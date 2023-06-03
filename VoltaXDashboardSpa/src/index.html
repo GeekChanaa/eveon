@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>VoltaXDashboardSpa</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    var viewportmeta = document.querySelector('meta[name="viewport"]');
+    if (viewportmeta) {
+      if (screen.width < 375) {
+        var newScale = screen.width / 375;
+        viewportmeta.content = 'width=375, minimum-scale=' + newScale + ', maximum-scale=1.0, user-scalable=no, initial-scale=' + newScale + '';
+      } else {
+        viewportmeta.content = 'width=device-width, maximum-scale=1.0, initial-scale=1.0';
+      }
+    }
+  </script>
+</head>
+<body>
+  <script>
+    console.log(localStorage.getItem('darkMode'));
+    if (localStorage.getItem('darkMode') === "on") {
+      document.body.classList.add("dark");
+      document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector('.js-theme input').checked = true;
+      });
+    }
+  </script>
+  <app-root></app-root>
+</body>
+</html>

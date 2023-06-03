@@ -1,0 +1,15 @@
+<div class="sidebar__item sidebar__item_dropdown">
+  <div class="sidebar__top">
+    <button class="sidebar__head">
+      <svg class="icon icon-diamond">
+        <use xlink:href="#icon-diamond"></use>
+      </svg>{{title | titlecase}}
+      <svg class="icon icon-arrow-down">
+        <use xlink:href="#icon-arrow-down"></use>
+      </svg>
+    </button>
+  </div>
+  <div class="sidebar__body">
+    <ng-content></ng-content>
+  </div>
+</div>
