@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
-using VoltaXApi.Data.Repositories;
 
 namespace VoltaXApi.Controllers
 {

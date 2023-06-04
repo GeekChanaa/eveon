@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using VoltaXApi.Helpers;
 
-namespace VoltaXApi.Data.Repositories
+namespace VoltaXApi.Data
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IQueryable<TEntity>> GetAllAsync(GlobalParams globalParams);
         Task<TEntity> GetByIdAsync(int id);
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync(TEntity entity);

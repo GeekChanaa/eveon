@@ -23,6 +23,8 @@ import { UsersComponent } from './users/users.component';
 import { SharedModule } from './shared/shared.module';
 import { AtomsComponent } from './atoms/atoms.component';
 import { AtomsModule } from './atoms/atoms.module';
+import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [																			
@@ -43,12 +45,14 @@ import { AtomsModule } from './atoms/atoms.module';
     OcppLocalListComponent,
     ChargingProfileComponent,
     OcppConfigurationComponent,
-    UsersComponent
+    UsersComponent,
+    TabsStatisticsComponent
    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     SharedModule,
+    HttpClientModule,
     AtomsModule
   ],
   providers: [],

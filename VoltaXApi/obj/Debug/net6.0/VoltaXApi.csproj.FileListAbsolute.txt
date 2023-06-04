@@ -80,3 +80,6 @@ C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\obj\Deb
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\obj\Debug\net6.0\VoltaXApi.pdb
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\obj\Debug\net6.0\VoltaXApi.genruntimeconfig.cache
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\obj\Debug\net6.0\ref\VoltaXApi.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\bin\Debug\net6.0\Bogus.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\bin\Debug\net6.0\System.Linq.Dynamic.Core.dll

@@ -1,0 +1,109 @@
+<div class="page__title h3">{{name | titlecase}}</div>
+    <div class="customer card">
+      <div class="card__head">
+        <div class="title-purple card__title">{{names | titlecase}}</div>
+        <form class="form">
+          <input class="form__input" type="text" name="search" placeholder="Search by name or email" required="required" autocomplete="off"/>
+          <button class="form__button">
+            <svg class="icon icon-search">
+              <use xlink:href="#icon-search"></use>
+            </svg>
+          </button>
+        </form>
+        <div class="card__nav">
+          <button class="card__link active">Active</button>
+          <button class="card__link">New</button>
+        </div>
+        <div class="filters">
+          <button class="button-square-stroke button-small filters__head">
+            <svg class="icon icon-filter">
+              <use xlink:href="#icon-filter"></use>
+            </svg>
+          </button>
+          <div class="filters__body">
+            <div class="filters__top">
+              <div class="title-red filters__title">Showing 10 of 24 customer</div>
+              <button class="filters__close">
+                <svg class="icon icon-close">
+                  <use xlink:href="#icon-close"></use>
+                </svg>
+              </button>
+            </div>
+            <form class="form">
+              <input class="form__input" type="text" name="search" placeholder="Search for products" required="required" autocomplete="off"/>
+              <button class="form__button">
+                <svg class="icon icon-search">
+                  <use xlink:href="#icon-search"></use>
+                </svg>
+              </button>
+            </form>
+            <div class="filters__group">
+              <div class="filters__item">
+                <div class="field">
+                  <div class="field__label">Sort by</div>
+                  <div class="field__wrap">
+                    <select class="select">
+                      <option>Featured</option>
+                      <option>Last</option>
+                      <option>New</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="filters__item">
+                <div class="filters__label">Showing</div>
+                <div class="filters__list">
+                  <label class="checkbox checkbox_reverse">
+                    <input class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span class="checkbox__tick"></span><span class="checkbox__text">All products</span></span>
+                  </label>
+                  <label class="checkbox checkbox_reverse">
+                    <input class="checkbox__input" type="checkbox" checked><span class="checkbox__inner"><span class="checkbox__tick"></span><span class="checkbox__text">UI Kit</span></span>
+                  </label>
+                  <label class="checkbox checkbox_reverse">
+                    <input class="checkbox__input" type="checkbox" checked><span class="checkbox__inner"><span class="checkbox__tick"></span><span class="checkbox__text">Illustration</span></span>
+                  </label>
+                  <label class="checkbox checkbox_reverse">
+                    <input class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span class="checkbox__tick"></span><span class="checkbox__text">Wireframe kit</span></span>
+                  </label>
+                  <label class="checkbox checkbox_reverse">
+                    <input class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span class="checkbox__tick"></span><span class="checkbox__text">Icons</span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="filters__item">
+                <div class="filters__label">Price</div>
+                <div class="filters__range js-slider" data-min="0" data-max="100" data-start="20" data-end="50" data-step="1" data-tooltips="true" data-prefix="$"></div>
+              </div>
+            </div>
+            <div class="filters__btns">
+              <button class="button-stroke filters__button">Reset</button>
+              <button class="button filters__button">Apply</button>
+            </div>
+          </div>
+          <div class="filters__overlay"></div>
+        </div>
+      </div>
+      <div class="customer__inner">
+        <div class="customer__container">
+          <div class="customer__wrapper">
+            <div class="customer__table">
+              <div class="customer__row">
+                <div *ngFor="let field of fields" class="customer__col">{{field }}</div>
+              </div>
+              <div class="customer__row" *ngFor="let item of data">
+                <div class="customer__col" *ngFor="let field of fields">{{item[field.charAt(0).toLowerCase() + field.slice(1)]}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="customer__foot">
+            <button class="button-stroke button-small customer__button" (click)="previousPage()">
+              <span>previous</span>
+            </button>
+            <button class="button-stroke button-small customer__button" (click)="nextPage()">
+              <span>next</span>
+            </button>
+            
+          </div>
+        </div>
+      </div>
+    </div>

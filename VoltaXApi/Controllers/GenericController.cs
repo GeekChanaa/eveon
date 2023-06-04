@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
-using VoltaXApi.Data.Repositories;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -29,10 +29,12 @@ namespace VoltaXApi.Controllers
 
         // GET: api/T
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public virtual async Task<IActionResult> GetAll([FromQuery] GlobalParams globalParams)
         {
-            var entities = await _repository.GetAllAsync();
-            return Ok(entities);
+            Type t = typeof(T);
+            var classes = await PagedList<T>.CreateAsync(await _repository.GetAllAsync(globalParams),globalParams.PageNumber,globalParams.PageSize);
+            Response.AddPagination(classes.CurrentPage, classes.PageSize, classes.TotalCount, classes.TotalPages);
+            return Ok(classes); 
         }
 
         // GET: api/T/5
