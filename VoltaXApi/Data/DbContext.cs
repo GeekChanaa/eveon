@@ -22,11 +22,11 @@ namespace VoltaXApi.Data
             public DbSet<Administrator> Administrators { get; set; }
             public DbSet<Customer> Customers { get; set; }
             public DbSet<Card> Cards { get; set; }
-            public DbSet<CarCharger> CarChargers { get; set; }
             public DbSet<ChargingStation> ChargingStations { get; set; }
             public DbSet<ChargePoint> ChargePoints { get; set; }
             public DbSet<Connector> Connectors { get; set; }
             public DbSet<Order> Orders { get; set; }
+            public DbSet<Transaction> Transactions { get; set; }
             public DbSet<Comment> Comments { get; set; }
             // Add any Dbset configurations here
     }

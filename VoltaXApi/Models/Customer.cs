@@ -9,8 +9,5 @@ namespace VoltaXApi.Models
     
         public Boolean Sold { get; set; }
         public User User { get; set; }
-        
-        
-    
     }
 }

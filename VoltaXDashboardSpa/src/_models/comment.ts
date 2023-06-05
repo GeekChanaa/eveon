@@ -9,6 +9,7 @@ export interface Comment {
     ChargingStationID: number;
     PointID: number;
     CommentTime: Date;
-    User: User;
-    ChargingStation: ChargingStation;
+    User: User | null;
+    ChargingStation: ChargingStation | null;
+    [key: string]: any;
 }

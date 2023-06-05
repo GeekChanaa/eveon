@@ -1,3 +1,13 @@
-<p>
-  comment-management works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="comment"
+      names="comments"
+      [fields]="fields" 
+      [data]="data"
+      (next)="nextPage()"
+      (previous)="previousPage()">
+    </app-table-list>
+  </div>
+</div>
+

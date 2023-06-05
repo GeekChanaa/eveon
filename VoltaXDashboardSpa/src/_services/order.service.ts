@@ -14,6 +14,31 @@ export class OrderService extends AbstractService<Order>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/order";
+  baseUrl = environment.apiUrl+"/api/order";
+
+  // Counting orders today
+  countOrdersToday(){
+    return this._http.get<number>(this.baseUrl+"/countToday");
+  }
+
+  // Counting orders By DAy
+  countOrdersByDay(){
+    return this._http.get<number[]>(this.baseUrl+"/countByDay");
+  }
+
+  // Counting orders rechargeAmount total
+  countRechargeAmount(){
+    return this._http.get<number>(this.baseUrl+"/countRechargeAmount");
+  }
+
+  // Counting orders rechargeAmount today
+  countRechargeAmountToday(){
+    return this._http.get<number>(this.baseUrl+"/countRechargeAmountToday");
+  }
+
+  // Counting orders rechargeAmount By day
+  countRechargeAmountByDay(){
+    return this._http.get<number[]>(this.baseUrl+"/countRechargeAmountByDay");
+  }
 
 }

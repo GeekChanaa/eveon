@@ -1,3 +1,13 @@
-<p>
-  charging-stations works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="charging station"
+      names="charging stations"
+      [fields]="fields" 
+      [data]="data"
+      (next)="nextPage()"
+      (previous)="previousPage()">
+    </app-table-list>
+  </div>
+</div>
+

@@ -16,11 +16,11 @@ namespace VoltaXApi.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CarChargerController : GenericController<CarCharger>
+    public class UserController : GenericController<User>
     {
-        private readonly IRepository<CarCharger> _repository;
+        private readonly IRepository<User> _repository;
 
-        public CarChargerController(IRepository<CarCharger> repository) : base(repository)
+        public UserController(IRepository<User> repository) : base(repository)
         {
             _repository = repository;
         }

@@ -4,5 +4,6 @@ export interface Customer {
     id: number;
     UserID: number;
     Sold: boolean;
-    User: User;
+    User: User | null;
+    [key: string]: any;
 }

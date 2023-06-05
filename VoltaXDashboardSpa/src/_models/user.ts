@@ -8,4 +8,5 @@ export interface User {
     Phone: string;
     Password?: string;
     Orders: Order[];
+    [key: string]: any;
   }

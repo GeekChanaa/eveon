@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+  import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,6 +25,7 @@ import { AtomsComponent } from './atoms/atoms.component';
 import { AtomsModule } from './atoms/atoms.module';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
 import { HttpClientModule } from '@angular/common/http';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   declarations: [																			
@@ -53,7 +54,8 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     SharedModule,
     HttpClientModule,
-    AtomsModule
+    AtomsModule,
+    NgApexchartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

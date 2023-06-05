@@ -11,5 +11,6 @@ export interface Card {
     Balance: number;
     Note: string;
     CustomerID: number;
-    Customer: Customer;
+    Customer: Customer | null;
+    [key: string]: any;
 }

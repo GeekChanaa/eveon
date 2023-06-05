@@ -14,12 +14,12 @@
             </svg>
           </div>
         </div>
-        <div class="overview__counter">1024</div>
+        <div class="overview__counter">{{totalEnergy | number : '1.0-0' }}</div>
       </div>
       <div class="balance background negative">
         <svg class="icon icon-arrow-bottom">
           <use xlink:href="#icon-arrow-bottom"></use>
-        </svg>37.8%
+        </svg>{{totalEnergyToday | number : '1.0-0'}}
       </div>
     </a>
     <a class="overview__link js-tabs-link" href="#">
@@ -36,12 +36,12 @@
             </svg>
           </div>
         </div>
-        <div class="overview__counter">256k</div>
+        <div class="overview__counter">{{totalOrders | number : '1.0-0'}}</div>
       </div>
       <div class="balance background positive">
         <svg class="icon icon-arrow-top">
           <use xlink:href="#icon-arrow-top"></use>
-        </svg>37.8%
+        </svg>{{totalOrdersToday | number : '1.0-0'}}
       </div>
     </a>
     <a class="overview__link js-tabs-link" href="#">
@@ -58,12 +58,12 @@
             </svg>
           </div>
         </div>
-        <div class="overview__counter">256k</div>
+        <div class="overview__counter">{{totalRechargeAmount | number : '1.0-0'}}</div>
       </div>
       <div class="balance background positive">
         <svg class="icon icon-arrow-top">
           <use xlink:href="#icon-arrow-top"></use>
-        </svg>37.8%
+        </svg>{{totalRechargeAmountToday | number : '1.0-0'}}
       </div>
     </a>
     <a class="overview__link js-tabs-link" href="#">

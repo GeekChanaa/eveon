@@ -90,6 +90,13 @@ namespace VoltaXApi.Controllers
             await _repository.Remove(item);
             return NoContent();
         }
+
+        [HttpGet("countAll")]
+        public async Task<IActionResult> CountAll()
+        {
+            int count = await _repository.CountAsync(u => true);
+            return Ok(count);
+        }
     }
 
 }

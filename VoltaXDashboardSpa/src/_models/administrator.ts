@@ -4,4 +4,5 @@ export interface Administrator {
     id: number;
     UserID: number;
     User: User;
+    [key: string]: any;
 }

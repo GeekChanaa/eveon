@@ -3,5 +3,6 @@ export interface Connector {
     PointID: number;
     ConnectorType: string;
     Power: number;
+    [key: string]: any;
 }
   

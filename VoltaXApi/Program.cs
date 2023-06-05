@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -44,10 +45,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// using(var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
-//     // use context
-//     GlobalSeeder.Seed(dbContext).Wait();
-// }
+using(var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+    // use context
+    //GlobalSeeder.Seed(dbContext).Wait();
+}
 app.Run();

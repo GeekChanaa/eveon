@@ -12,8 +12,8 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230603103753_initial")]
-    partial class initial
+    [Migration("20230605132829_recreate")]
+    partial class recreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,27 +41,6 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Administrators");
-                });
-
-            modelBuilder.Entity("VoltaXApi.Models.CarCharger", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("CarChargers");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
@@ -159,16 +138,11 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CarChargerID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StationName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("CarChargerID");
 
                     b.ToTable("ChargingStations");
                 });
@@ -217,17 +191,19 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("ChargePointID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConnectorType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PointID")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("Power")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ChargePointID");
 
                     b.ToTable("Connectors");
                 });
@@ -261,23 +237,13 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("CarChargerID")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CardID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StopReason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StopTime")
+                    b.Property<DateTime>("RechargeDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserID")
@@ -286,13 +252,50 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CarChargerID");
-
                     b.HasIndex("CardID");
 
                     b.HasIndex("UserID");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("EnergyConsumed")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("PaymentAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>
@@ -357,23 +360,12 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
                 {
                     b.HasOne("VoltaXApi.Models.ChargingStation", "ChargingStation")
-                        .WithMany()
+                        .WithMany("ChargePoints")
                         .HasForeignKey("ChargingStationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChargingStation");
-                });
-
-            modelBuilder.Entity("VoltaXApi.Models.ChargingStation", b =>
-                {
-                    b.HasOne("VoltaXApi.Models.CarCharger", "CarCharger")
-                        .WithMany()
-                        .HasForeignKey("CarChargerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CarCharger");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Comment", b =>
@@ -395,6 +387,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePoint");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Customer", b =>
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
@@ -408,12 +411,6 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.Order", b =>
                 {
-                    b.HasOne("VoltaXApi.Models.CarCharger", "CarCharger")
-                        .WithMany()
-                        .HasForeignKey("CarChargerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany()
                         .HasForeignKey("CardID")
@@ -426,11 +423,33 @@ namespace VoltaXApi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("CarCharger");
-
                     b.Navigation("Card");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargingStation", b =>
+                {
+                    b.Navigation("ChargePoints");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>

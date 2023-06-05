@@ -18,13 +18,82 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class OrderController : GenericController<Order>
     {
-        private readonly IRepository<Order> _repository;
+        private readonly IOrderRepository _repository;
 
-        public OrderController(IRepository<Order> repository) : base(repository)
+        public OrderController(IOrderRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
         // You can override the base methods or add specific methods for this controller
+        [HttpGet("countRechargeAmount")]
+        public async Task<IActionResult> CountRecharge()
+        {
+            decimal count = await _repository.CountRecharge(u => true);
+            return Ok(count);
+        }
+
+        [HttpGet("countRechargeAmountToday")]
+        public async Task<IActionResult> CountRechargeToday()
+        {
+            DateTime today = DateTime.Today;
+            DateTime tomorrow = today.AddDays(1);
+
+            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
+            return Ok(count);
+        }
+
+        [HttpGet("countRechargeAmountByDay")]
+        public async Task<IActionResult> GetEnergyConsumptionByDay()
+        {
+            DateTime endDate = DateTime.Today;
+            DateTime startDate = endDate.AddDays(-29);
+
+            var rechargeAmountByDay = new List<decimal>();
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                DateTime currentDay = date.Date;
+                DateTime nextDay = currentDay.AddDays(1);
+
+                decimal rechargeAmount = await _repository
+                    .CountRecharge(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
+
+                rechargeAmountByDay.Add(rechargeAmount);
+            }
+
+            return Ok(rechargeAmountByDay);
+        }
+
+        [HttpGet("countToday")]
+        public async Task<IActionResult> CountToday()
+        {
+            DateTime today = DateTime.Today;
+            DateTime tomorrow = today.AddDays(1);
+            decimal count = await _repository.CountAsync(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
+            return Ok(count);
+        }
+
+        [HttpGet("countByDay")]
+        public async Task<IActionResult> CountByDay()
+        {
+            DateTime endDate = DateTime.Today;
+            DateTime startDate = endDate.AddDays(-29);
+
+            var orderCountByDay = new List<decimal>();
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                DateTime currentDay = date.Date;
+                DateTime nextDay = currentDay.AddDays(1);
+
+                decimal rechargeAmount = await _repository
+                    .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
+
+                orderCountByDay.Add(rechargeAmount);
+            }
+
+            return Ok(orderCountByDay);
+        }
     }
 }

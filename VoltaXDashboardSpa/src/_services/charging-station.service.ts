@@ -10,10 +10,10 @@ import { environment } from 'src/environments/environment';
 export class ChargingStationService extends AbstractService<ChargingStation>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/charging-station");
+    super(http, environment.apiUrl+"/api/chargingstation");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/charging-station";
+  baseUrl = environment.apiUrl+"api/chargingstation";
 
 }
