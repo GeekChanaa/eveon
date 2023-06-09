@@ -14,6 +14,6 @@ export class ConnectorService extends AbstractService<Connector>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/connector";
+  baseUrl = environment.apiUrl+"/api/connector";
 
 }

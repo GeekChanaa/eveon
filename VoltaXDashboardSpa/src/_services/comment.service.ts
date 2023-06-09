@@ -14,6 +14,6 @@ export class CommentService extends AbstractService<Comment>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/comment";
+  baseUrl = environment.apiUrl+"/api/comment";
 
 }

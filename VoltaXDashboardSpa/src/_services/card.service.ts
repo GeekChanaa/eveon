@@ -14,6 +14,6 @@ export class CardService extends AbstractService<Card>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/card";
+  baseUrl = environment.apiUrl+"/api/card";
 
 }

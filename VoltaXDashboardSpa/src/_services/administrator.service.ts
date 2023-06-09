@@ -14,6 +14,6 @@ export class AdministratorService extends AbstractService<Administrator>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/administrator";
+  baseUrl = environment.apiUrl+"/api/administrator";
 
 }

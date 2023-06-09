@@ -14,6 +14,6 @@ export class UserService extends AbstractService<User>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/user";
+  baseUrl = environment.apiUrl+"/api/user";
 
 }

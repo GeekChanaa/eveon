@@ -14,6 +14,6 @@ export class CustomerService extends AbstractService<Customer>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/customer";
+  baseUrl = environment.apiUrl+"/api/customer";
 
 }

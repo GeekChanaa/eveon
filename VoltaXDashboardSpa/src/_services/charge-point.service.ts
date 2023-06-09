@@ -14,6 +14,6 @@ export class ChargePointService extends AbstractService<ChargePoint>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/chargepoint";
+  baseUrl = environment.apiUrl+"/api/chargepoint";
 
 }

@@ -8,7 +8,7 @@ import { FormArray, FormGroup, FormControl } from '@angular/forms';
 export class CreateChargingStationComponent implements OnInit {
 
   form: FormGroup;
-
+  opacity : number = 0;
   constructor() {
     this.form = new FormGroup({
       chargingStationName : new FormControl(''),
@@ -71,6 +71,59 @@ export class CreateChargingStationComponent implements OnInit {
 
   onSubmit() {
     console.log(this.form.value);
+  }
+
+  showSelect(){
+    console.log("this is focused")
+    this.opacity = 1;
+  }
+
+  hideSelect(){
+    console.log("this is focusout");
+    this.opacity = 0;
+  }
+
+
+  // Getting City Control
+  get cityControl(): FormControl {
+    const control = this.form.get('chargingStationCity');
+    if (!control) {
+      throw new Error('Country control not found');
+    }
+    return control as FormControl;
+  }
+
+  // Getting Country Control
+  get countryControl(): FormControl {
+    const control = this.form.get('chargingStationCountry');
+    if (!control) {
+      throw new Error('Country control not found');
+    }
+    return control as FormControl;
+  }
+
+  // Getting State Control
+  get stateControl(): FormControl {
+    const control = this.form.get('chargingStationState');
+    if (!control) {
+      throw new Error('Country control not found');
+    }
+    return control as FormControl;
+  }
+
+  // Updating state Control
+  updateState(value: string) {
+    this.stateControl.setValue(value);
+  }
+
+  // Updating country Control
+  updateCountry(value: string) {
+    this.countryControl.setValue(value);
+  }
+
+  // Updating city Control
+  updateCity(value: string) {
+    this.cityControl.setValue(value);
   }
 
 }

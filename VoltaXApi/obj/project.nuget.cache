@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UfLzGzBuoAR6Fi6FtDA+r6YEN2ZXggfF9lJ43ImMEqxyQDcuaLUE0LLABBAQ0H+yMpTfbbJGuHSGLqq+kMI10g==",
+  "dgSpecHash": "HAr0iHayI96KZoha4JF1udNxDEcqOwRLtgLc4UBZLCHAH6YnSQAC44gNUbWGsIhXQoooPLy03jRcke4L9QrCUA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\VoltaXApi.csproj",
+  "projectFilePath": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\VoltaXApi\\VoltaXApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\XPS\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\XPS\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

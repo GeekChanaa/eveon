@@ -14,6 +14,6 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"api/chargingstation";
+  baseUrl = environment.apiUrl+"/api/chargingstation";
 
 }

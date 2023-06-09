@@ -1,0 +1,6 @@
+<div class="field__wrap">
+  <input [formControl]="control"  #inputElem  (focus)="showSelect()" (focusout)="hideSelect()" class="field__input" type="text" placeholder="Value" required>
+  <ul class="list-search-input" [ngClass]="{'show-opacity': showList}">
+    <li *ngFor="let option of options" (click)="selectOption(option, inputElem)" class="option-search-input select-option">{{ option }}</li>
+  </ul>
+</div>

@@ -108,7 +108,7 @@
                     </div>
                   </div>
                   <div class="field__wrap">
-                    <input formControlName="chargingStationCountry" class="field__input" type="text" name="value1" placeholder="Value" required>
+                    <app-search-input (optionSelected)="updateCountry($event)" [control]="countryControl" [options]="['Option 1', 'Option 2', 'Option 3']"></app-search-input>
                   </div>
                 </div>
                 <div class="field">
@@ -120,7 +120,7 @@
                     </div>
                   </div>
                   <div class="field__wrap">
-                    <input formControlName="chargingStationState" class="field__input" type="text" name="value2" placeholder="Value" required>
+                    <app-search-input (optionSelected)="updateState($event)" [control]="stateControl" [options]="['Option 1', 'Option 2', 'Option 3']"></app-search-input>
                   </div>
                 </div>
                 <div class="field">
@@ -131,9 +131,7 @@
                       </svg>
                     </div>
                   </div>
-                  <div class="field__wrap">
-                    <input formControlName="chargingStationCity"  class="field__input" type="text" name="value2" placeholder="Value" required>
-                  </div>
+                  <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl" [options]="['Option 1', 'Option 2', 'Option 3']"></app-search-input>
                 </div>
                 <div class="field">
                   <div class="field__label">Location Zip Code
