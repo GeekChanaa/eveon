@@ -1,0 +1,9 @@
+.btns_group{
+    display: flex;
+    width: 100%;
+}
+
+.btn_next{
+    margin-left: auto;
+    margin-right: 0px;
+}

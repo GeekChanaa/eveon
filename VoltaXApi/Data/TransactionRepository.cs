@@ -21,7 +21,7 @@ namespace VoltaXApi.Data
         {
             var energySumTask = _context.Transactions
                 .Where(predicate)
-                .SumAsync(t => t.EnergyConsumed);
+                .SumAsync(t => t.MeterStart);
 
             return energySumTask;
         }

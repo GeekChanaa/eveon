@@ -26,6 +26,8 @@ import { AtomsModule } from './atoms/atoms.module';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { CreateChargingStationComponent } from './charging-stations/create-charging-station/create-charging-station.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [																			
@@ -47,7 +49,9 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     ChargingProfileComponent,
     OcppConfigurationComponent,
     UsersComponent,
-    TabsStatisticsComponent
+    TabsStatisticsComponent,
+    CreateChargingStationComponent
+  
    ],
   imports: [
     BrowserModule,
@@ -56,6 +60,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     HttpClientModule,
     AtomsModule,
     NgApexchartsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

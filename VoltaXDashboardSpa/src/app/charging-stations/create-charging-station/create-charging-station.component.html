@@ -1,0 +1,402 @@
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">New Charging Station</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="create">
+        <div class="create__row">
+          <div class="create__col">
+            <!-- Chargin station informations -->
+            <div class="create__card card">
+              <div class="card__head">
+                <div class="title-green card__title">Name & description</div><a
+                  class="button-stroke button-small card__button" href="products-dashboard.html">
+                  <svg class="icon icon-arrow-left">
+                    <use xlink:href="#icon-arrow-left"></use>
+                  </svg><span>Back</span></a>
+              </div>
+              <div class="field">
+                <div class="field__label">Charging Station Name
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <input formControlName="chargingStationName" class="field__input" type="text" name="title" required>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Network
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" formControlName="chargingStationNetwork">
+                      <option>Purchase now</option>
+                      <option>Purchase tomorrow</option>
+                      <option>Buy later</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Category
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" formControlName="chargingStationCategory">
+                      <option>Purchase now</option>
+                      <option>Purchase tomorrow</option>
+                      <option>Buy later</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Charger quantity at location
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" formControlName="chargingStationChargerQuantity">
+                      <option>Purchase now</option>
+                      <option>Purchase tomorrow</option>
+                      <option>Buy later</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Address
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <input formControlName="chargingStationAddress" class="field__input" type="text" name="title" required>
+                </div>
+              </div>
+
+              <div class="create__group">
+                <div class="field">
+                  <div class="field__label">Country
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationCountry" class="field__input" type="text" name="value1" placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">State / Province
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationState" class="field__input" type="text" name="value2" placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">City
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationCity"  class="field__input" type="text" name="value2" placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Location Zip Code
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationZipCode"  class="field__input" type="text" name="value2" placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Latitude
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationLatitude"  class="field__input" type="text" name="value2" placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Longitude
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationLongitude"  class="field__input" type="text" name="value2" placeholder="Value" required>
+                  </div>
+                </div>
+              </div>
+              <div class="create__group">
+                <div class="field">
+                  <div class="field__label">Organisation
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationOrganisation" >
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Publish
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationPublish" >
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Parking Type
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationParkingType" >
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Status
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationStatus">
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="create__label">Compatibility
+                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="create__list" formGroupName="chargingStationAmenities">
+                <label class="checkbox">
+                  <input formControlName="wifi" class="checkbox__input" type="checkbox" checked><span class="checkbox__inner"><span
+                      class="checkbox__tick"></span><span class="checkbox__text">Wifi</span></span>
+                </label>
+                <label class="checkbox">
+                  <input formControlName="parking" class="checkbox__input" type="checkbox" checked><span class="checkbox__inner"><span
+                      class="checkbox__tick"></span><span class="checkbox__text">Parking</span></span>
+                </label>
+                <label class="checkbox">
+                  <input formControlName="restaurants" class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span
+                      class="checkbox__tick"></span><span class="checkbox__text">Restaurants</span></span>
+                </label>
+                <label class="checkbox">
+                  <input formControlName="washroom"  class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span
+                      class="checkbox__tick"></span><span class="checkbox__text">Washroom</span></span>
+                </label>
+                <label class="checkbox">
+                  <input formControlName="sittingArea"  class="checkbox__input" type="checkbox"><span class="checkbox__inner"><span
+                      class="checkbox__tick"></span><span class="checkbox__text">Sitting Area</span></span>
+                </label>
+
+              </div>
+              <div class="create__card card">
+                <div class="card__head">
+                  <div class="title-blue card__title">Images & CTA</div>
+                </div>
+                <div class="file">
+                  <div class="file__label">Cover images
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed" data-position="right">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="file__wrap">
+                    <input class="file__input" type="file" />
+                    <div class="file__box">
+                      <svg class="icon icon-upload">
+                        <use xlink:href="#icon-upload"></use>
+                      </svg>Click or drop image
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="create__card card">
+              <div class="card__head">
+                <div class="title-green card__title">Charge Points</div>
+                <button (click)="addChargePoint()" class="button-stroke button-small card__button">
+                  <svg class="icon icon-arrow-left">
+                    <use xlink:href="#icon-arrow-left"></use>
+                  </svg><span>Add Charge Point</span></button>
+              </div>
+            </div>
+            
+            <div class="create__card card" formArrayName="chargePoints" *ngFor="let control of chargePoints.controls; index as i">
+              <div class="create__group" [formGroupName]="i">
+                <div class="field">
+                  <div class="field__label">Charge point ID
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="chargePointName"  placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Charge Point Name
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="chargePointName"  placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Charge Point Serial number
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="chargePointSerialNumber"  placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Charge Point Make
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="chargePointMake"  placeholder="Value" required>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Charge Point Status
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargePointStatus" >
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="btns_group">
+              <!--  Previous button  -->
+              <button class="button-stroke btn_previous"> Previous step </button>
+
+              <!--  next button  -->
+              <button type="submit" class="button btn_next"> Next step </button>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>

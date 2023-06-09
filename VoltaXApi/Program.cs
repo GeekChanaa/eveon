@@ -3,6 +3,8 @@ using VoltaXApi.Models;
 using VoltaXApi.Data.Seeders;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore;
+using OCPP.Core.Server;
+using VoltaXApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,8 @@ if (app.Environment.IsDevelopment())
 
 
 
+
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("CorsPolicy");
@@ -50,5 +54,18 @@ using(var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
     //GlobalSeeder.Seed(dbContext).Wait();
+    SqlScriptExecuter.ExecuteSqlScript("sql-scripts/world.sql");
 }
+
+// Set WebSocketsOptions
+var webSocketOptions = new WebSocketOptions() 
+{
+    ReceiveBufferSize = 8 * 1024
+};
+
+// Accept WebSocket
+app.UseWebSockets(webSocketOptions);
+
+// Integrate custom OCPP middleware for message processing
+app.UseOCPPMiddleware();    
 app.Run();
