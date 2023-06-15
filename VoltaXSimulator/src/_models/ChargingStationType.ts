@@ -1,5 +1,5 @@
 import { CustomDataType } from "./CustomDataType";
-import { ModemType } from "./Modemtype";
+import { ModemType } from "./ModemType";
 
 export interface ChargingStationType {
     customData?: CustomDataType;
