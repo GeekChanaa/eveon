@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VoltaXApi.Helpers;
+using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
 {
-    public interface IRepository<TEntity> where TEntity : class
+    public interface IRepository<TEntity> where TEntity : IEntity
     {
         Task<IQueryable<TEntity>> GetAllAsync(GlobalParams globalParams);
         Task<TEntity> GetByIdAsync(int id);

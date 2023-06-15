@@ -21,9 +21,9 @@ export class ConnectorsComponent implements OnInit {
 
   connector : Connector = {
     id: 0,
-    PointID: 0,
-    ConnectorType: '',
-    Power: 0
+    chargePointId: 0,
+    power: 0,
+    speed: 0
   }
 
   // Constructor

@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class Card
+    public class Card : IEntity
     {
     
         public int ID { get; set; }
@@ -22,7 +22,7 @@ namespace VoltaXApi.Models
         public string Note { get; set; }
     
         public int CustomerID { get; set; }
-        public Customer Customer { get; set; }
+        public Customer? Customer { get; set; }
         
         
     

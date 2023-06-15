@@ -1,8 +1,12 @@
+import { ChargePoint } from "./charge-point";
+
 export interface Connector {
     id: number;
-    PointID: number;
-    ConnectorType: string;
-    Power: number;
+    chargePointId: number;
+    connectorType?: string;
+    power: number;
+    speed: number;
+    chargePoint?: ChargePoint;
     [key: string]: any;
-}
+  }
   

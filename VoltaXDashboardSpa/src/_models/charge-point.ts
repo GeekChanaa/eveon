@@ -1,12 +1,20 @@
-import { ChargingStation } from "./charging-station";
+import { Connector } from "./connector";
+import { Transaction } from "./transaction";
 
 export interface ChargePoint {
     id: number;
-    ChargingStationID: number;
-    Network: string;
-    Timezone: string;
-    LastConnectTime: Date;
-    OnlineTime: Date;
-    ChargingStation: ChargingStation | null;
+    chargePointId: string;
+    chargingStationID : number;
+    name: string;
+    serialNumber: string;
+    make: string;
+    status: string;
+    comment: string;
+    username: string;
+    password: string;
+    clientCertThumb: string;
+    connectors : Connector[];
+    transactions: Transaction[];
     [key: string]: any;
-}
+  }
+  

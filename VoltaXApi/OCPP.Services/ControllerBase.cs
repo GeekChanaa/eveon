@@ -60,7 +60,7 @@ namespace OCPP.Core.Server
             }
             else
             {
-                Logger.LogError("New ControllerBase => empty chargepoint status");
+                Console.WriteLine("New ControllerBase => empty chargepoint status");
             }
         }
 
@@ -76,14 +76,14 @@ namespace OCPP.Core.Server
                 optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 using (VoltaXApiDbContext dbContext = new VoltaXApiDbContext(optionsBuilder.Options))
                 {
-                    ConnectorStatus connectorStatus = dbContext.Find<ConnectorStatus>(ChargePointStatus.Id, connectorId);
+                    ConnectorStatus? connectorStatus = dbContext.ConnectorStatuses.Where(u=> u.ChargePointId == ChargePointStatus.Id && connectorId == u.ConnectorId).FirstOrDefault();
                     if (connectorStatus == null)
                     {
                         // no matching entry => create connector status
                         connectorStatus = new ConnectorStatus();
                         connectorStatus.ChargePointId = ChargePointStatus.Id;
                         connectorStatus.ConnectorId = connectorId;
-                        Logger.LogTrace("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointId, connectorStatus.ConnectorId);
+                        Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointId, connectorStatus.ConnectorId);
                         dbContext.Add<ConnectorStatus>(connectorStatus);
                     }
 
@@ -99,13 +99,13 @@ namespace OCPP.Core.Server
                         connectorStatus.LastMeterTime = ((meterTime.HasValue) ? meterTime.Value : DateTimeOffset.UtcNow).DateTime;
                     }
                     dbContext.SaveChanges();
-                    Logger.LogInformation("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2} / Meter={3}", connectorStatus.ChargePointId, connectorId, status, meter);
+                    Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2} / Meter={3}", connectorStatus.ChargePointId, connectorId, status, meter);
                     return true;
                 }
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp, "UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", ChargePointStatus?.Id, connectorId, exp.Message);
+                Console.WriteLine( "UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", ChargePointStatus?.Id, connectorId, exp.Message);
             }
 
             return false;
@@ -125,7 +125,7 @@ namespace OCPP.Core.Server
                 if (sep >= 0)
                 {
                     idTag = rawChargeTagId.Substring(0, sep);
-                    logger.LogTrace("CleanChargeTagId => Charge tag '{0}' => '{1}'", rawChargeTagId, idTag);
+                    Console.WriteLine("CleanChargeTagId => Charge tag '{0}' => '{1}'", rawChargeTagId, idTag);
                 }
             }
 

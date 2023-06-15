@@ -20,13 +20,19 @@ export class ChargingPointsComponent implements OnInit {
   currentPage : number = 1;
 
   chargePoint : ChargePoint = {
-    id: 1,
-    ChargingStationID: 1,
-    Network: "",
-    Timezone: "",
-    LastConnectTime: new Date(),
-    OnlineTime: new Date(),
-    ChargingStation: null
+    id: 0,
+    chargePointId: '',
+    chargingStationID: 0,
+    name: '',
+    serialNumber: '',
+    make: '',
+    status: '',
+    comment: '',
+    username: '',
+    password: '',
+    clientCertThumb: '',
+    connectors: [],
+    transactions: []
   }
 
   // Constructor

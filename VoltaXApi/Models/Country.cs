@@ -2,9 +2,9 @@
 
 namespace VoltaXApi.Models
 {
-    public class Country
+    public class Country : IEntity
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string? Name { get; set; }
         public string? Iso3 { get; set; }
         public string? NumericCode { get; set; }
@@ -29,7 +29,7 @@ namespace VoltaXApi.Models
         public bool Flag { get; set; }
         public string? WikiDataId { get; set; }
 
-        public virtual ICollection<State> States { get; set; }
-        public virtual ICollection<City> Cities { get; set; }
+        public virtual ICollection<State>? States { get; set; }
+        public virtual ICollection<City>? Cities { get; set; }
     }
 }

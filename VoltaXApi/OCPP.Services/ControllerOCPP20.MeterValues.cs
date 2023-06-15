@@ -45,6 +45,8 @@ namespace OCPP.Core.Server
             try
             {
                 Logger.LogTrace("Processing meter values...");
+                Console.WriteLine("THESE ARE THE METERE VALUES : ");
+                Console.WriteLine(msgIn.JsonPayload);
                 MeterValuesRequest meterValueRequest = JsonConvert.DeserializeObject<MeterValuesRequest>(msgIn.JsonPayload);
                 Logger.LogTrace("MeterValues => Message deserialized");
 

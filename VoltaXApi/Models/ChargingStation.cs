@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class ChargingStation
+    public class ChargingStation : IEntity
     {
         public int ID { get; set; }
         public string Name { get; set; } // name of the station
@@ -24,16 +24,12 @@ namespace VoltaXApi.Models
         
         public string Status { get; set; }
         
-        public string WifiAmenity { get; set; }
-        public string ParkingAmenity { get; set; }
-        public string RestaurantsAmenity { get; set; }
-        public string WashroomAmenity { get; set; }
-        public string SittingAreaAmenity { get; set; }
-        
-        
-        
-
+        public bool WifiAmenity { get; set; }
+        public bool ParkingAmenity { get; set; }
+        public bool RestaurantsAmenity { get; set; }
+        public bool WashroomAmenity { get; set; }
+        public bool SittingAreaAmenity { get; set; }
         // Navigation properties
-        public ICollection<ChargePoint> ChargePoints { get; set; }
+        public ICollection<ChargePoint>? ChargePoints { get; set; }
     }
 }

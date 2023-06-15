@@ -7,7 +7,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'VoltaXDashboardSpa';
-
   constructor() { }
 
   // Loading Assets
@@ -16,6 +15,7 @@ export class AppComponent {
     this.loadScripts();
   }
 
+  
 
   // Loading CSS Files
   loadCSS() {

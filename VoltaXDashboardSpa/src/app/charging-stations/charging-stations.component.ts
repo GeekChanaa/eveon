@@ -22,9 +22,24 @@ export class ChargingStationsComponent implements OnInit {
   chargingStation : ChargingStation = {
     id: 0,
     name: '',
-    businessHours: '',
     address: '',
-    chargePoints: []
+    network: '',
+    category: '',
+    chargerQuantity: '',
+    country: '',
+    state: '',
+    city: '',
+    latitude: '',
+    longitude: '',
+    organisation: '',
+    parkingType: '',
+    status: '',
+    wifiAmenity: '',
+    parkingAmenity: '',
+    restaurantsAmenity: '',
+    washroomAmenity: '',
+    sittingAreaAmenity: '',
+    ChargePoints: []
   }
 
   // Constructor

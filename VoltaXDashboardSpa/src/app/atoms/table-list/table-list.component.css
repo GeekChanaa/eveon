@@ -2,6 +2,10 @@
     margin-bottom: 44px;
 }
 
+.customer__wrapper{
+    overflow-x: scroll;
+}
+
 @media only screen and (max-width: 1023px) {
     .customer .card__head {
         margin-bottom: 32px;

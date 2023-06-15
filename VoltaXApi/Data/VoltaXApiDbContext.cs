@@ -19,6 +19,12 @@ namespace VoltaXApi.Data
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ChargeTag>()
+                .HasIndex(e => e.TagID)
+                .IsUnique();
+            modelBuilder.Entity<ConnectorStatus>()
+                .HasKey(cs => new { cs.ConnectorId, cs.ChargePointId });
         }
 
             public DbSet<User> Users { get; set; }
@@ -27,7 +33,10 @@ namespace VoltaXApi.Data
             public DbSet<Card> Cards { get; set; }
             public DbSet<ChargingStation> ChargingStations { get; set; }
             public DbSet<ChargePoint> ChargePoints { get; set; }
+            public DbSet<ChargeTag> ChargeTags { get; set; }
             public DbSet<Connector> Connectors { get; set; }
+            public DbSet<ConnectorTarif> ConnectorTarifs { get; set; }
+            public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
             public DbSet<Order> Orders { get; set; }
             public DbSet<Transaction> Transactions { get; set; }
             public DbSet<Comment> Comments { get; set; }

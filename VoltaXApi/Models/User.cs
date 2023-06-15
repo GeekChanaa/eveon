@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace VoltaXApi.Models
 {
-    public class User
+    public class User : IEntity
     {
         public int ID { get; set; }
         public string FirstName { get; set; }
@@ -17,7 +17,7 @@ namespace VoltaXApi.Models
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
         public string Password { get; set; }
-        public IEnumerable<Order> Orders { get; set; }
+        public IEnumerable<Order>? Orders { get; set; }
         
         
     }

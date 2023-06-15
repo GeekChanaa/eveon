@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class Administrator
+    public class Administrator : IEntity
     {
     
         public int ID { get; set; }

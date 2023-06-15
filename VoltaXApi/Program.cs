@@ -56,15 +56,15 @@ using(var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
-    //GlobalSeeder.Seed(dbContext).Wait();
+    // GlobalSeeder.Seed(dbContext).Wait();
     dbContext.Database.SetCommandTimeout(6000); // Time in seconds
     
-    await SqlScriptExecuter.ExecuteSqlScript();
+    // await SqlScriptExecuter.ExecuteSqlScript();
 }
 
 // Set WebSocketsOptions
 var webSocketOptions = new WebSocketOptions() 
-{
+{       
     ReceiveBufferSize = 8 * 1024
 };
 

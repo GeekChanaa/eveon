@@ -18,7 +18,7 @@ namespace VoltaXApi.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class GenericController<T> : ControllerBase where T : class
+    public class GenericController<T> : ControllerBase where T : IEntity
     {
         private readonly IRepository<T> _repository;
 
@@ -32,22 +32,25 @@ namespace VoltaXApi.Controllers
         public virtual async Task<IActionResult> GetAll([FromQuery] GlobalParams globalParams)
         {
             Type t = typeof(T);
-            var classes = await PagedList<T>.CreateAsync(await _repository.GetAllAsync(globalParams),globalParams.PageNumber,globalParams.PageSize);
+            var classes = await PagedList<T>.CreateAsync(await _repository.GetAllAsync(globalParams), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(classes.CurrentPage, classes.PageSize, classes.TotalCount, classes.TotalPages);
-            return Ok(classes); 
+            return Ok(classes);
         }
 
-        // GET: api/T/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
+
             if (entity == null)
             {
-            return NotFound();
+                return NotFound();
             }
+
             return Ok(entity);
         }
+
+
 
         // PUT: api/T/5
         [HttpPut("{id}")]
@@ -73,13 +76,14 @@ namespace VoltaXApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(T entity)
         {
+            Console.WriteLine("this is the create function endpoint");
             if (entity == null)
             {
-            return BadRequest("Entity is null");
+                return BadRequest("Entity is null");
             }
 
             await _repository.AddAsync(entity);
-            return CreatedAtAction("GetById", entity);
+            return CreatedAtAction("GetById", new { id = entity.ID }, entity);
         }
 
         // DELETE: api/T/5

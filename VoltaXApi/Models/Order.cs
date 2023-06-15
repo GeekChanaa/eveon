@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class Order
+    public class Order : IEntity
     {
     
         public int ID { get; set; }
@@ -9,8 +9,8 @@ namespace VoltaXApi.Models
         public int CardID { get; set; }
         public decimal Amount { get; set; }
         public DateTime RechargeDate { get; set; }
-        public User User { get; set; }
-        public Card Card { get; set; }
+        public User? User { get; set; }
+        public Card? Card { get; set; }
         
     
     }
