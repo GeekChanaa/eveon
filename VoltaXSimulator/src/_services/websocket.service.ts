@@ -521,7 +521,7 @@ export class WebsocketService {
   }
 
   // Stop Transaction Request
-  stopTransaction(transaction_id = false, request : TransactionEventRequest ) {
+  stopTransaction( request : TransactionEventRequest ,transaction_id: any = this._lastTranId) {
     sessionStorage.setItem('LastAction', "stopTransaction");
     transaction_id == false ? this._lastTranId = this._lastTranId : this._lastTranId = transaction_id.toString();
     this._connector_locked = false;
@@ -530,7 +530,7 @@ export class WebsocketService {
     this.myWebSocket.next(stpT);
   }
 
-
+  // Starting Transaction
   startTransaction(request : TransactionEventRequest) {
     sessionStorage.setItem('LastAction', "startTransaction");
     this._connector_locked = true;

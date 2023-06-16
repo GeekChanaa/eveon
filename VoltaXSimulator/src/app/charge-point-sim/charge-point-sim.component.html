@@ -17,21 +17,39 @@
 
 <div>
   <h4>Start Transaction Event</h4>
-  <select [(ngModel)]="selectedTransactionEvent">
+  <select [(ngModel)]="selectedStartTransactionTransactionEventType">
     <option *ngFor="let event of transactionEvents" [value]="event">{{event}}</option>
   </select>
   
-  <select [(ngModel)]="selectedTriggerReason">
+  <select [(ngModel)]="selectedStartTransactionTriggerReason">
     <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
   </select>
   
-  <select [(ngModel)]="selectedChargingState">
-    <option *ngFor="let state of chargingStates" [value]="state">{{state}}</option>
-  </select>
   
-  <select [(ngModel)]="selectedReason">
+  <select [(ngModel)]="selectedStartTransactionReason">
     <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
   </select>
   
   <button (click)="startTransaction()">start Transaction</button>
+</div>
+
+
+
+
+<div>
+  <h4>Stop Transaction Event</h4>
+  <select [(ngModel)]="selectedStopTransactionTransactionEventType">
+    <option *ngFor="let event of transactionEvents" [value]="event">{{event}}</option>
+  </select>
+  
+  <select [(ngModel)]="selectedStopTransactionTriggerReason">
+    <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
+  </select>
+  
+  
+  <select [(ngModel)]="selectedStopTransactionReason">
+    <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
+  </select>
+  
+  <button (click)="stopTransaction()">Stop Transaction</button>
 </div>

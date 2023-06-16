@@ -18,7 +18,29 @@ import { WebsocketService } from 'src/_services/websocket.service';
 export class ChargePointSimComponent implements OnInit {
 
   chargePoint: ChargePoint | undefined;
-  transactionEventRequest: TransactionEventRequest = {
+  startTransactionEventRequest: TransactionEventRequest = {
+    eventType: TransactionEventEnumType.Ended,
+    meterValue: [],
+    timestamp: this._wsService.formatDate(new Date()),
+    triggerReason: TriggerReasonEnumType.Authorized,
+    seqNo: 0,
+    transactionInfo: {
+      customData: {
+        vendorId: ''
+      },
+      transactionId: '',
+      stoppedReason : ReasonEnumType.DeAuthorized
+    },
+    evse: {
+      id: 0
+    },
+    idToken: {
+      idToken: '',
+      type: IdTokenEnumType.Central
+    }
+  };
+
+  stopTransactionEventRequest: TransactionEventRequest = {
     eventType: TransactionEventEnumType.Ended,
     meterValue: [],
     timestamp: this._wsService.formatDate(new Date()),
@@ -45,9 +67,13 @@ export class ChargePointSimComponent implements OnInit {
   chargingStates = Object.values(ChargingStateEnumType);
   reasons = Object.values(ReasonEnumType);
 
-  selectedTransactionEvent!: TransactionEventEnumType;
-  selectedTriggerReason!: TriggerReasonEnumType;
-  selectedReason!: ReasonEnumType;
+  selectedStartTransactionTransactionEventType!: TransactionEventEnumType;
+  selectedStartTransactionTriggerReason!: TriggerReasonEnumType;
+  selectedStartTransactionReason!: ReasonEnumType;
+
+  selectedStopTransactionTransactionEventType!: TransactionEventEnumType;
+  selectedStopTransactionTriggerReason!: TriggerReasonEnumType;
+  selectedStopTransactionReason!: ReasonEnumType;
 
   constructor(
     private route: ActivatedRoute,
@@ -75,11 +101,21 @@ export class ChargePointSimComponent implements OnInit {
   // Start Transaction
   startTransaction(){
     console.log("STARTING THE TRANSACTION");
-    console.log(this.transactionEventRequest);
-    this.transactionEventRequest.eventType = this.selectedTransactionEvent;
-    this.transactionEventRequest.triggerReason = this.selectedTriggerReason;
-    this.transactionEventRequest.transactionInfo.stoppedReason = this.selectedReason;
-    this._wsService.startTransaction(this.transactionEventRequest);
+    console.log(this.startTransactionEventRequest);
+    this.startTransactionEventRequest.eventType = this.selectedStartTransactionTransactionEventType;
+    this.startTransactionEventRequest.triggerReason = this.selectedStartTransactionTriggerReason;
+    this.startTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStartTransactionReason;
+    this._wsService.startTransaction(this.startTransactionEventRequest);
+  }
+
+  // Stop transaction 
+  stopTransaction(){
+    console.log("STOPING THE TRANSACTION");
+    console.log(this.stopTransactionEventRequest);
+    this.stopTransactionEventRequest.eventType = this.selectedStopTransactionTransactionEventType;
+    this.stopTransactionEventRequest.triggerReason = this.selectedStopTransactionTriggerReason;
+    this.stopTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStopTransactionReason;
+    this._wsService.stopTransaction(this.stopTransactionEventRequest);
   }
 
 }
