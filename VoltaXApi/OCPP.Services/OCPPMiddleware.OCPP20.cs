@@ -59,7 +59,8 @@ namespace OCPP.Core.Server
                         }
 
                         string ocppMessage = UTF8Encoding.UTF8.GetString(bMessage);
-
+                        Console.WriteLine("================ this is the ocppMessage =======");
+                        Console.WriteLine(ocppMessage);
                         Match match = Regex.Match(ocppMessage, MessageRegExp);
                         if (match != null && match.Groups != null && match.Groups.Count >= 3)
                         {

@@ -1,4 +1,5 @@
 import { ChargingProfileCriterionType } from "./ChargingProfileCriterionType";
+import { CustomDataType } from "./CustomDataType";
 
   
   export interface GetChargingProfilesRequest {

@@ -1,0 +1,37 @@
+<!-- charge-point-details.component.html -->
+<div *ngIf="chargePoint">
+  <h2>{{ chargePoint.chargePointName }}</h2>
+  <p>ID: {{ chargePoint.chargePointId }}</p>
+  <p>Station ID: {{ chargePoint.chargeStationId }}</p>
+  <p>Gateway: {{ chargePoint.chargePointGateway }}</p>
+  <h3>Connectors</h3>
+  <div *ngFor="let connector of chargePoint.connectors">
+    <p>Connector ID: {{ connector.connectorId }}, Type: {{ connector.connectorType }}</p>
+  </div>
+</div>
+
+<div>
+  <h4>Connecting the chargepoint to the gateway</h4>
+  <button (click)="wsConnect()">connect</button>
+</div>
+
+<div>
+  <h4>Start Transaction Event</h4>
+  <select [(ngModel)]="selectedTransactionEvent">
+    <option *ngFor="let event of transactionEvents" [value]="event">{{event}}</option>
+  </select>
+  
+  <select [(ngModel)]="selectedTriggerReason">
+    <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
+  </select>
+  
+  <select [(ngModel)]="selectedChargingState">
+    <option *ngFor="let state of chargingStates" [value]="state">{{state}}</option>
+  </select>
+  
+  <select [(ngModel)]="selectedReason">
+    <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
+  </select>
+  
+  <button (click)="startTransaction()">start Transaction</button>
+</div>

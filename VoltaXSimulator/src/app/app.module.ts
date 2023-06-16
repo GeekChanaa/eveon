@@ -7,13 +7,15 @@ import { ChargingStationsComponent } from './charging-stations/charging-stations
 import { ChargePointsComponent } from './charge-points/charge-points.component';
 import { AddChargePointComponent } from './add-charge-point/add-charge-point.component';
 import { FormsModule } from '@angular/forms';
+import { ChargePointSimComponent } from './charge-point-sim/charge-point-sim.component';
 
 @NgModule({
-  declarations: [			
+  declarations: [				
     AppComponent,
       ChargingStationsComponent,
       ChargePointsComponent,
-      AddChargePointComponent
+      AddChargePointComponent,
+      ChargePointSimComponent
    ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-enum CancelReservationStatusEnumType {
+export enum CancelReservationStatusEnumType {
     Accepted = "Accepted",
     Rejected = "Rejected",
   }
