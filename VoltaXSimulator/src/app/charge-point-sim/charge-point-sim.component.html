@@ -17,9 +17,6 @@
 
 <div *ngFor="let connector of chargePoint?.connectors">
   <h4>Start Transaction Event (connector : {{connector.connectorId}})</h4>
-  <select [(ngModel)]="selectedStartTransactionTransactionEventType">
-    <option *ngFor="let event of transactionEvents" [value]="event">{{event}}</option>
-  </select>
   
   <select [(ngModel)]="selectedStartTransactionTriggerReason">
     <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
@@ -38,9 +35,6 @@
 
 <div *ngFor="let connector of chargePoint?.connectors">
   <h4>Stop Transaction Event (connector : {{connector.connectorId}})</h4>
-  <select [(ngModel)]="selectedStopTransactionTransactionEventType">
-    <option *ngFor="let event of transactionEvents" [value]="event">{{event}}</option>
-  </select>
   
   <select [(ngModel)]="selectedStopTransactionTriggerReason">
     <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>

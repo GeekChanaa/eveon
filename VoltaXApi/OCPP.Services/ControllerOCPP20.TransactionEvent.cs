@@ -112,7 +112,7 @@ namespace OCPP.Core.Server
                                 try
                                 {
                                     Console.WriteLine("StartTransaction => Meter='{0}' (kWh)", meterKWH);
-
+                                    Console.WriteLine(transactionEventRequest.TransactionInfo.TransactionId);
                                     Transaction transaction = new Transaction();
                                     transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
                                     transaction.ChargePointID = ChargePointStatus.Id;
@@ -385,8 +385,12 @@ namespace OCPP.Core.Server
 
             foreach (MeterValueType meterValue in meterValues)
             {
+                
                 foreach (SampledValueType sampleValue in meterValue.SampledValue)
                 {
+                    Console.WriteLine("this is the first metervaluetype : ");
+                    Console.WriteLine(sampleValue.Value);
+                    Console.WriteLine(sampleValue.Measurand);
                     Console.WriteLine("GetMeterValues => Context={0} / SignedMeterValue={1} / Value={2} / Unit={3} / Location={4} / Measurand={5} / Phase={6}",
                         sampleValue.Context, sampleValue.SignedMeterValue, sampleValue.Value, sampleValue.UnitOfMeasure, sampleValue.Location, sampleValue.Measurand, sampleValue.Phase);
 
@@ -426,7 +430,11 @@ namespace OCPP.Core.Server
                             sampleValue.UnitOfMeasure?.Unit == "varh" ||
                             (sampleValue.UnitOfMeasure == null || sampleValue.UnitOfMeasure.Unit == null))
                         {
+                            // Multiplying this by the meter value
                             Console.WriteLine("GetMeterValues => Value: '{0:0.0}' Wh", meterKWH);
+                            if(sampleValue.UnitOfMeasure?.Multiplier != null && sampleValue.UnitOfMeasure?.Multiplier>0)
+                            meterKWH = meterKWH * Math.Pow(10,(double) sampleValue.UnitOfMeasure?.Multiplier);
+
                             // convert Wh => kWh
                             meterKWH = meterKWH / 1000;
                         }

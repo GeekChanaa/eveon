@@ -535,7 +535,7 @@ export class WebsocketService {
     sessionStorage.setItem('LastAction', "startTransaction");
     this._connector_locked = true;
     console.log("Connector status changed to: " + this._connector_locked);
-    this._lastTranId = this.guid();
+    console.log(this._lastTranId);
     var strtT = ([2, this._id, "TransactionEvent", request]);
     this.myWebSocket.next(strtT);
   }
@@ -568,14 +568,7 @@ export class WebsocketService {
     return year + '-' + monthIndex + '-' + day + "T" + h + ":" + m + ":" + s + "Z";
   }
 
-  guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-      }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-  }
+  
 
 
 }

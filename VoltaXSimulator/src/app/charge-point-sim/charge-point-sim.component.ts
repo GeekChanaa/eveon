@@ -23,6 +23,7 @@ import { WebsocketService } from 'src/_services/websocket.service';
 export class ChargePointSimComponent implements OnInit {
 
   chargePoint: ChargePoint | undefined;
+  connectorIdTransactionUid : string[] = [];
   startTransactionEventRequest: TransactionEventRequest = {
     eventType: TransactionEventEnumType.Ended,
     meterValue: [],
@@ -74,11 +75,9 @@ export class ChargePointSimComponent implements OnInit {
   chargingStates = Object.values(ChargingStateEnumType);
   reasons = Object.values(ReasonEnumType);
 
-  selectedStartTransactionTransactionEventType!: TransactionEventEnumType;
   selectedStartTransactionTriggerReason!: TriggerReasonEnumType;
   selectedStartTransactionReason!: ReasonEnumType;
 
-  selectedStopTransactionTransactionEventType!: TransactionEventEnumType;
   selectedStopTransactionTriggerReason!: TriggerReasonEnumType;
   selectedStopTransactionReason!: ReasonEnumType;
 
@@ -109,38 +108,68 @@ export class ChargePointSimComponent implements OnInit {
   startTransaction(connectorId : any){
     console.log("STARTING THE TRANSACTION");
     console.log(this.startTransactionEventRequest);
-    this.startTransactionEventRequest.eventType = this.selectedStartTransactionTransactionEventType;
+    var transaction_id = this.guid();
+    this.startTransactionEventRequest.eventType = TransactionEventEnumType.Started;
     this.startTransactionEventRequest.triggerReason = this.selectedStartTransactionTriggerReason;
     this.startTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStartTransactionReason;
     this.startTransactionEventRequest.evse.connectorId = connectorId;
+    this.startTransactionEventRequest.transactionInfo.transactionId = transaction_id;
+    this.connectorIdTransactionUid[connectorId] = transaction_id;
+    var meterValue : MeterValueType = {
+      sampledValue: [{
+        value : 0,
+        context : ReadingContextEnumType.TransactionEnd,
+        measurand : MeasurandEnumType.EnergyActiveImportRegister,
+        phase : PhaseEnumType.L1,
+        location : LocationEnumType.Cable,
+        unitOfMeasure : {
+          unit : "Wh",
+          multiplier : 0
+        }
+      }],
+      timestamp: this._wsService.formatDate(new Date)
+    } 
+    this.startTransactionEventRequest.meterValue = [meterValue];
     this._wsService.startTransaction(this.startTransactionEventRequest);
+    console.log("this is the transaction id : " +transaction_id);
   }
 
   // Stop transaction 
   stopTransaction(connectorId : any){
     console.log("STOPING THE TRANSACTION");
-    console.log(this.stopTransactionEventRequest);
-    this.stopTransactionEventRequest.eventType = this.selectedStopTransactionTransactionEventType;
+    var transaction_id = this.connectorIdTransactionUid[connectorId]
+    console.log(transaction_id);
+    this.stopTransactionEventRequest.eventType = TransactionEventEnumType.Ended;
     this.stopTransactionEventRequest.triggerReason = this.selectedStopTransactionTriggerReason;
     this.stopTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStopTransactionReason;
     this.stopTransactionEventRequest.evse.connectorId = connectorId;
+    this.stopTransactionEventRequest.transactionInfo.transactionId = transaction_id;
     var meterValue : MeterValueType = {
-      
       sampledValue: [{
         value : 20,
         context : ReadingContextEnumType.TransactionEnd,
-        measurand : MeasurandEnumType.SoC,
+        measurand : MeasurandEnumType.EnergyActiveImportRegister,
         phase : PhaseEnumType.L1,
         location : LocationEnumType.Cable,
         unitOfMeasure : {
           unit : "Wh",
-          multiplier : 10
+          multiplier : 0
         }
       }],
       timestamp: this._wsService.formatDate(new Date)
     } 
     this.stopTransactionEventRequest.meterValue = [meterValue]
     this._wsService.stopTransaction(this.stopTransactionEventRequest);
+  }
+
+  // Generating transaction IDS
+  guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+      }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   }
 
 }
