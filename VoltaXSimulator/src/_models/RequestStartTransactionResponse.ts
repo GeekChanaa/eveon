@@ -1,16 +1,14 @@
-import { ChargingProfileType } from "./ChargingProfileType";
+import { StatusInfoType } from "./StatusInfoType";
+import { RequestStartStopStatusEnumType } from "./_enums/RequestStartStopStatusEnumType";
 import { CustomDataType } from "./CustomDataType";
-import { IdTokenType } from "./IdTokenType";
 
-  
-  export interface RequestStartTransactionRequest {
+  /**
+   * OCPP 2.0.1 FINAL
+   */
+  export interface RequestStartTransactionResponse {
     customData?: CustomDataType;
-    evseId?: number;
-    groupIdToken?: IdTokenType;
-    idToken: IdTokenType;
-    remoteStartId: number;
-    chargingProfile?: ChargingProfileType;
+    status: RequestStartStopStatusEnumType;
+    statusInfo?: StatusInfoType;
+    transactionId?: string;
   }
-  
-  
   

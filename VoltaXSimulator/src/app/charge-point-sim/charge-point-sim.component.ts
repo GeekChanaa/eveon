@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MeterValueType } from 'src/_models/MeterValueType';
 import { TransactionEventRequest } from 'src/_models/TransactionEventRequest';
 import { ChargingStateEnumType } from 'src/_models/_enums/ChargingStateEnumType';
 import { IdTokenEnumType } from 'src/_models/_enums/IdTokenEnumType';
+import { LocationEnumType } from 'src/_models/_enums/LocationEnumType';
+import { MeasurandEnumType } from 'src/_models/_enums/MeasurandEnumType';
+import { PhaseEnumType } from 'src/_models/_enums/PhaseEnumType';
+import { ReadingContextEnumType } from 'src/_models/_enums/ReadingContextEnumType';
 import { ReasonEnumType } from 'src/_models/_enums/ReasonEnumType';
 import { TransactionEventEnumType } from 'src/_models/_enums/TransactionEventEnumType';
 import { TriggerReasonEnumType } from 'src/_models/_enums/TriggerReasonEnumType';
@@ -32,7 +37,8 @@ export class ChargePointSimComponent implements OnInit {
       stoppedReason : ReasonEnumType.DeAuthorized
     },
     evse: {
-      id: 0
+      id: 0,
+      connectorId : 0
     },
     idToken: {
       idToken: '',
@@ -54,7 +60,8 @@ export class ChargePointSimComponent implements OnInit {
       stoppedReason : ReasonEnumType.DeAuthorized
     },
     evse: {
-      id: 0
+      id: 0,
+      connectorId : 3 
     },
     idToken: {
       idToken: '',
@@ -99,22 +106,40 @@ export class ChargePointSimComponent implements OnInit {
   }
 
   // Start Transaction
-  startTransaction(){
+  startTransaction(connectorId : any){
     console.log("STARTING THE TRANSACTION");
     console.log(this.startTransactionEventRequest);
     this.startTransactionEventRequest.eventType = this.selectedStartTransactionTransactionEventType;
     this.startTransactionEventRequest.triggerReason = this.selectedStartTransactionTriggerReason;
     this.startTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStartTransactionReason;
+    this.startTransactionEventRequest.evse.connectorId = connectorId;
     this._wsService.startTransaction(this.startTransactionEventRequest);
   }
 
   // Stop transaction 
-  stopTransaction(){
+  stopTransaction(connectorId : any){
     console.log("STOPING THE TRANSACTION");
     console.log(this.stopTransactionEventRequest);
     this.stopTransactionEventRequest.eventType = this.selectedStopTransactionTransactionEventType;
     this.stopTransactionEventRequest.triggerReason = this.selectedStopTransactionTriggerReason;
     this.stopTransactionEventRequest.transactionInfo.stoppedReason = this.selectedStopTransactionReason;
+    this.stopTransactionEventRequest.evse.connectorId = connectorId;
+    var meterValue : MeterValueType = {
+      
+      sampledValue: [{
+        value : 20,
+        context : ReadingContextEnumType.TransactionEnd,
+        measurand : MeasurandEnumType.SoC,
+        phase : PhaseEnumType.L1,
+        location : LocationEnumType.Cable,
+        unitOfMeasure : {
+          unit : "Wh",
+          multiplier : 10
+        }
+      }],
+      timestamp: this._wsService.formatDate(new Date)
+    } 
+    this.stopTransactionEventRequest.meterValue = [meterValue]
     this._wsService.stopTransaction(this.stopTransactionEventRequest);
   }
 
