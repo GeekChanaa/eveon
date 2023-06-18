@@ -7,13 +7,15 @@ import { CardComponent } from './card/card.component';
 import { TableListComponent } from './table-list/table-list.component';
 import { SearchInputComponent } from './search-input/search-input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SmallCardComponent } from './small-card/small-card.component';
 
 @NgModule({
   declarations: [
     AtomsComponent,
     CardComponent,
     TableListComponent,
-    SearchInputComponent
+    SearchInputComponent,
+    SmallCardComponent
    ],
   imports: [
     CommonModule,
@@ -25,6 +27,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CardComponent,
     TableListComponent,
     SearchInputComponent,
+    SmallCardComponent
   ],
   providers: [],
 })

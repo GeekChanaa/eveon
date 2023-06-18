@@ -429,3 +429,8 @@ body.dark .customer__col:after {
 .customer__col:last-child:after {
     right: 12px;
 }
+
+.pagination__btn{
+    padding: 0px;
+    border-radius: 0px;
+}

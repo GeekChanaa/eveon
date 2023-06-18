@@ -6,7 +6,10 @@
       [fields]="fields" 
       [data]="data"
       (next)="nextPage()"
-      (previous)="previousPage()">
+      (previous)="previousPage()"
+      (firstPage)="goToFirstPage()"
+      (lastPage)="goToLastPage()"
+      >
     </app-table-list>
   </div>
 </div>

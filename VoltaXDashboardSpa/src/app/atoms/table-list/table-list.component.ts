@@ -13,6 +13,8 @@ export class TableListComponent implements OnInit {
   @Input() data : any[] = [];
   @Output() next : EventEmitter<void> = new EventEmitter<void>();
   @Output() previous : EventEmitter<void> = new EventEmitter<void>();
+  @Output() firstPage : EventEmitter<void> = new EventEmitter<void>();
+  @Output() lastPage : EventEmitter<void> = new EventEmitter<void>();
 
   constructor() { }
 
@@ -22,6 +24,16 @@ export class TableListComponent implements OnInit {
   // next Page Event
   nextPage(){
     this.next.emit();
+  }
+
+  // first Page Event
+  firstP(){
+    this.firstPage.emit();
+  }
+  
+  // last Page Event
+  lastP(){
+    this.lastPage.emit();
   }
 
   // previous page event

@@ -1,0 +1,114 @@
+<div class="page page_simple">
+  <div class="login">
+    <div class="login__col">
+      <div class="login__wrap">
+        <div class="login__preview"><img src="assets/img/content/login-pic.png" alt="Login"></div>
+        <div class="h4 login__subtitle">Plan includes</div>
+        <ul class="login__list">
+          <li>Unlimited product uploads</li>
+          <li>Pro tips</li>
+          <li>Free forever</li>
+          <li>Full author options</li>
+        </ul>
+      </div>
+    </div>
+    <div class="login__col">
+      <div class="login__head"><a class="login__logo" href="#"><img class="some-icon" src="assets/img/logo-dark.png"
+            alt="Core"><img class="some-icon-dark" src="assets/img/logo-light.png" alt="Core"></a>
+        <div class="login__info">Already a member? <a href="sign-in.html">Sign in</a></div>
+      </div>
+      <div class="login__wrapper">
+        <div class="h2 login__title">Sign up</div>
+        <div class="login__entry">
+          <div class="login__top">
+            <div class="login__text">Sign up with Open account</div>
+            <div class="login__btns">
+              <button class="button-stroke login__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
+              <button class="button-stroke login__button"><img class="some-icon" src="assets/img/content/apple-dark.svg"
+                  alt="Apple"><img class="some-icon-dark" src="assets/img/content/apple-light.svg" alt="Apple">Apple
+                ID</button>
+            </div>
+          </div>
+          <div class="login__text">Or continue with email address</div>
+          <form [formGroup]="form">
+            <div class="login__fieldset">
+              <div class="field field_icon">
+                <div class="field__wrap">
+                  <input class="field__input" type="text" formControlName="firstName" placeholder="First Name">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="field field_icon">
+                <div class="field__wrap">
+                  <input class="field__input" type="text" formControlName="lastName" placeholder="Last Name">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="field field_icon">
+                <div class="field__wrap">
+                  <input class="field__input" type="text" formControlName="email" placeholder="Your email">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="field field_icon">
+                <div class="field__wrap">
+                  <input class="field__input" type="text" formControlName="phone" placeholder="Your phone">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="field field_icon">
+                <div class="field__wrap">
+                  <input class="field__input" type="password" formControlName="password" placeholder="Your Password">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <button class="button login__button" (click)="register()">Continue</button>
+              <div class="login__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+            </div>
+          </form>
+        </div>
+        <div class="login__code">
+          <div class="login__text">We just send you a verify code. Check your inbox to get them.</div>
+          <div class="login__row">
+            <div class="login__field">
+              <input class="error" type="tel" name="code1" autocomplete="off">
+            </div>
+            <div class="login__field">
+              <input type="tel" name="code2" autocomplete="off">
+            </div>
+            <div class="login__field">
+              <input type="tel" name="code3" autocomplete="off">
+            </div>
+            <div class="login__field">
+              <input type="tel" name="code4" autocomplete="off">
+            </div>
+          </div>
+          <div class="login__error">The code you entered is incorrect.</div><button  class="button login__button">
+            <div class="loader"></div><span>Continue</span>
+          </button>
+          <div class="login__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

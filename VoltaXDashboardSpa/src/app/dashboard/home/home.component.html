@@ -1,0 +1,70 @@
+<div class="overlay"></div>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Home</div>
+
+    <!-- Chargers Overview -->
+    <div class="card">
+      <div class="card__head">
+        <div class="title-purple card__title">Charge Points Connectors Overview</div>
+      </div>
+      <div class="stock">
+        <div class="stock__list">
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Available"
+            description="available" [number]="300"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Unavailable"
+            description="Unavailable" [number]="400"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Occupied" description="Occupied"
+            [number]="300"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Faulted" description="Faulted"
+            [number]="300"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Reserved" description="Reserved"
+            [number]="300"></app-small-card>
+        </div>
+      </div>
+    </div>
+
+    <div class="page__row">
+      <div class="page__col">
+        <app-card title="overview">
+          <app-tabs-statistics></app-tabs-statistics>
+        </app-card>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__head">
+        <div class="title-purple card__title">Links</div>
+      </div>
+      <div class="stock">
+        <div class="stock__list">
+          <app-small-card routerLink="/charging-stations" class="stock__item" style="background-color: #f2efff" title="Charging Stations"
+            description="available"></app-small-card>
+          <app-small-card routerLink="/charging-points" class="stock__item" style="background-color: #f2efff" title="Charge points"
+            description="Unavailable"></app-small-card>
+          <app-small-card routerLink="/connectors" class="stock__item" style="background-color: #f2efff" title="Connectors"
+            description="Occupied"></app-small-card>
+          <app-small-card routerLink="/charging-cards" class="stock__item" style="background-color: #f2efff" title="Chraging Cards"
+            description="Faulted"></app-small-card>
+          <app-small-card routerLink="/users" class="stock__item" style="background-color: #f2efff" title="Users"
+            description="Reserved"></app-small-card>
+        </div>
+      </div>
+      <div class="stock">
+        <div class="stock__list">
+          <app-small-card routerLink="/customers" class="stock__item" style="background-color: #f2efff" title="Customers"
+            description="available"></app-small-card>
+          <app-small-card routerLink="/recharge-orders" class="stock__item" style="background-color: #f2efff" title="Orders"
+            description="Unavailable"></app-small-card>
+          <app-small-card routerLink="/transactions" class="stock__item" style="background-color: #f2efff" title="Transactions"
+            description="Occupied"></app-small-card>
+          <app-small-card routerLink="/alarm-management" class="stock__item" style="background-color: #f2efff" title="Alarms"
+            description="Faulted"></app-small-card>
+          <app-small-card routerLink="/comment-management" class="stock__item" style="background-color: #f2efff" title="Comments"
+            description="Reserved"></app-small-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

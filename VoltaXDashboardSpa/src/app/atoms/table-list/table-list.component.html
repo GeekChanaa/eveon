@@ -96,13 +96,26 @@
             </div>
           </div>
           <div class="customer__foot">
-            <button class="button-stroke button-small customer__button" (click)="previousPage()">
-              <span>previous</span>
+            <button class="button-stroke button-small customer__button pagination__btn " (click)="firstP()">
+              <svg class="icon icon-arrow-left">
+                <use xlink:href="#icon-arrow-left"></use>
+              </svg>
             </button>
-            <button class="button-stroke button-small customer__button" (click)="nextPage()">
-              <span>next</span>
+            <button class="button-stroke button-small customer__button pagination__btn " (click)="previousPage()">
+              <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
+                <use xlink:href="#icon-arrow-next"></use>
+              </svg>
             </button>
-            
+            <button class="button-stroke button-small customer__button pagination__btn" (click)="nextPage()">
+              <svg class="icon icon-arrow-next">
+                <use xlink:href="#icon-arrow-next"></use>
+              </svg>
+            </button>
+            <button class="button-stroke button-small customer__button pagination__btn " (click)="lastP()">
+              <svg class="icon icon-arrow-right">
+                <use xlink:href="#icon-arrow-right"></use>
+              </svg>
+            </button>
           </div>
         </div>
       </div>

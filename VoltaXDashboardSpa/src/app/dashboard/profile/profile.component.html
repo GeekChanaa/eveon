@@ -1,0 +1,232 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Settings</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button (click)="changeTab('AccountInformationsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'AccountInformationsTab'}">Account Informations</button>
+        <button (click)="changeTab('SecurityTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'SecurityTab'}">Security</button>
+        <button (click)="changeTab('RechargeCardsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
+        <button (click)="changeTab('PaymentCardsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'PaymentCardsTab'}">Payment Cards</button></div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option (click)="changeTab('AccountInformationsTab')">Account Informations</option>
+          <option (click)="changeTab('SecurityTab')">Security</option>
+          <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
+          <option (click)="changeTab('PaymentCardsTab')">Payment Cards</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item" *ngIf="tabsEnum == 'AccountInformationsTab'">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Profile Informations</div>
+            <div class="settings__profile">
+              <div class="settings__avatar"><img src="assets/img/content/avatar.jpg" alt="Avatar">
+                <button class="settings__remove">
+                  <svg class="icon icon-close">
+                    <use xlink:href="#icon-close"></use>
+                  </svg>
+                </button>
+              </div>
+              <div class="settings__file">
+                <input type="file">
+                <button class="button settings__button" type="button">
+                  <svg class="icon icon-add">
+                    <use xlink:href="#icon-add"></use>
+                  </svg><span>Upload new picture</span>
+                </button>
+              </div>
+              <button class="button-stroke settings__button">Remove</button>
+            </div>
+            <div class="settings__fieldset">
+              <div class="field">
+                <div class="field__label">First Name
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__information">
+                  {{user.firstName}}
+                </div>
+                <div class="field__wrap">
+                  <input class="field__input" type="email" name="email">
+                </div>
+              </div>
+              <div class="field">
+                <div class="field__label">Last Name
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__information">
+                  {{user.lastName}}
+                </div>
+                <div class="field__wrap">
+                  <input class="field__input" type="email" name="email">
+                </div>
+              </div>
+              <div class="field">
+                <div class="field__label">Email
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__information">
+                  {{user.email}}
+                </div>
+                <div class="field__wrap">
+                  <input class="field__input" type="email" name="email">
+                </div>
+              </div>
+              <div class="field">
+                <div class="field__label">Phone
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__information">
+                  {{user.phone}}
+                </div>
+                <div class="field__wrap">
+                  <input class="field__input" type="text" name="location">
+                </div>
+              </div>
+              <div class="editor">
+                <div class="editor__label">Bio
+                  <div class="tooltip" title="Description">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <textarea class="editor__textarea js-editor"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'" >
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">Login</div>
+            <div class="settings__fieldset">
+              <div class="field">
+                <div class="field__label">Old password
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <input class="field__input" type="password" name="old-password">
+                </div>
+              </div>
+              <div class="settings__row">
+                <div class="field">
+                  <div class="field__label">New password
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="password" name="new-password">
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field__label">Confirm new password
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="password" name="Confirm-password">
+                  </div>
+                </div>
+              </div>
+              <button class="button-stroke settings__button">Update password</button>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
+            <div class="settings__anchor" id="notifications" data-value="Notifications"></div>
+            <div class="title-red settings__title">Notifications</div>
+            <div class="settings__list">
+              <div class="settings__line">
+                <div class="settings__label">Product updates and community announcements
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <label class="switch">
+                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                </label>
+              </div>
+              <div class="settings__line">
+                <div class="settings__label">Market newsletter
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <label class="switch">
+                  <input class="switch__input" type="checkbox"/><span class="switch__inner"><span class="switch__box"></span></span>
+                </label>
+              </div>
+              <div class="settings__line">
+                <div class="settings__label">Comments
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <label class="switch">
+                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                </label>
+              </div>
+              <div class="settings__line">
+                <div class="settings__label">Purchases
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <label class="switch">
+                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'PaymentCardsTab'">
+            <div class="settings__anchor" id="payment" data-value="Payment"></div>
+            <div class="title-green settings__title">Payment</div>
+            <div class="settings__top">
+              <div class="settings__label">Paypal
+                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <button class="button-stroke button-small settings__button">Update</button>
+            </div>
+            <div class="settings__email">tam@ui8.net</div>
+            <div class="settings__content">Payout fee is 1% of the amount transferred, with a minimum of USD $0.25 and a maximum of USD $20</div>
+          </div>
+        </div>
+        <button class="button settings__button">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

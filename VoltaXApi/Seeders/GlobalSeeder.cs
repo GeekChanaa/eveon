@@ -22,6 +22,10 @@ namespace VoltaXApi.Data.Seeders
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
             var connectors = await ConnectorSeeder.Seed(100,chargePoints,context);
             var connectorTarifs = await ConnectorTarifSeeder.Seed(100,connectors,context);
+
+            var users = await UserSeeder.Seed(100,context);
+            var customers = await CustomerSeeder.Seed(40,users,context);
+            var cards = await CardSeeder.Seed(60, customers,context);
         }
 
         private static string GenerateRandomTimeZone()

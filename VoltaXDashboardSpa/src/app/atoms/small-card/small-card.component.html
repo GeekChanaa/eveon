@@ -1,0 +1,19 @@
+
+  <div class="stock__icon">
+    <svg class="icon icon-payment">
+      <use xlink:href="#icon-payment"></use>
+    </svg>
+  </div>
+  <div class="stock__line">
+    <div class="stock__details">
+      <div class="stock__category">{{title}}
+        <div class="tooltip" title="{{description}}">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div *ngIf="number!=0" class="stock__counter">{{number}}</div>
+      
+    </div>
+  </div>

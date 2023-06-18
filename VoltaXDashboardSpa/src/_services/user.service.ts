@@ -10,10 +10,10 @@ import { environment } from 'src/environments/environment';
 export class UserService extends AbstractService<User>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/user");
+    super(http, environment.apiUrl+"/api/user/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/user";
+  baseUrl = environment.apiUrl+"/api/user/";
 
 }

@@ -22,11 +22,10 @@ export class UsersComponent implements OnInit {
 
   user : User = {
     id: 0,
-    FirstName: '',
-    LastName: '',
-    Email: '',
-    Phone: '',
-    Orders: []
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
   }
 
   // Constructor

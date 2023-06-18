@@ -1,3 +1,4 @@
+import { CustomDataType } from "./CustomDataType";
 import { IdTokenInfoType } from "./IdTokenInfoType";
 import { IdTokenType } from "./IdTokenType";
 

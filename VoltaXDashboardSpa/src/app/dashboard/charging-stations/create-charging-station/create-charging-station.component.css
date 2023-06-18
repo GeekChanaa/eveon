@@ -42,3 +42,16 @@
     right: -8px;
     top: -8px;
 }
+
+
+.create__col:first-child {
+    flex: 0 0 calc(100% );
+    width: calc(100%);
+    padding-right: 8px;
+  }
+
+  .create__group3 .field {
+    flex: 0 0 calc(33% - 12px);
+    width: calc(33% - 12px);
+    margin: 0 6px 12px;
+  }
