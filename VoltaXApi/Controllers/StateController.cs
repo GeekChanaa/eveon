@@ -26,9 +26,9 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetAllStateNamesByCountry")]
-        public async Task<ActionResult<List<string>>> GetAllStateNamesByCountry([FromQuery] int id)
+        public async Task<ActionResult<List<StateNameDto>>> GetAllStateNamesByCountry([FromQuery] int countryID)
         {
-            return await _repository.GetAllStateNamesByCountry(id);
+            return await _repository.GetAllStateNamesByCountry(countryID);
         }
     }
 }

@@ -11,15 +11,15 @@ import { Observable } from 'rxjs';
 export class CountryService extends AbstractService<Country>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/country");
+    super(http, environment.apiUrl+"/api/country/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/country";
+  baseUrl = environment.apiUrl+"/api/country/";
 
   // Get All country names
   getAllCountryNames() : Observable<any[]>{
-    return this._http.get<any[]>(this.baseUrl+"/GetAllCountryNames")
+    return this._http.get<any[]>(this.baseUrl+"GetAllCountryNames")
   }
 
 

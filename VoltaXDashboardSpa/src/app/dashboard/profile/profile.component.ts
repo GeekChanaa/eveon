@@ -16,6 +16,14 @@ enum ProfilePageTabsEnum {
 })
 export class ProfileComponent implements OnInit {
 
+  // Editing bools
+  editingFirstName : Boolean = false;
+  editingLastName : Boolean = false;
+  editingEmail : Boolean = false;
+  editingPhone : Boolean = false;
+  editingPassword : Boolean = false;
+
+
   // TabsEnum
   tabsEnum : ProfilePageTabsEnum = ProfilePageTabsEnum.AccountInformationsTab;
 

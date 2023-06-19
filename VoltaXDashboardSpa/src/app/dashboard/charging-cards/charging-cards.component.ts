@@ -21,16 +21,16 @@ export class ChargingCardsComponent implements OnInit {
 
   card : Card = {
     id: 0,
-    CardNumber: '',
-    Account: '',
-    CardType: '',
-    ExpirationDate: new Date(),
-    MaxCount: 0,
-    Status: '',
-    Balance: 0,
-    Note: '',
-    CustomerID: 0,
-    Customer: null
+    cardNumber: '',
+    account: '',
+    cardType: '',
+    expirationDate: new Date(),
+    maxCount: 0,
+    status: '',
+    balance: 0,
+    note: '',
+    customerID: 0,
+    customer: null
   }
 
   // Constructor

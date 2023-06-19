@@ -12,7 +12,6 @@ export const AuthRoutes: Routes= [
   { path : 'register' , component : SignUpComponent },
   { path : 'requestpassword' , component : RequestPasswordComponent },
   { path : 'resetpassword' , component : ResetPasswordComponent },
-  
 ]
 
 @NgModule({

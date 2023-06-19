@@ -2,3 +2,10 @@
     font-size: 24px;
     color: #959595;
 }
+
+.field__edit{
+    position: relative;
+    display: inline-block;
+    margin-left: 4px;
+    cursor: pointer;
+}

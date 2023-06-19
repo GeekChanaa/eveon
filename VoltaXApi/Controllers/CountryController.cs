@@ -26,7 +26,7 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetAllCountryNames")]
-        public async Task<ActionResult<List<string>>> GetAllCountryNames()
+        public async Task<ActionResult<List<CountryNameDto>>> GetAllCountryNames()
         {
             return await _repository.GetAllCountryNames();
         }

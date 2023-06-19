@@ -126,7 +126,7 @@
                     </div>
                     <div class="field__wrap">
                       <app-search-input (optionSelected)="updateState($event)" [control]="stateControl"
-                        [options]="['Option 1', 'Option 2', 'Option 3']"></app-search-input>
+                        [options]="states"></app-search-input>
                     </div>
                   </div>
                   <div class="field">
@@ -138,7 +138,7 @@
                       </div>
                     </div>
                     <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl"
-                      [options]="['Option 1', 'Option 2', 'Option 3']"></app-search-input>
+                      [options]="cities"></app-search-input>
                   </div>
                   <div class="field">
                     <div class="field__label">Location Zip Code

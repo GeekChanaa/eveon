@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using VoltaXApi.Helpers;
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -17,9 +17,9 @@ namespace VoltaXApi.Data
             
         }
 
-        public async Task<List<string>> GetAllCityNamesByCountry(int countryID)
+        public async Task<List<CityNameDto>> GetAllCityNamesByState(int stateID)
         {
-            return await _context.Cities.Where(u => u.CountryID == countryID).Select(u => u.Name).ToListAsync();
+            return await _context.Cities.Where(u => u.StateID == stateID).Select(u => new CityNameDto{Name = u.Name, ID = u.ID}).ToListAsync();
         }
     }
 }

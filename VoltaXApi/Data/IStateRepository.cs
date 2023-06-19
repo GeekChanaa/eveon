@@ -4,11 +4,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VoltaXApi.Models;
 using VoltaXApi.Helpers;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
     public interface IStateRepository : IRepository<State>
     {
-        Task<List<string>> GetAllStateNamesByCountry(int countryID);
+        Task<List<StateNameDto>> GetAllStateNamesByCountry(int countryID);
     }
 }

@@ -27,6 +27,7 @@ import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
+import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 
 
 
@@ -52,7 +53,8 @@ import { ProfileComponent } from './profile/profile.component';
     TabsStatisticsComponent,
     CreateChargingStationComponent,
     DashboardComponent,
-    ProfileComponent
+    ProfileComponent,
+    CreateChargingCardComponent
 
   ],
     imports: [

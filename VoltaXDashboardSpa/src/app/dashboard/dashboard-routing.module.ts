@@ -19,6 +19,7 @@ import { StationLoadBalanceComponent } from './station-load-balance/station-load
 import { TransactionsComponent } from './transactions/transactions.component';
 import { UsersComponent } from './users/users.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 const routes: Routes = [
   {
     path: "",
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: "charging-cards",
     component: ChargingCardsComponent,
+  },
+  {
+    path: "create-charging-card",
+    component: CreateChargingCardComponent,
   },
   {
     path: "charging-points",

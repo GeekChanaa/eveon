@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl } from '@angular/forms';
 import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
+import { CityNameDto } from 'src/_models/_dtos/city-name-dto';
 import { ConnectorCreateDto } from 'src/_models/_dtos/connector-create-dto';
 import { ConnectorTarifCreateDto } from 'src/_models/_dtos/connector-tarif-create-dto';
+import { CountryNameDto } from 'src/_models/_dtos/country-name-dto';
+import { StateNameDto } from 'src/_models/_dtos/state-name-dto';
 import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
@@ -31,9 +34,9 @@ export class CreateChargingStationComponent implements OnInit {
   }
 
   // lists of countries / states / cities
-  countries : string[] = [];
-  states : string[] = [];
-  cities : string[] = [];
+  countries : CountryNameDto[] = [];
+  states : StateNameDto[] = [];
+  cities : CityNameDto[] = [];
 
 
   constructor(
@@ -171,8 +174,20 @@ export class CreateChargingStationComponent implements OnInit {
   getAllCountryNames(){
     this._countryService.getAllCountryNames().subscribe((data) => {
       this.countries = data;
-      console.log("these are countries");
-      console.log(this.countries);
+    })
+  }
+
+  // Getting states by country
+  getAllStatesByCountry(countryID : number){
+    this._stateService.getStatesByCountryID(countryID).subscribe((data) => {
+      this.states = data;
+    })
+  }
+
+  // Getting cities by state
+  getAllCitiesByState(stateID : number){
+    this._cityService.getCitiesByStateID(stateID).subscribe((data) => {
+      this.cities = data;
     })
   }
 
@@ -224,9 +239,6 @@ export class CreateChargingStationComponent implements OnInit {
           password: '',
           clientCertThumb: ''
         };
-        console.log("chargepoint");
-        
-        console.log(chargePoint);
   
         this._chargePointService.create(chargePoint).subscribe((createdChargePoint) => {
   
@@ -298,18 +310,20 @@ export class CreateChargingStationComponent implements OnInit {
   }
 
   // Updating state Control
-  updateState(value: string) {
-    this.stateControl.setValue(value);
+  updateState(value: any) {
+    this.stateControl.setValue(value.name);
+    this.getAllCitiesByState(value.id);
   }
 
   // Updating country Control
-  updateCountry(value: string) {
-    this.countryControl.setValue(value);
+  updateCountry(value: any) {
+    this.countryControl.setValue(value.name);
+    this.getAllStatesByCountry(value.id);
   }
 
   // Updating city Control
-  updateCity(value: string) {
-    this.cityControl.setValue(value);
+  updateCity(value: any) {
+    this.cityControl.setValue(value.name);
   }
 
 

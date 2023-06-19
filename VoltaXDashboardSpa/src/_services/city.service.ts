@@ -10,11 +10,14 @@ import { AbstractService } from './abstract-service';
 export class CityService extends AbstractService<City>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/City");
+    super(http, environment.apiUrl+"/api/City/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/City";
+  baseUrl = environment.apiUrl+"/api/City/";
 
-
+  // Get all cities by state
+  getCitiesByStateID(stateID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetAllCityNamesByState?stateID="+stateID);
+  }
 }

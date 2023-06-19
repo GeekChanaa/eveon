@@ -8,12 +8,12 @@ import { FormControl } from '@angular/forms';
 })
 export class SearchInputComponent implements OnInit {
 
-  @Input() options: string[] = [];
+  @Input() options: any[] = [];
   @Input() control: FormControl = new FormControl('');
-  @Output() optionSelected = new EventEmitter<string>();
+  @Output() optionSelected = new EventEmitter<any>();
 
   // Add a new property for filtered options
-  filteredOptions: string[] = [];
+  filteredOptions: any[] = [];
 
 
   showList = false;
@@ -32,7 +32,7 @@ export class SearchInputComponent implements OnInit {
 
   filterOptions(value: string): string[] {
     // Filter options based on input value
-    return this.options.filter(option => option.toLowerCase().includes(value.toLowerCase()));
+    return this.options.filter(option => option.name.toLowerCase().includes(value.toLowerCase()));
   }
 
   showSelect() {
@@ -46,6 +46,7 @@ export class SearchInputComponent implements OnInit {
   selectOption(option: string, inputElem: HTMLInputElement) {
     inputElem.value = option;
     this.showList = false;
+    console.log(option);
     this.optionSelected.emit(option);
   }
 

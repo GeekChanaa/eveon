@@ -26,10 +26,10 @@ namespace VoltaXApi.Controllers
         }
 
         
-        [HttpGet("GetAllCityNamesByCountry")]
-        public async Task<ActionResult<List<string>>> GetAllCityNamesByCountry([FromQuery] int id)
+        [HttpGet("GetAllCityNamesByState")]
+        public async Task<ActionResult<List<CityNameDto>>> GetAllCityNamesByState([FromQuery] int stateID)
         {
-            return await _repository.GetAllCityNamesByCountry(id);
+            return await _repository.GetAllCityNamesByState(stateID);
         }
     }
 }

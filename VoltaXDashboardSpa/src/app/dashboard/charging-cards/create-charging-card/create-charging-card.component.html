@@ -1,0 +1,153 @@
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">New Charging Station</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="create">
+        <div class="create__row">
+          <div class="create__col">
+            <!-- Chargin station informations -->
+            <div class="create__card card">
+              <div class="card__head">
+                <div class="title-green card__title">Card Number</div><a
+                  class="button-stroke button-small card__button" href="products-dashboard.html">
+                  <svg class="icon icon-arrow-left">
+                    <use xlink:href="#icon-arrow-left"></use>
+                  </svg><span>Back</span></a>
+              </div>
+              <div class="create__group">
+                <div class="field">
+                  <div class="field__label">Account
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="chargingStationName" class="field__input" type="text" name="title" required>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Card Type
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationNetwork">
+                        <option value="private">Private</option>
+                        <option value="public">Public</option>
+                        <option value="partner">Partner</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Expiration Date
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationCategory">
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Max Count
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" formControlName="chargingStationChargerQuantity">
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Status
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <input formControlName="chargingStationAddress" class="field__input" type="text" name="title"
+                    required>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">Balance
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <app-search-input (optionSelected)="updateCountry($event)" [control]="countryControl"
+                    [options]="countries"></app-search-input>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field__label">Note
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <app-search-input (optionSelected)="updateState($event)" [control]="stateControl"
+                    [options]="states"></app-search-input>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field__label">Customer
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl"
+                  [options]="cities"></app-search-input>
+              </div>
+              
+
+            </div>
+
+
+            <div class="btns_group">
+              <button class="button" type="submit"> Submit </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>

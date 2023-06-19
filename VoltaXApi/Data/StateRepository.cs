@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -17,9 +18,9 @@ namespace VoltaXApi.Data
             
         }
 
-        public async Task<List<string>> GetAllStateNamesByCountry(int countryID)
+        public async Task<List<StateNameDto>> GetAllStateNamesByCountry(int countryID)
         {
-            return await _context.States.Where(u => u.CountryID == countryID).Select(u => u.Name).ToListAsync();
+            return await _context.States.Where(u => u.CountryID == countryID).Select(u => new StateNameDto{Name = u.Name,ID = u.ID}).ToListAsync();
         }
     }
 }
