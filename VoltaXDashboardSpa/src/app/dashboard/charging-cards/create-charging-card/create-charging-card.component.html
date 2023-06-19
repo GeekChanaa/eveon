@@ -9,13 +9,26 @@
             <!-- Chargin station informations -->
             <div class="create__card card">
               <div class="card__head">
-                <div class="title-green card__title">Card Number</div><a
+                <div class="title-green card__title">Card</div><a
                   class="button-stroke button-small card__button" href="products-dashboard.html">
                   <svg class="icon icon-arrow-left">
                     <use xlink:href="#icon-arrow-left"></use>
                   </svg><span>Back</span></a>
               </div>
               <div class="create__group">
+                <div class="field">
+                  <div class="field__label">Card Number
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input formControlName="cardNumber" class="field__input" type="text" name="title" required>
+                  </div>
+                </div>
+
                 <div class="field">
                   <div class="field__label">Account
                     <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -25,7 +38,7 @@
                     </div>
                   </div>
                   <div class="field__wrap">
-                    <input formControlName="chargingStationName" class="field__input" type="text" name="title" required>
+                    <input formControlName="account" class="field__input" type="text" name="title" required>
                   </div>
                 </div>
 
@@ -39,7 +52,7 @@
                   </div>
                   <div class="field__wrap">
                     <div class="field__wrap">
-                      <select class="select" formControlName="chargingStationNetwork">
+                      <select class="select" formControlName="cardType">
                         <option value="private">Private</option>
                         <option value="public">Public</option>
                         <option value="partner">Partner</option>
@@ -58,11 +71,8 @@
                   </div>
                   <div class="field__wrap">
                     <div class="field__wrap">
-                      <select class="select" formControlName="chargingStationCategory">
-                        <option>Purchase now</option>
-                        <option>Purchase tomorrow</option>
-                        <option>Buy later</option>
-                      </select>
+                      <input formControlName="expirationDate" class="field__input" type="text"
+                        required>
                     </div>
                   </div>
                 </div>
@@ -77,29 +87,31 @@
                   </div>
                   <div class="field__wrap">
                     <div class="field__wrap">
-                      <select class="select" formControlName="chargingStationChargerQuantity">
-                        <option>Purchase now</option>
-                        <option>Purchase tomorrow</option>
-                        <option>Buy later</option>
-                      </select>
+                      <input formControlName="maxCount" class="field__input" type="text"
+                        required>
                     </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Status
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <select class="select" formControlName="status">
+                      <option>Purchase now</option>
+                      <option>Purchase tomorrow</option>
+                      <option>Buy later</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              <div class="field">
-                <div class="field__label">Status
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <input formControlName="chargingStationAddress" class="field__input" type="text" name="title"
-                    required>
-                </div>
-              </div>
+              
 
               <div class="field">
                 <div class="field__label">Balance
@@ -110,8 +122,8 @@
                   </div>
                 </div>
                 <div class="field__wrap">
-                  <app-search-input (optionSelected)="updateCountry($event)" [control]="countryControl"
-                    [options]="countries"></app-search-input>
+                  <input formControlName="balance" class="field__input" type="text" name="title"
+                    required>
                 </div>
               </div>
               <div class="field">
@@ -123,8 +135,8 @@
                   </div>
                 </div>
                 <div class="field__wrap">
-                  <app-search-input (optionSelected)="updateState($event)" [control]="stateControl"
-                    [options]="states"></app-search-input>
+                  <input formControlName="note" class="field__input" type="text" name="title"
+                    required>
                 </div>
               </div>
               <div class="field">
@@ -135,8 +147,8 @@
                     </svg>
                   </div>
                 </div>
-                <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl"
-                  [options]="cities"></app-search-input>
+                <app-search-input (optionSelected)="updateCustomer($event)" [control]="customerControl"
+                    [options]="customers"></app-search-input>
               </div>
               
 

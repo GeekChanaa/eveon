@@ -1,4 +1,5 @@
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
@@ -18,13 +19,25 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class CustomerController : GenericController<Customer>
     {
-        private readonly IRepository<Customer> _repository;
+        private readonly ICustomerRepository _repository;
 
-        public CustomerController(IRepository<Customer> repository) : base(repository)
+        public CustomerController(ICustomerRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        // Getting all customer names
+        [HttpGet("GetAllCustomersNames")]
+        public async Task<ActionResult<List<CustomerNameDto>>> GettAllCustomersNames()
+        {
+            return await _repository.GetAllCustomersNames();
+        }
+
+        // Getting All customer names by name
+        [HttpGet("GetAllCustomersNamesByName")]
+        public async Task<ActionResult<List<CustomerNameDto>>> GetAllCustomersNamesByName([FromQuery] string name)
+        {
+            return await _repository.GetAllCustomersNamesByName(name);
+        }
     }
 }
