@@ -25,6 +25,6 @@ namespace VoltaXApi.Controllers
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        
     }
 }

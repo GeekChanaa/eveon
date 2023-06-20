@@ -18,13 +18,18 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ChargePointController : GenericController<ChargePoint>
     {
-        private readonly IRepository<ChargePoint> _repository;
+        private readonly IChargePointRepository _repository;
 
-        public ChargePointController(IRepository<ChargePoint> repository) : base(repository)
+        public ChargePointController(IChargePointRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        // Get ChargePoint Connectors
+        [HttpGet("GetChargePointConnectors")]
+        public async Task<ActionResult<List<Connector>>> GetChargePointConnectors([FromQuery] int chargePointID)
+        {
+            return await this._repository.GetChargePointConnectors(chargePointID);
+        }
     }
 }

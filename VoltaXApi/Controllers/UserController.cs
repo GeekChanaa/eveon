@@ -18,13 +18,17 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class UserController : GenericController<User>
     {
-        private readonly IRepository<User> _repository;
+        private readonly IUserRepository _repository;
 
-        public UserController(IRepository<User> repository) : base(repository)
+        public UserController(IUserRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        [HttpGet("UserEmailExists")]
+        public async Task<ActionResult<Boolean>> UserEmailExists(string email)
+        {
+            return await this._repository.UserEmailExists(email);
+        }
     }
 }
