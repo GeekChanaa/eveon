@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChargePoint } from 'src/_models/charge-point';
 import { Connector } from 'src/_models/connector';
+import { ChargePointApiService } from 'src/_services/charge-point-api.service';
 import { ChargePointService } from 'src/_services/charge-point.service';
 
 @Component({
@@ -14,12 +15,18 @@ export class ChargePointsComponent implements OnInit {
   chargeStationId = '';
   chargePointName = '';
   chargePointGateway = '';
-  connectors: Connector[] = [];
+  connectors: any[] = [];
   editIndex = -1;
+  chargePoints : any[] = [];
 
-  constructor(public pointService: ChargePointService) {}
+  constructor(
+    public pointService: ChargePointService,
+    private _chargePointService: ChargePointApiService
+    ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getChargePoints();
+  }
 
   addOrUpdateChargePoint() {
     const point = new ChargePoint(this.chargePointId, this.chargeStationId, this.chargePointName, this.chargePointGateway, this.connectors);
@@ -53,7 +60,7 @@ export class ChargePointsComponent implements OnInit {
     this.chargePointId = point.chargePointId;
     this.chargeStationId = point.chargeStationId;
     this.chargePointName = point.chargePointName;
-    this.chargePointGateway = point.chargePointGateway;
+    this.chargePointGateway = "wss://localhost:7282/OCPP/"+point.chargePointId;
     this.connectors = point.connectors;
     this.editIndex = index;
   }
@@ -66,4 +73,24 @@ export class ChargePointsComponent implements OnInit {
     this.connectors = [];
   }
 
+  // Getting chargepoint from the db
+  getChargePoints(){
+    this._chargePointService.getAll().subscribe((data) => {
+      console.log("these are the chargepoitns");
+      if(data.result)
+      this.chargePoints = data.result;
+      console.log(this.chargePoints);
+    })
+  }
+
+  // Get charge point connectors
+  getChargePointConnectors(chargePoint : any){
+    this.chargePointGateway = "wss://localhost:7282/OCPP/"+chargePoint.chargePointId;
+    
+    this._chargePointService.getChargePointConnectors(chargePoint.id).subscribe((data) => {
+      this.connectors = data;
+      console.log("connectors : ");
+      console.log(this.connectors);
+    })
+  }
 }

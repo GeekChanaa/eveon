@@ -8,6 +8,7 @@ import { ChargePointsComponent } from './charge-points/charge-points.component';
 import { AddChargePointComponent } from './add-charge-point/add-charge-point.component';
 import { FormsModule } from '@angular/forms';
 import { ChargePointSimComponent } from './charge-point-sim/charge-point-sim.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [				
@@ -21,7 +22,7 @@ import { ChargePointSimComponent } from './charge-point-sim/charge-point-sim.com
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

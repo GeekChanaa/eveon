@@ -529,6 +529,39 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.DebitCard", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("CVV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("DebitCards");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.MessageLog", b =>
                 {
                     b.Property<int>("ID")
@@ -723,6 +756,9 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Users");
@@ -832,6 +868,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.DebitCard", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany("DebitCards")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Order", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
@@ -896,6 +943,8 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>
                 {
+                    b.Navigation("DebitCards");
+
                     b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618

@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UserForRegisterDto } from 'src/_models/_dtos/user-for-register-dto';
+import { UserForResetPasswordDto } from 'src/_models/_dtos/user-for-reset-password-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -71,5 +72,15 @@ export class AuthService {
   // Changing password
   changePassword(pwd : any){
     return this.http.post(this.baseUrl+"ChangePassword",pwd);
+  }
+
+  // Reset password request
+  resetPasswordRequest(email : string){
+    return this.http.get(this.baseUrl+"ResetPassword?email="+email);
+  }
+
+  // Reset password
+  resetPassword(user : UserForResetPasswordDto){
+    return this.http.post(this.baseUrl+"ResetPassword", user);
   }
 }

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DebitCard } from 'src/_models/debit-card';
 import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
+import { DebitCardService } from 'src/_services/debit-card.service';
 import { UserService } from 'src/_services/user.service';
 enum ProfilePageTabsEnum {
   AccountInformationsTab = "AccountInformationsTab",
@@ -23,6 +26,13 @@ export class ProfileComponent implements OnInit {
   editingPhone : Boolean = false;
   editingPassword : Boolean = false;
 
+  showDCForm : Boolean = false;
+
+  // Forms : 
+  debitCardForm : FormGroup;
+
+  // debit cards array : 
+  debitCards : any[] = [];
 
   // TabsEnum
   tabsEnum : ProfilePageTabsEnum = ProfilePageTabsEnum.AccountInformationsTab;
@@ -40,8 +50,16 @@ export class ProfileComponent implements OnInit {
   // Constructor
   constructor(
     private _authService : AuthService,
-    private _userService : UserService
-  ) { }
+    private _userService : UserService,
+    private _debitCardService : DebitCardService
+  ) {
+    this.debitCardForm = new FormGroup({
+      debitCardName: new FormControl('', [Validators.required]),
+      debitCardNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{16}$/)]),
+      debitCardExpirationDate: new FormControl('', [Validators.required]),
+      debitCardCVV: new FormControl('', [Validators.required, Validators.pattern(/^\d{3}$/)]),
+    });
+   }
 
   // On init cycle hook
   ngOnInit() {
@@ -53,10 +71,15 @@ export class ProfileComponent implements OnInit {
     var decodedToken = this._authService.getAuthInformation();
     var userid = parseInt(decodedToken.nameid);
     this._userService.getById(userid).subscribe((user) => {
-      console.log(user);
       this.user = user;
     });
-    console.log(this.user);
+  }
+
+  // Get User Debit cards
+  getUserDebitCards(){
+    this._userService.getUserDebitCards(this.user.id).subscribe((data) => {
+      this.debitCards = data;
+    })
   }
 
 
@@ -65,4 +88,41 @@ export class ProfileComponent implements OnInit {
     this.tabsEnum = tab;
   }
 
+  // Save Debit Card
+  debitCardSave(){
+    var debitCardValue = this.debitCardForm.value;
+    var debitCard : DebitCard = {
+      id: 0,
+      userID: this.user.id,
+      cardNumber: debitCardValue.debitCardNumber,
+      name: debitCardValue.debitCardName,
+      cvv: debitCardValue.debitCardCVV,
+      expirationDate: this.convertToDate(debitCardValue.debitCardExpirationDate)
+    }
+    console.log(debitCard);
+    this._debitCardService.create(debitCard).subscribe((data) => {
+      console.log("debit card added successfully");
+    })
+  }
+  convertToDate(dateString: string): Date {
+    // Split the string into month and year
+    const parts = dateString.split('/');
+    const month = parseInt(parts[0], 10);
+    const year = parseInt(parts[1], 10);
+
+    // Create a new Date object
+    // In JavaScript, month is zero-based, so we subtract 1 from the month.
+    // Also, we're assuming the day to be 1.
+    return new Date(year, month - 1, 1);
+}
+
+  // showAddDebitCardForm
+  showAddDebitCardForm(){
+    this.showDCForm = true;
+  }
+
+  // hideAddDebitCardForm
+  hideAddDebitCardForm(){
+    this.showDCForm = false;
+  }
 }

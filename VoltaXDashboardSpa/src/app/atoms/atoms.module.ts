@@ -8,6 +8,7 @@ import { TableListComponent } from './table-list/table-list.component';
 import { SearchInputComponent } from './search-input/search-input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmallCardComponent } from './small-card/small-card.component';
+import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { SmallCardComponent } from './small-card/small-card.component';
     CardComponent,
     TableListComponent,
     SearchInputComponent,
-    SmallCardComponent
+    SmallCardComponent,
+    CamelCaseToSpacePipe
    ],
   imports: [
     CommonModule,

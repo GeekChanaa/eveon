@@ -88,10 +88,10 @@
           <div class="customer__wrapper">
             <div class="customer__table">
               <div class="customer__row">
-                <div *ngFor="let field of fields" class="customer__col">{{field }}</div>
+                <div *ngFor="let field of fields" class="customer__col">{{field | camelCaseToSpace}}</div>
               </div>
               <div class="customer__row" *ngFor="let item of data">
-                <div class="customer__col" *ngFor="let field of fields">{{item[field.charAt(0).toLowerCase() + field.slice(1)]}}</div>
+                <div class="customer__col" *ngFor="let field of fields">{{item[field.charAt(0).toLowerCase() + field.slice(1)]  }}</div>
               </div>
             </div>
           </div>

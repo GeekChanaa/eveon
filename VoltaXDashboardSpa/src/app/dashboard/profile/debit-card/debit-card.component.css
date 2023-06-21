@@ -1,0 +1,24 @@
+
+.debit_card__logo{
+    width: 64px;
+}
+
+.debit_card{
+    background: #0a004f;
+    border-radius: 8px;
+    color: white;
+    width: 60%;
+    padding: 32px;
+}
+
+.debit_card__number{
+    font-size: 1.5em;
+    font-weight: lighter;
+    margin-top: 48px;
+}
+
+.debit_card__name_title{
+    color: #d0d0d0;
+    font-weight: lighter;
+    margin-top: 16px;
+}

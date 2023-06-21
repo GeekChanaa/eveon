@@ -26,12 +26,14 @@ namespace VoltaXApi.Controllers
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
         private readonly VoltaXApiDbContext _context;
+        private readonly IUserRepository _userRepo;
 
-        public AuthController(IAuthRepository repo, IConfiguration config, VoltaXApiDbContext context)
+        public AuthController(IAuthRepository repo, IUserRepository userRepo, IConfiguration config, VoltaXApiDbContext context)
         {
             _repo = repo;
             _config = config;
             _context = context;
+            _userRepo = userRepo;
         }
 
         // Registration Method
@@ -124,6 +126,37 @@ namespace VoltaXApi.Controllers
                 return false;
             }
             return true;
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task ResetPassword(UserForResetPasswordDto userDto)
+        {
+            // Find the user by their email
+            var user = await this._userRepo.FindUserByEmail(userDto.Email);
+            if (user == null)
+                throw new Exception("User not found");
+
+            // Check that the tokens match
+            if (user.ResetPasswordToken != userDto.Token)
+                throw new Exception("Invalid token");
+
+            // Update the user's password
+            byte[] passHash, passSalt;
+            this._repo.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
+            user.PasswordHash = passHash;
+            user.PasswordSalt = passSalt;
+
+            // Invalidate the token so it can't be used again
+            user.ResetPasswordToken = null;
+
+            // Update the user in the database
+            await this._userRepo.Update(user);
+        }
+
+        [HttpGet("ResetPassword")]
+        public async Task ResetPasswordRequest([FromQuery] string email)
+        {
+            await this._userRepo.GenerateResetPasswordTokenForUser(email);
         }
 
 

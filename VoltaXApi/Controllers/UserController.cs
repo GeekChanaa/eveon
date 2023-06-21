@@ -30,5 +30,11 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.UserEmailExists(email);
         }
+
+        [HttpGet("GetUserDebitCards")]
+        public async Task<ActionResult<List<DebitCardListingDto>>> GetUserDebitCards([FromQuery] int UserID)
+        {
+            return await this._repository.GetUserDebitCards(UserID);
+        }
     }
 }

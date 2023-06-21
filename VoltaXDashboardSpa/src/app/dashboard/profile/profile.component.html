@@ -3,10 +3,15 @@
     <div class="page__title h3">Settings</div>
     <div class="settings">
       <div class="settings__menu">
-        <button (click)="changeTab('AccountInformationsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'AccountInformationsTab'}">Account Informations</button>
-        <button (click)="changeTab('SecurityTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'SecurityTab'}">Security</button>
-        <button (click)="changeTab('RechargeCardsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
-        <button (click)="changeTab('PaymentCardsTab')" class="settings__link" [ngClass]="{'active' : tabsEnum == 'PaymentCardsTab'}">Payment Cards</button></div>
+        <button (click)="changeTab('AccountInformationsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'AccountInformationsTab'}">Account Informations</button>
+        <button (click)="changeTab('SecurityTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'SecurityTab'}">Security</button>
+        <button (click)="changeTab('RechargeCardsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
+        <button (click)="changeTab('PaymentCardsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'PaymentCardsTab'}">Payment Cards</button>
+      </div>
       <div class="settings__wrapper">
         <select class="select">
           <option (click)="changeTab('AccountInformationsTab')">Account Informations</option>
@@ -119,7 +124,7 @@
               </div>
             </div>
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'" >
+          <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'">
             <div class="settings__anchor" id="account" data-value="Account"></div>
             <div class="title-purple settings__title">Security</div>
             <div class="settings__fieldset" *ngIf="editingPassword">
@@ -180,7 +185,8 @@
                   </div>
                 </div>
                 <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
+                      class="switch__box"></span></span>
                 </label>
               </div>
               <div class="settings__line">
@@ -192,7 +198,8 @@
                   </div>
                 </div>
                 <label class="switch">
-                  <input class="switch__input" type="checkbox"/><span class="switch__inner"><span class="switch__box"></span></span>
+                  <input class="switch__input" type="checkbox" /><span class="switch__inner"><span
+                      class="switch__box"></span></span>
                 </label>
               </div>
               <div class="settings__line">
@@ -204,7 +211,8 @@
                   </div>
                 </div>
                 <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
+                      class="switch__box"></span></span>
                 </label>
               </div>
               <div class="settings__line">
@@ -216,29 +224,89 @@
                   </div>
                 </div>
                 <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
+                      class="switch__box"></span></span>
                 </label>
               </div>
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'PaymentCardsTab'">
             <div class="settings__anchor" id="payment" data-value="Payment"></div>
-            <div class="title-green settings__title">Payment</div>
-            <div class="settings__top">
-              <div class="settings__label">Paypal
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <button class="button-stroke button-small settings__button">Update</button>
+            <div class="title-green settings__title">Debit Cards</div>
+            <div class="card" *ngIf="debitCards.length == 0">
+              You have no debit cards
+              <button class="button" (click)="showAddDebitCardForm()"> Add Debit Card </button>
             </div>
-            <div class="settings__email">tam@ui8.net</div>
-            <div class="settings__content">Payout fee is 1% of the amount transferred, with a minimum of USD $0.25 and a maximum of USD $20</div>
+            <div *ngIf="showDCForm">
+              <form [formGroup]="debitCardForm">
+                <div class="field">
+                  <div class="field__label">Card Holder Name
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="debitCardName">
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">Card Number
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <input class="field__input" type="text" formControlName="debitCardNumber">
+                  </div>
+                </div>
+
+
+                <div class="settings__row">
+                  <div class="field">
+                    <div class="field__label">Expiration Date
+                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                        <svg class="icon icon-info">
+                          <use xlink:href="#icon-info"></use>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="field__wrap">
+                      <input class="field__input" type="text" formControlName="debitCardExpirationDate">
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="field__label">CVV
+                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                        <svg class="icon icon-info">
+                          <use xlink:href="#icon-info"></use>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="field__wrap">
+                      <input class="field__input" type="text" formControlName="debitCardCVV">
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="field">
+                  <button class="button" (click)="debitCardSave()">save debit card</button>
+                </div>
+              </form>
+            </div>
+            <div *ngIf="debitCards.length > 0">
+              <app-debit-card *ngFor="let debitCard of debitCards"
+                [cardNumber]="debitCard.cardNumberHidden"
+                [cardHolderName]="debitCard.nameHidden">
+              </app-debit-card>
+            </div>
+            
           </div>
         </div>
-        <button class="button settings__button">Save</button>
       </div>
     </div>
   </div>

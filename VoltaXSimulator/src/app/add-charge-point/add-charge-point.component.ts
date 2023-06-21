@@ -7,8 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddChargePointComponent implements OnInit {
 
+  // charge points
+  chargePoints : any[] = [];
+
+  // Constructor
   constructor() { }
 
+  // On init CycleHook
   ngOnInit() {
   }
 

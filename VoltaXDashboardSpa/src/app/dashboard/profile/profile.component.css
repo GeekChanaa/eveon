@@ -9,3 +9,11 @@
     margin-left: 4px;
     cursor: pointer;
 }
+
+.field__error{
+    margin-left: 9px;
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 8px;
+}

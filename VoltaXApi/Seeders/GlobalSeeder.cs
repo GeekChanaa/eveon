@@ -24,6 +24,7 @@ namespace VoltaXApi.Data.Seeders
             var connectorTarifs = await ConnectorTarifSeeder.Seed(100,connectors,context);
 
             var users = await UserSeeder.Seed(100,context);
+            var debitCards = await DebitCardSeeder.Seed(200,users,context);
             var customers = await CustomerSeeder.Seed(40,users,context);
             var cards = await CardSeeder.Seed(60, customers,context);
         }

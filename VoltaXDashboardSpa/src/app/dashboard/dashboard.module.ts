@@ -28,6 +28,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
+import { DebitCardComponent } from './profile/debit-card/debit-card.component';
 
 
 
@@ -54,8 +55,8 @@ import { CreateChargingCardComponent } from './charging-cards/create-charging-ca
     CreateChargingStationComponent,
     DashboardComponent,
     ProfileComponent,
-    CreateChargingCardComponent
-
+    CreateChargingCardComponent,
+    DebitCardComponent
   ],
     imports: [
         DashboardRoutingModule,
