@@ -20,6 +20,8 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { UsersComponent } from './users/users.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
+import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
+import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
 const routes: Routes = [
   {
     path: "",
@@ -40,6 +42,12 @@ const routes: Routes = [
   {
     path: "charging-points",
     component: ChargingPointsComponent,
+    
+  },
+  {
+    path: "charging-points/:id",
+    component: ChargingPointComponent,
+    
   },
   {
     path: "create-charging-station",
@@ -52,6 +60,11 @@ const routes: Routes = [
   {
     path: "charging-stations",
     component: ChargingStationsComponent,
+    
+  },
+  {
+    path: 'charging-stations/:id',
+    component: ChargingStationComponent,
   },
   {
     path: "charging-strategies",

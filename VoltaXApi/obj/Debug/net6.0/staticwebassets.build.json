@@ -1,11 +1,19 @@
 {
   "Version": 1,
-  "Hash": "it0WW8/RHy3Kptfn3aBLjn/5o7dyaw62L30XN9BgEeE=",
+  "Hash": "zitseeOmop74WKhQRl8rIEIVCvZ3hfr92yPIgjIbeD8=",
   "Source": "VoltaXApi",
   "BasePath": "_content/VoltaXApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "VoltaXApi\\wwwroot",
+      "Source": "VoltaXApi",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\wwwroot\\",
+      "BasePath": "_content/VoltaXApi",
+      "Pattern": "**"
+    }
+  ],
   "Assets": []
 }

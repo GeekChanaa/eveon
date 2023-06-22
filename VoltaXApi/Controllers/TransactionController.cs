@@ -13,7 +13,6 @@ using System.Net;
 
 namespace VoltaXApi.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionController : GenericController<Transaction>
@@ -25,46 +24,32 @@ namespace VoltaXApi.Controllers
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
-        [HttpGet("countEnergy")]
-        public async Task<IActionResult> CountEnergy()
+        [HttpGet("TotalEnergyConsumed")]
+        public async Task<IActionResult> GetTotalEnergyConsumedAsync()
         {
-            double count = await _repository.CountEnergy(u => true);
-            return Ok(count);
+            var result = await _repository.GetTotalEnergyConsumedAsync();
+            return Ok(result);
         }
 
-        [HttpGet("countEnergyToday")]
-        public async Task<IActionResult> CountEnergyToday()
+        [HttpGet("TotalEnergyConsumedToday")]
+        public async Task<IActionResult> GetTotalEnergyConsumedTodayAsync()
         {
-            DateTime today = DateTime.Today;
-            DateTime tomorrow = today.AddDays(1);
-
-            double count = await _repository.CountEnergy(u => u.StartTime >= today && u.StartTime < tomorrow);
-            return Ok(count);
+            var result = await _repository.GetTotalEnergyConsumedTodayAsync();
+            return Ok(result);
         }
 
-        [HttpGet("countEnergyByDay")]
-        public async Task<IActionResult> GetEnergyConsumptionByDay()
+        [HttpGet("DailyEnergyConsumedLast30Days")]
+        public async Task<IActionResult> GetDailyEnergyConsumedLast30DaysAsync()
         {
-            DateTime endDate = DateTime.Today;
-            DateTime startDate = endDate.AddDays(-29);
-
-            var energyConsumptionByDay = new List<double>();
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-            {
-                DateTime currentDay = date.Date;
-                DateTime nextDay = currentDay.AddDays(1);
-
-                double energyConsumption = await _repository
-                    .CountEnergy(u => u.StartTime >= currentDay && u.StartTime < nextDay);
-
-                energyConsumptionByDay.Add(energyConsumption);
-            }
-
-            return Ok(energyConsumptionByDay);
+            var result = await _repository.GetDailyEnergyConsumedLast30DaysAsync();
+            return Ok(result);
         }
-    
+
+        [HttpGet("MonthlyEnergyConsumedLastYear")]
+        public async Task<IActionResult> GetMonthlyEnergyConsumedLastYearAsync()
+        {
+            var result = await _repository.GetMonthlyEnergyConsumedLastYearAsync();
+            return Ok(result);
+        }
     }
-    
 }

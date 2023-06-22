@@ -18,13 +18,17 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ConnectorStatusController : GenericController<ConnectorStatus>
     {
-        private readonly IRepository<ConnectorStatus> _repository;
+        private readonly IConnectorStatusRepository _repository;
 
-        public ConnectorStatusController(IRepository<ConnectorStatus> repository) : base(repository)
+        public ConnectorStatusController(IConnectorStatusRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        [HttpGet("GetNumberOfConnectorsByStatus")]
+        public async Task<ActionResult<int>> GetNumberOfConnectorsByStatus([FromQuery] string status)
+        {
+            return await this._repository.GetNumberOfConnectorsByStatus(status);
+        }
     }
 }

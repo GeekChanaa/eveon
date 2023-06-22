@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230621120133_recreate")]
+    [Migration("20230621144852_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -381,12 +381,6 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("ID")
                         .HasColumnType("int");
-
-                    b.Property<double?>("LastMeter")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime?>("LastMeterTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastStatus")
                         .HasColumnType("nvarchar(max)");

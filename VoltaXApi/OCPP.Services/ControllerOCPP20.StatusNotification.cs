@@ -1,22 +1,4 @@
-﻿/*
- * OCPP.Core - https://github.com/dallmann-consulting/OCPP.Core
- * Copyright (C) 2020-2021 dallmann consulting GmbH.
- * All Rights Reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +15,7 @@ namespace OCPP.Core.Server
     {
         public string HandleStatusNotification(OCPPMessage msgIn, OCPPMessage msgOut)
         {
+            Console.WriteLine("this is the handle status ntification");
             string? errorCode = null;
             StatusNotificationResponse statusNotificationResponse = new StatusNotificationResponse();
 
@@ -53,29 +36,13 @@ namespace OCPP.Core.Server
                 // Write raw status in DB
                 msgWritten = WriteMessageLog(ChargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty);
 
-                ConnectorStatusEnum newStatus = ConnectorStatusEnum.Undefined;
-
-                switch (statusNotificationRequest.ConnectorStatus)
-                {
-                    case ConnectorStatusEnumType.Available:
-                        newStatus = ConnectorStatusEnum.Available;
-                        break;
-                    case ConnectorStatusEnumType.Occupied:
-                    case ConnectorStatusEnumType.Reserved:
-                        newStatus = ConnectorStatusEnum.Occupied;
-                        break;
-                    case ConnectorStatusEnumType.Unavailable:
-                        newStatus = ConnectorStatusEnum.Unavailable;
-                        break;
-                    case ConnectorStatusEnumType.Faulted:
-                        newStatus = ConnectorStatusEnum.Faulted;
-                        break;
-                }
+                ConnectorStatusEnumType newStatus = statusNotificationRequest.ConnectorStatus;
+                
                 Logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1} / newStatus={2}", ChargePointStatus?.Id, connectorId, newStatus.ToString());
 
                 if (connectorId > 0)
                 {
-                    if (UpdateConnectorStatus(connectorId, newStatus.ToString(), statusNotificationRequest.Timestamp, null, null) == false)
+                    if (UpdateConnectorStatus(connectorId, newStatus.ToString(), statusNotificationRequest.Timestamp) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }

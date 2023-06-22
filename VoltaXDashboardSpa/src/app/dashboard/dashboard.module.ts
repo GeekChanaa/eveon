@@ -29,6 +29,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 import { DebitCardComponent } from './profile/debit-card/debit-card.component';
+import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
 
 
 
@@ -56,7 +57,9 @@ import { DebitCardComponent } from './profile/debit-card/debit-card.component';
     DashboardComponent,
     ProfileComponent,
     CreateChargingCardComponent,
-    DebitCardComponent
+    DebitCardComponent,
+    ChargingStationComponent,
+    ChargingPointsComponent
   ],
     imports: [
         DashboardRoutingModule,
@@ -64,7 +67,8 @@ import { DebitCardComponent } from './profile/debit-card/debit-card.component';
         NgApexchartsModule,
         ReactiveFormsModule,
         CommonModule,
-        SharedModule
+        SharedModule,
+        FormsModule
     ],
   })
   export class DashboardModule { }

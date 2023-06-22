@@ -68,7 +68,7 @@ namespace OCPP.Core.Server
         /// <summary>
         /// Helper function for creating and updating the ConnectorStatus in then database
         /// </summary>
-        protected bool UpdateConnectorStatus(int connectorId, string? status, DateTimeOffset? statusTime, double? meter, DateTimeOffset? meterTime)
+        protected bool UpdateConnectorStatus(int connectorId, string? status, DateTimeOffset? statusTime)
         {
             try
             {
@@ -92,14 +92,8 @@ namespace OCPP.Core.Server
                         connectorStatus.LastStatus = status;
                         connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
                     }
-
-                    if (meter.HasValue)
-                    {
-                        connectorStatus.LastMeter = meter.Value;
-                        connectorStatus.LastMeterTime = ((meterTime.HasValue) ? meterTime.Value : DateTimeOffset.UtcNow).DateTime;
-                    }
                     dbContext.SaveChanges();
-                    Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2} / Meter={3}", connectorStatus.ChargePointId, connectorId, status, meter);
+                    Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2}", connectorStatus.ChargePointId, connectorId, status);
                     return true;
                 }
             }

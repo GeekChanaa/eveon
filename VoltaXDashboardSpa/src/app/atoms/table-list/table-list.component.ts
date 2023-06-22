@@ -15,6 +15,9 @@ export class TableListComponent implements OnInit {
   @Output() previous : EventEmitter<void> = new EventEmitter<void>();
   @Output() firstPage : EventEmitter<void> = new EventEmitter<void>();
   @Output() lastPage : EventEmitter<void> = new EventEmitter<void>();
+  @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
+  @Output() displayEvent : EventEmitter<number> = new EventEmitter<number>();
+  @Output() updateEvent : EventEmitter<number> = new EventEmitter<number>();
 
   constructor() { }
 
@@ -41,4 +44,18 @@ export class TableListComponent implements OnInit {
     this.previous.emit();
   }
 
+  // delete function
+  delete(id : number){
+    this.deleteEvent.emit(id);
+  }
+
+  // update 
+  update(id : number){
+    this.updateEvent.emit(id);
+  }
+
+  //display 
+  display(id : number){
+    this.displayEvent.emit(id);
+  }
 }

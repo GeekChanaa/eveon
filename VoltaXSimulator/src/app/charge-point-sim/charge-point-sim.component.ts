@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MeterValueType } from 'src/_models/MeterValueType';
 import { TransactionEventRequest } from 'src/_models/TransactionEventRequest';
 import { ChargingStateEnumType } from 'src/_models/_enums/ChargingStateEnumType';
+import { ConnectorStatusEnumType } from 'src/_models/_enums/ConnectorStatusEnumType';
 import { IdTokenEnumType } from 'src/_models/_enums/IdTokenEnumType';
 import { LocationEnumType } from 'src/_models/_enums/LocationEnumType';
 import { MeasurandEnumType } from 'src/_models/_enums/MeasurandEnumType';
@@ -21,6 +22,13 @@ import { WebsocketService } from 'src/_services/websocket.service';
   styleUrls: ['./charge-point-sim.component.css']
 })
 export class ChargePointSimComponent implements OnInit {
+
+  // Selected Connector Status
+  selectedConnectorStatus : ConnectorStatusEnumType = ConnectorStatusEnumType.Available;
+  
+  // Getting all possible connector Statuses
+  connectorStatuses = Object.values(ConnectorStatusEnumType);
+
 
   chargePoint: ChargePoint | undefined;
   connectorIdTransactionUid : string[] = [];
@@ -93,7 +101,7 @@ export class ChargePointSimComponent implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     this.chargePoint = this.pointService.getChargePoints().find(point => point.chargePointId === id);
-
+    console.log(this.chargePoint);
     // Setting the websocket gateway for the chargepoint
     if(this.chargePoint)
     this._wsService.setWsLink(this.chargePoint.chargePointGateway)
@@ -170,6 +178,13 @@ export class ChargePointSimComponent implements OnInit {
         .substring(1);
       }
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
+
+  // Status notification Request 
+  statusNotificationRequest(connectorId : number){
+    if(this.chargePoint?.chargePointId != null)
+    this._wsService.statusNotification(this.selectedConnectorStatus,this.chargePoint?.id,connectorId);
   }
 
 }

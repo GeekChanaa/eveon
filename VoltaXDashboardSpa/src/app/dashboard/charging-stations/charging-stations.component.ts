@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChargingStation } from 'src/_models/charging-station';
 import { Pagination } from 'src/_models/pagination';
 import { ChargingStationService } from 'src/_services/charging-station.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-charging-stations',
@@ -48,12 +49,13 @@ export class ChargingStationsComponent implements OnInit {
     restaurantsAmenity: '',
     washroomAmenity: '',
     sittingAreaAmenity: '',
-    ChargePoints: []
+    chargePoints: []
   }
 
   // Constructor
   constructor(
-    private _chargingStationService: ChargingStationService
+    private _chargingStationService: ChargingStationService,
+    private _router : Router
   ) { }
 
   ngOnInit() {
@@ -114,5 +116,22 @@ export class ChargingStationsComponent implements OnInit {
   goToLastPage() {
     this.currentPage = this.pagination.totalPages;
     this.getAll();
+  }
+
+  // delete item
+  delete(id : number){
+    this._chargingStationService.deleteById(id).subscribe((data) => {
+      console.log("charging station deleted succesfully");
+    })
+  }
+
+  // delete item
+  update(id : number){
+    console.log("function to be implemented");
+  }
+
+  // delete item
+  display(id : number){
+    this._router.navigate(['/charging-stations',id])
   }
 }

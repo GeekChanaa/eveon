@@ -12,8 +12,5 @@ namespace VoltaXApi.Models
         public int ConnectorId { get; set; }
         public string? LastStatus { get; set; }
         public DateTime? LastStatusTime { get; set; }
-
-        public double? LastMeter { get; set; }
-        public DateTime? LastMeterTime { get; set; }
     }
 }

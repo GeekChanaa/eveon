@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { connect, map } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { TransactionEventRequest } from 'src/_models/TransactionEventRequest';
+import { ConnectorStatusEnumType } from 'src/_models/_enums/ConnectorStatusEnumType';
 class MyWebSocket extends WebSocket {
   constructor(url: string) {
     super(url, ["ocpp2.0", "ocpp1.5"]);
@@ -151,7 +152,7 @@ export class WebsocketService {
               // $('.indicator').hide();
               // $('#yellow').show();
               console.log("Connector status changed to: " + this._connector_locked);
-              this.statusNotification();
+              // this.statusNotification();
               break;
             case "UpdateFirmware":
               var updFirm = JSON.stringify([3, this._id, {
@@ -245,9 +246,9 @@ export class WebsocketService {
               }
               if (req_message == "SignChargingStationCertificate") {}
               if (req_message == "SignV2GCertificate") {}
-              if (req_message == "StatusNotification") {
-                this.statusNotification();
-              }
+              // if (req_message == "StatusNotification") {
+              //   this.statusNotification();
+              // }
               if (req_message == "TransactionEvent") {}
               break;
             case "GetCompositeSchedule":
@@ -450,14 +451,15 @@ export class WebsocketService {
     this.myWebSocket.next(HB);
   }
 
-  statusNotification() {
+  statusNotification(connectorStatus : ConnectorStatusEnumType, evseId : number, connectorId : number) {
+    console.log("this is the evseid : " + evseId);
     sessionStorage.setItem('LastAction', "StatusNotification");
-    var SN = JSON.stringify([2, this._id, "StatusNotification", {
+    var SN = [2, this._id, "StatusNotification", {
       "timestamp": this.formatDate(new Date()),
-      "connectorStatus": "Available",
-      "evseId": 2,
-      "connectorId": 2
-    }]);
+      "connectorStatus": connectorStatus,
+      "evseId": evseId,
+      "connectorId": connectorId
+    }];
     this.myWebSocket.next(SN);
   }
 

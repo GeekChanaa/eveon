@@ -26,10 +26,11 @@
                       </div>
                     </div>
                     <div class="field__wrap">
-                      <input formControlName="chargingStationName" class="field__input" type="text" name="title" required>
+                      <input formControlName="chargingStationName" class="field__input" type="text" name="title"
+                        required>
                     </div>
                   </div>
-  
+
                   <div class="field">
                     <div class="field__label">Network
                       <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -48,7 +49,7 @@
                       </div>
                     </div>
                   </div>
-  
+
                   <div class="field">
                     <div class="field__label">Category
                       <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -67,7 +68,7 @@
                       </div>
                     </div>
                   </div>
-  
+
                   <div class="field">
                     <div class="field__label">Charger quantity at location
                       <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -335,19 +336,6 @@
                       </button>
                     </div>
                     <div class="field">
-                      <div class="field__label">Charge point ID
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <input class="field__input" type="text" formControlName="chargePointId" placeholder="Value"
-                          required>
-                      </div>
-                    </div>
-                    <div class="field">
                       <div class="field__label">Charge Point Name
                         <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                           <svg class="icon icon-info">
@@ -411,14 +399,14 @@
 
                     <div class="create__card card charge_point_connector_form" formArrayName="chargePointConnectors"
                       *ngFor="let connectorCtrl of getChargePointConnectors(i).controls; let j=index">
-                    <div class="btn__remove_container">
-                      <button class="btn__remove" (click)="removeChargePointConnector(i,j)">
-                        <svg class="icon icon-trash icon__remove">
-                          <use xlink:href="#icon-trash"></use>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="create__group" [formGroupName]="j">
+                      <div class="btn__remove_container">
+                        <button class="btn__remove" (click)="removeChargePointConnector(i,j)">
+                          <svg class="icon icon-trash icon__remove">
+                            <use xlink:href="#icon-trash"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="create__group" [formGroupName]="j">
                         <div class="field">
                           <div class="field__label">Quantity
                             <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -471,58 +459,59 @@
                               placeholder="Value" required>
                           </div>
                         </div>
-                        <div class="create__card card charge_point_connector_tarif" formArrayName="chargePointConnectorTarifs"
-                        *ngFor="let tarifCtrl of getChargePointConnectorTarifs(i,j).controls; let k=index">
-                        <div class="create__group" [formGroupName]="k">
-                          <div class="btn__remove_container">
-                            <button class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
-                              <svg class="icon icon-trash icon__remove">
-                                <use xlink:href="#icon-trash"></use>
-                              </svg>
-                            </button>
-                          </div>
-                    
-                    <div class="field">
-                            <div class="field__label">Unit
-                              <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                <svg class="icon icon-info">
-                                  <use xlink:href="#icon-info"></use>
+                        <div class="create__card card charge_point_connector_tarif"
+                          formArrayName="chargePointConnectorTarifs"
+                          *ngFor="let tarifCtrl of getChargePointConnectorTarifs(i,j).controls; let k=index">
+                          <div class="create__group" [formGroupName]="k">
+                            <div class="btn__remove_container">
+                              <button class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
+                                <svg class="icon icon-trash icon__remove">
+                                  <use xlink:href="#icon-trash"></use>
                                 </svg>
+                              </button>
+                            </div>
+
+                            <div class="field">
+                              <div class="field__label">Unit
+                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                                  <svg class="icon icon-info">
+                                    <use xlink:href="#icon-info"></use>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="field__wrap">
+                                <input class="field__input" type="text" formControlName="chargePointConnectorTarifUnit"
+                                  placeholder="Value" required>
                               </div>
                             </div>
-                            <div class="field__wrap">
-                              <input class="field__input" type="text" formControlName="chargePointConnectorTarifUnit"
-                                placeholder="Value" required>
-                            </div>
-                          </div>
-                          <div class="field">
-                            <div class="field__label">Quantity
-                              <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                <svg class="icon icon-info">
-                                  <use xlink:href="#icon-info"></use>
-                                </svg>
+                            <div class="field">
+                              <div class="field__label">Quantity
+                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                                  <svg class="icon icon-info">
+                                    <use xlink:href="#icon-info"></use>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="field__wrap">
+                                <input class="field__input" type="text"
+                                  formControlName="chargePointConnectorTarifQuantity" placeholder="Value" required>
                               </div>
                             </div>
-                            <div class="field__wrap">
-                              <input class="field__input" type="text" formControlName="chargePointConnectorTarifQuantity"
-                                placeholder="Value" required>
-                            </div>
-                          </div>
-                          <div class="field">
-                            <div class="field__label">Currency
-                              <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                <svg class="icon icon-info">
-                                  <use xlink:href="#icon-info"></use>
-                                </svg>
+                            <div class="field">
+                              <div class="field__label">Currency
+                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                                  <svg class="icon icon-info">
+                                    <use xlink:href="#icon-info"></use>
+                                  </svg>
+                                </div>
                               </div>
-                            </div>
-                            <div class="field__wrap">
-                              <input class="field__input" type="text" formControlName="chargePointConnectorTarifCurrency"
-                                placeholder="Value" required>
+                              <div class="field__wrap">
+                                <input class="field__input" type="text"
+                                  formControlName="chargePointConnectorTarifCurrency" placeholder="Value" required>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                       </div>
                       <button class="button mt-20" (click)="addChargePointConnectorTarif(i,j)">Add Tarif</button>
                     </div>

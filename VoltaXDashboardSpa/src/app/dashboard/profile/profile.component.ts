@@ -4,6 +4,7 @@ import { DebitCard } from 'src/_models/debit-card';
 import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
 import { DebitCardService } from 'src/_services/debit-card.service';
+import { FileManagementService } from 'src/_services/file-management.service';
 import { UserService } from 'src/_services/user.service';
 enum ProfilePageTabsEnum {
   AccountInformationsTab = "AccountInformationsTab",
@@ -25,6 +26,9 @@ export class ProfileComponent implements OnInit {
   editingEmail : Boolean = false;
   editingPhone : Boolean = false;
   editingPassword : Boolean = false;
+
+  // Profile Picture
+  profilePicture : any = {};
 
   showDCForm : Boolean = false;
 
@@ -51,7 +55,8 @@ export class ProfileComponent implements OnInit {
   constructor(
     private _authService : AuthService,
     private _userService : UserService,
-    private _debitCardService : DebitCardService
+    private _debitCardService : DebitCardService,
+    private _fileManagementService : FileManagementService
   ) {
     this.debitCardForm = new FormGroup({
       debitCardName: new FormControl('', [Validators.required]),
@@ -124,5 +129,16 @@ export class ProfileComponent implements OnInit {
   // hideAddDebitCardForm
   hideAddDebitCardForm(){
     this.showDCForm = false;
+  }
+
+  // Upload profile picture
+  uploadPicture(files : any){
+    const formData = new FormData();
+    this.profilePicture = <File>files[0];
+    console.log(this.profilePicture);
+    formData.append('imageFile',this.profilePicture, "userX.png");
+    this._fileManagementService.uploadProfilePicture(formData).subscribe((data) => {
+      console.log("Profile Picture successfully uploaded to the destination");
+    });
   }
 }

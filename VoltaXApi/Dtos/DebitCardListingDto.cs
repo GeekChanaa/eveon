@@ -6,10 +6,5 @@ namespace VoltaXApi.Dtos
         public int UserID { get; set; }
         public string CardNumberHidden { get; set; }
         public string NameHidden { get; set; }
-        
-        
-        
-        
-        
     }
 }

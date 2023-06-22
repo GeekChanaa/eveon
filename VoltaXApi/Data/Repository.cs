@@ -21,7 +21,7 @@ namespace VoltaXApi.Data
             this.dbSet = _context.Set<TEntity>();
         }
 
-        public async Task<IQueryable<TEntity>> GetAllAsync(GlobalParams objectParams)
+        public virtual async Task<IQueryable<TEntity>> GetAllAsync(GlobalParams objectParams)
         {
             var data = this.dbSet.AsQueryable();
             // List of parameters of M
@@ -106,41 +106,41 @@ namespace VoltaXApi.Data
             return data;
         }
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public virtual async Task<TEntity> GetByIdAsync(int id)
         {
             return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _context.Set<TEntity>().Where(predicate).ToListAsync();
         }
 
-        public async Task AddAsync(TEntity entity)
+        public virtual async Task AddAsync(TEntity entity)
         {
             await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
             await _context.Set<TEntity>().AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Remove(TEntity entity)
+        public virtual async Task Remove(TEntity entity)
         {
             _context.Set<TEntity>().Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveRange(IEnumerable<TEntity> entities)
+        public virtual async Task RemoveRange(IEnumerable<TEntity> entities)
         {
             _context.Set<TEntity>().RemoveRange(entities);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(TEntity entity)
+        public virtual async Task Update(TEntity entity)
         {
             _context.Set<TEntity>().Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();

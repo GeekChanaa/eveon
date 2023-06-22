@@ -33,7 +33,7 @@
       <button routerLink="/chargepoint/{{point.chargePointId}}">Simulator</button>
     </p>
     <div *ngFor="let connector of point.connectors">
-      <p>-- Connector ID: {{ connector.connectorId }}, Type: {{ connector.connectorType }}</p>
+      <p>-- Connector ID: {{ connector.id }}, Type: {{ connector.connectorType }}</p>
     </div>
   </div>
 </div>

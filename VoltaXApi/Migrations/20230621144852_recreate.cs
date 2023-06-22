@@ -66,9 +66,7 @@ namespace VoltaXApi.Migrations
                     ConnectorId = table.Column<int>(type: "int", nullable: false),
                     ID = table.Column<int>(type: "int", nullable: false),
                     LastStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastStatusTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastMeter = table.Column<double>(type: "float", nullable: true),
-                    LastMeterTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    LastStatusTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

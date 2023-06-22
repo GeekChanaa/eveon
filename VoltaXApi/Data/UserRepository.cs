@@ -3,7 +3,6 @@ using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-
 namespace VoltaXApi.Data
 {
     public class UserRepository : Repository<User>, IUserRepository

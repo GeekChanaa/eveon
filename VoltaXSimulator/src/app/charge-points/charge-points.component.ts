@@ -11,10 +11,12 @@ import { ChargePointService } from 'src/_services/charge-point.service';
 })
 export class ChargePointsComponent implements OnInit {
 
+  // Selected charge point
   chargePointId = '';
   chargeStationId = '';
   chargePointName = '';
   chargePointGateway = '';
+  selectedId : number = 0;
   connectors: any[] = [];
   editIndex = -1;
   chargePoints : any[] = [];
@@ -29,22 +31,16 @@ export class ChargePointsComponent implements OnInit {
   }
 
   addOrUpdateChargePoint() {
-    const point = new ChargePoint(this.chargePointId, this.chargeStationId, this.chargePointName, this.chargePointGateway, this.connectors);
+    const point = new ChargePoint(this.selectedId,this.chargePointId, this.chargeStationId, this.chargePointName, this.chargePointGateway, this.connectors);
     if (this.editIndex === -1) {
+      console.log("this is the charge point ot be added");
+      console.log(point);
       this.pointService.addChargePoint(point);
     } else {
       this.pointService.updateChargePoint(this.editIndex, point);
       this.editIndex = -1;
     }
     this.clearForm();
-  }
-
-  addConnector(connectorId: string, connectorType: string) {
-    if (this.connectors.length < 3) {
-      this.connectors.push(new Connector(this.chargePointId, connectorId, connectorType));
-    } else {
-      alert('Max 3 connectors per charge point!');
-    }
   }
 
   deleteConnector(index: number) {
@@ -85,6 +81,7 @@ export class ChargePointsComponent implements OnInit {
 
   // Get charge point connectors
   getChargePointConnectors(chargePoint : any){
+    this.selectedId = chargePoint.id;
     this.chargePointGateway = "wss://localhost:7282/OCPP/"+chargePoint.chargePointId;
     
     this._chargePointService.getChargePointConnectors(chargePoint.id).subscribe((data) => {

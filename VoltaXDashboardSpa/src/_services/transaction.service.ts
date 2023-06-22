@@ -11,25 +11,26 @@ import { Observable } from 'rxjs';
 export class TransactionService extends AbstractService<Transaction>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/transaction");
+    super(http, environment.apiUrl+"/api/transaction/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/transaction";
+  baseUrl = environment.apiUrl+"/api/transaction/";
 
-  // count total energy
-  countEnergy() : Observable<number>{
-    return this._http.get<number>(this.baseUrl+"/countEnergy");
+  getTotalEnergyConsumed(){
+    return this.http.get<number>(this.baseUrl+"TotalEnergyConsumed");
   }
 
-  // count energy today
-  countEnergyToday() : Observable<number>{
-    console.log(this.baseUrl+"/countEnergyToday")
-    return this._http.get<number>(this.baseUrl+"/countEnergyToday");
+  getTotalEnergyConsumedToday(){
+    return this.http.get<number>(this.baseUrl+"TotalEnergyConsumedToday");
   }
 
-  // count energy by day
-  countEnergyByDay() : Observable<number[]>{
-    return this._http.get<number[]>(this.baseUrl+"/countEnergyByDay");
+  getDailyEnergyConsumedLast30Days(){
+    return this.http.get<any[]>(this.baseUrl+"DailyEnergyConsumedLast30Days");
   }
+
+  getMonthlyEnergyConsumedLastYear(){
+    return this.http.get(this.baseUrl+"MonthlyEnergyConsumedLastYear");
+  }
+
 }

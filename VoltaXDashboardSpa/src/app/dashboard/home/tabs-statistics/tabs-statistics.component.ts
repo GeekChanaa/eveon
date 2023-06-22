@@ -44,9 +44,9 @@ export class TabsStatisticsComponent implements OnInit {
   // Get energy data
   getEnergyData(){
     // Total Energy
-    this._transactionService.countEnergy().subscribe(result => this.totalEnergy = result);
-    this._transactionService.countEnergyToday().subscribe(result => this.totalEnergyToday = result);
-    this._transactionService.countEnergyByDay().subscribe(result => this.totalEnergyByDay = result);
+    this._transactionService.getTotalEnergyConsumed().subscribe(result => this.totalEnergy = result);
+    this._transactionService.getTotalEnergyConsumedToday().subscribe(result => this.totalEnergyToday = result);
+    this._transactionService.getDailyEnergyConsumedLast30Days().subscribe(result => this.totalEnergyByDay = result);
   }
 
   // count order numbers

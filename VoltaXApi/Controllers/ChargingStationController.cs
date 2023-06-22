@@ -18,13 +18,24 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ChargingStationController : GenericController<ChargingStation>
     {
-        private readonly IRepository<ChargingStation> _repository;
+        private readonly IChargingStationRepository _repository;
 
-        public ChargingStationController(IRepository<ChargingStation> repository) : base(repository)
+        public ChargingStationController(IChargingStationRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        [HttpGet("{id}")]
+        public override async Task<IActionResult> GetById(int id)
+        {
+            var entity =  await this._repository.GetChargingStationByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
+        }
+
+
     }
 }

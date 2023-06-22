@@ -379,12 +379,6 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ID")
                         .HasColumnType("int");
 
-                    b.Property<double?>("LastMeter")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime?>("LastMeterTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastStatus")
                         .HasColumnType("nvarchar(max)");
 

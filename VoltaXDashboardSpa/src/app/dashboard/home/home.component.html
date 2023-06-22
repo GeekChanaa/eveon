@@ -12,15 +12,17 @@
       <div class="stock">
         <div class="stock__list">
           <app-small-card class="stock__item" style="background-color: #f2efff" title="Available"
-            description="available" [number]="300"></app-small-card>
+            description="When a Connector becomes available for a new User (Operative)" [number]="availableConnectors"></app-small-card>
           <app-small-card class="stock__item" style="background-color: #f2efff" title="Unavailable"
-            description="Unavailable" [number]="400"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Occupied" description="Occupied"
-            [number]="300"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Faulted" description="Faulted"
-            [number]="300"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Reserved" description="Reserved"
-            [number]="300"></app-small-card>
+            description="When a Connector becomes unavailable as the result of a Change Availability command or an event upon
+            which the Charging Station transitions to unavailable at its discretion." [number]="unavailableConnectors"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Occupied" description="When a Connector becomes occupied, so it is not available for a new EV driver. (Operative)"
+            [number]="occupiedConnectors"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Faulted" description="When a Connector (or the EVSE or the entire Charging Station it belongs to) has reported an error and is not
+          available for energy delivery. (Inoperative)"
+            [number]="faultedConnectors"></app-small-card>
+          <app-small-card class="stock__item" style="background-color: #f2efff" title="Reserved" description="When a Connector becomes reserved as a result of ReserveNow command (Operative)"
+            [number]="reservedConnectors"></app-small-card>
         </div>
       </div>
     </div>
@@ -37,29 +39,29 @@
       </div>
       <div class="stock">
         <div class="stock__list">
-          <app-small-card routerLink="/charging-stations" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/charging-stations" class="stock__item" style="background-color: #f2efff"
             title="Charging Stations" description="available"></app-small-card>
-          <app-small-card routerLink="/charging-points" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/charging-points" class="stock__item" style="background-color: #f2efff"
             title="Charge points" description="Unavailable"></app-small-card>
-          <app-small-card routerLink="/connectors" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/connectors" class="stock__item" style="background-color: #f2efff"
             title="Connectors" description="Occupied"></app-small-card>
-          <app-small-card routerLink="/charging-cards" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/charging-cards" class="stock__item" style="background-color: #f2efff"
             title="Chraging Cards" description="Faulted"></app-small-card>
-          <app-small-card routerLink="/users" class="stock__item" style="background-color: #f2efff" title="Users"
+          <app-small-card [number]="-1" routerLink="/users" class="stock__item" style="background-color: #f2efff" title="Users"
             description="Reserved"></app-small-card>
         </div>
       </div>
       <div class="stock">
         <div class="stock__list">
-          <app-small-card routerLink="/customers" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/customers" class="stock__item" style="background-color: #f2efff"
             title="Customers" description="available"></app-small-card>
-          <app-small-card routerLink="/recharge-orders" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/recharge-orders" class="stock__item" style="background-color: #f2efff"
             title="Orders" description="Unavailable"></app-small-card>
-          <app-small-card routerLink="/transactions" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/transactions" class="stock__item" style="background-color: #f2efff"
             title="Transactions" description="Occupied"></app-small-card>
-          <app-small-card routerLink="/alarm-management" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/alarm-management" class="stock__item" style="background-color: #f2efff"
             title="Alarms" description="Faulted"></app-small-card>
-          <app-small-card routerLink="/comment-management" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/comment-management" class="stock__item" style="background-color: #f2efff"
             title="Comments" description="Reserved"></app-small-card>
         </div>
       </div>

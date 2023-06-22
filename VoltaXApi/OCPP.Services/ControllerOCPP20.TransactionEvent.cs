@@ -16,21 +16,6 @@ namespace OCPP.Core.Server
     {
         public string HandleTransactionEvent(OCPPMessage msgIn, OCPPMessage msgOut)
         {
-            Console.WriteLine("this is the message in : ");
-            Console.WriteLine("MessageType : " + msgIn.MessageType);
-            Console.WriteLine("UniqueId : " + msgIn.UniqueId);
-            Console.WriteLine("Action : " + msgIn.Action);
-            Console.WriteLine("JsonPayload : " + msgIn.JsonPayload);
-            Console.WriteLine("ErrorCode : " + msgIn.ErrorCode);
-            Console.WriteLine("ErrorDescription : " + msgIn.ErrorDescription);
-
-            Console.WriteLine("this is the message out : ");
-            Console.WriteLine("MessageType : " + msgOut.MessageType);
-            Console.WriteLine("UniqueId : " + msgOut.UniqueId);
-            Console.WriteLine("Action : " + msgOut.Action);
-            Console.WriteLine("JsonPayload : " + msgOut.JsonPayload);
-            Console.WriteLine("ErrorCode : " + msgOut.ErrorCode);
-            Console.WriteLine("ErrorDescription : " + msgOut.ErrorDescription);
             string? errorCode = null;
             TransactionEventResponse transactionEventResponse = new TransactionEventResponse();
             transactionEventResponse.CustomData = new CustomDataType();
@@ -57,10 +42,6 @@ namespace OCPP.Core.Server
                 double stateOfCharge = -1;
                 GetMeterValues(transactionEventRequest.MeterValue, out meterKWH, out currentChargeKW, out stateOfCharge, out meterTime);
 
-                if (connectorId > 0 && meterKWH >= 0)
-                {
-                    UpdateConnectorStatus(connectorId, null, null, meterKWH, meterTime);
-                }
 
                 if (transactionEventRequest.EventType == TransactionEventEnumType.Started)
                 {
@@ -107,8 +88,6 @@ namespace OCPP.Core.Server
 
                             if (transactionEventResponse.IdTokenInfo.Status == AuthorizationStatusEnumType.Accepted)
                             {
-                                UpdateConnectorStatus(connectorId, ConnectorStatusEnum.Occupied.ToString(), meterTime, null, null);
-
                                 try
                                 {
                                     Console.WriteLine("StartTransaction => Meter='{0}' (kWh)", meterKWH);
@@ -325,6 +304,9 @@ namespace OCPP.Core.Server
                                     transaction.StopTagId = idTag;
                                     transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
                                     dbContext.SaveChanges();
+
+                                    // Update connecter status to available
+
                                 }
                             }
                             else

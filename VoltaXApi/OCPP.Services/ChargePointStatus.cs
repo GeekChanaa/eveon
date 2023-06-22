@@ -23,6 +23,7 @@ using System.Net.WebSockets;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
+using VoltaXApi.Messages_OCPP20;
 
 namespace OCPP.Core.Server
 {
@@ -95,7 +96,7 @@ namespace OCPP.Core.Server
         /// <summary>
         /// Status of charge connector
         /// </summary>
-        public ConnectorStatusEnum Status { get; set; }
+        public ConnectorStatusEnumType Status { get; set; }
 
         /// <summary>
         /// Current charge rate in kW

@@ -85,3 +85,4 @@ C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\bin\Deb
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\VoltaXApi\bin\Debug\net6.0\System.Linq.Dynamic.Core.dll
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\VoltaXApi.staticwebassets.runtime.json

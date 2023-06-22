@@ -20,7 +20,7 @@ export interface ChargingStation {
     restaurantsAmenity: string;
     washroomAmenity: string;
     sittingAreaAmenity: string;
-    ChargePoints: ChargePoint[];
+    chargePoints: ChargePoint[];
     [key: string]: any;
   }
   

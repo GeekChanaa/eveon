@@ -2,24 +2,28 @@ using AutoMapper;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 
-public class AutoMapperProfile : Profile
+namespace VoltaXApi.Mappers
 {
-    public AutoMapperProfile()
+    public class AutoMapperProfile : Profile
     {
-        CreateMap<DebitCard, DebitCardListingDto>()
-            .ForMember(dest => dest.CardNumberHidden, opt => opt.MapFrom(src => Mask(src.CardNumber)))
-            .ForMember(dest => dest.NameHidden, opt => opt.MapFrom(src => Mask(src.Name)));
-    }
-
-    private string Mask(string value)
-    {
-        if (string.IsNullOrEmpty(value))
+        public AutoMapperProfile()
         {
-            return value;
+            CreateMap<DebitCard, DebitCardListingDto>()
+                .ForMember(dest => dest.CardNumberHidden, opt => opt.MapFrom(src => Mask(src.CardNumber)))
+                .ForMember(dest => dest.NameHidden, opt => opt.MapFrom(src => Mask(src.Name)));
         }
 
-        return value.Length <= 4
-            ? new string('X', value.Length)
-            : new string('X', value.Length - 4) + value.Substring(value.Length - 4);
+        private string Mask(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            return value.Length <= 4
+                ? new string('X', value.Length)
+                : new string('X', value.Length - 4) + value.Substring(value.Length - 4);
+        }
     }
+
 }

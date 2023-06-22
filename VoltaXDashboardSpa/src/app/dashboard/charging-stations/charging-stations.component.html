@@ -9,8 +9,114 @@
       (previous)="previousPage()"
       (firstPage)="goToFirstPage()"
       (lastPage)="goToLastPage()"
+      (deleteEvent)="delete($event)"
+      (updateEvent)="update($event)"
+      (displayEvent)="display($event)"
       >
+      <!-- filter body -->
+      <div filter__body class="filters__body">
+        <div class="filters__body">
+          <div class="filters__top">
+            <div class="title-red filters__title">Filtering Charging Stations</div>
+            <button class="filters__close">
+              <svg class="icon icon-close">
+                <use xlink:href="#icon-close"></use>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="filters__group">
+            
+            <div class="filters__item">
+              <div class="filters__list">
+                <div class="field">
+                  <div class="field__label">By Country
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select">
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">By City
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select">
+                        <option>Purchase now</option>
+                        <option>Purchase tomorrow</option>
+                        <option>Buy later</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">By Network
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select">
+                        <option value="Private">Private</option>
+                        <option value="Public">Public</option>
+                        <option value="Partner">Partner</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <div class="field__label">By Charger Quantity
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="filters__btns">
+            <button class="button-stroke filters__button">Reset</button>
+            <button class="button filters__button">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      
     </app-table-list>
   </div>
 </div>
-

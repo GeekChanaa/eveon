@@ -9,6 +9,7 @@ import { SearchInputComponent } from './search-input/search-input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmallCardComponent } from './small-card/small-card.component';
 import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
+import { DisplayCellComponent } from './display-cell/display-cell.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
     TableListComponent,
     SearchInputComponent,
     SmallCardComponent,
-    CamelCaseToSpacePipe
+    CamelCaseToSpacePipe,
+    DisplayCellComponent
    ],
   imports: [
     CommonModule,
@@ -29,7 +31,8 @@ import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
     CardComponent,
     TableListComponent,
     SearchInputComponent,
-    SmallCardComponent
+    SmallCardComponent,
+    DisplayCellComponent
   ],
   providers: [],
 })

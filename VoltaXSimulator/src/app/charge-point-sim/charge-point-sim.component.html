@@ -6,7 +6,7 @@
   <p>Gateway: {{ chargePoint.chargePointGateway }}</p>
   <h3>Connectors</h3>
   <div *ngFor="let connector of chargePoint.connectors">
-    <p>Connector ID: {{ connector.connectorId }}, Type: {{ connector.connectorType }}</p>
+    <p>Connector ID: {{ connector.id }}, Type: {{ connector.connectorType }}</p>
   </div>
 </div>
 
@@ -16,34 +16,46 @@
 </div>
 
 <div *ngFor="let connector of chargePoint?.connectors">
-  <h4>Start Transaction Event (connector : {{connector.connectorId}})</h4>
-  
-  <select [(ngModel)]="selectedStartTransactionTriggerReason">
-    <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
-  </select>
-  
-  
-  <select [(ngModel)]="selectedStartTransactionReason">
-    <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
-  </select>
-  
-  <button (click)="startTransaction(connector.connectorId)">start Transaction</button>
-</div>
+  <div>
+    <h4>Start Transaction Event (connector : {{connector.id}})</h4>
+
+    <select [(ngModel)]="selectedStartTransactionTriggerReason">
+      <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
+    </select>
 
 
+    <select [(ngModel)]="selectedStartTransactionReason">
+      <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
+    </select>
+
+    <button (click)="startTransaction(connector.id)">start Transaction</button>
+  </div>
+  <div>
+    <h4>Status Notification Request (connector : {{connector.id}})</h4>
+    <select [(ngModel)]="selectedConnectorStatus">
+      <option *ngFor="let status of connectorStatuses" [value]="status">
+        {{status}}
+      </option>
+    </select>
+    
+    <button (click)="statusNotificationRequest(connector.id)">statusNotificationRequest</button>
+  </div>
 
 
-<div *ngFor="let connector of chargePoint?.connectors">
-  <h4>Stop Transaction Event (connector : {{connector.connectorId}})</h4>
-  
-  <select [(ngModel)]="selectedStopTransactionTriggerReason">
-    <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
-  </select>
-  
-  
-  <select [(ngModel)]="selectedStopTransactionReason">
-    <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
-  </select>
-  
-  <button (click)="stopTransaction(connector.connectorId)">Stop Transaction</button>
+  <div>
+    <h4>Stop Transaction Event (connector : {{connector.id}})</h4>
+
+    <select [(ngModel)]="selectedStopTransactionTriggerReason">
+      <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
+    </select>
+
+
+    <select [(ngModel)]="selectedStopTransactionReason">
+      <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
+    </select>
+
+    <button (click)="stopTransaction(connector.id)">Stop Transaction</button>
+  </div>
+
+
 </div>

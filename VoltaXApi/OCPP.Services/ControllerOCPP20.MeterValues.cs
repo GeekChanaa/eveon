@@ -66,11 +66,6 @@ namespace OCPP.Core.Server
                     {
                         msgMeterValue = $"Meter (kWh): {meterKWH} | Charge (kW): {currentChargeKW} | SoC (%): {stateOfCharge}";
 
-                        if (meterKWH >= 0)
-                        {
-                            UpdateConnectorStatus(connectorId, null, null, meterKWH, meterTime);
-                        }
-
                         if (currentChargeKW >= 0 || meterKWH >= 0 || stateOfCharge >= 0)
                         {
                             if (ChargePointStatus.OnlineConnectors.ContainsKey(connectorId))

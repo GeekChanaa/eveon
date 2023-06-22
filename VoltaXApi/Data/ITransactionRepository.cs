@@ -10,5 +10,9 @@ namespace VoltaXApi.Data
     public interface ITransactionRepository : IRepository<Transaction>
     {
         Task<double> CountEnergy(Expression<Func<Transaction, bool>> predicate);
+        Task<double> GetTotalEnergyConsumedAsync();
+        Task<double> GetTotalEnergyConsumedTodayAsync();
+        Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync();
+        Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync();
     }
 }
