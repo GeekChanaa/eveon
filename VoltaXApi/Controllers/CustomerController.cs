@@ -39,5 +39,12 @@ namespace VoltaXApi.Controllers
         {
             return await _repository.GetAllCustomersNamesByName(name);
         }
+
+        // Get Customer By UserID
+        [HttpGet("GetCustomerByUserID")]
+        public async Task<ActionResult<Customer>> GetCustomerByUserID([FromQuery] int UserID)
+        {
+            return await _repository.GetCustomerByUserID(UserID);
+        }
     }
 }

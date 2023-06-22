@@ -1,72 +1,96 @@
 <div class="page__title h3">{{name | titlecase}}</div>
-    <div class="customer card">
-      <div class="card__head">
-        <div class="title-purple card__title">{{names | titlecase}}</div>
-        <form class="form">
-          <input class="form__input" type="text" name="search" placeholder="Search by name or email" required="required" autocomplete="off"/>
-          <button class="form__button">
-            <svg class="icon icon-search">
-              <use xlink:href="#icon-search"></use>
-            </svg>
-          </button>
-        </form>
-        <div class="card__nav">
-          <button class="card__link active">Active</button>
-          <button class="card__link">New</button>
-        </div>
-        <div class="filters">
-          <button class="button-square-stroke button-small filters__head">
-            <svg class="icon icon-filter">
-              <use xlink:href="#icon-filter"></use>
-            </svg>
-          </button>
-          <ng-content select="[filter__body]"></ng-content>
-          <div class="filters__overlay"></div>
-        </div>
-      </div>
-      <div class="customer__inner">
-        <div class="customer__container">
-          <div class="customer__wrapper">
-            <div class="customer__table">
-              <div class="customer__row">
-                <div *ngFor="let field of fields" class="customer__col">{{field | camelCaseToSpace}}</div>
-              </div>
-              <div class="customer__row" *ngFor="let item of data">
-                <ng-container *ngFor="let field of fields">
-                  <div class="customer__col" >{{item[field.charAt(0).toLowerCase() + field.slice(1)]  }}</div>
-                </ng-container>
-                <div class="customer__col">
-                  <button (click)="delete(item.id)" class="button"> Delete </button>
-                  <button (click)="update(item.id)" class="button"> Update </button>
-                  <button (click)="display(item.id)" class="button"> Display </button>
-                </div>
-                <!-- Additional Columns -->
-              </div>
-              
-            </div>
-          </div>
-          <div class="customer__foot">
-            <button class="button-stroke button-small customer__button pagination__btn " (click)="firstP()">
-              <svg class="icon icon-arrow-left">
-                <use xlink:href="#icon-arrow-left"></use>
-              </svg>
-            </button>
-            <button class="button-stroke button-small customer__button pagination__btn " (click)="previousPage()">
-              <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
-                <use xlink:href="#icon-arrow-next"></use>
-              </svg>
-            </button>
-            <button class="button-stroke button-small customer__button pagination__btn" (click)="nextPage()">
-              <svg class="icon icon-arrow-next">
-                <use xlink:href="#icon-arrow-next"></use>
-              </svg>
-            </button>
-            <button class="button-stroke button-small customer__button pagination__btn " (click)="lastP()">
-              <svg class="icon icon-arrow-right">
-                <use xlink:href="#icon-arrow-right"></use>
-              </svg>
-            </button>
+<div class="customer card">
+  <div class="card__head">
+    <div class="title-purple card__title">{{names | titlecase}}</div>
+    <form class="form">
+      <input class="form__input" type="text" name="search" placeholder="Search by name or email" required="required"
+        autocomplete="off" />
+      <button class="form__button">
+        <svg class="icon icon-search">
+          <use xlink:href="#icon-search"></use>
+        </svg>
+      </button>
+    </form>
+    <div class="card__nav">
+      <button class="card__link active">Active</button>
+      <button class="card__link">New</button>
+    </div>
+    <div class="filters">
+      <button class="button-square-stroke button-small filters__head">
+        <svg class="icon icon-filter">
+          <use xlink:href="#icon-filter"></use>
+        </svg>
+      </button>
+      <ng-content select="[filter__body]"></ng-content>
+      <div class="filters__overlay"></div>
+    </div>
+    <div>
+      <button (click)="displayMenu = !displayMenu" class="button-square-stroke button-small ">
+        <svg class="icon icon-moon">
+          <use xlink:href="#icon-moon"></use>
+        </svg>
+      </button>
+      <div class="display__columns" *ngIf="displayMenu">
+        <div class="display__columns_options">
+          <div class="filters__label">Showing</div>
+          <div class="filters__list">
+            <label class="checkbox checkbox_reverse" *ngFor="let field of fields">
+              <input value="{{fieldShown[field]}}" [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
+              <span class="checkbox__inner">
+                <span class="checkbox__tick"></span>
+                <span class="checkbox__text">{{field | camelCaseToSpace}}</span>
+              </span> 
+            </label>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="customer__inner">
+    <div class="customer__container">
+      <div class="customer__wrapper">
+        <div class="customer__table">
+          <div class="customer__row">
+            <ng-container *ngFor="let field of fields">
+              <div *ngIf="fieldShown[field]" class="customer__col">{{field | camelCaseToSpace}}</div>
+            </ng-container>
+          </div>
+          <div class="customer__row" *ngFor="let item of data">
+            <ng-container *ngFor="let field of fields">
+              <div *ngIf="fieldShown[field]" class="customer__col">{{item[field.charAt(0).toLowerCase() + field.slice(1)] }}</div>
+            </ng-container>
+            <div class="customer__col">
+              <button (click)="delete(item.id)" class="button"> Delete </button>
+              <button (click)="update(item.id)" class="button"> Update </button>
+              <button (click)="display(item.id)" class="button"> Display </button>
+            </div>
+            <!-- Additional Columns -->
+          </div>
+
+        </div>
+      </div>
+      <div class="customer__foot">
+        <button class="button-stroke button-small customer__button pagination__btn " (click)="firstP()">
+          <svg class="icon icon-arrow-left">
+            <use xlink:href="#icon-arrow-left"></use>
+          </svg>
+        </button>
+        <button class="button-stroke button-small customer__button pagination__btn " (click)="previousPage()">
+          <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
+            <use xlink:href="#icon-arrow-next"></use>
+          </svg>
+        </button>
+        <button class="button-stroke button-small customer__button pagination__btn" (click)="nextPage()">
+          <svg class="icon icon-arrow-next">
+            <use xlink:href="#icon-arrow-next"></use>
+          </svg>
+        </button>
+        <button class="button-stroke button-small customer__button pagination__btn " (click)="lastP()">
+          <svg class="icon icon-arrow-right">
+            <use xlink:href="#icon-arrow-right"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

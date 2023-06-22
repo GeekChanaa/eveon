@@ -25,7 +25,7 @@ import { DisplayCellComponent } from './display-cell/display-cell.component';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-
+    FormsModule
   ],
   exports: [
     CardComponent,

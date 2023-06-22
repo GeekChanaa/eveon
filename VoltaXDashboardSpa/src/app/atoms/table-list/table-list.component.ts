@@ -18,10 +18,17 @@ export class TableListComponent implements OnInit {
   @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() displayEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent : EventEmitter<number> = new EventEmitter<number>();
+  fieldShown : { [key: string]: Boolean } = {};
+
+  displayMenu : Boolean = false;
 
   constructor() { }
 
   ngOnInit() {
+    this.fields.forEach(field => {
+      this.fieldShown[field] = true;
+    });
+    console.log(this.fieldShown);
   }
 
   // next Page Event

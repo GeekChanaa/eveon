@@ -434,3 +434,12 @@ body.dark .customer__col:after {
     padding: 0px;
     border-radius: 0px;
 }
+
+
+.display__columns_options{
+    position: absolute;
+    background-color: white;
+    z-index: 100;
+    padding: 24px;
+    border-radius: 8px;
+}

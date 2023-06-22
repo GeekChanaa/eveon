@@ -27,6 +27,9 @@ export class ProfileComponent implements OnInit {
   editingPhone : Boolean = false;
   editingPassword : Boolean = false;
 
+  //userid
+  userID : number = 0;
+
   // Profile Picture
   profilePicture : any = {};
 
@@ -58,6 +61,8 @@ export class ProfileComponent implements OnInit {
     private _debitCardService : DebitCardService,
     private _fileManagementService : FileManagementService
   ) {
+    var decodedToken = this._authService.getAuthInformation();
+    this.userID = parseInt(decodedToken.nameid);
     this.debitCardForm = new FormGroup({
       debitCardName: new FormControl('', [Validators.required]),
       debitCardNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{16}$/)]),
@@ -69,12 +74,14 @@ export class ProfileComponent implements OnInit {
   // On init cycle hook
   ngOnInit() {
     this.getAuthUserInfos();
+    this.getUserDebitCards();
   }
 
   // Getting authenticated user informations
   getAuthUserInfos(){
     var decodedToken = this._authService.getAuthInformation();
     var userid = parseInt(decodedToken.nameid);
+
     this._userService.getById(userid).subscribe((user) => {
       this.user = user;
     });
@@ -82,8 +89,14 @@ export class ProfileComponent implements OnInit {
 
   // Get User Debit cards
   getUserDebitCards(){
-    this._userService.getUserDebitCards(this.user.id).subscribe((data) => {
+    var decodedToken = this._authService.getAuthInformation();
+    var userid = parseInt(decodedToken.nameid);
+    this._userService.getUserDebitCards(userid).subscribe((data) => {
+      console.log("user debit cards");
+      console.log(data);
       this.debitCards = data;
+      console.log(this.debitCards);
+      console.log("debit cards");
     })
   }
 
@@ -140,5 +153,9 @@ export class ProfileComponent implements OnInit {
     this._fileManagementService.uploadProfilePicture(formData).subscribe((data) => {
       console.log("Profile Picture successfully uploaded to the destination");
     });
+  }
+
+  addSpaces(input: string): string {
+    return input.replace(/(.{4})/g, '$1 ');
   }
 }

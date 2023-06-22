@@ -214,62 +214,7 @@
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
-            <div class="settings__anchor" id="notifications" data-value="Notifications"></div>
-            <div class="title-red settings__title">Notifications</div>
-            <div class="settings__list">
-              <div class="settings__line">
-                <div class="settings__label">Product updates and community announcements
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
-                      class="switch__box"></span></span>
-                </label>
-              </div>
-              <div class="settings__line">
-                <div class="settings__label">Market newsletter
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <label class="switch">
-                  <input class="switch__input" type="checkbox" /><span class="switch__inner"><span
-                      class="switch__box"></span></span>
-                </label>
-              </div>
-              <div class="settings__line">
-                <div class="settings__label">Comments
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
-                      class="switch__box"></span></span>
-                </label>
-              </div>
-              <div class="settings__line">
-                <div class="settings__label">Purchases
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <label class="switch">
-                  <input class="switch__input" type="checkbox" checked="checked" /><span class="switch__inner"><span
-                      class="switch__box"></span></span>
-                </label>
-              </div>
-            </div>
+            <app-recharge-cards [userID]="userID"></app-recharge-cards>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'PaymentCardsTab'">
             <div class="settings__anchor" id="payment" data-value="Payment"></div>
@@ -341,7 +286,7 @@
             </div>
             <div *ngIf="debitCards.length > 0">
               <app-debit-card *ngFor="let debitCard of debitCards"
-                [cardNumber]="debitCard.cardNumberHidden"
+                [cardNumber]="addSpaces(debitCard.cardNumberHidden)"
                 [cardHolderName]="debitCard.nameHidden">
               </app-debit-card>
             </div>

@@ -26,4 +26,9 @@ export class CustomerService extends AbstractService<Customer>{
     return this._http.get<any[]>(this.baseUrl+"GetAllCustomersNamesByName?name="+name);
   }
 
+  // get customer by userid 
+  getCustomerByUserID(userID : number){
+    return this._http.get<any>(this.baseUrl+"GetCustomerByUserID?userID="+userID);
+  }
+
 }

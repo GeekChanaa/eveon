@@ -30,6 +30,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 import { DebitCardComponent } from './profile/debit-card/debit-card.component';
 import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
+import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 
 
 
@@ -59,7 +60,8 @@ import { ChargingStationComponent } from './charging-stations/charging-station/c
     CreateChargingCardComponent,
     DebitCardComponent,
     ChargingStationComponent,
-    ChargingPointsComponent
+    ChargingPointsComponent,
+    RechargeCardsComponent
   ],
     imports: [
         DashboardRoutingModule,

@@ -8,6 +8,7 @@ import { SharedComponent } from './shared.component';
 import { SidebarDropdownComponent } from './sidebar/sidebar-dropdown/sidebar-dropdown.component';
 import { SidebarItemComponent } from './sidebar/sidebar-item/sidebar-item.component';
 import { SidebarLinkComponent } from './sidebar/sidebar-link/sidebar-link.component';
+import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navbar-notifications.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { SidebarLinkComponent } from './sidebar/sidebar-link/sidebar-link.compon
       SharedComponent,
       SidebarItemComponent,
     SidebarDropdownComponent,
-    SidebarLinkComponent
+    SidebarLinkComponent,
+    NavbarNotificationsComponent
    ],
   imports: [
     CommonModule,

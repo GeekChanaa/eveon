@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "zitseeOmop74WKhQRl8rIEIVCvZ3hfr92yPIgjIbeD8=",
+  "Hash": "bbFLJVvg/3wVWzY1BP+d7h07b+UiKxB1Hz9Vh168O2Q=",
   "Source": "VoltaXApi",
   "BasePath": "_content/VoltaXApi",
   "Mode": "Default",
@@ -15,5 +15,23 @@
       "Pattern": "**"
     }
   ],
-  "Assets": []
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\wwwroot\\ProfilePictures\\.png",
+      "SourceId": "VoltaXApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\wwwroot\\",
+      "BasePath": "_content/VoltaXApi",
+      "RelativePath": "ProfilePictures/.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProfilePictures\\.png"
+    }
+  ]
 }

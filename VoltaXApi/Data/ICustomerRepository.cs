@@ -7,5 +7,6 @@ namespace VoltaXApi.Data
     {
         Task<List<CustomerNameDto>> GetAllCustomersNames();
         Task<List<CustomerNameDto>> GetAllCustomersNamesByName(string name);
+        Task<Customer> GetCustomerByUserID(int UserID);
     }
 }

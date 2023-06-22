@@ -10,10 +10,15 @@ import { environment } from 'src/environments/environment';
 export class CardService extends AbstractService<Card>{
 
   constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/card");
+    super(http, environment.apiUrl+"/api/card/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/card";
+  baseUrl = environment.apiUrl+"/api/card/";
+
+  // Get user recharge cards
+  getCustomerRechargeCardsAsync(customerID : number){
+    return this._http.get(this.baseUrl+"GetUserRechargeCards?customerID="+customerID);
+  }
 
 }

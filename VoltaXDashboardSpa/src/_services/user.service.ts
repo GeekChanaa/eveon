@@ -19,15 +19,6 @@ export class UserService extends AbstractService<User>{
 
   // Get User Debit Cards
   getUserDebitCards(userID: number) {
-    return this._http.get<any[]>(this.baseUrl + "GetUserDebitCards?UserID=" + userID)
-      .pipe(
-        map(data => data.map(item => {
-          item.cardNumberHidden = this.transformCardNumber(item.cardNumberHidden);
-        }))
-      )
-  }
-
-  transformCardNumber(cardNumber: string | null): string | undefined {
-    return cardNumber ? cardNumber.match(/.{1,4}/g)?.join(' ') : '';
+    return this._http.get<any[]>(this.baseUrl + "GetUserDebitCards?UserID=" + userID);
   }
 }

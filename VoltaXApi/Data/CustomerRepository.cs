@@ -33,5 +33,11 @@ namespace VoltaXApi.Data
 
         }
 
+        // Get Customer By User ID
+        public async Task<Customer> GetCustomerByUserID(int UserID)
+        {
+            return await _context.Customers.Where(u => UserID == u.UserID).FirstOrDefaultAsync();
+        }
+
     } 
 }
