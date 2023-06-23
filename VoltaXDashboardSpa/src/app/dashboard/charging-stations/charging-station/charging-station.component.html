@@ -18,7 +18,7 @@
             <div class="settings__anchor" id="basics" data-value="Basics"></div>
             <div class="title-green settings__title">Informations</div>
             <div class="settings__profile">
-              
+
             </div>
             <div class="settings__fieldset">
               <app-display-cell title="name" val="{{chargingStation.name}}"></app-display-cell>
@@ -40,110 +40,38 @@
             <div class="settings__anchor" id="account" data-value="Account"></div>
             <div class="title-purple settings__title">Charge Points</div>
             <div class="settings__fieldset">
-              <div class="card__display" *ngFor="let chargePoint of chargingStation.chargePoints">
-                
-                
-                <!-- name -->
-                <div class="card__display_item">
-                  <span class="item__title"> Name 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.name}}</span>
+              <ng-container *ngIf="chargingStation.chargePoints.length > 0 && !cpfShow">
+                <div class="card__display" *ngFor="let chargePoint of chargingStation.chargePoints">
+                  <app-charging-station-charge-point [chargePoint]="chargePoint"></app-charging-station-charge-point>
                 </div>
+              </ng-container>
 
-                <!-- serialNumber -->
-                <div class="card__display_item">
-                  <span class="item__title"> Serial Number 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.serialNumber}}</span>
+              <ng-container *ngIf="(chargingStation.chargePoints.length <= 0 && !cpfShow)">
+                <div class="empty__card">
+                  <div>
+                    <img src="/assets/img/content/login-pic.png" alt="">
+                  </div>
+                  <div>
+                    <button (click)="showChargePointForm()" class="button-stroke">Add Charge Point</button>
+                  </div>
                 </div>
+              </ng-container>
+              <ng-container *ngIf="cpfShow">
+                <form [formGroup]="chargePointForm">
+                  <app-form-field title="name" description="tbd" [control]="getControl('name')"></app-form-field>
+                  <app-form-field title="serialNumber" description="tbd" [control]="getControl('serialNumber')"></app-form-field>
+                  <app-form-field title="make" description="tbd" [control]="getControl('make')"></app-form-field>
+                  <app-form-field title="status" description="tbd" [control]="getControl('status')"></app-form-field>
+                  <app-form-field title="comment" description="tbd" [control]="getControl('comment')"></app-form-field>
+                  <button (click)="cpfOnSubmit()" class="button">Create</button>
+                </form>
+              </ng-container>
 
-                <!-- make -->
-                <div class="card__display_item">
-                  <span class="item__title"> Make 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.make}}</span>
-                </div>
 
-                <!-- status -->
-                <div class="card__display_item">
-                  <span class="item__title"> Status 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.status}}</span>
-                </div>
-
-                <!-- comment -->
-                <div class="card__display_item">
-                  <span class="item__title"> Comment 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.comment}}</span>
-                </div>
-
-                <!-- username -->
-                <div class="card__display_item">
-                  <span class="item__title"> Username 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.username}}</span>
-                </div>
-
-                <!-- password -->
-                <div class="card__display_item">
-                  <span class="item__title"> Password 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.password}}</span>
-                </div>
-
-                <!-- clientCertThumb -->
-                <div class="card__display_item">
-                  <span class="item__title"> Client Certificate Thumb 
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </span> <br>
-                  <span class="item__text">{{chargePoint.clientCertThumb}}</span>
-                </div>
-
-              </div>
             </div>
 
           </div>
-          
+
         </div>
       </div>
     </div>

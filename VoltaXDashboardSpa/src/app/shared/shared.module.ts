@@ -16,9 +16,9 @@ import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navb
       NavbarComponent,
       SharedComponent,
       SidebarItemComponent,
-    SidebarDropdownComponent,
-    SidebarLinkComponent,
-    NavbarNotificationsComponent
+      SidebarDropdownComponent,
+      SidebarLinkComponent,
+      NavbarNotificationsComponent
    ],
   imports: [
     CommonModule,

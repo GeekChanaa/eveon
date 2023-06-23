@@ -1,3 +1,42 @@
-<p>
-  charging-point works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">User</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button (click)="changeTab('InformationsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+        <button (click)="changeTab('ConnectorsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'ConnectorsTab'}">Connectors</button>
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option (click)="changeTab('InformationsTab')">Informations</option>
+          <option (click)="changeTab('ConnectorsTab')">Connectors</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <app-display-cell title="name" val="{{chargePoint.name}}"></app-display-cell>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'ConnectorsTab'">
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">Connectors</div>
+            <div class="settings__fieldset">
+
+            </div>
+
+          </div>
+
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

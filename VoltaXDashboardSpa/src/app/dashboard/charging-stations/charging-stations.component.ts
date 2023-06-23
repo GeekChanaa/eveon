@@ -121,7 +121,7 @@ export class ChargingStationsComponent implements OnInit {
   // delete item
   delete(id : number){
     this._chargingStationService.deleteById(id).subscribe((data) => {
-      console.log("charging station deleted succesfully");
+      this.getAll();
     })
   }
 

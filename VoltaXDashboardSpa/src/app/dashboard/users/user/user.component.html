@@ -1,0 +1,55 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">User</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button (click)="changeTab('InformationsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+        <button (click)="changeTab('RechargeCardsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
+        <button (click)="changeTab('DebitCardsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'DebitCardsTab'}">Debit Cards</button>
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option (click)="changeTab('InformationsTab')">Informations</option>
+          <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
+          <option (click)="changeTab('DebitCardsTab')">Debit Cards</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <app-display-cell title="first name" val="{{user.firstName}}"></app-display-cell>
+              <app-display-cell title="last name" val="{{user.lastName}}"></app-display-cell>
+              <app-display-cell title="email" val="{{user.email}}"></app-display-cell>
+              <app-display-cell title="phone" val="{{user.phone}}"></app-display-cell>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">Recharge Cards</div>
+            <div class="settings__fieldset">
+
+            </div>
+
+          </div>
+
+          <div class="settings__item" *ngIf="tabsEnum == 'DebitCardsTab'">
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">Debit Cards</div>
+            <div class="settings__fieldset">
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

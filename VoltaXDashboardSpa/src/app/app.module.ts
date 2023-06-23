@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { AuthComponent } from './auth/auth.component';
     AppRoutingModule,
     SharedModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule
     
   ],
   providers: [],

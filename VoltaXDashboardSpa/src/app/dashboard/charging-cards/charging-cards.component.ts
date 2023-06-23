@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
 
@@ -35,7 +36,8 @@ export class ChargingCardsComponent implements OnInit {
 
   // Constructor
   constructor(
-    private _cardService : CardService
+    private _cardService : CardService,
+    private _router : Router
   ) { }
 
   ngOnInit() {
@@ -80,6 +82,20 @@ export class ChargingCardsComponent implements OnInit {
   previousPage(){
     this.currentPage--;
     this.getAll();
+  }
+
+  delete(id : number){
+    this._cardService.deleteById(id).subscribe((data) => {
+      this.getAll();
+    })
+  }
+
+  display(id : number){
+    this._router.navigate(['/charging-cards/',id]);
+  }
+
+  update(id : number){
+    console.log("updated");
   }
 
 }

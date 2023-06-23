@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargePointService } from 'src/_services/charge-point.service';
 
@@ -37,7 +38,8 @@ export class ChargingPointsComponent implements OnInit {
 
   // Constructor
   constructor(
-    private _chargePointService : ChargePointService
+    private _chargePointService : ChargePointService,
+    private _router : Router
   ) { }
 
   ngOnInit() {
@@ -82,6 +84,20 @@ export class ChargingPointsComponent implements OnInit {
   previousPage(){
     this.currentPage--;
     this.getAll();
+  }
+
+  delete(id : number){
+    this._chargePointService.deleteById(id).subscribe((data) => {
+      this.getAll()
+    });
+  }
+
+  display(id : number){
+    this._router.navigate(['/charging-points',id]);
+  }
+
+  update(id : number){
+    console.log("this is update function");
   }
 
 }

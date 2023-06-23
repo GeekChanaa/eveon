@@ -443,3 +443,21 @@ body.dark .customer__col:after {
     padding: 24px;
     border-radius: 8px;
 }
+
+
+.sidebar__add{
+    position:initial;
+    height: 34px;
+    width: 34px;
+    margin-left: 8px;
+}
+
+.sidebar__add svg{
+    height: 16px;
+    width: 16px;
+}
+
+.flex{
+    display: flex;
+    margin-top: 16px;
+}

@@ -22,7 +22,7 @@ import { StateService } from 'src/_services/state.service';
 export class CreateChargingStationComponent implements OnInit {
 
   form: FormGroup;
-  opacity : number = 0;
+  opacity: number = 0;
   activeDiv = 1;
 
   showNextDiv() {
@@ -34,37 +34,37 @@ export class CreateChargingStationComponent implements OnInit {
   }
 
   // lists of countries / states / cities
-  countries : CountryNameDto[] = [];
-  states : StateNameDto[] = [];
-  cities : CityNameDto[] = [];
+  countries: CountryNameDto[] = [];
+  states: StateNameDto[] = [];
+  cities: CityNameDto[] = [];
 
 
   constructor(
-    private _countryService : CountryService,
-    private _cityService : CityService,
-    private _stateService : StateService,
-    private _chargingStationService : ChargingStationService,
-    private _chargePointService : ChargePointService,
-    private _connectorService : ConnectorService,
-    private _connectorTarifService : ConnectorTarifService
+    private _countryService: CountryService,
+    private _cityService: CityService,
+    private _stateService: StateService,
+    private _chargingStationService: ChargingStationService,
+    private _chargePointService: ChargePointService,
+    private _connectorService: ConnectorService,
+    private _connectorTarifService: ConnectorTarifService
   ) {
     this.form = new FormGroup({
-      chargingStationName : new FormControl(''),
-      chargingStationNetwork : new FormControl(''),
-      chargingStationCategory : new FormControl(''),
-      chargingStationChargerQuantity : new FormControl(''),
-      chargingStationAddress : new FormControl(''),
-      chargingStationCountry : new FormControl(''),
-      chargingStationState : new FormControl(''),
-      chargingStationCity : new FormControl(''),
-      chargingStationZipCode : new FormControl(''),
-      chargingStationLatitude : new FormControl(''),
-      chargingStationLongitude : new FormControl(''),
-      chargingStationOrganisation : new FormControl(''),
-      chargingStationPublish : new FormControl(''),
-      chargingStationParkingType : new FormControl(''),
-      chargingStationStatus : new FormControl(''),
-      chargingStationAmenities : new FormGroup({
+      chargingStationName: new FormControl(''),
+      chargingStationNetwork: new FormControl(''),
+      chargingStationCategory: new FormControl(''),
+      chargingStationChargerQuantity: new FormControl(''),
+      chargingStationAddress: new FormControl(''),
+      chargingStationCountry: new FormControl(''),
+      chargingStationState: new FormControl(''),
+      chargingStationCity: new FormControl(''),
+      chargingStationZipCode: new FormControl(''),
+      chargingStationLatitude: new FormControl(''),
+      chargingStationLongitude: new FormControl(''),
+      chargingStationOrganisation: new FormControl(''),
+      chargingStationPublish: new FormControl(''),
+      chargingStationParkingType: new FormControl(''),
+      chargingStationStatus: new FormControl(''),
+      chargingStationAmenities: new FormGroup({
         wifi: new FormControl(false),
         parking: new FormControl(false),
         restaurants: new FormControl(false),
@@ -74,21 +74,20 @@ export class CreateChargingStationComponent implements OnInit {
       chargePoints: new FormArray([
         new FormGroup({
           chargePointName: new FormControl(''),
-          chargePointId: new FormControl(''),
           chargePointSerialNumber: new FormControl(''),
           chargePointMake: new FormControl(''),
           chargePointStatus: new FormControl(''),
-          chargePointConnectors : new FormArray([
+          chargePointConnectors: new FormArray([
             new FormGroup({
-              chargePointConnectorType : new FormControl(''),
-              chargePointConnectorSpeed : new FormControl(''),
-              chargePointConnectorPower : new FormControl(''),
-              chargePointConnectorQuantity : new FormControl(''),
-              chargePointConnectorTarifs : new FormArray([
+              chargePointConnectorType: new FormControl(''),
+              chargePointConnectorSpeed: new FormControl(''),
+              chargePointConnectorPower: new FormControl(''),
+              chargePointConnectorQuantity: new FormControl(''),
+              chargePointConnectorTarifs: new FormArray([
                 new FormGroup({
-                  chargePointConnectorTarifUnit : new FormControl(''),
-                  chargePointConnectorTarifCurrency : new FormControl(''),
-                  chargePointConnectorTarifQuantity : new FormControl(''),
+                  chargePointConnectorTarifUnit: new FormControl(''),
+                  chargePointConnectorTarifCurrency: new FormControl(''),
+                  chargePointConnectorTarifQuantity: new FormControl(''),
                 })
               ])
             })
@@ -102,11 +101,11 @@ export class CreateChargingStationComponent implements OnInit {
     return this.form.get('chargePoints') as FormArray;
   }
 
-  getChargePointConnectors(i : number) {
+  getChargePointConnectors(i: number) {
     return ((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray);
   }
 
-  getChargePointConnectorTarifs(i:number, j:number){
+  getChargePointConnectorTarifs(i: number, j: number) {
     return (((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).at(j).get('chargePointConnectorTarifs') as FormArray);
   }
 
@@ -116,21 +115,20 @@ export class CreateChargingStationComponent implements OnInit {
     if (chargePoints.length < 5) {
       chargePoints.push(new FormGroup({
         chargePointName: new FormControl(''),
-        chargePointId: new FormControl(''),
         chargePointSerialNumber: new FormControl(''),
         chargePointMake: new FormControl(''),
         chargePointStatus: new FormControl(''),
-        chargePointConnectors : new FormArray([
+        chargePointConnectors: new FormArray([
           new FormGroup({
-            chargePointConnectorType : new FormControl(''),
-            chargePointConnectorSpeed : new FormControl(''),
-            chargePointConnectorPower : new FormControl(''),
-            chargePointConnectorQuantity : new FormControl(''),
-            chargePointConnectorTarifs : new FormArray([
+            chargePointConnectorType: new FormControl(''),
+            chargePointConnectorSpeed: new FormControl(''),
+            chargePointConnectorPower: new FormControl(''),
+            chargePointConnectorQuantity: new FormControl(''),
+            chargePointConnectorTarifs: new FormArray([
               new FormGroup({
-                chargePointConnectorTarifUnit : new FormControl(''),
-                chargePointConnectorTarifCurrency : new FormControl(''),
-                chargePointConnectorTarifQuantity : new FormControl(''),
+                chargePointConnectorTarifUnit: new FormControl(''),
+                chargePointConnectorTarifCurrency: new FormControl(''),
+                chargePointConnectorTarifQuantity: new FormControl(''),
               })
             ])
           })
@@ -144,25 +142,25 @@ export class CreateChargingStationComponent implements OnInit {
 
   addChargePointConnector(i: number) {
     ((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).push(new FormGroup({
-      chargePointConnectorType : new FormControl(''),
-      chargePointConnectorSpeed : new FormControl(''),
-      chargePointConnectorPower : new FormControl(''),
-      chargePointConnectorQuantity : new FormControl(''),
-      chargePointConnectorTarifs : new FormArray([
+      chargePointConnectorType: new FormControl(''),
+      chargePointConnectorSpeed: new FormControl(''),
+      chargePointConnectorPower: new FormControl(''),
+      chargePointConnectorQuantity: new FormControl(''),
+      chargePointConnectorTarifs: new FormArray([
         new FormGroup({
-          chargePointConnectorTarifUnit : new FormControl(''),
-          chargePointConnectorTarifCurrency : new FormControl(''),
-          chargePointConnectorTarifQuantity : new FormControl(''),
+          chargePointConnectorTarifUnit: new FormControl(''),
+          chargePointConnectorTarifCurrency: new FormControl(''),
+          chargePointConnectorTarifQuantity: new FormControl(''),
         })
       ])
     }));
   }
 
-  addChargePointConnectorTarif(i:number, j: number){
+  addChargePointConnectorTarif(i: number, j: number) {
     (((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).at(j).get('chargePointConnectorTarifs') as FormArray).push(new FormGroup({
-      chargePointConnectorTarifUnit : new FormControl(''),
-      chargePointConnectorTarifCurrency : new FormControl(''),
-      chargePointConnectorTarifQuantity : new FormControl(''),
+      chargePointConnectorTarifUnit: new FormControl(''),
+      chargePointConnectorTarifCurrency: new FormControl(''),
+      chargePointConnectorTarifQuantity: new FormControl(''),
     }));
   }
 
@@ -171,21 +169,21 @@ export class CreateChargingStationComponent implements OnInit {
   }
 
   // Getting all country names
-  getAllCountryNames(){
+  getAllCountryNames() {
     this._countryService.getAllCountryNames().subscribe((data) => {
       this.countries = data;
     })
   }
 
   // Getting states by country
-  getAllStatesByCountry(countryID : number){
+  getAllStatesByCountry(countryID: number) {
     this._stateService.getStatesByCountryID(countryID).subscribe((data) => {
       this.states = data;
     })
   }
 
   // Getting cities by state
-  getAllCitiesByState(stateID : number){
+  getAllCitiesByState(stateID: number) {
     this._cityService.getCitiesByStateID(stateID).subscribe((data) => {
       this.cities = data;
     })
@@ -194,7 +192,7 @@ export class CreateChargingStationComponent implements OnInit {
   onSubmit() {
     // Extract form values
     const formValues = this.form.value;
-  
+
     // Create ChargingStation object
     const chargingStation: ChargingStationCreateDto = {
       Name: formValues.chargingStationName,
@@ -217,20 +215,20 @@ export class CreateChargingStationComponent implements OnInit {
       SittingAreaAmenity: formValues.chargingStationAmenities.sittingArea,
     };
     console.log("charge station");
-    
+
     console.log(chargingStation);
-  
+
     // Create the station first because the chargePoints depend on its ID
     this._chargingStationService.create(chargingStation).subscribe((createdStation) => {
       console.log("this is the created station");
       console.log(createdStation);
       // Now create the ChargePoints
-      formValues.chargePoints.forEach((cp : any) => {
+      formValues.chargePoints.forEach((cp: any) => {
         // Create ChargePoint object
         const chargePoint: ChargePointCreateDto = {
           chargingStationID: createdStation.id,
           name: cp.chargePointName,
-          chargePointId: cp.chargePointId,
+          chargePointId: "",
           serialNumber: cp.chargePointSerialNumber,
           make: cp.chargePointMake,
           status: cp.chargePointStatus,
@@ -239,11 +237,11 @@ export class CreateChargingStationComponent implements OnInit {
           password: '',
           clientCertThumb: ''
         };
-  
+
         this._chargePointService.create(chargePoint).subscribe((createdChargePoint) => {
-  
+
           // Now create the Connectors
-          cp.chargePointConnectors.forEach((connector : any) => {
+          cp.chargePointConnectors.forEach((connector: any) => {
             // Create Connector object
             const connectorObj: ConnectorCreateDto = {
               chargePointId: createdChargePoint.id,
@@ -253,7 +251,7 @@ export class CreateChargingStationComponent implements OnInit {
             };
             this._connectorService.create(connectorObj).subscribe((createdConnector) => {
               // Now create the ConnectorTarifs
-              connector.chargePointConnectorTarifs.forEach((tarif : any) => {
+              connector.chargePointConnectorTarifs.forEach((tarif: any) => {
                 // Create ConnectorTarif object
                 const connectorTarif: ConnectorTarifCreateDto = {
                   connectorID: createdConnector.id,
@@ -269,14 +267,14 @@ export class CreateChargingStationComponent implements OnInit {
       });
     });
   }
-  
 
-  showSelect(){
+
+  showSelect() {
     console.log("this is focused")
     this.opacity = 1;
   }
 
-  hideSelect(){
+  hideSelect() {
     console.log("this is focusout");
     this.opacity = 0;
   }
@@ -335,7 +333,7 @@ export class CreateChargingStationComponent implements OnInit {
       alert('At least one charge point should exist');
     }
   }
-  
+
   removeChargePointConnector(chargePointIndex: number, connectorIndex: number) {
     const connectors = this.getChargePointConnectors(chargePointIndex);
     if (connectors.length > 1) {
@@ -344,7 +342,7 @@ export class CreateChargingStationComponent implements OnInit {
       alert('At least one connector should exist for each charge point');
     }
   }
-  
+
   removeChargePointConnectorTarif(chargePointIndex: number, connectorIndex: number, tarifIndex: number) {
     const tarifs = this.getChargePointConnectorTarifs(chargePointIndex, connectorIndex);
     if (tarifs.length > 1) {
@@ -353,5 +351,7 @@ export class CreateChargingStationComponent implements OnInit {
       alert('At least one tariff should exist for each connector');
     }
   }
+
+  
 
 }

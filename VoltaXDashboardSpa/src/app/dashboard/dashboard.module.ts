@@ -31,7 +31,11 @@ import { CreateChargingCardComponent } from './charging-cards/create-charging-ca
 import { DebitCardComponent } from './profile/debit-card/debit-card.component';
 import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
-
+import { ChargingStationChargePointComponent } from './charging-stations/charging-station-charge-point/charging-station-charge-point.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { UserComponent } from './users/user/user.component';
+import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
+import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 
 
 @NgModule({
@@ -61,7 +65,12 @@ import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.
     DebitCardComponent,
     ChargingStationComponent,
     ChargingPointsComponent,
-    RechargeCardsComponent
+    RechargeCardsComponent,
+    ChargingStationChargePointComponent,
+    UserComponent,
+    ChargingPointComponent,
+    ChargingCardComponent
+    
   ],
     imports: [
         DashboardRoutingModule,

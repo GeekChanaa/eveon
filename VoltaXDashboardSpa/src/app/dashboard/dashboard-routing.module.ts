@@ -22,6 +22,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
 import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
+import { UserComponent } from './users/user/user.component';
+import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 const routes: Routes = [
   {
     path: "",
@@ -34,6 +36,9 @@ const routes: Routes = [
   {
     path: "charging-cards",
     component: ChargingCardsComponent,
+  },{
+    path: "charging-cards/:id",
+    component: ChargingCardComponent,
   },
   {
     path: "create-charging-card",
@@ -109,6 +114,9 @@ const routes: Routes = [
   {
     path: "users",
     component: UsersComponent,
+  },{
+    path: "users/:id",
+    component: UserComponent,
   },{
     path: "profile",
     component: ProfileComponent,

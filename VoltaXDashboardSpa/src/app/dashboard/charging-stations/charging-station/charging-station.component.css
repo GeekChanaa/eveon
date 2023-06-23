@@ -1,21 +1,13 @@
-.card__display {
-    background: #f4f4ff;
-    border-radius: 12px;
-    display: flex;
-    flex-wrap: wrap;
-}
 
-.card__display_item {
-    flex: 1 0 33%;
+
+.empty__card{
+    background: black;
+    text-align: center;
     padding: 34px;
-    max-width: 33%;
+    border-radius: 24px;
 }
 
-.item__title {
-    font-size: 24px;
-}
-
-.item__text {
-    font-size: 18px;
-    color: #797474;
+.button-stroke{
+    margin-top: 36px;
+    color: white;
 }

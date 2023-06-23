@@ -2,11 +2,15 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PaginatedResult } from '../_models/pagination';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 export abstract class AbstractService<T> {
 
-  constructor(protected _http: HttpClient, protected actionUrl: string) {
+  constructor(
+    protected _http: HttpClient, 
+    private _snackBar : MatSnackBar,
+    protected actionUrl: string) {
   }
 
   // Http Options (defining some headers)
@@ -67,7 +71,7 @@ export abstract class AbstractService<T> {
   // Delete Item by id
   deleteById(id: number): Observable<T> {
     return this._http.delete<T>(this.actionUrl + id, this.httpOptions).pipe(map(response => {
-      //this._snackBar.open("Item Deleted with id : "+id,"dismiss",{duration:2000});
+      this._snackBar.open("Item Deleted Succesfully","dismiss",{duration:2000});
       return response;
     }));
   }
@@ -76,7 +80,7 @@ export abstract class AbstractService<T> {
   create(model: any): Observable<T> {
     return this._http.post<T>(this.actionUrl, model, this.httpOptions).pipe(map(response => {
       model = response;
-    //   this._snackBar.open("Item Created Succesfully","dismiss",{duration:2000});
+      this._snackBar.open("Item Created Succesfully","dismiss",{duration:2000});
       return response;
     }));
   }
@@ -85,7 +89,7 @@ export abstract class AbstractService<T> {
   edit(id:number , model:any): Observable<T>{
     return this._http.put<T>(this.actionUrl+id, model, this.httpOptions).pipe(map(response => {
       model = response;
-    //   this._snackBar.open("Item Updated Succesfully","dismiss",{duration:2000});
+      this._snackBar.open("Item Updated Succesfully","dismiss",{duration:2000});
       return response;
     }));
   }

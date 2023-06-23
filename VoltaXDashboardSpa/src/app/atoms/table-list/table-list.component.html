@@ -12,7 +12,6 @@
       </button>
     </form>
     <div class="card__nav">
-      <button class="card__link active">Active</button>
       <button class="card__link">New</button>
     </div>
     <div class="filters">
@@ -54,15 +53,31 @@
             <ng-container *ngFor="let field of fields">
               <div *ngIf="fieldShown[field]" class="customer__col">{{field | camelCaseToSpace}}</div>
             </ng-container>
+            <div class="customer__col">Options</div>
           </div>
           <div class="customer__row" *ngFor="let item of data">
             <ng-container *ngFor="let field of fields">
               <div *ngIf="fieldShown[field]" class="customer__col">{{item[field.charAt(0).toLowerCase() + field.slice(1)] }}</div>
+              
             </ng-container>
-            <div class="customer__col">
-              <button (click)="delete(item.id)" class="button"> Delete </button>
-              <button (click)="update(item.id)" class="button"> Update </button>
-              <button (click)="display(item.id)" class="button"> Display </button>
+            <div class="customer__col options_col">
+              <div class="flex">
+                <button (click)="delete(item.id)" class="sidebar__add"> 
+                  <svg class="icon icon-trash">
+                    <use xlink:href="#icon-trash"></use>
+                  </svg>   
+                </button>
+                <button (click)="update(item.id)" class="sidebar__add"> 
+                  <svg class="icon icon-edit">
+                    <use xlink:href="#icon-edit"></use>
+                  </svg> 
+                </button>
+                <button (click)="display(item.id)" class="sidebar__add"> 
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>  
+                </button>
+              </div>
             </div>
             <!-- Additional Columns -->
           </div>

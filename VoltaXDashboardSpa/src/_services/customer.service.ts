@@ -3,14 +3,15 @@ import { Customer } from 'src/_models/customer';
 import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService extends AbstractService<Customer>{
 
-  constructor(protected http : HttpClient) {
-    super(http, environment.apiUrl+"/api/customer/");
+  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
+    super(http,snackBar, environment.apiUrl+"/api/customer/");
   }
 
   // Base URL for the api

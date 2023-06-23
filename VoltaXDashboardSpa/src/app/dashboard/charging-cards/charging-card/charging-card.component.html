@@ -1,0 +1,42 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">User</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button (click)="changeTab('InformationsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+        <button (click)="changeTab('OtherTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'OtherTab'}">Connectors</button>
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option (click)="changeTab('InformationsTab')">Informations</option>
+          <option (click)="changeTab('OtherTab')">Connectors</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <app-display-cell title="Card Number" val="{{chargingCard.cardNumber}}"></app-display-cell>
+            </div>
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'OtherTab'">
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">Connectors</div>
+            <div class="settings__fieldset">
+
+            </div>
+
+          </div>
+
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

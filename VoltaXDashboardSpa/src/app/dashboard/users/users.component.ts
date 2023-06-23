@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from 'src/_models/user';
 import { UserService } from 'src/_services/user.service';
 
@@ -30,7 +31,8 @@ export class UsersComponent implements OnInit {
 
   // Constructor
   constructor(
-    private _userService : UserService
+    private _userService : UserService,
+    private _router : Router
   ) { }
 
   ngOnInit() {
@@ -75,6 +77,20 @@ export class UsersComponent implements OnInit {
   previousPage(){
     this.currentPage--;
     this.getAll();
+  }
+
+  delete(id : number){
+    this._userService.deleteById(id).subscribe((data) => {
+      this.getAll();
+    });
+  }
+
+  update(id : number){
+    console.log("update");
+  }
+
+  display(id : number){
+    this._router.navigate(['/users/',id]);
   }
 
 }

@@ -25,8 +25,15 @@ export class TableListComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.fields.forEach(field => {
-      this.fieldShown[field] = true;
+    var i = 0
+    this.fields.forEach((field) => {
+      if(i<5){
+        this.fieldShown[field] = true;
+      }
+      else{
+        this.fieldShown[field] = false;
+      }
+      i++;
     });
     console.log(this.fieldShown);
   }

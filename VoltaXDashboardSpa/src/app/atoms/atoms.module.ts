@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmallCardComponent } from './small-card/small-card.component';
 import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
 import { DisplayCellComponent } from './display-cell/display-cell.component';
+import { FormFieldComponent } from './form-field/form-field.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { DisplayCellComponent } from './display-cell/display-cell.component';
     SearchInputComponent,
     SmallCardComponent,
     CamelCaseToSpacePipe,
-    DisplayCellComponent
+    DisplayCellComponent,
+    FormFieldComponent
    ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { DisplayCellComponent } from './display-cell/display-cell.component';
     TableListComponent,
     SearchInputComponent,
     SmallCardComponent,
-    DisplayCellComponent
+    DisplayCellComponent,
+    FormFieldComponent
   ],
   providers: [],
 })

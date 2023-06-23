@@ -6,7 +6,10 @@
       [fields]="fields" 
       [data]="data"
       (next)="nextPage()"
-      (previous)="previousPage()">
+      (previous)="previousPage()"
+      (deleteEvent)="delete($event)"
+      (displayEvent)="display($event)"
+      (updateEvent)="update($event)">
     </app-table-list>
   </div>
 </div>
