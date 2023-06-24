@@ -8,11 +8,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
+    AppTableCustomButtonDirective
   ],
   imports: [
     BrowserModule,

@@ -36,6 +36,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserComponent } from './users/user/user.component';
 import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
 import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 
 
 @NgModule({
@@ -69,7 +71,9 @@ import { ChargingCardComponent } from './charging-cards/charging-card/charging-c
     ChargingStationChargePointComponent,
     UserComponent,
     ChargingPointComponent,
-    ChargingCardComponent
+    ChargingCardComponent,
+    StatisticsComponent,
+    AppTableCustomButtonDirective
     
   ],
     imports: [

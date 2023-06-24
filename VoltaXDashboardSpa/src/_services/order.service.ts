@@ -42,4 +42,9 @@ export class OrderService extends AbstractService<Order>{
     return this._http.get<number[]>(this.baseUrl+"/countRechargeAmountByDay");
   }
 
+  // Counting order recharge amount between 2 dates
+  countRechargeAmountBetween(dateStart : Date, dateEnd : Date){
+    return this._http.get<number>(this.baseUrl+"/countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
+  }
+
 }

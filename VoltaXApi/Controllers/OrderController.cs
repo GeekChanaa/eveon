@@ -43,8 +43,15 @@ namespace VoltaXApi.Controllers
             return Ok(count);
         }
 
+        [HttpGet("countRechargeAmountBetween")]
+        public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart , [FromQuery] DateTime dateEnd)
+        {
+            decimal count =  await _repository.CountRecharge(u => u.RechargeDate>= dateStart && u.RechargeDate <= dateEnd);
+            return Ok(count);
+        }
+
         [HttpGet("countRechargeAmountByDay")]
-        public async Task<IActionResult> GetEnergyConsumptionByDay()
+        public async Task<IActionResult> CountRechargeAmountByDy()
         {
             DateTime endDate = DateTime.Today;
             DateTime startDate = endDate.AddDays(-29);

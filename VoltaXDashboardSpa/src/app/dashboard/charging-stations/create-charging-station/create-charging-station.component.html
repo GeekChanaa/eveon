@@ -17,19 +17,9 @@
                     </svg><span>Back</span></a>
                 </div>
                 <div class="create__group">
-                  <div class="field">
-                    <div class="field__label">Charging Station Name
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <input formControlName="chargingStationName" class="field__input" type="text" name="title"
-                        required>
-                    </div>
-                  </div>
+                  
+                  <app-form-field title="Charging Station Name" description="tbd" [control]="getFormControl('chargingStationName')"></app-form-field>
+
 
                   <div class="field">
                     <div class="field__label">Network
@@ -89,19 +79,7 @@
                   </div>
                 </div>
 
-                <div class="field">
-                  <div class="field__label">Address
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <input formControlName="chargingStationAddress" class="field__input" type="text" name="title"
-                      required>
-                  </div>
-                </div>
+                <app-form-field title="Address" description="tbd" [control]="getFormControl('chargingStationAddress')"></app-form-field>
 
                 <div class="create__group create__group3">
                   <div class="field">
@@ -141,45 +119,13 @@
                     <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl"
                       [options]="cities"></app-search-input>
                   </div>
-                  <div class="field">
-                    <div class="field__label">Location Zip Code
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <input formControlName="chargingStationZipCode" class="field__input" type="text" name="value2"
-                        placeholder="Value" required>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="field__label">Latitude
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <input formControlName="chargingStationLatitude" class="field__input" type="text" name="value2"
-                        placeholder="Value" required>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="field__label">Longitude
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <input formControlName="chargingStationLongitude" class="field__input" type="text" name="value2"
-                        placeholder="Value" required>
-                    </div>
-                  </div>
+                  <app-form-field title="Location Zip Code" description="tbd" [control]="getFormControl('chargingStationZipCode')"></app-form-field>
+
+
+                  
+                  <app-form-field title="Latitude" description="tbd" [control]="getFormControl('chargingStationLatitude')"></app-form-field>
+                  <app-form-field title="Longitude" description="tbd" [control]="getFormControl('chargingStationLongitude')"></app-form-field>
+                  
                 </div>
                 <div class="create__group">
                   <div class="field">

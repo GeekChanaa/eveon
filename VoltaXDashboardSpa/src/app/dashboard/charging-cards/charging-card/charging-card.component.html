@@ -1,17 +1,17 @@
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">User</div>
+    <div class="page__title h3">Recharge Card</div>
     <div class="settings">
       <div class="settings__menu">
         <button (click)="changeTab('InformationsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
         <button (click)="changeTab('OtherTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'OtherTab'}">Connectors</button>
+          [ngClass]="{'active' : tabsEnum == 'OtherTab'}">Other Tab</button>
       </div>
       <div class="settings__wrapper">
         <select class="select">
           <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('OtherTab')">Connectors</option>
+          <option (click)="changeTab('OtherTab')">Other Tab</option>
         </select>
         <div class="settings__list">
           <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
@@ -22,11 +22,17 @@
             </div>
             <div class="settings__fieldset">
               <app-display-cell title="Card Number" val="{{chargingCard.cardNumber}}"></app-display-cell>
+              <app-display-cell title="Card Type" val="{{chargingCard.cardType}}"></app-display-cell>
+              <app-display-cell title="Expiration Date" val="{{chargingCard.expirationDate}}"></app-display-cell>
+              <app-display-cell title="Max Count" val="{{chargingCard.maxCount}}"></app-display-cell>
+              <app-display-cell title="Status" val="{{chargingCard.status}}"></app-display-cell>
+              <app-display-cell title="Balance" val="{{chargingCard.balance}}"></app-display-cell>
+              <app-display-cell title="Note" val="{{chargingCard.note}}"></app-display-cell>
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'OtherTab'">
             <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Connectors</div>
+            <div class="title-purple settings__title">Other Tab</div>
             <div class="settings__fieldset">
 
             </div>

@@ -51,5 +51,12 @@ namespace VoltaXApi.Controllers
             var result = await _repository.GetMonthlyEnergyConsumedLastYearAsync();
             return Ok(result);
         }
+
+        [HttpGet("GetTotalEnergyConsumedBetween")]
+        public async Task<IActionResult> GetTotalEnergyConsumedBetween([FromQuery] DateTime dateStart , [FromQuery] DateTime dateEnd)
+        {
+            var result = await _repository.GetTotalEnergyConsumedBetween(dateStart ,dateEnd);
+            return Ok(result);
+        }
     }
 }

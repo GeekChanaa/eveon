@@ -27,7 +27,7 @@ namespace VoltaXApi.Data.Seeders
             var debitCards = await DebitCardSeeder.Seed(200,users,context);
             var customers = await CustomerSeeder.Seed(40,users,context);
             var cards = await CardSeeder.Seed(60, customers,context);
-            var orders = await OrderSeeder.Seed(100, users, cards, context);
+            var orders = await OrderSeeder.Seed(100, cards, context);
         }
 
         private static string GenerateRandomTimeZone()

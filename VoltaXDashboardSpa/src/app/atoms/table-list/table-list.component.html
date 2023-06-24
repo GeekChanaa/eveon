@@ -62,23 +62,28 @@
             </ng-container>
             <div class="customer__col options_col">
               <div class="flex">
-                <button (click)="delete(item.id)" class="sidebar__add"> 
-                  <svg class="icon icon-trash">
-                    <use xlink:href="#icon-trash"></use>
-                  </svg>   
-                </button>
-                <button (click)="update(item.id)" class="sidebar__add"> 
-                  <svg class="icon icon-edit">
-                    <use xlink:href="#icon-edit"></use>
-                  </svg> 
-                </button>
-                <button (click)="display(item.id)" class="sidebar__add"> 
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>  
-                </button>
+                  <button (click)="delete(item.id)" class="sidebar__add"> 
+                      <svg class="icon icon-trash">
+                          <use xlink:href="#icon-trash"></use>
+                      </svg>   
+                  </button>
+                  <button (click)="update(item.id)" class="sidebar__add"> 
+                      <svg class="icon icon-edit">
+                          <use xlink:href="#icon-edit"></use>
+                      </svg> 
+                  </button>
+                  <button (click)="display(item.id)" class="sidebar__add"> 
+                      <svg class="icon icon-info">
+                          <use xlink:href="#icon-info"></use>
+                      </svg>  
+                  </button>
+                  <!-- Custom button -->
+                  <ng-container *ngIf="customButtonTemplate">
+                      <ng-container *ngTemplateOutlet="customButtonTemplate.template; context: { $implicit: item }"></ng-container>
+                  </ng-container>
               </div>
-            </div>
+          </div>
+          
             <!-- Additional Columns -->
           </div>
 

@@ -1,3 +1,16 @@
-<p>
-  recharge-orders works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="Recharge Order"
+      names="Recharge Orders"
+      [fields]="fields" 
+      [data]="data"
+      (next)="nextPage()"
+      (previous)="previousPage()"
+      (deleteEvent)="delete($event)"
+      (displayEvent)="display($event)"
+      (updateEvent)="update($event)">
+    </app-table-list>
+  </div>
+</div>
+

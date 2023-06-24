@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 
 @Component({
   selector: 'app-table-list',
@@ -6,7 +7,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./table-list.component.css']
 })
 export class TableListComponent implements OnInit {
-
+  @ContentChild(AppTableCustomButtonDirective, { static: false })
+  customButtonTemplate!: AppTableCustomButtonDirective ;
   @Input() name : string = "";
   @Input() names : string = "";
   @Input() fields : string[] = [];
@@ -36,6 +38,8 @@ export class TableListComponent implements OnInit {
       i++;
     });
     console.log(this.fieldShown);
+    console.log("custom button");
+    console.log(this.customButtonTemplate);
   }
 
   // next Page Event

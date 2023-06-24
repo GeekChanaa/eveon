@@ -352,6 +352,10 @@ export class CreateChargingStationComponent implements OnInit {
     }
   }
 
+  getFormControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
+  }
+
   
 
 }

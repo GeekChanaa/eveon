@@ -1,0 +1,193 @@
+<div class="page__container">
+  <div class="page__title h3">Statistics</div>
+  <div class="card">
+    <div class="income">
+      <div class="income__list">
+        <div class="income__item">
+          <div class="income__icon" style="background-color: #B5E4CA;">
+            <svg class="icon icon-activity">
+              <use xlink:href="#icon-activity"></use>
+            </svg>
+          </div>
+          <div class="income__line">
+            <div class="income__details">
+              <div class="income__label">Charge Points (EVSE)
+                <div class="tooltip" title="Small description Earning">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="income__counter">{{nbr_charge_points}}</div>
+              <div class="income__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{nbr_charge_points_week}}
+                </div><span>this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="income__item">
+          <div class="income__icon" style="background-color: #CABDFF;">
+            <svg class="icon icon-pie-chart">
+              <use xlink:href="#icon-pie-chart"></use>
+            </svg>
+          </div>
+          <div class="income__line">
+            <div class="income__details">
+              <div class="income__label">Recharge Orders
+                <div class="tooltip" title="Small description Balance">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="income__counter">{{recharge_orders_total_amount}}</div>
+              <div class="income__indicator">
+                <div class="balance negative">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{recharge_orders_amount_percentage}}
+                </div><span>this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="income__item">
+          <div class="income__icon" style="background-color: #B1E5FC;">
+            <svg class="icon icon-shopping-bag">
+              <use xlink:href="#icon-shopping-bag"></use>
+            </svg>
+          </div>
+          <div class="income__line">
+            <div class="income__details">
+              <div class="income__label">Total Energy (Kwh)
+                <div class="tooltip" title="Small description Total value of sales">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="income__counter"> {{total_energy_consumed}} </div>
+              <div class="income__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{percentage_energy_consumed}}
+                </div><span>this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page__row">
+    <div class="page__col">
+      <div class="card">
+        <div class="card__head">
+          <div class="title-purple card__title">Recharge Orders</div>
+          <select class="select select_small">
+            <option>Last 7 days</option>
+            <option>This month</option>
+            <option>All time</option>
+          </select>
+        </div>
+        <div class="card__chart card__chart_product-sales">
+          <div id="product-sales"></div>
+        </div>
+      </div>
+    </div>
+    <div class="page__col">
+      <div class="card">
+        <div class="card__head">
+          <div class="title-blue card__title">Top Cities</div>
+        </div>
+        <div class="countries">
+          <div class="countries__list">
+            <div class="countries__item">
+              <div class="countries__flag">🇺🇸</div>
+              <div class="countries__title">United States</div>
+              <div class="countries__price">$876.77</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="earning">
+    <div class="earning__table">
+      <div class="earning__row">
+        <div class="earning__col">Date</div>
+        <div class="earning__col">Status</div>
+        <div class="earning__col">Product sales count</div>
+        <div class="earning__col">Earnings</div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Fri, Apr 9</div>
+        <div class="earning__col">
+          <div class="status-yellow earning__status">Pending</div>
+        </div>
+        <div class="earning__col">28</div>
+        <div class="earning__col">$3,140.00
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Sat, Apr 10</div>
+        <div class="earning__col">
+          <div class="status-green-dark earning__status">Paid</div>
+        </div>
+        <div class="earning__col">24</div>
+        <div class="earning__col">$2,568.00
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Sun, Apr 11</div>
+        <div class="earning__col">
+          <div class="status-yellow earning__status">Pending</div>
+        </div>
+        <div class="earning__col">16</div>
+        <div class="earning__col">$1,375.88
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Mon, Apr 12</div>
+        <div class="earning__col">
+          <div class="status-green-dark earning__status">Paid</div>
+        </div>
+        <div class="earning__col">48</div>
+        <div class="earning__col">$4,955.86
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Tue, Apr 13</div>
+        <div class="earning__col">
+          <div class="status-green-dark earning__status">Paid</div>
+        </div>
+        <div class="earning__col">32</div>
+        <div class="earning__col">$2,233.44
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Wed, Apr 14</div>
+        <div class="earning__col">
+          <div class="status-yellow earning__status">Pending</div>
+        </div>
+        <div class="earning__col">64</div>
+        <div class="earning__col">$6,140.00
+        </div>
+      </div>
+      <div class="earning__row">
+        <div class="earning__col">Thu, Apr 15</div>
+        <div class="earning__col">
+          <div class="status-green-dark earning__status">Paid</div>
+        </div>
+        <div class="earning__col">8</div>
+        <div class="earning__col">$789.32
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

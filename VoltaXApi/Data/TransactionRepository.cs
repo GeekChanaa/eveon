@@ -59,6 +59,26 @@ namespace VoltaXApi.Data
             return totalEnergy;
         }
 
+        // Get Energy consumed between 2 dates
+        public async Task<double> GetTotalEnergyConsumedBetween(DateTime dateStart , DateTime dateEnd)
+        {
+            var today = DateTime.Today;
+            var transactions = await _context.Transactions
+                                            .Where(t => t.MeterStart != null 
+                                                    && t.MeterStop != null 
+                                                    && t.StartTime >= dateStart 
+                                                    && t.StartTime <= dateEnd)
+                                            .ToListAsync();
+
+            double totalEnergy = 0;
+            foreach (var transaction in transactions)
+            {
+                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
+            }
+
+            return totalEnergy;
+        }
+
         public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync()
         {
             var startDate = DateTime.Today.AddDays(-30);
