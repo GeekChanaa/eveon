@@ -1,6 +1,6 @@
 <div class="overview js-tabs">
   <div class="overview__nav">
-    <a class="overview__link js-tabs-link active" href="#">
+    <a #tabsLink class="overview__link js-tabs-link active" href="#">
       <div class="overview__icon" style="background-color: #B1E5FC;">
         <svg class="icon icon-shopping-bag">
           <use xlink:href="#icon-shopping-bag"></use>
@@ -22,7 +22,7 @@
         </svg>{{totalEnergyToday | number : '1.0-0'}}
       </div>
     </a>
-    <a class="overview__link js-tabs-link" href="#">
+    <a #tabsLink class="overview__link js-tabs-link" href="#">
       <div class="overview__icon" style="background-color: #CABDFF;">
         <svg class="icon icon-activity">
           <use xlink:href="#icon-activity"></use>
@@ -44,7 +44,7 @@
         </svg>{{totalOrdersToday | number : '1.0-0'}}
       </div>
     </a>
-    <a class="overview__link js-tabs-link" href="#">
+    <a #tabsLink class="overview__link js-tabs-link" href="#">
       <div class="overview__icon" style="background-color: #CABDFF;">
         <svg class="icon icon-activity">
           <use xlink:href="#icon-activity"></use>
@@ -66,7 +66,7 @@
         </svg>{{totalRechargeAmountToday | number : '1.0-0'}}
       </div>
     </a>
-    <a class="overview__link js-tabs-link" href="#">
+    <a #tabsLink class="overview__link js-tabs-link" href="#">
       <div class="overview__icon" style="background-color: #CABDFF;">
         <svg class="icon icon-activity">
           <use xlink:href="#icon-activity"></use>
@@ -90,42 +90,20 @@
     </a>
   </div>
   <div class="overview__container">
-    <div class="overview__item js-tabs-item" style="display: block;">
-      <div class="users">
-        <div class="users__head">
-          <div class="users__info">Welcome <strong>857 customers</strong> with a personal message 😎</div><a
-            class="button-stroke users__button" href="message-center.html">Send<span> message</span></a>
-        </div>
-        <div class="users__list"><a class="users__item" href="message-center.html">
-            <div class="users__avatar"><img src="img/content/avatar.jpg" alt="Avatar"></div>
-            <div class="users__title">Gladyce</div>
-          </a><a class="users__item" href="message-center.html">
-            <div class="users__avatar"><img src="img/content/avatar-1.jpg" alt="Avatar"></div>
-            <div class="users__title">Elbert</div>
-          </a><a class="users__item" href="message-center.html">
-            <div class="users__avatar"><img src="img/content/avatar-2.jpg" alt="Avatar"></div>
-            <div class="users__title">Joyce</div>
-          </a><a class="users__all" href="customer-list.html">
-            <div class="users__icon">
-              <svg class="icon icon-arrow-right">
-                <use xlink:href="#icon-arrow-right"></use>
-              </svg>
-            </div>
-            <div class="users__text">View all</div>
-          </a></div>
-      </div>
+    <div #tabsItem class="overview__item js-tabs-item" style="display: block; height: 200px;">
+      <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis" [stroke]="chartOptions.stroke" [dataLabels]="chartOptions.dataLabels" [colors]="chartOptions.colors" [legend]="chartOptions.legend" [grid]="chartOptions.grid"></apx-chart>
     </div>
-    <div class="overview__item js-tabs-item">
+    <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart">
         <div > salut </div>
       </div>
     </div>
-    <div class="overview__item js-tabs-item">
+    <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart">
         <div > salut2 </div>
       </div>
     </div>
-    <div class="overview__item js-tabs-item">
+    <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart">
         <div id="oveview-income"></div>
       </div>

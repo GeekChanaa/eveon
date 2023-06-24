@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { OrderService } from 'src/_services/order.service';
 import { TransactionService } from 'src/_services/transaction.service';
 import {
@@ -15,8 +15,15 @@ import {
   templateUrl: './tabs-statistics.component.html',
   styleUrls: ['./tabs-statistics.component.css']
 })
-export class TabsStatisticsComponent implements OnInit {
+export class TabsStatisticsComponent implements OnInit,AfterViewInit {
+  @ViewChildren('tabsLink') tabsLink!: QueryList<ElementRef>;
+  @ViewChildren('tabsItem') tabsItem!: QueryList<ElementRef>;
 
+
+  ngAfterViewInit() {
+    this.changeTabs();
+  }
+  chartOptions: any;
   // energy consumed data:
   totalEnergy : number = 0;
   totalEnergyToday : number = 0;
@@ -35,10 +42,61 @@ export class TabsStatisticsComponent implements OnInit {
   constructor(
     private _transactionService : TransactionService,
     private _orderService : OrderService
-  ) { }
+  ) { 
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Earning',
+          data: [500, 1600, 1100, 1400, 1700, 800]
+        }
+      ],
+      chart: {
+        height: '200',
+        type: 'line',
+        toolbar: {
+          show: false
+        },
+        fontFamily: 'Inter, sans-serif'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 4
+      },
+      xaxis: {
+        type: 'category',
+        categories: ["Apr", "May", "Jun", "July", "Aug", "Sep"],
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        tooltip: {
+          enabled: false
+        }
+      },
+      grid: {
+        strokeDashArray: 0,
+        padding: {
+          top: -20,
+          right: 0,
+          bottom: 0,
+          left: 10
+        }
+      },
+      legend: {
+        show: false
+      },
+      colors: ['#2A85FF']
+    };
+  }
 
   ngOnInit() {
     this.getEnergyData();
+    console.log(this.chartOptions);
   }
 
   // Get energy data
@@ -61,5 +119,30 @@ export class TabsStatisticsComponent implements OnInit {
     this._orderService.countRechargeAmount().subscribe(result => this.totalRechargeAmount = result);
     this._orderService.countRechargeAmountToday().subscribe(result => this.totalRechargeAmountToday = result);
     this._orderService.countRechargeAmountByDay().subscribe(result => this.totalRechargeAmountByDay = result);
+  }
+
+
+  changeTabs() {
+    const tabsLinks = this.tabsLink.toArray();
+    const tabsItems = this.tabsItem.toArray();
+
+    tabsLinks.forEach((tabLink, index) => {
+      tabLink.nativeElement.addEventListener('click', (e : any) => {
+        e.preventDefault();
+
+        // Reset all tabs and content
+        tabsLinks.forEach((tab) => tab.nativeElement.classList.remove('active'));
+        tabsItems.forEach((item) => item.nativeElement.style.display = 'none');
+
+        // Activate clicked tab and its content
+        tabLink.nativeElement.classList.add('active');
+        tabsItems[index].nativeElement.style.display = 'block';
+      });
+    });
+
+    // Activate the first tab
+    if (tabsLinks[0]) {
+      tabsLinks[0].nativeElement.click();
+    }
   }
 }

@@ -13,8 +13,7 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
 @NgModule({
   declarations: [
     AppComponent,
-    AuthComponent,
-    AppTableCustomButtonDirective
+    AuthComponent
   ],
   imports: [
     BrowserModule,

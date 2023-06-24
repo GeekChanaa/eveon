@@ -205,36 +205,10 @@ $(document).ready(function () {
         trigger: 'click'
       });
     }
-  }); // tabs
+  }); 
+  
 
-  (function () {
-    var tabs = $('.js-tabs');
-    tabs.each(function () {
-      var thisTabs = $(this),
-        nav = thisTabs.find('.js-tabs-link'),
-        option = thisTabs.find('.option'),
-        item = thisTabs.find('.js-tabs-item');
-      nav.on('click', function () {
-        var thisNav = $(this),
-          indexNav = thisNav.index();
-        nav.removeClass('active');
-        thisNav.addClass('active');
-        item.hide();
-        item.eq(indexNav).fadeIn();
-        return false;
-      }).first().trigger('click');
-    });
-    $(document).ready(function () {
-      var option = $('.js-tabs-select .option');
-      option.on('click', function () {
-        var thisOption = $(this),
-          indexOption = thisOption.index();
-        $('.js-tabs-item').hide();
-        $('.js-tabs-item').eq(indexOption).fadeIn();
-        initSlider($('.js-tabs-item').eq(indexOption));
-      });
-    });
-  })(); // favorite
+   // favorite
 
 
   $('.favorite, .comments__favorite').on('click', function () {
