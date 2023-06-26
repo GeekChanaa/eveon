@@ -27,6 +27,7 @@ export class UsersComponent implements OnInit {
     lastName: '',
     email: '',
     phone: '',
+    role : ''
   }
 
   // Constructor

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserForLoginDto } from 'src/_models/_dtos/user-for-login-dto';
@@ -12,6 +12,7 @@ import { AuthService } from 'src/_services/auth.service';
 })
 export class LoginComponent implements OnInit {
 
+  errorMessage : string = "";
   form: FormGroup;
   constructor(
     private _authService: AuthService,
@@ -19,8 +20,15 @@ export class LoginComponent implements OnInit {
     private _snackBar : MatSnackBar
   ) {
     this.form = new FormGroup({
-      email: new FormControl(''),
-      password: new FormControl('')
+      email: new FormControl('', [
+        Validators.required,
+        Validators.email
+    ]),
+    password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8)
+    ])
+    
     })
   }
 
@@ -38,6 +46,13 @@ export class LoginComponent implements OnInit {
     this._authService.login(userForLogin).subscribe((data) => {
       this._router.navigate(['/']);
       this._snackBar.open("Welcome Back","dismiss",{duration:2000});
+    },(error) => {
+      if(error.status == 401){
+        this.errorMessage = "Email or password incorrect";
+      }
+      else{
+        this.errorMessage = "Server error, please try again later";
+      }
     })
   }
 

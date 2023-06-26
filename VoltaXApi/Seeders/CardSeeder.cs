@@ -7,7 +7,7 @@ namespace VoltaXApi.Data.Seeders
 {
     public static class CardSeeder
     {
-        public async static Task<List<Card>> Seed(int count, List<Customer> customers, VoltaXApiDbContext dbContext)
+        public async static Task<List<Card>> Seed(int count, List<User> users, VoltaXApiDbContext dbContext)
         {
             IRepository<Card> repo = new Repository<Card>(dbContext);
             var cardFaker = new Faker<Card>()
@@ -19,8 +19,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(c => c.Status, f => f.PickRandom("Active", "Inactive"))
                 .RuleFor(c => c.Balance, f => f.Random.Decimal(0, 1000))
                 .RuleFor(c => c.Note, f => f.Lorem.Sentence())
-                .RuleFor(c => c.CustomerID, f => f.PickRandom(customers).ID)
-                .RuleFor(c => c.Customer, f => f.PickRandom(customers));
+                .RuleFor(c => c.UserID, f => f.PickRandom(users).ID);
 
             var cards = cardFaker.Generate(count);
             await repo.AddRangeAsync(cards);

@@ -23,7 +23,8 @@ export class UserComponent implements OnInit {
     firstName: '',
     lastName: '',
     email: '',
-    phone: ''
+    phone: '',
+    role : ''
   }
 
   constructor(

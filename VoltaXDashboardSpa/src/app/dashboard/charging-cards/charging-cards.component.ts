@@ -30,8 +30,8 @@ export class ChargingCardsComponent implements OnInit {
     status: '',
     balance: 0,
     note: '',
-    customerID: 0,
-    customer: null
+    userID: 0,
+    user: null
   }
 
   // Constructor

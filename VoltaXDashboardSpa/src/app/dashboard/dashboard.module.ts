@@ -10,7 +10,6 @@ import { CreateChargingStationComponent } from './charging-stations/create-charg
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { CommentManagementComponent } from './comment-management/comment-management.component';
 import { ConnectorsComponent } from './connectors/connectors.component';
-import { CustomersComponent } from './customers/customers.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
@@ -51,7 +50,6 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
     ChargingStrategiesComponent,
     CommentManagementComponent,
     HomeChargerBindListComponent,
-    CustomersComponent,
     TransactionsComponent,
     RechargeOrdersComponent,
     AlarmManagementComponent,

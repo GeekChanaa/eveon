@@ -11,19 +11,19 @@
           </div>
           <div class="income__line">
             <div class="income__details">
-              <div class="income__label">Charge Points (EVSE)
+              <div class="income__label">Recharge Amount (EUR)
                 <div class="tooltip" title="Small description Earning">
                   <svg class="icon icon-info">
                     <use xlink:href="#icon-info"></use>
                   </svg>
                 </div>
               </div>
-              <div class="income__counter">{{nbr_charge_points}}</div>
+              <div class="income__counter">{{recharge_orders_total_amount}}</div>
               <div class="income__indicator">
                 <div class="balance positive">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>
-                  </svg>{{nbr_charge_points_week}}
+                  </svg>{{recharge_orders_amount_last_week}}
                 </div><span>this week</span>
               </div>
             </div>
@@ -49,7 +49,7 @@
                 <div class="balance negative">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>
-                  </svg>{{recharge_orders_amount_percentage}}
+                  </svg>{{recharge_orders_amount_last_week}}
                 </div><span>this week</span>
               </div>
             </div>
@@ -75,7 +75,7 @@
                 <div class="balance positive">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>
-                  </svg>{{percentage_energy_consumed}}
+                  </svg>{{total_energy_consumed_last_week}}
                 </div><span>this week</span>
               </div>
             </div>

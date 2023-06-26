@@ -13,6 +13,7 @@ export class TableListComponent implements OnInit {
   @Input() names : string = "";
   @Input() fields : string[] = [];
   @Input() data : any[] = [];
+  @Input() createLink : string = "/";
   @Output() next : EventEmitter<void> = new EventEmitter<void>();
   @Output() previous : EventEmitter<void> = new EventEmitter<void>();
   @Output() firstPage : EventEmitter<void> = new EventEmitter<void>();

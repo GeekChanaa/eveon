@@ -51,7 +51,8 @@ export class ProfileComponent implements OnInit {
     lastName: '',
     id: 0,
     email: '',
-    phone: ''  
+    phone: '' ,
+    role : ''
   };
 
   // Constructor

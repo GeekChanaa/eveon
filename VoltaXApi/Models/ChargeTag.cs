@@ -16,5 +16,10 @@ namespace VoltaXApi.Models
         public string ParentTagId { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool? Blocked { get; set; }
+        public int  CardID { get; set; }
+        
+        public Card? Card { get; set; }
+        
+        
     }
 }

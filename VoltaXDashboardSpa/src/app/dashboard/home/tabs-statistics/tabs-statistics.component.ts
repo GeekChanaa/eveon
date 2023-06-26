@@ -19,11 +19,24 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
   @ViewChildren('tabsLink') tabsLink!: QueryList<ElementRef>;
   @ViewChildren('tabsItem') tabsItem!: QueryList<ElementRef>;
 
+  // Chart data
+  energyData : any[] = [];
+  energyCategories : any[] = [];
+  ordersData : any[] = [];
+  ordersCategories : any[] = [];
+  rechargeAmountData : any[] = [];
+  rechargeAmountCategories : any[] = [];
+
 
   ngAfterViewInit() {
     this.changeTabs();
   }
-  chartOptions: any;
+
+  // Charts
+  energyChart: any;
+  orderChart : any;
+  rechargeChart : any;
+
   // energy consumed data:
   totalEnergy : number = 0;
   totalEnergyToday : number = 0;
@@ -42,61 +55,13 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
   constructor(
     private _transactionService : TransactionService,
     private _orderService : OrderService
-  ) { 
-    this.chartOptions = {
-      series: [
-        {
-          name: 'Earning',
-          data: [500, 1600, 1100, 1400, 1700, 800]
-        }
-      ],
-      chart: {
-        height: '200',
-        type: 'line',
-        toolbar: {
-          show: false
-        },
-        fontFamily: 'Inter, sans-serif'
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: 'smooth',
-        width: 4
-      },
-      xaxis: {
-        type: 'category',
-        categories: ["Apr", "May", "Jun", "July", "Aug", "Sep"],
-        axisBorder: {
-          show: false
-        },
-        axisTicks: {
-          show: false
-        },
-        tooltip: {
-          enabled: false
-        }
-      },
-      grid: {
-        strokeDashArray: 0,
-        padding: {
-          top: -20,
-          right: 0,
-          bottom: 0,
-          left: 10
-        }
-      },
-      legend: {
-        show: false
-      },
-      colors: ['#2A85FF']
-    };
+  ) {
   }
 
   ngOnInit() {
     this.getEnergyData();
-    console.log(this.chartOptions);
+    this.getOrderCount();
+    this.getRechargeAmount();
   }
 
   // Get energy data
@@ -104,14 +69,24 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
     // Total Energy
     this._transactionService.getTotalEnergyConsumed().subscribe(result => this.totalEnergy = result);
     this._transactionService.getTotalEnergyConsumedToday().subscribe(result => this.totalEnergyToday = result);
-    this._transactionService.getDailyEnergyConsumedLast30Days().subscribe(result => this.totalEnergyByDay = result);
+    this._transactionService.getDailyEnergyConsumedLast30Days().subscribe(result =>{ 
+      this.totalEnergyByDay = result;
+      var categories = Object.keys(this.totalEnergyByDay);
+      var values = Object.values(this.totalEnergyByDay);
+      this.energyChart = this.chartOptionsConstructor(values,categories);
+    });
   }
 
   // count order numbers
   getOrderCount(){
     this._orderService.count().subscribe(result => this.totalOrders = result);
     this._orderService.countOrdersToday().subscribe(result => this.totalOrdersToday = result);
-    this._orderService.countOrdersByDay().subscribe(result => this.totalOrdersByDay = result);
+    this._orderService.countOrdersByDay().subscribe(result => {
+      this.totalOrdersByDay = result;
+      var categories = Object.keys(this.totalOrdersByDay);
+      var values = Object.values(this.totalOrdersByDay);
+      this.orderChart = this.chartOptionsConstructor(values,categories);
+    });
   }
 
   // count recharge amount
@@ -144,5 +119,58 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
     if (tabsLinks[0]) {
       tabsLinks[0].nativeElement.click();
     }
+  }
+
+
+  chartOptionsConstructor(values :any, categories : any){
+    return {
+      series: [
+        {
+          name: 'Earning',
+          data: values
+        }
+      ],
+      chart: {
+        height: '200',
+        type: 'line',
+        toolbar: {
+          show: false
+        },
+        fontFamily: 'Inter, sans-serif'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 4
+      },
+      xaxis: {
+        type: 'category',
+        categories: categories,
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        tooltip: {
+          enabled: false
+        }
+      },
+      grid: {
+        strokeDashArray: 0,
+        padding: {
+          top: -20,
+          right: 0,
+          bottom: 0,
+          left: 10
+        }
+      },
+      legend: {
+        show: false
+      },
+      colors: ['#2A85FF']
+    };
   }
 }

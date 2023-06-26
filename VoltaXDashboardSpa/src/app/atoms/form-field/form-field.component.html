@@ -1,13 +1,10 @@
-<div class="field">
-  <div class="field__label">{{title | camelCaseToSpace}}
-    <div class="tooltip" title="{{description}}">
-      <svg class="icon icon-info">
-        <use xlink:href="#icon-info"></use>
-      </svg>
-    </div>
+<div class="field__label">{{title | camelCaseToSpace}}
+  <div class="tooltip" title="{{description}}">
+    <svg class="icon icon-info">
+      <use xlink:href="#icon-info"></use>
+    </svg>
   </div>
-  <div class="field__wrap">
-    <input class="field__input" type="text" [formControl]="control" placeholder="Value"
-      required>
-  </div>
+</div>
+<div class="field__wrap">
+  <input class="field__input" type="text" [formControl]="control" placeholder="Value" required>
 </div>

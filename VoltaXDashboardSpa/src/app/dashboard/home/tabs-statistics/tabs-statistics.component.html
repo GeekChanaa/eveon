@@ -91,11 +91,13 @@
   </div>
   <div class="overview__container">
     <div #tabsItem class="overview__item js-tabs-item" style="display: block; height: 200px;">
-      <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis" [stroke]="chartOptions.stroke" [dataLabels]="chartOptions.dataLabels" [colors]="chartOptions.colors" [legend]="chartOptions.legend" [grid]="chartOptions.grid"></apx-chart>
+      <div class="overview__chart" *ngIf="energyChart">
+        <apx-chart [series]="energyChart.series" [chart]="energyChart.chart" [xaxis]="energyChart.xaxis" [stroke]="energyChart.stroke" [dataLabels]="energyChart.dataLabels" [colors]="energyChart.colors" [legend]="energyChart.legend" [grid]="energyChart.grid"></apx-chart>
+      </div>
     </div>
-    <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart">
-        <div > salut </div>
+    <div #tabsItem class="overview__item js-tabs-item"  style="display: block; height: 200px;">
+      <div class="overview__chart" *ngIf="orderChart">
+        <apx-chart [series]="orderChart.series" [chart]="orderChart.chart" [xaxis]="orderChart.xaxis" [stroke]="orderChart.stroke" [dataLabels]="orderChart.dataLabels" [colors]="orderChart.colors" [legend]="orderChart.legend" [grid]="orderChart.grid"></apx-chart>
       </div>
     </div>
     <div #tabsItem class="overview__item js-tabs-item">

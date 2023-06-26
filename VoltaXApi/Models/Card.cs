@@ -21,10 +21,9 @@ namespace VoltaXApi.Models
     
         public string Note { get; set; }
     
-        public int CustomerID { get; set; }
-        public Customer? Customer { get; set; }
+        public int UserID { get; set; }
+        public User? User { get; set; }
         
-        
-    
+        public ICollection<Order> Orders { get; set; }
     }
 }

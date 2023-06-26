@@ -3,6 +3,6 @@ namespace VoltaXApi.Data
 {
     public interface ICardRepository : IRepository<Card>
     {
-        Task<List<Card>> GetCustomerRechargeCardsAsync(int UserID);
+        Task<List<Card>> GetUserRechargeCardsAsync(int UserID);
     }
 }

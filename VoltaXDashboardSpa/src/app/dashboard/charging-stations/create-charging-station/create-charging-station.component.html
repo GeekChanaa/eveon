@@ -18,7 +18,7 @@
                 </div>
                 <div class="create__group">
                   
-                  <app-form-field title="Charging Station Name" description="tbd" [control]="getFormControl('chargingStationName')"></app-form-field>
+                  <app-form-field class="field" title="Charging Station Name" description="tbd" [control]="getFormControl('chargingStationName')"></app-form-field>
 
 
                   <div class="field">
@@ -79,7 +79,7 @@
                   </div>
                 </div>
 
-                <app-form-field title="Address" description="tbd" [control]="getFormControl('chargingStationAddress')"></app-form-field>
+                <app-form-field class="field" title="Address" description="tbd" [control]="getFormControl('chargingStationAddress')"></app-form-field>
 
                 <div class="create__group create__group3">
                   <div class="field">
@@ -119,12 +119,12 @@
                     <app-search-input (optionSelected)="updateCity($event)" [control]="cityControl"
                       [options]="cities"></app-search-input>
                   </div>
-                  <app-form-field title="Location Zip Code" description="tbd" [control]="getFormControl('chargingStationZipCode')"></app-form-field>
+                  <app-form-field class="field" title="Location Zip Code" description="tbd" [control]="getFormControl('chargingStationZipCode')"></app-form-field>
 
 
                   
-                  <app-form-field title="Latitude" description="tbd" [control]="getFormControl('chargingStationLatitude')"></app-form-field>
-                  <app-form-field title="Longitude" description="tbd" [control]="getFormControl('chargingStationLongitude')"></app-form-field>
+                  <app-form-field class="field" title="Latitude" description="tbd" [control]="getFormControl('chargingStationLatitude')"></app-form-field>
+                  <app-form-field class="field" title="Longitude" description="tbd" [control]="getFormControl('chargingStationLongitude')"></app-form-field>
                   
                 </div>
                 <div class="create__group">
@@ -474,9 +474,9 @@
             </div>
             <div class="btns_group">
               <!--  Previous button  -->
-              <button class="button-stroke btn_previous" (click)="showPreviousDiv()"> Previous step </button>
+              <button type="button" class="button-stroke btn_previous" (click)="showPreviousDiv()"> Previous step </button>
               <!--  next button  -->
-              <button *ngIf="activeDiv <= 2" class="button btn_next" (click)="showNextDiv()"> Next step </button>
+              <button type="button" *ngIf="activeDiv <= 2" class="button btn_next" (click)="showNextDiv()"> Next step </button>
               <button class="button" type="submit"> Submit </button>
             </div>
           </div>

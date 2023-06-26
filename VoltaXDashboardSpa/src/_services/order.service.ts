@@ -11,40 +11,40 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class OrderService extends AbstractService<Order>{
 
   constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/order");
+    super(http,snackBar, environment.apiUrl+"/api/order/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/order";
+  baseUrl = environment.apiUrl+"/api/order/";
 
   // Counting orders today
   countOrdersToday(){
-    return this._http.get<number>(this.baseUrl+"/countToday");
+    return this._http.get<number>(this.baseUrl+"countToday");
   }
 
   // Counting orders By DAy
   countOrdersByDay(){
-    return this._http.get<number[]>(this.baseUrl+"/countByDay");
+    return this._http.get<number[]>(this.baseUrl+"countByDay");
   }
 
   // Counting orders rechargeAmount total
   countRechargeAmount(){
-    return this._http.get<number>(this.baseUrl+"/countRechargeAmount");
+    return this._http.get<number>(this.baseUrl+"countRechargeAmount");
   }
 
   // Counting orders rechargeAmount today
   countRechargeAmountToday(){
-    return this._http.get<number>(this.baseUrl+"/countRechargeAmountToday");
+    return this._http.get<number>(this.baseUrl+"countRechargeAmountToday");
   }
 
   // Counting orders rechargeAmount By day
   countRechargeAmountByDay(){
-    return this._http.get<number[]>(this.baseUrl+"/countRechargeAmountByDay");
+    return this._http.get<number[]>(this.baseUrl+"countRechargeAmountByDay");
   }
 
   // Counting order recharge amount between 2 dates
   countRechargeAmountBetween(dateStart : Date, dateEnd : Date){
-    return this._http.get<number>(this.baseUrl+"/countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
+    return this._http.get<number>(this.baseUrl+"countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
   }
 
 }

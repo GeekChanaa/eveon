@@ -115,7 +115,7 @@ export abstract class AbstractService<T> {
         }
       }
     }
-    return this._http.get<number>(this.actionUrl+"count",{params : params});
+    return this._http.get<number>(this.actionUrl+"countAll",{params : params});
   }
 
 }

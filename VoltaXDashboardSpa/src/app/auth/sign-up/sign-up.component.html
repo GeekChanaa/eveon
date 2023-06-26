@@ -13,8 +13,8 @@
       </div>
     </div>
     <div class="login__col">
-      <div class="login__head"><a class="login__logo" href="#"><img class="some-icon" src="assets/img/logo-dark.png"
-            alt="Core"><img class="some-icon-dark" src="assets/img/logo-light.png" alt="Core"></a>
+      <div class="login__head"><a class="login__logo" href="#"><img class="some-icon" src="assets/img/logo.svg"
+            alt="Core"><img class="some-icon-dark" src="assets/img/logo.svg" alt="Core"></a>
         <div class="login__info">Already a member? <a href="sign-in.html">Sign in</a></div>
       </div>
       <div class="login__wrapper">
@@ -32,7 +32,7 @@
           <div class="login__text">Or continue with email address</div>
           <form [formGroup]="form">
             <div class="login__fieldset">
-              <div class="field field_icon">
+              <div class="field field_icon"  [ngClass]="{'error': form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched)}">
                 <div class="field__wrap">
                   <input class="field__input" type="text" formControlName="firstName" placeholder="First Name">
                   <div class="field__icon">
@@ -42,7 +42,7 @@
                   </div>
                 </div>
               </div>
-              <div class="field field_icon">
+              <div class="field field_icon"  [ngClass]="{'error': form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched)}">
                 <div class="field__wrap">
                   <input class="field__input" type="text" formControlName="lastName" placeholder="Last Name">
                   <div class="field__icon">
@@ -54,7 +54,17 @@
               </div>
               <div class="field field_icon">
                 <div class="field__wrap">
-                  <input class="field__input" type="text" formControlName="email" placeholder="Your email">
+                  <input class="field__input"  [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}" type="text" formControlName="email" placeholder="Your email">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="field field_icon" [ngClass]="{'error': form.controls['phone'].invalid && (form.controls['phone'].dirty || form.controls['phone'].touched)}">
+                <div class="field__wrap">
+                  <input class="field__input"  type="text" formControlName="phone" placeholder="Your phone">
                   <div class="field__icon">
                     <svg class="icon icon-mail">
                       <use xlink:href="#icon-mail"></use>
@@ -63,17 +73,7 @@
                 </div>
               </div>
               <div class="field field_icon">
-                <div class="field__wrap">
-                  <input class="field__input" type="text" formControlName="phone" placeholder="Your phone">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon">
-                <div class="field__wrap">
+                <div class="field__wrap"  [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
                   <input class="field__input" type="password" formControlName="password" placeholder="Your Password">
                   <div class="field__icon">
                     <svg class="icon icon-mail">
@@ -82,7 +82,18 @@
                   </div>
                 </div>
               </div>
-              <button class="button login__button" (click)="register()">Continue</button>
+              <div class="field field_icon">
+                <div class="field__wrap" [ngClass]="{'error': form.controls['confirmPassword'].invalid && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched)}">
+                  <input class="field__input" type="password" formControlName="confirmPassword" placeholder="Confirm Password">
+                  <div class="field__icon">
+                    <svg class="icon icon-mail">
+                      <use xlink:href="#icon-mail"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <button class="button login__button" [disabled]="signUpFormValid" (click)="register()">Continue</button>
               <div class="login__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
             </div>
           </form>

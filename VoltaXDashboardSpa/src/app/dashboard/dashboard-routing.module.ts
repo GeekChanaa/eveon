@@ -9,7 +9,6 @@ import { CreateChargingStationComponent } from './charging-stations/create-charg
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { CommentManagementComponent } from './comment-management/comment-management.component';
 import { ConnectorsComponent } from './connectors/connectors.component';
-import { CustomersComponent } from './customers/customers.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
@@ -57,16 +56,17 @@ const routes: Routes = [
     
   },
   {
-    path: "create-charging-station",
-    component: CreateChargingStationComponent,
-  },
-  {
     path: "charging-profile",
     component: ChargingProfileComponent,
   },
   {
     path: "charging-stations",
     component: ChargingStationsComponent,
+    
+  },
+  {
+    path: "charging-stations/create",
+    component: CreateChargingStationComponent,
     
   },
   {
@@ -84,10 +84,6 @@ const routes: Routes = [
   {
     path: "connectors",
     component: ConnectorsComponent,
-  },
-  {
-    path: "customers",
-    component: CustomersComponent,
   },{
     path: "statistics",
     component: StatisticsComponent,

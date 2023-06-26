@@ -12,9 +12,9 @@ namespace VoltaXApi.Data
         }
 
         // Get all user recharge cards
-        public async Task<List<Card>> GetCustomerRechargeCardsAsync(int CustomerID)
+        public async Task<List<Card>> GetUserRechargeCardsAsync(int UserID)
         {
-            return await _context.Cards.Where(u => u.CustomerID == CustomerID).ToListAsync();
+            return await _context.Cards.Where(u => u.UserID == UserID).ToListAsync();
         }
 
     }

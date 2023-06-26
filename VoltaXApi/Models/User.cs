@@ -17,9 +17,10 @@ namespace VoltaXApi.Models
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
         public string Password { get; set; }
+        public string Role { get; set; } = "None";
         public string? ResetPasswordToken  { get; set; }
         public IEnumerable<Order>? Orders { get; set; }
-        public ICollection<DebitCard> DebitCards { get; set; }
+        public ICollection<DebitCard>? DebitCards { get; set; }
         
     }
 }

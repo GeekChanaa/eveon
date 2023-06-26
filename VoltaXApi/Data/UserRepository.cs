@@ -18,6 +18,11 @@ namespace VoltaXApi.Data
             return await this._context.Users.AnyAsync(u => u.Email == email);
         }
 
+        public async Task<Boolean> UserPhoneExists(string phone)
+        {
+            return await this._context.Users.AnyAsync(u => u.Phone == phone);
+        }
+
         public async Task<User?> FindUserByEmail(string email)
         {
             return await this._context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -52,6 +57,21 @@ namespace VoltaXApi.Data
             {
                 throw new Exception("User does not exist");
             }
+        }
+
+
+        // get all user names
+        public async Task<List<UserNameDto>> GetUserNames()
+        {
+            var users = this._context.Users.AsQueryable();
+            return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
+        }
+
+        // get all user name by name
+        public async Task<List<UserNameDto>> GetUserNamesByName(string name)
+        {
+            var users = this._context.Users.Where(u => (u.FirstName + " " + u.LastName).Contains(name)).AsQueryable();
+            return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
         }
 
 

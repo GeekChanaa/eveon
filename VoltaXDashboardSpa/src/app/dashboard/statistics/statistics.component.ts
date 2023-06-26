@@ -10,21 +10,26 @@ import { TransactionService } from 'src/_services/transaction.service';
 })
 export class StatisticsComponent implements OnInit {
 
-  nbr_charge_points : number = 0 ; 
-  nbr_charge_points_week : number = 0 ;
+  nbr_recharge_orders : number = 0 ; 
+  nbr_recharge_orders_last_week : number = 0 ;
   recharge_orders_total_amount : number = 0 ;
-  recharge_orders_amount_percentage : number = 0 ;
+  recharge_orders_amount_last_week : number = 0 ;
   total_energy_consumed : number = 0 ;
-  percentage_energy_consumed : number = 0 ;
+  total_energy_consumed_last_week : number = 0 ;
+
+  lastWeekEndDate : Date = new Date();
+  lastWeekStartDate : Date = new Date(this.lastWeekEndDate.getFullYear(), this.lastWeekEndDate.getMonth(), this.lastWeekEndDate.getDate() - 7);
 
   // constructor
   constructor(
-    private _chargePointService : ChargePointService,
     private _transactionService : TransactionService,
     private _orderService : OrderService
   ) { }
 
   ngOnInit() {
+    this.getEnergyData();
+    this.getRechargeAmountData();
+    this.getRechargeOrdersNumbersData();
   }
 
   // get energy
@@ -33,43 +38,34 @@ export class StatisticsComponent implements OnInit {
     this._transactionService.getTotalEnergyConsumed().subscribe((data) => {
       this.total_energy_consumed = data;
     })
-    const today = new Date(); // Current date
-
-    // Get the start date of the last week
-    const lastWeekStartDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-
-    // get the start date of the last last week 
-    const lastLastWeekStartDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14);
-
-    // Get the end date of the last week (assuming today is the end of the week)
-    const lastWeekEndDate = today;
 
     // percentage energy consumed this week / energy consumed last week
-    this._transactionService.getTotalEnergyConsumedBetween(lastWeekStartDate, lastWeekEndDate).subscribe((lastWeekEnergy) => {
-      this._transactionService.getTotalEnergyConsumedBetween(lastLastWeekStartDate, lastWeekStartDate).subscribe((lastLastWeekEnergy) => {
-        this.percentage_energy_consumed = lastWeekEnergy / lastLastWeekEnergy;
-      })
+    this._transactionService.getTotalEnergyConsumedBetween(this.lastWeekStartDate, this.lastWeekEndDate).subscribe((data) => {
+      this.total_energy_consumed_last_week = data;
     })
   }
 
-  // get Recharge Amount
-  getRechargeAmount(){
 
-    const today = new Date(); // Current date
 
-    // Get the start date of the last week
-    const lastWeekStartDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+  // Get number of charge points data
+  getRechargeAmountData(){
 
-    // get the start date of the last last week 
-    const lastLastWeekStartDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14);
-
-    // Get the end date of the last week (assuming today is the end of the week)
-    const lastWeekEndDate = today;
-    this._orderService.countRechargeAmountBetween(lastWeekStartDate, lastWeekEndDate).subscribe((lastWeekRechargeAmount) => {
-      this._orderService.countRechargeAmountBetween(lastWeekEndDate, lastLastWeekStartDate).subscribe((lastLastWeekRechargeAmount) => {
-        this.recharge_orders_amount_percentage = lastWeekRechargeAmount / lastLastWeekRechargeAmount;
-      })
+    // total recharge amount of all time
+    this._orderService.countRechargeAmount().subscribe((data) => {
+      this.recharge_orders_total_amount = data;
     })
+    
+    // recharge amount  by eur lat week
+    this._orderService.countRechargeAmountBetween(this.lastWeekStartDate, this.lastWeekEndDate).subscribe((data) => {
+      this.recharge_orders_amount_last_week = data
+    })
+  }
+
+  // get recharge orders umber
+  getRechargeOrdersNumbersData(){
+    this._orderService.count().subscribe((data) => {
+      this.nbr_recharge_orders = data
+    });
   }
 
 }

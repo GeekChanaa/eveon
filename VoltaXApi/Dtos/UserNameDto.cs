@@ -1,11 +1,10 @@
 namespace VoltaXApi.Dtos
 {
-    public class CustomerNameDto
+    public class UserNameDto
     {
         public int ID { get; set; }
         
-        public string Name { get; set; }
-        
+        public string FullName { get; set; }
         
     }
 }

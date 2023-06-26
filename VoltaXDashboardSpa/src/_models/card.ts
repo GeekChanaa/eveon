@@ -1,4 +1,4 @@
-import { Customer } from "./customer";
+import { User } from "./user";
 
 export interface Card {
     id: number;
@@ -10,7 +10,7 @@ export interface Card {
     status: string;
     balance: number;
     note: string;
-    customerID: number;
-    customer: Customer | null;
+    userID: number;
+    user: User | null;
     [key: string]: any;
 }

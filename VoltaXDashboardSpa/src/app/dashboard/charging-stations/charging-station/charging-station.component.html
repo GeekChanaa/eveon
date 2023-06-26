@@ -41,7 +41,7 @@
             <div class="title-purple settings__title">Charge Points</div>
             <div class="settings__fieldset">
               <ng-container *ngIf="chargingStation.chargePoints.length > 0 && !cpfShow">
-                <div class="card__display" *ngFor="let chargePoint of chargingStation.chargePoints">
+                <div *ngFor="let chargePoint of chargingStation.chargePoints">
                   <app-charging-station-charge-point [chargePoint]="chargePoint"></app-charging-station-charge-point>
                 </div>
               </ng-container>
@@ -58,11 +58,11 @@
               </ng-container>
               <ng-container *ngIf="cpfShow">
                 <form [formGroup]="chargePointForm">
-                  <app-form-field title="name" description="tbd" [control]="getControl('name')"></app-form-field>
-                  <app-form-field title="serialNumber" description="tbd" [control]="getControl('serialNumber')"></app-form-field>
-                  <app-form-field title="make" description="tbd" [control]="getControl('make')"></app-form-field>
-                  <app-form-field title="status" description="tbd" [control]="getControl('status')"></app-form-field>
-                  <app-form-field title="comment" description="tbd" [control]="getControl('comment')"></app-form-field>
+                  <app-form-field class="field" title="name" description="tbd" [control]="getControl('name')"></app-form-field>
+                  <app-form-field class="field" title="serialNumber" description="tbd" [control]="getControl('serialNumber')"></app-form-field>
+                  <app-form-field class="field" title="make" description="tbd" [control]="getControl('make')"></app-form-field>
+                  <app-form-field class="field" title="status" description="tbd" [control]="getControl('status')"></app-form-field>
+                  <app-form-field class="field" title="comment" description="tbd" [control]="getControl('comment')"></app-form-field>
                   <button (click)="cpfOnSubmit()" class="button">Create</button>
                 </form>
               </ng-container>

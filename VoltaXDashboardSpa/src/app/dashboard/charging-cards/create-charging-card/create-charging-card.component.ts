@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { CardService } from 'src/_services/card.service';
-import { CustomerService } from 'src/_services/customer.service';
+import { UserService } from 'src/_services/user.service';
 
 @Component({
   selector: 'app-create-charging-card',
@@ -13,12 +13,12 @@ export class CreateChargingCardComponent implements OnInit {
   // FormGroup
   form : FormGroup;
 
-  // Customers
-  customers : any[] = [];
+  // Users
+  users : any[] = [];
 
   constructor(
     private _chargingCardService:  CardService,
-    private _customerService : CustomerService
+    private _userService : UserService
   ) { 
     this.form = new FormGroup({
       cardNumber : new FormControl(''),
@@ -29,43 +29,43 @@ export class CreateChargingCardComponent implements OnInit {
       status : new FormControl(''),
       balance : new FormControl(''),
       note : new FormControl(''),
-      customerID : new FormControl('')
+      userID : new FormControl('')
     })
   }
 
   // Getting State Control
-  get customerControl(): FormControl {
-    const control = this.form.get('customerID');
+  get userControl(): FormControl {
+    const control = this.form.get('userID');
     if (!control) {
-      throw new Error('Country control not found');
+      throw new Error('User control not found');
     }
     return control as FormControl;
   }
 
   ngOnInit() {
-    this.getAllCustomersNames();
+    this.getAllUserNames();
   }
 
   onSubmit(){
     console.log(this.form.value);
   }
 
-  // Getting All customers
-  getAllCustomersNames(){
-    this._customerService.getCustomersNames().subscribe((data) => {
-      this.customers = data;
+  // Getting All users
+  getAllUserNames(){
+    this._userService.getUserNames().subscribe((data) => {
+      this.users = data;
     })
   }
 
-  // Getting all customer names by name
-  getAllCustomersNamesByName(name : string){
-    this._customerService.getCustomersNamesByName(name).subscribe((data) => {
-      this.customers = data;
+  // Getting all user names by name
+  getAllUsersNamesByName(name : string){
+    this._userService.getAllUsersNamesByName(name).subscribe((data) => {
+      this.users = data;
     })
   }
 
-  // Customer Selected Event
-  updateCustomer(customer : any){
-    this.customerControl.setValue(customer.id);
+  // User Selected Event
+  updateUser(user : any){
+    this.userControl.setValue(user.id);
   }
 }
