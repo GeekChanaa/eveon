@@ -1,7 +1,7 @@
 <!-- inner-->
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">New Charging Station</div>
+    <div class="page__title h3">New Charging Card</div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="create">
         <div class="create__row">
@@ -16,32 +16,6 @@
                   </svg><span>Back</span></a>
               </div>
               <div class="create__group">
-                <div class="field">
-                  <div class="field__label">Card Number
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <input formControlName="cardNumber" class="field__input" type="text" name="title" required>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <div class="field__label">Account
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <input formControlName="account" class="field__input" type="text" name="title" required>
-                  </div>
-                </div>
-
                 <div class="field">
                   <div class="field__label">Card Type
                     <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">

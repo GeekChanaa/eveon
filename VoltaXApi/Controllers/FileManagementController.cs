@@ -58,6 +58,37 @@ namespace VoltaXApi.Controllers
             }
         }
 
+
+        [HttpPost("UploadChargingStationPicture")]
+        public IActionResult UploadChargingStationPicture(IFormFile imageFile, int chargingStationID)
+        {
+            Console.WriteLine("this is getting in here b3da");
+            try
+            {
+                if (Request.Form.Files.Count == 1)
+                {
+                    var file = Request.Form.Files[0];
+                    string folderName = "ChargingStationPictures/";
+                    Console.WriteLine("Folder Name : "+folderName);
+                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    Console.WriteLine("fileName : " + fileName);
+                    fileName = chargingStationID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
+                    Console.WriteLine("profile pictures 3");
+                    this._fileManagementService.UploadFile(fileName, folderName, file);
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine( ex.Message);
+                return BadRequest();
+            }
+        }
+
         
     }
     

@@ -83,60 +83,60 @@ $(document).ready(function () {
   })(); // sidebar
 
 
-  (function () {
-    var sidebar = $('.sidebar'),
-      items = sidebar.find('.sidebar__item_dropdown'),
-      toggle = sidebar.find('.sidebar__toggle'),
-      sidebarOverlay = sidebar.next(),
-      helpOpen = sidebar.find('.sidebar__help'),
-      close = sidebar.find('.sidebar__close'),
-      search = $('.search'),
-      theme = $('.theme'),
-      help = $('.help'),
-      helpOverlay = help.next(),
-      helpClose = help.find('.help__close');
-    console.log(items);
-    items.each(function () {
-      var item = $(this),
-        head = item.find('.sidebar__head'),
-        body = item.find('.sidebar__body');
-      head.on('click', function (e) {
-        e.stopPropagation();
-        item.toggleClass('active');
-        sidebar.addClass('active');
-        sidebarOverlay.addClass('active');
-        items.addClass('wide');
-        theme.addClass('wide');
-      });
-    });
-    toggle.on('click', function () {
-      sidebar.toggleClass('active');
-      sidebarOverlay.toggleClass('active');
-      items.toggleClass('wide');
-      theme.toggleClass('wide');
-    });
-    sidebarOverlay.on('click', function () {
-      sidebar.removeClass('active');
-      sidebarOverlay.removeClass('active');
-      items.removeClass('wide');
-      theme.removeClass('wide');
-    });
-    close.on('click', function () {
-      sidebar.removeClass('visible');
-    });
-    helpOpen.on('click', function () {
-      help.addClass('active');
-      helpOverlay.addClass('active');
-    });
-    helpOverlay.on('click', function () {
-      help.removeClass('active');
-      helpOverlay.removeClass('active');
-    });
-    helpClose.on('click', function () {
-      help.removeClass('active');
-      helpOverlay.removeClass('active');
-    });
-  })(); // actions
+  // (function () {
+  //   var sidebar = $('.sidebar'),
+  //     items = sidebar.find('.sidebar__item_dropdown'),
+  //     toggle = sidebar.find('.sidebar__toggle'),
+  //     sidebarOverlay = sidebar.next(),
+  //     helpOpen = sidebar.find('.sidebar__help'),
+  //     close = sidebar.find('.sidebar__close'),
+  //     search = $('.search'),
+  //     theme = $('.theme'),
+  //     help = $('.help'),
+  //     helpOverlay = help.next(),
+  //     helpClose = help.find('.help__close');
+  //   console.log(items);
+  //   items.each(function () {
+  //     var item = $(this),
+  //       head = item.find('.sidebar__head'),
+  //       body = item.find('.sidebar__body');
+  //     head.on('click', function (e) {
+  //       e.stopPropagation();
+  //       item.toggleClass('active');
+  //       sidebar.addClass('active');
+  //       sidebarOverlay.addClass('active');
+  //       items.addClass('wide');
+  //       theme.addClass('wide');
+  //     });
+  //   });
+  //   toggle.on('click', function () {
+  //     sidebar.toggleClass('active');
+  //     sidebarOverlay.toggleClass('active');
+  //     items.toggleClass('wide');
+  //     theme.toggleClass('wide');
+  //   });
+  //   sidebarOverlay.on('click', function () {
+  //     sidebar.removeClass('active');
+  //     sidebarOverlay.removeClass('active');
+  //     items.removeClass('wide');
+  //     theme.removeClass('wide');
+  //   });
+  //   close.on('click', function () {
+  //     sidebar.removeClass('visible');
+  //   });
+  //   helpOpen.on('click', function () {
+  //     help.addClass('active');
+  //     helpOverlay.addClass('active');
+  //   });
+  //   helpOverlay.on('click', function () {
+  //     help.removeClass('active');
+  //     helpOverlay.removeClass('active');
+  //   });
+  //   helpClose.on('click', function () {
+  //     help.removeClass('active');
+  //     helpOverlay.removeClass('active');
+  //   });
+  // })(); // actions
 
 
   (function () {
@@ -183,9 +183,9 @@ $(document).ready(function () {
   })(); // nice select
 
 
-  $(document).ready(function () {
-    $('.select').niceSelect();
-  }); // tooltip
+  // $(document).ready(function () {
+  //   $('.select').niceSelect();
+  // }); // tooltip
 
   $(document).ready(function () {
     var tooltip = $('.tooltip'),

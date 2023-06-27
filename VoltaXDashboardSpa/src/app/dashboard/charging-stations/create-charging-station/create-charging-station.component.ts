@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl } from '@angular/forms';
 import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
@@ -14,16 +14,21 @@ import { ConnectorTarifService } from 'src/_services/connector-tarif.service';
 import { ConnectorService } from 'src/_services/connector.service';
 import { CountryService } from 'src/_services/country.service';
 import { StateService } from 'src/_services/state.service';
+declare var $: any;  // Declare $ to use jQuery
 @Component({
   selector: 'app-create-charging-station',
   templateUrl: './create-charging-station.component.html',
   styleUrls: ['./create-charging-station.component.css']
 })
-export class CreateChargingStationComponent implements OnInit {
+export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   form: FormGroup;
   opacity: number = 0;
   activeDiv = 1;
+
+  ngAfterViewInit() {
+    $('select').niceSelect();
+  }
 
   showNextDiv() {
     this.activeDiv = this.activeDiv === 3 ? 1 : this.activeDiv + 1;

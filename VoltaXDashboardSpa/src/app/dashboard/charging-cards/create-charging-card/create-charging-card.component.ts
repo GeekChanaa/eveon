@@ -1,28 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
 import { UserService } from 'src/_services/user.service';
+declare var $: any;  
 
 @Component({
   selector: 'app-create-charging-card',
   templateUrl: './create-charging-card.component.html',
   styleUrls: ['./create-charging-card.component.css']
 })
-export class CreateChargingCardComponent implements OnInit {
+export class CreateChargingCardComponent implements OnInit, AfterViewInit {
 
+  
   // FormGroup
   form : FormGroup;
+
+  // card
+  card : Card = {
+    id: 0,
+    cardNumber: '',
+    cardType: '',
+    expirationDate: new Date(),
+    maxCount: 0,
+    status: '',
+    balance: 0,
+    note: '',
+    userID: 0,
+    user: null
+  };
 
   // Users
   users : any[] = [];
 
+
+  ngAfterViewInit() {
+    
+  }
+  
+
   constructor(
     private _chargingCardService:  CardService,
-    private _userService : UserService
+    private _userService : UserService,
+    private renderer: Renderer2,
+    private el: ElementRef
   ) { 
     this.form = new FormGroup({
-      cardNumber : new FormControl(''),
-      account : new FormControl(''),
       cardType : new FormControl(''),
       expirationDate : new FormControl(''),
       maxCount : new FormControl(''),
@@ -47,7 +70,16 @@ export class CreateChargingCardComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log(this.form.value);
+    var cardForm = this.form.value;
+    this.card.cardType = cardForm.cardType;
+    this.card.expirationDate = cardForm.expirationDate;
+    this.card.maxCount = cardForm.maxCount;
+    this.card.status = cardForm.status;
+    this.card.note = cardForm.note;
+    this.card.userID = cardForm.userID;
+    this.card.balance = cardForm.balance;
+    console.log("this is the card : ");
+    console.log(this.card);
   }
 
   // Getting All users
@@ -68,4 +100,14 @@ export class CreateChargingCardComponent implements OnInit {
   updateUser(user : any){
     this.userControl.setValue(user.id);
   }
+
+  // card number generator
+  generateCardNumber(): string {
+    let cardNumber = '';
+    for(let i = 0; i < 16; i++) {
+        cardNumber += Math.floor(Math.random() * 10);
+    }
+    return cardNumber;
+  }
+
 }

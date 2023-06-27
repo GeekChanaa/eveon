@@ -11,7 +11,7 @@
         </svg>
       </button>
     </form>
-    <div class="card__nav">
+    <div class="card__nav" *ngIf="createLink != ''">
       <button routerLink="{{createLink}}" class="card__link">New</button>
     </div>
     <div class="filters">

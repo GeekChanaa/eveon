@@ -59,7 +59,7 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
@@ -76,10 +76,10 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
-     GlobalSeeder.Seed(dbContext).Wait();
+    //  GlobalSeeder.Seed(dbContext).Wait();
     dbContext.Database.SetCommandTimeout(6000);
 
-     await SqlScriptExecuter.ExecuteSqlScript();
+    //  await SqlScriptExecuter.ExecuteSqlScript();
 }
 
 // Set WebSocketsOptions

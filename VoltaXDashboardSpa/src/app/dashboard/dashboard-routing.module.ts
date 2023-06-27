@@ -38,12 +38,11 @@ const routes: Routes = [
     path: "charging-cards",
     component: ChargingCardsComponent,
   },{
+    path: "charging-cards/create",
+    component: CreateChargingCardComponent,
+  },{
     path: "charging-cards/:id",
     component: ChargingCardComponent,
-  },
-  {
-    path: "create-charging-card",
-    component: CreateChargingCardComponent,
   },
   {
     path: "charging-points",

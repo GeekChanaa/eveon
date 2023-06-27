@@ -2669,6 +2669,7 @@ body.dark .some-icon {
   font-size: 14px;
   font-weight: 600;
   line-height: 48px;
+  width: 100%;
   color: #1A1D1F; }
   .select:after {
     display: none; }
