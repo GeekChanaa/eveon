@@ -49,7 +49,7 @@ export class TransactionsComponent implements OnInit {
   
   // Getting All Products
   getAll(){
-    this._transactionService.getAll(this.currentPage,this.itemsPerPage).subscribe(data => {
+    this._transactionService.getAll(this.currentPage,this.itemsPerPage, this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
       }

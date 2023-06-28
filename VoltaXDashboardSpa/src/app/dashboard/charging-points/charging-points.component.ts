@@ -13,6 +13,9 @@ export class ChargingPointsComponent implements OnInit {
   // Data
   data : any[] = [];
 
+  // item params for filtering sorting an other
+  itemParams : any = {};
+
   // Fields
   fields : string[] = [];
 
@@ -50,7 +53,7 @@ export class ChargingPointsComponent implements OnInit {
   
   // Getting All Products
   getAll(){
-    this._chargePointService.getAll(this.currentPage,this.itemsPerPage).subscribe(data => {
+    this._chargePointService.getAll(this.currentPage,this.itemsPerPage,this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
       }
@@ -98,6 +101,20 @@ export class ChargingPointsComponent implements OnInit {
 
   update(id : number){
     console.log("this is update function");
+  }
+
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
+    this.getAll();
   }
 
 }

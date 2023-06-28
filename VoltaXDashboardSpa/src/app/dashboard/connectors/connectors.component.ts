@@ -42,7 +42,7 @@ export class ConnectorsComponent implements OnInit {
   
   // Getting All Products
   getAll(){
-    this._connectorService.getAll(this.currentPage,this.itemsPerPage).subscribe(data => {
+    this._connectorService.getAll(this.currentPage,this.itemsPerPage, this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
       }
