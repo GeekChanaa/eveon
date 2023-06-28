@@ -19,6 +19,9 @@ export class ConnectorsComponent implements OnInit {
   itemsPerPage : number = 20;
   currentPage : number = 1;
 
+  // item params
+  itemParams : any = {};
+
   connector : Connector = {
     id: 0,
     chargePointId: 0,
@@ -72,6 +75,21 @@ export class ConnectorsComponent implements OnInit {
   // Previous Page
   previousPage(){
     this.currentPage--;
+    this.getAll();
+  }
+
+  // sorting by field
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
     this.getAll();
   }
 

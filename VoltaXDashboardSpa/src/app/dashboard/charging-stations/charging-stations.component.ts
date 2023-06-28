@@ -17,6 +17,9 @@ export class ChargingStationsComponent implements OnInit {
   // Fields
   fields: string[] = [];
 
+  // params for filtering / sotring
+  itemParams : any = {};
+
   // Page params
   itemsPerPage: number = 20;
   currentPage: number = 1;
@@ -66,10 +69,9 @@ export class ChargingStationsComponent implements OnInit {
 
   // Getting All Products
   getAll() {
-    this._chargingStationService.getAll(this.currentPage, this.itemsPerPage).subscribe(data => {
+    this._chargingStationService.getAll(this.currentPage, this.itemsPerPage, this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
-
       }
       if (data.pagination) {
         this.pagination = data.pagination;
@@ -133,5 +135,20 @@ export class ChargingStationsComponent implements OnInit {
   // delete item
   display(id : number){
     this._router.navigate(['/charging-stations',id])
+  }
+
+  // sorting by field
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
+    this.getAll();
   }
 }

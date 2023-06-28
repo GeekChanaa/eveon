@@ -187,4 +187,9 @@ export class ChargePointSimComponent implements OnInit {
     this._wsService.statusNotification(this.selectedConnectorStatus,this.chargePoint?.id,connectorId);
   }
 
+  // send authorize accepted
+  authAcc(){
+    this._wsService.sendAuthorizeResponse();
+  }
+
 }

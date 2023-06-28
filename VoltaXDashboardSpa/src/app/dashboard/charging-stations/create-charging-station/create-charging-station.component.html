@@ -277,7 +277,7 @@
                   *ngFor="let control of chargePoints.controls; index as i">
                   <div class="create__group create__group3" [formGroupName]="i">
                     <div class="btn__remove_container">
-                      <button class="btn__remove" (click)="removeChargePoint(i)">
+                      <button type="button" class="btn__remove" (click)="removeChargePoint(i)">
                         <svg class="icon icon-trash icon__remove">
                           <use xlink:href="#icon-trash"></use>
                         </svg>
@@ -348,7 +348,7 @@
                     <div class="create__card card charge_point_connector_form" formArrayName="chargePointConnectors"
                       *ngFor="let connectorCtrl of getChargePointConnectors(i).controls; let j=index">
                       <div class="btn__remove_container">
-                        <button class="btn__remove" (click)="removeChargePointConnector(i,j)">
+                        <button type="button"  class="btn__remove" (click)="removeChargePointConnector(i,j)">
                           <svg class="icon icon-trash icon__remove">
                             <use xlink:href="#icon-trash"></use>
                           </svg>
@@ -412,7 +412,7 @@
                           *ngFor="let tarifCtrl of getChargePointConnectorTarifs(i,j).controls; let k=index">
                           <div class="create__group" [formGroupName]="k">
                             <div class="btn__remove_container">
-                              <button class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
+                              <button type="button"  class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
                                 <svg class="icon icon-trash icon__remove">
                                   <use xlink:href="#icon-trash"></use>
                                 </svg>
@@ -461,13 +461,13 @@
                           </div>
                         </div>
                       </div>
-                      <button class="button mt-20" (click)="addChargePointConnectorTarif(i,j)">Add Tarif</button>
+                      <button type="button"  class="button mt-20" (click)="addChargePointConnectorTarif(i,j)">Add Tarif</button>
                     </div>
-                    <button class="button" (click)="addChargePointConnector(i)">Add Connector</button>
+                    <button type="button"  class="button" (click)="addChargePointConnector(i)">Add Connector</button>
                   </div>
                   <!-- charge point connectors -->
                 </div>
-                <button (click)="addChargePoint()" class="button-stroke">
+                <button type="button"  (click)="addChargePoint()" class="button-stroke">
                   Add Charge Point</button>
               </div>
             </div>

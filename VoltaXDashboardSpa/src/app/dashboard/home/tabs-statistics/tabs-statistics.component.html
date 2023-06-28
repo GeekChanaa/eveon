@@ -90,19 +90,19 @@
     </a>
   </div>
   <div class="overview__container">
-    <div #tabsItem class="overview__item js-tabs-item" style="display: block; height: 200px;">
+    <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart" *ngIf="energyChart">
-        <apx-chart [series]="energyChart.series" [chart]="energyChart.chart" [xaxis]="energyChart.xaxis" [stroke]="energyChart.stroke" [dataLabels]="energyChart.dataLabels" [colors]="energyChart.colors" [legend]="energyChart.legend" [grid]="energyChart.grid"></apx-chart>
+        <apx-chart style="display: block; height: 200px; width: 100%" [series]="energyChart.series" [chart]="energyChart.chart" [xaxis]="energyChart.xaxis" [stroke]="energyChart.stroke" [dataLabels]="energyChart.dataLabels" [colors]="energyChart.colors" [legend]="energyChart.legend" [grid]="energyChart.grid"></apx-chart>
       </div>
     </div>
-    <div #tabsItem class="overview__item js-tabs-item"  style="display: block; height: 200px;">
+    <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart" *ngIf="orderChart">
-        <apx-chart [series]="orderChart.series" [chart]="orderChart.chart" [xaxis]="orderChart.xaxis" [stroke]="orderChart.stroke" [dataLabels]="orderChart.dataLabels" [colors]="orderChart.colors" [legend]="orderChart.legend" [grid]="orderChart.grid"></apx-chart>
+        <apx-chart style="display: block; height: 200px; width: 100%" [series]="orderChart.series" [chart]="orderChart.chart" [xaxis]="orderChart.xaxis" [stroke]="orderChart.stroke" [dataLabels]="orderChart.dataLabels" [colors]="orderChart.colors" [legend]="orderChart.legend" [grid]="orderChart.grid"></apx-chart>
       </div>
     </div>
     <div #tabsItem class="overview__item js-tabs-item">
       <div class="overview__chart">
-        <div > salut2 </div>
+        <apx-chart style="display: block; height: 200px; width: 100%" [series]="rechargeChart.series" [chart]="rechargeChart.chart" [xaxis]="rechargeChart.xaxis" [stroke]="rechargeChart.stroke" [dataLabels]="rechargeChart.dataLabels" [colors]="rechargeChart.colors" [legend]="rechargeChart.legend" [grid]="rechargeChart.grid"></apx-chart>
       </div>
     </div>
     <div #tabsItem class="overview__item js-tabs-item">

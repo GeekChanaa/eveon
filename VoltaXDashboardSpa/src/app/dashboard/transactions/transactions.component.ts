@@ -13,6 +13,9 @@ export class TransactionsComponent implements OnInit {
   // Data
   data : any[] = [];
 
+  // item params
+  itemParams : any = {};
+
   // Fields
   fields : string[] = [];
 
@@ -79,6 +82,21 @@ export class TransactionsComponent implements OnInit {
   // Previous Page
   previousPage(){
     this.currentPage--;
+    this.getAll();
+  }
+
+  // sorting by field
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
     this.getAll();
   }
 

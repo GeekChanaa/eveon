@@ -21,6 +21,8 @@ export class TableListComponent implements OnInit {
   @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() displayEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent : EventEmitter<number> = new EventEmitter<number>();
+  @Output() sortEvent : EventEmitter<string> = new EventEmitter<string>();
+
   fieldShown : { [key: string]: Boolean } = {};
 
   displayMenu : Boolean = false;
@@ -76,5 +78,10 @@ export class TableListComponent implements OnInit {
   //display 
   display(id : number){
     this.displayEvent.emit(id);
+  }
+
+  // sorting by field
+  sort(field : string){
+    this.sortEvent.emit(field);
   }
 }

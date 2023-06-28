@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CardDto } from 'src/_models/_dtos/card-dto';
 import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
 
@@ -20,10 +21,13 @@ export class ChargingCardsComponent implements OnInit {
   itemsPerPage : number = 20;
   currentPage : number = 1;
 
-  card : Card = {
+  // item params 
+  itemParams : any = {};
+
+  card : CardDto = {
     id: 0,
     cardNumber: '',
-    account: '',
+    name : '',
     cardType: '',
     expirationDate: new Date(),
     maxCount: 0,
@@ -46,9 +50,9 @@ export class ChargingCardsComponent implements OnInit {
   }
 
   
-  // Getting All Products
+  // Getting All recharge cards
   getAll(){
-    this._cardService.getAll(this.currentPage,this.itemsPerPage).subscribe(data => {
+    this._cardService.getAllCards(this.currentPage,this.itemsPerPage).subscribe(data => {
       if (data.result) {
         this.data = data.result;
       }
@@ -96,6 +100,21 @@ export class ChargingCardsComponent implements OnInit {
 
   update(id : number){
     console.log("updated");
+  }
+
+  // sorting by field
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
+    this.getAll();
   }
 
 }

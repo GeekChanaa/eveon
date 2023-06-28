@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
+using AutoMapper;
 
 namespace VoltaXApi.Data
 {
@@ -14,7 +15,6 @@ namespace VoltaXApi.Data
     {
         public ChargeTagRepository(VoltaXApiDbContext context) : base(context)
         {
-            
         }
 
         public async Task<ChargeTag?> GetByTagId(string idTag)

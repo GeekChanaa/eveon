@@ -19,6 +19,10 @@
     }
 }
 
+.col_header{
+    cursor: pointer;
+}
+
 .customer .card__head .form {
     margin-right: auto;
 }

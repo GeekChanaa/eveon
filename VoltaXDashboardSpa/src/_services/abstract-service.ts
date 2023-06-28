@@ -20,7 +20,7 @@ export abstract class AbstractService<T> {
     headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' })
   };
 
-  getAll(page?: number, itemsPerPage?: number, itemParams?: any): Observable<PaginatedResult<T[]>> {
+  getAll(page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<T[]>> {
     const paginatedResult: PaginatedResult<T[]> | null = new PaginatedResult<T[]>();
     let params = new HttpParams();
     if (page != null && itemsPerPage != null) {
@@ -50,7 +50,8 @@ export abstract class AbstractService<T> {
               
       }
     }
-    return this._http.get<T[]>(this.actionUrl, { observe: 'response', params })
+    const url = this.actionUrl + endpoint;
+    return this._http.get<T[]>(url, { observe: 'response', params })
         .pipe(
             map(response => {
             const paginationHeader = response.headers.get('Pagination');

@@ -18,8 +18,15 @@ export class CardService extends AbstractService<Card>{
   baseUrl = environment.apiUrl+"/api/card/";
 
   // Get user recharge cards
-  getCustomerRechargeCardsAsync(customerID : number){
-    return this._http.get(this.baseUrl+"GetUserRechargeCards?customerID="+customerID);
+  getUserRechargeCards(userID : number){
+    return this._http.get(this.baseUrl+"GetUserRechargeCards?UserID="+userID);
   }
+
+  // get all cards
+  getAllCards(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetAllCards");
+  }
+
+  
 
 }

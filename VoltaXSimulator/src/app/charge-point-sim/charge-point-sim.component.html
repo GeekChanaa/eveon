@@ -14,7 +14,7 @@
   <h4>Connecting the chargepoint to the gateway</h4>
   <button (click)="wsConnect()">connect</button>
 </div>
-
+<button (click)="authAcc()">Accepted</button>
 <div *ngFor="let connector of chargePoint?.connectors">
   <div>
     <h4>Start Transaction Event (connector : {{connector.id}})</h4>

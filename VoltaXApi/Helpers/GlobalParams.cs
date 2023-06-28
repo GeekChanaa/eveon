@@ -13,7 +13,6 @@ namespace VoltaXApi.Helpers
         public string[]? FilterValue { get; set; }
         public string FilterMethod { get; set; } = "||";
         
-        
         public string? ReverseOrder { get; set; }
     }
 }

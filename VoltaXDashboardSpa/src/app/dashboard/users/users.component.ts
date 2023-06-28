@@ -17,6 +17,9 @@ export class UsersComponent implements OnInit {
   // Fields
   fields : string[] = [];
 
+  // item params
+  itemParams : any = {};
+
   // Page params
   itemsPerPage : number = 20;
   currentPage : number = 1;
@@ -92,6 +95,21 @@ export class UsersComponent implements OnInit {
 
   display(id : number){
     this._router.navigate(['/users/',id]);
+  }
+
+  // sorting by field
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
+    this.getAll();
   }
 
 }

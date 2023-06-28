@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
+using AutoMapper;
 
 namespace VoltaXApi.Controllers
 {
@@ -18,13 +20,29 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class CardController : GenericController<Card>
     {
-        private readonly IRepository<Card> _repository;
+        private readonly IMapper _mapper;
+        private readonly ICardRepository _repository;
 
-        public CardController(IRepository<Card> repository) : base(repository)
+        public CardController(ICardRepository repository, IMapper mapper) : base(repository)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        [HttpGet("GetAllCards")]
+        public async Task<IActionResult> GetAllCards([FromQuery] GlobalParams globalParams)
+        {
+            var cards = await PagedList<Card>.CreateAsync((await _repository.GetAllAsync(globalParams)).Include(u => u.User), globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(cards.CurrentPage, cards.PageSize, cards.TotalCount, cards.TotalPages);
+            List<CardDto> cardsDto = _mapper.Map<List<CardDto>>(cards);
+            return Ok(cardsDto);
+        }
+
+        // get user recharge cards
+        [HttpGet("GetUserRechargeCards")]
+        public async Task<ActionResult<List<Card>>> GetUserRechargeCards([FromQuery] int UserID)
+        {
+            return await this._repository.GetUserRechargeCardsAsync(UserID);
+        }
     }
 }

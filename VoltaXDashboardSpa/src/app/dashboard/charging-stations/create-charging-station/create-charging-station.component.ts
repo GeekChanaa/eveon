@@ -27,7 +27,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   activeDiv = 1;
 
   ngAfterViewInit() {
-    $('select').niceSelect();
   }
 
   showNextDiv() {

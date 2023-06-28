@@ -6,7 +6,8 @@
       [fields]="fields" 
       [data]="data"
       (next)="nextPage()"
-      (previous)="previousPage()">
+      (previous)="previousPage()"
+      (sortEvent)="sort($event)">
     </app-table-list>
   </div>
 </div>

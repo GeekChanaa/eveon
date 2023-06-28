@@ -2,7 +2,9 @@ import { formatDate } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { connect, map } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { AuthorizeResponse } from 'src/_models/AuthorizeResponse';
 import { TransactionEventRequest } from 'src/_models/TransactionEventRequest';
+import { AuthorizationStatusEnumType } from 'src/_models/_enums/AuthorizationStatusEnumType';
 import { ConnectorStatusEnumType } from 'src/_models/_enums/ConnectorStatusEnumType';
 class MyWebSocket extends WebSocket {
   constructor(url: string) {
@@ -568,6 +570,16 @@ export class WebsocketService {
       s = ('0' + s.slice(-2));
     }
     return year + '-' + monthIndex + '-' + day + "T" + h + ":" + m + ":" + s + "Z";
+  }
+
+
+  sendAuthorizeResponse(){
+    var authorizeResponse : AuthorizeResponse  = {
+      "idTokenInfo": {
+        "status": AuthorizationStatusEnumType.Accepted
+      }
+    }
+    this.myWebSocket.next(authorizeResponse);
   }
 
   

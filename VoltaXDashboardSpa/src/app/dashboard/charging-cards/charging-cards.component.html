@@ -10,7 +10,8 @@
       (previous)="previousPage()"
       (deleteEvent)="delete($event)"
       (displayEvent)="display($event)"
-      (updateEvent)="update($event)">
+      (updateEvent)="update($event)"
+      (sortEvent)="sort($event)">
       <ng-template appTableCustomButton let-item>
         <button routerLink="/recharge-card/{{item.id}}" class="sidebar__add"> 
           <svg class="icon icon-payment">

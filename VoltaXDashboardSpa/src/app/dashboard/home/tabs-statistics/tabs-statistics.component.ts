@@ -93,7 +93,12 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
   getRechargeAmount(){
     this._orderService.countRechargeAmount().subscribe(result => this.totalRechargeAmount = result);
     this._orderService.countRechargeAmountToday().subscribe(result => this.totalRechargeAmountToday = result);
-    this._orderService.countRechargeAmountByDay().subscribe(result => this.totalRechargeAmountByDay = result);
+    this._orderService.countRechargeAmountByDay().subscribe(result => {
+      this.totalRechargeAmountByDay = result;
+      var categories = Object.keys(this.totalRechargeAmountByDay);
+      var values = Object.values(this.totalRechargeAmountByDay);
+      this.rechargeChart = this.chartOptionsConstructor(values,categories);
+    });
   }
 
 

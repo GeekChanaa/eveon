@@ -51,7 +51,7 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("countRechargeAmountByDay")]
-        public async Task<IActionResult> CountRechargeAmountByDy()
+        public async Task<IActionResult> CountRechargeAmountByDay()
         {
             DateTime endDate = DateTime.Today;
             DateTime startDate = endDate.AddDays(-29);

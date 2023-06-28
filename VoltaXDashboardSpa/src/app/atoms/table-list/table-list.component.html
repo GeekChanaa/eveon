@@ -51,7 +51,7 @@
         <div class="customer__table">
           <div class="customer__row">
             <ng-container *ngFor="let field of fields">
-              <div *ngIf="fieldShown[field]" class="customer__col">{{field | camelCaseToSpace}}</div>
+              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="customer__col col_header">{{field | camelCaseToSpace}}</div>
             </ng-container>
             <div class="customer__col">Options</div>
           </div>
