@@ -1,0 +1,41 @@
+<div class="overlay"></div>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">My Dashboard</div>
+
+    <!-- Welcome Card -->
+    <div class="card welcome__card">
+      Hello back my friend mohammed chanaa ! 
+    </div>
+    
+    <!-- Chargers Overview -->
+    <div class="card">
+      <div class="card__head">
+        <div class="title-purple card__title">My Recharge Cards</div>
+      </div>
+      <div>
+        <ngx-slick-carousel class="carousel" 
+        #slickModal="slick-carousel" 
+        [config]="slideConfig" 
+        (init)="slickInit($event)"
+        (breakpoint)="breakpoint($event)"
+        (afterChange)="afterChange($event)"
+        (beforeChange)="beforeChange($event)">
+      <div ngxSlickItem *ngFor="let slide of slides" class="slide">
+      <img src="{{ slide.img }}" alt="" width="100%">
+      </div>
+      </ngx-slick-carousel>
+      <button (click)="addSlide()">Add</button>
+      <button (click)="removeSlide()">Remove</button>
+      <button (click)="slickModal.slickGoTo(2)">slickGoto 2</button>
+      <button (click)="slickModal.unslick()">unslick</button>
+        
+      </div>
+    </div>
+
+    
+
+    
+  </div>
+</div>

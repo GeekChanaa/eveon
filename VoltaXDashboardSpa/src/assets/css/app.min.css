@@ -12836,7 +12836,8 @@ body.dark .notification .actions__button {
       align-items: center;
       flex-grow: 1; }
   .login__wrap {
-    max-width: 212px; }
+    max-width: 212px; 
+  width : 200px;}
   .login__preview {
     max-width: 180px;
     margin: 0 auto 40px; }

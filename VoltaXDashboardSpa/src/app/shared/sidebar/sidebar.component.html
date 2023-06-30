@@ -6,46 +6,47 @@
   </button><a class="sidebar__logo" href="index.html"><img class="some-icon" src="img/logo-dark.png" alt="Core"><img class="some-icon-dark" src="img/logo-light.png" alt="Core"></a>
   
   <div class="sidebar__menu">
-    <app-sidebar-item [title]="'home'" [link]="'/'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'home'" [link]="'/my-dashboard'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 'Admin'" [title]="'home'" [link]="'/'"></app-sidebar-item>
 
-    <app-sidebar-dropdown [title]="'Operation Monitoring'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Operation Monitoring'">
       <app-sidebar-link [title]="'Connector real-time'" [link]="'/tbd'"></app-sidebar-link>
       <app-sidebar-link [title]="'statistics'" [link]="'/statistics'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'Station Management'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Station Management'">
       <app-sidebar-link [title]="'charging station'" [link]="'/charging-stations'"></app-sidebar-link>
       <app-sidebar-link [title]="'charge point'" [link]="'/charging-points'"></app-sidebar-link>
       <app-sidebar-link [title]="'connector'" [link]="'/connectors'"></app-sidebar-link>
       <app-sidebar-link [title]="'station load balance'" [link]="'/station-load-balance'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'business management'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'business management'">
       <app-sidebar-link [title]="'charging cards'" [link]="'/charging-cards'"></app-sidebar-link>
       <app-sidebar-link [title]="'charging strategies'" [link]="'/charging-strategies'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'app management'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'app management'">
       <app-sidebar-link [title]="'comments management'" [link]="'/comment-management'"></app-sidebar-link>
       <app-sidebar-link [title]="'home charger bind list'" [link]="'/home-charger-bind-list'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'order management'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'order management'">
       <app-sidebar-link [title]="'transactions'" [link]="'/transactions'"></app-sidebar-link>
       <app-sidebar-link [title]="'recharge orders'" [link]="'/recharge-orders'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'maintenance management'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'maintenance management'">
       <app-sidebar-link [title]="'alarm management'" [link]="'/alarm-management'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'ocpp operation'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'ocpp operation'">
       <app-sidebar-link [title]="'local list'" [link]="'/ocpp-local-list'"></app-sidebar-link>
       <app-sidebar-link [title]="'charging profile'" [link]="'/charging-profile'"></app-sidebar-link>
       <app-sidebar-link [title]="'configuration'" [link]="'/ocpp-configuration'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown [title]="'Account'">
+    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Account'">
       <app-sidebar-link [title]="'users'" [link]="'/users'"></app-sidebar-link>
     </app-sidebar-dropdown>
   </div>

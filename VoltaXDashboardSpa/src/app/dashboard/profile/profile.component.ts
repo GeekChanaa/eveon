@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UserRole } from 'src/_models/_enums/user-role';
 import { DebitCard } from 'src/_models/debit-card';
 import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
@@ -52,7 +53,7 @@ export class ProfileComponent implements OnInit {
     id: 0,
     email: '',
     phone: '' ,
-    role : ''
+    role : UserRole.Customer
   };
 
   // Constructor

@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { UserRole } from 'src/_models/_enums/user-role';
+import { AuthService } from 'src/_services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,9 +19,15 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('helpOverlay') helpOverlay!: ElementRef;
   @ViewChild('helpClose') helpClose!: ElementRef;
 
-  constructor() { }
+  // User Role
+  role : UserRole = UserRole.Customer;
+
+  constructor(
+    private _authService : AuthService
+  ) { }
 
   ngOnInit() {
+    this.role = this._authService.getRole();
   }
 
   ngAfterViewInit() {

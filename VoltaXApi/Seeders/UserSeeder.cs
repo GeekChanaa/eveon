@@ -17,6 +17,7 @@ public static class UserSeeder
             .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber())
             .RuleFor(u => u.PasswordHash, f => f.Random.Bytes(64))
             .RuleFor(u => u.PasswordSalt, f => f.Random.Bytes(64))
+            .RuleFor(u => u.Role, f => f.PickRandom<UserRole>()) 
             .RuleFor(u => u.Orders, f => new List<Order>())
             .FinishWith((f, u) =>
             {

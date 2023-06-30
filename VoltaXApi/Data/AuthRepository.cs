@@ -14,41 +14,92 @@ namespace VoltaXApi.Data
             this._context = context;
         }
 
-        public async Task<User> Register(User user, string password){
+        public async Task<User> Register(User user, string password)
+        {
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+
+            // Add these lines:
+            user.IsEmailVerified = false;
+            user.EmailVerificationToken = GenerateVerificationToken();
+
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+
+            // Send verification tokens via email and SMS:
+            //await SendVerificationEmail(user.Email, user.EmailVerificationToken);
+
             return user;
+        }
+
+        // Generating a verification token 
+        private string GenerateVerificationToken()
+        {
+            Random random = new Random();
+            const int tokenLength = 6;
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // only digits
+            return new string(Enumerable.Repeat(chars, tokenLength)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+
+        // Verifying the email
+        public async Task<bool> VerifyEmail(string email, string token)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user == null || user.EmailVerificationToken != token)
+                return false;
+
+            user.IsEmailVerified = true;
+            user.EmailVerificationToken = null; // clear the token
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        // Verifying the phone number
+        public async Task<bool> VerifyPhoneNumber(string phoneNumber, string token)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Phone == phoneNumber);
+            if (user == null || user.PhoneVerificationToken != token)
+                return false;
+
+            user.IsPhoneNumberVerified = true;
+            user.PhoneVerificationToken = null;
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            using(var hmac = new System.Security.Cryptography.HMACSHA512())
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
 
-        public async Task<User> Login(string email, string password){
+        public async Task<User> Login(string email, string password)
+        {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-            if(user == null)
+            if (user == null)
                 return null;
-            if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
             return user;
         }
 
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            using(var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt)){
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for(int i=0; i< computedHash.Length ; i ++)
+                for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if(computedHash[i] != passwordHash[i]) return false;
+                    if (computedHash[i] != passwordHash[i]) return false;
                 }
             }
             return true;
@@ -57,7 +108,7 @@ namespace VoltaXApi.Data
         // Unicity of Email
         public async Task<bool> UserExists(string email)
         {
-            if(await _context.Users.AnyAsync(x=>x.Email == email))
+            if (await _context.Users.AnyAsync(x => x.Email == email))
             {
                 return true;
             }
@@ -65,7 +116,8 @@ namespace VoltaXApi.Data
         }
 
         // Getting user
-        public Task<User> GetUser(int id){
+        public Task<User> GetUser(int id)
+        {
             // Getting The user and some of its navigation properties
             var user = _context.Users.FirstOrDefaultAsync(u => u.ID == id);
             return user;

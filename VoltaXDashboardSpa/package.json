@@ -25,7 +25,9 @@
     "jquery": "^3.7.0",
     "jquery-nice-select": "^1.1.0",
     "ng-apexcharts": "^1.7.6",
+    "ngx-slick-carousel": "^15.0.0",
     "rxjs": "~7.5.0",
+    "slick-carousel": "^1.8.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },

@@ -1,0 +1,23 @@
+<!-- page-->
+<div class="page page_simple">
+  <div class="entry">
+    <div class="entry__wrapper">
+      <form >
+        <div class="entry__fieldset">
+          <div class="field field_icon">
+            <div class="field__wrap" >
+              <input class="field__input" [(ngModel)]="code" name="code" type="text" placeholder="Code">
+              <div class="field__icon">
+                <svg class="icon icon-mail">
+                  <use xlink:href="#icon-mail"></use>
+                </svg>
+              </div>
+            </div>
+        </div>
+          <button (click)="verify()" class="button entry__button" >Verify</button>
+        </div>
+      </form>
+      <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+    </div>
+  </div>
+</div>

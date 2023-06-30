@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/_models/user';
+import { UserRole } from 'src/_models/_enums/user-role';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
@@ -24,7 +25,7 @@ export class UserComponent implements OnInit {
     lastName: '',
     email: '',
     phone: '',
-    role : ''
+    role : UserRole.Customer
   }
 
   constructor(

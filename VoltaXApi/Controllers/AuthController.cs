@@ -73,18 +73,19 @@ namespace VoltaXApi.Controllers
             {
                 return Unauthorized();
             }
-                
+
             var user = await _repo.GetUser(userFromRepo.ID);
 
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.ID.ToString()),
                 new Claim(ClaimTypes.Name, userFromRepo.Email),
-                new Claim(ClaimTypes.Name, userFromRepo.FirstName),
-                new Claim(ClaimTypes.Name, userFromRepo.LastName),
+                new Claim(ClaimTypes.GivenName, userFromRepo.FirstName),
+                new Claim(ClaimTypes.Surname, userFromRepo.LastName),
+                new Claim(ClaimTypes.Role, userFromRepo.Role.ToString())
             };
 
-            
+
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
 
@@ -164,24 +165,55 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> ChangePassword(UserPasswordChangeDto userPasswordChangeDto)
         {
             // Init passwordhash and salt (new ones)
-            byte[] passwordHash,passwordSalt;
+            byte[] passwordHash, passwordSalt;
 
             // Getting User
             var user = await _repo.GetUser(userPasswordChangeDto.ID);
 
             // Checking the password
-            if(_repo.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+            if (_repo.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
             {
                 // Changing The password
-                _repo.CreatePasswordHash(userPasswordChangeDto.NewPassword, out passwordHash,out passwordSalt);
+                _repo.CreatePasswordHash(userPasswordChangeDto.NewPassword, out passwordHash, out passwordSalt);
                 user.PasswordSalt = passwordSalt;
                 user.PasswordHash = passwordHash;
                 await _context.SaveChangesAsync();
             }
-            else{
+            else
+            {
                 return StatusCode(500, "Password Incorrect");
             }
             return StatusCode(201);
+        }
+
+        // Verifying the email
+        [HttpPost("VerifyEmail")]
+        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDto verifyEmailDto)
+        {
+            // Checking the password
+            if (await _repo.VerifyEmail(verifyEmailDto.Email, verifyEmailDto.Token))
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(500, "Email or token incorrect");
+            }
+        }
+
+        // Verifying the phone number
+        [HttpPost("VerifyPhone")]
+        public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
+        {
+            // Checking the password
+            if (await _repo.VerifyPhoneNumber(verifyPhoneDto.Phone, verifyPhoneDto.Token))
+            {
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(500, "Phone number or token incorrect");
+            }
         }
     }
 

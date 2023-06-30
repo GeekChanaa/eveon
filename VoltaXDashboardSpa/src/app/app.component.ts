@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -52,7 +51,7 @@ export class AppComponent {
       "assets/js/lib/wNumb.js",
       "assets/js/charts.js",
       "assets/js/demo.js",
-      "assets/js/app.js"
+      "assets/js/app.js",
     ];
     for (let i = 0; i < dynamicScripts.length; i++) {
       const node = document.createElement('script');

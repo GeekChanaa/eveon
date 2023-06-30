@@ -1,3 +1,4 @@
+import { UserRole } from "./_enums/user-role";
 import { Order } from "./order";
 
 export interface User {
@@ -8,6 +9,6 @@ export interface User {
     phone: string;
     password?: string;
     orders?: Order[];
-    role : string;
+    role : UserRole;
     [key: string]: any;
   }

@@ -75,6 +75,10 @@
             "bogus": {
               "target": "Package",
               "version": "[34.0.2, )"
+            },
+            "mailkit": {
+              "target": "Package",
+              "version": "[4.1.0, )"
             }
           },
           "imports": [

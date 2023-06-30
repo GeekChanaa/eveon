@@ -10,6 +10,9 @@ namespace VoltaXApi.Data
         Task<bool> UserExists(string email);
         Task<User> GetUser(int id);
         bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
-        void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
+        void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);      
+        Task<bool> VerifyEmail(string email, string token);
+        Task<bool> VerifyPhoneNumber(string phoneNumber, string token);
+
     }
 }

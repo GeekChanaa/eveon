@@ -1,0 +1,25 @@
+<!-- page-->
+<div class="page page_simple">
+  <div class="entry">
+    <div class="entry__wrapper"><a class="entry__logo" href="#"><img class="some-icon" src="assets/img/logo.svg"
+          alt="Core"><img class="some-icon-dark" src="assets/img/logo.svg" alt="Core"></a>
+      <ng-container *ngIf="!emailVerifiedSuccess">
+        <div class="h2 entry__title">Email Verified !</div>
+        <div class="entry__top">
+          <div class="entry__text">Sign up with Open account</div>
+          <div class="entry__btns">
+            <button class="button-stroke entry__button">Continue</button>
+            <button class="button-stroke entry__button">Go to home</button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="emailVerifiedSuccess">
+        <div class="h2 entry__title">Error :( </div>
+        <div class="entry__top">
+          <div class="entry__text">{{errorMessage}}</div>
+        </div>
+      </ng-container>
+      
+    </div>
+  </div>
+</div>

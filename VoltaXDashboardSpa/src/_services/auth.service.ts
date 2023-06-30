@@ -8,6 +8,8 @@ import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UserForRegisterDto } from 'src/_models/_dtos/user-for-register-dto';
 import { UserForResetPasswordDto } from 'src/_models/_dtos/user-for-reset-password-dto';
+import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
+import { VerifyPhoneDto } from 'src/_models/_dtos/verify-phone-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +68,15 @@ export class AuthService {
     var token = localStorage.getItem('token');
     if(token != null)
     this.decodedToken = this.jwtHelper.decodeToken(token);
+    console.log("this is the decoded token");
+    console.log(this.decodedToken);
     return this.decodedToken;
+  }
+
+  // getting user role
+  getRole(){
+    this.getAuthInformation();
+    return this.decodedToken.role;
   }
 
   // Changing password
@@ -82,5 +92,15 @@ export class AuthService {
   // Reset password
   resetPassword(user : UserForResetPasswordDto){
     return this.http.post(this.baseUrl+"ResetPassword", user);
+  }
+
+  // verify Email
+  verifyEmail(verifyEmailDto : VerifyEmailDto){
+    return this.http.post(this.baseUrl+"VerifyEmail",verifyEmailDto);
+  }
+
+  // verify phone
+  verifyPhone(verifyPhoneDto : VerifyPhoneDto){
+    return this.http.post(this.baseUrl+"VerifyPhone",verifyPhoneDto);
   }
 }

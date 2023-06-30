@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -9,19 +9,23 @@ import { AuthComponent } from './auth/auth.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
+import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
-    AuthComponent
-  ],
+    AuthComponent,
+      CustomerDashboardComponent
+   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     SharedModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    SlickCarouselModule
     
   ],
   providers: [],

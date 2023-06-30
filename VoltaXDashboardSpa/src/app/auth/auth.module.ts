@@ -7,6 +7,11 @@ import { LoginComponent } from './login/login.component';
 import { RequestPasswordComponent } from './request-password/request-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { VerifyPhoneComponent } from './verify-phone/verify-phone.component';
+import { VerificationMailSentComponent } from './verification-mail-sent/verification-mail-sent.component';
+import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-number.component';
+import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 
 
 
@@ -15,7 +20,12 @@ import { SignUpComponent } from './sign-up/sign-up.component';
         LoginComponent,
         SignUpComponent,
         RequestPasswordComponent,
-        ResetPasswordComponent
+        ResetPasswordComponent,
+        VerifyEmailComponent,
+        VerifyPhoneComponent,
+        VerificationMailSentComponent,
+        EnterPhoneNumberComponent,
+        CompleteProfileComponent
   ],
     imports: [
       CommonModule,

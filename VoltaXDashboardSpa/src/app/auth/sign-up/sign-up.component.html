@@ -2,20 +2,12 @@
   <div class="login">
     <div class="login__col">
       <div class="login__wrap">
-        <div class="login__preview"><img src="assets/img/content/login-pic.png" alt="Login"></div>
-        <div class="h4 login__subtitle">Plan includes</div>
-        <ul class="login__list">
-          <li>Unlimited product uploads</li>
-          <li>Pro tips</li>
-          <li>Free forever</li>
-          <li>Full author options</li>
-        </ul>
+        <div class="login__preview"><img src="assets/img/logo.svg" alt="Login"></div>
       </div>
     </div>
     <div class="login__col">
-      <div class="login__head"><a class="login__logo" href="#"><img class="some-icon" src="assets/img/logo.svg"
-            alt="Core"><img class="some-icon-dark" src="assets/img/logo.svg" alt="Core"></a>
-        <div class="login__info">Already a member? <a href="sign-in.html">Sign in</a></div>
+      <div class="login__head">
+        
       </div>
       <div class="login__wrapper">
         <div class="h2 login__title">Sign up</div>
@@ -24,9 +16,7 @@
             <div class="login__text">Sign up with Open account</div>
             <div class="login__btns">
               <button class="button-stroke login__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
-              <button class="button-stroke login__button"><img class="some-icon" src="assets/img/content/apple-dark.svg"
-                  alt="Apple"><img class="some-icon-dark" src="assets/img/content/apple-light.svg" alt="Apple">Apple
-                ID</button>
+              
             </div>
           </div>
           <div class="login__text">Or continue with email address</div>
@@ -55,16 +45,6 @@
               <div class="field field_icon">
                 <div class="field__wrap">
                   <input class="field__input"  [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}" type="text" formControlName="email" placeholder="Your email">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon" [ngClass]="{'error': form.controls['phone'].invalid && (form.controls['phone'].dirty || form.controls['phone'].touched)}">
-                <div class="field__wrap">
-                  <input class="field__input"  type="text" formControlName="phone" placeholder="Your phone">
                   <div class="field__icon">
                     <svg class="icon icon-mail">
                       <use xlink:href="#icon-mail"></use>

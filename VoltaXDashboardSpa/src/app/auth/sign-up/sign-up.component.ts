@@ -45,10 +45,6 @@ export class SignUpComponent implements OnInit {
         Validators.required, 
         Validators.email 
       ]),
-      phone: new FormControl('', [
-        Validators.required,
-        Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$") 
-      ]),
       password: new FormControl('', [
         Validators.required,  
         Validators.minLength(8) 
@@ -77,7 +73,7 @@ export class SignUpComponent implements OnInit {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
         email: formValue.email,
-        phone: formValue.phone,
+        phone: '',
         password: formValue.password
       }
 
