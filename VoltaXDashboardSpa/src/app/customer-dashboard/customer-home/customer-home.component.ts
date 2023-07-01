@@ -22,7 +22,6 @@ export class CustomerHomeComponent implements OnInit {
     var id = this._authService.getAuthInformation().nameid;
     this._cardService.getUserRechargeCards(id).subscribe((data) => {
       this.rechargeCards = data;
-      console.log(this.rechargeCards)
     })
   }
 

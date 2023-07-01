@@ -72,6 +72,7 @@ export class RechargeCardsComponent implements OnInit {
     this.card.note = cardForm.note;
     this.card.userID = this.userID;
     this.card.balance = 0;
+    this.card.cardNumber = this.generateRandomString();
     this._cardService.create(this.card).subscribe((data) => {
       this.createFormHide();
       this.getUserRechargeCards();
@@ -86,5 +87,23 @@ export class RechargeCardsComponent implements OnInit {
     this.showCreateForm = false;
     this.form.reset();
   }
+
+  generateRandomString(): string {
+    let result = '';
+    const characters = '0123456789';
+    const charactersLength = characters.length;
+    
+    for (let i = 0; i < 16; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    
+    return result;
+  }
+
+  // deleting recharge card
+  delete(cardID : number){
+    this._cardService.deleteById(cardID).subscribe();
+  }
+  
 
 }

@@ -2,14 +2,10 @@
     <div class="title-green card__title">Recharge Cards</div>
 </div>
 
-<ng-container *ngIf="rechargeCards.length <= 0 && !showCreateForm">
-    <p>there are no cards in this account</p>
-    <button (click)="createFormShow()" class="button"> Add Recharge Card </button>
 
-</ng-container>
 
-<ng-container *ngIf="rechargeCards.length > 0">
-    <app-recharge-card></app-recharge-card>
+<ng-container *ngIf="rechargeCards.length > 0 && !showCreateForm">
+    <app-recharge-card class="recharge_card" *ngFor="let rechargeCard of rechargeCards" [card]="rechargeCard" (deleteEvent)="delete(rechargeCard.id)"></app-recharge-card>
 </ng-container>
 
 <ng-container *ngIf="showCreateForm">
@@ -75,4 +71,12 @@
             </div>
         </div>
     </form>
+</ng-container>
+
+<ng-container *ngIf="rechargeCards.length<=0">
+    you have no recharge cards
+</ng-container>
+
+<ng-container *ngIf="!showCreateForm">
+    <button (click)="createFormShow()" class="button add_button"> Add Recharge Card </button>
 </ng-container>

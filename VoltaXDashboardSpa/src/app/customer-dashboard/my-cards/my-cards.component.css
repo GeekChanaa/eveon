@@ -1,0 +1,14 @@
+.recharge_card{
+    width: 47%;
+    margin-right: 3%;
+    cursor: pointer;
+    transition: ease-in-out all 0.2s;
+}
+
+/* .recharge_card:hover{
+    opacity: 0.7;
+} */
+
+.flex{
+    display: flex;
+}

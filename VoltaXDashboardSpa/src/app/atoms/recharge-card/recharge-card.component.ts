@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Card } from 'src/_models/card';
 
 @Component({
@@ -7,6 +7,8 @@ import { Card } from 'src/_models/card';
   styleUrls: ['./recharge-card.component.css']
 })
 export class RechargeCardComponent implements OnInit {
+
+  @Output() deleteEvent : EventEmitter<void> = new EventEmitter<void>();
 
   @Input() card : Card = {
     id: 0,
@@ -21,6 +23,8 @@ export class RechargeCardComponent implements OnInit {
     user: null
   }
 
+  @Input() small : boolean = false;
+
   
 
   // constructor
@@ -28,6 +32,11 @@ export class RechargeCardComponent implements OnInit {
 
   // on init
   ngOnInit() {
+  }
+
+  // remove recharge card button
+  remove(){
+    this.deleteEvent.emit();
   }
 
 }

@@ -12,6 +12,7 @@ import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
 import { DisplayCellComponent } from './display-cell/display-cell.component';
 import { FormFieldComponent } from './form-field/form-field.component';
 import { RechargeCardComponent } from './recharge-card/recharge-card.component';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { RechargeCardComponent } from './recharge-card/recharge-card.component';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatRippleModule
   ],
   exports: [
     CardComponent,

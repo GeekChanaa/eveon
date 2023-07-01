@@ -21,7 +21,21 @@ namespace VoltaXApi.Data
         public async Task<List<Card>> GetUserRechargeCardsAsync(int UserID)
         {
             return await _context.Cards.Where(u => u.UserID == UserID).ToListAsync();
-        }        
+        }   
+
+        // get card transactions
+        public async Task<List<Transaction>> GetCardTransactions(int CardID)
+        {
+            var card = await _context.Cards.Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ID == CardID);
+            return card?.Transactions.ToList();
+        }    
+
+        // get card Orders
+        public async Task<List<Order>> GetCardOrders(int CardID)
+        {
+            var card = await _context.Cards.Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
+            return card?.Orders.ToList();
+        }     
 
 
     }

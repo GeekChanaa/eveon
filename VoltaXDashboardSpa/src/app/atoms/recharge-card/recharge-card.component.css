@@ -1,13 +1,21 @@
 
 .recharge_card_container{
     border-radius: 12px;
-background: black;
-padding: 64px;
-color: white;
+    background: black;
+    padding: 64px;
+    color: white;
+}
+
+.recharge_card_container.small{
+    padding: 24px;
 }
 
 .recharge_card_logo img {
     height: 64px;
+}
+
+.recharge_card_logo.small img {
+    height: 32px;
 }
 
 .recharge_card_head {
@@ -17,14 +25,26 @@ color: white;
 .recharge_card_body{
     margin-top: 64px;
 }
+.recharge_card_body.small{
+    margin-top: 16px;
+}
 
 .recharge_card_body .card_number{
     font-size: 2.5em;
 }
 
+.recharge_card_body .card_number.small{
+    font-size: 1em;
+}
+
 .recharge_card_footer{
     display: flex;
     margin-top: 48px;
+}
+
+.recharge_card_footer.small{
+    display: flex;
+    margin-top: 16px;
 }
 
 .recharge_card_footer .balance{
@@ -47,4 +67,8 @@ color: white;
 
 .title{
     padding: 0px;
+}
+
+.title.small{
+    font-size: 1em;
 }

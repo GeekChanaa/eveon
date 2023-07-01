@@ -26,14 +26,10 @@
         (breakpoint)="breakpoint($event)"
         (afterChange)="afterChange($event)"
         (beforeChange)="beforeChange($event)">
-      <div ngxSlickItem *ngFor="let slide of slides" class="slide">
-      <img src="{{ slide.img }}" alt="" width="100%">
-      </div>
+          <div ngxSlickItem *ngFor="let rechargeCard of rechargeCards" class="slide">
+            <app-recharge-card ></app-recharge-card>
+          </div>
       </ngx-slick-carousel>
-      <button (click)="addSlide()">Add</button>
-      <button (click)="removeSlide()">Remove</button>
-      <button (click)="slickModal.slickGoTo(2)">slickGoto 2</button>
-      <button (click)="slickModal.unslick()">unslick</button>
         
       </div>
     </div>

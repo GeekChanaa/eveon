@@ -11,6 +11,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [	
@@ -25,7 +26,8 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
     HttpClientModule,
     BrowserAnimationsModule,
     MatSnackBarModule,
-    SlickCarouselModule
+    SlickCarouselModule,
+    MatRippleModule
     
   ],
   providers: [],

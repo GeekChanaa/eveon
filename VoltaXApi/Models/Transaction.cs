@@ -18,7 +18,9 @@ namespace VoltaXApi.Models
         public DateTime? StopTime { get; set; }
         public double? MeterStop { get; set; }
         public string? StopReason { get; set; }
-
+        public int? CardID { get; set; }
+        public Card? Card { get; set; }
+        
         public ChargePoint? ChargePoint { get; set; }
     }
 

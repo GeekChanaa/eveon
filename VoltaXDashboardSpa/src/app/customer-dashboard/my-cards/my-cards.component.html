@@ -1,3 +1,11 @@
-<p>
-  my-cards works!
-</p>
+<div class="overlay"></div>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">My Recharge Cards</div>
+    <div class="flex">
+      <app-recharge-card routerLink="/my-dashboard/my-card/{{rechargeCard.id}}" matRipple [matRippleColor]="'#22222282'"  [small]="true" class="recharge_card" *ngFor="let rechargeCard of rechargeCards" [card]="rechargeCard"></app-recharge-card>
+    </div>
+    
+  </div>
+</div>

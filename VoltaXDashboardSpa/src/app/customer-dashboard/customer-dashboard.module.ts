@@ -8,10 +8,14 @@ import { CustomerDashboardRoutingModule } from './customer-dashboard-routing.mod
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
 import { MyCardsComponent } from './my-cards/my-cards.component';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { MatRippleModule } from '@angular/material/core';
+import { MyCardComponent } from './my-card/my-card.component';
+import {MatTabsModule} from '@angular/material/tabs'; 
 @NgModule({
     declarations: [
         CustomerHomeComponent,
-        MyCardsComponent
+        MyCardsComponent,
+        MyCardComponent
     ],
     imports: [
         AtomsModule,
@@ -21,7 +25,9 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
         SharedModule,
         FormsModule,
         CustomerDashboardRoutingModule,
-        SlickCarouselModule
+        SlickCarouselModule,
+        MatRippleModule,
+        MatTabsModule
     ],
   })
   export class CustomerDashboardModule { }
