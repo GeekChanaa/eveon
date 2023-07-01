@@ -27,6 +27,7 @@ namespace VoltaXApi.Models
         public string? ResetPasswordToken  { get; set; }
         public IEnumerable<Order>? Orders { get; set; }
         public ICollection<DebitCard>? DebitCards { get; set; }
+        public ICollection<Card>? Cards { get; set; }
         
     }
 }

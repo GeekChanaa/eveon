@@ -6,7 +6,12 @@
   </button><a class="sidebar__logo" href="index.html"><img class="some-icon" src="img/logo-dark.png" alt="Core"><img class="some-icon-dark" src="img/logo-light.png" alt="Core"></a>
   
   <div class="sidebar__menu">
+    <!-- Customer menu -->
     <app-sidebar-item *ngIf="role == 'Customer'" [title]="'home'" [link]="'/my-dashboard'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'my cards'" [link]="'/my-dashboard/my-cards'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'my profile'" [link]="'/my-dashboard/my-profile'"></app-sidebar-item>
+
+    <!-- Menu and support menu -->
     <app-sidebar-item *ngIf="role == 'Admin'" [title]="'home'" [link]="'/'"></app-sidebar-item>
 
     <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Operation Monitoring'">

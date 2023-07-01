@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
     private _fileManagementService : FileManagementService
   ) {
     var decodedToken = this._authService.getAuthInformation();
-    this.userID = parseInt(decodedToken.nameid);
+    console.log("this is the profile userID : " + this.userID);
     this.debitCardForm = new FormGroup({
       debitCardName: new FormControl('', [Validators.required]),
       debitCardNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{16}$/)]),

@@ -11,6 +11,7 @@ import { SmallCardComponent } from './small-card/small-card.component';
 import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
 import { DisplayCellComponent } from './display-cell/display-cell.component';
 import { FormFieldComponent } from './form-field/form-field.component';
+import { RechargeCardComponent } from './recharge-card/recharge-card.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FormFieldComponent } from './form-field/form-field.component';
     SmallCardComponent,
     CamelCaseToSpacePipe,
     DisplayCellComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    RechargeCardComponent
    ],
   imports: [
     CommonModule,
@@ -35,7 +37,8 @@ import { FormFieldComponent } from './form-field/form-field.component';
     SearchInputComponent,
     SmallCardComponent,
     DisplayCellComponent,
-    FormFieldComponent
+    FormFieldComponent,
+    RechargeCardComponent
   ],
   providers: [],
 })

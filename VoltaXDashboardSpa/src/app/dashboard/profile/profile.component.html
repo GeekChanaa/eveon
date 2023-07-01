@@ -214,7 +214,7 @@
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
-            <app-recharge-cards [userID]="userID"></app-recharge-cards>
+            <app-recharge-cards [userID]="user.id"></app-recharge-cards>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'PaymentCardsTab'">
             <div class="settings__anchor" id="payment" data-value="Payment"></div>

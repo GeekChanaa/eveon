@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { AuthService } from 'src/_services/auth.service';
 
@@ -14,6 +14,8 @@ export class NavbarComponent implements OnInit {
     private _router: Router
   ) { }
 
+  avatarMenuBody : boolean = false;
+
   // On init cycle hook
   ngOnInit() {
   }
@@ -24,4 +26,8 @@ export class NavbarComponent implements OnInit {
     this._router.navigate(['/auth/login']);
   }
 
+  // header avatar 
+  header_avatar(){
+    this.avatarMenuBody = this.avatarMenuBody ? false : true;
+  }
 }

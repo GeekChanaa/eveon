@@ -1,0 +1,14 @@
+.create__col{
+    flex: 0 0 calc(100%);
+    width: calc(100%);
+}
+
+.cancel-btn{
+    margin-left: 77%;
+}
+
+.btns_group{
+    padding: 24px;
+}
+
+

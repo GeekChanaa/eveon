@@ -59,7 +59,6 @@ namespace VoltaXApi.Data
             }
         }
 
-
         // get all user names
         public async Task<List<UserNameDto>> GetUserNames()
         {

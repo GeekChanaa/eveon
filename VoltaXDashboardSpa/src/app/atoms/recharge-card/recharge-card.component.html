@@ -1,0 +1,30 @@
+<div class="recharge_card_container">
+  <div class="recharge_card_head">
+    <div class="recharge_card_logo">
+      <img src="assets/img/logo.svg" alt="">
+    </div>
+    <div>
+      {{card.cardType}}
+    </div>
+  </div>
+
+  <div class="recharge_card_body">
+    <p class="card_number">{{card.cardNumber}}</p>
+    
+  </div>
+
+  <div class="recharge_card_footer">
+    <div class="balance footer_element"> 
+      <p class="title">Balance</p>
+      <p class="value">{{card.balance}} DH</p>
+    </div>
+    <div class="expiration_date footer_element"> 
+      <p class="title">Exp. Date</p>
+      <p class="value">{{card.expirationDate}}</p>
+    </div>
+    <div class="activation_control footer_element">
+      <p class="title">Activation</p>
+      <p class="value">{{card.status}}</p>
+    </div>
+  </div>
+</div>

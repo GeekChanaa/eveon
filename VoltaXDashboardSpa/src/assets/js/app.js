@@ -21,43 +21,43 @@ $(document).ready(function () {
   } // header
 
 
-  (function () {
-    var header = $('.header'),
-      items = header.find('.header__item'),
-      burger = header.find('.header__burger'),
-      searchOpen = header.find('.header__search'),
-      sidebar = $('.sidebar'),
-      search = $('.search');
-    items.each(function () {
-      var item = $(this),
-        head = item.find('.header__head'),
-        body = item.find('.header__body');
-      head.on('click', function (e) {
-        e.stopPropagation();
+  // (function () {
+  //   var header = $('.header'),
+  //     items = header.find('.header__item'),
+  //     burger = header.find('.header__burger'),
+  //     searchOpen = header.find('.header__search'),
+  //     sidebar = $('.sidebar'),
+  //     search = $('.search');
+  //   items.each(function () {
+  //     var item = $(this),
+  //       head = item.find('.header__head'),
+  //       body = item.find('.header__body');
+  //     head.on('click', function (e) {
+  //       e.stopPropagation();
 
-        if (!item.hasClass('active')) {
-          items.removeClass('active');
-          item.addClass('active');
-        } else {
-          items.removeClass('active');
-        }
+  //       if (!item.hasClass('active')) {
+  //         items.removeClass('active');
+  //         item.addClass('active');
+  //       } else {
+  //         items.removeClass('active');
+  //       }
 
-        searchOpen.removeClass('active');
-        search.removeClass('visible');
-      });
-      body.on('click', function (e) {
-        e.stopPropagation();
-      });
-      $('html, body').on('click', function () {
-        items.removeClass('active');
-      });
-    });
-    burger.on('click', function (e) {
-      e.stopPropagation();
-      sidebar.toggleClass('visible');
-      $('html, body').toggleClass('no-scroll');
-    });
-  })(); // search
+  //       searchOpen.removeClass('active');
+  //       search.removeClass('visible');
+  //     });
+  //     body.on('click', function (e) {
+  //       e.stopPropagation();
+  //     });
+  //     $('html, body').on('click', function () {
+  //       items.removeClass('active');
+  //     });
+  //   });
+  //   burger.on('click', function (e) {
+  //     e.stopPropagation();
+  //     sidebar.toggleClass('visible');
+  //     $('html, body').toggleClass('no-scroll');
+  //   });
+  // })(); // search
 
 
   (function () {

@@ -4,6 +4,7 @@ import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,8 @@ export class CardService extends AbstractService<Card>{
   baseUrl = environment.apiUrl+"/api/card/";
 
   // Get user recharge cards
-  getUserRechargeCards(userID : number){
-    return this._http.get(this.baseUrl+"GetUserRechargeCards?UserID="+userID);
+  getUserRechargeCards(userID : number) : Observable<any[]>{
+    return this._http.get<any[]>(this.baseUrl+"GetUserRechargeCards?UserID="+userID);
   }
 
   // get all cards

@@ -24,6 +24,11 @@ export class UserService extends AbstractService<User>{
     return this._http.get<any[]>(this.baseUrl + "GetUserDebitCards?UserID=" + userID);
   }
 
+  // Get User Recharge Cards
+  getUserRechargeCards(userID: number) {
+    return this._http.get<any[]>(this.baseUrl + "GetUserRechargeCards?UserID=" + userID);
+  }
+
   // user email unique
   userEmailExists(email : string) : Observable<Boolean>{
     return this._http.get<Boolean>(this.baseUrl + "UserEmailExists/?email=" + email);
