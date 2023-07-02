@@ -47,14 +47,14 @@ namespace VoltaXApi.Controllers
 
         // get Card Transactions
         [HttpGet("GetCardTransactions")]
-        public async Task<ActionResult<List<Transaction>>> GetCardTransactions([FromQuery] int CardID)
+        public async Task<ActionResult<List<TransactionDto>>> GetCardTransactions([FromQuery] int CardID)
         {
             return await this._repository.GetCardTransactions(CardID);
         }
 
         // get Card Orders
         [HttpGet("GetCardOrders")]
-        public async Task<ActionResult<List<Order>>> GetCardOrders([FromQuery] int CardID)
+        public async Task<ActionResult<List<OrderDto>>> GetCardOrders([FromQuery] int CardID)
         {
             return await this._repository.GetCardOrders(CardID);
         }

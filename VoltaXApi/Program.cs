@@ -78,7 +78,6 @@ using (var scope = app.Services.CreateScope())
     // use context
     // GlobalSeeder.Seed(dbContext).Wait();
     dbContext.Database.SetCommandTimeout(6000);
-
     // await SqlScriptExecuter.ExecuteSqlScript();
 }
 

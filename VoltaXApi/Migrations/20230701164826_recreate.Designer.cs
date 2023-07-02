@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230630185502_recreate")]
+    [Migration("20230701164826_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -658,6 +658,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int?>("CardID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ChargePointID")
                         .HasColumnType("nvarchar(max)");
 
@@ -695,6 +698,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CardID");
 
                     b.HasIndex("ChargePointID1");
 
@@ -769,7 +774,7 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Cards")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -898,9 +903,15 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
                 {
+                    b.HasOne("VoltaXApi.Models.Card", "Card")
+                        .WithMany("Transactions")
+                        .HasForeignKey("CardID");
+
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
                         .WithMany("Transactions")
                         .HasForeignKey("ChargePointID1");
+
+                    b.Navigation("Card");
 
                     b.Navigation("ChargePoint");
                 });
@@ -908,6 +919,8 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
@@ -936,6 +949,8 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>
                 {
+                    b.Navigation("Cards");
+
                     b.Navigation("DebitCards");
 
                     b.Navigation("Orders");

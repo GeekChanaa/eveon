@@ -14,6 +14,10 @@ namespace VoltaXApi.Mappers
             
             CreateMap<Card,CardDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
+            
+            CreateMap<Order,OrderDto>();
+            CreateMap<Transaction,TransactionDto>();
+                
         }
 
         private string Mask(string value)

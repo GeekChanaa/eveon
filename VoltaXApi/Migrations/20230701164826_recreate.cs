@@ -316,35 +316,6 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Uid = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConnectorId = table.Column<int>(type: "int", nullable: false),
-                    StartTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MeterStart = table.Column<double>(type: "float", nullable: false),
-                    StartResult = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StopTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StopTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    MeterStop = table.Column<double>(type: "float", nullable: true),
-                    StopReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID1 = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Transactions", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Transactions_ChargePoints_ChargePointID1",
-                        column: x => x.ChargePointID1,
-                        principalTable: "ChargePoints",
-                        principalColumn: "ID");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Cities",
                 columns: table => new
                 {
@@ -424,6 +395,41 @@ namespace VoltaXApi.Migrations
                         name: "FK_Orders_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Uid = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChargePointID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConnectorId = table.Column<int>(type: "int", nullable: false),
+                    StartTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MeterStart = table.Column<double>(type: "float", nullable: false),
+                    StartResult = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StopTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StopTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MeterStop = table.Column<double>(type: "float", nullable: true),
+                    StopReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CardID = table.Column<int>(type: "int", nullable: true),
+                    ChargePointID1 = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Cards_CardID",
+                        column: x => x.CardID,
+                        principalTable: "Cards",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Transactions_ChargePoints_ChargePointID1",
+                        column: x => x.ChargePointID1,
+                        principalTable: "ChargePoints",
                         principalColumn: "ID");
                 });
 
@@ -530,6 +536,11 @@ namespace VoltaXApi.Migrations
                 name: "IX_States_CountryID",
                 table: "States",
                 column: "CountryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_CardID",
+                table: "Transactions",
+                column: "CardID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_ChargePointID1",

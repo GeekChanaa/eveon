@@ -24,17 +24,19 @@ namespace VoltaXApi.Data
         }   
 
         // get card transactions
-        public async Task<List<Transaction>> GetCardTransactions(int CardID)
+        public async Task<List<TransactionDto>> GetCardTransactions(int CardID)
         {
             var card = await _context.Cards.Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ID == CardID);
-            return card?.Transactions.ToList();
+            var transactions =  card?.Transactions.AsQueryable();
+            return _mapper.ProjectTo<TransactionDto>(transactions).ToList();
         }    
 
         // get card Orders
-        public async Task<List<Order>> GetCardOrders(int CardID)
+        public async Task<List<OrderDto>> GetCardOrders(int CardID)
         {
             var card = await _context.Cards.Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
-            return card?.Orders.ToList();
+            var Orders =  card?.Orders.AsQueryable();
+            return _mapper.ProjectTo<OrderDto>(Orders).ToList();
         }     
 
 
