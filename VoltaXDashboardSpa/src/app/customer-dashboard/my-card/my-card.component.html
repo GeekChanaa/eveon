@@ -6,7 +6,7 @@
       <div class="recharge_card_informations">
         <mat-tab-group>
           <mat-tab label="Recharge History">
-            <div class="earning">
+            <div *ngIf="rechargeOrders.length >0" class="earning">
               <div class="earning__table">
                 <div class="earning__row">
                   <div class="earning__col">Date</div>
@@ -24,10 +24,14 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div class="empty" *ngIf="rechargeOrders.length<=0">
+              no orders for this card
             </div>
           </mat-tab>
           <mat-tab label="Transaction History">
-            <div class="earning">
+            <div *ngIf="transactions.length>0" class="earning">
               <div class="earning__table">
                 <div class="earning__row">
                   <div class="earning__col">Date</div>
@@ -35,7 +39,7 @@
                   <div class="earning__col">Product sales count</div>
                   <div class="earning__col">Earnings</div>
                 </div>
-                <div class="earning__row">
+                <div *ngFor="let transaction of transactions" class="earning__row">
                   <div class="earning__col">Fri, Apr 9</div>
                   <div class="earning__col">
                     <div class="status-yellow earning__status">Pending</div>
@@ -46,6 +50,11 @@
                 </div>
               </div>
             </div>
+
+            <div *ngIf="transactions.length <= 0" class="empty">
+              Empty table
+            </div>
+            
           </mat-tab>
         </mat-tab-group>
       </div>

@@ -15,5 +15,6 @@ namespace VoltaXApi.Data
         Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync();
         Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync();
         Task<double> GetTotalEnergyConsumedBetween(DateTime date1, DateTime date2);
+        Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20);
     }
 }

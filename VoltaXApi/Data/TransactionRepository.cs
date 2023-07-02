@@ -132,6 +132,12 @@ namespace VoltaXApi.Data
             return energyByMonth;
         }
 
+        // Getting latest Transactions 
+        public async Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20)
+        {
+            return await  this._context.Transactions.OrderByDescending(u => u.StartTime).Take(nbrTransactions).ToListAsync();
+        }
+
 
 
     }

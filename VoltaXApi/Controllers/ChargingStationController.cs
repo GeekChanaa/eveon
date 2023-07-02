@@ -36,6 +36,48 @@ namespace VoltaXApi.Controllers
             return Ok(entity);
         }
 
+        [HttpGet("GetChargingStationRevenue")]
+        public async Task<ActionResult<double>> GetChargingStationRevenue([FromQuery] int chargingStationID, string? start =null , string? end = null)
+        {
+            if(String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
+            {
+                Console.WriteLine("this is inside the if");
+                return await this._repository.GetChargingStationRevenue(chargingStationID);
+            }
+
+
+            DateTime? startDate = DateTime.Parse(start);
+            DateTime? endDate = DateTime.Parse(end);
+
+            return await this._repository.GetChargingStationRevenue(chargingStationID, startDate , endDate);
+        }
+
+        [HttpGet("GetChargingStationRevenueLast7Days")]
+        public async Task<ActionResult<List<double>>> GetChargingStationRevenueLast7Days([FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetChargingStationRevenueLast7Days(chargingStationID)).ToList();
+        }
+
+        [HttpGet("GetChargingStationRevenueLast30Days")]
+        public async Task<ActionResult<List<double>>> GetChargingStationRevenueLast30Days([FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetChargingStationRevenueLast30Days(chargingStationID)).ToList();
+        }
+
+        [HttpGet("GetChargingStationRevenueLast12Months")]
+        public async Task<ActionResult<List<double>>> GetChargingStationRevenueLast12Months([FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetChargingStationRevenueLast12Months(chargingStationID)).ToList();
+        }
+
+
+        [HttpGet("GetTop10ChargingStationsByRevenue")]
+        public async Task<IActionResult> GetTop10ChargingStationsByRevenue()
+        {
+            return Ok(await _repository.GetTop10ChargingStationsByRevenue());
+        }
+
+
 
     }
 }

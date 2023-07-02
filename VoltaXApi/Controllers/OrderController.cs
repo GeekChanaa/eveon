@@ -44,9 +44,9 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("countRechargeAmountBetween")]
-        public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart , [FromQuery] DateTime dateEnd)
+        public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart, [FromQuery] DateTime dateEnd)
         {
-            decimal count =  await _repository.CountRecharge(u => u.RechargeDate>= dateStart && u.RechargeDate <= dateEnd);
+            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= dateStart && u.RechargeDate <= dateEnd);
             return Ok(count);
         }
 
@@ -102,5 +102,51 @@ namespace VoltaXApi.Controllers
 
             return Ok(orderCountByDay);
         }
+
+        [HttpGet("countByLast7Days")]
+        public async Task<IActionResult> CountByLast7Days()
+        {
+            DateTime endDate = DateTime.Today;
+            DateTime startDate = endDate.AddDays(-6); // subtract 6 to include today in the 7 day count
+
+            var orderCountByDay = new List<decimal>();
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                DateTime currentDay = date.Date;
+                DateTime nextDay = currentDay.AddDays(1);
+
+                decimal rechargeAmount = await _repository
+                    .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
+
+                orderCountByDay.Add(rechargeAmount);
+            }
+
+            return Ok(orderCountByDay);
+        }
+
+        [HttpGet("countByLast12Months")]
+        public async Task<IActionResult> CountByLast12Months()
+        {
+            DateTime endDate = DateTime.Today;
+            DateTime startDate = endDate.AddYears(-1).AddMonths(1); // subtract a year and add a month to include the current month in the 12 month count
+
+            var orderCountByMonth = new List<decimal>();
+
+            for (DateTime month = startDate; month <= endDate; month = month.AddMonths(1))
+            {
+                DateTime currentMonthStart = new DateTime(month.Year, month.Month, 1);
+                DateTime nextMonthStart = currentMonthStart.AddMonths(1);
+
+                decimal rechargeAmount = await _repository
+                    .CountAsync(u => u.RechargeDate >= currentMonthStart && u.RechargeDate < nextMonthStart);
+
+                orderCountByMonth.Add(rechargeAmount);
+            }
+
+            return Ok(orderCountByMonth);
+        }
+
+
     }
 }

@@ -22,10 +22,21 @@ export class OrderService extends AbstractService<Order>{
     return this._http.get<number>(this.baseUrl+"countToday");
   }
 
-  // Counting orders By DAy
+  // Counting orders By DAy for the last 30 days
   countOrdersByDay(){
     return this._http.get<number[]>(this.baseUrl+"countByDay");
   }
+
+  // counting orders by day for the last 7 days
+  countbylast7Days(){
+    return this._http.get<number[]>(this.baseUrl+"countbylast7Days");
+  }
+
+  // counting orders by day for the last 12 months by month
+  countbylast12months(){
+    return this._http.get<number[]>(this.baseUrl+"countbylast12months");
+  }
+
 
   // Counting orders rechargeAmount total
   countRechargeAmount(){
@@ -46,5 +57,6 @@ export class OrderService extends AbstractService<Order>{
   countRechargeAmountBetween(dateStart : Date, dateEnd : Date){
     return this._http.get<number>(this.baseUrl+"countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
   }
+
 
 }

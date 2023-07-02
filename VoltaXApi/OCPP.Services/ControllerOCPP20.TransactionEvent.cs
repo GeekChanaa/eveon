@@ -95,7 +95,7 @@ namespace OCPP.Core.Server
                                     Transaction transaction = new Transaction();
                                     transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
                                     transaction.ChargePointID = ChargePointStatus.Id;
-                                    transaction.ConnectorId = connectorId;
+                                    transaction.ConnectorID = connectorId;
                                     transaction.StartTagId = idTag;
                                     transaction.StartTime = transactionEventRequest.Timestamp.UtcDateTime;
                                     transaction.MeterStart  = meterKWH;
@@ -145,7 +145,7 @@ namespace OCPP.Core.Server
                                 Console.WriteLine("UpdateTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
                                 // find latest transaction for this charge point
                                 transaction = dbContext.Transactions
-                                    .Where(t => t.ChargePointID == ChargePointStatus.Id && t.ConnectorId == connectorId)
+                                    .Where(t => t.ChargePointID == ChargePointStatus.Id && t.ConnectorID == connectorId)
                                     .OrderByDescending(t => t.ID)
                                     .FirstOrDefault();
 
@@ -247,7 +247,7 @@ namespace OCPP.Core.Server
                                 Console.WriteLine("EndTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
                                 // find latest transaction for this charge point
                                 transaction = dbContext.Transactions
-                                    .Where(t => t.ChargePointID == ChargePointStatus.Id && t.ConnectorId == connectorId)
+                                    .Where(t => t.ChargePointID == ChargePointStatus.Id && t.ConnectorID == connectorId)
                                     .OrderByDescending(t => t.ID)
                                     .FirstOrDefault();
 

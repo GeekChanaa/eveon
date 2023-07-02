@@ -18,4 +18,24 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
 
   // Base URL for the api
   baseUrl = environment.apiUrl+"/api/chargingstation/";
+
+  // get charging station revenue
+
+
+  getChargingStationRevenueLast7Days(chargingStationID : number){
+    return this._http.get<number[]>(this.baseUrl+"GetChargingStationRevenueLast7Days?chargingStationID="+chargingStationID);
+  }
+
+  getChargingStationRevenueLast30Days(chargingStationID : number){
+    return this._http.get<number[]>(this.baseUrl+"GetChargingStationRevenueLast30Days?chargingStationID="+chargingStationID);
+  }
+
+  getChargingStationRevenueLast12Months(chargingStationID : number){
+    return this._http.get<number[]>(this.baseUrl+"GetChargingStationRevenueLast12Months?chargingStationID="+chargingStationID);
+  }
+
+  getTop10ChargingStationsByRevenue(){
+    return this._http.get<any[]>(this.baseUrl+"GetTop10ChargingStationsByRevenue");
+  }
+
 }

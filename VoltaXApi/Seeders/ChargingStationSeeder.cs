@@ -12,7 +12,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(cs => cs.Name, f => f.Company.CompanyName())
                 .RuleFor(cs => cs.Address, f => f.Address.FullAddress())
                 .RuleFor(cs => cs.Network, f => f.Company.CompanySuffix())
-                .RuleFor(cs => cs.Category, f => f.Commerce.Department())
+                .RuleFor(cs => cs.Category, f => f.PickRandom(new string[] { "public", "private", "partner" }))
                 .RuleFor(cs => cs.ChargerQuantity, f => f.Random.Int(1, 10).ToString())
                 .RuleFor(cs => cs.Country, f => f.Address.Country())
                 .RuleFor(cs => cs.State, f => f.Address.State())

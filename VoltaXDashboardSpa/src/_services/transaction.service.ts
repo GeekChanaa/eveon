@@ -38,4 +38,9 @@ export class TransactionService extends AbstractService<Transaction>{
     return this.http.get<number>(this.baseUrl+"GetTotalEnergyConsumedBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
   }
 
+  // getting latest transactions
+  getLatestTransactions(){
+    return this.http.get<any[]>(this.baseUrl+"GetLatestTransactions");
+  }
+
 }

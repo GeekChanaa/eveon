@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
+using LinqKit;
 
 namespace VoltaXApi.Data
 {
@@ -41,22 +42,25 @@ namespace VoltaXApi.Data
             }
 
             // Searching for an occurence of a string Only string Objects 
-            if (!string.IsNullOrEmpty(objectParams.SearchBy))
+            // Searching for an occurrence of a string in multiple properties
+            if (objectParams.SearchBy != null && objectParams.SearchBy.Length > 0)
             {
-                foreach (var prop in props)
+                var combinedSearchPredicate = PredicateBuilder.New<TEntity>(false); // 'false' for OR logic
+                foreach (var searchProperty in objectParams.SearchBy)
                 {
-                    if (prop.Name == objectParams.SearchBy && !objectParams.SearchBy.Contains('.'))
+                    var searchPropertyInfo = props.FirstOrDefault(p => p.Name == searchProperty);
+                    if (searchPropertyInfo != null)
                     {
-                        string filterQuery1 = "(" + prop.Name + ".Contains(\"" + objectParams.SearchValue + "\"))";
-                        data = data.Where(filterQuery1);
+                        combinedSearchPredicate = combinedSearchPredicate.Or(entity => EF.Property<string>(entity, searchPropertyInfo.Name).Contains(objectParams.SearchValue));
                     }
-                    else if (objectParams.SearchBy.Contains('.'))
+                    else if (searchProperty.Contains('.'))
                     {
-                        var navigation = objectParams.SearchBy.Split('.').First();
-                        var navigationProp = objectParams.SearchBy.Split('.').Last();
+                        var navigation = searchProperty.Split('.').First();
+                        var navigationProp = searchProperty.Split('.').Last();
                         data = data.Where(navigation + "." + navigationProp + ".Contains(\"" + objectParams.SearchValue + "\")");
                     }
                 }
+                data = data.Where(combinedSearchPredicate);
             }
 
             // Filtering

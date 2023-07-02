@@ -94,3 +94,13 @@ C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Deb
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\System.Text.Encoding.CodePages.dll
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\EntityFramework.SqlServer.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\EntityFramework.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\LinqKit.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\LinqKit.Core.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\System.Data.SqlClient.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win-arm64\native\sni.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win-x64\native\sni.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win-x86\native\sni.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\XPS\OneDrive\Bureau\Projects\Personal Projects\VoltaX\voltaxapi\bin\Debug\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll

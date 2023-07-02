@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230701164826_recreate")]
+    [Migration("20230702170304_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -96,7 +96,7 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("ChargePointId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ChargingStationID")
                         .HasColumnType("int");
@@ -356,6 +356,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ChargePointID")
                         .HasColumnType("int");
 
+                    b.Property<int>("ConnectorID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
 
@@ -368,6 +371,9 @@ namespace VoltaXApi.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("ChargePointID");
+
+                    b.HasIndex("ConnectorID", "ChargePointID")
+                        .IsUnique();
 
                     b.ToTable("Connectors");
                 });
@@ -658,16 +664,16 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<int?>("CardID")
                         .HasColumnType("int");
 
                     b.Property<string>("ChargePointID")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ChargePointID1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ConnectorId")
+                    b.Property<int>("ConnectorID")
                         .HasColumnType("int");
 
                     b.Property<double>("MeterStart")
@@ -701,7 +707,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("CardID");
 
-                    b.HasIndex("ChargePointID1");
+                    b.HasIndex("ChargePointID");
 
                     b.ToTable("Transactions");
                 });
@@ -909,7 +915,8 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
                         .WithMany("Transactions")
-                        .HasForeignKey("ChargePointID1");
+                        .HasForeignKey("ChargePointID")
+                        .HasPrincipalKey("ChargePointId");
 
                     b.Navigation("Card");
 

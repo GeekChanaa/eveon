@@ -151,4 +151,13 @@ export class ChargingStationsComponent implements OnInit {
     }
     this.getAll();
   }
+
+  search(val : string){
+    // // Update parameters in itemParams
+    // this.itemParams.SearchBy = ['Name', 'Address']; // array of fields to search in
+    // this.itemParams.SearchValue = 'Gut'; // the value to search for
+
+    // this.getAll();
+    console.log(val);
+  }
 }

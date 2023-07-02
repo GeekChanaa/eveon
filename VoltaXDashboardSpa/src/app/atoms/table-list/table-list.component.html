@@ -3,8 +3,8 @@
   <div class="card__head">
     <div class="title-purple card__title">{{names | titlecase}}</div>
     <form class="form">
-      <input class="form__input" type="text" name="search" placeholder="Search by name or email" required="required"
-        autocomplete="off" />
+      <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup)="search()" />
+
       <button class="form__button">
         <svg class="icon icon-search">
           <use xlink:href="#icon-search"></use>

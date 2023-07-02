@@ -24,6 +24,9 @@ export class MyCardComponent implements OnInit {
     user: null
   }
 
+  transactions : any[] = [];
+  rechargeOrders : any[] = [];
+
   // card ID 
   cardID : number = 0;
 
@@ -46,6 +49,22 @@ export class MyCardComponent implements OnInit {
   getCard(){
     this._cardService.getById(this.cardID).subscribe((data) => {
       this.card = data;
+      this.getCardTransactions();
+      this.getCardTransactions();
+    })
+  }
+
+  // get Card Transactions
+  getCardTransactions(){
+    this._cardService.getCardTransactions(this.card.id).subscribe((data) => {
+      this.transactions = data;
+    })
+  }
+
+  // get card recharge orders
+  getCardRechargeOrders(){
+    this._cardService.getCardOrders(this.card.id).subscribe((data) => {
+      this.rechargeOrders = data;
     })
   }
 

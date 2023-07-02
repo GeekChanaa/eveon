@@ -28,6 +28,14 @@ export class CardService extends AbstractService<Card>{
     return super.getAll(page,itemsPerPage,itemParams,"GetAllCards");
   }
 
-  
+  // get card transactions 
+  getCardTransactions(cardID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetCardTransactions?CardID="+cardID);
+  }
+
+  // get card recharge orders
+  getCardOrders(cardID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetCardOrders?CardID="+cardID);
+  }
 
 }

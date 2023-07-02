@@ -24,23 +24,32 @@ export abstract class AbstractService<T> {
     const paginatedResult: PaginatedResult<T[]> | null = new PaginatedResult<T[]>();
     let params = new HttpParams();
     if (page != null && itemsPerPage != null) {
-      params = params.append('pageNumber', page);
-      params = params.append('pageSize', itemsPerPage);
+      params = params.append('pageNumber', page.toString());
+      params = params.append('pageSize', itemsPerPage.toString());
     }
 
     // Other sorting and filtering params
+    let queryString = "";
     if (itemParams != null) {
       for (const p in itemParams) {
         if (itemParams[p] != null)
         {
-          if(p == "filterBy"){
+          if(p == "SearchBy"){
+            for(var i =0 ;i < itemParams.SearchBy.length ;i++){
+              queryString += "&" + p + "=" + itemParams.SearchBy[i];
+            }
+          }
+          else if(p == "SearchValue"){
+            queryString += "&" + p + "=" + itemParams.SearchValue;
+          }
+          else if(p == "filterBy"){
             for(var i =0 ;i < itemParams.filterBy.length ;i++){
-              params = params.append(p,itemParams.filterBy[i]);
+              queryString += "&" + p + "=" + itemParams.filterBy[i];
             }
           }
           else if(p == "filterValue"){
             for(var i =0 ;i < itemParams.filterValue.length ;i++){
-              params = params.append(p,itemParams.filterValue[i]);
+              queryString += "&" + p + "=" + itemParams.filterValue[i];
             }
           }
           else{
@@ -50,8 +59,8 @@ export abstract class AbstractService<T> {
               
       }
     }
-    const url = this.actionUrl + endpoint;
-    return this._http.get<T[]>(url, { observe: 'response', params })
+    const url = this.actionUrl + endpoint + "?" + params.toString() + queryString;
+    return this._http.get<T[]>(url, { observe: 'response' })
         .pipe(
             map(response => {
             const paginationHeader = response.headers.get('Pagination');
@@ -63,6 +72,7 @@ export abstract class AbstractService<T> {
             })
         )
   }
+
 
   // Get Item by id
   getById(id: number): Observable<T> {

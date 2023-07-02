@@ -25,6 +25,15 @@ namespace VoltaXApi.Data
                 .IsUnique();
             modelBuilder.Entity<ConnectorStatus>()
                 .HasKey(cs => new { cs.ConnectorId, cs.ChargePointId });
+            modelBuilder.Entity<Connector>()
+                .HasIndex(cs => new { cs.ConnectorID, cs.ChargePointID })
+                .IsUnique();
+            
+            modelBuilder.Entity<Transaction>()
+                    .HasOne(t => t.ChargePoint)
+                    .WithMany(cp => cp.Transactions)
+                    .HasForeignKey(t => t.ChargePointID)
+                    .HasPrincipalKey(cp => cp.ChargePointId); // new line
         }
 
             public DbSet<User> Users { get; set; }

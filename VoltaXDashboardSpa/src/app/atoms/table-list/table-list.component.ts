@@ -14,6 +14,7 @@ export class TableListComponent implements OnInit {
   @Input() fields : string[] = [];
   @Input() data : any[] = [];
   @Input() createLink : string = "/";
+  @Input() searchByPlaceHolder : string = "Search by name";
   @Output() next : EventEmitter<void> = new EventEmitter<void>();
   @Output() previous : EventEmitter<void> = new EventEmitter<void>();
   @Output() firstPage : EventEmitter<void> = new EventEmitter<void>();
@@ -22,6 +23,9 @@ export class TableListComponent implements OnInit {
   @Output() displayEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent : EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent : EventEmitter<string> = new EventEmitter<string>();
+  @Output() searchEvent : EventEmitter<string> = new EventEmitter<string>();
+
+  searchValue : string = "";
 
   fieldShown : { [key: string]: Boolean } = {};
 
@@ -83,5 +87,10 @@ export class TableListComponent implements OnInit {
   // sorting by field
   sort(field : string){
     this.sortEvent.emit(field);
+  }
+
+  // search field
+  search(){
+    this.searchEvent.emit(this.searchValue);
   }
 }
