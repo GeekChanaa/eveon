@@ -360,6 +360,4 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     return this.form.get(name) as FormControl;
   }
 
-  
-
 }
