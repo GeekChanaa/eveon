@@ -29,6 +29,29 @@ export class ChargePointSimComponent implements OnInit {
   // Getting all possible connector Statuses
   connectorStatuses = Object.values(ConnectorStatusEnumType);
 
+  STR : any = {
+    eventType: Object.values(TransactionEventEnumType),
+    triggerReason: Object.values(TriggerReasonEnumType),
+    transactionInfo: {
+      customData: {
+        vendorId: ''
+      },
+      transactionId: '',
+      stoppedReason : Object.values(ReasonEnumType)
+    },
+    meterValue: [],
+    timestamp: this._wsService.formatDate(new Date()),
+    seqNo: 0,
+    evse: {
+      id: 0,
+      connectorId : 0
+    },
+    idToken: {
+      idToken: '',
+      type:  Object.values(IdTokenEnumType)
+    }
+  };
+
 
   chargePoint: ChargePoint | undefined;
   connectorIdTransactionUid : string[] = [];

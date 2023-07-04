@@ -6,9 +6,11 @@ import { AppComponent } from './app.component';
 import { ChargingStationsComponent } from './charging-stations/charging-stations.component';
 import { ChargePointsComponent } from './charge-points/charge-points.component';
 import { AddChargePointComponent } from './add-charge-point/add-charge-point.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChargePointSimComponent } from './charge-point-sim/charge-point-sim.component';
 import { HttpClientModule } from '@angular/common/http';
+import { DynamicFormComponent } from './charge-point-sim/dynamic-form/dynamic-form.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [				
@@ -16,13 +18,16 @@ import { HttpClientModule } from '@angular/common/http';
       ChargingStationsComponent,
       ChargePointsComponent,
       AddChargePointComponent,
-      ChargePointSimComponent
+      ChargePointSimComponent,
+      DynamicFormComponent
    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
