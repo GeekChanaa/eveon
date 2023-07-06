@@ -10,5 +10,6 @@ namespace VoltaXApi.Data
     public interface ICityRepository : IRepository<City>
     {
         Task<List<CityNameDto>> GetAllCityNamesByState(int stateID);
+        Task<List<CityNameDto>> GetAllMoroccoCityNames();
     }
 }

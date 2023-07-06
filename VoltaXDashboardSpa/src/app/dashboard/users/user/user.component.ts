@@ -25,7 +25,9 @@ export class UserComponent implements OnInit {
     lastName: '',
     email: '',
     phone: '',
-    role : UserRole.Customer
+    role: UserRole.Customer,
+    isEmailVerified: false,
+    isPhoneVerified: false
   }
 
   constructor(

@@ -28,7 +28,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("{id}")]
         public override async Task<IActionResult> GetById(int id)
         {
-            var entity =  await this._repository.GetChargingStationByIdAsync(id);
+            var entity = await this._repository.GetChargingStationByIdAsync(id);
             if (entity == null)
             {
                 return NotFound();
@@ -37,9 +37,9 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargingStationRevenue")]
-        public async Task<ActionResult<double>> GetChargingStationRevenue([FromQuery] int chargingStationID, string? start =null , string? end = null)
+        public async Task<ActionResult<double>> GetChargingStationRevenue([FromQuery] int chargingStationID, string? start = null, string? end = null)
         {
-            if(String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
+            if (String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
             {
                 Console.WriteLine("this is inside the if");
                 return await this._repository.GetChargingStationRevenue(chargingStationID);
@@ -49,7 +49,7 @@ namespace VoltaXApi.Controllers
             DateTime? startDate = DateTime.Parse(start);
             DateTime? endDate = DateTime.Parse(end);
 
-            return await this._repository.GetChargingStationRevenue(chargingStationID, startDate , endDate);
+            return await this._repository.GetChargingStationRevenue(chargingStationID, startDate, endDate);
         }
 
         [HttpGet("GetChargingStationRevenueLast7Days")]
@@ -76,6 +76,29 @@ namespace VoltaXApi.Controllers
         {
             return Ok(await _repository.GetTop10ChargingStationsByRevenue());
         }
+
+        [HttpPost]
+        public override async Task<IActionResult> Create(ChargingStation chargingStation)
+        {
+            if (chargingStation == null)
+            {
+                return BadRequest("Entity is null");
+            }
+
+            try
+            {
+                await _repository.AddAsync(chargingStation);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exception that was thrown in the AddAsync method
+                // You can replace this with more specific error handling if you want
+                return BadRequest(ex.Message);
+            }
+
+            return CreatedAtAction("GetById", new { id = chargingStation.ID }, chargingStation);
+        }
+
 
 
 

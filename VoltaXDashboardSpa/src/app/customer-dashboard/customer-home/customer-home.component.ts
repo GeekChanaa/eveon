@@ -1,4 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { UserRole } from 'src/_models/_enums/user-role';
+import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
 import { CardService } from 'src/_services/card.service';
 import { UserService } from 'src/_services/user.service';
@@ -8,6 +10,20 @@ import { UserService } from 'src/_services/user.service';
   styleUrls: ['./customer-home.component.css']
 })
 export class CustomerHomeComponent implements OnInit {
+
+  loggedInUserFirstName : string = "";
+  loggedInUserLastName : string = "";
+
+  loggedInUser : User={
+    id: 0,
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    role: UserRole.Customer,
+    isEmailVerified: false,
+    isPhoneVerified: false
+  }
 
   constructor(
     private _userService : UserService,
@@ -19,9 +35,13 @@ export class CustomerHomeComponent implements OnInit {
   rechargeCards : any[] = [];
 
   ngOnInit(): void {
+    var info = this._authService.getAuthInformation();
     var id = this._authService.getAuthInformation().nameid;
     this._cardService.getUserRechargeCards(id).subscribe((data) => {
       this.rechargeCards = data;
+    });
+    this._userService.getById(id).subscribe((data) => {
+      this.loggedInUser = data;
     })
   }
 

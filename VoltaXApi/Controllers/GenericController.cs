@@ -74,7 +74,7 @@ namespace VoltaXApi.Controllers
 
         // POST: api/T
         [HttpPost]
-        public async Task<IActionResult> Create(T entity)
+        public virtual async Task<IActionResult> Create(T entity)
         {
             Console.WriteLine("this is the create function endpoint");
             if (entity == null)

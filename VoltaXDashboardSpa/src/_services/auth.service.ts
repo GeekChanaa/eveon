@@ -10,6 +10,7 @@ import { UserForRegisterDto } from 'src/_models/_dtos/user-for-register-dto';
 import { UserForResetPasswordDto } from 'src/_models/_dtos/user-for-reset-password-dto';
 import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
 import { VerifyPhoneDto } from 'src/_models/_dtos/verify-phone-dto';
+import { AddPhoneNumberDto } from 'src/_models/_dtos/add-phone-number-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -68,8 +69,6 @@ export class AuthService {
     var token = localStorage.getItem('token');
     if(token != null)
     this.decodedToken = this.jwtHelper.decodeToken(token);
-    console.log("this is the decoded token");
-    console.log(this.decodedToken);
     return this.decodedToken;
   }
 
@@ -102,5 +101,10 @@ export class AuthService {
   // verify phone
   verifyPhone(verifyPhoneDto : VerifyPhoneDto){
     return this.http.post(this.baseUrl+"VerifyPhone",verifyPhoneDto);
+  }
+
+  // send phone verification sms
+  sendPhoneVerificationSms(AddPhoneNumberDto : AddPhoneNumberDto){
+    return this.http.post(this.baseUrl+"SendPhoneVerificationSMS",AddPhoneNumberDto);
   }
 }

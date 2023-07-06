@@ -31,5 +31,27 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.GetChargePointConnectors(chargePointID);
         }
+
+        [HttpPost]
+        public override async Task<IActionResult> Create(ChargePoint chargePoint)
+        {
+            if (chargePoint == null)
+            {
+                return BadRequest("Entity is null");
+            }
+
+            try
+            {
+                await _repository.AddAsync(chargePoint);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exception that was thrown in the AddAsync method
+                // You can replace this with more specific error handling if you want
+                return BadRequest(ex.Message);
+            }
+
+            return CreatedAtAction("GetById", new { id = chargePoint.ID }, chargePoint);
+        }
     }
 }

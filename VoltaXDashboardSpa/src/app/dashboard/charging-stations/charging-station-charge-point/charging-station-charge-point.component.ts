@@ -22,7 +22,8 @@ export class ChargingStationChargePointComponent implements OnInit {
     password: '',
     clientCertThumb: '',
     connectors: [],
-    transactions: []
+    transactions: [],
+    category: ''
   }
 
   constructor() { }

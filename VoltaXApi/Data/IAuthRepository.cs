@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -13,6 +14,6 @@ namespace VoltaXApi.Data
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);      
         Task<bool> VerifyEmail(string email, string token);
         Task<bool> VerifyPhoneNumber(string phoneNumber, string token);
-
+        Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
     }
 }

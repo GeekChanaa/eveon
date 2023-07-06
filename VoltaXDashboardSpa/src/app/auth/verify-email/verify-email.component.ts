@@ -17,6 +17,9 @@ export class VerifyEmailComponent implements OnInit {
   // errors messages
   errorMessage : string = "";
 
+  // Email concerned 
+  email : string = "";
+
   // Constructor
   constructor(
     private _route : ActivatedRoute,
@@ -26,10 +29,10 @@ export class VerifyEmailComponent implements OnInit {
   ngOnInit() {
     this._route.queryParams.subscribe((params) => {
       const token = params['token'];
-      const email = params['email'];
+      this.email = params['email'];
       let verifyEmailDto : VerifyEmailDto = {
         token : token,
-        email : email
+        email : this.email
       };
       console.log("dto : ");
       console.log(verifyEmailDto);

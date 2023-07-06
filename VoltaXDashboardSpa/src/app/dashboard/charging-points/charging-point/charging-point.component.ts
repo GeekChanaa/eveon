@@ -33,7 +33,8 @@ export class ChargingPointComponent implements OnInit {
     password: '',
     clientCertThumb: '',
     connectors: [],
-    transactions: []
+    transactions: [],
+    category: ''
   }
 
   chargePointID : number = 0;

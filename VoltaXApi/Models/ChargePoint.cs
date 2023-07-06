@@ -18,6 +18,7 @@ namespace VoltaXApi.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string ClientCertThumb { get; set; }
+        public string Category { get; set; }
 
         public ChargingStation? ChargingStation { get; set; }
 

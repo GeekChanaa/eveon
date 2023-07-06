@@ -52,8 +52,10 @@ export class ProfileComponent implements OnInit {
     lastName: '',
     id: 0,
     email: '',
-    phone: '' ,
-    role : UserRole.Customer
+    phone: '',
+    role: UserRole.Customer,
+    isEmailVerified: false,
+    isPhoneVerified: false
   };
 
   // Constructor
@@ -94,11 +96,7 @@ export class ProfileComponent implements OnInit {
     var decodedToken = this._authService.getAuthInformation();
     var userid = parseInt(decodedToken.nameid);
     this._userService.getUserDebitCards(userid).subscribe((data) => {
-      console.log("user debit cards");
-      console.log(data);
       this.debitCards = data;
-      console.log(this.debitCards);
-      console.log("debit cards");
     })
   }
 

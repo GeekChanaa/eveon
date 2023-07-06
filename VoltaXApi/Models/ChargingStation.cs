@@ -8,17 +8,17 @@ namespace VoltaXApi.Models
         public string Network { get; set; }
         public string Category { get; set; }
         public string ChargerQuantity { get; set; }
-        public string Country { get; set; }
+        public string? Country { get; set; }
         
-        public string State { get; set; }
+        public string? State { get; set; }
         
         public string City { get; set; }
         
-        public string Latitude { get; set; }
+        public string? Latitude { get; set; }
         
-        public string Longitude { get; set; }
+        public string? Longitude { get; set; }
         
-        public string Organisation { get; set; }
+        public string? Organisation { get; set; }
         
         public string ParkingType { get; set; }
         

@@ -106,6 +106,28 @@ namespace VoltaXApi.Data
             return top10Stations;
         }
 
+        public override async Task AddAsync(ChargingStation chargingStation)
+        {
+            // Get the latest ChargingStationID in the database
+            var lastChargingStation = await _context.Set<ChargingStation>().OrderByDescending(c => c.Name).FirstOrDefaultAsync();
+
+            int newNumber = 1;
+            if (lastChargingStation != null)
+            {
+                // Extract the number from the ChargingStationID and increment it
+                var lastNumber = int.Parse(lastChargingStation.Name.Substring(2));
+                newNumber = lastNumber + 1;
+            }
+
+            // Generate new ChargingStationID
+            chargingStation.Name = $"VX{newNumber.ToString("D4")}";
+
+            // Add the new ChargingStation to the database
+            await _context.Set<ChargingStation>().AddAsync(chargingStation);
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 
 

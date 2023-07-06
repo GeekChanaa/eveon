@@ -21,6 +21,11 @@ namespace VoltaXApi.Data
         {
             return await _context.Cities.Where(u => u.StateID == stateID).Select(u => new CityNameDto{Name = u.Name, ID = u.ID}).ToListAsync();
         }
+
+        public async Task<List<CityNameDto>> GetAllMoroccoCityNames()
+        {
+            return await _context.Cities.Where(u => u.CountryID == 149).Select(u => new CityNameDto{Name = u.Name, ID = u.ID}).ToListAsync();
+        }
     }
 }
 

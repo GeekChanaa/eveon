@@ -10,6 +10,7 @@ export interface ChargePointCreateDto {
     comment: string;
     username: string;
     password: string;
+    category : string;
     clientCertThumb: string;
   }
   

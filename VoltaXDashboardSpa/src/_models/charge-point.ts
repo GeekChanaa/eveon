@@ -8,6 +8,7 @@ export interface ChargePoint {
     name: string;
     serialNumber: string;
     make: string;
+    category: string;
     status: string;
     comment: string;
     username: string;

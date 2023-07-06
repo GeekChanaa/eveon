@@ -3,6 +3,7 @@ using VoltaXApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using VoltaXApi.Helpers;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -28,8 +29,7 @@ namespace VoltaXApi.Data
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
-            // Send verification tokens via email and SMS:
-            //await SendVerificationEmail(user.Email, user.EmailVerificationToken);
+            // Creating a standard recharge card for the user
 
             return user;
         }
@@ -116,11 +116,23 @@ namespace VoltaXApi.Data
         }
 
         // Getting user
-        public Task<User> GetUser(int id)
+        public async Task<User> GetUser(int id)
         {
             // Getting The user and some of its navigation properties
-            var user = _context.Users.FirstOrDefaultAsync(u => u.ID == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == id);
             return user;
+        }
+
+        // Creating phone verification token and updating the user
+        public async Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == addPhoneNumberDto.Email);
+            user.Phone = addPhoneNumberDto.Phone;
+            user.PhoneVerificationToken = this.GenerateVerificationToken();
+            user.IsPhoneNumberVerified = false;
+            
+            this._context.Set<User>().Entry(user).State = EntityState.Modified;
+            await this._context.SaveChangesAsync();
         }
     }
 }

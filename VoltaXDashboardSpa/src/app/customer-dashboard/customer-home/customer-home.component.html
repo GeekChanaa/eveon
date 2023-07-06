@@ -7,10 +7,45 @@
     <!-- Welcome Card -->
     <div class="card welcome__card">
       <!-- Welcoming message -->
-      <p class="welcome">Hello back my friend mohammed chanaa ! </p>
+      <p class="welcome">Hello back {{loggedInUser.firstName}} {{loggedInUser.lastName}} ! </p>
 
       <!-- Warnings and very important alerts -->
       <p class="warning">You must complete your profile before you can use our services ! <button>complete profile</button> </p>
+      
+      
+
+      <!-- Email should be verified -->
+      <ng-container *ngIf="!loggedInUser.isEmailVerified">
+        <p class="warning"> 
+          <svg class="icon icon-close-circle">
+            <use xlink:href="#icon-close-circle"></use>
+          </svg> 
+          You must Verify your Email before using our services ! <button>Verify Email</button> 
+        </p>
+      </ng-container>
+
+      <!-- Has no phone number -->
+      <ng-container *ngIf="loggedInUser.phone == null || loggedInUser.phone == ''">
+
+        <p class="warning"> 
+          <svg class="icon icon-close-circle">
+            <use xlink:href="#icon-close-circle"></use>
+          </svg> 
+          You must add a phone number before using our services <button>Add phone number</button> 
+        
+        </p>
+
+        <!-- Phone should be verified -->
+        <ng-container *ngIf="!loggedInUser.isPhoneVerified">
+          <p class="warning"> 
+            <svg class="icon icon-close-circle">
+              <use xlink:href="#icon-close-circle"></use>
+            </svg> 
+            You must Verify your phone number before using our services ! <button>Verify Phone Number</button> 
+          
+          </p>
+        </ng-container>
+      </ng-container>
     </div>
     
     <!-- Chargers Overview -->
@@ -33,9 +68,5 @@
         
       </div>
     </div>
-
-    
-
-    
   </div>
 </div>

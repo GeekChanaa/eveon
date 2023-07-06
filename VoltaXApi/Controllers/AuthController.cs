@@ -60,6 +60,8 @@ namespace VoltaXApi.Controllers
             // Create link between user and the guest privilege
             await _context.SaveChangesAsync();
 
+            // Sending the verification email mail
+            Console.WriteLine("http://localhost:4200/auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
             return StatusCode(201);
         }
 
@@ -214,6 +216,16 @@ namespace VoltaXApi.Controllers
             {
                 return StatusCode(500, "Phone number or token incorrect");
             }
+        }
+    
+        // Send Phone Verification
+        [HttpPost("SendPhoneVerificationSMS")]
+        public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
+        {
+            await this._repo.CreatePhoneVerificationToken(addPhoneNumberDto);
+
+            // sending phone verification token via sms
+            return StatusCode(200);
         }
     }
 

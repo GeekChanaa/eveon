@@ -21,4 +21,9 @@ export class CityService extends AbstractService<City>{
   getCitiesByStateID(stateID : number){
     return this._http.get<any[]>(this.baseUrl+"GetAllCityNamesByState?stateID="+stateID);
   }
+
+  // Get All morocco cities
+  getAllMoroccoCityNames(){
+    return this._http.get<any[]>(this.baseUrl+"GetAllMoroccoCityNames");
+  }
 }

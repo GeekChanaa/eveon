@@ -63,7 +63,6 @@ export class SignUpComponent implements OnInit {
   // sign up function
   register(){
     if(!this.form.valid){
-      console.log("this is not valid");
       this.signUpFormValid = false;
     }
     else{
@@ -81,7 +80,7 @@ export class SignUpComponent implements OnInit {
         // snack bar message
         this._snackBar.open("User Registered Success","dismiss",{duration:2000});
         // routing to the login page
-        this._route.navigate(['/auth/login']);
+        this._route.navigate(['/auth/verification-mail-sent']);
       })
     }
     

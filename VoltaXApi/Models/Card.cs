@@ -14,14 +14,10 @@ namespace VoltaXApi.Models
         public int MaxCount { get; set; }
     
         public string Status { get; set; }
-    
         public decimal Balance { get; set; }
-    
         public string Note { get; set; }
-    
         public int UserID { get; set; }
         public User? User { get; set; }
-        
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Transaction>? Transactions { get; set; }
     }

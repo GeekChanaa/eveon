@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { VerifyPhoneDto } from 'src/_models/_dtos/verify-phone-dto';
 import { AuthService } from 'src/_services/auth.service';
 
@@ -18,7 +18,8 @@ export class VerifyPhoneComponent implements OnInit {
 
   constructor(
     private _route : ActivatedRoute,
-    private _authService : AuthService
+    private _authService : AuthService,
+    private _router : Router
   ) { }
 
   ngOnInit() {
@@ -36,7 +37,8 @@ export class VerifyPhoneComponent implements OnInit {
       this._authService.verifyPhone(verifyPhoneDto).subscribe((data) => {
         this.phoneVerifiedSuccess = true;
       }, (error) => {
-        console.log("this is an error")
+        console.log("this is an error");
+        this._router.navigate(['/auth/login'])
       });
     })
   }

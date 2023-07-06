@@ -7,6 +7,8 @@ export interface User {
     lastName: string;
     email: string;
     phone: string;
+    isEmailVerified : Boolean;
+    isPhoneVerified : Boolean;
     password?: string;
     orders?: Order[];
     role : UserRole;

@@ -36,7 +36,8 @@ export class ChargingPointsComponent implements OnInit {
     password: '',
     clientCertThumb: '',
     connectors: [],
-    transactions: []
+    transactions: [],
+    category: ''
   }
 
   // Constructor

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "cd1fu9XvOtepxkWNBhzuckHq1khdjU+E3vo1ByQ0rR8=",
+  "Hash": "SR5JRqEbOVjiMQjsl4Qtpdu4SMT95aD6THa9eR9RzF8=",
   "Source": "VoltaXApi",
   "BasePath": "_content/VoltaXApi",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "VoltaXApi\\wwwroot",
       "Source": "VoltaXApi",
-      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\VoltaXApi\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxApi\\wwwroot\\",
       "BasePath": "_content/VoltaXApi",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\VoltaXApi\\wwwroot\\ProfilePictures\\.png",
+      "Identity": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxApi\\wwwroot\\ProfilePictures\\.png",
       "SourceId": "VoltaXApi",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\VoltaXApi\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxApi\\wwwroot\\",
       "BasePath": "_content/VoltaXApi",
       "RelativePath": "ProfilePictures/.png",
       "AssetKind": "All",

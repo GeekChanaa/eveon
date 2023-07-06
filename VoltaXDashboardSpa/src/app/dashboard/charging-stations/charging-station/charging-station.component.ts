@@ -62,7 +62,8 @@ export class ChargingStationComponent implements OnInit {
       serialNumber : new FormControl(''),
       make : new FormControl(''),
       status : new FormControl(''),
-      comment : new FormControl('')
+      comment : new FormControl(''),
+      chargePointCategory : new FormControl(''),
     })
    }
 
@@ -93,6 +94,7 @@ export class ChargingStationComponent implements OnInit {
     const chargePoint : ChargePointCreateDto = {
       name: cpf.name,
       serialNumber: cpf.serialNumber,
+      category : cpf.category,
       make: cpf.make,
       status: cpf.status,
       comment: cpf.comment,

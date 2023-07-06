@@ -31,5 +31,11 @@ namespace VoltaXApi.Controllers
         {
             return await _repository.GetAllCityNamesByState(stateID);
         }
+
+        [HttpGet("GetAllMoroccoCityNames")]
+        public async Task<ActionResult<List<CityNameDto>>> GetAllMoroccoCityNames()
+        {
+            return await _repository.GetAllMoroccoCityNames();
+        }
     }
 }
