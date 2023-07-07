@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CardStatusEnum } from 'src/_models/_enums/card-status';
 import { Card } from 'src/_models/card';
 import { AuthService } from 'src/_services/auth.service';
 import { CardService } from 'src/_services/card.service';
@@ -17,7 +18,7 @@ export class MyCardComponent implements OnInit {
     cardType: '',
     expirationDate: new Date(),
     maxCount: 0,
-    status: '',
+    status: CardStatusEnum.Inactive,
     balance: 0,
     note: '',
     userID: 0,

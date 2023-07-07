@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
+import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargingStation } from 'src/_models/charging-station';
 
@@ -16,14 +18,14 @@ export class ChargingStationChargePointComponent implements OnInit {
     name: '',
     serialNumber: '',
     make: '',
-    status: '',
+    status: ChargePointStatusEnum.Available,
     comment: '',
     username: '',
     password: '',
     clientCertThumb: '',
     connectors: [],
     transactions: [],
-    category: ''
+    category: ChargePointCategoryEnum.TheTower
   }
 
   constructor() { }

@@ -305,29 +305,19 @@
                       </div>
                       <div class="create__group" [formGroupName]="j">
                         
-
-                        <div class="field">
-                          <div class="field__label">Quantity
-                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                              <svg class="icon icon-info">
-                                <use xlink:href="#icon-info"></use>
-                              </svg>
-                            </div>
-                          </div>
-                          <div class="field__wrap">
-                            <div class="field__wrap">
-                              <select class="select" formControlName="chargePointConnectorQuantity">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-
-
+                        <app-select-form-field class="field"
+                          [parentForm]="form" 
+                          controlName="chargePointConnectorQuantity" 
+                          [options]="[
+                            {value: '1', viewValue: '1'},
+                            {value: '2', viewValue: '2'},
+                            {value: '3', viewValue: '3'},
+                            {value: '4', viewValue: '4'},
+                            {value: '5', viewValue: '5'}
+                          ]" 
+                          label="Quantity" 
+                          tooltip="Maximum 100 characters. No HTML or emoji allowed">
+                        </app-select-form-field>
                         
                         <div class="field">
                           <div class="field__label">Speed

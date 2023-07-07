@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { subscribeOn } from 'rxjs';
+import { CardStatusEnum } from 'src/_models/_enums/card-status';
 import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
 import { UserService } from 'src/_services/user.service';
@@ -23,7 +24,7 @@ export class RechargeCardsComponent implements OnInit {
     cardType: '',
     expirationDate: new Date(),
     maxCount: 0,
-    status: '',
+    status: CardStatusEnum.Inactive,
     balance: 0,
     note: '',
     userID: 0,
@@ -68,7 +69,7 @@ export class RechargeCardsComponent implements OnInit {
     this.card.cardType = cardForm.cardType;
     this.card.expirationDate = (new Date());
     this.card.maxCount = cardForm.maxCount;
-    this.card.status = "active";
+    this.card.status = CardStatusEnum.Active;
     this.card.note = cardForm.note;
     this.card.userID = this.userID;
     this.card.balance = 0;

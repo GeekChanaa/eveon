@@ -13,6 +13,7 @@ import { DisplayCellComponent } from './display-cell/display-cell.component';
 import { FormFieldComponent } from './form-field/form-field.component';
 import { RechargeCardComponent } from './recharge-card/recharge-card.component';
 import { MatRippleModule } from '@angular/material/core';
+import { SelectFormFieldComponent } from './select-form-field/select-form-field.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MatRippleModule } from '@angular/material/core';
     CamelCaseToSpacePipe,
     DisplayCellComponent,
     FormFieldComponent,
-    RechargeCardComponent
+    RechargeCardComponent,
+    SelectFormFieldComponent
    ],
   imports: [
     CommonModule,
@@ -40,7 +42,8 @@ import { MatRippleModule } from '@angular/material/core';
     SmallCardComponent,
     DisplayCellComponent,
     FormFieldComponent,
-    RechargeCardComponent
+    RechargeCardComponent,
+    SelectFormFieldComponent
   ],
   providers: [],
 })

@@ -17,10 +17,11 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(o => o.Name, f => f.Company.CompanyName())
                 .RuleFor(o => o.SerialNumber, f => f.Random.AlphaNumeric(10))
                 .RuleFor(o => o.Make, f => f.Vehicle.Manufacturer())
-                .RuleFor(o => o.Status, f => f.PickRandom(new List<string> { "Active", "Inactive", "Maintenance" }))
+                .RuleFor(o => o.Status, f => f.PickRandom<ChargePointStatusEnum>())
                 .RuleFor(o => o.Comment, f => f.Lorem.Sentence())
                 .RuleFor(o => o.Username, f => f.Internet.UserName())
                 .RuleFor(o => o.Password, f => f.Internet.Password())
+                .RuleFor(c => c.Category, f => f.PickRandom<ChargePointCategoryEnum>())
                 .RuleFor(o => o.ClientCertThumb, f => f.Random.AlphaNumeric(20));
 
             var chargePoints = chargePointFaker.Generate(100);

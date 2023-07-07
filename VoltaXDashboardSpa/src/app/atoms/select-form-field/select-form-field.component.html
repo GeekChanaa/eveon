@@ -1,0 +1,16 @@
+  <div class="field__label">{{ label }}
+    <div class="tooltip" title="{{ tooltip }}">
+      <svg class="icon icon-info">
+        <use xlink:href="#icon-info"></use>
+      </svg>
+    </div>
+  </div>
+  <div class="field__wrap">
+    <div class="field__wrap">
+      <select [formControlName]="controlName" class="select">
+        <option *ngFor="let option of options" [value]="option.value">
+          {{ option.viewValue }}
+        </option>
+      </select>
+    </div>
+  </div>

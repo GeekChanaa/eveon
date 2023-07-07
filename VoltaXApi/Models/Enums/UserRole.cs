@@ -1,7 +1,10 @@
-public enum UserRole
+namespace VoltaXApi.Models
 {
-    Admin,
-    Customer,
-    PremiumCustomer,
-    Support
+    public enum UserRole
+    {
+        Admin,
+        Customer,
+        PremiumCustomer,
+        Support
+    }
 }

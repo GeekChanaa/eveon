@@ -1,3 +1,5 @@
+import { ChargePointCategoryEnum } from "./_enums/charge-point-category";
+import { ChargePointStatusEnum } from "./_enums/charge-point-status";
 import { Connector } from "./connector";
 import { Transaction } from "./transaction";
 
@@ -8,8 +10,8 @@ export interface ChargePoint {
     name: string;
     serialNumber: string;
     make: string;
-    category: string;
-    status: string;
+    category: ChargePointCategoryEnum;
+    status: ChargePointStatusEnum;
     comment: string;
     username: string;
     password: string;
