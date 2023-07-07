@@ -42,14 +42,14 @@ export abstract class AbstractService<T> {
           else if(p == "SearchValue"){
             queryString += "&" + p + "=" + itemParams.SearchValue;
           }
-          else if(p == "filterBy"){
-            for(var i =0 ;i < itemParams.filterBy.length ;i++){
-              queryString += "&" + p + "=" + itemParams.filterBy[i];
+          else if(p == "FilterBy"){
+            for(var i =0 ;i < itemParams.FilterBy.length ;i++){
+              queryString += "&" + p + "=" + itemParams.FilterBy[i];
             }
           }
-          else if(p == "filterValue"){
-            for(var i =0 ;i < itemParams.filterValue.length ;i++){
-              queryString += "&" + p + "=" + itemParams.filterValue[i];
+          else if(p == "FilterValue"){
+            for(var i =0 ;i < itemParams.FilterValue.length ;i++){
+              queryString += "&" + p + "=" + itemParams.FilterValue[i];
             }
           }
           else{
@@ -113,13 +113,13 @@ export abstract class AbstractService<T> {
     if (itemParams != null) {
       for (const p in itemParams) {
         if (itemParams[p] != null)
-        if(p == "filterBy"){
-          for(var i =0 ;i < itemParams.filterBy.length ;i++)
-          params = params.append(p,itemParams.filterBy[i]);
+        if(p == "FilterBy"){
+          for(var i =0 ;i < itemParams.FilterBy.length ;i++)
+          params = params.append(p,itemParams.FilterBy[i]);
         }
-        else if(p == "filterValue"){
-          for(var i =0 ;i < itemParams.filterValue.length ;i++)
-          params = params.append(p,itemParams.filterValue[i]);
+        else if(p == "FilterValue"){
+          for(var i =0 ;i < itemParams.FilterValue.length ;i++)
+          params = params.append(p,itemParams.FilterValue[i]);
         }
         else{
           params = params.append(p, itemParams[p]);

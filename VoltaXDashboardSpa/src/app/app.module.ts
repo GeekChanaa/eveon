@@ -12,12 +12,14 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MatRippleModule } from '@angular/material/core';
+import { GlobalComponent } from './global/global.component';
 
 @NgModule({
-  declarations: [	
+  declarations: [		
     AppComponent,
     AuthComponent,
-      CustomerDashboardComponent
+      CustomerDashboardComponent,
+      GlobalComponent
    ],
   imports: [
     BrowserModule,

@@ -17,7 +17,7 @@ namespace VoltaXApi.Data
             
         }
 
-        public Task<decimal> CountRecharge(Expression<Func<Order, bool>> predicate)
+        public Task<double> CountRecharge(Expression<Func<Order, bool>> predicate)
         {
             var Amount = _context.Orders
                 .Where(predicate)

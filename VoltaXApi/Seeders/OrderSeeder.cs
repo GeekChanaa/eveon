@@ -11,7 +11,7 @@ namespace VoltaXApi.Data.Seeders
             IRepository<Order> repo = new Repository<Order>(dbContext);
             var orders = new Faker<Order>()
                 .RuleFor(o => o.CardID, f => f.PickRandom(cards).ID)
-                .RuleFor(o => o.Amount, f => Math.Round(f.Random.Decimal(1m, 100m), 2))
+                .RuleFor(o => o.Amount, f => (double)Math.Round(f.Random.Decimal(1m, 100m), 2))
                 .RuleFor(o => o.RechargeDate, f => f.Date.Recent())
                 .Generate(count);
 

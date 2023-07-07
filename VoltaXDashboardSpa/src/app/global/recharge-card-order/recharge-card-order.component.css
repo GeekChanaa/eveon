@@ -1,0 +1,26 @@
+.entry__wrapper{
+    max-width: max-content;
+}
+
+.flex{
+    display: flex;
+}
+
+.debit_card_radio_input{
+    flex: 1 0 10%;
+    height: 20%;
+    margin-top: 20%;
+}
+
+.debit_card_div{
+    flex: 1 0 90%;
+}
+
+.steps_btns{
+    margin-top: 44px;
+    display: flex;
+}
+
+.next__button{
+    margin-left: auto;
+}

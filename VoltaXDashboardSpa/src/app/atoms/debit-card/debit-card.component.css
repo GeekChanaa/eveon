@@ -11,14 +11,34 @@
     padding: 32px;
 }
 
+.debit_card.small{
+    width: 100%;
+}
+
 .debit_card__number{
     font-size: 1.5em;
     font-weight: lighter;
     margin-top: 48px;
 }
 
+.debit_card__number.small{
+    font-size: 0.8em;
+    font-weight: lighter;
+    margin-top: 24px;
+}
+
 .debit_card__name_title{
     color: #d0d0d0;
     font-weight: lighter;
     margin-top: 16px;
+}
+
+.debit_card__name_title.small{
+    font-size: 0.8em;
+    margin-top: 4px;
+}
+
+.debit_card__name.small{
+    font-size: 0.8em;
+    margin-top: 4px;
 }

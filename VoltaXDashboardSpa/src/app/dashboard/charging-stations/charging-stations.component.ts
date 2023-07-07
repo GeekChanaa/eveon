@@ -3,6 +3,7 @@ import { ChargingStation } from 'src/_models/charging-station';
 import { Pagination } from 'src/_models/pagination';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { Router } from '@angular/router';
+import { CityService } from 'src/_services/city.service';
 
 @Component({
   selector: 'app-charging-stations',
@@ -13,6 +14,12 @@ export class ChargingStationsComponent implements OnInit {
 
   // Data
   data: any[] = [];
+
+  // cities : 
+  cities : any[] = [];
+
+  // filters : 
+  filters : any = {};
 
   // Fields
   fields: string[] = [];
@@ -58,10 +65,12 @@ export class ChargingStationsComponent implements OnInit {
   // Constructor
   constructor(
     private _chargingStationService: ChargingStationService,
-    private _router : Router
+    private _router : Router,
+    private _cityService : CityService
   ) { }
 
   ngOnInit() {
+    this.getAllMoroccoCityNames();
     this._getItemFields();
     this.getAll();
   }
@@ -153,11 +162,23 @@ export class ChargingStationsComponent implements OnInit {
   }
 
   search(val : string){
-    // // Update parameters in itemParams
-    // this.itemParams.SearchBy = ['Name', 'Address']; // array of fields to search in
-    // this.itemParams.SearchValue = 'Gut'; // the value to search for
+     // Update parameters in itemParams
+    this.itemParams.SearchBy = ['Name', 'Address']; // array of fields to search in
+    this.itemParams.SearchValue = 'Gut'; // the value to search for
+    this.getAll();
+  }
 
-    // this.getAll();
-    console.log(val);
+  // Getting Morocco Cities: 
+  getAllMoroccoCityNames(){
+    this._cityService.getAllMoroccoCityNames().subscribe((data) => {
+      this.cities = data;
+    })
+  }
+
+  // Applying filters
+  applyFilters(){
+    this.itemParams.FilterValue = [this.filters.category, this.filters.city]; 
+    this.itemParams.FilterBy = ["City","Category"]; 
+    this.getAll();
   }
 }

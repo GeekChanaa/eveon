@@ -43,7 +43,7 @@ export class EnterPhoneNumberComponent implements OnInit {
     this._authService.sendPhoneVerificationSms(addPhoneNumberDto).subscribe((data) => {
         this._snackBar.open("Phone verification SMS Sent","dismiss",{duration:2000});
         console.log("phone verification sms sent");
-        this._router.navigate(['/auth/verify-phone?phone='+this.form.value.phone]);
+        this._router.navigate(['/auth/verify-phone'], { queryParams: { phone: this.form.value.phone } });
     })
   }
 

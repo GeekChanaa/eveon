@@ -1,0 +1,135 @@
+<!-- page-->
+<div class="page page_simple">
+  <div class="entry">
+    <div class="entry__wrapper">
+      <a class="entry__logo" href="#"
+        ><img class="some-icon" src="assets/img/logo.svg" alt="Core" /><img
+          class="some-icon-dark"
+          src="assets/img/logo.svg"
+          alt="Core"
+      /></a>
+      <div class="h2 entry__title">Recharge Your Card</div>
+
+      <form [formGroup]="form">
+        <div class="entry__fieldset">
+          <!-- amount of recharge step -->
+          <ng-container *ngIf="currentStep === 1">
+            <div
+              class="field"
+              [ngClass]="{
+                error:
+                  form.controls['amount'].invalid &&
+                  (form.controls['amount'].dirty ||
+                    form.controls['phone'].touched)
+              }"
+            >
+              <div class="field__label">
+                Amount
+                <div
+                  class="tooltip"
+                  title="Maximum 100 characters. No HTML or emoji allowed"
+                >
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="field__wrap">
+                <div class="field__wrap">
+                  <select class="select" formControlName="amount">
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Debit card informations step -->
+          <ng-container *ngIf="currentStep === 2">
+            <!-- List of existing debit cards -->
+            <ng-container *ngIf="debitCards.length > 0">
+              <span>choose existing card</span>
+              <div class="flex" *ngFor="let debitCard of debitCards">
+                <label class="radio debit_card_radio_input">
+                  <input class="radio__input" type="radio" name="customers" />
+                  <span class="radio__inner">
+                    <span class="radio__tick"></span>
+                  </span>
+                </label>
+                <app-debit-card class="debit_card_div"
+                  cardNumber="{{ debitCard.cardNumberHidden }}"
+                  cardHolderName="{{ debitCard.nameHidden }}"
+                  size="small"
+                ></app-debit-card>
+              </div>
+            </ng-container>
+            <button *ngIf="!newDebitCard" class="button" (click)="addNewDebitCard()">add new debit card</button>
+            <!-- Debit Card FormGroup -->
+            <ng-container *ngIf="debitCards.length==0 || newDebitCard">
+              <div formGroupName="debitCard">
+                <div class="field">
+                  <label for="holderName">Holder Name</label>
+                  <input
+                    class="field__input"
+                    type="text"
+                    formControlName="holderName"
+                    placeholder="Holder Name"
+                  />
+                </div>
+  
+                <div class="field">
+                  <label for="cardNumber">Card Number</label>
+                  <input
+                    class="field__input"
+                    type="text"
+                    formControlName="cardNumber"
+                    placeholder="Card Number"
+                  />
+                </div>
+  
+                <div class="field">
+                  <label for="cardNumber">Expiry Date</label>
+                  <input
+                    class="field__input"
+                    type="text"
+                    formControlName="expiryDate"
+                    placeholder="Expiry Date"
+                  />
+                </div>
+  
+                <div class="field">
+                  <label for="cardNumber">CVV</label>
+                  <input
+                    class="field__input"
+                    type="text"
+                    formControlName="cvv"
+                    placeholder="cvv"
+                  />
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <!-- Preview component -->
+        <ng-container *ngIf="currentStep === 3"> </ng-container>
+        <div class="steps_btns">
+          <button (click)="previousStep()" *ngIf="currentStep != 1" type="button" class="button-stroke entry__button previous__button" >
+            Previous
+          </button>
+          <button (click)="nextStep()" *ngIf="currentStep != 3" type="button" class="button entry__button next__button" >
+            Next
+          </button>
+        </div>
+        
+      </form>
+
+      <div class="entry__note">
+        This site is protected by reCAPTCHA and the Google Privacy Policy.
+      </div>
+    </div>
+  </div>
+</div>

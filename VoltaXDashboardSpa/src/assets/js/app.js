@@ -577,33 +577,7 @@ $(document).ready(function () {
     });
   })(); // filters
 
-
-  (function () {
-    var filters = $('.filters');
-    filters.each(function () {
-      var filter = $(this),
-        head = filter.find('.filters__head'),
-        body = filter.find('.filters__body'),
-        overlay = filter.find('.filters__overlay'),
-        close = filter.find('.filters__close');
-      head.on('click', function (e) {
-        e.stopPropagation();
-
-        if (!filter.hasClass('active')) {
-          filters.removeClass('active');
-          filter.addClass('active');
-        } else {
-          filters.removeClass('active');
-        }
-      });
-      close.on('click', function () {
-        filters.removeClass('active');
-      });
-      overlay.on('click', function () {
-        filters.removeClass('active');
-      });
-    });
-  })(); // slider
+ // slider
 
 
   (function () {

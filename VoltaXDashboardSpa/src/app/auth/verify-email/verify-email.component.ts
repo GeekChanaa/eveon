@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/_services/auth.service';
 import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
 
@@ -23,7 +23,8 @@ export class VerifyEmailComponent implements OnInit {
   // Constructor
   constructor(
     private _route : ActivatedRoute,
-    private _authService : AuthService
+    private _authService : AuthService,
+    private _router : Router
   ) { }
 
   ngOnInit() {

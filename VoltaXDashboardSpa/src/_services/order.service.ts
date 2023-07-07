@@ -4,6 +4,7 @@ import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RechargeOrderDto } from 'src/_models/_dtos/recharge-order-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,11 @@ export class OrderService extends AbstractService<Order>{
   // Counting order recharge amount between 2 dates
   countRechargeAmountBetween(dateStart : Date, dateEnd : Date){
     return this._http.get<number>(this.baseUrl+"countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
+  }
+
+  // recharge card order
+  rechargeCard(orderDto : RechargeOrderDto){
+    return this._http.post(this.baseUrl+"RechargeOrder",orderDto);
   }
 
 

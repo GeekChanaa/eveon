@@ -37,7 +37,7 @@ namespace VoltaXApi.Data
                 ExpirationDate = DateTime.Now.AddYears(2),
                 MaxCount = 1,
                 Status = CardStatusEnum.Inactive,
-                Balance = 100.00M,
+                Balance = 100,
                 Note = "Initial card",
                 UserID = user.ID
             };

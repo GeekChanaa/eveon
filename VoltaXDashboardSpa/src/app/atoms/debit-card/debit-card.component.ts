@@ -10,6 +10,7 @@ export class DebitCardComponent implements OnInit {
   // Input parameters for the component
   @Input() cardNumber : string = "";
   @Input() cardHolderName : string = "";
+  @Input() size : string = "";
 
   // Constructor
   constructor() { }

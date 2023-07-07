@@ -27,6 +27,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
+import { DebitCardComponent } from '../atoms/debit-card/debit-card.component';
 import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 import { ChargingStationChargePointComponent } from './charging-stations/charging-station-charge-point/charging-station-charge-point.component';
@@ -60,6 +61,7 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
     DashboardComponent,
     ProfileComponent,
     CreateChargingCardComponent,
+    DebitCardComponent,
     ChargingStationComponent,
     ChargingPointsComponent,
     RechargeCardsComponent,

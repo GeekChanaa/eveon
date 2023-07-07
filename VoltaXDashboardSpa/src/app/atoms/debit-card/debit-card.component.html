@@ -1,0 +1,6 @@
+<div class="debit_card" [ngClass]="{'small': size=='small'}">
+  <img class="debit_card__logo" [ngClass]="{'small': size=='small'}" src="/assets/img/mastercard.png" alt="">
+  <div class="debit_card__number" [ngClass]="{'small': size=='small'}">{{cardNumber}}</div>
+  <div class="debit_card__name_title" [ngClass]="{'small': size=='small'}">Card Holder</div>
+  <div class="debit_card__name" [ngClass]="{'small': size=='small'}">{{cardHolderName}}</div>
+</div>

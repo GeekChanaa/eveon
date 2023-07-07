@@ -16,7 +16,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(c => c.ExpirationDate, f => f.Date.Future())
                 .RuleFor(c => c.MaxCount, f => f.Random.Number(100))
                 .RuleFor(c => c.Status, f => f.PickRandom<CardStatusEnum>())
-                .RuleFor(c => c.Balance, f => f.Random.Decimal(0, 1000))
+                .RuleFor(c => c.Balance, f => f.Random.Number(0, 1000))
                 .RuleFor(c => c.Note, f => f.Lorem.Sentence())
                 .RuleFor(c => c.UserID, f => f.PickRandom(users).ID);
 

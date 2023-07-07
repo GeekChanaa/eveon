@@ -9,6 +9,6 @@ namespace VoltaXApi.Data
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task<decimal> CountRecharge(Expression<Func<Order, bool>> predicate);
+        Task<double> CountRecharge(Expression<Func<Order, bool>> predicate);
     }
 }

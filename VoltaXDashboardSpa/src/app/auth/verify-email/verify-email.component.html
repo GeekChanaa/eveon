@@ -8,7 +8,7 @@
         <div class="entry__top">
           <div class="entry__text">Sign up with Open account</div>
           <div class="entry__btns">
-            <button class="button-stroke entry__button" routerLink="/auth/phone-number?email={{email}}">Continue</button>
+            <button class="button-stroke entry__button" [routerLink]="['/auth/phone-number']" [queryParams]="{email : email}">Continue</button>
             <button class="button-stroke entry__button" routerLink="/my-dashboard">Go to home</button>
           </div>
         </div>

@@ -14,14 +14,28 @@
     <div class="card__nav" *ngIf="createLink != ''">
       <button routerLink="{{createLink}}" class="card__link">New</button>
     </div>
-    <div class="filters">
-      <button class="button-square-stroke button-small filters__head">
+    <div class="filters" [ngClass]="{'active': isActive}">
+      <button class="button-square-stroke button-small filters__head" (click)="toggleActive($event)">
         <svg class="icon icon-filter">
           <use xlink:href="#icon-filter"></use>
         </svg>
       </button>
-      <ng-content select="[filter__body]"></ng-content>
-      <div class="filters__overlay"></div>
+      <div class="filters__body">
+        <div class="filters__body">
+          <div class="filters__top">
+            <div class="title-red filters__title">Filtering Charging Stations</div>
+            <button class="filters__close" (click)="removeActive()">
+              <svg class="icon icon-close">
+                <use xlink:href="#icon-close"></use>
+              </svg>
+            </button>
+          </div>
+          <ng-content select="[filter__body]"></ng-content>
+          
+          
+        </div>
+      </div>
+      <div class="filters__overlay" (click)="removeActive()"></div>
     </div>
     <div>
       <button (click)="displayMenu = !displayMenu" class="button-square-stroke button-small ">

@@ -4,10 +4,11 @@ import { AuthComponent } from './auth/auth.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from 'src/_guards/auth.guard';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
+import { GlobalComponent } from './global/global.component';
 
 const routes: Routes = [
   {
-    path: "",
+    path: "dashboard",
     component: DashboardComponent,
     canActivate : [AuthGuard],
     loadChildren : () => import('./dashboard/dashboard.module').then( m => m.DashboardModule)
@@ -23,6 +24,12 @@ const routes: Routes = [
     component : AuthComponent,
     loadChildren : () => import('./auth/auth.module')
       .then(m=>m.AuthModule)
+  },
+  {
+    path : "",
+    component : GlobalComponent,
+    loadChildren : () => import('./global/global.module')
+      .then(m=>m.GlobalModule)
   }
   
 ];
