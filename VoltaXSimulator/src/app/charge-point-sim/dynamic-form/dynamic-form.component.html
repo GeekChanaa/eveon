@@ -1,22 +1,26 @@
-<ng-container *ngIf="dynamicForm != null">
-  <form [formGroup]="dynamicForm" (ngSubmit)="onSubmit()">
-    <ng-container *ngFor="let control of dynamicForm.controls | keyvalue">
-      <div class="">
-        <label [for]="control.key">{{control.key}}</label>
+<form [formGroup]="form">
+  <ng-container *ngFor="let key of objectKeys(form.controls)">
+    <ng-container [ngSwitch]="getType(form.get(key))">
+      <div *ngSwitchCase="'FormGroup'" [formGroupName]="key">
+        <h3>{{ key }}</h3>
+        <ng-container *ngFor="let subKey of objectKeys(form.get(key).controls)">
+          <input type="text" [formControlName]="subKey">
+        </ng-container>
       </div>
-      <ng-container *ngIf="fieldTypes[control.key] === 'array';"> 
-        <select [id]="control.key" [formControlName]="control.key">
-          <option *ngFor="let option of requestType[control.key] | keyvalue" [value]="option.key">{{option.value}}</option>
-        </select>
-      </ng-container>
-      <ng-container *ngIf="fieldTypes[control.key] === 'text';">
-        <input [id]="control.key" [formControlName]="control.key" type="text">
-      </ng-container>
-      <ng-container *ngIf="fieldTypes[control.key] === 'object';">
-        <div class="field__label">{{control.key}}</div>
-        <app-dynamic-form [requestType]="requestType[control.key]" [formGroup]="getFormGroup(control.key)"></app-dynamic-form>
-      </ng-container>
+      <div *ngSwitchCase="'FormArray'" formArrayName="{{key}}">
+        <h3>{{ key }}</h3>
+        <div *ngFor="let control of form.get(key).controls; index as i">
+          <div [formGroupName]="i">
+            <ng-container *ngFor="let subKey of objectKeys(control.controls)">
+              <input type="text" [formControlName]="subKey">
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div *ngSwitchDefault>
+        <label>{{ key }}</label>
+        <input type="text" [formControlName]="key">
+      </div>
     </ng-container>
-    <button type="submit">Submit</button>
-  </form>
-</ng-container>
+  </ng-container>
+</form>

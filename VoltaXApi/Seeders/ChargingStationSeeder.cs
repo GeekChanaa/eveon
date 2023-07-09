@@ -16,7 +16,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(cs => cs.ChargerQuantity, f => f.Random.Int(1, 10).ToString())
                 .RuleFor(cs => cs.Country, f => f.Address.Country())
                 .RuleFor(cs => cs.State, f => f.Address.State())
-                .RuleFor(cs => cs.City, f => f.Address.City())
+                .RuleFor(cs => cs.City, f => f.PickRandom(new string[] { "Tangier", "Agadir", "Rabat" }))
                 .RuleFor(cs => cs.Latitude, f => f.Address.Latitude().ToString())
                 .RuleFor(cs => cs.Longitude, f => f.Address.Longitude().ToString())
                 .RuleFor(cs => cs.Organisation, f => f.Company.CompanyName())

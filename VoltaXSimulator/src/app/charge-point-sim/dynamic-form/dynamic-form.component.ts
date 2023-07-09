@@ -1,66 +1,68 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  AbstractControl,
+  FormControl,
+  FormArray,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
-  styleUrls: ['./dynamic-form.component.css']
+  styleUrls: ['./dynamic-form.component.css'],
 })
 export class DynamicFormComponent implements OnInit {
-
-
   @Input() requestType: any;
-  @Input() formGroup!: FormGroup; 
+  @Input() formGroup!: FormGroup;
 
-  dynamicForm!: FormGroup;
-  fieldTypes: Record<string, 'text' | 'select' | 'boolean' | 'object' | 'array'> = {};
+  form!: FormGroup;
+  fieldTypes: Record<
+    string,
+    'text' | 'select' | 'boolean' | 'object' | 'array'
+  > = {};
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
-    
-    
-      console.log("this is the form group not null");
-      this.dynamicForm = this.createForm(this.requestType);
-     
-
+  ngOnInit() {
+    this.form = this.createGroup(this.requestType);
   }
 
-  createForm(requestType: any): FormGroup {
+  createGroup(obj: any): FormGroup {
     const group = this.fb.group({});
-    for (const field in requestType) {
-      if (requestType.hasOwnProperty(field)) {
-        if (Array.isArray(requestType[field]) && typeof requestType[field][0] == "string") {
-          this.fieldTypes[field] = 'array';
-          const formGroups = requestType[field].map((item:any) => {
-            this.createForm(item)
-          });
-          group.addControl(field, this.fb.control(requestType[field]));
-        } 
-        else if (typeof requestType[field] === 'object' && requestType[field] !== null) {
-          this.fieldTypes[field] = 'object';
-          var igroup = (this.createForm(requestType[field]))
-          group.addControl(field, igroup);
-        } 
-        else if (typeof requestType[field] === 'boolean') {
-          this.fieldTypes[field] = 'boolean';
-          group.addControl(field, this.fb.control(requestType[field] ? 'yes' : 'no'));
-        } 
-        else {
-          this.fieldTypes[field] = 'text';
-          group.addControl(field, this.fb.control(requestType[field]));
-        }
+    Object.keys(obj).forEach((key) => {
+      if (obj[key].type === 'enum') {
+        group.addControl(key, this.fb.control(''));
+      } else if (obj[key].type === 'string' || obj[key].type === 'number') {
+        group.addControl(key, this.fb.control(''));
+      } else if (obj[key].type === 'object') {
+        group.addControl(key, this.createGroup(obj[key].value));
+      } else if (obj[key].type === 'array') {
+        group.addControl(
+          key,
+          this.fb.array([this.createGroup(obj[key].value)])
+        );
       }
-    }
+    });
     return group;
   }
 
-  getFormGroup(fieldName: string): FormGroup {
-    return this.dynamicForm.get(fieldName) as FormGroup;
+  onSubmit() {
+    console.log('this is the submit');
   }
 
-  onSubmit(){
-    console.log("this is the submit");
+  objectKeys(obj:any) {
+    return Object.keys(obj);
   }
-
+  
+  getType(control:any) {
+    if (control instanceof FormGroup) {
+      return 'FormGroup';
+    } else if (control instanceof FormArray) {
+      return 'FormArray';
+    } else {
+      return 'FormControl';
+    }
+  }
+  
 }

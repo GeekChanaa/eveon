@@ -23,7 +23,7 @@
       <div class="filters__body">
         <div class="filters__body">
           <div class="filters__top">
-            <div class="title-red filters__title">Filtering Charging Stations</div>
+            <div class="title-red filters__title">Filtering {{names}}</div>
             <button class="filters__close" (click)="removeActive()">
               <svg class="icon icon-close">
                 <use xlink:href="#icon-close"></use>
@@ -31,7 +31,10 @@
             </button>
           </div>
           <ng-content select="[filter__body]"></ng-content>
-          
+          <div class="filters__btns">
+            <button class="button-stroke filters__button">Reset</button>
+            <button class="button filters__button" (click)="applyFilters()">Apply</button>
+          </div>
           
         </div>
       </div>

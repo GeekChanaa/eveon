@@ -20,6 +20,7 @@ export class TableListComponent implements OnInit {
   @Output() previous: EventEmitter<void> = new EventEmitter<void>();
   @Output() firstPage: EventEmitter<void> = new EventEmitter<void>();
   @Output() lastPage: EventEmitter<void> = new EventEmitter<void>();
+  @Output() applyFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
   @Output() deleteEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() displayEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
@@ -109,5 +110,10 @@ export class TableListComponent implements OnInit {
 
   removeActive(): void {
       this.isActive = false;
+  }
+
+  applyFilters(){
+    this.applyFiltersEvent.emit();
+    this.removeActive();
   }
 }

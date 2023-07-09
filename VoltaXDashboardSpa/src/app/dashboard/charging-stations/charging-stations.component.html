@@ -14,6 +14,7 @@
       (updateEvent)="update($event)"
       (displayEvent)="display($event)"
       (sortEvent)="sort($event)"
+      (applyFiltersEvent)="applyFilters()"
       searchByPlaceHolder="Search by Name or Address"
       (searchEvent)="search($event)"
       >
@@ -63,10 +64,6 @@
             </div>
           </div>
           
-        </div>
-        <div class="filters__btns">
-          <button class="button-stroke filters__button">Reset</button>
-          <button class="button filters__button" (click)="applyFilters()">Apply</button>
         </div>
       </ng-container>
 
