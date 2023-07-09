@@ -1,26 +1,39 @@
-<form [formGroup]="form">
-  <ng-container *ngFor="let key of objectKeys(form.controls)">
-    <ng-container [ngSwitch]="getType(form.get(key))">
-      <div *ngSwitchCase="'FormGroup'" [formGroupName]="key">
-        <h3>{{ key }}</h3>
-        <ng-container *ngFor="let subKey of objectKeys(form.get(key).controls)">
-          <input type="text" [formControlName]="subKey">
-        </ng-container>
+<ng-container *ngFor="let item of objectKeys(requestType)">
+  <!-- case of enum -->
+
+  <ng-container *ngIf="requestType[item].type === 'enum'">
+    <div class="field">
+      <div class="field__label">{{requestType[item].name}}</div>
+      <div class="field__wrap">
+        <select [(ngModel)]="model[requestType[item].name]" id="">
+          <option value="{{opt}}" *ngFor="let opt of requestType[item].value"> {{opt}} </option>
+        </select>
       </div>
-      <div *ngSwitchCase="'FormArray'" formArrayName="{{key}}">
-        <h3>{{ key }}</h3>
-        <div *ngFor="let control of form.get(key).controls; index as i">
-          <div [formGroupName]="i">
-            <ng-container *ngFor="let subKey of objectKeys(control.controls)">
-              <input type="text" [formControlName]="subKey">
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div *ngSwitchDefault>
-        <label>{{ key }}</label>
-        <input type="text" [formControlName]="key">
-      </div>
-    </ng-container>
+    </div>
   </ng-container>
-</form>
+    
+  <!-- case of string -->
+  <ng-container *ngIf="requestType[item].type === 'string'">
+    <div class="field">
+      <div class="field__label">{{requestType[item].name}}</div>
+      <div class="field__wrap">
+        <input [(ngModel)]="model[requestType[item].name]" type="text" placeholder="{{requestType[item].name}}">
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- case of object -->
+  <ng-container *ngIf="requestType[item].type === 'object'">
+    <!-- call to recursive component -->
+    <app-dynamic-form [requestType]="requestType[item].value"></app-dynamic-form>
+  </ng-container>
+
+  <!-- case of array -->
+  <ng-container *ngIf="requestType[item].type === 'array'">
+    <app-dynamic-form [requestType]="requestType[item].value"></app-dynamic-form>
+  </ng-container>
+
+
+</ng-container>
+
+<button (click)="test()">test</button>
