@@ -29,6 +29,7 @@ namespace VoltaXApi.Models
         public bool RestaurantsAmenity { get; set; }
         public bool WashroomAmenity { get; set; }
         public bool SittingAreaAmenity { get; set; }
+        public int? PartnerID { get; set; }
         // Navigation properties
         public ICollection<ChargePoint>? ChargePoints { get; set; }
     }

@@ -14,13 +14,15 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MatRippleModule } from '@angular/material/core';
 import { GlobalComponent } from './global/global.component';
 import { TokenInterceptor } from './auth/token.interceptor';
+import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
 
 @NgModule({
-  declarations: [		
+  declarations: [			
     AppComponent,
     AuthComponent,
       CustomerDashboardComponent,
-      GlobalComponent
+      GlobalComponent,
+      PartnerDashboardComponent
    ],
   imports: [
     BrowserModule,
