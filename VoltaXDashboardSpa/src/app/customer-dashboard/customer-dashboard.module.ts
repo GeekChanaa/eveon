@@ -11,11 +11,13 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MatRippleModule } from '@angular/material/core';
 import { MyCardComponent } from './my-card/my-card.component';
 import {MatTabsModule} from '@angular/material/tabs'; 
+import { CompleteProfilePopupComponent } from './complete-profile-popup/complete-profile-popup.component';
 @NgModule({
     declarations: [
         CustomerHomeComponent,
         MyCardsComponent,
-        MyCardComponent
+        MyCardComponent,
+        CompleteProfilePopupComponent
     ],
     imports: [
         AtomsModule,

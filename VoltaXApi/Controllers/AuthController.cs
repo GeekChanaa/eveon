@@ -227,6 +227,16 @@ namespace VoltaXApi.Controllers
             // sending phone verification token via sms
             return StatusCode(200);
         }
+
+        // Send Email Verification
+        [HttpPost("SendEmailVerificationCode")]
+        public async Task<IActionResult> SendEmailVerificationCode([FromBody] int userID)
+        {
+            await this._repo.CreateEmailVerificationToken(userID);
+
+            // sending email verification via email
+            return StatusCode(200);
+        }
     }
 
 }

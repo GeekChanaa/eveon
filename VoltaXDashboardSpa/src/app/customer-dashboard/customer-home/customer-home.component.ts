@@ -110,6 +110,7 @@ export class CustomerHomeComponent implements OnInit {
         this.hidePopup();
       });
     });
+    
   }
 
   @HostListener('document:keydown', ['$event'])

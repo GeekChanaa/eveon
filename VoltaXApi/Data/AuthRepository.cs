@@ -160,5 +160,16 @@ namespace VoltaXApi.Data
             this._context.Set<User>().Entry(user).State = EntityState.Modified;
             await this._context.SaveChangesAsync();
         }
+
+        // Creating phone verification token and updating the user
+        public async Task CreateEmailVerificationToken(int userID)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == userID);
+            user.EmailVerificationToken = this.GenerateVerificationToken();
+            user.IsEmailVerified = false;
+            
+            this._context.Set<User>().Entry(user).State = EntityState.Modified;
+            await this._context.SaveChangesAsync();
+        }
     }
 }

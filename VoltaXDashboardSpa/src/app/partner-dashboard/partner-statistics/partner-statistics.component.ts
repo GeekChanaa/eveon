@@ -18,7 +18,6 @@ export class PartnerStatisticsComponent implements OnInit {
   total_energy_consumed_last_week : number = 0 ;
   
 
-  rechargeOrdersChart : any = {};
 
   latestTransactions : any[] = [];
 

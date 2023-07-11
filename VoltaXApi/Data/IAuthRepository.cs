@@ -15,5 +15,6 @@ namespace VoltaXApi.Data
         Task<bool> VerifyEmail(string email, string token);
         Task<bool> VerifyPhoneNumber(string phoneNumber, string token);
         Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
+        Task CreateEmailVerificationToken(int userID);
     }
 }

@@ -112,4 +112,9 @@ export class AuthService {
   sendPhoneVerificationSms(AddPhoneNumberDto : AddPhoneNumberDto){
     return this.http.post(this.baseUrl+"SendPhoneVerificationSMS",AddPhoneNumberDto);
   }
+
+  // send email verification sms
+  sendEmailVerificationCode(userID : number){
+    return this.http.post(this.baseUrl+"SendEmailVerificationCode",userID);
+  }
 }

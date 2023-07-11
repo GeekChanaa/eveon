@@ -76,35 +76,5 @@
 
 <div #elementX class="popup popup_product js-popup js-popup-product">
   <div class="popup__overlay js-popup-overlay"></div>
-  <div class="popup__wrap js-popup-wrap">
-    <div class="product js-product">
-      <div class="product__control"><a class="button-white product__button" href="products-add.html">Edit product</a>
-        <button class="product__close js-popup-close">
-          <svg class="icon icon-close">
-            <use xlink:href="#icon-close"></use>
-          </svg>
-        </button>
-      </div>
-      <div class="product__wrapper">
-        <div class="product__details">
-          <div class="product__overview">
-            <div class="product__head">
-              <div class="product__nav">
-                <button class="product__link js-product-open active">Product</button>
-              </div>
-            </div>
-            <div class="product__title h4">Complete Your Profile</div>
-            
-            
-          </div>
-          
-        </div>
-        
-        <a class="product__next" href="#">
-          <svg class="icon icon-arrow-right">
-            <use xlink:href="#icon-arrow-right"></use>
-          </svg></a>
-      </div>
-    </div>
-  </div>
+  <app-complete-profile-popup class="popup__wrap js-popup-wrap"></app-complete-profile-popup>
 </div>

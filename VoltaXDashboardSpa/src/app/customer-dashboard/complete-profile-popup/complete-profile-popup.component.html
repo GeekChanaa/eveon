@@ -1,0 +1,80 @@
+  <div class="product js-product">
+    <div class="product__control"><a class="button-white product__button" href="products-add.html">Edit product</a>
+      <button class="product__close js-popup-close">
+        <svg class="icon icon-close">
+          <use xlink:href="#icon-close"></use>
+        </svg>
+      </button>
+    </div>
+    <div class="product__wrapper">
+      <div class="product__details">
+        <div class="product__overview">
+          <div class="product__head">
+            <div class="product__nav">
+              <button class="product__link js-product-open active">Complete Profile</button>
+            </div>
+          </div>
+          <!-- Verifying the email Part -->
+          <ng-container *ngIf="completeProfileStep == 1">
+            <button (click)="sendEmailVerificationCode()" class="button-stroke">Send Email Verification Code</button>
+          </ng-container>
+          <!-- Code for the email part -->
+          <ng-container *ngIf="completeProfileStep == 2">
+            <div class="field">
+              <div class="field__label">Email verification code
+                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="field__wrap">
+                <input [(ngModel)]="emailVerificationCode" class="field__input" type="text" placeholder="Code" required>
+              </div>
+            </div>
+            <button (click)="verifyEmail()" class="button">Verify</button>
+          </ng-container>
+          <!-- Verifying the phone part -->
+          <ng-container *ngIf="completeProfileStep == 3">
+            <div class="field">
+              <div class="field__label">Phone Number
+                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="field__wrap">
+                <input [(ngModel)]="phone" class="field__input" type="text" placeholder="Phone" required>
+              </div>
+            </div>
+            <button (click)="sendPhoneVerificationCode()" class="button-stroke">Send Phone Verification Code</button>
+          </ng-container>
+          <!-- Code for the phone part -->
+          <ng-container *ngIf="completeProfileStep == 4">
+            <div class="field">
+              <div class="field__label">Phone verification code
+                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="field__wrap">
+                <input [(ngModel)]="phoneVerificationCode" class="field__input" type="text" placeholder="Code" required>
+              </div>
+            </div>
+            <button (click)="verifyPhone()" class="button">Verify</button>
+          </ng-container>
+          <!-- Entering additional informations (about user car and others) -->
+          
+        </div>
+        
+      </div>
+      
+      <a class="product__next" href="#">
+        <svg class="icon icon-arrow-right">
+          <use xlink:href="#icon-arrow-right"></use>
+        </svg></a>
+    </div>
+  </div>
