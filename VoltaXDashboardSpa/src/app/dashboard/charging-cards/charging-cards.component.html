@@ -11,6 +11,9 @@
       (deleteEvent)="delete($event)"
       (displayEvent)="display($event)"
       (updateEvent)="update($event)"
+      (applyFiltersEvent)="applyFilters()"
+      searchByPlaceHolder="Search by Name or Address"
+      (searchEvent)="search($event)"
       (sortEvent)="sort($event)">
       <ng-template appTableCustomButton let-item>
         <button routerLink="/recharge-card/{{item.id}}" class="sidebar__add"> 
@@ -19,6 +22,58 @@
           </svg>  
         </button>
       </ng-template>
+
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By Status
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.status">
+                      <option value="0">Active</option>
+                      <option value="1">Inactive</option>
+                      <option value="2">Blocked</option>
+                      <option value="3">Expired</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">By Type
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.type">
+                      <option value="0">Standard</option>
+                      <option value="1">Premium</option>
+                      <option value="2">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
     </app-table-list>
   </div>
 </div>

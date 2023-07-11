@@ -28,6 +28,7 @@ export class SidebarComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.role = this._authService.getRole();
+    console.log("this is the role : " + this.role)
   }
 
   ngAfterViewInit() {

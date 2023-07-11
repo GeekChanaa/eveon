@@ -12,7 +12,7 @@ namespace VoltaXApi.Data.Seeders
             IRepository<Card> repo = new Repository<Card>(dbContext);
             var cardFaker = new Faker<Card>()
                 .RuleFor(c => c.CardNumber, f => f.Finance.CreditCardNumber())
-                .RuleFor(c => c.CardType, f => f.PickRandom("Visa", "Mastercard", "American Express"))
+                .RuleFor(c => c.CardType, f => f.PickRandom<CardTypeEnum>())
                 .RuleFor(c => c.ExpirationDate, f => f.Date.Future())
                 .RuleFor(c => c.MaxCount, f => f.Random.Number(100))
                 .RuleFor(c => c.Status, f => f.PickRandom<CardStatusEnum>())

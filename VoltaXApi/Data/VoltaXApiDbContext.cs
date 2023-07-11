@@ -54,6 +54,9 @@ namespace VoltaXApi.Data
             public DbSet<State> States { get; set; }
             public DbSet<City> Cities { get; set; }
             public DbSet<DebitCard> DebitCards { get; set; }
+            public DbSet<Notification> Notifications { get; set; }
+            public DbSet<NotificationSetting> NotificationSettings { get; set; }
+            public DbSet<NotificationType> NotificationTypes { get; set; }
             // Add any Dbset configurations here
     }
 }

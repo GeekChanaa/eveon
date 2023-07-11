@@ -12,6 +12,7 @@ enum ProfilePageTabsEnum {
   SecurityTab = "SecurityTab",
   RechargeCardsTab = "RechargeCardsTab",
   PaymentCardsTab = "PaymentCardsTab",
+  NotificationSettingsTab = "NotificationSettingsTab"
 }
 
 @Component({

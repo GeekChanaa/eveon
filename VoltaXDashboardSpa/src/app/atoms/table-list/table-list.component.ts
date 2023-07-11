@@ -1,6 +1,8 @@
+import { formatDate } from '@angular/common';
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 @Component({
   selector: 'app-table-list',
@@ -36,10 +38,12 @@ export class TableListComponent implements OnInit {
 
   displayMenu: Boolean = false;
 
-  constructor() { }
+  constructor( 
+    private _enumMappingService : EnumMappingService
+  ) { }
 
   ngOnInit() {
-    var i = 0
+    var i = 0;
     this.fields.forEach((field) => {
       if (i < 5) {
         this.fieldShown[field] = true;
@@ -116,4 +120,62 @@ export class TableListComponent implements OnInit {
     this.applyFiltersEvent.emit();
     this.removeActive();
   }
+
+  formatValue(item: any, field: string): any {
+    let value = item[field.charAt(0).toLowerCase() + field.slice(1)];
+    console.log("HEEERE");
+    console.log(field);
+    console.log(typeof value);
+    if(this.isDateString(value)) {
+      // If it's a date string, parse it as a date and format it
+      const date = new Date(value);
+      return formatDate(date, 'yyyy/MM/dd hh:mm:ss', 'en-US');
+    } else if(field == 'status' && typeof value === 'number' && this.name == 'charging card') {
+      const enumMapping = this._enumMappingService.getEnumMapping("CardStatus");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'cardType') {
+      const enumMapping = this._enumMappingService.getEnumMapping("CardType");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'status' && typeof value === 'number' && this.name == 'charging station') {
+      const enumMapping = this._enumMappingService.getEnumMapping("ChargingStationStatusEnum");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'category' && typeof value === 'number' && this.name == 'charging station') {
+      const enumMapping = this._enumMappingService.getEnumMapping("ChargingStationCategoryEnum");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'parkingType' && typeof value === 'number' && this.name == 'charging station') {
+      const enumMapping = this._enumMappingService.getEnumMapping("ParkingTypeEnum");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'status' && typeof value === 'number' && this.name == 'charging point') {
+      const enumMapping = this._enumMappingService.getEnumMapping("ChargePointStatus");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    } else if(field == 'category' && typeof value === 'number' && this.name == 'charging point') {
+      const enumMapping = this._enumMappingService.getEnumMapping("ChargePointCategory");
+      return enumMapping ? enumMapping[value] ?? value : value;
+    }
+
+    else if(typeof value === 'number' || this.isNumericString(value)) {
+      // If it's a number (or a string that can be parsed as a number), format it with 2 decimal places
+      const num = Number(value);
+      if (Number.isInteger(num)) {
+        return num.toString();
+      } else {
+        return num.toFixed(2);
+      }
+    }
+    
+    else {
+      return value;
+    }
+  }
+  
+  isDateString(value: any): boolean {
+    const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+$/;
+    return typeof value === 'string' && regex.test(value);
+  }
+  
+  isNumericString(value: any): boolean {
+    return typeof value === 'string' && !isNaN(Number(value)) && value.includes(".");
+  }
+  
+  
 }

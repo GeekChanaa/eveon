@@ -1,6 +1,6 @@
 export enum CardStatusEnum {
-    Active = "Active",
-    Inactive = "Inactive",
-    Blocked = "Blocked",
-    Expired = "Expired"
+    Active =  0,
+    Inactive =  1,
+    Blocked =  2,
+    Expired = 3
 }

@@ -84,7 +84,7 @@ namespace VoltaXApi.Controllers
                 new Claim(ClaimTypes.Name, userFromRepo.Email),
                 new Claim(ClaimTypes.GivenName, userFromRepo.FirstName),
                 new Claim(ClaimTypes.Surname, userFromRepo.LastName),
-                new Claim(ClaimTypes.Role, userFromRepo.Role.ToString())
+                new Claim(ClaimTypes.Role, ((int)userFromRepo.Role).ToString())
             };
 
 

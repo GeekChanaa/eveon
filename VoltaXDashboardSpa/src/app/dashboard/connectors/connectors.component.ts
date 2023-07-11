@@ -24,7 +24,7 @@ export class ConnectorsComponent implements OnInit {
 
   connector : Connector = {
     id: 0,
-    chargePointId: 0,
+    chargePointID: 0,
     power: 0,
     speed: 0
   }
@@ -45,6 +45,7 @@ export class ConnectorsComponent implements OnInit {
     this._connectorService.getAll(this.currentPage,this.itemsPerPage, this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
+        console.log(this.data);
       }
     })
   }

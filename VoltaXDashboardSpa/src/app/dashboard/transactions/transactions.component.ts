@@ -25,15 +25,17 @@ export class TransactionsComponent implements OnInit {
 
   transaction : Transaction = {
     id: 0,
-    userID: 0,
-    chargePointID: 0,
     startTime: new Date(),
-    endTime: new Date(),
-    energyConsumed: 0,
-    paymentAmount: 0,
-    transactionStatus: '',
-    user: null,
-    chargePoint: null
+    connectorID: 0,
+    startTagId: '',
+    meterStart: 0,
+    startResult: '',
+    stopTagId: '',
+    stopTime: new Date(),
+    meterStop: 0,
+    stopReason: '',
+    amount: 0,
+    cardID: 0
   }
 
   // Constructor

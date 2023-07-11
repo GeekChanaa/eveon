@@ -1,5 +1,5 @@
 export enum ChargePointStatusEnum {
-    Available = "Available",
-    Offline = "Offline",
-    UnderMaintenance = "Under Maintenance"
+    Available = 0,
+    Offline = 1,
+    UnderMaintenance = 2
 }

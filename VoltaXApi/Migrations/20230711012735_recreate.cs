@@ -20,7 +20,7 @@ namespace VoltaXApi.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Network = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
                     ChargerQuantity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -28,8 +28,8 @@ namespace VoltaXApi.Migrations
                     Latitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Longitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Organisation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParkingType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParkingType = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     WifiAmenity = table.Column<bool>(type: "bit", nullable: false),
                     ParkingAmenity = table.Column<bool>(type: "bit", nullable: false),
                     RestaurantsAmenity = table.Column<bool>(type: "bit", nullable: false),
@@ -107,6 +107,23 @@ namespace VoltaXApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MessageLogs", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationTypes",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ForCustomers = table.Column<bool>(type: "bit", nullable: false),
+                    ForAdmins = table.Column<bool>(type: "bit", nullable: false),
+                    ForPartners = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationTypes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,7 +236,7 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CardType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CardType = table.Column<int>(type: "int", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MaxCount = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -255,6 +272,74 @@ namespace VoltaXApi.Migrations
                     table.PrimaryKey("PK_DebitCards", x => x.ID);
                     table.ForeignKey(
                         name: "FK_DebitCards_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    NotificationTypeID = table.Column<int>(type: "int", nullable: false),
+                    Read = table.Column<bool>(type: "bit", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderID = table.Column<int>(type: "int", nullable: true),
+                    ReceiverID = table.Column<int>(type: "int", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActionOn = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Urgent = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Notifications_NotificationTypes_NotificationTypeID",
+                        column: x => x.NotificationTypeID,
+                        principalTable: "NotificationTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_ReceiverID",
+                        column: x => x.ReceiverID,
+                        principalTable: "Users",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_SenderID",
+                        column: x => x.SenderID,
+                        principalTable: "Users",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationSettings",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<bool>(type: "bit", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    NotificationTypeID = table.Column<int>(type: "int", nullable: false),
+                    Urgent = table.Column<bool>(type: "bit", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationSettings", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_NotificationSettings_NotificationTypes_NotificationTypeID",
+                        column: x => x.NotificationTypeID,
+                        principalTable: "NotificationTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NotificationSettings_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "ID",
@@ -532,6 +617,31 @@ namespace VoltaXApi.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_NotificationTypeID",
+                table: "Notifications",
+                column: "NotificationTypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_ReceiverID",
+                table: "Notifications",
+                column: "ReceiverID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_SenderID",
+                table: "Notifications",
+                column: "SenderID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NotificationSettings_NotificationTypeID",
+                table: "NotificationSettings",
+                column: "NotificationTypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NotificationSettings_UserID",
+                table: "NotificationSettings",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CardID",
                 table: "Orders",
                 column: "CardID");
@@ -585,6 +695,12 @@ namespace VoltaXApi.Migrations
                 name: "MessageLogs");
 
             migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "NotificationSettings");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
@@ -595,6 +711,9 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Connectors");
+
+            migrationBuilder.DropTable(
+                name: "NotificationTypes");
 
             migrationBuilder.DropTable(
                 name: "Cards");

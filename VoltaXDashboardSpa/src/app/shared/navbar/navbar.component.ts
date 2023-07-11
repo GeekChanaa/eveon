@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
 
 @Component({
@@ -29,5 +30,16 @@ export class NavbarComponent implements OnInit {
   // header avatar 
   header_avatar(){
     this.avatarMenuBody = this.avatarMenuBody ? false : true;
+  }
+
+  // go to profile
+  goToProfile(){
+    var role = this._authService.getRole();
+    if(role == UserRole.Admin)
+    this._router.navigate(['/dashboard/profile'])
+    else if(role == UserRole.Customer)
+    this._router.navigate(['/my-dashboard/profile'])
+    else if(role == UserRole.Partner)
+    this._router.navigate(['/partner-dashboard/profile'])
   }
 }

@@ -7,7 +7,7 @@ namespace VoltaXApi.Models
     
         public string CardNumber { get; set; }
         
-        public string CardType { get; set; }
+        public CardTypeEnum CardType { get; set; }
     
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }

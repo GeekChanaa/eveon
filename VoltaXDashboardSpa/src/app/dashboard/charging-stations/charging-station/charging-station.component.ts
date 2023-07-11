@@ -5,6 +5,9 @@ import { ChargingStation } from 'src/_models/charging-station';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto';
+import { ParkingTypeEnum } from 'src/_models/_enums/parking-type';
+import { ChargingStationStatusEnum } from 'src/_models/_enums/charging-station-status';
+import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 
 enum ChargingStationTabsEnum {
   InformationsTab = "InformationsTab",
@@ -30,7 +33,7 @@ export class ChargingStationComponent implements OnInit {
     name: '',
     address: '',
     network: '',
-    category: '',
+    category: ChargingStationCategoryEnum.Partner,
     chargerQuantity: '',
     country: '',
     state: '',
@@ -38,8 +41,8 @@ export class ChargingStationComponent implements OnInit {
     latitude: '',
     longitude: '',
     organisation: '',
-    parkingType: '',
-    status: '',
+    parkingType: ParkingTypeEnum.AngleParking,
+    status: ChargingStationStatusEnum.Available,
     wifiAmenity: '',
     parkingAmenity: '',
     restaurantsAmenity: '',

@@ -55,9 +55,8 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CardType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CardType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
@@ -187,9 +186,8 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
 
                     b.Property<string>("ChargerQuantity")
                         .IsRequired()
@@ -222,9 +220,8 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("ParkingAmenity")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ParkingType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParkingType")
+                        .HasColumnType("int");
 
                     b.Property<bool>("RestaurantsAmenity")
                         .HasColumnType("bit");
@@ -235,9 +232,8 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<bool>("WashroomAmenity")
                         .HasColumnType("bit");
@@ -569,6 +565,124 @@ namespace VoltaXApi.Migrations
                     b.ToTable("MessageLogs");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Notification", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ActionOn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NotificationTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ReceiverID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Urgent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NotificationTypeID");
+
+                    b.HasIndex("ReceiverID");
+
+                    b.HasIndex("SenderID");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.NotificationSetting", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Email")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NotificationTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Urgent")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NotificationTypeID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("NotificationSettings");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.NotificationType", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ForAdmins")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ForCustomers")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ForPartners")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("NotificationTypes");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Order", b =>
                 {
                     b.Property<int>("ID")
@@ -870,6 +984,48 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Notification", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverID");
+
+                    b.HasOne("VoltaXApi.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderID");
+
+                    b.Navigation("NotificationType");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.NotificationSetting", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NotificationType");
 
                     b.Navigation("User");
                 });

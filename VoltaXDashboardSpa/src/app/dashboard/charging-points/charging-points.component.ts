@@ -15,6 +15,9 @@ export class ChargingPointsComponent implements OnInit {
   // Data
   data : any[] = [];
 
+  // filters : 
+  filters : any = {};
+
   // item params for filtering sorting an other
   itemParams : any = {};
 
@@ -119,5 +122,20 @@ export class ChargingPointsComponent implements OnInit {
     }
     this.getAll();
   }
+
+  // Applying filters
+  applyFilters(){
+    this.itemParams.FilterValue = [this.filters.category, this.filters.status]; 
+    this.itemParams.FilterBy = ["Status","Category"]; 
+    this.itemParams.FilterMethod = "&&";
+    this.getAll();
+  }
+
+  search(val : string){
+    // Update parameters in itemParams
+   this.itemParams.SearchBy = ['Name', 'Address']; // array of fields to search in
+   this.itemParams.SearchValue = 'Gut'; // the value to search for
+   this.getAll();
+ }
 
 }

@@ -7,51 +7,51 @@
   
   <div class="sidebar__menu">
     <!-- Customer menu -->
-    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'home'" [link]="'/my-dashboard'"></app-sidebar-item>
-    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'my cards'" [link]="'/my-dashboard/my-cards'"></app-sidebar-item>
-    <app-sidebar-item *ngIf="role == 'Customer'" [title]="'my profile'" [link]="'/my-dashboard/my-profile'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 1" [title]="'home'" [link]="'/my-dashboard'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 1" [title]="'my cards'" [link]="'/my-dashboard/my-cards'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 1" [title]="'my profile'" [link]="'/my-dashboard/my-profile'"></app-sidebar-item>
 
     <!-- Menu and support menu -->
-    <app-sidebar-item *ngIf="role == 'Admin'" [title]="'home'" [link]="'/'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 0" [title]="'home'" [link]="'/'"></app-sidebar-item>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Operation Monitoring'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'Operation Monitoring'">
       <app-sidebar-link [title]="'Connector real-time'" [link]="'/tbd'"></app-sidebar-link>
       <app-sidebar-link [title]="'statistics'" [link]="'/dashboard/statistics'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Station Management'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'Station Management'">
       <app-sidebar-link [title]="'charging station'" [link]="'/dashboard/charging-stations'"></app-sidebar-link>
       <app-sidebar-link [title]="'charge point'" [link]="'/dashboard/charging-points'"></app-sidebar-link>
       <app-sidebar-link [title]="'connector'" [link]="'/dashboard/connectors'"></app-sidebar-link>
       <app-sidebar-link [title]="'station load balance'" [link]="'/station-load-balance'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'business management'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'business management'">
       <app-sidebar-link [title]="'charging cards'" [link]="'/dashboard/charging-cards'"></app-sidebar-link>
       <app-sidebar-link [title]="'charging strategies'" [link]="'/dashboard/charging-strategies'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'app management'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'app management'">
       <app-sidebar-link [title]="'comments management'" [link]="'/dashboard/comment-management'"></app-sidebar-link>
       <app-sidebar-link [title]="'home charger bind list'" [link]="'/dashboard/home-charger-bind-list'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'order management'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'order management'">
       <app-sidebar-link [title]="'transactions'" [link]="'/dashboard/transactions'"></app-sidebar-link>
       <app-sidebar-link [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'maintenance management'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'maintenance management'">
       <app-sidebar-link [title]="'alarm management'" [link]="'/dashboard/alarm-management'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'ocpp operation'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'ocpp operation'">
       <app-sidebar-link [title]="'local list'" [link]="'/dashboard/ocpp-local-list'"></app-sidebar-link>
       <app-sidebar-link [title]="'charging profile'" [link]="'/dashboard/charging-profile'"></app-sidebar-link>
       <app-sidebar-link [title]="'configuration'" [link]="'/dashboard/ocpp-configuration'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
-    <app-sidebar-dropdown *ngIf="role == 'Admin'" [title]="'Account'">
+    <app-sidebar-dropdown *ngIf="role == 0" [title]="'Account'">
       <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'"></app-sidebar-link>
     </app-sidebar-dropdown>
   </div>

@@ -17,6 +17,9 @@ export class ChargingCardsComponent implements OnInit {
   // Fields
   fields : string[] = [];
 
+  // filters : 
+  filters : any = {};
+
   // Page params
   itemsPerPage : number = 20;
   currentPage : number = 1;
@@ -52,7 +55,7 @@ export class ChargingCardsComponent implements OnInit {
   
   // Getting All recharge cards
   getAll(){
-    this._cardService.getAllCards(this.currentPage,this.itemsPerPage).subscribe(data => {
+    this._cardService.getAllCards(this.currentPage,this.itemsPerPage,this.itemParams).subscribe(data => {
       if (data.result) {
         this.data = data.result;
       }
@@ -114,6 +117,23 @@ export class ChargingCardsComponent implements OnInit {
       this.itemParams.orderBy = field;
       this.itemParams.reverseOrder = 'n'
     }
+    this.getAll();
+  }
+
+  
+
+  // Applying filters
+  applyFilters() {
+    this.itemParams.FilterValue = [this.filters.status, this.filters.type];
+    this.itemParams.FilterBy = ['Status', 'CardType'];
+    this.itemParams.FilterMethod = '&&';
+    this.getAll();
+  }
+
+  search(val: string) {
+    // Update parameters in itemParams
+    this.itemParams.SearchBy = ['Name', 'Address']; // array of fields to search in
+    this.itemParams.SearchValue = 'Gut'; // the value to search for
     this.getAll();
   }
 

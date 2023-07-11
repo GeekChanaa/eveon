@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from 'src/_guards/auth.guard';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { GlobalComponent } from './global/global.component';
+import { NotFoundComponent } from './global/error-pages/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -30,7 +31,12 @@ const routes: Routes = [
     component : GlobalComponent,
     loadChildren : () => import('./global/global.module')
       .then(m=>m.GlobalModule)
-  }
+  },
+  {
+    path : "**",
+    component : NotFoundComponent,
+  },
+
   
 ];
 

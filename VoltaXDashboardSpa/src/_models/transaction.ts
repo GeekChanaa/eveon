@@ -1,16 +1,22 @@
+import { Card } from "./card";
 import { ChargePoint } from "./charge-point";
-import { User } from "./user";
 
 export interface Transaction {
     id: number;
-    userID: number;
-    chargePointID: number;
+    uid?: string;
+    chargePointID?: string;
+    connectorID: number;
+    startTagId: string;
     startTime: Date;
-    endTime: Date;
-    energyConsumed: number;
-    paymentAmount: number;
-    transactionStatus: string;
-    user : User | null;
-    chargePoint : ChargePoint | null;
+    meterStart: number;
+    startResult: string;
+    stopTagId: string;
+    stopTime: Date;
+    meterStop: number;
+    stopReason: string;
+    amount: number;
+    cardID: number;
     [key: string]: any;
+    card?: Card;
+    chargePoint?: ChargePoint;
 }

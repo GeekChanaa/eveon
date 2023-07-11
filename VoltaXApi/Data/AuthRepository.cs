@@ -33,7 +33,7 @@ namespace VoltaXApi.Data
             Card userCard = new Card
             {
                 CardNumber = GenerateCardNumber(),
-                CardType = "Standard",
+                CardType = CardTypeEnum.Standard,
                 ExpirationDate = DateTime.Now.AddYears(2),
                 MaxCount = 1,
                 Status = CardStatusEnum.Inactive,

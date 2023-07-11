@@ -11,6 +11,8 @@
           [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
         <button (click)="changeTab('PaymentCardsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'PaymentCardsTab'}">Payment Cards</button>
+          <button (click)="changeTab('NotificationSettingsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'NotificationSettingsTab'}">Notification Settings</button>
       </div>
       <div class="settings__wrapper">
         <select class="select">
@@ -291,6 +293,9 @@
               </app-debit-card>
             </div>
             
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'NotificationSettingsTab'">
+            <app-notification-settings></app-notification-settings>
           </div>
         </div>
       </div>

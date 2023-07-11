@@ -11,7 +11,7 @@ namespace VoltaXApi.Data
     {
         Task<IQueryable<TEntity>> GetAllAsync(GlobalParams globalParams);
         Task<TEntity> GetByIdAsync(int id);
-        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync(TEntity entity);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         Task Remove(TEntity entity);

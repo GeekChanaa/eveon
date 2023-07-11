@@ -1,0 +1,18 @@
+<div class="settings__item">
+  <div class="settings__anchor" id="notifications" data-value="Notifications"></div>
+  <div class="title-red settings__title">Notifications</div>
+  <div class="settings__list">
+    <div *ngFor="let notificationType of notificationTypes" class="settings__line">
+      <div class="settings__label">{{notificationType.description}}
+        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <label class="switch">
+        <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+      </label>
+    </div>
+  </div>
+</div>

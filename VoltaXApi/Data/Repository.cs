@@ -31,7 +31,6 @@ namespace VoltaXApi.Data
             // Sorting
             if (!string.IsNullOrEmpty(objectParams.OrderBy))
             {
-                Console.WriteLine(objectParams.OrderBy);
                 foreach (var prop in props)
                 {
                     if (prop.Name.ToLower() == objectParams.OrderBy.ToLower())
@@ -66,22 +65,26 @@ namespace VoltaXApi.Data
             // Filtering
             if (objectParams.FilterBy != null)
             {
-
                 string filterQuery1 = "";
                 for (int i = 0; i < objectParams.FilterBy.Length; i++)
                 {
                     foreach (var prop in props)
                     {
-                        if (prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?) || prop.PropertyType == typeof(bool))
+                        if (prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?) || prop.PropertyType == typeof(bool) || prop.PropertyType.IsEnum)
                         {
                             if (prop.Name == objectParams.FilterBy[i])
                             {
+                                Console.WriteLine("this is the prop.Name : " + prop.Name);
                                 if (i == 0)
                                 {
                                     filterQuery1 = prop.Name + " == \"" + objectParams.FilterValue[i] + "\"";
+                                    Console.WriteLine(filterQuery1);
                                 }
                                 if (i != 0)
+                                {
                                     filterQuery1 = filterQuery1 + " " + objectParams.FilterMethod + " " + prop.Name + " == \"" + objectParams.FilterValue[i] + "\"";
+                                    Console.WriteLine(filterQuery1);
+                                }
                                 if (i == objectParams.FilterValue.Length - 1)
                                 {
                                     data = data.Where("( " + filterQuery1 + " )");
@@ -115,7 +118,7 @@ namespace VoltaXApi.Data
             return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _context.Set<TEntity>().Where(predicate).ToListAsync();
         }

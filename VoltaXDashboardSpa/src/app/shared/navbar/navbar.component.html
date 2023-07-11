@@ -111,7 +111,7 @@
       <button (click)="header_avatar()" class="header__head"><img src="img/content/avatar.jpg" alt="Avatar"></button>
       <div class="header__body" >
         <div class="header__nav">
-          <a class="header__link" routerLink="/profile">Profile</a>
+          <button class="header__link" (click)="goToProfile()">Profile</button>
         </div>
 
         <div class="header__nav"><a class="header__link" (click)="logout()">Log out</a></div>

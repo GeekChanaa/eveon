@@ -1,7 +1,7 @@
 export enum ChargePointCategoryEnum {
-    TheTower = "The Tower",
-    TheTowerPlus = "The Tower Plus",
-    VXCommercial = "VX Commercial",
-    TheTowerDC = "The Tower DC",
-    VXHome = "VX Home"
+    TheTower = 0,
+    TheTowerPlus = 1,
+    VXCommercial = 2,
+    TheTowerDC = 3,
+    VXHome = 4
 }

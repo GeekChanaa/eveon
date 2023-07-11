@@ -1,6 +1,6 @@
 import { HttpEvent, HttpInterceptor, HttpRequest, HttpHandler } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, catchError, throwError } from "rxjs";
 import { AuthService } from "src/_services/auth.service";
 
 
@@ -20,5 +20,15 @@ export class TokenInterceptor implements HttpInterceptor
         });
 
         return next.handle(request);
+    }
+
+    // handle your auth error or rethrow
+    private handleAuthError() {
+        // if (this.auth.isTokenExpired()) {
+        // // navigate /delete cookies or whatever
+        // console.log('handled error ' );
+        // // if you've caught / handled the error, you don't want to rethrow it unless you also want downstream consumers to have to handle it as well.
+        // // return Observable.throw(new Error('An error occurred'));
+        // }
     }
 }

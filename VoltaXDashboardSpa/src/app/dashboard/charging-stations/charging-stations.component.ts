@@ -4,6 +4,9 @@ import { Pagination } from 'src/_models/pagination';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { Router } from '@angular/router';
 import { CityService } from 'src/_services/city.service';
+import { ParkingTypeEnum } from 'src/_models/_enums/parking-type';
+import { ChargingStationStatusEnum } from 'src/_models/_enums/charging-station-status';
+import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 
 @Component({
   selector: 'app-charging-stations',
@@ -44,7 +47,7 @@ export class ChargingStationsComponent implements OnInit {
     name: '',
     address: '',
     network: '',
-    category: '',
+    category: ChargingStationCategoryEnum.Public,
     chargerQuantity: '',
     country: '',
     state: '',
@@ -52,8 +55,8 @@ export class ChargingStationsComponent implements OnInit {
     latitude: '',
     longitude: '',
     organisation: '',
-    parkingType: '',
-    status: '',
+    parkingType: ParkingTypeEnum.AngleParking,
+    status: ChargingStationStatusEnum.Available,
     wifiAmenity: '',
     parkingAmenity: '',
     restaurantsAmenity: '',

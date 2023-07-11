@@ -1,17 +1,20 @@
+using VoltaXApi.Models;
+
+
 namespace VoltaXApi.Dtos
 {
     public class CardDto
     {
         public string CardNumber { get; set; }
         
-        public string CardType { get; set; }
+        public CardTypeEnum CardType { get; set; }
         public string Name { get; set; }
     
         public DateTime ExpirationDate { get; set; }
     
         public int MaxCount { get; set; }
     
-        public string Status { get; set; }
+        public CardStatusEnum Status { get; set; }
     
         public decimal Balance { get; set; }
     
