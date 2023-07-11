@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, map } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PaginatedResult } from 'src/_models/pagination';
 @Injectable({
   providedIn: 'root'
 })
@@ -44,5 +45,10 @@ export class ChargePointService extends AbstractService<ChargePoint>{
     }
 
     return result;
+  }
+
+  // Get Partner Charge Points : 
+  getPartnerChargePoints(partnerID : number,page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<ChargePoint[]>>{
+    return super.getAll(page,itemsPerPage,itemParams,"GetPartnerChargePoints/"+partnerID);
   }
 }

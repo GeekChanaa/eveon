@@ -14,7 +14,7 @@ const routes: Routes = [
     path: "charging-stations",
     component: PartnerChargingStationsComponent,
   },{
-    path: "charge-points",
+    path: "charging-points",
     component: PartnerChargePointsComponent,
   },{
     path: "connectors",

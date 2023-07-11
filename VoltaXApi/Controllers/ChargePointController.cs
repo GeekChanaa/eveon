@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -46,12 +47,19 @@ namespace VoltaXApi.Controllers
             }
             catch (Exception ex)
             {
-                // Handle any exception that was thrown in the AddAsync method
-                // You can replace this with more specific error handling if you want
                 return BadRequest(ex.Message);
             }
 
             return CreatedAtAction("GetById", new { id = chargePoint.ID }, chargePoint);
+        }
+
+        // Charging Stations of partner
+        [HttpGet("GetPartnerChargePoints/{partnerID}")]
+        public async Task<ActionResult<List<ChargingStation>>> GetPartnerChargePoints(int partnerID , [FromQuery] GlobalParams globalParams)
+        {
+            var chargingStations = await PagedList<ChargePoint>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ChargingStation.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(chargingStations.CurrentPage, chargingStations.PageSize, chargingStations.TotalCount, chargingStations.TotalPages);
+            return Ok(chargingStations);
         }
     }
 }

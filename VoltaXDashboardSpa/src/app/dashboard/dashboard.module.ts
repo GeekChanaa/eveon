@@ -36,6 +36,7 @@ import { ChargingCardComponent } from './charging-cards/charging-card/charging-c
 import { StatisticsComponent } from './statistics/statistics.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
+import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { NotificationSettingsComponent } from './profile/notification-settings/n
     ChargingCardComponent,
     StatisticsComponent,
     AppTableCustomButtonDirective,
-    NotificationSettingsComponent
+    NotificationSettingsComponent,
+    CompleteProfileComponent
     
   ],
     imports: [

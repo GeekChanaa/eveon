@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
@@ -28,7 +28,9 @@ export class CustomerHomeComponent implements OnInit {
   constructor(
     private _userService : UserService,
     private _authService : AuthService,
-    private _cardService: CardService
+    private _cardService: CardService,
+    private el: ElementRef, 
+    private renderer: Renderer2
   ) {}
 
   // recharge cards : 
@@ -79,6 +81,62 @@ export class CustomerHomeComponent implements OnInit {
     console.log('beforeChange');
   }
 
-  
+  public popupElement: any;
+  public bodyElement: HTMLElement = document.getElementsByTagName('body')[0];
+
+  ngAfterViewInit() {
+    // Assume all the popup triggers, overlays, and close buttons are marked with an appropriate class in the template
+    const triggers = this.el.nativeElement.querySelectorAll('[data-popup]');
+    const overlays = this.el.nativeElement.querySelectorAll('.js-popup-overlay');
+    const closeButtons = this.el.nativeElement.querySelectorAll('.js-popup-close');
+
+    triggers.forEach((trigger : any) => {
+      this.renderer.listen(trigger, 'click', (event) => {
+        this.popupElement = this.el.nativeElement.querySelector(trigger.getAttribute('data-popup'));
+        this.showPopup(this.popupElement);
+      });
+    });
+
+    closeButtons.forEach((button : any) => {
+      this.renderer.listen(button, 'click', (event) => {
+        this.popupElement = button.closest('.js-popup');
+        this.hidePopup();
+      });
+    });
+
+    overlays.forEach((overlay : any) => {
+      this.renderer.listen(overlay, 'click', (event) => {
+        this.popupElement = overlay.closest('.js-popup');
+        this.hidePopup();
+      });
+    });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.hidePopup();
+    }
+  }
+
+  showPopup(element : any) {
+    this.renderer.addClass(element, 'animation');
+    this.renderer.addClass(element, 'visible');
+    this.renderer.addClass(this.bodyElement, 'no-scroll');
+  }
+
+  hidePopup() {
+    if (this.popupElement) {
+      this.renderer.removeClass(this.popupElement, 'animation');
+
+      if (document.querySelectorAll('.js-popup.visible').length === 1) {
+        this.renderer.removeClass(this.bodyElement, 'no-scroll');
+      }
+
+      setTimeout(() => {
+        this.renderer.removeClass(this.popupElement, 'visible');
+      }, 300);
+    }
+  }
 
 }

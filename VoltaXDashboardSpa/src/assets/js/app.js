@@ -244,54 +244,7 @@ $(document).ready(function () {
   } // popup
 
 
-  (function () {
-    var body = $('body'),
-      wrap = $('.js-popup-wrap'),
-      overlay = $('.js-popup-overlay'),
-      close = $('.js-popup-close');
-    var el;
-    $('[data-popup]').on('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      var _this = $(this),
-        data = _this.data('popup');
-
-      el = $(data);
-      showPopup(el);
-    });
-    close.on('click', function (e) {
-      var _thisClose = $(this);
-
-      el = _thisClose.parents('.js-popup');
-      e.preventDefault();
-      hidePopup();
-    });
-    overlay.on('click', function () {
-      var _thisOverlay = $(this);
-
-      el = _thisOverlay.parents('.js-popup');
-      hidePopup();
-    });
-    $(document).keyup(function (e) {
-      if (e.keyCode === 27) hidePopup();
-    });
-
-    function hidePopup() {
-      if (el) {
-        el.removeClass('animation');
-
-        if ($('.js-popup.visible').length == 1) {
-          body.removeClass('no-scroll');
-          body.css('padding-right', 0);
-        }
-
-        setTimeout(function () {
-          el.removeClass('visible');
-        }, 300);
-      }
-    }
-  })(); // global variables
+  // global variables
 
 
   var prevArrow = '<button type="button" class="slick-prev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="9" fill="none" viewBox="0 0 14 9"><path fill-rule="evenodd" d="M4.909.265a1 1 0 0 0-1.413.057l-3.231 3.5a1 1 0 0 0 0 1.357l3.231 3.5a1 1 0 0 0 1.47-1.357L3.284 5.5H13a1 1 0 1 0 0-2H3.284l1.682-1.822A1 1 0 0 0 4.909.265z" fill="#777e91"/></svg></button>',
