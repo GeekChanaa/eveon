@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230711012735_recreate")]
+    [Migration("20230711104935_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -224,6 +224,9 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("ParkingType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PartnerID")
                         .HasColumnType("int");
 
                     b.Property<bool>("RestaurantsAmenity")

@@ -128,6 +128,81 @@ namespace VoltaXApi.Data
         }
 
 
+
+        // PARTNER CHARGING STATIONS FUNCTIONS
+        // Getting charging station revenue
+        public async Task<double> GetPartnerChargingStationRevenue(int partnerID,int chargingStationID, DateTime? start = null, DateTime? end = null)
+        {
+            var chargePoints = (await this._context.ChargingStations.Include(u => u.ChargePoints).Where(c => c.PartnerID == partnerID).FirstOrDefaultAsync(u => u.ID == chargingStationID)).ChargePoints;
+            double total = 0;
+            foreach (ChargePoint chargePoint in chargePoints)
+            {
+                total += await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId, start, end);
+            }
+
+            return total;
+        }
+
+        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast7Days(int partnerID,int chargingStationID)
+        {
+            List<double> revenueList = new List<double>();
+            for (int i = 0; i < 7; i++)
+            {
+                DateTime start = DateTime.Today.AddDays(-i);
+                DateTime end = start.AddDays(1);
+                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
+                revenueList.Add(revenue);
+            }
+            return revenueList;
+        }
+
+        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast30Days(int partnerID,int chargingStationID)
+        {
+            List<double> revenueList = new List<double>();
+            for (int i = 0; i < 30; i++)
+            {
+                DateTime start = DateTime.Today.AddDays(-i);
+                DateTime end = start.AddDays(1);
+                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
+                revenueList.Add(revenue);
+            }
+            return revenueList;
+        }
+
+        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast12Months(int partnerID,int chargingStationID)
+        {
+            List<double> revenueList = new List<double>();
+            for (int i = 0; i < 12; i++)
+            {
+                DateTime start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-i);
+                DateTime end = start.AddMonths(1);
+                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
+                revenueList.Add(revenue);
+            }
+            return revenueList;
+        }
+
+
+        public async Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
+        {
+            // Get all ChargingStations
+            var chargingStations = await this._context.ChargingStations.Where(c => c.PartnerID == partnerID).Include(u => u.ChargePoints).ToListAsync();
+
+            var revenues = new List<ChargingStationRevenue>();
+
+            foreach (var cs in chargingStations)
+            {
+                var revenue = await GetPartnerChargingStationRevenue(partnerID,cs.ID);
+                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = revenue });
+            }
+
+            // Order by revenue and take top 10
+            var top10Stations = revenues.OrderByDescending(r => r.Revenue).Take(10);
+
+            return top10Stations;
+        }
+
+
     }
 
 

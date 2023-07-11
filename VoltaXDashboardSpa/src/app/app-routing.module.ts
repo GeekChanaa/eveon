@@ -6,6 +6,7 @@ import { AuthGuard } from 'src/_guards/auth.guard';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { GlobalComponent } from './global/global.component';
 import { NotFoundComponent } from './global/error-pages/not-found/not-found.component';
+import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
     component: CustomerDashboardComponent,
     canActivate : [AuthGuard],
     loadChildren : () => import('./customer-dashboard/customer-dashboard.module').then( m => m.CustomerDashboardModule)
+  },{
+    path: "partner-dashboard",
+    component: PartnerDashboardComponent,
+    canActivate : [AuthGuard],
+    loadChildren : () => import('./partner-dashboard/partner-dashboard.module').then( m => m.PartnerDashboardModule)
   },
   {
     path : "auth",

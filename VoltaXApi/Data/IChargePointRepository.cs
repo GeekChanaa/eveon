@@ -6,5 +6,6 @@ namespace VoltaXApi.Data
     {
         Task<List<Connector>> GetChargePointConnectors(int ChargePointID);
         Task<double> GetChargePointRevenue(string chargePointID ,DateTime? start = null , DateTime? end = null);
+        Task<double> GetPartnerChargePointRevenue(int partnerID,string chargePointID ,DateTime? start = null , DateTime? end = null);
     }
 }

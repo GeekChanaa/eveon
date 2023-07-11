@@ -223,6 +223,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ParkingType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PartnerID")
+                        .HasColumnType("int");
+
                     b.Property<bool>("RestaurantsAmenity")
                         .HasColumnType("bit");
 

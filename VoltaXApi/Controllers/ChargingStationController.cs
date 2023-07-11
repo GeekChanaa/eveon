@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -99,6 +100,16 @@ namespace VoltaXApi.Controllers
 
             return CreatedAtAction("GetById", new { id = chargingStation.ID }, chargingStation);
         }
+
+        // Charging Stations of partner
+        [HttpGet("GetPartnerChargingStations/{partnerID}")]
+        public async Task<ActionResult<List<ChargingStation>>> GetPartnerChargingStations(int partnerID , [FromQuery] GlobalParams globalParams)
+        {
+            var chargingStations = await PagedList<ChargingStation>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(chargingStations.CurrentPage, chargingStations.PageSize, chargingStations.TotalCount, chargingStations.TotalPages);
+            return Ok(chargingStations);
+        }
+
 
 
 

@@ -34,7 +34,8 @@ namespace VoltaXApi.Migrations
                     ParkingAmenity = table.Column<bool>(type: "bit", nullable: false),
                     RestaurantsAmenity = table.Column<bool>(type: "bit", nullable: false),
                     WashroomAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    SittingAreaAmenity = table.Column<bool>(type: "bit", nullable: false)
+                    SittingAreaAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    PartnerID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

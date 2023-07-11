@@ -118,7 +118,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
     // GlobalSeeder.Seed(dbContext).Wait();
-    SeedingNotificationTypes.Initialize(app.Services);
+    // SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);
     // await SqlScriptExecuter.ExecuteSqlScript();
 }

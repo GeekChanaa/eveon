@@ -54,6 +54,24 @@
     <app-sidebar-dropdown *ngIf="role == 0" [title]="'Account'">
       <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'"></app-sidebar-link>
     </app-sidebar-dropdown>
+
+    <!-- ForPartners -->
+    <ng-container *ngIf="role == 4">
+      <app-sidebar-dropdown [title]="'Station Management'">
+        <app-sidebar-link [title]="'charging station'" [link]="'/partner-dashboard/charging-stations'"></app-sidebar-link>
+        <app-sidebar-link [title]="'charge point'" [link]="'/partner-dashboard/charging-points'"></app-sidebar-link>
+        <app-sidebar-link [title]="'connector'" [link]="'/partner-dashboard/connectors'"></app-sidebar-link>
+      </app-sidebar-dropdown>
+
+      <app-sidebar-dropdown [title]="'Operation Monitoring'">
+        <app-sidebar-link [title]="'Connector real-time'" [link]="'/tbd'"></app-sidebar-link>
+        <app-sidebar-link [title]="'statistics'" [link]="'/partner-dashboard/statistics'"></app-sidebar-link>
+      </app-sidebar-dropdown>
+
+      <app-sidebar-dropdown [title]="'order management'">
+        <app-sidebar-link [title]="'transactions'" [link]="'/partner-dashboard/transactions'"></app-sidebar-link>
+      </app-sidebar-dropdown>
+    </ng-container>
   </div>
 
 

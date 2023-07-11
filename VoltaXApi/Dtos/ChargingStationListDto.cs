@@ -23,6 +23,7 @@ namespace VoltaXApi.Dtos
         public string ParkingType { get; set; }
         
         public string Status { get; set; }
+        public int? PartnerID { get; set; }
         
         public bool WifiAmenity { get; set; }
         public bool ParkingAmenity { get; set; }
