@@ -1,3 +1,80 @@
-<p>
-  partner-statistics works!
-</p>
+<div class="page__container">
+  <div class="page__title h3">Statistics</div>
+  <div class="card">
+    <div class="income">
+      <div class="income__list">
+        
+        
+        <div class="income__item">
+          <div class="income__icon" style="background-color: #B1E5FC;">
+            <svg class="icon icon-shopping-bag">
+              <use xlink:href="#icon-shopping-bag"></use>
+            </svg>
+          </div>
+          <div class="income__line">
+            <div class="income__details">
+              <div class="income__label">Total Energy (Kwh)
+                <div class="tooltip" title="Small description Total value of sales">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="income__counter"> {{total_energy_consumed | number:'1.2-2'}} </div>
+              <div class="income__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{total_energy_consumed_last_week}}
+                </div><span>this week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page__row">
+    <div class="page__col">
+      <div class="card">
+        <div class="earning">
+          <div class="earning__table">
+            <div class="earning__row">
+              <div class="earning__col">Start</div>
+              <div class="earning__col">End</div>
+              <div class="earning__col">Energy Consumed</div>
+              <div class="earning__col">Amount</div>
+            </div>
+            <div class="earning__row" *ngFor="let item of latestTransactions">
+              <div class="earning__col">{{item.startTime | date:'medium'}}</div>
+              <div class="earning__col">
+                <div class="status-yellow earning__status">{{item.stopTime | date:'medium'}}</div>
+              </div>
+              <div class="earning__col">{{item.meterStop - item.meterStart | number:'1.2-2'}}</div>
+              <div class="earning__col">{{item.amount | number:'1.2-2'}} DH
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page__col">
+      <div class="card">
+        <div class="card__head">
+          <div class="title-blue card__title">Top Charging Stations</div>
+        </div>
+        <div class="countries">
+          <div class="countries__list">
+            <div *ngFor="let item of top10ChargingStationRevenues" class="countries__item">
+              <div class="countries__flag">mo</div>
+              <div class="countries__title">{{item.chargingStationID}}</div>
+              <div class="countries__price">{{item.revenue}} DH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>

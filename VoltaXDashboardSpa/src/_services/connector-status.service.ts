@@ -21,4 +21,9 @@ export class ConnectorStatusService extends AbstractService<ConnectorStatus> {
   getNumberOfConnectorsByStatus(status : string){
     return this.http.get<number>(this.baseUrl+"GetNumberOfConnectorsByStatus?status="+status);
   }
+
+  // Get number of connectors by status
+  getPartnerNumberOfConnectorsByStatus(status : string){
+    return this.http.get<number>(this.baseUrl+"GetPartnerNumberOfConnectorsByStatus?status="+status);
+  }
 }

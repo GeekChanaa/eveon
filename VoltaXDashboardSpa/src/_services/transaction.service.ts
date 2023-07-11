@@ -43,4 +43,33 @@ export class TransactionService extends AbstractService<Transaction>{
     return this.http.get<any[]>(this.baseUrl+"GetLatestTransactions");
   }
 
+
+
+  // Partner functions
+
+  partnerTotalEnergyConsumed(partnerID : number){
+    return this._http.get<number>(this.baseUrl+"PartnerTotalEnergyConsumed/"+partnerID);
+  }
+
+  partnerTotalEnergyConsumedToday(partnerID : number){
+    return this._http.get(this.baseUrl+"PartnerTotalEnergyConsumedToday/"+partnerID);
+  }
+
+  partnerDailyEnergyConsumedLast30Days(partnerID : number){
+    return this._http.get(this.baseUrl+"PartnerDailyEnergyConsumedLast30Days/"+partnerID);
+  }
+
+  partnerMonthlyEnergyConsumedLastYear(partnerID : number){
+    return this._http.get(this.baseUrl+"PartnerMonthlyEnergyConsumedLastYear/"+partnerID);
+  }
+
+  getPartnerTotalEnergyConsumedBetween(partnerID : number, dateStart : Date, dateEnd : Date){
+    return this._http.get<number>(this.baseUrl+"GetPartnerTotalEnergyConsumedBetween/"+partnerID+"?dateStart="+dateStart+"&dateEnd="+dateEnd);
+  }
+
+  getPartnerLatestTransactions(partnerID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetPartnerLatestTransactions/"+partnerID);
+  }
+
+
 }

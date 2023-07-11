@@ -156,6 +156,5 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
 
-
     }
 }

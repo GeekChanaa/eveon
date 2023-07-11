@@ -111,6 +111,48 @@ namespace VoltaXApi.Controllers
         }
 
 
+        [HttpGet("GetPartnerChargingStationRevenue/{partnerID}")]
+        public async Task<ActionResult<double>> GetPartnerChargingStationRevenue(int partnerID,[FromQuery] int chargingStationID, string? start = null, string? end = null)
+        {
+            if (String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
+            {
+                Console.WriteLine("this is inside the if");
+                return await this._repository.GetPartnerChargingStationRevenue(partnerID,chargingStationID);
+            }
+
+
+            DateTime? startDate = DateTime.Parse(start);
+            DateTime? endDate = DateTime.Parse(end);
+
+            return await this._repository.GetPartnerChargingStationRevenue(partnerID,chargingStationID, startDate, endDate);
+        }
+
+        [HttpGet("GetPartnerChargingStationRevenueLast7Days/{partnerID}")]
+        public async Task<ActionResult<List<double>>> GetPartnerChargingStationRevenueLast7Days(int partnerID,[FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetPartnerChargingStationRevenueLast7Days(partnerID,chargingStationID)).ToList();
+        }
+
+        [HttpGet("GetPartnerChargingStationRevenueLast30Days/{partnerID}")]
+        public async Task<ActionResult<List<double>>> GetPartnerChargingStationRevenueLast30Days(int partnerID,[FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetPartnerChargingStationRevenueLast30Days(partnerID,chargingStationID)).ToList();
+        }
+
+        [HttpGet("GetPartnerChargingStationRevenueLast12Months/{partnerID}")]
+        public async Task<ActionResult<List<double>>> GetPartnerChargingStationRevenueLast12Months(int partnerID,[FromQuery] int chargingStationID)
+        {
+            return (await _repository.GetPartnerChargingStationRevenueLast12Months(partnerID,chargingStationID)).ToList();
+        }
+
+
+        [HttpGet("GetPartnerTop10ChargingStationsByRevenue/{partnerID}")]
+        public async Task<IActionResult> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
+        {
+            return Ok(await _repository.GetPartnerTop10ChargingStationsByRevenue(partnerID));
+        }
+
+
 
 
 

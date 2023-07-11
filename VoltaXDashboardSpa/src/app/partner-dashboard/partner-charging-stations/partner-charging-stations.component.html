@@ -1,3 +1,73 @@
-<p>
-  partner-charging-stations works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="charging station"
+      names="charging stations"
+      createLink="/charging-stations/create"
+      [fields]="fields" 
+      [data]="data"
+      (next)="nextPage()"
+      (previous)="previousPage()"
+      (firstPage)="goToFirstPage()"
+      (lastPage)="goToLastPage()"
+      (deleteEvent)="delete($event)"
+      (updateEvent)="update($event)"
+      (displayEvent)="display($event)"
+      (sortEvent)="sort($event)"
+      (applyFiltersEvent)="applyFilters()"
+      searchByPlaceHolder="Search by Name or Address"
+      (searchEvent)="search($event)"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By City
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.city">
+                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">By Category
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.category">
+                      <option value="Private">Private</option>
+                      <option value="Public">Public</option>
+                      <option value="Partner">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

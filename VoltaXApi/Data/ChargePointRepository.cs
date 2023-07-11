@@ -29,6 +29,20 @@ namespace VoltaXApi.Data
             return total;
         }
 
+        // Charge Point Total Transactions Amount (total revenues from this charge point)
+        public async Task<double> GetPartnerChargePointRevenue(int partnerID ,string chargePointID, DateTime? start = null, DateTime? end = null)
+        {
+            var chargePoint = await this._context.ChargePoints.Where(u => u.ChargingStation.PartnerID == partnerID).Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ChargePointId == chargePointID);
+            var transactions = chargePoint.Transactions.Where(t => (!start.HasValue || t.StartTime >= start.Value) && (!end.HasValue || t.StartTime <= end.Value));
+            double total = 0;
+            foreach (var transaction in transactions)
+            {
+                total += transaction.Amount;
+            }
+
+            return total;
+        }
+
         override public async Task AddAsync(ChargePoint chargePoint)
         {
             // Get the latest ChargePoint Name in the database

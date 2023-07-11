@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ChargingStation } from 'src/_models/charging-station';
 import { AbstractService } from './abstract-service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, map } from 'rxjs';
 import { ChargePoint } from 'src/_models/charge-point';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PaginatedResult } from 'src/_models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +38,31 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
   getTop10ChargingStationsByRevenue(){
     return this._http.get<any[]>(this.baseUrl+"GetTop10ChargingStationsByRevenue");
   }
+
+  // PARTNER CHARGING STATIONS
+  getPartnerChargingStations(partnerID : number,page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<ChargingStation[]>>{
+    return super.getAll(page,itemsPerPage,itemParams,"GetPartnerChargingStations/"+partnerID);
+  }
+
+  getPartnerChargingStationRevenue(partnerID : number){
+    return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenue/"+partnerID);
+  }
+
+  getPartnerChargingStationRevenueLast7Days(partnerID : number){
+    return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenueLast7Days/"+partnerID);
+  }
+
+  getPartnerChargingStationRevenueLast30Days(partnerID : number){
+    return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenueLast30Days/"+partnerID);
+  }
+
+  getPartnerChargingStationRevenueLast12Months(partnerID : number){
+    return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenueLast12Months/"+partnerID);
+  }
+
+  getPartnerTop10ChargingStationsByRevenue(partnerID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetPartnerTop10ChargingStationsByRevenue/"+partnerID);
+  }
+
 
 }

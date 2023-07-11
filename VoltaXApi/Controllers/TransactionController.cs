@@ -64,5 +64,50 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.GetLatestTransactions();
         }
+        
+        /****
+            PARTNER TRANSACTIONS MANAGEMENT
+        ***/
+
+        [HttpGet("PartnerTotalEnergyConsumed/{partnerID}")]
+        public async Task<IActionResult> GetPartnerTotalEnergyConsumedAsync(int partnerID)
+        {
+            var result = await _repository.GetPartnerTotalEnergyConsumedAsync(partnerID);
+            return Ok(result);
+        }
+
+        [HttpGet("PartnerTotalEnergyConsumedToday/{partnerID}")]
+        public async Task<IActionResult> GetPartnerTotalEnergyConsumedTodayAsync(int partnerID)
+        {
+            var result = await _repository.GetPartnerTotalEnergyConsumedTodayAsync(partnerID);
+            return Ok(result);
+        }
+
+        [HttpGet("PartnerDailyEnergyConsumedLast30Days/{partnerID}")]
+        public async Task<IActionResult> GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID)
+        {
+            var result = await _repository.GetPartnerDailyEnergyConsumedLast30DaysAsync(partnerID);
+            return Ok(result);
+        }
+
+        [HttpGet("PartnerMonthlyEnergyConsumedLastYear/{partnerID}")]
+        public async Task<IActionResult> GetPartnerMonthlyEnergyConsumedLastYearAsync(int partnerID)
+        {
+            var result = await _repository.GetPartnerMonthlyEnergyConsumedLastYearAsync(partnerID);
+            return Ok(result);
+        }
+
+        [HttpGet("GetPartnerTotalEnergyConsumedBetween/{partnerID}")]
+        public async Task<IActionResult> GetPartnerTotalEnergyConsumedBetween(int partnerID,[FromQuery] DateTime dateStart , [FromQuery] DateTime dateEnd)
+        {
+            var result = await _repository.GetPartnerTotalEnergyConsumedBetween(partnerID,dateStart ,dateEnd);
+            return Ok(result);
+        }
+
+        [HttpGet("GetPartnerLatestTransactions/{partnerID}")]
+        public async Task<ActionResult<List<Transaction>>> GetPartnerLatestTransactions(int partnerID)
+        {
+            return await this._repository.GetPartnerLatestTransactions(partnerID);
+        }
     }
 }
