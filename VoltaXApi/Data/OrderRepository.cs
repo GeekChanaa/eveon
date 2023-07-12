@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -25,6 +26,25 @@ namespace VoltaXApi.Data
 
             return Amount;
         }
+
+        public async Task<InvoiceDTO> GetOrderForInvoice(int orderID)
+        {
+            var order = _context.Orders.Include(u => u.Card).ThenInclude(u => u.User).FirstOrDefault(u => u.ID == orderID);
+            var invoice = new InvoiceDTO
+            {
+                OrderNumber = order.ID.ToString(),
+                BilledTo = $"{order.Card.User.FirstName} {order.Card.User.LastName}",
+                PayTo = "VoltaX Charging",
+                PaymentMethod = "CMI", // You need to provide actual payment method data
+                Phone = order.Card.User.Phone,
+                Email = order.Card.User.Email,
+                CardID = order.Card.CardNumber,
+                Date = order.RechargeDate.ToString("dd MMM yyyy"),
+            };
+
+            return invoice;
+        }
+
     }
 }
 

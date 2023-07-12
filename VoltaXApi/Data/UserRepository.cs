@@ -73,6 +73,8 @@ namespace VoltaXApi.Data
             return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
         }
 
+        
+
 
 
     }

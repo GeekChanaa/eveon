@@ -51,7 +51,7 @@ export class EnumMappingService {
       0: 'ParallelParking',
       1: 'PerpendicularParking',
       2: 'AngleParking'
-    }
+    },
   };
 
   getEnumMapping(modelName: string): { [id: number]: string } {

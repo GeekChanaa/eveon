@@ -156,5 +156,12 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
 
+
+        // Get Invoice PDF Info 
+        [HttpGet("GetInvoiceInfo/{orderID}")]
+        public async Task<IActionResult> GetInvoiceInfo(int orderID)
+        {
+            return Ok(await this._repository.GetOrderForInvoice(orderID));
+        }
     }
 }

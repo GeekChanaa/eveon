@@ -372,11 +372,14 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.ConnectorStatus", b =>
                 {
-                    b.Property<int>("ConnectorId")
+                    b.Property<int?>("ConnectorID")
                         .HasColumnType("int");
 
-                    b.Property<string>("ChargePointId")
+                    b.Property<string>("ChargePointID")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("ChargePointID1")
+                        .HasColumnType("int");
 
                     b.Property<int>("ID")
                         .HasColumnType("int");
@@ -387,7 +390,9 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime?>("LastStatusTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ConnectorId", "ChargePointId");
+                    b.HasKey("ConnectorID", "ChargePointID");
+
+                    b.HasIndex("ChargePointID1");
 
                     b.ToTable("ConnectorStatuses");
                 });
@@ -967,6 +972,23 @@ namespace VoltaXApi.Migrations
                         .IsRequired();
 
                     b.Navigation("ChargePoint");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ConnectorStatus", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID1");
+
+                    b.HasOne("VoltaXApi.Models.Connector", "Connector")
+                        .WithMany()
+                        .HasForeignKey("ConnectorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("Connector");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ConnectorTarif", b =>

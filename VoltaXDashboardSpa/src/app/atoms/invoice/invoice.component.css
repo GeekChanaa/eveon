@@ -1,0 +1,65 @@
+.invoice_logo img {
+    height: 90px;
+}
+
+.invoice_card {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.invoice_title {
+    margin-left: auto;
+    font-size: 2em;
+    font-weight: lighter;
+}
+
+.invoice_header {
+    display: flex;
+}
+
+.invoice_center {
+    text-align: center;
+}
+
+.invoice_header_main {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.invoice_header_value {
+    font-size: 0.7em;
+    font-weight: lighter;
+}
+
+.invoice_header table {
+    margin-top: 64px;
+    width: 45%;
+}
+
+.invoice_thead {
+    font-size: 1.2em;
+}
+
+.invoice_tbody {
+    font-size: 1.2em;
+    font-weight: lighter;
+}
+
+.invoice_footer_message {
+    font-size: 1.5em;
+    margin-top: 64px;
+}
+
+.invoice_details_title {
+    margin-top: 64px;
+    margin-bottom: 32px;
+    font-size: 2em;
+}
+
+body {
+    color: black;
+  }
+
+.invoice-card {
+    width: 100%;
+}

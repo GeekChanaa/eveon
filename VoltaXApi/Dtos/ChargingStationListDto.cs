@@ -1,3 +1,5 @@
+using VoltaXApi.Models;
+
 namespace VoltaXApi.Dtos
 {
     public class ChargingStationListDto
@@ -6,7 +8,7 @@ namespace VoltaXApi.Dtos
         public string Name { get; set; } // name of the station
         public string Address { get; set; } // location of the station
         public string Network { get; set; }
-        public string Category { get; set; }
+        public ChargingStationCategoryEnum Category { get; set; }
         public string ChargerQuantity { get; set; }
         public string Country { get; set; }
         
@@ -20,9 +22,9 @@ namespace VoltaXApi.Dtos
         
         public string Organisation { get; set; }
         
-        public string ParkingType { get; set; }
+        public ParkingTypeEnum ParkingType { get; set; }
         
-        public string Status { get; set; }
+        public ChargingStationStatusEnum Status { get; set; }
         public int? PartnerID { get; set; }
         
         public bool WifiAmenity { get; set; }

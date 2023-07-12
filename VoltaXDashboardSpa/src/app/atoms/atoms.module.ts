@@ -15,6 +15,7 @@ import { RechargeCardComponent } from './recharge-card/recharge-card.component';
 import { MatRippleModule } from '@angular/material/core';
 import { SelectFormFieldComponent } from './select-form-field/select-form-field.component';
 import { DebitCardComponent } from './debit-card/debit-card.component';
+import { InvoiceComponent } from './invoice/invoice.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { DebitCardComponent } from './debit-card/debit-card.component';
     FormFieldComponent,
     RechargeCardComponent,
     SelectFormFieldComponent,
-    DebitCardComponent
+    DebitCardComponent,
+    InvoiceComponent
    ],
   imports: [
     CommonModule,
@@ -46,7 +48,8 @@ import { DebitCardComponent } from './debit-card/debit-card.component';
     FormFieldComponent,
     RechargeCardComponent,
     SelectFormFieldComponent,
-    DebitCardComponent
+    DebitCardComponent,
+    InvoiceComponent
   ],
   providers: [],
 })

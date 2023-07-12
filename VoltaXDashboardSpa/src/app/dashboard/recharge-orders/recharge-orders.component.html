@@ -11,7 +11,16 @@
       (displayEvent)="display($event)"
       (updateEvent)="update($event)"
       (sortEvent)="sort($event)">
+
+      <ng-template appTableCustomButton let-item>
+        <button (click)="downloadInvoicePdf(item.id)" class="sidebar__add"> 
+          <svg class="icon icon-payment">
+              <use xlink:href="#icon-payment"></use>
+          </svg>  
+        </button>
+      </ng-template>
+
+
     </app-table-list>
   </div>
 </div>
-

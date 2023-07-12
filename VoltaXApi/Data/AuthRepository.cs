@@ -99,6 +99,15 @@ namespace VoltaXApi.Data
             return true;
         }
 
+        public static void CreatePasswordHashStatic(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -170,6 +179,55 @@ namespace VoltaXApi.Data
             
             this._context.Set<User>().Entry(user).State = EntityState.Modified;
             await this._context.SaveChangesAsync();
+        }
+
+        // Creating Test Users
+        public static List<User> CreateTestUsers()
+        {
+            string password = "test";
+            byte[] passHash , passSalt;
+            AuthRepository.CreatePasswordHashStatic(password,out passHash,out passSalt);
+            var customer = new User{
+                FirstName = "test",
+                LastName = "test",
+                Email = "customer@gmail.com",
+                Phone = "0610614476",
+                PasswordHash = passHash,
+                PasswordSalt = passSalt,
+                IsEmailVerified = true,
+                IsPhoneNumberVerified = true,
+                Role = UserRole.Customer
+            };
+
+            var admin = new User{
+                FirstName = "test",
+                LastName = "test",
+                Email = "admin@gmail.com",
+                Phone = "0610614476",
+                PasswordHash = passHash,
+                PasswordSalt = passSalt,
+                IsEmailVerified = true,
+                IsPhoneNumberVerified = true,
+                Role = UserRole.Admin
+            };
+
+            var partner = new User{
+                FirstName = "test",
+                LastName = "test",
+                Email = "partner@gmail.com",
+                Phone = "0610614476",
+                PasswordHash = passHash,
+                PasswordSalt = passSalt,
+                IsEmailVerified = true,
+                IsPhoneNumberVerified = true,
+                Role = UserRole.Partner
+            };
+
+            var listUsers = new List<User>();
+            listUsers.Add(customer);
+            listUsers.Add(admin);
+            listUsers.Add(partner);
+            return listUsers;
         }
     }
 }

@@ -40,13 +40,14 @@ namespace VoltaXApi.Controllers
             {
                 return BadRequest("Entity is null");
             }
-
+            Console.WriteLine("this is here");
             try
             {
                 await _repository.AddAsync(chargePoint);
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.StackTrace);
                 return BadRequest(ex.Message);
             }
 

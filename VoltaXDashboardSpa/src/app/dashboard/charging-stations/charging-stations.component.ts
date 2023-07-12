@@ -146,7 +146,7 @@ export class ChargingStationsComponent implements OnInit {
 
   // delete item
   display(id : number){
-    this._router.navigate(['/charging-stations',id])
+    this._router.navigate(['/dashboard/charging-stations',id])
   }
 
   // sorting by field
@@ -184,4 +184,5 @@ export class ChargingStationsComponent implements OnInit {
     this.itemParams.FilterBy = ["City","Category"]; 
     this.getAll();
   }
+
 }

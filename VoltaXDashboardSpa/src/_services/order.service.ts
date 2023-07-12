@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RechargeOrderDto } from 'src/_models/_dtos/recharge-order-dto';
+import { InvoiceDTO } from 'src/_models/_dtos/invoice-dto';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +66,9 @@ export class OrderService extends AbstractService<Order>{
     return this._http.post(this.baseUrl+"RechargeOrder",orderDto);
   }
 
+  // Get invoice info
+  getInvoiceInfo(orderID : number) : Observable<InvoiceDTO>{
+    return this._http.get<InvoiceDTO>(this.baseUrl+"getInvoiceInfo/"+orderID);
+  }
 
 }

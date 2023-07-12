@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Order } from 'src/_models/order';
+import { InvoiceService } from 'src/_services/invoice.service';
 import { OrderService } from 'src/_services/order.service';
 
 @Component({
@@ -34,7 +35,8 @@ export class RechargeOrdersComponent implements OnInit {
   // Constructor
   constructor(
     private _orderService : OrderService,
-    private _router : Router
+    private _router : Router,
+    private _invoiceService: InvoiceService
   ) { }
 
   ngOnInit() {
@@ -109,5 +111,15 @@ export class RechargeOrdersComponent implements OnInit {
     }
     this.getAll();
   }
+
+  
+  // Downloading pdf
+  downloadInvoicePdf(id : number){
+    this._orderService.getInvoiceInfo(id).subscribe((data) =>  {
+      this._invoiceService.downloadPdf(data);
+    })
+  }
+
+  
 
 }

@@ -25,6 +25,13 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(o => o.ClientCertThumb, f => f.Random.AlphaNumeric(20));
 
             var chargePoints = chargePointFaker.Generate(100);
+            int newNumber = 1;
+            
+            foreach(var chargePoint in chargePoints)
+            {
+                chargePoint.Name = $"VXC{newNumber.ToString("D4")}";
+                newNumber++;
+            }
             await dbContext.ChargePoints.AddRangeAsync(chargePoints);
             await dbContext.SaveChangesAsync();
             return chargePoints;

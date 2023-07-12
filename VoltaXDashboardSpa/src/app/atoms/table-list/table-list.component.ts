@@ -123,9 +123,6 @@ export class TableListComponent implements OnInit {
 
   formatValue(item: any, field: string): any {
     let value = item[field.charAt(0).toLowerCase() + field.slice(1)];
-    console.log("HEEERE");
-    console.log(field);
-    console.log(typeof value);
     if(this.isDateString(value)) {
       // If it's a date string, parse it as a date and format it
       const date = new Date(value);

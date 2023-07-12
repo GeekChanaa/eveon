@@ -1,3 +1,5 @@
+import { ChargePointCategoryEnum } from "../_enums/charge-point-category";
+import { ChargePointStatusEnum } from "../_enums/charge-point-status";
 
 
 export interface ChargePointCreateDto {
@@ -6,11 +8,11 @@ export interface ChargePointCreateDto {
     name: string;
     serialNumber: string;
     make: string;
-    status: string;
+    status: ChargePointStatusEnum;
     comment: string;
     username: string;
     password: string;
-    category : string;
+    category : ChargePointCategoryEnum;
     clientCertThumb: string;
   }
   

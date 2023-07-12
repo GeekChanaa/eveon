@@ -23,8 +23,9 @@ public static class UserSeeder
             {
                 Console.WriteLine($"User created. Id={u.ID}, Email={u.Email}");
             });
-
+        var testUsers = AuthRepository.CreateTestUsers();
         var users = fakeUsers.Generate(number).ToList();
+        users.AddRange(testUsers);
         await _userRepo.AddRangeAsync(users);
         return users;
     }

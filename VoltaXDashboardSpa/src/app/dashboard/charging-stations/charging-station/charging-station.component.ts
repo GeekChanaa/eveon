@@ -8,6 +8,7 @@ import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto'
 import { ParkingTypeEnum } from 'src/_models/_enums/parking-type';
 import { ChargingStationStatusEnum } from 'src/_models/_enums/charging-station-status';
 import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 enum ChargingStationTabsEnum {
   InformationsTab = "InformationsTab",
@@ -26,6 +27,10 @@ export class ChargingStationComponent implements OnInit {
 
   chargingStationID : number = 0;
   cpfShow : Boolean = false;
+  chargingStationLoaded : boolean = false;
+  parkingTypeValues : { [key: number]: string; } = {};
+  chargingStationStatusValues : { [key: number]: string; } = {};
+  chargingStationCategoryValues : { [key: number]: string; } = {};
 
   // charging station entity
   chargingStation: ChargingStation = {
@@ -58,13 +63,15 @@ export class ChargingStationComponent implements OnInit {
   constructor(
     private _chargingStationService: ChargingStationService,
     private _chargePointService : ChargePointService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _enumService : EnumMappingService
   ) {
     this.chargePointForm = new FormGroup({
       name : new FormControl(''),
       serialNumber : new FormControl(''),
       make : new FormControl(''),
       status : new FormControl(''),
+      category : new FormControl(''),
       comment : new FormControl(''),
       chargePointCategory : new FormControl(''),
     })
@@ -74,12 +81,23 @@ export class ChargingStationComponent implements OnInit {
     var idParam = this._route.snapshot.paramMap.get('id')
     if (idParam != null) {
       var id = parseInt(idParam);
-      this.chargingStationID = id;
+      this.getChargingStationByID(id);
+    }
+    this.populatingSelectBoxes();
+  }
+
+  // populating options for the selectboxes : 
+  populatingSelectBoxes(){
+    console.log(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
+  }
+
+  // get charging Station by id
+  getChargingStationByID(id : number){
+    this.chargingStationID = id;
       this._chargingStationService.getById(id).subscribe((cs) => {
         this.chargingStation = cs;
+        this.chargingStationLoaded = true;
       })
-    }
-
   }
 
   // Changing current tab
@@ -97,9 +115,9 @@ export class ChargingStationComponent implements OnInit {
     const chargePoint : ChargePointCreateDto = {
       name: cpf.name,
       serialNumber: cpf.serialNumber,
-      category : cpf.category,
+      category : parseInt(cpf.category),
       make: cpf.make,
-      status: cpf.status,
+      status: parseInt(cpf.status),
       comment: cpf.comment,
       username: '',
       password: '',
@@ -114,6 +132,14 @@ export class ChargingStationComponent implements OnInit {
 
   getControl(name: string): FormControl {
     return this.chargePointForm.get(name) as FormControl;
+  }
+
+  update(vale : any,name : string){
+    this.chargingStation[name] = vale;
+    this.chargingStation.chargePoints=[];
+    this._chargingStationService.edit(this.chargingStation.id, this.chargingStation).subscribe((data) => {
+      this.getChargingStationByID(this.chargingStation.id);
+    })
   }
 
 }
