@@ -73,8 +73,8 @@
     </form>
 </ng-container>
 
-<ng-container *ngIf="rechargeCards.length<=0">
-    you have no recharge cards
+<ng-container *ngIf="rechargeCards.length<=0 && showCreateForm == false">
+    <app-empty-card></app-empty-card>
 </ng-container>
 
 <ng-container *ngIf="!showCreateForm">

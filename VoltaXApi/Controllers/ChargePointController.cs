@@ -40,14 +40,12 @@ namespace VoltaXApi.Controllers
             {
                 return BadRequest("Entity is null");
             }
-            Console.WriteLine("this is here");
             try
             {
                 await _repository.AddAsync(chargePoint);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
                 return BadRequest(ex.Message);
             }
 
@@ -61,6 +59,17 @@ namespace VoltaXApi.Controllers
             var chargingStations = await PagedList<ChargePoint>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ChargingStation.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingStations.CurrentPage, chargingStations.PageSize, chargingStations.TotalCount, chargingStations.TotalPages);
             return Ok(chargingStations);
+        }
+
+        [HttpGet("{id}")]
+        public override async Task<IActionResult> GetById(int id)
+        {
+            var entity = await this._repository.GetChargePointByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
         }
     }
 }

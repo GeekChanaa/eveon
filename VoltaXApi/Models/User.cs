@@ -16,7 +16,7 @@ namespace VoltaXApi.Models
         public  byte[] PasswordHash { get; set; }
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         public bool IsEmailVerified { get; set; } = false;
         public string? EmailVerificationToken { get; set; }

@@ -1,13 +1,17 @@
 using VoltaXApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using VoltaXApi.Dtos;
+using AutoMapper;
+
 namespace VoltaXApi.Data
 {
     public class ChargePointRepository : Repository<ChargePoint>, IChargePointRepository
     {
-        public ChargePointRepository(VoltaXApiDbContext context) : base(context)
+        private readonly IMapper _mapper;
+        public ChargePointRepository(VoltaXApiDbContext context, IMapper mapper ) : base(context)
         {
-
+            _mapper = mapper;
         }
 
         public async Task<List<Connector>> GetChargePointConnectors(int chargePointID)
@@ -62,6 +66,14 @@ namespace VoltaXApi.Data
             // Add the new ChargePoint to the database
             await _context.Set<ChargePoint>().AddAsync(chargePoint);
             await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<ChargePointListDto> GetChargePointByIdAsync(int id)
+        {
+            var chargePoint= await this._context.ChargePoints.Include(u => u.Connectors).FirstOrDefaultAsync(u => u.ID == id);
+            ChargePointListDto chargePointDto = _mapper.Map<ChargePointListDto>(chargePoint);
+            return chargePointDto;
         }
 
 

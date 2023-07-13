@@ -107,7 +107,7 @@ export class ChargingPointsComponent implements OnInit {
   }
 
   display(id: number) {
-    this._router.navigate(['/charging-points', id]);
+    this._router.navigate(['/dashboard/charging-points', id]);
   }
 
   update(id: number) {

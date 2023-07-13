@@ -1,0 +1,113 @@
+<div class="settings__anchor" id="payment" data-value="Payment"></div>
+<div class="title-green settings__title">Debit Cards</div>
+<div class="card" *ngIf="debitCards.length == 0 && showDCForm == false">
+  <app-empty-card></app-empty-card>
+</div>
+
+
+<div *ngIf="showDCForm">
+  <form [formGroup]="debitCardForm">
+    <div class="field">
+      <div class="field__label">
+        Card Holder Name
+        <div
+          class="tooltip"
+          title="Maximum 100 characters. No HTML or emoji allowed"
+        >
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <input
+          class="field__input"
+          type="text"
+          formControlName="debitCardName"
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">
+        Card Number
+        <div
+          class="tooltip"
+          title="Maximum 100 characters. No HTML or emoji allowed"
+        >
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <input
+          class="field__input"
+          type="text"
+          formControlName="debitCardNumber"
+        />
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="field">
+        <div class="field__label">
+          Expiration Date
+          <div
+            class="tooltip"
+            title="Maximum 100 characters. No HTML or emoji allowed"
+          >
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <input
+            class="field__input"
+            type="text"
+            formControlName="debitCardExpirationDate"
+          />
+        </div>
+      </div>
+      <div class="field">
+        <div class="field__label">
+          CVV
+          <div
+            class="tooltip"
+            title="Maximum 100 characters. No HTML or emoji allowed"
+          >
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <input
+            class="field__input"
+            type="text"
+            formControlName="debitCardCVV"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="field flex">
+      <button class="button" (click)="debitCardSave()">Save</button>
+      <button class="button-stroke ml-auto" (click)="showDCForm=false">Cancel</button>
+    </div>
+  </form>
+</div>
+<div *ngIf="debitCards.length > 0 && showDCForm == false">
+  <app-debit-card
+    *ngFor="let debitCard of debitCards"
+    [cardNumber]="addSpaces(debitCard.cardNumberHidden)"
+    [cardHolderName]="debitCard.nameHidden"
+  >
+  </app-debit-card>
+</div>
+
+<div>
+  <button *ngIf="showDCForm ==false" class="button mt-20" (click)="showAddDebitCardForm()">
+    Add Debit Card
+  </button>
+</div>

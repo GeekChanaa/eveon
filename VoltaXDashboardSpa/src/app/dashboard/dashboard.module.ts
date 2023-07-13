@@ -37,7 +37,9 @@ import { StatisticsComponent } from './statistics/statistics.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
-
+import {MatExpansionModule} from '@angular/material/expansion'; 
+import { MatButtonModule } from '@angular/material/button';
+import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 
 @NgModule({
     declarations: [
@@ -72,7 +74,8 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
     StatisticsComponent,
     AppTableCustomButtonDirective,
     NotificationSettingsComponent,
-    CompleteProfileComponent
+    CompleteProfileComponent,
+    DebitCardsComponent
     
   ],
     imports: [
@@ -82,7 +85,9 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
         ReactiveFormsModule,
         CommonModule,
         SharedModule,
-        FormsModule
+        FormsModule,
+        MatExpansionModule,
+        MatButtonModule
     ],
   })
   export class DashboardModule { }

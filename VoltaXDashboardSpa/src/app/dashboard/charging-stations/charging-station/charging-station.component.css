@@ -1,13 +1,23 @@
 
-
-.empty__card{
-    background: black;
-    text-align: center;
-    padding: 34px;
-    border-radius: 24px;
-}
-
 .button-stroke{
     margin-top: 36px;
     color: white;
+}
+
+
+.mb-8{
+    margin-bottom: 8px;
+}
+
+.flex{
+    display: flex;
+}
+
+.btn-cancel{
+    margin-left: auto;
+    color: black;
+}
+
+.button{
+    margin-top: 36px;
 }

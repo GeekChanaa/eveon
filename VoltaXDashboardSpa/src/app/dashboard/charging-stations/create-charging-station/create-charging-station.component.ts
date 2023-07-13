@@ -5,11 +5,13 @@ import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-cre
 import { CityNameDto } from 'src/_models/_dtos/city-name-dto';
 import { ConnectorCreateDto } from 'src/_models/_dtos/connector-create-dto';
 import { ConnectorTarifCreateDto } from 'src/_models/_dtos/connector-tarif-create-dto';
+import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
 import { ConnectorTarifService } from 'src/_services/connector-tarif.service';
 import { ConnectorService } from 'src/_services/connector.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 declare var $: any;  // Declare $ to use jQuery
 @Component({
@@ -22,6 +24,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   form: FormGroup;
   opacity: number = 0;
   activeDiv = 1;
+
+  chargingStationCategories : any = {};
 
   ngAfterViewInit() {
   }
@@ -43,7 +47,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     private _chargingStationService: ChargingStationService,
     private _chargePointService: ChargePointService,
     private _connectorService: ConnectorService,
-    private _connectorTarifService: ConnectorTarifService
+    private _connectorTarifService: ConnectorTarifService,
+    private _enumService : EnumMappingService
   ) {
     this.form = new FormGroup({
       chargingStationNetwork: new FormControl(''),
@@ -151,6 +156,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   ngOnInit() {
     this.getAllCities();
+    this.chargingStationCategories = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"))
+
   }
 
   
@@ -294,6 +301,10 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   getFormControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
+  }
+
+  getChargingStationCategoriesKeys(){
+    return Object.keys(this.chargingStationCategories);
   }
 
 }

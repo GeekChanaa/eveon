@@ -67,7 +67,6 @@ export class ChargingStationComponent implements OnInit {
     private _enumService : EnumMappingService
   ) {
     this.chargePointForm = new FormGroup({
-      name : new FormControl(''),
       serialNumber : new FormControl(''),
       make : new FormControl(''),
       status : new FormControl(''),
@@ -88,7 +87,7 @@ export class ChargingStationComponent implements OnInit {
 
   // populating options for the selectboxes : 
   populatingSelectBoxes(){
-    console.log(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
+    this._enumService.getEnumMapping("ChargingStationCategoryEnum");
   }
 
   // get charging Station by id
@@ -97,6 +96,7 @@ export class ChargingStationComponent implements OnInit {
       this._chargingStationService.getById(id).subscribe((cs) => {
         this.chargingStation = cs;
         this.chargingStationLoaded = true;
+        this.cpfShow=false;
       })
   }
 
@@ -113,7 +113,7 @@ export class ChargingStationComponent implements OnInit {
   cpfOnSubmit(){
     var cpf = this.chargePointForm.value;
     const chargePoint : ChargePointCreateDto = {
-      name: cpf.name,
+      name: "",
       serialNumber: cpf.serialNumber,
       category : parseInt(cpf.category),
       make: cpf.make,
@@ -126,7 +126,8 @@ export class ChargingStationComponent implements OnInit {
       chargingStationID: this.chargingStationID
     }
     this._chargePointService.create(chargePoint).subscribe((data) => {
-      console.log(data);
+      this.getChargingStationByID(this.chargingStation.id);
+      
     })
   }
 
@@ -140,6 +141,12 @@ export class ChargingStationComponent implements OnInit {
     this._chargingStationService.edit(this.chargingStation.id, this.chargingStation).subscribe((data) => {
       this.getChargingStationByID(this.chargingStation.id);
     })
+  }
+
+  deleteChargePoint(id : number){
+    this._chargePointService.deleteById(id).subscribe((data) => {
+      this.getChargingStationByID(this.chargingStation.id);
+    });
   }
 
 }

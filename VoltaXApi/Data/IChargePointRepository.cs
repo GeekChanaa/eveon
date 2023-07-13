@@ -1,3 +1,4 @@
+using VoltaXApi.Dtos;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
@@ -7,5 +8,7 @@ namespace VoltaXApi.Data
         Task<List<Connector>> GetChargePointConnectors(int ChargePointID);
         Task<double> GetChargePointRevenue(string chargePointID ,DateTime? start = null , DateTime? end = null);
         Task<double> GetPartnerChargePointRevenue(int partnerID,string chargePointID ,DateTime? start = null , DateTime? end = null);
+        Task AddAsync(ChargePoint chargePoint);
+        Task<ChargePointListDto> GetChargePointByIdAsync(int id);
     }
 }

@@ -20,7 +20,7 @@ namespace VoltaXApi.Data
         public ChargingStationRepository(VoltaXApiDbContext context, IMapper mapper) : base(context)
         {
             _mapper = mapper;
-            _chargePointRepo = new ChargePointRepository(context);
+            _chargePointRepo = new ChargePointRepository(context,mapper);
         }
 
         public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID)

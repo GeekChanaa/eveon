@@ -21,6 +21,9 @@ export class ChargingPointComponent implements OnInit {
   // TabsEnum
   tabsEnum : ChargePointTabsEnum = ChargePointTabsEnum.InformationsTab;
 
+  // connectors
+  connectors : any[] = [];
+
   // charge point
   chargePoint : ChargePoint = {
     id: 0,
@@ -54,6 +57,7 @@ export class ChargingPointComponent implements OnInit {
       this.chargePointID = id;
       this._chargePointService.getById(id).subscribe((cs) => {
         this.chargePoint = cs;
+        this.connectors = this.chargePoint.connectors;
       })
     }
   }
@@ -61,6 +65,10 @@ export class ChargingPointComponent implements OnInit {
   // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
+  }
+
+  deleteConnector(id : number){
+    this._connectorService.deleteById(id).subscribe();
   }
 
 }

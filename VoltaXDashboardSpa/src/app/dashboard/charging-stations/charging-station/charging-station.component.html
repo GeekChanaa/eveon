@@ -1,6 +1,6 @@
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">Settings</div>
+    <div class="page__title h3">Charging Station : {{chargingStation.name}}</div>
     <div class="settings">
       <div class="settings__menu">
         <button (click)="changeTab('InformationsTab')" class="settings__link"
@@ -40,22 +40,16 @@
             <div class="title-purple settings__title">Charge Points</div>
             <div class="settings__fieldset">
               <ng-container *ngIf="chargingStation.chargePoints.length > 0 && !cpfShow">
-                <div *ngFor="let chargePoint of chargingStation.chargePoints">
-                  <app-charging-station-charge-point [chargePoint]="chargePoint"></app-charging-station-charge-point>
+                <div class="mb-8" *ngFor="let chargePoint of chargingStation.chargePoints">
+                  <app-charging-station-charge-point (deleteEvent)="deleteChargePoint($event)" [chargePoint]="chargePoint"></app-charging-station-charge-point>
                 </div>
               </ng-container>
 
               <ng-container *ngIf="(chargingStation.chargePoints.length <= 0 && !cpfShow)">
-                <div class="empty__card">
-                  <div>
-                    <img src="/assets/img/content/login-pic.png" alt="">
-                  </div>
-                  
-                </div>
+                <app-empty-card></app-empty-card>
               </ng-container>
               <ng-container *ngIf="cpfShow">
                 <form [formGroup]="chargePointForm">
-                  <app-form-field class="field" title="name" description="tbd" [control]="getControl('name')"></app-form-field>
                   <app-form-field class="field" title="serialNumber" description="tbd" [control]="getControl('serialNumber')"></app-form-field>
                   <app-form-field class="field" title="make" description="tbd" [control]="getControl('make')"></app-form-field>
                   <div class="field">
@@ -97,7 +91,11 @@
                       </div>
                     </div>
                   </div>
-                  <button (click)="cpfOnSubmit()" class="button">Create</button>
+                  <div class="flex">
+                    <button (click)="cpfOnSubmit()" class="button">Create</button>
+                    <button (click)="cpfShow = false" class="button-stroke btn-cancel">Cancel</button>
+
+                  </div>
                 </form>
               </ng-container>
 

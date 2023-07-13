@@ -12,7 +12,7 @@ export class InvoiceService {
 
   private downloadSubject = new Subject<void>();
 
-  private generateHtmlString(item : InvoiceDTO): SafeHtml {
+  private generateHtmlString(invoiceData : InvoiceDTO): SafeHtml {
     // Create the HTML string with inline styles
     let htmlString = `
 <div style="width: 80%; margin-left: 10%;" id="invoice">
@@ -21,14 +21,26 @@ export class InvoiceService {
       <img src="dd" alt="">
     </div>
     <div style="margin-left: auto; font-size: 3em; font-weight: lighter;">
-      INVOICE #1000
+      INVOICE #${invoiceData.orderNumber}
     </div>    
   </div>
   <div style="display: flex;">   
-    <table style="margin-top: 64px; width: 45%;">
+    <table style="margin-top: 64px; width: 65%;">
       <tr>
-        <td style="font-size: 1.5em; font-weight: bold;">Billed to :</td>
-        <td style="font-size: 1.2em; font-weight: lighter;">mohammed chanaa</td>
+        <td style="font-size: 1.2em; font-weight: bold;">Billed to :</td>
+        <td style="font-size: 0.8em; font-weight: lighter;">${invoiceData.billedTo}</td>
+      </tr>
+      <tr>
+        <td style="font-size: 1.2em; font-weight: bold;">Pay to :</td>
+        <td style="font-size: 0.8em; font-weight: lighter;">${invoiceData.payTo}</td>
+      </tr>
+      <tr>
+        <td style="font-size: 1.2em; font-weight: bold;">Payment Method :</td>
+        <td style="font-size: 0.8em; font-weight: lighter;">${invoiceData.paymentMethod}</td>
+      </tr>
+      <tr>
+        <td style="font-size: 1.2em; font-weight: bold;">Phone Number :</td>
+        <td style="font-size: 0.8em; font-weight: lighter;">${invoiceData.phone}</td>
       </tr>
       <!-- add more rows as needed -->
     </table>   
@@ -51,7 +63,7 @@ export class InvoiceService {
     </div>
   </div>
   <div>
-    <p style="font-size: 1.5em; margin-top: 64px;">Thank you for your purchase ! </p>
+    <p style="font-size: 1.2em; margin-top: 64px;">Thank you for your purchase ! </p>
     <p>For any further questions please contact us at support@voltax.com </p>
   </div>
 </div>

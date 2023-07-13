@@ -15,6 +15,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { GlobalComponent } from './global/global.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [			
@@ -32,7 +33,8 @@ import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard
     BrowserAnimationsModule,
     MatSnackBarModule,
     SlickCarouselModule,
-    MatRippleModule
+    MatRippleModule,
+    MatButtonModule
     
   ],
   providers: [

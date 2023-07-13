@@ -48,9 +48,7 @@
                     <div class="field__wrap">
                       <div class="field__wrap">
                         <select class="select" formControlName="chargingStationCategory">
-                          <option>Purchase now</option>
-                          <option>Purchase tomorrow</option>
-                          <option>Buy later</option>
+                          <option *ngFor="let key of getChargingStationCategoriesKeys()" value="{{key}}"> {{chargingStationCategories[key]}} </option>
                         </select>
                       </div>
                     </div>

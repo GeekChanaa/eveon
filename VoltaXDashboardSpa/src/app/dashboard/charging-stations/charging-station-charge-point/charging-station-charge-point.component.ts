@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargingStation } from 'src/_models/charging-station';
+import { ChargePointService } from 'src/_services/charge-point.service';
 
 @Component({
   selector: 'app-charging-station-charge-point',
@@ -10,6 +11,8 @@ import { ChargingStation } from 'src/_models/charging-station';
   styleUrls: ['./charging-station-charge-point.component.css']
 })
 export class ChargingStationChargePointComponent implements OnInit {
+
+  @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
 
   @Input() chargePoint : ChargePoint = {
     id: 0,
@@ -28,9 +31,15 @@ export class ChargingStationChargePointComponent implements OnInit {
     category: ChargePointCategoryEnum.TheTower
   }
 
-  constructor() { }
+  constructor(
+    private _chargePointService : ChargePointService
+  ) { }
 
   ngOnInit() {
+  }
+
+  deleteChargePoint(id : number){
+    this.deleteEvent.emit(id);
   }
 
 }
