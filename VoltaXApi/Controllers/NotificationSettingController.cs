@@ -19,11 +19,18 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class NotificationSettingController : GenericController<NotificationSetting>
     {
-        private readonly IRepository<NotificationSetting> _repository;
+        private readonly INotificationSettingRepository _repository;
 
-        public NotificationSettingController(IRepository<NotificationSetting> repository) : base(repository)
+        public NotificationSettingController(INotificationSettingRepository repository) : base(repository)
         {
             _repository = repository;
+        }
+
+        // get all notification settings for user
+        [HttpGet("UserNotificationSettings/{UserID}")]
+        public async Task<ActionResult<List<NotificationSetting>>> GetUserNotificationSettings( int UserID)
+        {
+            return await this._repository.GetUserNotificationSettings(UserID);
         }
 
 
