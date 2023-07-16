@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-debit-card',
@@ -11,11 +11,16 @@ export class DebitCardComponent implements OnInit {
   @Input() cardNumber : string = "";
   @Input() cardHolderName : string = "";
   @Input() size : string = "";
+  @Input() id : number = 0;
+  @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
 
-  // Constructor
   constructor() { }
 
   ngOnInit() {
+  }
+
+  delete(id : number ){
+    this.deleteEvent.emit(id);
   }
 
 }

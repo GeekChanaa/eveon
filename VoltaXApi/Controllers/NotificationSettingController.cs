@@ -33,6 +33,29 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetUserNotificationSettings(UserID);
         }
 
+        // Save user notification setting
+        [HttpPost("SaveUserNotificationSetting")]
+        public async Task<IActionResult> SaveUserNotificationSetting(NotificationSetting notificationSetting)
+        {
+            var ns = await this._repository.GetUserNotificationSetting(notificationSetting.UserID, notificationSetting.NotificationTypeID);
+            if(ns == null)
+            {
+                await this._repository.AddAsync(notificationSetting);
+            }
+            else
+            {
+                ns.UserID = notificationSetting.UserID;
+                ns.NotificationTypeID = notificationSetting.NotificationTypeID;
+                ns.Email = notificationSetting.Email;
+                ns.Active = notificationSetting.Active;
+                ns.Urgent = notificationSetting.Urgent;
+
+                Console.WriteLine("updating : notificationSetting : "+ns.ID);
+                await this._repository.Update(ns);
+            }
+            return StatusCode(200);
+        }
+
 
     }
 }

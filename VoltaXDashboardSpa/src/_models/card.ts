@@ -1,4 +1,6 @@
 import { CardStatusEnum } from "./_enums/card-status";
+import { Order } from "./order";
+import { Transaction } from "./transaction";
 import { User } from "./user";
 
 export interface Card {
@@ -12,5 +14,7 @@ export interface Card {
     note: string;
     userID: number;
     user: User | null;
+    transactions : Transaction[],
+    orders : Order[],
     [key: string]: any;
 }

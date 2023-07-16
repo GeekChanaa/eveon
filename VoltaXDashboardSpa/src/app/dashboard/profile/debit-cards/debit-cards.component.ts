@@ -91,6 +91,7 @@ export class DebitCardsComponent implements OnInit {
 
   // delete debit card
   deleteDebitCardByID(id : number){
+    console.log("this is the debit card delete");
     this._debitCardService.deleteById(id).subscribe((data) => {
       this.getUserDebitCards();
     })

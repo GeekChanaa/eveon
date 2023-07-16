@@ -28,7 +28,9 @@ export class CreateChargingCardComponent implements OnInit, AfterViewInit {
     balance: 0,
     note: '',
     userID: 0,
-    user: null
+    user: null,
+    transactions : [],
+    orders : []
   };
 
   // Users

@@ -4,6 +4,7 @@ import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargingStation } from 'src/_models/charging-station';
 import { ChargePointService } from 'src/_services/charge-point.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 @Component({
   selector: 'app-charging-station-charge-point',
@@ -13,6 +14,9 @@ import { ChargePointService } from 'src/_services/charge-point.service';
 export class ChargingStationChargePointComponent implements OnInit {
 
   @Output() deleteEvent : EventEmitter<number> = new EventEmitter<number>();
+
+  chargePointCategory : string = "";
+  chargePointStatus : string = "";
 
   @Input() chargePoint : ChargePoint = {
     id: 0,
@@ -32,10 +36,13 @@ export class ChargingStationChargePointComponent implements OnInit {
   }
 
   constructor(
-    private _chargePointService : ChargePointService
+    private _chargePointService : ChargePointService,
+    private _enumMappings : EnumMappingService
   ) { }
 
   ngOnInit() {
+    this.chargePointCategory = this._enumMappings.getEnumMapping("ChargePointCategory")[this.chargePoint.category];
+    this.chargePointStatus = this._enumMappings.getEnumMapping("ChargePointStatus")[this.chargePoint.status];
   }
 
   deleteChargePoint(id : number){

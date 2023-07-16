@@ -11,8 +11,9 @@
         </div>
       </div>
       <label class="switch">
-        <input class="switch__input" type="checkbox" checked="checked"/><span class="switch__inner"><span class="switch__box"></span></span>
+        <input class="switch__input" type="checkbox" [(ngModel)]="notificationType.active"/><span class="switch__inner"><span class="switch__box"></span></span>
       </label>
     </div>
   </div>
+  <button (click)="saveNotificationSettings()">Save Settings</button>
 </div>

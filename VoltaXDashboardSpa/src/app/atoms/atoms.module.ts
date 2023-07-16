@@ -17,6 +17,7 @@ import { SelectFormFieldComponent } from './select-form-field/select-form-field.
 import { DebitCardComponent } from './debit-card/debit-card.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { EmptyCardComponent } from './empty-card/empty-card.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { EmptyCardComponent } from './empty-card/empty-card.component';
     ReactiveFormsModule,
     FormsModule,
     MatRippleModule,
+    MatButtonModule
   ],
   exports: [
     CardComponent,
@@ -52,7 +54,7 @@ import { EmptyCardComponent } from './empty-card/empty-card.component';
     SelectFormFieldComponent,
     DebitCardComponent,
     InvoiceComponent,
-    EmptyCardComponent
+    EmptyCardComponent,
   ],
   providers: [],
 })

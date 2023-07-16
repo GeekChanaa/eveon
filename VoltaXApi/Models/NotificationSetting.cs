@@ -8,7 +8,7 @@ namespace VoltaXApi.Models
         
         public bool Email { get; set; }
         
-        public User User { get; set; }
+        public User? User { get; set; }
         
         public int UserID { get; set; }
         

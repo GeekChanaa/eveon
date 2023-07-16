@@ -15,6 +15,7 @@ import { NotAuthorizedComponent } from './error-pages/not-authorized/not-authori
 import { ServerErrorComponent } from './error-pages/server-error/server-error.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
+import { IndexComponent } from './index/index.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { TermsConditionsComponent } from './terms-conditions/terms-conditions.co
       NotAuthorizedComponent,
       ServerErrorComponent,
       PrivacyPolicyComponent,
-      TermsConditionsComponent
+      TermsConditionsComponent,
+      IndexComponent
     ],
     imports: [
         GlobalRoutingModule,

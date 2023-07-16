@@ -10,10 +10,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class DebitCardService extends AbstractService<DebitCard>{
   constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/debitCard");
+    super(http,snackBar, environment.apiUrl+"/api/debitCard/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/debitCard";
+  baseUrl = environment.apiUrl+"/api/debitCard/";
 
 }

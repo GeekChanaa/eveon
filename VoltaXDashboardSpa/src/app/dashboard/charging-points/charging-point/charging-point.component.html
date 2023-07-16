@@ -20,13 +20,13 @@
             <div class="settings__profile">
 
             </div>
-            <div class="settings__fieldset">
-              <app-display-cell title="name" val="{{chargePoint.name}}"></app-display-cell>
-              <app-display-cell title="serialNumber" inpType="text" val="{{chargePoint.serialNumber}}"></app-display-cell>
-              <app-display-cell title="make" inpType="text" val="{{chargePoint.make}}"></app-display-cell>
-              <app-display-cell title="status" inpType="select_enum" enumName="ChargePointStatus" val="{{chargePoint.status}}"></app-display-cell>
-              <app-display-cell title="comment" inpType="text" val="{{chargePoint.comment}}"></app-display-cell>
-              <app-display-cell title="category" inpType="select_enum" enumName="ChargePointCategory" val="{{chargePoint.category}}"></app-display-cell>
+            <div class="settings__fieldset" *ngIf="chargePointLoaded">
+              <app-display-cell (updatePropertyEvent)="update($event,'name')" title="name" val="{{chargePoint.name}}"></app-display-cell>
+              <app-display-cell (updatePropertyEvent)="update($event,'serialNumber')" title="serialNumber" inpType="text" val="{{chargePoint.serialNumber}}"></app-display-cell>
+              <app-display-cell (updatePropertyEvent)="update($event,'make')" title="make" inpType="text" val="{{chargePoint.make}}"></app-display-cell>
+              <app-display-cell (updatePropertyEvent)="update($event,'status')" title="status" inpType="select_enum" enumName="ChargePointStatus" val="{{chargePoint.status}}"></app-display-cell>
+              <app-display-cell (updatePropertyEvent)="update($event,'comment')" title="comment" inpType="text" val="{{chargePoint.comment}}"></app-display-cell>
+              <app-display-cell (updatePropertyEvent)="update($event,'category')" title="category" inpType="select_enum" enumName="ChargePointCategory" val="{{chargePoint.category}}"></app-display-cell>
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ConnectorsTab'">
@@ -48,8 +48,6 @@
                     </mat-expansion-panel-header>
                 
                     <div class="card__display">
-                      
-
                       <div class="card__display_item">
                         <span class="item__title">
                           Connector Type

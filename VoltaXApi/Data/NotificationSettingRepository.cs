@@ -18,6 +18,10 @@ namespace VoltaXApi.Data
             return await this._context.NotificationSettings.Where(u => u.UserID == UserID).ToListAsync();
         }
 
+        public async Task<NotificationSetting> GetUserNotificationSetting(int userID, int notificationTypeID)
+        {
+            return await this._context.NotificationSettings.FirstOrDefaultAsync(u => u.NotificationTypeID == notificationTypeID && u.UserID == userID);
+        }
 
 
 

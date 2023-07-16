@@ -35,7 +35,11 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
 
   update(){
+    if(this.inpType == "text")
     this.updatePropertyEvent.emit(this.updatedValue);
+    if(this.inpType == "select_enum")
+    this.updatePropertyEvent.emit(parseInt(this.updatedValue));
+    this.editing = false;
   }
 
   ngAfterViewInit(){

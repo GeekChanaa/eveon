@@ -102,6 +102,8 @@
     *ngFor="let debitCard of debitCards"
     [cardNumber]="addSpaces(debitCard.cardNumberHidden)"
     [cardHolderName]="debitCard.nameHidden"
+    [id]="debitCard.id"
+    (deleteEvent)="deleteDebitCardByID($event)"
   >
   </app-debit-card>
 </div>

@@ -24,13 +24,13 @@
               <ng-container *ngIf="chargingStationLoaded">
                 <app-display-cell inpType="text" title="name" (updatePropertyEvent)="update($event,'name')" [val]="chargingStation.name"></app-display-cell>
                 <app-display-cell inpType="text" title="address" (updatePropertyEvent)="update($event,'address')" [val]="chargingStation.address"></app-display-cell>
-                <app-display-cell inpType="text" title="network" val="{{chargingStation.network}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" title="category" enumName="ChargingStationCategoryEnum" val="{{chargingStation.category}}"></app-display-cell>
-                <app-display-cell inpType="text" title="chargerQuantity" val="{{chargingStation.chargerQuantity}}"></app-display-cell>
-                <app-display-cell inpType="text" title="city" val="{{chargingStation.city}}"></app-display-cell>
-                <app-display-cell inpType="text" title="organisation" val="{{chargingStation.organisation}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" enumName="ParkingTypeEnum" title="parkingType" val="{{chargingStation.parkingType}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" enumName="ChargingStationStatusEnum" title="status" val="{{chargingStation.status}}"></app-display-cell>
+                <app-display-cell inpType="text" title="network" (updatePropertyEvent)="update($event,'network')" val="{{chargingStation.network}}"></app-display-cell>
+                <app-display-cell inpType="select_enum" title="category" (updatePropertyEvent)="update($event,'category')" enumName="ChargingStationCategoryEnum" val="{{chargingStation.category}}"></app-display-cell>
+                <app-display-cell inpType="text" title="chargerQuantity" (updatePropertyEvent)="update($event,'chargerQuantity')" val="{{chargingStation.chargerQuantity}}"></app-display-cell>
+                <app-display-cell inpType="text" title="city" (updatePropertyEvent)="update($event,'city')" val="{{chargingStation.city}}"></app-display-cell>
+                <app-display-cell inpType="text" title="organisation" (updatePropertyEvent)="update($event,'organisation')" val="{{chargingStation.organisation}}"></app-display-cell>
+                <app-display-cell inpType="select_enum" enumName="ParkingTypeEnum" title="parkingType" (updatePropertyEvent)="update($event,'parkingType')" val="{{chargingStation.parkingType}}"></app-display-cell>
+                <app-display-cell inpType="select_enum" enumName="ChargingStationStatusEnum" title="status" (updatePropertyEvent)="update($event,'status')" val="{{chargingStation.status}}"></app-display-cell>
               </ng-container>
               
             </div>

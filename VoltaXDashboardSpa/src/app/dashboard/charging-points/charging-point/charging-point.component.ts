@@ -18,6 +18,7 @@ enum ChargePointTabsEnum {
 })
 export class ChargingPointComponent implements OnInit {
 
+  chargePointLoaded : boolean = false;
   // TabsEnum
   tabsEnum : ChargePointTabsEnum = ChargePointTabsEnum.InformationsTab;
 
@@ -55,11 +56,18 @@ export class ChargingPointComponent implements OnInit {
     if (idParam != null) {
       var id = parseInt(idParam);
       this.chargePointID = id;
-      this._chargePointService.getById(id).subscribe((cs) => {
-        this.chargePoint = cs;
-        this.connectors = this.chargePoint.connectors;
-      })
+      this.getChargePointByID(id);
     }
+  }
+
+  // get charge point by id
+  getChargePointByID(id : number){
+    this._chargePointService.getById(id).subscribe((cs) => {
+      this.chargePoint = cs;
+      console.log(this.chargePoint);
+      this.connectors = this.chargePoint.connectors;
+      this.chargePointLoaded = true;
+    })
   }
 
   // Changing current tab
@@ -69,6 +77,15 @@ export class ChargingPointComponent implements OnInit {
 
   deleteConnector(id : number){
     this._connectorService.deleteById(id).subscribe();
+  }
+
+  update(vale : any,name : string){
+    this.chargePoint[name] = vale;
+    console.log(this.chargePoint);
+    this.chargePoint.connectors=[];
+    this._chargePointService.edit(this.chargePoint.id, this.chargePoint).subscribe((data) => {
+      this.getChargePointByID(this.chargePoint.id);
+    })
   }
 
 }

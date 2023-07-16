@@ -21,7 +21,9 @@ export class RechargeCardComponent implements OnInit {
     balance: 0,
     note: '',
     userID: 0,
-    user: null
+    user: null,
+    transactions : [],
+    orders : []
   }
 
   @Input() small : boolean = false;

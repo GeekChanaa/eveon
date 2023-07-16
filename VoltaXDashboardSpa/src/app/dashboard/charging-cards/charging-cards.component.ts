@@ -98,7 +98,9 @@ export class ChargingCardsComponent implements OnInit {
   }
 
   display(id : number){
-    this._router.navigate(['/charging-cards/',id]);
+    console.log(id);
+    console.log("this is the id : "+id);
+    this._router.navigate(['/dashboard/charging-cards/'+id]);
   }
 
   update(id : number){

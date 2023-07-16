@@ -26,10 +26,10 @@ export class RechargeOrdersComponent implements OnInit {
 
   order : Order = {
     id: 0,
-    CardID: 0,
-    Amount: 0,
-    RechargeDate: new Date(),
-    Card: null
+    cardID: 0,
+    amount: 0,
+    rechargeDate: new Date(),
+    card: null
   }
 
   // Constructor

@@ -49,8 +49,6 @@ export class LoginComponent implements OnInit {
     this._authService.login(userForLogin).subscribe((data) => {
       var userID = parseInt(this._authService.getAuthInformation().nameid);
       this._userService.getById(userID).subscribe((u) => {
-        console.log(" this it the user ");
-        console.log(u);
         if(u.role == UserRole.Admin)
         this._router.navigate(['/dashboard']);
         else if(u.role == UserRole.Customer)

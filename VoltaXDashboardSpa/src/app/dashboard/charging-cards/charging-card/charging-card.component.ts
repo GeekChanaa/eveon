@@ -6,7 +6,8 @@ import { CardService } from 'src/_services/card.service';
 
 enum ChargingCardTabsEnum {
   InformationsTab = "InformationsTab",
-  OtherTab = "OtherTab"
+  Transactions = "Transactions",
+  Orders = "Orders",
 }
 @Component({
   selector: 'app-charging-card',
@@ -30,7 +31,9 @@ export class ChargingCardComponent implements OnInit {
     balance: 0,
     note: '',
     userID: 0,
-    user: null
+    user: null,
+    transactions : [],
+    orders : []
   }
 
   // charging card id
@@ -55,5 +58,20 @@ export class ChargingCardComponent implements OnInit {
   // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
+  }
+
+  update(vale : any,name : string){
+    this.chargingCard[name] = vale;
+    this.chargingCard.transactions=[];
+    this.chargingCard.orders=[];
+    this._cardService.edit(this.chargingCard.id, this.chargingCard).subscribe((data) => {
+      this.getchargingCardByID(this.chargingCard.id);
+    })
+  }
+
+  getchargingCardByID(id : number){
+    this._cardService.getById(id).subscribe((data) => {
+      this.chargingCard = data;
+    })
   }
 }

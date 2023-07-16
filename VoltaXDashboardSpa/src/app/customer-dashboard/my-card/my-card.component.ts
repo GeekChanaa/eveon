@@ -22,7 +22,9 @@ export class MyCardComponent implements OnInit {
     balance: 0,
     note: '',
     userID: 0,
-    user: null
+    user: null,
+    transactions : [],
+    orders : []
   }
 
   transactions : any[] = [];

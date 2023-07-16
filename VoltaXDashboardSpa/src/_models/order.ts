@@ -3,9 +3,9 @@ import { User } from "./user";
 
 export interface Order {
     id: number;
-    CardID: number;
-    Amount: number;
-    RechargeDate: Date;
-    Card: Card | null;
+    cardID: number;
+    amount: number;
+    rechargeDate: Date;
+    card: Card | null;
     [key: string]: any;
   }

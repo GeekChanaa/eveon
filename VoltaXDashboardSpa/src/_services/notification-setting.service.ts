@@ -10,10 +10,18 @@ import { AbstractService } from './abstract-service';
 })
 export class NotificationSettingService  extends AbstractService<NotificationSetting>{
   constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/notificationSetting");
+    super(http,snackBar, environment.apiUrl+"/api/notificationSetting/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/notificationSetting";
+  baseUrl = environment.apiUrl+"/api/notificationSetting/";
 
+  getUserNotificationSettings(userID : number){
+    return this._http.get<any[]>(this.baseUrl+"UserNotificationSettings/"+userID);
+  }
+
+  // save user notification setting
+  saveUserNotificationSetting(notificationSetting : any){
+    return this._http.post(this.baseUrl+"SaveUserNotificationSetting",notificationSetting);
+  }
 }

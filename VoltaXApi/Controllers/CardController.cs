@@ -58,5 +58,17 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.GetCardOrders(CardID);
         }
+        
+        // Get Card ID
+        [HttpGet("{id}")]
+        public override async Task<IActionResult> GetById(int id)
+        {
+            var entity = await this._repository.GetCardByID(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
+        }
     }
 }

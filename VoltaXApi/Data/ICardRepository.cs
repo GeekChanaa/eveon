@@ -10,6 +10,7 @@ namespace VoltaXApi.Data
         Task<List<Card>> GetUserRechargeCardsAsync(int UserID);
         Task<List<TransactionDto>> GetCardTransactions(int CardID);
         Task<List<OrderDto>> GetCardOrders(int CardID);
+        Task<CardWithTransactionsOrdersDto> GetCardByID(int CardID);
 
     }
 }

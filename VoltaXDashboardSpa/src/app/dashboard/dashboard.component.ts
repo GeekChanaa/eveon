@@ -7,9 +7,11 @@ declare var $: any;  // Declare $ to use jQuery
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit() {
+    
   }
 
   ngAfterViewInit() {
