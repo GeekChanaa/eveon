@@ -4,7 +4,7 @@ import { ReasonEnumType } from "./_enums/ReasonEnumType";
 
   
   export interface TransactionType {
-    customData: CustomDataType;
+    customData?: CustomDataType;
     transactionId: string;
     chargingState?: ChargingStateEnumType;
     timeSpentCharging?: number;

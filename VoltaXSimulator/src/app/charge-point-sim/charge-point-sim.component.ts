@@ -194,39 +194,8 @@ export class ChargePointSimComponent implements OnInit {
   }
 
   // Start Transaction
-  startTransaction(connectorId: any) {
-    console.log('STARTING THE TRANSACTION');
-    console.log(this.startTransactionEventRequest);
-    var transaction_id = this.guid();
-    this.startTransactionEventRequest.eventType =
-      TransactionEventEnumType.Started;
-    this.startTransactionEventRequest.triggerReason =
-      this.selectedStartTransactionTriggerReason;
-    this.startTransactionEventRequest.transactionInfo.stoppedReason =
-      this.selectedStartTransactionReason;
-    this.startTransactionEventRequest.evse.connectorId = connectorId;
-    this.startTransactionEventRequest.transactionInfo.transactionId =
-      transaction_id;
-    this.connectorIdTransactionUid[connectorId] = transaction_id;
-    var meterValue: MeterValueType = {
-      sampledValue: [
-        {
-          value: 0,
-          context: ReadingContextEnumType.TransactionEnd,
-          measurand: MeasurandEnumType.EnergyActiveImportRegister,
-          phase: PhaseEnumType.L1,
-          location: LocationEnumType.Cable,
-          unitOfMeasure: {
-            unit: 'Wh',
-            multiplier: 0,
-          },
-        },
-      ],
-      timestamp: this._wsService.formatDate(new Date()),
-    };
-    this.startTransactionEventRequest.meterValue = [meterValue];
-    this._wsService.startTransaction(this.startTransactionEventRequest);
-    console.log('this is the transaction id : ' + transaction_id);
+  startTransaction(req : any){
+    this._wsService.startTransaction(req);
   }
 
   // Stop transaction
@@ -262,28 +231,7 @@ export class ChargePointSimComponent implements OnInit {
     this._wsService.stopTransaction(this.stopTransactionEventRequest);
   }
 
-  // Generating transaction IDS
-  guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return (
-      s4() +
-      s4() +
-      '-' +
-      s4() +
-      '-' +
-      s4() +
-      '-' +
-      s4() +
-      '-' +
-      s4() +
-      s4() +
-      s4()
-    );
-  }
+  
 
   // Status notification Request
   statusNotificationRequest(connectorId: number) {

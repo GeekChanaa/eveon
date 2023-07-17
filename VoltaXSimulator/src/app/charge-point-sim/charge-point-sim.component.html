@@ -10,59 +10,82 @@
   </div>
 </div>
 
-<div>
-  <h4>Connecting the chargepoint to the gateway</h4>
-  <button (click)="wsConnect()">connect</button>
-</div>
-<button (click)="authAcc()">Accepted</button>
-<div *ngFor="let connector of chargePoint?.connectors">
-  <div>
-    <h4>Start Transaction Event (connector : {{connector.id}})</h4>
-
-    <select [(ngModel)]="selectedStartTransactionTriggerReason">
-      <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
-    </select>
-
-
-    <select [(ngModel)]="selectedStartTransactionReason">
-      <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
-    </select>
-
-    <button (click)="startTransaction(connector.id)">start Transaction</button>
+<!-- Connect button / with status -->
+<div class="connect_div">
+  <div class="status_div">
+    <div class="status_point"></div>
+    <p>
+      <span>status : </span>
+      <span>disconnected </span>
+    </p>
   </div>
-  <div>
-    <h4>Status Notification Request (connector : {{connector.id}})</h4>
-    <select [(ngModel)]="selectedConnectorStatus">
-      <option *ngFor="let status of connectorStatuses" [value]="status">
-        {{status}}
-      </option>
-    </select>
+  <button mat-button (click)="wsConnect()">Connect</button>
+</div>
+
+
+
+<button mat-button (click)="authAcc()">Accepted</button>
+
+
+<mat-accordion>
+  <!-- Start Transaction Request -->
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Start Transaction Request
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-start-transaction-request (StartTransactionEvent)="startTransaction($event)"></app-start-transaction-request>
+  </mat-expansion-panel>
+
+  <!-- Update Transaction -->
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Update Transaction
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-update-transaction-request></app-update-transaction-request>
+  </mat-expansion-panel>
+
+  <!-- Stop Transaction -->
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Stop Transaction
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    app-stop-transaction-request
+  </mat-expansion-panel>
+
+  <!-- HeartBeat -->
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Heartbeat Request
+      </mat-panel-title>
+    </mat-expansion-panel-header>
     
-    <button (click)="statusNotificationRequest(connector.id)">statusNotificationRequest</button>
-  </div>
+  </mat-expansion-panel>
 
+  <!-- Meter Values Request -->
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Meter values request
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-meter-values-request></app-meter-values-request>
+  </mat-expansion-panel>
 
-  <div>
-    <h4>Stop Transaction Event (connector : {{connector.id}})</h4>
+  <!-- Status Notification Request -->
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Status Notification Request
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-status-notification-request></app-status-notification-request>
+  </mat-expansion-panel>
 
-    <select [(ngModel)]="selectedStopTransactionTriggerReason">
-      <option *ngFor="let reason of triggerReasons" [value]="reason">{{reason}}</option>
-    </select>
-
-
-    <select [(ngModel)]="selectedStopTransactionReason">
-      <option *ngFor="let reason of reasons" [value]="reason">{{reason}}</option>
-    </select>
-
-    <button (click)="stopTransaction(connector.id)">Stop Transaction</button>
-  </div>
-
-
-  <div>
-    <h1>this is the form : </h1>
-    <app-dynamic-form [requestType]="STR"></app-dynamic-form>
-  </div>
-
-  <button>DESCRIB OBJECT</button>
-
-</div>
+</mat-accordion>
