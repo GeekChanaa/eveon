@@ -40,6 +40,7 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
 import {MatExpansionModule} from '@angular/material/expansion'; 
 import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
+import { ChargePointConnectorsComponent } from './charging-points/charging-point/charge-point-connectors/charge-point-connectors.component';
 
 @NgModule({
     declarations: [
@@ -75,7 +76,8 @@ import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component
     AppTableCustomButtonDirective,
     NotificationSettingsComponent,
     CompleteProfileComponent,
-    DebitCardsComponent
+    DebitCardsComponent,
+    ChargePointConnectorsComponent
     
   ],
     imports: [

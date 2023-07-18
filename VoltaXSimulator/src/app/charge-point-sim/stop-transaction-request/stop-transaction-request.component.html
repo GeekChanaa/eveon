@@ -1,3 +1,26 @@
-<p>
-  stop-transaction-request works!
-</p>
+
+<!-- Trigger Reason -->
+<mat-form-field>
+  <mat-label>Trigger Reason</mat-label>
+  <mat-select [(ngModel)]="request.triggerReason">
+    <mat-option *ngFor="let triggerReason of triggerReasons" [value]="triggerReason">
+      {{triggerReason}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+
+<!-- IdTokenEnumTypes -->
+<mat-form-field>
+  <mat-label>Id Token Type </mat-label>
+  <mat-select [(ngModel)]="request.idToken.type">
+    <mat-option *ngFor="let IdTokenType of IdTokenEnumTypes" [value]="IdTokenType">
+      {{IdTokenType}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- button for submit -->
+<div>
+  <button mat-button color="primary" (click)="sendRequest()">Send Request</button>
+</div>

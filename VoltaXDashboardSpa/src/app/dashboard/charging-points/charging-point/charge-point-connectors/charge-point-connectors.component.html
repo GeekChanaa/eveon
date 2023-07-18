@@ -1,0 +1,128 @@
+<ng-container *ngIf="showcf == false">
+  <div class="settings__anchor" id="account" data-value="Account"></div>
+  <div class="title-purple settings__title">Connectors</div>
+  <div class="settings__fieldset">
+    <ng-container *ngFor="let connector of connectors">
+      <mat-accordion>
+        <mat-expansion-panel
+          class="expansion-panel"
+          (opened)="(true)"
+          (closed)="(false)"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title class="flex">
+              <div>Connector : {{ connector.id }}</div>
+              <button
+                (click)="deleteConnector(connector.id)"
+                class="ml-auto"
+                mat-button
+                color="primary"
+              >
+                delete
+              </button>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="card__display">
+            <div class="card__display_item">
+              <span class="item__title">
+                Connector Type
+                <div
+                  class="tooltip"
+                  title="Maximum 100 characters. No HTML or emoji allowed"
+                >
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </span>
+              <br />
+              <span class="item__text">{{ connector.connectorType }}</span>
+            </div>
+
+            <div class="card__display_item">
+              <span class="item__title">
+                Power
+                <div
+                  class="tooltip"
+                  title="Maximum 100 characters. No HTML or emoji allowed"
+                >
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </span>
+              <br />
+              <span class="item__text">{{ connector.power }}</span>
+            </div>
+
+            <div class="card__display_item">
+              <span class="item__title">
+                Speed
+                <div
+                  class="tooltip"
+                  title="Maximum 100 characters. No HTML or emoji allowed"
+                >
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </span>
+              <br />
+              <span class="item__text">{{ connector.speed }}</span>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-container>
+  </div>
+
+  <!-- Adding new connector button -->
+  <div class="btns__div">
+    <button class="button" (click)="showcf = true">Add Connector</button>
+  </div>
+
+</ng-container>
+
+<ng-container *ngIf="showcf == true">
+  <div class="field">
+    <div class="field__label">Power
+      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <input [(ngModel)]="connectorPower" class="field__input" type="number" placeholder="Value" required>
+    </div>
+  </div>
+  <div class="field">
+    <div class="field__label">Speed
+      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <input [(ngModel)]="connectorSpeed" class="field__input" type="number" placeholder="Value" required>
+    </div>
+  </div>
+  <div class="field">
+    <div class="field__label">Connector ID
+      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <input [(ngModel)]="connectorID" class="field__input" type="number" placeholder="Value" required>
+    </div>
+  </div>
+  <div class="btns__div">
+    <button class="button" (click)="createConnector()">Create</button>
+    <button class="button-stroke" (click)="showcf = false">Cancel</button>
+  </div>
+</ng-container>

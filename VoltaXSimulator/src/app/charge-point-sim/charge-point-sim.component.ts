@@ -34,51 +34,7 @@ export class ChargePointSimComponent implements OnInit {
 
   chargePoint: ChargePoint | undefined;
   connectorIdTransactionUid: string[] = [];
-  startTransactionEventRequest: TransactionEventRequest = {
-    eventType: TransactionEventEnumType.Ended,
-    meterValue: [],
-    timestamp: this._wsService.formatDate(new Date()),
-    triggerReason: TriggerReasonEnumType.Authorized,
-    seqNo: 0,
-    transactionInfo: {
-      customData: {
-        vendorId: '',
-      },
-      transactionId: '',
-      stoppedReason: ReasonEnumType.DeAuthorized,
-    },
-    evse: {
-      id: 0,
-      connectorId: 0,
-    },
-    idToken: {
-      idToken: '',
-      type: IdTokenEnumType.Central,
-    },
-  };
-
-  stopTransactionEventRequest: TransactionEventRequest = {
-    eventType: TransactionEventEnumType.Ended,
-    meterValue: [],
-    timestamp: this._wsService.formatDate(new Date()),
-    triggerReason: TriggerReasonEnumType.Authorized,
-    seqNo: 0,
-    transactionInfo: {
-      customData: {
-        vendorId: '',
-      },
-      transactionId: '',
-      stoppedReason: ReasonEnumType.DeAuthorized,
-    },
-    evse: {
-      id: 0,
-      connectorId: 3,
-    },
-    idToken: {
-      idToken: '',
-      type: IdTokenEnumType.Central,
-    },
-  };
+  
 
   transactionEvents = Object.values(TransactionEventEnumType);
   triggerReasons = Object.values(TriggerReasonEnumType);
@@ -99,85 +55,6 @@ export class ChargePointSimComponent implements OnInit {
 
   // On init cycle hook
   ngOnInit() {
-    let instance: any = {
-      eventType: Object.values(TransactionEventEnumType),
-      meterValue: [
-        {
-          customData: {
-            vendorId: '',
-          },
-          sampledValue: [
-            {
-              customData: {
-                vendorId: '',
-              },
-              value: 0,
-              context: Object.values(ReadingContextEnumType),
-              measurand: Object.values(MeasurandEnumType),
-              phase: Object.values(PhaseEnumType),
-              location: Object.values(LocationEnumType),
-              signedMeterValue: {
-                customData: {
-                  vendorId: '',
-                },
-                signedMeterData: '',
-                signingMethod: '',
-                encodingMethod: '',
-                publicKey: '',
-              },
-              unitOfMeasure: {
-                customData: {
-                  vendorId: '',
-                },
-                unit: '',
-                multiplier: 0,
-              },
-            },
-          ],
-          timestamp: '',
-        },
-      ],
-      timestamp: '',
-      triggerReason: Object.values(TriggerReasonEnumType),
-      seqNo: 0,
-      transactionInfo: {
-        customData: {
-          vendorId: '',
-        },
-        transactionId: '',
-        chargingState: Object.values(ChargingStateEnumType),
-        timeSpentCharging: 0,
-        stoppedReason: Object.values(ReasonEnumType),
-        remoteStartId: 0,
-      },
-      evse: {
-        customData: {
-          vendorId: '',
-        },
-        id: 0,
-        connectorId: 0,
-      },
-      idToken: {
-        customData: {
-          vendorId: '',
-        },
-        additionalInfo: [
-          {
-            customData: {
-              vendorId: '',
-            },
-            additionalIdToken: '',
-            type: '',
-          },
-        ],
-        idToken: '',
-        type: Object.values(IdTokenEnumType),
-      },
-    };
-    console.log("this is the object description");
-    console.log(this.describeObject(instance));
-
-    this.STR = this.describeObject(instance)
     const id = this.route.snapshot.paramMap.get('id');
     this.chargePoint = this.pointService
       .getChargePoints()
@@ -194,53 +71,15 @@ export class ChargePointSimComponent implements OnInit {
   }
 
   // Start Transaction
-  startTransaction(req : any){
+  startTransaction(req : any, connectorID : number){
     this._wsService.startTransaction(req);
+    this.connectorIdTransactionUid[connectorID] = req.transactionInfo.transactionId;
+    console.log(this.connectorIdTransactionUid);
   }
 
-  // Stop transaction
-  stopTransaction(connectorId: any) {
-    console.log('STOPING THE TRANSACTION');
-    var transaction_id = this.connectorIdTransactionUid[connectorId];
-    console.log(transaction_id);
-    this.stopTransactionEventRequest.eventType = TransactionEventEnumType.Ended;
-    this.stopTransactionEventRequest.triggerReason =
-      this.selectedStopTransactionTriggerReason;
-    this.stopTransactionEventRequest.transactionInfo.stoppedReason =
-      this.selectedStopTransactionReason;
-    this.stopTransactionEventRequest.evse.connectorId = connectorId;
-    this.stopTransactionEventRequest.transactionInfo.transactionId =
-      transaction_id;
-    var meterValue: MeterValueType = {
-      sampledValue: [
-        {
-          value: 20,
-          context: ReadingContextEnumType.TransactionEnd,
-          measurand: MeasurandEnumType.EnergyActiveImportRegister,
-          phase: PhaseEnumType.L1,
-          location: LocationEnumType.Cable,
-          unitOfMeasure: {
-            unit: 'Wh',
-            multiplier: 0,
-          },
-        },
-      ],
-      timestamp: this._wsService.formatDate(new Date()),
-    };
-    this.stopTransactionEventRequest.meterValue = [meterValue];
-    this._wsService.stopTransaction(this.stopTransactionEventRequest);
-  }
-
-  
-
-  // Status notification Request
-  statusNotificationRequest(connectorId: number) {
-    if (this.chargePoint?.chargePointId != null)
-      this._wsService.statusNotification(
-        this.selectedConnectorStatus,
-        this.chargePoint?.id,
-        connectorId
-      );
+  // Stop Transaction
+  stopTransaction(req : any, connectorID : number){
+    this._wsService.stopTransaction(req, req.transactionInfo.transactionID);
   }
 
   // send authorize accepted
@@ -248,58 +87,5 @@ export class ChargePointSimComponent implements OnInit {
     this._wsService.sendAuthorizeResponse();
   }
 
-  describeObject(obj: any) {
-    let description: any = {};
-
-    for (let key in obj) {
-      let value = obj[key];
-      let valueType = typeof value;
-
-      if (Array.isArray(value)) {
-        if (value.length > 0) {
-          if(typeof value[0] ==='object'){
-            description[key] = {
-              name: key,
-              type: 'array',
-              value: this.describeObject(value[0]),
-            };
-          }
-          else{
-            description[key] = {
-              name: key,
-              type: 'enum',
-              value: value,
-            };
-          }
-          
-        }
-      } else if (valueType === 'object') {
-        description[key] = {
-          name: key,
-          type: 'object',
-          value: this.describeObject(value),
-        };
-      } else if (valueType === 'boolean') {
-        description[key] = {
-          name: key,
-          type: 'bool',
-          value: value,
-        };
-      } else if (valueType === 'number') {
-        description[key] = {
-          name: key,
-          type: 'number',
-          value: value,
-        };
-      } else if (valueType === 'string') {
-        description[key] = {
-          name: key,
-          type: 'string',
-          value: value,
-        };
-      }
-    }
-
-    return description;
-  }
+  
 }
