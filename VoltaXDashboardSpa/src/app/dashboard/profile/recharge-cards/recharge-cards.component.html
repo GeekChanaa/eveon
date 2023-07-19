@@ -28,9 +28,7 @@
                                 <div class="field__wrap">
                                     <div class="field__wrap">
                                         <select class="select" formControlName="cardType">
-                                            <option value="private">Private</option>
-                                            <option value="public">Public</option>
-                                            <option value="partner">Partner</option>
+                                            <option *ngFor="let cardType of cardTypes | keyvalue" value="{{cardType.key}}">{{cardType.value}}</option>
                                         </select>
                                     </div>
                                 </div>

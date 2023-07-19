@@ -41,6 +41,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 import { ChargePointConnectorsComponent } from './charging-points/charging-point/charge-point-connectors/charge-point-connectors.component';
+import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
 
 @NgModule({
     declarations: [
@@ -77,7 +78,8 @@ import { ChargePointConnectorsComponent } from './charging-points/charging-point
     NotificationSettingsComponent,
     CompleteProfileComponent,
     DebitCardsComponent,
-    ChargePointConnectorsComponent
+    ChargePointConnectorsComponent,
+    ProfileSecurityComponent
     
   ],
     imports: [

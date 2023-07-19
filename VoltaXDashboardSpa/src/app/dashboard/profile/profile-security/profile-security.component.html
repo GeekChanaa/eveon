@@ -1,0 +1,60 @@
+<div class="settings__anchor" id="account" data-value="Account"></div>
+<div class="title-purple settings__title">Security</div>
+<div class="settings__fieldset" *ngIf="editingPassword">
+  <div class="field">
+    <div class="field__label">
+      Old password
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <input class="field__input" type="password" [(ngModel)]="userPasswordChange.currentPassword" />
+    </div>
+  </div>
+  <div class="settings__row">
+    <div class="field">
+      <div class="field__label">
+        New password
+        <div
+          class="tooltip"
+          title="Maximum 100 characters. No HTML or emoji allowed"
+        >
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <input class="field__input" type="password" [(ngModel)]="userPasswordChange.newPassword" />
+      </div>
+    </div>
+    <div class="field">
+      <div class="field__label">
+        Confirm new password
+        <div
+          class="tooltip"
+          title="Maximum 100 characters. No HTML or emoji allowed"
+        >
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <input class="field__input" type="password" [(ngModel)]="userPasswordChange.newPasswordCheck" />
+      </div>
+    </div>
+  </div>
+  <button class="button-stroke settings__button" (click)="changePassword()">Save</button>
+</div>
+<div class="settings__fieldset" *ngIf="!editingPassword">
+  <button class="button" (click)="editingPassword = true">
+    Update Password
+  </button>
+</div>

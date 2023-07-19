@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { CardStatusEnum } from 'src/_models/_enums/card-status';
+import { CardTypeEnum } from 'src/_models/_enums/card-type';
 import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
 import { UserService } from 'src/_services/user.service';
@@ -21,7 +22,7 @@ export class CreateChargingCardComponent implements OnInit, AfterViewInit {
   card : Card = {
     id: 0,
     cardNumber: '',
-    cardType: '',
+    cardType: CardTypeEnum.Standard,
     expirationDate: new Date(),
     maxCount: 0,
     status: CardStatusEnum.Inactive,

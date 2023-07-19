@@ -33,7 +33,7 @@ class SignupSuccessPage extends StatelessWidget {
             ),
             SizedBox(height: 32),
             Image.asset(
-              'assets/images/personalcard.png', // Replace with your image asset path
+              'assets/images/signup_success.png', // Replace with your image asset path
               height: 100,
               width: 100,
             ),

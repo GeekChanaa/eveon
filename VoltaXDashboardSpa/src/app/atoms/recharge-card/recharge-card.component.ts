@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CardStatusEnum } from 'src/_models/_enums/card-status';
+import { CardTypeEnum } from 'src/_models/_enums/card-type';
 import { Card } from 'src/_models/card';
 
 @Component({
@@ -14,7 +15,7 @@ export class RechargeCardComponent implements OnInit {
   @Input() card : Card = {
     id: 0,
     cardNumber: '',
-    cardType: '',
+    cardType: CardTypeEnum.Standard,
     expirationDate: new Date(),
     maxCount: 0,
     status: CardStatusEnum.Inactive,

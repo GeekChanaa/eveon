@@ -1,4 +1,5 @@
 import { CardStatusEnum } from "./_enums/card-status";
+import { CardTypeEnum } from "./_enums/card-type";
 import { Order } from "./order";
 import { Transaction } from "./transaction";
 import { User } from "./user";
@@ -6,7 +7,7 @@ import { User } from "./user";
 export interface Card {
     id: number;
     cardNumber: string;
-    cardType: string;
+    cardType: CardTypeEnum;
     expirationDate: Date;
     maxCount: number;
     status: CardStatusEnum;

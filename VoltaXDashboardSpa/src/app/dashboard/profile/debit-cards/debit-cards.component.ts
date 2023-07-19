@@ -62,7 +62,9 @@ export class DebitCardsComponent implements OnInit {
         debitCardValue.debitCardExpirationDate
       ),
     };
-    this._debitCardService.create(debitCard).subscribe((data) => {this.showDCForm = false});
+    this._debitCardService.create(debitCard).subscribe((data) => {
+      this.getUserDebitCards();
+    });
   }
 
 

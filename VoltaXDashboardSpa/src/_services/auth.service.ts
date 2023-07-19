@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UserForRegisterDto } from 'src/_models/_dtos/user-for-register-dto';
 import { UserForResetPasswordDto } from 'src/_models/_dtos/user-for-reset-password-dto';
+import { UserPasswordChangeDto } from 'src/_models/_dtos/user-password-change-dto';
 import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
 import { VerifyPhoneDto } from 'src/_models/_dtos/verify-phone-dto';
 import { AddPhoneNumberDto } from 'src/_models/_dtos/add-phone-number-dto';
@@ -84,7 +85,7 @@ export class AuthService {
   }
 
   // Changing password
-  changePassword(pwd : any){
+  changePassword(pwd : UserPasswordChangeDto){
     return this.http.post(this.baseUrl+"ChangePassword",pwd);
   }
 

@@ -12,7 +12,7 @@ const routes: Routes = [
     path: "my-cards",
     component: MyCardsComponent,
   },{
-    path: "my-profile",
+    path: "profile",
     component: ProfileComponent,
   },{
     path: "my-card/:id",

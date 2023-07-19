@@ -84,30 +84,11 @@
               </div>
               <button class="button-stroke settings__button">Remove</button>
             </div>
-            <div class="settings__fieldset">
-              
+            <div class="settings__fieldset" *ngIf="user.firstName != ''">
               <app-display-cell inpType="text" title="First Name" (updatePropertyEvent)="update($event,'firstName')" [val]="user.firstName"></app-display-cell>
+              <app-display-cell inpType="text" title="Last Name" (updatePropertyEvent)="update($event,'lastName')" [val]="user.lastName"></app-display-cell>
                 
-              <div class="field">
-                <div class="field__label">Last Name
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                  <div class="field__edit" (click)="editingLastName = true;">
-                    <svg class="icon icon-edit">
-                      <use xlink:href="#icon-edit"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__information" *ngIf="!editingLastName">
-                  {{user.lastName | titlecase}}
-                </div>
-                <div class="field__wrap" *ngIf="editingLastName">
-                  <input class="field__input" type="email" name="email">
-                </div>
-              </div>
+              
               <div class="field">
                 <div class="field__label">Email
                   <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
@@ -151,52 +132,7 @@
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Security</div>
-            <div class="settings__fieldset" *ngIf="editingPassword">
-              <div class="field">
-                <div class="field__label">Old password
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <input class="field__input" type="password" name="old-password">
-                </div>
-              </div>
-              <div class="settings__row">
-                <div class="field">
-                  <div class="field__label">New password
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <input class="field__input" type="password" name="new-password">
-                  </div>
-                </div>
-                <div class="field">
-                  <div class="field__label">Confirm new password
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <input class="field__input" type="password" name="Confirm-password">
-                  </div>
-                </div>
-              </div>
-              <button class="button-stroke settings__button">Save</button>
-            </div>
-            <div class="settings__fieldset" *ngIf="!editingPassword">
-              <button class="button" (click)="editingPassword = true">Update Password</button>
-            </div>
+            <app-profile-security [userID]="user.id"></app-profile-security>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
             <app-recharge-cards [userID]="user.id"></app-recharge-cards>

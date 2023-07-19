@@ -57,10 +57,7 @@ export class ProfileComponent implements OnInit {
     private _authService : AuthService,
     private _userService : UserService,
     private _fileManagementService : FileManagementService
-  ) {
-    var decodedToken = this._authService.getAuthInformation();
-    console.log("this is the profile userID : " + this.userID);
-    
+  ) {    
    }
 
   // On init cycle hook
@@ -75,6 +72,7 @@ export class ProfileComponent implements OnInit {
 
     this._userService.getById(userid).subscribe((user) => {
       this.user = user;
+      console.log(this.user);
     });
   }
 

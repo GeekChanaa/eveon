@@ -2,8 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { subscribeOn } from 'rxjs';
 import { CardStatusEnum } from 'src/_models/_enums/card-status';
+import { CardTypeEnum } from 'src/_models/_enums/card-type';
 import { Card } from 'src/_models/card';
 import { CardService } from 'src/_services/card.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { UserService } from 'src/_services/user.service';
 
 @Component({
@@ -16,12 +18,13 @@ export class RechargeCardsComponent implements OnInit {
   @Input() userID : number = 0;
 
   showCreateForm : boolean = false;
+  cardTypes : any = {};
 
   // card
   card : Card = {
     id: 0,
     cardNumber: '',
-    cardType: '',
+    cardType: CardTypeEnum.Standard,
     expirationDate: new Date(),
     maxCount: 0,
     status: CardStatusEnum.Inactive,
@@ -38,7 +41,8 @@ export class RechargeCardsComponent implements OnInit {
 
   constructor(
     private _cardService : CardService,
-    private _userService: UserService
+    private _userService: UserService,
+    private _enumMapping : EnumMappingService
   ) { 
     this.form = new FormGroup({
       cardType : new FormControl(''),
@@ -53,9 +57,10 @@ export class RechargeCardsComponent implements OnInit {
 
   // On init cycle hook
   ngOnInit() {
-    console.log("this is the recharge cards comp");
-    console.log(this.userID);
+    this.cardTypes = this._enumMapping.getEnumMapping("CardType");
+    console.log(this.cardTypes);
     this.getUserRechargeCards();
+
   }
 
   // Getting all recharge cards of the user
@@ -68,7 +73,7 @@ export class RechargeCardsComponent implements OnInit {
   // on submit button
   onSubmit(){
     var cardForm = this.form.value;
-    this.card.cardType = cardForm.cardType;
+    this.card.cardType = parseInt(cardForm.cardType);
     this.card.expirationDate = (new Date());
     this.card.maxCount = cardForm.maxCount;
     this.card.status = CardStatusEnum.Active;
@@ -105,7 +110,9 @@ export class RechargeCardsComponent implements OnInit {
 
   // deleting recharge card
   delete(cardID : number){
-    this._cardService.deleteById(cardID).subscribe();
+    this._cardService.deleteById(cardID).subscribe((data)=>{
+      this.getUserRechargeCards();
+    });
   }
 
   
