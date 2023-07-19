@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:volta_x_mobile/verify_identity_page.dart';
 
 import 'login_page.dart';
 
@@ -104,6 +105,12 @@ class SignUpPage extends StatelessWidget {
                   ),
                   onPressed: () {
                     // Handle sign up
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VerifyIdentityPage(),
+                        ),
+                      );
                   },
                 ),
               ),
