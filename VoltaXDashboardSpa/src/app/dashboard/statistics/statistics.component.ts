@@ -85,11 +85,7 @@ export class StatisticsComponent implements OnInit {
       this.nbr_recharge_orders = data
     });
 
-    this._orderService.countRechargeAmountByDay().subscribe((data) => {
-      var categories = Object.keys(data);
-      var values = Object.values(data);
-      this.rechargeOrdersChart = this.chartOptionsConstructor(values,categories);
-    })
+    this.getRechargeOrdersOf("7days");
   }
 
   // change recharge orders chart period

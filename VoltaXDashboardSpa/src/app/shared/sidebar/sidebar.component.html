@@ -3,13 +3,13 @@
     <svg class="icon icon-close">
       <use xlink:href="#icon-close"></use>
     </svg>
-  </button><a class="sidebar__logo" href="index.html"><img class="some-icon" src="img/logo-dark.png" alt="Core"><img class="some-icon-dark" src="img/logo-light.png" alt="Core"></a>
+  </button><a class="sidebar__logo" href="index.html"><img class="some-icon" src="assets/img/logo.svg" alt="Core"><img class="some-icon-dark" src="img/logo-light.png" alt="Core"></a>
   
   <div class="sidebar__menu">
     <!-- Customer menu -->
     <app-sidebar-item *ngIf="role == 1" [title]="'home'" [link]="'/my-dashboard'"></app-sidebar-item>
     <app-sidebar-item *ngIf="role == 1" [title]="'my cards'" [link]="'/my-dashboard/my-cards'"></app-sidebar-item>
-    <app-sidebar-item *ngIf="role == 1" [title]="'my profile'" [link]="'/my-dashboard/my-profile'"></app-sidebar-item>
+    <app-sidebar-item *ngIf="role == 1" [title]="'my profile'" [link]="'/my-dashboard/profile'"></app-sidebar-item>
 
     <!-- Menu and support menu -->
     <app-sidebar-item *ngIf="role == 0" [title]="'home'" [link]="'/'"></app-sidebar-item>
@@ -72,6 +72,23 @@
         <app-sidebar-link [title]="'transactions'" [link]="'/partner-dashboard/transactions'"></app-sidebar-link>
       </app-sidebar-dropdown>
     </ng-container>
+  </div>
+  <div class="sidebar__foot">
+    <button class="sidebar__help">
+      <svg class="icon icon-help">
+        <use xlink:href="#icon-help"></use>
+      </svg>Help & getting started
+      <div class="sidebar__counter">8</div>
+    </button>
+    <label class="theme js-theme">
+      <input class="theme__input" type="checkbox"/><span class="theme__inner"><span class="theme__box">
+          <svg class="icon icon-sun">
+            <use xlink:href="#icon-sun"></use>
+          </svg>Light</span><span class="theme__box">
+          <svg class="icon icon-moon">
+            <use xlink:href="#icon-moon"></use>
+          </svg>Dark</span></span>
+    </label>
   </div>
 
 

@@ -11,3 +11,8 @@ body .slick-next {
     background: grey !important;
     z-index: 100;
 }
+
+.slide{
+  background-color: white;
+  padding: 0px 32px;
+}

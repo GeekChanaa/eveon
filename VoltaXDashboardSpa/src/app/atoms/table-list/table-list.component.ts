@@ -28,6 +28,8 @@ export class TableListComponent implements OnInit {
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output() searchEvent: EventEmitter<string> = new EventEmitter<string>();
+  sortedColumn : string= "";
+  sortedDirection : string = "ASC";
 
   searchValue: string = "";
   private searchSubject = new Subject<string>();
@@ -98,6 +100,20 @@ export class TableListComponent implements OnInit {
 
   // sorting by field
   sort(field: string) {
+    console.log(this.sortedColumn);
+    console.log(field);
+    console.log(this.sortedDirection == "ASC");
+    console.log(this.sortedDirection == "DESC");
+    if(field == this.sortedColumn && this.sortedDirection == "ASC"){
+      this.sortedDirection = "DESC"
+      console.log("here")
+    }
+    else if(field == this.sortedColumn && this.sortedDirection == "DESC"){
+      this.sortedDirection = "ASC"
+      console.log("here 2")
+    }
+    console.log(this.sortedDirection);
+    this.sortedColumn = field;
     this.sortEvent.emit(field);
   } 
 

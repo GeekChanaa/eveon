@@ -21,6 +21,8 @@
     top: 55px;
     border: 1px solid #f7f7f7;
     border-radius: 14px;
+    max-height: 300px;
+overflow: scroll;
 }
 
 .show-opacity{

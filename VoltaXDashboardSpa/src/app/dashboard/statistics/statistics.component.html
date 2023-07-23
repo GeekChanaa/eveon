@@ -110,7 +110,7 @@
             <div *ngFor="let item of top10ChargingStationRevenues" class="countries__item">
               <div class="countries__flag">mo</div>
               <div class="countries__title">{{item.chargingStationID}}</div>
-              <div class="countries__price">{{item.revenue}} DH</div>
+              <div class="countries__price">{{item.revenue | number:'1.2-2'}} DH</div>
             </div>
           </div>
         </div>

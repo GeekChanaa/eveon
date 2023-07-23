@@ -29,9 +29,9 @@
                     <div class="field__wrap">
                       <div class="field__wrap">
                         <select class="select" formControlName="chargingStationNetwork">
-                          <option value="private">Private</option>
-                          <option value="public">Public</option>
-                          <option value="partner">Partner</option>
+                          <option value="0">Public</option>
+                          <option value="1">Private</option>
+                          <option value="2">Partner</option>
                         </select>
                       </div>
                     </div>
@@ -404,8 +404,11 @@
                                 </div>
                               </div>
                               <div class="field__wrap">
-                                <input class="field__input" type="text"
-                                  formControlName="chargePointConnectorTarifCurrency" placeholder="Value" required>
+                                <select class="select" formControlName="chargePointConnectorTarifCurrency">
+                                  <option value="MAD">MAD</option>
+                                  <option value="EUR">EUR</option>
+                                  <option value="USD">USD</option>
+                                </select>
                               </div>
                             </div>
                           </div>

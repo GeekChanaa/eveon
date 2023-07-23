@@ -10,6 +10,10 @@ namespace VoltaXApi.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public string? Gender { get; set; }
+        public string? City { get; set; }
+        public string? Car { get; set; }
+        public DateTime Birthday { get; set; }
         public string? Phone { get; set; }
     
         // Salting the hashed password is one of the most secured ways to secure passwords

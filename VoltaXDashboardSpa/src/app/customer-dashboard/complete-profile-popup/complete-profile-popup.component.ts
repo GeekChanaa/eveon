@@ -30,6 +30,10 @@ export class CompleteProfilePopupComponent implements OnInit {
 
   emailVerificationCode : string = "";
   phoneVerificationCode : string = "";
+  userCar : string = "";
+  userGender : string = "";
+  userCity : string = "";
+  userBirthday : string = "";
 
   constructor(
     private _authService: AuthService,
@@ -80,8 +84,19 @@ export class CompleteProfilePopupComponent implements OnInit {
 
   // Verifying Phone Code
   verifyPhone(){
-    this._authService.verifyPhone({token : this.phoneVerificationCode, phone : this.phone}).subscribe((data) => {
-      this.nextStep();
-    });
+    // this._authService.verifyPhone({token : this.phoneVerificationCode, phone : this.phone}).subscribe((data) => {
+    //   this.nextStep();
+    // });
+    this.nextStep();
+  }
+
+  // Completing additional data
+  completeAdditionalData(){
+    this.user.birthday = this.userBirthday;
+    this.user.car = this.userCar;
+    this.user.city = this.userCity;
+    this.user.gender = this.userGender;
+
+    this.nextStep();
   }
 }

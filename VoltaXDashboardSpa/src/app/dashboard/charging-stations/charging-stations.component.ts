@@ -180,7 +180,7 @@ export class ChargingStationsComponent implements OnInit {
 
   // Applying filters
   applyFilters(){
-    this.itemParams.FilterValue = [this.filters.category, this.filters.city]; 
+    this.itemParams.FilterValue = [ this.filters.city, this.filters.category]; 
     this.itemParams.FilterBy = ["City","Category"]; 
     this.getAll();
   }

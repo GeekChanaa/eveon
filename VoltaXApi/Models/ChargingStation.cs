@@ -5,7 +5,7 @@ namespace VoltaXApi.Models
         public int ID { get; set; }
         public string Name { get; set; } // name of the station
         public string Address { get; set; } // location of the station
-        public string Network { get; set; }
+        public ChargingStationNetworkEnum Network { get; set; }
         public ChargingStationCategoryEnum Category { get; set; }
         public string ChargerQuantity { get; set; }
         public string? Country { get; set; }

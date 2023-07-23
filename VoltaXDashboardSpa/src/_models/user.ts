@@ -7,6 +7,10 @@ export interface User {
     lastName: string;
     email: string;
     phone: string;
+    car? : string;
+    birthday? : string;
+    city? : string;
+    gender? : string;
     isEmailVerified : Boolean;
     isPhoneVerified : Boolean;
     password?: string;

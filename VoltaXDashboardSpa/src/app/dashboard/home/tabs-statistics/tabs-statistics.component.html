@@ -51,7 +51,7 @@
         </svg>
       </div>
       <div class="overview__details">
-        <div class="overview__subtitle">Total Recharge (EUR)
+        <div class="overview__subtitle">Total Recharge (MAD)
           <div class="tooltip" title="Small description">
             <svg class="icon icon-info">
               <use xlink:href="#icon-info"></use>
@@ -73,7 +73,7 @@
         </svg>
       </div>
       <div class="overview__details">
-        <div class="overview__subtitle">Total Revenue (EUR)
+        <div class="overview__subtitle">Total Revenue (MAD)
           <div class="tooltip" title="Small description">
             <svg class="icon icon-info">
               <use xlink:href="#icon-info"></use>
@@ -101,7 +101,7 @@
       </div>
     </div>
     <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart">
+      <div class="overview__chart" *ngIf="rechargeChart">
         <apx-chart style="display: block; height: 200px; width: 100%" [series]="rechargeChart.series" [chart]="rechargeChart.chart" [xaxis]="rechargeChart.xaxis" [stroke]="rechargeChart.stroke" [dataLabels]="rechargeChart.dataLabels" [colors]="rechargeChart.colors" [legend]="rechargeChart.legend" [grid]="rechargeChart.grid"></apx-chart>
       </div>
     </div>

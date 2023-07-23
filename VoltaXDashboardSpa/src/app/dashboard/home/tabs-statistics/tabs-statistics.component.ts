@@ -72,7 +72,12 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
     this._transactionService.getDailyEnergyConsumedLast30Days().subscribe(result =>{ 
       this.totalEnergyByDay = result;
       var categories = Object.keys(this.totalEnergyByDay);
+      categories = categories.map(date => {
+        const d = new Date(date);
+        return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })} ${d.getFullYear()}`;
+      });
       var values = Object.values(this.totalEnergyByDay);
+      values = values.map(value => parseFloat(value.toFixed(2)));
       this.energyChart = this.chartOptionsConstructor(values,categories);
     });
   }
@@ -85,6 +90,7 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
       this.totalOrdersByDay = result;
       var categories = Object.keys(this.totalOrdersByDay);
       var values = Object.values(this.totalOrdersByDay);
+      values = values.map(value => parseFloat(value.toFixed(2)));
       this.orderChart = this.chartOptionsConstructor(values,categories);
     });
   }
@@ -97,6 +103,7 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
       this.totalRechargeAmountByDay = result;
       var categories = Object.keys(this.totalRechargeAmountByDay);
       var values = Object.values(this.totalRechargeAmountByDay);
+      values = values.map(value => parseFloat(value.toFixed(2)));
       this.rechargeChart = this.chartOptionsConstructor(values,categories);
     });
   }

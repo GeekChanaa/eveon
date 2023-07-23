@@ -44,13 +44,18 @@ export class EnumMappingService {
     },
     ChargingStationStatusEnum: {
       0: 'Available',
-      1: 'UnderMaintenance',
+      1: 'Under Maintenance',
       2: 'Offline'
     },
+    ChargingStationNetworkEnum: {
+      0: 'Public',
+      1: 'Private',
+      2: 'Partner'
+    },
     ParkingTypeEnum: {
-      0: 'ParallelParking',
-      1: 'PerpendicularParking',
-      2: 'AngleParking'
+      0: 'Parallel Parking',
+      1: 'Perpendicular Parking',
+      2: 'Angle Parking'
     },
   };
 
