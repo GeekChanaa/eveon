@@ -96,7 +96,7 @@ export class CompleteProfilePopupComponent implements OnInit {
     this.user.car = this.userCar;
     this.user.city = this.userCity;
     this.user.gender = this.userGender;
-
+    
     this.nextStep();
   }
 }
