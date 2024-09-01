@@ -51,6 +51,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     private _enumService : EnumMappingService
   ) {
     this.form = new FormGroup({
+      chargingStationName: new FormControl(''),
       chargingStationNetwork: new FormControl(''),
       chargingStationCategory: new FormControl(''),
       chargingStationChargerQuantity: new FormControl(''),
@@ -68,11 +69,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       }),
       chargePoints: new FormArray([
         new FormGroup({
-          chargePointName: new FormControl(''),
           chargePointSerialNumber: new FormControl(''),
           chargePointStatus: new FormControl(''),
           chargePointCategory: new FormControl(''),
           chargePointID: new FormControl(''),
+          chargePointName: new FormControl(''),
           chargePointConnectors: new FormArray([
             new FormGroup({
               chargePointConnectorSpeed: new FormControl(''),
@@ -108,10 +109,10 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
     if (chargePoints.length < 5) {
       chargePoints.push(new FormGroup({
-        chargePointName: new FormControl(''),
         chargePointSerialNumber: new FormControl(''),
         chargePointStatus: new FormControl(''),
         chargePointCategory: new FormControl(''),
+        chargePointName: new FormControl(''),
         chargePointID: new FormControl(''),
         chargePointConnectors: new FormArray([
           new FormGroup({
@@ -173,6 +174,9 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     // Extract form values
     const formValues = this.form.value;
 
+    console.log("this is the form value");
+    console.log(formValues);
+
     // Create ChargingStation object
     const chargingStation: ChargingStationCreateDto = {
       Address: formValues.chargingStationAddress,
@@ -187,59 +191,40 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       RestaurantsAmenity: formValues.chargingStationAmenities.restaurants,
       WashroomAmenity: formValues.chargingStationAmenities.washroom,
       SittingAreaAmenity: formValues.chargingStationAmenities.sittingArea,
+      chargePoints : []
     };
-    console.log("charge station");
+    formValues.chargePoints.forEach((cp : any) => {
+      let chargePoint: ChargePointCreateDto = {
+        name: cp.chargePointName,
+        chargePointId: cp.chargePointID,
+        serialNumber: cp.chargePointSerialNumber,
+        make: "VoltaX",
+        status: cp.chargePointStatus,
+        comment: '',
+        username: '',
+        password: '',
+        clientCertThumb: '',
+        category: cp.chargePointCategory,
+        connectors : []
+      };
 
-    console.log(chargingStation);
+      cp.chargePointConnectors.forEach((connector: any) => {
+        const connectorObj: ConnectorCreateDto = {
+          connectorType: "cType2",
+          power: connector.chargePointConnectorPower,
+          speed: connector.chargePointConnectorSpeed,
+        };
+        
+        chargePoint.connectors.push(connectorObj)
+        
+      });
+
+      chargingStation.chargePoints.push(chargePoint);
+    })
 
     // Create the station first because the chargePoints depend on its ID
-    this._chargingStationService.create(chargingStation).subscribe((createdStation) => {
-      console.log("this is the created station");
-      console.log(createdStation);
-      // Now create the ChargePoints
-      formValues.chargePoints.forEach((cp: any) => {
-        // Create ChargePoint object
-        const chargePoint: ChargePointCreateDto = {
-          chargingStationID: createdStation.id,
-          name: cp.chargePointName,
-          chargePointId: cp.chargePointID,
-          serialNumber: cp.chargePointSerialNumber,
-          make: "VoltaX",
-          status: cp.chargePointStatus,
-          comment: '',
-          username: '',
-          password: '',
-          clientCertThumb: '',
-          category: cp.chargePointCategory
-        };
-
-        this._chargePointService.create(chargePoint).subscribe((createdChargePoint) => {
-
-          // Now create the Connectors
-          cp.chargePointConnectors.forEach((connector: any) => {
-            // Create Connector object
-            const connectorObj: ConnectorCreateDto = {
-              chargePointId: createdChargePoint.id,
-              connectorType: "cType2",
-              power: connector.chargePointConnectorPower,
-              speed: connector.chargePointConnectorSpeed,
-            };
-            this._connectorService.create(connectorObj).subscribe((createdConnector) => {
-              // Now create the ConnectorTarifs
-              connector.chargePointConnectorTarifs.forEach((tarif: any) => {
-                // Create ConnectorTarif object
-                const connectorTarif: ConnectorTarifCreateDto = {
-                  connectorID: createdConnector.id,
-                  unit: tarif.chargePointConnectorTarifUnit,
-                  quantity: "1",
-                  currency: tarif.chargePointConnectorTarifCurrency,
-                };
-                this._connectorTarifService.create(connectorTarif).subscribe();
-              });
-            });
-          });
-        });
-      });
+    this._chargingStationService.createChargingStation(chargingStation).subscribe((createdStation) => {
+      console.log("CHARGING STATION CREATED ");
     });
   }
 

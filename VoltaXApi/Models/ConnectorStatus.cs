@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaXApi.Models
 {
@@ -12,6 +13,7 @@ namespace VoltaXApi.Models
         public int? ConnectorID { get; set; }
         public string? LastStatus { get; set; }
         public DateTime? LastStatusTime { get; set; }
+        [ForeignKey(nameof(ConnectorID))]
         public Connector? Connector { get; set; }
         public ChargePoint? ChargePoint { get; set; }
     }

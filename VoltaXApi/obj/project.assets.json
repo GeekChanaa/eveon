@@ -4615,11 +4615,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\VoltaXApi.csproj",
+      "projectUniqueName": "c:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\VoltaXApi.csproj",
       "projectName": "VoltaXApi",
-      "projectPath": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\VoltaXApi.csproj",
+      "projectPath": "c:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\VoltaXApi.csproj",
       "packagesPath": "C:\\Users\\XPS\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\XPS\\OneDrive\\Bureau\\Projects\\Personal Projects\\VoltaX\\voltaxapi\\obj\\",
+      "outputPath": "c:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\XPS\\AppData\\Roaming\\NuGet\\NuGet.Config"

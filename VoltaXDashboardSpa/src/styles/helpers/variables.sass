@@ -1,0 +1,96 @@
+// media queries
+=xl
+    @media only screen and (max-width: "1579px")
+        @content
+=w
+    @media only screen and (max-width: "1419px")
+        @content
+=x
+    @media only screen and (max-width: "1339px")
+        @content
+=d
+    @media only screen and (max-width: "1259px")
+        @content
+=t
+    @media only screen and (max-width: "1023px")
+        @content
+=m
+    @media only screen and (max-width: "767px")
+        @content
+=a
+    @media only screen and (max-width: "639px")
+        @content
+=s
+    @media only screen and (max-width: "474px")
+        @content
+
+=r($width)
+    @media only screen and (max-width: $width+ "px")
+        @content
+
+=rmin($width)
+    @media only screen and (min-width: $width+ "px")
+        @content
+
+=rh($height)
+    @media screen and (max-height: $height + "px")
+        @content
+    
+// colors
+$a1: #BCE6EC
+$a2: #B9A9FB
+$a3: #FFA6D6
+$a4: #DBFF73
+
+$s1: #6DD3C2
+$s2: #1966F7
+
+$red: #FF5C17
+
+// colors neutral
+$n0: #FFFFFF
+$n1: #F7FBFA
+$n2: #F1F4F4
+$n3: #E1E2E2
+$n4: #A6AEAD
+$n5: #686A6C
+$n6: #555555
+$n7: #202025
+$n8: #010101
+
+// colors pink
+$pink1: #FFE6F2 // Lightest pink
+$pink2: #FFCCE6
+$pink3: #FFB3DB
+$pink4: #FF99CF
+$pink5: #FF80C4
+$pink6: #FF66B8
+$pink7: #FF4DAD // Medium pink
+$pink8: #FF339B // Darkest pink
+$pink9: #fb1e91 // Darkest pink
+$pink10: #fe178e // Darkest pink
+
+// colors blue
+$blue1: #190482
+$blue2: #7752FE
+$blue3: #8E8FFA
+$blue4: #C2D9FF
+
+
+// opacity
+$o1: rgba($n1, .5)
+$o3: rgba($n3, .5)
+$o5: rgba($n5, .75)
+$o6: rgba($n6, .5)
+$o7-50: rgba($n7, .5) 
+$o7-75: rgba($n7, .75)
+
+$shade: #898E8E
+
+$grd: conic-gradient(from 180deg at 50% 50%, #5FFF5C -18.66deg, #FFE249 22.23deg, #F35950 78.14deg, #7C5BFF 159deg, #1CE4FF 202.32deg, #5FFF5C 341.34deg, #FFE249 382.23deg)
+
+=shadow1
+    box-shadow: 0px rem(32) rem(48) rem(-16) rgba(0, 0, 0, 0.1)
+
+=shadow2
+    box-shadow: 0px rem(12) rem(40) rem(-16) rgba(0, 0, 0, 0.05)

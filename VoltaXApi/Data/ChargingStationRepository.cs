@@ -202,6 +202,14 @@ namespace VoltaXApi.Data
             return top10Stations;
         }
 
+        public async Task<int> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto)
+        {
+            ChargingStation chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationCreateDto);
+            await this.AddAsync(chargingStation);
+            return chargingStation.ID;
+        }
+
+
 
     }
 

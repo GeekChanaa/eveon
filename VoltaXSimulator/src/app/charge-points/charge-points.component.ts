@@ -82,8 +82,9 @@ export class ChargePointsComponent implements OnInit {
   // Get charge point connectors
   getChargePointConnectors(chargePoint : any){
     this.selectedId = chargePoint.id;
-    this.chargePointGateway = "wss://localhost:7282/OCPP/"+chargePoint.chargePointId;
-    
+    this.chargePointGateway = "ws://localhost:8000/OCPP/"+chargePoint.chargePointId;
+    console.log("this is the chargepoint gateway");
+    console.log(this.chargePointGateway);
     this._chargePointService.getChargePointConnectors(chargePoint.id).subscribe((data) => {
       this.connectors = data;
       console.log("connectors : ");

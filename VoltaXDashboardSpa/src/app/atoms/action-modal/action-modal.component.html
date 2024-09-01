@@ -1,0 +1,14 @@
+<div [ngClass]="{'active' : isVisible}">
+  <div class="modal">
+    <div class="modal-content" [ngClass]="{'active' : isVisible}">
+      <div class="modal-img">
+        <img src="{{image}}" alt="">
+      </div>
+      <div class="modal-message">
+        <div class="title">{{title}}</div>
+        <div class="message">{{message}}</div>
+      </div>
+    </div>
+  </div>
+    
+</div>

@@ -112,7 +112,7 @@ export class ChargingStationComponent implements OnInit {
 
   cpfOnSubmit(){
     var cpf = this.chargePointForm.value;
-    const chargePoint : ChargePointCreateDto = {
+    const chargePoint : any = {
       name: "",
       serialNumber: cpf.serialNumber,
       category : parseInt(cpf.category),

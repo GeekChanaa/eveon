@@ -210,9 +210,8 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Network")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Network")
+                        .HasColumnType("int");
 
                     b.Property<string>("Organisation")
                         .HasColumnType("nvarchar(max)");

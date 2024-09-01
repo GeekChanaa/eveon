@@ -1,0 +1,120 @@
+=inter
+    font-family: 'Quicksand', sans-serif
+
+// to vw
+@function vw($px-vw, $base-vw: 1600) 
+    @return ($px-vw * 100vw) / $base-vw
+
+// to REM
+@function rem($value) 
+    @return calc($value / 16) + rem
+
+=title
+    font-size: rem(18)
+    line-height: rem(36)
+    letter-spacing: -0.01em
+    font-weight: 700
+
+=body1
+    font-size: rem(24)
+    line-height: rem(32)
+    letter-spacing: -0.02em
+    font-weight: 700
+
+=body1M
+    font-size: rem(20)
+    line-height: rem(24)
+
+=body1S
+    font-size: rem(16)
+    line-height: rem(24)
+
+=body2
+    font-size: rem(20)
+    line-height: rem(32)
+    letter-spacing: -0.02em
+    font-weight: 500
+
+=body2Bold
+    font-size: rem(20)
+    line-height: rem(32)
+    letter-spacing: -0.02em
+    font-weight: 700
+
+=body2M
+    font-size: rem(16)
+    line-height: rem(24)
+
+=base
+    font-size: rem(16)
+    line-height: rem(24)
+    letter-spacing: -0.01em
+    font-weight: 700
+
+=baseMedium
+    font-size: rem(16)
+    line-height: rem(24)
+    letter-spacing: -0.01em
+    font-weight: 500
+
+=baseM
+    font-size: rem(15)
+    line-height: rem(24)
+
+=baseS
+    font-size: rem(14)
+    line-height: rem(20)
+
+=caption
+    font-size: rem(14)
+    line-height: rem(20)
+    font-weight: 500
+    letter-spacing: -0.02em
+
+=captionBold
+    font-size: rem(14)
+    line-height: rem(20)
+    font-weight: 700
+    letter-spacing: -0.02em
+
+=captionSmall
+    font-size: rem(12)
+    line-height: rem(16)
+    font-weight: 600
+    letter-spacing: -0.02em
+
+=button
+    font-size: rem(12)
+    line-height: rem(24)
+    font-weight: 800
+    letter-spacing: 0.17em
+    text-transform: uppercase
+
+// responsive titles
+=heroM
+    font-size: rem(96)
+
+=heroS
+    font-size: rem(64)
+    letter-spacing: -0.02em
+
+=h1M
+    font-size: rem(64)
+
+=h1S
+    font-size: rem(48)
+
+=h2M
+    font-size: rem(48)
+
+=h3M
+    font-size: rem(40)
+    line-height: rem(48)
+
+=h3S
+    font-size: rem(32)
+    line-height: rem(40)
+
+=h4S
+    font-size: rem(24)
+    line-height: rem(32)

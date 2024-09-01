@@ -84,7 +84,7 @@ namespace OCPP.Core.Server
                         connectorStatus.ChargePointID = ChargePointStatus.Id;
                         connectorStatus.ConnectorID = connectorId;
                         Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
-                        dbContext.Add<ConnectorStatus>(connectorStatus);
+                        dbContext.ConnectorStatuses.Add(connectorStatus);
                     }
 
                     if (!string.IsNullOrEmpty(status))
@@ -100,6 +100,10 @@ namespace OCPP.Core.Server
             catch (Exception exp)
             {
                 Console.WriteLine( "UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", ChargePointStatus?.Id, connectorId, exp.Message);
+                Console.WriteLine("INNER EXCEPTION : ");
+                Console.WriteLine(exp.StackTrace);
+                if(exp.InnerException != null)
+                    Console.WriteLine(exp.InnerException.ToString());
             }
 
             return false;

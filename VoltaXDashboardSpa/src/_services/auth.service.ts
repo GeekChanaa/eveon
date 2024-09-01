@@ -34,7 +34,6 @@ export class AuthService {
     return this.http.post(this.baseUrl +'login', model).pipe(
       map((response:any) => {
         const user = response;
-        console.log(user);
         if(user){
           localStorage.setItem('token',user.token);
           this.token = user.token;
@@ -69,18 +68,15 @@ export class AuthService {
 
   getAuthInformation(){
     var token = localStorage.getItem('token');
-    if(token != null)
-    this.decodedToken = this.jwtHelper.decodeToken(token);
-    console.log("getauthinformations");
-    console.log(this.decodedToken);
+    if(token != null){
+      this.decodedToken = this.jwtHelper.decodeToken(token);
+    }
     return this.decodedToken;
   }
 
   // getting user role
   getRole(){
     this.getAuthInformation();
-    console.log("getting the role");
-    console.log(this.decodedToken);
     return this.decodedToken.role;
   }
 

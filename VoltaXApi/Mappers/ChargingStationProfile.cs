@@ -7,6 +7,8 @@ namespace VoltaXApi.Mappers
     {
         public ChargingStationProfile()
         {
+            
+            CreateMap<ChargingStationCreateDto, ChargingStation>();
             CreateMap<ChargingStation, ChargingStationListDto>()
                 .ForMember(dest => dest.ChargePoints, opt => opt.MapFrom(src => src.ChargePoints));
 

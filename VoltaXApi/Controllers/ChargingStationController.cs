@@ -43,10 +43,8 @@ namespace VoltaXApi.Controllers
         {
             if (String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
             {
-                Console.WriteLine("this is inside the if");
                 return await this._repository.GetChargingStationRevenue(chargingStationID);
             }
-
 
             DateTime? startDate = DateTime.Parse(start);
             DateTime? endDate = DateTime.Parse(end);
@@ -79,8 +77,8 @@ namespace VoltaXApi.Controllers
             return Ok(await _repository.GetTop10ChargingStationsByRevenue());
         }
 
-        [HttpPost]
-        public override async Task<IActionResult> Create(ChargingStation chargingStation)
+        [HttpPost("Add")]
+        public async Task<IActionResult> Create([FromBody] ChargingStationCreateDto chargingStation)
         {
             if (chargingStation == null)
             {
@@ -89,16 +87,16 @@ namespace VoltaXApi.Controllers
 
             try
             {
-                await _repository.AddAsync(chargingStation);
+                int id = await _repository.CreateChargingStation(chargingStation);
             }
             catch (Exception ex)
             {
-                // Handle any exception that was thrown in the AddAsync method
-                // You can replace this with more specific error handling if you want
+                Console.WriteLine("this is the stack trace");
+                Console.WriteLine(ex.StackTrace);
                 return BadRequest(ex.Message);
             }
 
-            return CreatedAtAction("GetById", new { id = chargingStation.ID }, chargingStation);
+            return CreatedAtAction("GetById", new { id = chargingStation }, chargingStation);
         }
 
         // Charging Stations of partner

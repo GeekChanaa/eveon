@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20230722000104_recreate")]
+    [Migration("20240829130640_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -213,9 +213,8 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Network")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Network")
+                        .HasColumnType("int");
 
                     b.Property<string>("Organisation")
                         .HasColumnType("nvarchar(max)");

@@ -21,7 +21,7 @@ namespace OCPP.Core.Server
     {
         // Supported OCPP protocols (in order)
         private const string Protocol_OCPP16 = "ocpp1.6";
-        private const string Protocol_OCPP20 = "ocpp2.0";
+        private const string Protocol_OCPP20 = "ocpp2.0.1";
         private static readonly string[] SupportedProtocols = { Protocol_OCPP20, Protocol_OCPP16 /*, "ocpp1.5" */};
 
         // RegExp for splitting ocpp message parts
@@ -54,30 +54,15 @@ namespace OCPP.Core.Server
             Console.WriteLine("OCPPMiddleware => Websocket request: Path='{0}'", context.Request.Path);
 
             ChargePointStatus? chargePointStatus = null;
-            Console.WriteLine("this is in the ocpp middleware");
 
             if (context.WebSockets.IsWebSocketRequest)
             {
                 if (context.Request.Path.StartsWithSegments("/OCPP"))
                 {
-                    Console.WriteLine("this is in the ocpp middleware CASE 1");
                     string chargepointIdentifier;
                     string[] parts = context.Request.Path.Value.Split('/');
                     chargepointIdentifier = parts[parts.Length - 1];
-                    Console.WriteLine("this is the first");
-                    Console.WriteLine(parts[parts.Length - 1]);
-                    Console.WriteLine("this is the second");
-                    Console.WriteLine(parts[parts.Length - 2]);
-                    // if (string.IsNullOrWhiteSpace(parts[parts.Length - 1]))
-                    // {
-                    //     // (Last part - 1) is chargepoint identifier
-                    //     chargepointIdentifier = int.Parse(parts[parts.Length - 2]);
-                    // }
-                    // else
-                    // {
-                    //     // Last part is chargepoint identifier
-                    //     chargepointIdentifier = int.Parse(parts[parts.Length - 2]);
-                    // }
+
                     Console.WriteLine("OCPPMiddleware => Connection request with chargepoint identifier = '{0}'", chargepointIdentifier);
 
                     // Known chargepoint?
@@ -126,7 +111,6 @@ namespace OCPP.Core.Server
                                 else if (!string.IsNullOrWhiteSpace(chargePoint.ClientCertThumb))
                                 {
                                     // Chargepoint MUST send basic authentication header
-
                                     bool certAuthSuccess = false;
                                     X509Certificate2 clientCert = context.Connection.ClientCertificate;
                                     if (clientCert != null)

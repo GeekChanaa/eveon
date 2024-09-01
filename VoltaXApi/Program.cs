@@ -15,11 +15,16 @@ using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -119,6 +124,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
     // GlobalSeeder.Seed(dbContext).Wait();
+    // await UserSeeder.Seed(100,dbContext);
+
     // SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);
     // await SqlScriptExecuter.ExecuteSqlScript();

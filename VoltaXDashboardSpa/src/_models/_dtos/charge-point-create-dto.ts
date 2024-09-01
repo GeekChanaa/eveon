@@ -4,7 +4,6 @@ import { ChargePointStatusEnum } from "../_enums/charge-point-status";
 
 export interface ChargePointCreateDto {
     chargePointId: string;
-    chargingStationID : number;
     name: string;
     serialNumber: string;
     make: string;
@@ -14,5 +13,6 @@ export interface ChargePointCreateDto {
     password: string;
     category : ChargePointCategoryEnum;
     clientCertThumb: string;
+    connectors : any[];
   }
   

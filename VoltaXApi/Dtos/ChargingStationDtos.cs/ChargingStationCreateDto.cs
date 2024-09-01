@@ -1,12 +1,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using VoltaXApi.Models;
 
-namespace VoltaXApi.Models
+namespace VoltaXApi.Dtos
 {
-    public class ChargingStation : IEntity
+    public class ChargingStationCreateDto
     {
-        public int ID { get; set; }
-        public string Name { get; set; } 
         public string Address { get; set; } 
         
         [JsonConverter(typeof(StringEnumConverter))]

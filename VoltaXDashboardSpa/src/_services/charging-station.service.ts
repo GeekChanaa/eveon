@@ -7,6 +7,7 @@ import { Observable, map } from 'rxjs';
 import { ChargePoint } from 'src/_models/charge-point';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PaginatedResult } from 'src/_models/pagination';
+import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,10 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
 
   getPartnerTop10ChargingStationsByRevenue(partnerID : number){
     return this._http.get<any[]>(this.baseUrl+"GetPartnerTop10ChargingStationsByRevenue/"+partnerID);
+  }
+
+  createChargingStation(chargingStationCreateDto : ChargingStationCreateDto){
+    return this._http.post<ChargingStationCreateDto>(this.baseUrl+"Add", chargingStationCreateDto, this.httpOptions);
   }
 
 

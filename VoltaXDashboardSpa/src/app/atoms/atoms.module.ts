@@ -18,6 +18,7 @@ import { DebitCardComponent } from './debit-card/debit-card.component';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { EmptyCardComponent } from './empty-card/empty-card.component';
 import { MatButtonModule } from '@angular/material/button';
+import { ActionModalComponent } from './action-modal/action-modal.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { MatButtonModule } from '@angular/material/button';
     SelectFormFieldComponent,
     DebitCardComponent,
     InvoiceComponent,
-    EmptyCardComponent
+    EmptyCardComponent,
+    ActionModalComponent
    ],
   imports: [
     CommonModule,
@@ -55,6 +57,7 @@ import { MatButtonModule } from '@angular/material/button';
     DebitCardComponent,
     InvoiceComponent,
     EmptyCardComponent,
+    ActionModalComponent
   ],
   providers: [],
 })

@@ -23,5 +23,7 @@ namespace VoltaXApi.Data
         Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast30Days(int partnerID, int chargingStationID);
         Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast12Months(int partnerID, int chargingStationID);
         Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID);
+
+        Task<int> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto);
     }
 }

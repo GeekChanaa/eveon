@@ -35,7 +35,7 @@ namespace VoltaXApi.Data
                 OrderNumber = order.ID.ToString(),
                 BilledTo = $"{order.Card.User.FirstName} {order.Card.User.LastName}",
                 PayTo = "VoltaX Charging",
-                PaymentMethod = "CMI", // You need to provide actual payment method data
+                PaymentMethod = "CMI",
                 Phone = order.Card.User.Phone,
                 Email = order.Card.User.Email,
                 CardID = order.Card.CardNumber,

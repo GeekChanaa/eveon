@@ -1,0 +1,56 @@
+@import '../../../styles/helpers'
+
+  
+.modal 
+    position: absolute
+    top: 0
+    left: 0
+    display: flex
+    justify-content: center
+    align-items: center
+
+
+.modal-content 
+    height: 100px
+    bottom: -500px
+    width: 25%
+    z-index: 100
+    border-radius: 12px
+    padding: 10px
+    display: flex
+    position: fixed
+    transition: ease-in-out all .4s
+    right: 50%
+    background: var(--primary9)
+    border: 2px solid rgb(235, 238, 241)
+    transform: translate(50%,0)
+    color: var(--primary1)
+    display: flex
+    align-items: center
+    box-shadow: 3px 0px 5px 0px rgba(176,176,176,0.75)
+    +x
+      width: 60%
+    &.active
+      bottom: 25px
+    +m
+      width: 90%
+
+.modal-img
+  text-align: center
+  display: flex
+  justify-content: center
+  flex: 0 0 20%
+  img
+   max-height: 48px
+
+.modal-message
+  width: 100%
+  text-align: center
+  text-align: left
+  text-transform: capitalize
+  .title
+    font-size: 1.3em
+    font-weight: 500
+  .message
+    font-size: 1em
+    font-weight: 400
