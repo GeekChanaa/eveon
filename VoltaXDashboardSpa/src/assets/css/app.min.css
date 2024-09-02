@@ -148,7 +148,6 @@ html {
   cursor: pointer;
   display: block;
   float: left;
-  font-family: inherit;
   font-size: 14px;
   font-weight: normal;
   height: 42px;
@@ -549,8 +548,7 @@ html {
   border: #EFEFEF solid 1px;
   color: #333333;
   width: 100%; }
-  .richText .richText-form {
-    font-family: Calibri,Verdana,Helvetica,sans-serif; }
+
     .richText .richText-form label {
       display: block;
       padding: 10px 15px; }
@@ -576,7 +574,6 @@ html {
     min-height: 20px;
     border-bottom: #EFEFEF solid 1px; }
     .richText .richText-toolbar .richText-length {
-      font-family: Verdana, Helvetica, sans-serif;
       font-size: 13px;
       vertical-align: middle;
       line-height: 34px; }
@@ -637,7 +634,7 @@ html {
               .richText .richText-toolbar ul li a .richText-dropdown-outer ul.richText-dropdown li {
                 display: block;
                 float: none;
-                font-family: Calibri,Verdana,Helvetica,sans-serif; }
+                }
                 .richText .richText-toolbar ul li a .richText-dropdown-outer ul.richText-dropdown li a {
                   display: block;
                   padding: 10px 15px;
@@ -683,7 +680,6 @@ html {
     padding: 20px;
     background-color: #FFFFFF;
     border-left: #FFFFFF solid 2px;
-    font-family: Calibri,Verdana,Helvetica,sans-serif;
     height: 300px;
     outline: none;
     overflow-y: scroll;
@@ -705,7 +701,6 @@ html {
     background-color: #282828;
     border: none;
     color: #33FF33;
-    font-family: Monospace,Calibri,Verdana,Helvetica,sans-serif;
     max-width: 100%;
     min-width: 100%;
     width: 100%;
@@ -1996,7 +1991,6 @@ body.compensate-for-scrollbar {
   line-height: 25px;
   padding-left: 10px;
   font-size: 12px;
-  font-family: Arial, sans-serif;
   font-weight: bold;
   cursor: pointer;
   color: #303030;
@@ -2012,7 +2006,6 @@ body.compensate-for-scrollbar {
   font-size: 12px;
   line-height: 20px;
   color: #aaa;
-  font-family: Arial, sans-serif;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
   box-sizing: initial; }
 
@@ -2611,7 +2604,6 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
 body {
   min-width: 375px;
   background: #F4F4F4;
-  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.6;
@@ -2634,10 +2626,6 @@ a {
 button {
   background: none; }
 
-button,
-input,
-textarea {
-  font-family: 'Inter', sans-serif; }
 
 svg,
 img {
@@ -3057,7 +3045,6 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
 .h2,
 .h3,
 .h4 {
-  font-family: 'Inter', sans-serif;
   font-weight: 600; }
 
 .h1 {
@@ -3509,7 +3496,6 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
     padding: 0 12px;
     border-radius: 12px;
     white-space: nowrap;
-    font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 600;
     line-height: 1.6;
@@ -6520,7 +6506,6 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
     border: none !important;
     background: none;
     border-radius: 0 0 10px 10px;
-    font-family: 'Inter', sans-serif;
     color: #33383F; }
     body.dark .editor .richText-editor {
       color: #FCFCFC; }
@@ -8032,7 +8017,6 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
   border-radius: 12px;
   border: 2px solid transparent;
   background: #F4F4F4;
-  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.6;
@@ -9091,7 +9075,6 @@ body.dark .schedule .actions__button {
   border: none;
   box-shadow: none;
   pointer-events: none;
-  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: #1A1D1F; }
@@ -9229,8 +9212,7 @@ body.dark .schedule .actions__button {
   box-shadow: 0px 40px 32px -24px rgba(15, 15, 15, 0.12);
   background: none;
   z-index: 20;
-  overflow: hidden;
-  font-family: 'Inter', sans-serif; }
+  overflow: hidden;}
   @media only screen and (max-width: 767px) {
     .date-picker-wrapper {
       width: 262px !important;
@@ -12950,7 +12932,6 @@ body.dark .notification .actions__button {
       border: 2px solid transparent;
       background: #EFEFEF;
       text-align: center;
-      font-family: 'Inter', sans-serif;
       font-size: 48px;
       font-weight: 600;
       color: #1A1D1F;

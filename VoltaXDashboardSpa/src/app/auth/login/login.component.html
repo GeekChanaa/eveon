@@ -1,48 +1,54 @@
-<!-- page-->
-<div class="page page_simple">
-  <div class="entry">
-    <div class="entry__wrapper"><a class="entry__logo" href="#"><img class="some-icon" src="assets/img/logo.svg"
-          alt="Core"><img class="some-icon-dark" src="assets/img/logo.svg" alt="Core"></a>
-      <div class="h2 entry__title">Sign in</div>
-      <div class="entry__top">
-        <div class="entry__text">Sign up with Open account</div>
-        <div class="entry__btns">
-          <button class="button-stroke entry__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
+<div class="icon">
+  <img src="assets/images/logos/logo.svg" alt="">
+</div>
+<div class="title">
+  Sign in
+</div>
+<div class="form-container">
+  <form [formGroup]="form">
+    <div class="entry__fieldset">
+      <div class="field field_icon" [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}">
+        <div class="field__wrap">
+          <input class="field__input" type="email" formControlName="email" placeholder="Your email">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
+    </div>
+    
+    <div class="field field_icon" [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
+      <div class="field__wrap">
+        <input class="field__input" type="password" formControlName="password" placeholder="Password">
+        <div class="field__icon">
+          <svg class="icon icon-lock">
+            <use xlink:href="#icon-lock"></use>
+          </svg>
         </div>
       </div>
-      <div class="entry__text">Or continue with email address</div>
-      <form [formGroup]="form">
-        <div class="entry__fieldset">
-          <div class="field field_icon" [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}">
-            <div class="field__wrap">
-              <input class="field__input" type="email" formControlName="email" placeholder="Your email">
-              <div class="field__icon">
-                <svg class="icon icon-mail">
-                  <use xlink:href="#icon-mail"></use>
-                </svg>
-              </div>
-            </div>
-        </div>
-        
-        <div class="field field_icon" [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
-            <div class="field__wrap">
-              <input class="field__input" type="password" formControlName="password" placeholder="Password">
-              <div class="field__icon">
-                <svg class="icon icon-lock">
-                  <use xlink:href="#icon-lock"></use>
-                </svg>
-              </div>
-            </div>
-            <div class="field__error" *ngIf="errorMessage != '' ">
-              {{errorMessage }}
-            </div>
-        </div>
-        
-          <button (click)="login()" class="button entry__button" href="index.html#header">Sign in</button>
-        </div>
-      </form>
-      <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
-      <div class="entry__info">Don’t have an account? <a routerLink="/auth/register">Sign up</a></div>
+      <div class="field__error" *ngIf="errorMessage != '' ">
+        {{errorMessage }}
+      </div>
+    </div>
+    
+      <button (click)="login()" class="button entry__button">
+        <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+        <ng-container *ngIf="!isLoading">Sign in</ng-container>
+      </button>
+    </div>
+    <div routerLink="/auth/request-password" class="link">
+      Forgot password?
+    </div>
+  </form>
+
+  <div class="entry__top">
+    <div class="entry__text">or Sign up with Open account</div>
+    <div class="entry__btns">
+      <button class="button-stroke entry__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
     </div>
   </div>
+  
+  <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+  <div class="entry__info">Don’t have an account? <a routerLink="/auth/register">Sign up</a></div>
 </div>

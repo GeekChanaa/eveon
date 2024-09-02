@@ -28,7 +28,7 @@ namespace VoltaXApi.Data
             return await this._context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task GenerateResetPasswordTokenForUser(string email)
+        public async Task<string> GenerateResetPasswordTokenForUser(string email)
         {
             var user = await this.FindUserByEmail(email);
             if (user == null)
@@ -42,6 +42,7 @@ namespace VoltaXApi.Data
 
             // Update the user in the database
             await this.Update(user);
+            return user.ResetPasswordToken;
         }
 
         // Get User debit cards

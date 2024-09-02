@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  styleUrls: ['./sidebar.component.sass']
 })
 export class SidebarComponent implements OnInit, AfterViewInit {
 
@@ -19,16 +20,23 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('helpOverlay') helpOverlay!: ElementRef;
   @ViewChild('helpClose') helpClose!: ElementRef;
 
+  theme : any = {};
+
+  checked : boolean = false;
+
   // User Role
   role : UserRole = UserRole.Customer;
 
   constructor(
-    private _authService : AuthService
+    private _authService : AuthService,
+    public _enumMappingService : EnumMappingService
   ) { }
 
   ngOnInit() {
     this.role = this._authService.getRole();
-    console.log("this is the role : " + this.role)
+    var mode = localStorage.getItem("darkMode");
+    if(mode == "on")
+      this.checked = true;
   }
 
   ngAfterViewInit() {
@@ -36,11 +44,7 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   }
 
   bindEvents() {
-    // Add event listeners
-    // this.toggle.nativeElement.addEventListener('click', () => this.toggleSidebar());
-    // this.helpOverlay.nativeElement.addEventListener('click', () => this.hideSidebar());
     this.close.nativeElement.addEventListener('click', () => this.hideSidebar());
-    // this.helpOpen.nativeElement.addEventListener('click', () => this.showHelp());
     this.helpOverlay.nativeElement.addEventListener('click', () => this.hideHelp());
     this.helpClose.nativeElement.addEventListener('click', () => this.hideHelp());
   }
@@ -64,5 +68,7 @@ export class SidebarComponent implements OnInit, AfterViewInit {
     this.help.nativeElement.classList.remove('active');
     this.helpOverlay.nativeElement.classList.remove('active');
   }
+
+  
 
 }

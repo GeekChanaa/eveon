@@ -8,6 +8,7 @@ using MimeKit;
 using System.IO;
 using System;
 using MailKit;
+using VoltaXApi.EmailTemplates;
 
 namespace VoltaXApi.Services
 {
@@ -50,6 +51,47 @@ namespace VoltaXApi.Services
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
+
+        public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink)
+    {
+      var email = new MimeMessage();
+      Console.WriteLine("this is the mail settings : ");
+      Console.WriteLine("MAIL : " + _mailSettings.Mail);
+      Console.WriteLine("MAIL : " + _mailSettings.Host);
+      Console.WriteLine("MAIL : " + _mailSettings.Password);
+      Console.WriteLine("MAIL : " + _mailSettings.Port);
+      email.From.Add(new MailboxAddress("TESTER", _mailSettings.Mail));
+      email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+      email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+      email.Subject = mailRequest.Subject;
+      var builder = new BodyBuilder();
+      if (mailRequest.Attachments != null)
+      {
+        byte[] fileBytes;
+        foreach (var file in mailRequest.Attachments)
+        {
+          if (file.Length > 0)
+          {
+            using (var ms = new MemoryStream())
+            {
+              file.CopyTo(ms);
+              fileBytes = ms.ToArray();
+            }
+            builder.Attachments.Add(file.FileName, fileBytes, ContentType.Parse(file.ContentType));
+          }
+        }
+      }
+      builder.HtmlBody = EmailTemplate1.Header + $@"Click here to verify your email : <a href=""{verificationLink}""> Verify Email </a>
+    " + EmailTemplate1.Footer;
+
+      email.Body = builder.ToMessageBody();
+      using var smtp = new SmtpClient();
+      smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+
+      smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+      await smtp.SendAsync(email);
+      smtp.Disconnect(true);
+    }
 
     }
 }

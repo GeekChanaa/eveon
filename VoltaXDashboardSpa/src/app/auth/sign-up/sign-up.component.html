@@ -1,105 +1,78 @@
-<div class="page page_simple">
-  <div class="login">
-    <div class="login__col">
-      <div class="login__wrap">
-        <div class="login__preview"><img src="assets/img/logo.svg" alt="Login"></div>
+<div class="icon">
+  <img src="assets/images/logos/logo.svg" alt="">
+</div>
+<div class="title">
+  Sign Up
+</div>
+<div class="form-container">
+  <form [formGroup]="form">
+    <div class="login__fieldset">
+      <div class="field field_icon"  [ngClass]="{'error': form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched)}">
+        <div class="field__wrap">
+          <input class="field__input" type="text" formControlName="firstName" placeholder="First Name">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="login__col">
-      <div class="login__head">
+      <div class="field field_icon"  [ngClass]="{'error': form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched)}">
+        <div class="field__wrap">
+          <input class="field__input" type="text" formControlName="lastName" placeholder="Last Name">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="field field_icon">
+        <div class="field__wrap">
+          <input class="field__input"  [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}" type="text" formControlName="email" placeholder="Your email">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="field field_icon">
+        <div class="field__wrap"  [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
+          <input class="field__input" type="password" formControlName="password" placeholder="Your Password">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="field field_icon">
+        <div class="field__wrap" [ngClass]="{'error': form.controls['confirmPassword'].invalid && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched)}">
+          <input class="field__input" type="password" formControlName="confirmPassword" placeholder="Confirm Password">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <button class="button login__button" [disabled]="signUpFormValid" (click)="register()">
+        <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+        <ng-container *ngIf="!isLoading"> Sign Up </ng-container>
         
-      </div>
-      <div class="login__wrapper">
-        <div class="h2 login__title">Sign up</div>
-        <div class="login__entry">
-          <div class="login__top">
-            <div class="login__text">Sign up with Open account</div>
-            <div class="login__btns">
-              <button class="button-stroke login__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
-              
-            </div>
-          </div>
-          <div class="login__text">Or continue with email address</div>
-          <form [formGroup]="form">
-            <div class="login__fieldset">
-              <div class="field field_icon"  [ngClass]="{'error': form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched)}">
-                <div class="field__wrap">
-                  <input class="field__input" type="text" formControlName="firstName" placeholder="First Name">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon"  [ngClass]="{'error': form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched)}">
-                <div class="field__wrap">
-                  <input class="field__input" type="text" formControlName="lastName" placeholder="Last Name">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon">
-                <div class="field__wrap">
-                  <input class="field__input"  [ngClass]="{'error': form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)}" type="text" formControlName="email" placeholder="Your email">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon">
-                <div class="field__wrap"  [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
-                  <input class="field__input" type="password" formControlName="password" placeholder="Your Password">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="field field_icon">
-                <div class="field__wrap" [ngClass]="{'error': form.controls['confirmPassword'].invalid && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched)}">
-                  <input class="field__input" type="password" formControlName="confirmPassword" placeholder="Confirm Password">
-                  <div class="field__icon">
-                    <svg class="icon icon-mail">
-                      <use xlink:href="#icon-mail"></use>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <button class="button login__button" [disabled]="signUpFormValid" (click)="register()">Continue</button>
-              <div class="login__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
-            </div>
-          </form>
-        </div>
-        <div class="login__code">
-          <div class="login__text">We just send you a verify code. Check your inbox to get them.</div>
-          <div class="login__row">
-            <div class="login__field">
-              <input class="error" type="tel" name="code1" autocomplete="off">
-            </div>
-            <div class="login__field">
-              <input type="tel" name="code2" autocomplete="off">
-            </div>
-            <div class="login__field">
-              <input type="tel" name="code3" autocomplete="off">
-            </div>
-            <div class="login__field">
-              <input type="tel" name="code4" autocomplete="off">
-            </div>
-          </div>
-          <div class="login__error">The code you entered is incorrect.</div><button  class="button login__button">
-            <div class="loader"></div><span>Continue</span>
-          </button>
-          <div class="login__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
-        </div>
-      </div>
+      </button>
+    </div>
+  </form>
+
+  <div class="entry__top">
+    <div class="entry__text">or Sign up with Open account</div>
+    <div class="entry__btns">
+      <button class="button-stroke entry__button"><img src="assets/img/content/google.svg" alt="Google">Google</button>
     </div>
   </div>
+  
+  <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+  <div class="entry__info">Already have an account? <a routerLink="/auth/login">Sign in</a></div>
 </div>

@@ -19,6 +19,7 @@ import { InvoiceComponent } from './invoice/invoice.component';
 import { EmptyCardComponent } from './empty-card/empty-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { ActionModalComponent } from './action-modal/action-modal.component';
+import { SvgSpinnerComponent } from './svg-spinner/svg-spinner.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ActionModalComponent } from './action-modal/action-modal.component';
     DebitCardComponent,
     InvoiceComponent,
     EmptyCardComponent,
-    ActionModalComponent
+    ActionModalComponent,
+    SvgSpinnerComponent
    ],
   imports: [
     CommonModule,
@@ -57,7 +59,8 @@ import { ActionModalComponent } from './action-modal/action-modal.component';
     DebitCardComponent,
     InvoiceComponent,
     EmptyCardComponent,
-    ActionModalComponent
+    ActionModalComponent,
+    SvgSpinnerComponent
   ],
   providers: [],
 })

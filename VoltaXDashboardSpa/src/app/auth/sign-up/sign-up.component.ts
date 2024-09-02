@@ -19,15 +19,16 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+  styleUrls: ['./sign-up.component.sass']
 })
 export class SignUpComponent implements OnInit {
 
   form : FormGroup;
 
   signUpFormValid : Boolean = false;
+  isLoading : boolean = false;
 
-  // constructor
+
   constructor( 
     private _authService : AuthService,
     private _snackBar : MatSnackBar,
@@ -56,33 +57,32 @@ export class SignUpComponent implements OnInit {
     
   }
 
-  // On init cycle hook
   ngOnInit() {
   }
 
-  // sign up function
   register(){
     if(!this.form.valid){
       this.signUpFormValid = false;
+      return;
     }
-    else{
-      this.signUpFormValid = true;
-      const formValue = this.form.value;
-      var userForRegister : UserForRegisterDto = {
-        firstName: formValue.firstName,
-        lastName: formValue.lastName,
-        email: formValue.email,
-        phone: '',
-        password: formValue.password
-      }
 
-      this._authService.register(userForRegister).subscribe((data) => {
-        // snack bar message
-        this._snackBar.open("User Registered Success","dismiss",{duration:2000});
-        // routing to the login page
-        this._route.navigate(['/auth/verification-mail-sent']);
-      })
+    this.isLoading = true;
+    this.signUpFormValid = true;
+    const formValue = this.form.value;
+    var userForRegister : UserForRegisterDto = {
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      email: formValue.email,
+      phone: '',
+      password: formValue.password
     }
+
+    this._authService.register(userForRegister).subscribe((data) => {
+      this.isLoading = false;
+      this._route.navigate(['/auth/verification-mail-sent']);
+    },(error) => {
+      this.isLoading = false;
+    })
     
   }
 

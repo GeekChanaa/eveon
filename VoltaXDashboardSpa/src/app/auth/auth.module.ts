@@ -12,6 +12,7 @@ import { VerifyPhoneComponent } from './verify-phone/verify-phone.component';
 import { VerificationMailSentComponent } from './verification-mail-sent/verification-mail-sent.component';
 import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-number.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
+import { AtomsModule } from '../atoms/atoms.module';
 
 
 
@@ -32,7 +33,8 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
       ReactiveFormsModule ,
       HttpClientModule,
       FormsModule,
-      AuthRoutingModule
+      AuthRoutingModule,
+      AtomsModule
     ],
   })
   export class AuthModule { }

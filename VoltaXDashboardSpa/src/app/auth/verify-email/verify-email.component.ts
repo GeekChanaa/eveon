@@ -6,7 +6,7 @@ import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
 @Component({
   selector: 'app-verify-email',
   templateUrl: './verify-email.component.html',
-  styleUrls: ['./verify-email.component.css']
+  styleUrls: ['./verify-email.component.sass']
 })
 export class VerifyEmailComponent implements OnInit {
 
@@ -35,8 +35,6 @@ export class VerifyEmailComponent implements OnInit {
         token : token,
         email : this.email
       };
-      console.log("dto : ");
-      console.log(verifyEmailDto);
       this._authService.verifyEmail(verifyEmailDto).subscribe((data) => {
         this.emailVerifiedSuccess = true;
       }, (error) => {

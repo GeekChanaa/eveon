@@ -87,7 +87,7 @@ export class AuthService {
 
   // Reset password request
   resetPasswordRequest(email : string){
-    return this.http.get(this.baseUrl+"ResetPassword?email="+email);
+    return this.http.get(this.baseUrl+"resetpassword?email="+email);
   }
 
   // Reset password

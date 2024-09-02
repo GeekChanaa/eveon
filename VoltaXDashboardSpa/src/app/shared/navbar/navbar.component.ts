@@ -35,11 +35,11 @@ export class NavbarComponent implements OnInit {
   // go to profile
   goToProfile(){
     var role = this._authService.getRole();
-    if(role == UserRole.Admin)
+    if(role == "Admin")
     this._router.navigate(['/dashboard/profile'])
-    else if(role == UserRole.Customer)
+    else if(role == "Customer")
     this._router.navigate(['/my-dashboard/profile'])
-    else if(role == UserRole.Partner)
+    else if(role == "Partner")
     this._router.navigate(['/partner-dashboard/profile'])
   }
 }

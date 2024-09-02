@@ -20,7 +20,7 @@ export class CustomerHomeComponent implements OnInit {
     lastName: '',
     email: '',
     phone: '',
-    role: UserRole.Customer,
+    role: "Customer",
     isEmailVerified: false,
     isPhoneVerified: false
   }

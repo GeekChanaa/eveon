@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.Controllers
 {
@@ -27,13 +28,20 @@ namespace VoltaXApi.Controllers
         private readonly IConfiguration _config;
         private readonly VoltaXApiDbContext _context;
         private readonly IUserRepository _userRepo;
+        private readonly IMailService _mailService;
 
-        public AuthController(IAuthRepository repo, IUserRepository userRepo, IConfiguration config, VoltaXApiDbContext context)
+        public AuthController(
+                IAuthRepository repo, 
+                IUserRepository userRepo, 
+                IConfiguration config, 
+                IMailService mailService,
+                VoltaXApiDbContext context)
         {
             _repo = repo;
             _config = config;
             _context = context;
             _userRepo = userRepo;
+            _mailService = mailService;
         }
 
         // Registration Method
@@ -57,11 +65,18 @@ namespace VoltaXApi.Controllers
 
             var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
 
-            // Create link between user and the guest privilege
+            MailRequest requ = new MailRequest{
+                Phone = "",
+                Email = "support@voltaxcharging.com",
+                Name = "IQOR Imane",
+                ToEmail = createdUser.Email,
+                Subject = "Email Verification",
+                Body = ""
+            };
+            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
+
             await _context.SaveChangesAsync();
 
-            // Sending the verification email mail
-            Console.WriteLine("http://localhost:4200/auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
             return StatusCode(201);
         }
 
@@ -159,7 +174,19 @@ namespace VoltaXApi.Controllers
         [HttpGet("ResetPassword")]
         public async Task ResetPasswordRequest([FromQuery] string email)
         {
-            await this._userRepo.GenerateResetPasswordTokenForUser(email);
+            Console.WriteLine("Email : "+email);
+            string resetToken = await this._userRepo.GenerateResetPasswordTokenForUser(email);
+            MailRequest requ = new MailRequest{
+                Phone = "",
+                Email = "no-reply@voltaxcharging.com",
+                Name = "IQOR Imane",
+                ToEmail = email,
+                Subject = "Password Reset",
+                Body = ""
+            };
+            Console.WriteLine("this is in here brother");
+            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/reset-password?email="+email+"&token="+resetToken);
+
         }
 
 
@@ -238,5 +265,7 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
     }
+
+    
 
 }

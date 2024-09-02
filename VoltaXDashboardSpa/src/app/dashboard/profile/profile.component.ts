@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
     id: 0,
     email: '',
     phone: '',
-    role: UserRole.Customer,
+    role: "Customer",
     isEmailVerified: false,
     isPhoneVerified: false
   };

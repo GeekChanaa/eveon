@@ -7,6 +7,7 @@ namespace VoltaXApi.Services
 {
     public interface IMailService
     {
+        Task SendVerificationEmailAsync(MailRequest mailRequest,string verificationLink);
         Task SendEmailAsync(MailRequest mailRequest);
     }
 }

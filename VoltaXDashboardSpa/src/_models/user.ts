@@ -15,6 +15,6 @@ export interface User {
     isPhoneVerified : Boolean;
     password?: string;
     orders?: Order[];
-    role : UserRole;
+    role : string;
     [key: string]: any;
   }

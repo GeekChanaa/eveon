@@ -10,11 +10,12 @@ import { UserService } from 'src/_services/user.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.sass']
 })
 export class LoginComponent implements OnInit {
 
   errorMessage : string = "";
+  isLoading : boolean = false;
   form: FormGroup;
   constructor(
     private _authService: AuthService,
@@ -41,24 +42,29 @@ export class LoginComponent implements OnInit {
 
   // Login button
   login(){
+    this.isLoading = true;
     const formValue = this.form.value;
     var userForLogin : UserForLoginDto = {
       email : formValue.email,
       password : formValue.password
     };
     this._authService.login(userForLogin).subscribe((data) => {
+      this.isLoading = false;
       var userID = parseInt(this._authService.getAuthInformation().nameid);
       this._userService.getById(userID).subscribe((u) => {
-        if(u.role == UserRole.Admin)
-        this._router.navigate(['/dashboard']);
-        else if(u.role == UserRole.Customer)
-        this._router.navigate(['/my-dashboard']);
-        else if(u.role == UserRole.Partner)
-        this._router.navigate(['/partner-dashboard']);
+        console.log("this is the user");
+        console.log(u);
+        if(u.role == "Admin")
+          this._router.navigate(['/dashboard']);
+        else if(u.role == "Customer")
+          this._router.navigate(['/my-dashboard']);
+        else if(u.role == "Partner")
+          this._router.navigate(['/partner-dashboard']);
         this._snackBar.open("Welcome Back","dismiss",{duration:2000});
       });
       
     },(error) => {
+      this.isLoading = false;
       if(error.status == 401){
         this.errorMessage = "Email or password incorrect";
       }

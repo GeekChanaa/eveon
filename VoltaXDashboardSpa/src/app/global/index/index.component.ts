@@ -19,11 +19,11 @@ export class IndexComponent implements OnInit {
   ngOnInit() {
     var userID = parseInt(this._authService.getAuthInformation().nameid);
     this._userService.getById(userID).subscribe((u) => {
-      if(u.role == UserRole.Admin)
+      if(u.role == "Admin")
       this._router.navigate(['/dashboard']);
-      else if(u.role == UserRole.Customer)
+      else if(u.role == "Customer")
       this._router.navigate(['/my-dashboard']);
-      else if(u.role == UserRole.Partner)
+      else if(u.role == "Partner")
       this._router.navigate(['/partner-dashboard']);
     });
   }

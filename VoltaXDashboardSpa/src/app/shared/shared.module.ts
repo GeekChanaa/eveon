@@ -9,6 +9,7 @@ import { SidebarDropdownComponent } from './sidebar/sidebar-dropdown/sidebar-dro
 import { SidebarItemComponent } from './sidebar/sidebar-item/sidebar-item.component';
 import { SidebarLinkComponent } from './sidebar/sidebar-link/sidebar-link.component';
 import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navbar-notifications.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navb
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule
   ],
   exports: [
     SidebarComponent,
