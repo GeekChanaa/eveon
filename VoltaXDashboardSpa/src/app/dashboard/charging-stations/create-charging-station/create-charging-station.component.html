@@ -198,15 +198,13 @@
                 <div class="card__head">
                   <div class="title-green card__title">Charge Points</div>
                 </div>
-
-                <div class="create__card card charge_point_form" formArrayName="chargePoints"
+              </div>
+              <div class="create__card card charge_point_form" formArrayName="chargePoints"
                   *ngFor="let control of chargePoints.controls; index as i">
                   <div class="create__group create__group3" [formGroupName]="i">
                     <div class="btn__remove_container">
                       <button type="button" class="btn__remove" (click)="removeChargePoint(i)">
-                        <svg class="icon icon-trash icon__remove">
-                          <use xlink:href="#icon-trash"></use>
-                        </svg>
+                        <svg viewBox="0 0 1024 1024"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M176.662 817.173c-8.19 8.471-7.96 21.977 0.51 30.165 8.472 8.19 21.978 7.96 30.166-0.51l618.667-640c8.189-8.472 7.96-21.978-0.511-30.166-8.471-8.19-21.977-7.96-30.166 0.51l-618.666 640z" fill="" /><path d="M795.328 846.827c8.19 8.471 21.695 8.7 30.166 0.511 8.471-8.188 8.7-21.694 0.511-30.165l-618.667-640c-8.188-8.471-21.694-8.7-30.165-0.511-8.471 8.188-8.7 21.694-0.511 30.165l618.666 640z" fill="" /></svg>
                       </button>
                     </div>
                     <div class="field">
@@ -296,29 +294,15 @@
                       *ngFor="let connectorCtrl of getChargePointConnectors(i).controls; let j=index">
                       <div class="btn__remove_container">
                         <button type="button"  class="btn__remove" (click)="removeChargePointConnector(i,j)">
-                          <svg class="icon icon-trash icon__remove">
-                            <use xlink:href="#icon-trash"></use>
-                          </svg>
+                          <svg viewBox="0 0 1024 1024"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M176.662 817.173c-8.19 8.471-7.96 21.977 0.51 30.165 8.472 8.19 21.978 7.96 30.166-0.51l618.667-640c8.189-8.472 7.96-21.978-0.511-30.166-8.471-8.19-21.977-7.96-30.166 0.51l-618.666 640z" fill="" /><path d="M795.328 846.827c8.19 8.471 21.695 8.7 30.166 0.511 8.471-8.188 8.7-21.694 0.511-30.165l-618.667-640c-8.188-8.471-21.694-8.7-30.165-0.511-8.471 8.188-8.7 21.694-0.511 30.165l618.666 640z" fill="" /></svg>
                         </button>
                       </div>
                       <div class="create__group" [formGroupName]="j">
                         
-                        <app-select-form-field class="field"
-                          [parentForm]="form" 
-                          controlName="chargePointConnectorQuantity" 
-                          [options]="[
-                            {value: '1', viewValue: '1'},
-                            {value: '2', viewValue: '2'},
-                            {value: '3', viewValue: '3'},
-                            {value: '4', viewValue: '4'},
-                            {value: '5', viewValue: '5'}
-                          ]" 
-                          label="Quantity" 
-                          tooltip="Maximum 100 characters. No HTML or emoji allowed">
-                        </app-select-form-field>
                         
+
                         <div class="field">
-                          <div class="field__label">Speed
+                          <div class="field__label">Quantity
                             <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                               <svg class="icon icon-info">
                                 <use xlink:href="#icon-info"></use>
@@ -326,8 +310,15 @@
                             </div>
                           </div>
                           <div class="field__wrap">
-                            <input class="field__input" type="text" formControlName="chargePointConnectorSpeed"
-                              placeholder="Value" required>
+                            <div class="field__wrap">
+                              <select class="select" formControlName="chargePointConnectorQuantity">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                              </select>
+                            </div>
                           </div>
                         </div>
 
@@ -351,29 +342,13 @@
                           </div>
                         </div>
 
-
-                        <div class="field">
-                          <div class="field__label">Power
-                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                              <svg class="icon icon-info">
-                                <use xlink:href="#icon-info"></use>
-                              </svg>
-                            </div>
-                          </div>
-                          <div class="field__wrap">
-                            <input class="field__input" type="number" formControlName="chargePointConnectorPower"
-                              placeholder="Value" required>
-                          </div>
-                        </div>
                         <div class="create__card card charge_point_connector_tarif"
                           formArrayName="chargePointConnectorTarifs"
                           *ngFor="let tarifCtrl of getChargePointConnectorTarifs(i,j).controls; let k=index">
                           <div class="create__group" [formGroupName]="k">
                             <div class="btn__remove_container">
                               <button type="button"  class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
-                                <svg class="icon icon-trash icon__remove">
-                                  <use xlink:href="#icon-trash"></use>
-                                </svg>
+                                <svg viewBox="0 0 1024 1024"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M176.662 817.173c-8.19 8.471-7.96 21.977 0.51 30.165 8.472 8.19 21.978 7.96 30.166-0.51l618.667-640c8.189-8.472 7.96-21.978-0.511-30.166-8.471-8.19-21.977-7.96-30.166 0.51l-618.666 640z" fill="" /><path d="M795.328 846.827c8.19 8.471 21.695 8.7 30.166 0.511 8.471-8.188 8.7-21.694 0.511-30.165l-618.667-640c-8.188-8.471-21.694-8.7-30.165-0.511-8.471 8.188-8.7 21.694-0.511 30.165l618.666 640z" fill="" /></svg>
                               </button>
                             </div>
 
@@ -422,16 +397,15 @@
                 </div>
                 <button type="button"  (click)="addChargePoint()" class="button-stroke">
                   Add Charge Point</button>
-              </div>
             </div>
             <div *ngIf="activeDiv === 3">
               <h4>this is the preview</h4>
             </div>
             <div class="btns_group">
-              <!--  Previous button  -->
-              <button type="button" class="button-stroke btn_previous" (click)="showPreviousDiv()"> Previous step </button>
-              <!--  next button  -->
+              <button *ngIf="activeDiv > 1" type="button" class="button-stroke btn_previous" (click)="showPreviousDiv()"> Previous step </button>
+              
               <button type="button" *ngIf="activeDiv <= 2" class="button btn_next" (click)="showNextDiv()"> Next step </button>
+              
               <button class="button" type="submit"> Submit </button>
             </div>
           </div>

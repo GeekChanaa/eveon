@@ -1,6 +1,6 @@
 export interface ConnectorCreateDto {
     connectorType?: string;
-    power: number;
+    power?: number;
     speed: number;
 }
   

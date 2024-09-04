@@ -1,13 +1,17 @@
 import { formatDate } from '@angular/common';
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { PaginatedResult, Pagination } from 'src/_models/pagination';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 @Component({
   selector: 'app-table-list',
   templateUrl: './table-list.component.html',
-  styleUrls: ['./table-list.component.css']
+  styleUrls: ['./table-list.component.sass']
 })
 export class TableListComponent implements OnInit {
   @ContentChild(AppTableCustomButtonDirective, { static: false })
@@ -15,21 +19,49 @@ export class TableListComponent implements OnInit {
   @Input() name: string = "";
   @Input() names: string = "";
   @Input() fields: string[] = [];
+  @Input() searchByAttributes: string[] = [];
   @Input() data: any[] = [];
-  @Input() createLink: string = "/";
+  @Input() createLink: string = "/create";
+  @Input() routeName : string = "";
   @Input() searchByPlaceHolder: string = "Search by name";
-  @Output() next: EventEmitter<void> = new EventEmitter<void>();
-  @Output() previous: EventEmitter<void> = new EventEmitter<void>();
-  @Output() firstPage: EventEmitter<void> = new EventEmitter<void>();
-  @Output() lastPage: EventEmitter<void> = new EventEmitter<void>();
+  @Input() getItemsObservable! : (page?: number, itemsPerPage?: number, itemParams?: any, endpoint?: string) => Observable<PaginatedResult<any[]>> 
+  @Input() deleteItemObservable! : (id : number) => Observable<any>;
+  @Input() updateItemObservable! : (id : number, model : any) => Observable<any>;
   @Output() applyFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
-  @Output() deleteEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() displayEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
-  @Output() searchEvent: EventEmitter<string> = new EventEmitter<string>();
+
+
+  constructor( 
+    private _enumMappingService : EnumMappingService,
+    private _modalService : ActionModalService,
+    private _router : Router
+  ) { }
+
+  delete(id : number){
+    this.deleteItemObservable(id).subscribe((data) => {
+      this.getAll();
+      this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Item deleted successfully ",4000);
+    })
+  }
+
+  paginationPages: any[] = [];
+  
   sortedColumn : string= "";
   sortedDirection : string = "ASC";
+
+  pagination: Pagination = {
+    currentPage: 0,
+    itemsPerPage: 0,
+    totalItems: 0,
+    totalPages: 0
+  }
+
+  itemParams : any = {};
+
+  itemsPerPage: number = 20;
+  currentPage: number = 1;
 
   searchValue: string = "";
   private searchSubject = new Subject<string>();
@@ -40,11 +72,10 @@ export class TableListComponent implements OnInit {
 
   displayMenu: Boolean = false;
 
-  constructor( 
-    private _enumMappingService : EnumMappingService
-  ) { }
+
 
   ngOnInit() {
+    this.getAll();
     var i = 0;
     this.fields.forEach((field) => {
       if (i < 5) {
@@ -59,69 +90,76 @@ export class TableListComponent implements OnInit {
       debounceTime(1000),
       distinctUntilChanged()
     ).subscribe(searchValue => {
-      this.searchEvent.emit(searchValue);
+      this.getAll();
     });
   }
 
-  // next Page Event
+  getAll(){
+    this.getItemsObservable(this.currentPage, this.itemsPerPage, this.itemParams).subscribe((data) => {
+      if(data.result)
+        this.data = data.result;
+      if(data.pagination){
+        this.pagination = data.pagination;
+        this.generatePaginationLinks();
+      }
+    })
+  }
+
   nextPage() {
-    this.next.emit();
+    this.currentPage++;
+    this.getAll();
   }
 
-  // first Page Event
-  firstP() {
-    this.firstPage.emit();
-  }
-
-  // last Page Event
-  lastP() {
-    this.lastPage.emit();
-  }
-
-  // previous page event
+  // Previous Page
   previousPage() {
-    this.previous.emit();
+    this.currentPage--;
+    this.getAll();
   }
 
-  // delete function
-  delete(id: number) {
-    this.deleteEvent.emit(id);
-  }
-
-  // update 
-  update(id: number) {
-    this.updateEvent.emit(id);
-  }
-
-  //display 
-  display(id: number) {
-    this.displayEvent.emit(id);
-  }
-
-  // sorting by field
-  sort(field: string) {
-    console.log(this.sortedColumn);
-    console.log(field);
-    console.log(this.sortedDirection == "ASC");
-    console.log(this.sortedDirection == "DESC");
-    if(field == this.sortedColumn && this.sortedDirection == "ASC"){
-      this.sortedDirection = "DESC"
-      console.log("here")
+  search(){
+    if(this.searchValue == null || this.searchValue == ""){
+      this.itemParams.SearchBy = [];
+      this.itemParams.SearchValue = [];
     }
-    else if(field == this.sortedColumn && this.sortedDirection == "DESC"){
-      this.sortedDirection = "ASC"
-      console.log("here 2")
+    else{
+      this.itemParams.SearchBy = this.searchByAttributes; 
+      this.itemParams.SearchValue = this.searchValue;
     }
-    console.log(this.sortedDirection);
-    this.sortedColumn = field;
-    this.sortEvent.emit(field);
-  } 
-
-  // search field
-  search() {
-    this.searchSubject.next(this.searchValue);
+    this.getAll(); 
   }
 
+  applyFilters(){
+    this.itemParams.FilterValue = [ this.filters.city, this.filters.category]; 
+    this.itemParams.FilterBy = ["City","Category"]; 
+    this.getAll();
+  }
+
+  filters : any = {};
+
+  update = (id: number) =>  this.updateEvent.emit(id);
+
+  display(id: number){
+    this._router.navigateByUrl("/dashboard/"+this.routeName+"/"+id)
+  }
+
+  goToPage(page : number){
+    this.currentPage = page;
+    this.getAll();
+  }
+
+  sort(field : string){
+    if(this.itemParams.orderBy == field){
+      if(this.itemParams.reverseOrder == 'y')
+      this.itemParams.reverseOrder = 'n'
+      else
+      this.itemParams.reverseOrder = 'y'
+    }
+    else{
+      this.itemParams.orderBy = field;
+      this.itemParams.reverseOrder = 'n'
+    }
+    this.getAll();
+  }
 
   toggleActive(event: Event): void {
       event.stopPropagation();
@@ -130,11 +168,6 @@ export class TableListComponent implements OnInit {
 
   removeActive(): void {
       this.isActive = false;
-  }
-
-  applyFilters(){
-    this.applyFiltersEvent.emit();
-    this.removeActive();
   }
 
   formatValue(item: any, field: string): any {
@@ -190,5 +223,19 @@ export class TableListComponent implements OnInit {
     return typeof value === 'string' && !isNaN(Number(value)) && value.includes(".");
   }
   
+  generatePaginationLinks() {
+    const currentPage = this.pagination.currentPage;
+    const totalPages = this.pagination.totalPages;
+    if (totalPages <= 3) {
+      this.paginationPages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    } else if (currentPage === 1) {
+      this.paginationPages = [1, 2, '...', totalPages];
+    } else if (currentPage == totalPages) {
+      this.paginationPages = [currentPage - 2, currentPage - 1, '...', totalPages];
+    } else {
+      this.paginationPages = [currentPage - 1, currentPage, '...', totalPages];
+    }
+    
+  }
   
 }

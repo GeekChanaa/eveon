@@ -1,0 +1,131 @@
+
+[class^="button"] 
+  display: inline-flex
+  justify-content: center
+  align-items: center
+  height: 48px
+  padding: 0 20px
+  background: #2A85FF
+  border-radius: 4px
+  font-size: 15px
+  font-weight: 600
+  line-height: 1.6
+  text-align: center
+  color: #FCFCFC
+  transition: all .2s 
+  &:hover 
+    background: #0069f6 
+  &.disabled 
+    opacity: .5
+    pointer-events: none 
+  & svg 
+    fill: #FCFCFC
+    transition: all .2s 
+  &:not([class^="button-square"]) svg:first-child 
+    margin-right: 8px 
+  &:not([class^="button-square"]) svg:last-child 
+    margin-left: 8px 
+
+.button-stroke, .button-stroke-red 
+  background: none
+  box-shadow: 0 0 0 2px #EFEFEF inset 
+
+body.dark .button-stroke, body.dark.button-stroke-red 
+  box-shadow: 0 0 0 2px #272B30 inset 
+
+.button-stroke 
+  color: #1A1D1F 
+  
+.button-stroke svg 
+  fill: #6F767E 
+  
+body.dark .button-stroke 
+  color: #FCFCFC 
+  
+.button-stroke:hover 
+  background: none
+  box-shadow: 0 0 0 2px #1A1D1F inset 
+  
+.button-stroke:hover svg 
+  fill: #1A1D1F 
+  
+body.dark .button-stroke:hover 
+  box-shadow: 0 0 0 2px #EFEFEF inset 
+    
+body.dark .button-stroke:hover svg 
+  fill: #FCFCFC 
+      
+.button-stroke.active 
+  background: #272B30
+  box-shadow: 0 0 0 2px #272B30 inset 
+  
+.button-stroke.active svg 
+  fill: #1A1D1F 
+    
+
+.button-stroke-red 
+  color: #FF6A55 
+  
+.button-stroke-red svg 
+  fill: #FF6A55 
+  
+.button-stroke-red:hover, .button-stroke-red.active 
+  background: #FF6A55
+  box-shadow: 0 0 0 2px #FF6A55 inset
+  color: #FCFCFC 
+
+.button-stroke-red:hover svg, .button-stroke-red.active svg 
+  fill: #FCFCFC 
+      
+
+.button-white 
+  box-shadow: 0 0 0 2px #EFEFEF inset
+  background: #FCFCFC
+  color: #1A1D1F 
+  
+.button-white svg 
+  fill: #1A1D1F 
+  
+.button-white:hover, .button-white.active 
+  box-shadow: 0 0 0 2px #1A1D1F inset
+  background: #FFFFFF
+  color: #1A1D1F 
+    
+.button-white:hover svg, .button-white.active svg 
+  fill: #1A1D1F 
+      
+
+.button-small 
+  height: 40px
+  padding: 0 16px
+  border-radius: 8px
+  font-size: 13px 
+  
+
+.button-square-stroke 
+  flex: 0 0 48px
+  width: 48px
+  height: 48px
+  padding: 0
+  background: none
+  box-shadow: 0 0 0 2px #EFEFEF inset
+  transition: all .2s 
+  
+.button-square-stroke svg 
+  fill: #6F767E 
+  
+body.dark .button-square-stroke 
+  box-shadow: 0 0 0 2px #272B30 inset 
+  
+.button-square-stroke:hover 
+  background: #2A85FF
+  box-shadow: 0 0 0 2px #2A85FF inset 
+  
+.button-square-stroke:hover svg 
+  fill: #FCFCFC 
+    
+
+.button-square-stroke.button-small 
+  flex: 0 0 40px
+  width: 40px
+  height: 40px 

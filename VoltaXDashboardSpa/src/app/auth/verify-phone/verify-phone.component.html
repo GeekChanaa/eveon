@@ -1,23 +1,26 @@
 <!-- page-->
-<div class="page page_simple">
-  <div class="entry">
-    <div class="entry__wrapper">
-      <form > 
-        <div class="entry__fieldset">
-          <div class="field field_icon">
-            <div class="field__wrap" >
-              <input class="field__input" [(ngModel)]="code" name="code" type="text" placeholder="Code">
-              <div class="field__icon">
-                <svg class="icon icon-mail">
-                  <use xlink:href="#icon-mail"></use>
-                </svg>
-              </div>
-            </div>
+<div class="icon">
+  <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+</div>
+<div class="form-container">
+  <form> 
+    <div class="entry__fieldset">
+      <div class="field field_icon">
+        <div class="field__wrap" >
+          <input class="field__input" [(ngModel)]="code" name="code" type="text" placeholder="Code">
+          <div class="field__icon">
+            <svg class="icon icon-mail">
+              <use xlink:href="#icon-mail"></use>
+            </svg>
+          </div>
         </div>
-          <button (click)="verify()" class="button entry__button" >Verify</button>
-        </div>
-      </form>
-      <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
     </div>
-  </div>
+      <button (click)="verify()" class="button entry__button" >
+        <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+        <ng-container *ngIf="!isLoading"> Verify </ng-container>
+        
+      </button>
+    </div>
+  </form>
+  <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
 </div>

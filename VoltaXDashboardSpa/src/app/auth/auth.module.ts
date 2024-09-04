@@ -13,6 +13,7 @@ import { VerificationMailSentComponent } from './verification-mail-sent/verifica
 import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-number.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import { AtomsModule } from '../atoms/atoms.module';
+import { AuthComponent } from './auth.component';
 
 
 
@@ -26,7 +27,8 @@ import { AtomsModule } from '../atoms/atoms.module';
         VerifyPhoneComponent,
         VerificationMailSentComponent,
         EnterPhoneNumberComponent,
-        CompleteProfileComponent
+        CompleteProfileComponent,
+        AuthComponent
   ],
     imports: [
       CommonModule,

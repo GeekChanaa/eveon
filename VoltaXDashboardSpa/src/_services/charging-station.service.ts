@@ -5,7 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, map } from 'rxjs';
 import { ChargePoint } from 'src/_models/charge-point';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { PaginatedResult } from 'src/_models/pagination';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
 
@@ -14,8 +14,8 @@ import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-cre
 })
 export class ChargingStationService extends AbstractService<ChargingStation>{
 
-  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http, snackBar, environment.apiUrl+"/api/chargingstation/");
+  constructor(protected http : HttpClient) {
+    super(http, environment.apiUrl+"/api/chargingstation/");
   }
 
   // Base URL for the api

@@ -13,7 +13,7 @@ namespace VoltaXApi.Data
         bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);      
         Task<bool> VerifyEmail(string email, string token);
-        Task<bool> VerifyPhoneNumber(string phoneNumber, string token);
+        Task<bool> VerifyPhoneNumber(string email, string token);
         Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
         Task CreateEmailVerificationToken(int userID);
     }

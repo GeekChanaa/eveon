@@ -6,12 +6,14 @@ import { AuthService } from 'src/_services/auth.service';
 @Component({
   selector: 'app-verify-phone',
   templateUrl: './verify-phone.component.html',
-  styleUrls: ['./verify-phone.component.css']
+  styleUrls: ['./verify-phone.component.sass']
 })
 export class VerifyPhoneComponent implements OnInit {
 
   // verification code
   code : string = "" ;
+  email : string = "";
+  isLoading : boolean = false;
 
   // phone verification success
   phoneVerifiedSuccess : boolean = false;
@@ -23,24 +25,26 @@ export class VerifyPhoneComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.email = this._authService.getAuthInformation().unique_name;
   }
 
   // verify
   verify(){
-    this._route.queryParams.subscribe((params) => {
-      const token = this.code;
-      const phone = params['phone'];
-      let verifyPhoneDto : VerifyPhoneDto = {
-        token : token,
-        phone : phone
-      };
-      this._authService.verifyPhone(verifyPhoneDto).subscribe((data) => {
-        this.phoneVerifiedSuccess = true;
-      }, (error) => {
-        console.log("this is an error");
-        this._router.navigate(['/auth/login'])
-      });
-    })
+    this.isLoading = true;
+    const token = this.code;
+    let verifyPhoneDto : VerifyPhoneDto = {
+      token : token,
+      email : this.email
+    };
+    this._authService.verifyPhone(verifyPhoneDto).subscribe((data) => {
+      this.isLoading = false;
+      this.phoneVerifiedSuccess = true;
+      this._router.navigate(['/my-dashboard']);
+    }, (error) => {
+      this.isLoading = false;
+      console.log("this is an error");
+      this._router.navigate(['/auth/login'])
+    });
   }
 
 }

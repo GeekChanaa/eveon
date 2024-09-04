@@ -45,8 +45,20 @@ export class AuthService {
   }
 
   // Register method
-  register(model:UserForRegisterDto) : Observable<User>{
-    return this.http.post<User>(this.baseUrl + 'register', model);
+  register(model:UserForRegisterDto) {
+    return this.http.post<User>(this.baseUrl + 'register', model).pipe(
+      map((response:any) => {
+        console.log("this is the response");
+        console.log(response);
+        const user = response;
+        if(user){
+          localStorage.setItem('token',user.token);
+          this.token = user.token;
+          const decode = this.jwtHelper.decodeToken(user.token);
+          this.decodedToken = decode;
+        }
+      })
+    );
   }
 
   // Checking if token is valid or not

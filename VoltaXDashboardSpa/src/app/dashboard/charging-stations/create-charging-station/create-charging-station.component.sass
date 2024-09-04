@@ -1,0 +1,70 @@
+.btns_group
+    display: flex
+    width: 100%
+    margin-top: 32px
+
+.btn_next
+    margin-left: auto
+    margin-right: 12px
+
+.charge_point_form
+    background-color: rgb(255, 254, 254)
+
+.charge_point_connector_form
+    background-color: rgb(255, 255, 124)
+
+.mt-20
+    margin-top: 20px
+
+.btn__remove
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 48px
+    height: 48px
+    border-radius: 50%
+    border: 2px solid var(--primary6)
+    transition: ease-in-out all .4s
+    svg
+        width: 24px
+        height: 24px
+        fill: var(--primary6)
+        transition: ease-in-out all .4s
+    &:hover
+        border: 2px solid var(--primary9)
+        svg
+            fill: var(--primary9)
+
+.icon__remove
+    height: 24px
+    width: 24px
+
+
+.btn__remove_container
+    position: absolute
+    right: 8px
+    top: 8px
+
+
+.create__col:first-child 
+    flex: 0 0 calc(100% )
+    width: calc(100%)
+    padding-right: 8px
+
+
+.create__group3 .field 
+    flex: 0 0 calc(33% - 12px)
+    width: calc(33% - 12px)
+    margin: 0 6px 12px
+
+
+.charge_point_connector_form
+    flex: 0 0 100%
+    overflow-x: scroll
+    .field
+        flex: 0 0 20%
+    .charge_point_connector_tarif
+        flex: 0 0 45%
+        padding: 12px
+        .field
+            flex: 0 0 40%

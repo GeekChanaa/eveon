@@ -7,7 +7,7 @@ namespace VoltaXApi.Models
         public int ConnectorID { get; set; }
         public int ChargePointID { get; set; }
         public string? ConnectorType { get; set; }
-        public decimal Power { get; set; }
+        public decimal Power { get; set; } = 0 ;
         public double Speed { get; set; }
         public ChargePoint? ChargePoint { get; set; }
     

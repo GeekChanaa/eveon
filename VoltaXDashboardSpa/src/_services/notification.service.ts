@@ -5,8 +5,8 @@ import { Notification } from 'src/_models/notification';
   providedIn: 'root'
 })
 export class NotificationService  extends AbstractService<Notification>{
-  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/notification/");
+  constructor(protected http : HttpClient) {
+    super(http,environment.apiUrl+"/api/notification/");
   }
 
   // Base URL for the api

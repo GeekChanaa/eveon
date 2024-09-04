@@ -77,7 +77,11 @@ namespace VoltaXApi.Controllers
 
             await _context.SaveChangesAsync();
 
-            return StatusCode(201);
+            var userForLogin = new UserForLoginDto{
+                Email = userForRegisterDto.Email,
+                Password = userForRegisterDto.Password
+            };
+            return await Login(userForLogin);
         }
 
 
@@ -235,7 +239,7 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
         {
             // Checking the password
-            if (await _repo.VerifyPhoneNumber(verifyPhoneDto.Phone, verifyPhoneDto.Token))
+            if (await _repo.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token))
             {
                 return StatusCode(200);
             }

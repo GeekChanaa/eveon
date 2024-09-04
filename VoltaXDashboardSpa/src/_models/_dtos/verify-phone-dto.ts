@@ -1,4 +1,4 @@
 export interface VerifyPhoneDto{
-    phone : string,
+    email : string,
     token : string
 }

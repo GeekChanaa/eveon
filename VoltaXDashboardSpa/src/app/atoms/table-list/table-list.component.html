@@ -1,9 +1,9 @@
 <div class="page__title h3">{{name | titlecase}}</div>
-<div class="customer card">
+<div class="row card">
   <div class="card__head">
     <div class="title-purple card__title">{{names | titlecase}}</div>
     <form class="form">
-      <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup)="search()" />
+      <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
 
       <button class="form__button">
         <svg class="icon icon-search">
@@ -62,13 +62,13 @@
       </div>
     </div>
   </div>
-  <div class="customer__inner">
-    <div class="customer__container">
-      <div class="customer__wrapper">
-        <div class="customer__table">
-          <div class="customer__row">
+  <div class="row__inner">
+    <div class="row__container">
+      <div class="row__wrapper">
+        <div class="row__table">
+          <div class="row__row">
             <ng-container *ngFor="let field of fields">
-              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="customer__col col_header">{{field | camelCaseToSpace}} 
+              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">{{field | camelCaseToSpace}} 
                 <svg *ngIf="sortedColumn == field && sortedDirection == 'ASC'" class="icon icon-arrow-down">
                   <use xlink:href="#icon-arrow-down"></use>
                 </svg> 
@@ -78,26 +78,26 @@
           
           </div>
             </ng-container>
-            <div class="customer__col">Options</div>
+            <div class="row__col">Options</div>
           </div>
-          <div class="customer__row" *ngFor="let item of data">
+          <div class="row__row" *ngFor="let item of data">
             <ng-container *ngFor="let field of fields">
-              <!-- <div *ngIf="fieldShown[field] && fieldShown[field] instanceof Date" el class="customer__col">this date</div> -->
-              <div *ngIf="fieldShown[field]" class="customer__col">{{formatValue(item, field)}}</div>
+              <!-- <div *ngIf="fieldShown[field] && fieldShown[field] instanceof Date" el class="row__col">this date</div> -->
+              <div *ngIf="fieldShown[field]" class="row__col">{{formatValue(item, field)}}</div>
             </ng-container>
-            <div class="customer__col options_col">
-              <div class="flex">
-                  <button (click)="delete(item.id)" class="sidebar__add"> 
+            <div class="row__col options_col">
+              <div class="actions__container">
+                  <button (click)="delete(item.id)" class="table__action"> 
                       <svg class="icon icon-trash">
                           <use xlink:href="#icon-trash"></use>
                       </svg>   
                   </button>
-                  <button (click)="update(item.id)" class="sidebar__add"> 
+                  <button (click)="update(item.id)" class="table__action"> 
                       <svg class="icon icon-edit">
                           <use xlink:href="#icon-edit"></use>
                       </svg> 
                   </button>
-                  <button (click)="display(item.id)" class="sidebar__add"> 
+                  <button (click)="display(item.id)" class="table__action"> 
                       <svg class="icon icon-info">
                           <use xlink:href="#icon-info"></use>
                       </svg>  
@@ -114,27 +114,39 @@
 
         </div>
       </div>
-      <div class="customer__foot">
-        <button class="button-stroke button-small customer__button pagination__btn " (click)="firstP()">
-          <svg class="icon icon-arrow-left">
-            <use xlink:href="#icon-arrow-left"></use>
-          </svg>
-        </button>
-        <button class="button-stroke button-small customer__button pagination__btn " (click)="previousPage()">
+      <div class="row__foot">
+        
+        <button 
+          class="button-stroke pagination__btn" 
+          [ngClass]="{'inactive' : currentPage == 1}"
+          (click)="previousPage()"
+          >
           <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
             <use xlink:href="#icon-arrow-next"></use>
           </svg>
         </button>
-        <button class="button-stroke button-small customer__button pagination__btn" (click)="nextPage()">
+
+        <div class="pagination__pages">
+          <div
+            *ngFor="let page of paginationPages"
+            class="pagination__link"
+            [ngClass]="{'active' : currentPage == page}"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </div>
+        </div>
+
+        <button  
+          class="button-stroke pagination__btn" 
+          (click)="nextPage()" 
+          [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
+          >
           <svg class="icon icon-arrow-next">
             <use xlink:href="#icon-arrow-next"></use>
           </svg>
         </button>
-        <button class="button-stroke button-small customer__button pagination__btn " (click)="lastP()">
-          <svg class="icon icon-arrow-right">
-            <use xlink:href="#icon-arrow-right"></use>
-          </svg>
-        </button>
+        
       </div>
     </div>
   </div>

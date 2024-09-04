@@ -10,31 +10,31 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 export class ActionModalComponent implements OnInit {
 
   isVisible: boolean = false;
-    title: string = 'Title';
-    message: string = 'User Created Successfully';
-    image: string = '';
+  title: string = 'Title';
+  message: string = 'User Created Successfully';
+  image: string = '';
 
-    constructor() { }
+  constructor() { }
 
-    ngOnInit(): void {}
+  ngOnInit(): void {}
 
-    statusImages : any = {
-      "success" : "/assets/principal/images/icons/success.svg",
-      "error" : "/assets/principal/images/icons/error.svg",
-      "warning" : "/assets/principal/images/icons/warning.svg"
-    }
+  statusImages : any = {
+    "success" : "/assets/images/icons/success.svg",
+    "error" : "/assets/images/icons/error.svg",
+    "warning" : "/assets/images/icons/warning.svg"
+  }
 
-    show(title : string,message: string, status : ActionModalStatusEnum): void {
-      if(status == ActionModalStatusEnum.Success) this.image = this.statusImages["success"];
-      if(status == ActionModalStatusEnum.Error) this.image = this.statusImages["error"];
-      if(status == ActionModalStatusEnum.Warning) this.image = this.statusImages["warning"];
-      this.message = message;
-      this.title = title;
-      this.isVisible = true;
-    }
+  show(title : string,message: string, status : ActionModalStatusEnum): void {
+    if(status == ActionModalStatusEnum.Success) this.image = this.statusImages["success"];
+    if(status == ActionModalStatusEnum.Error) this.image = this.statusImages["error"];
+    if(status == ActionModalStatusEnum.Warning) this.image = this.statusImages["warning"];
+    this.message = message;
+    this.title = title;
+    this.isVisible = true;
+  }
 
-    hide(): void {
-        this.isVisible = false;
-    }
+  hide(): void {
+      this.isVisible = false;
+  }
 
 }

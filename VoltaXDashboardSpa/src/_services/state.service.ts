@@ -3,15 +3,15 @@ import { AbstractService } from './abstract-service';
 import { State } from 'src/_models/state';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class StateService extends AbstractService<State>{
 
-  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/State/");
+  constructor(protected http : HttpClient) {
+    super(http,environment.apiUrl+"/api/State/");
   }
 
   // Base URL for the api

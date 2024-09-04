@@ -4,15 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { Country } from 'src/_models/country';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CountryService extends AbstractService<Country>{
 
-  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http, snackBar, environment.apiUrl+"/api/country/");
+  constructor(protected http : HttpClient) {
+    super(http, environment.apiUrl+"/api/country/");
   }
 
   // Base URL for the api

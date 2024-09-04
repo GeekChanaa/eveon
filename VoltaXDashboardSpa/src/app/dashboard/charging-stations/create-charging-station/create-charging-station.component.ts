@@ -13,11 +13,12 @@ import { ConnectorTarifService } from 'src/_services/connector-tarif.service';
 import { ConnectorService } from 'src/_services/connector.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
-declare var $: any;  // Declare $ to use jQuery
+declare var $: any;
+
 @Component({
   selector: 'app-create-charging-station',
   templateUrl: './create-charging-station.component.html',
-  styleUrls: ['./create-charging-station.component.css']
+  styleUrls: ['./create-charging-station.component.sass']
 })
 export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
@@ -35,6 +36,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
 
   showPreviousDiv() {
+    if(this.activeDiv == 1) return; 
     this.activeDiv = this.activeDiv - 1;
   }
 
@@ -52,14 +54,14 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   ) {
     this.form = new FormGroup({
       chargingStationName: new FormControl(''),
-      chargingStationNetwork: new FormControl(''),
-      chargingStationCategory: new FormControl(''),
-      chargingStationChargerQuantity: new FormControl(''),
+      chargingStationNetwork: new FormControl('0'),
+      chargingStationCategory: new FormControl('0'),
+      chargingStationChargerQuantity: new FormControl('1'),
       chargingStationAddress: new FormControl(''),
       chargingStationCity: new FormControl(''),
       chargingStationZipCode: new FormControl(''),
-      chargingStationParkingType: new FormControl(''),
-      chargingStationStatus: new FormControl(''),
+      chargingStationParkingType: new FormControl('ParallelParking'),
+      chargingStationStatus: new FormControl('available'),
       chargingStationAmenities: new FormGroup({
         wifi: new FormControl(false),
         parking: new FormControl(false),
@@ -70,19 +72,18 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       chargePoints: new FormArray([
         new FormGroup({
           chargePointSerialNumber: new FormControl(''),
-          chargePointStatus: new FormControl(''),
-          chargePointCategory: new FormControl(''),
+          chargePointStatus: new FormControl('Available'),
+          chargePointCategory: new FormControl('TheTower'),
           chargePointID: new FormControl(''),
           chargePointName: new FormControl(''),
           chargePointConnectors: new FormArray([
             new FormGroup({
-              chargePointConnectorSpeed: new FormControl(''),
-              chargePointConnectorPower: new FormControl(''),
-              chargePointConnectorQuantity: new FormControl(''),
+              chargePointConnectorSpeed: new FormControl('7.3'),
+              chargePointConnectorQuantity: new FormControl('1'),
               chargePointConnectorTarifs: new FormArray([
                 new FormGroup({
-                  chargePointConnectorTarifUnit: new FormControl(''),
-                  chargePointConnectorTarifCurrency: new FormControl(''),
+                  chargePointConnectorTarifUnit: new FormControl('KW'),
+                  chargePointConnectorTarifCurrency: new FormControl('MAD'),
                 })
               ])
             })
@@ -110,19 +111,18 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     if (chargePoints.length < 5) {
       chargePoints.push(new FormGroup({
         chargePointSerialNumber: new FormControl(''),
-        chargePointStatus: new FormControl(''),
-        chargePointCategory: new FormControl(''),
+        chargePointStatus: new FormControl('Available'),
+        chargePointCategory: new FormControl('TheTower'),
         chargePointName: new FormControl(''),
         chargePointID: new FormControl(''),
         chargePointConnectors: new FormArray([
           new FormGroup({
-            chargePointConnectorSpeed: new FormControl(''),
-            chargePointConnectorPower: new FormControl(''),
-            chargePointConnectorQuantity: new FormControl(''),
+            chargePointConnectorSpeed: new FormControl('7.3'),
+            chargePointConnectorQuantity: new FormControl('1'),
             chargePointConnectorTarifs: new FormArray([
               new FormGroup({
-                chargePointConnectorTarifUnit: new FormControl(''),
-                chargePointConnectorTarifCurrency: new FormControl(''),
+                chargePointConnectorTarifUnit: new FormControl('KW'),
+                chargePointConnectorTarifCurrency: new FormControl('MAD'),
               })
             ])
           })
@@ -137,12 +137,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   addChargePointConnector(i: number) {
     ((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).push(new FormGroup({
       chargePointConnectorSpeed: new FormControl(''),
-      chargePointConnectorPower: new FormControl(''),
-      chargePointConnectorQuantity: new FormControl(''),
+      chargePointConnectorQuantity: new FormControl('1'),
       chargePointConnectorTarifs: new FormArray([
         new FormGroup({
-          chargePointConnectorTarifUnit: new FormControl(''),
-          chargePointConnectorTarifCurrency: new FormControl(''),
+          chargePointConnectorTarifUnit: new FormControl('KW'),
+          chargePointConnectorTarifCurrency: new FormControl('MAD'),
         })
       ])
     }));
@@ -150,18 +149,15 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   addChargePointConnectorTarif(i: number, j: number) {
     (((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).at(j).get('chargePointConnectorTarifs') as FormArray).push(new FormGroup({
-      chargePointConnectorTarifUnit: new FormControl(''),
-      chargePointConnectorTarifCurrency: new FormControl(''),
+      chargePointConnectorTarifUnit: new FormControl('KW'),
+      chargePointConnectorTarifCurrency: new FormControl('MAD'),
     }));
   }
 
   ngOnInit() {
     this.getAllCities();
     this.chargingStationCategories = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"))
-
   }
-
-  
 
   // Getting cities by state
   getAllCities() {
@@ -211,7 +207,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       cp.chargePointConnectors.forEach((connector: any) => {
         const connectorObj: ConnectorCreateDto = {
           connectorType: "cType2",
-          power: connector.chargePointConnectorPower,
           speed: connector.chargePointConnectorSpeed,
         };
         
@@ -230,12 +225,10 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
 
   showSelect() {
-    console.log("this is focused")
     this.opacity = 1;
   }
 
   hideSelect() {
-    console.log("this is focusout");
     this.opacity = 0;
   }
 
@@ -249,8 +242,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     return control as FormControl;
   }
 
-  
-
   // Updating city Control
   updateCity(value: any) {
     this.cityControl.setValue(value.name);
@@ -259,29 +250,16 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   removeChargePoint(index: number) {
     const chargePoints = this.form.get('chargePoints') as FormArray;
-    if (chargePoints.length > 1) {
-      chargePoints.removeAt(index);
-    } else {
-      alert('At least one charge point should exist');
-    }
+    chargePoints.removeAt(index);
   }
-
   removeChargePointConnector(chargePointIndex: number, connectorIndex: number) {
     const connectors = this.getChargePointConnectors(chargePointIndex);
-    if (connectors.length > 1) {
-      connectors.removeAt(connectorIndex);
-    } else {
-      alert('At least one connector should exist for each charge point');
-    }
+    connectors.removeAt(connectorIndex);
   }
 
   removeChargePointConnectorTarif(chargePointIndex: number, connectorIndex: number, tarifIndex: number) {
     const tarifs = this.getChargePointConnectorTarifs(chargePointIndex, connectorIndex);
-    if (tarifs.length > 1) {
-      tarifs.removeAt(tarifIndex);
-    } else {
-      alert('At least one tariff should exist for each connector');
-    }
+    tarifs.removeAt(tarifIndex)
   }
 
   getFormControl(name: string): FormControl {

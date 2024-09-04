@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { NotificationSetting } from 'src/_models/notification-setting';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
@@ -9,8 +9,8 @@ import { AbstractService } from './abstract-service';
   providedIn: 'root'
 })
 export class NotificationSettingService  extends AbstractService<NotificationSetting>{
-  constructor(protected http : HttpClient, snackBar : MatSnackBar) {
-    super(http,snackBar, environment.apiUrl+"/api/notificationSetting/");
+  constructor(protected http : HttpClient) {
+    super(http,environment.apiUrl+"/api/notificationSetting/");
   }
 
   // Base URL for the api

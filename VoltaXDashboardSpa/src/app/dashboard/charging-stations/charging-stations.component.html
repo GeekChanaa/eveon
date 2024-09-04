@@ -3,24 +3,16 @@
     <app-table-list 
       name="charging station"
       names="charging stations"
+      [searchByAttributes]="['Name','Address']"
+      routeName="charging-stations"
       createLink="/dashboard/charging-stations/create"
       [fields]="fields" 
-      [data]="data"
-      (next)="nextPage()"
-      (previous)="previousPage()"
-      (firstPage)="goToFirstPage()"
-      (lastPage)="goToLastPage()"
-      (deleteEvent)="delete($event)"
-      (updateEvent)="update($event)"
+      [getItemsObservable]="getChargingStationsObservable.bind(this)"
+      [deleteItemObservable]="deleteChargingStationObservable.bind(this)"
+      [updateItemObservable]="updateChargingStationObservable.bind(this)"
       (displayEvent)="display($event)"
-      (sortEvent)="sort($event)"
-      (applyFiltersEvent)="applyFilters()"
       searchByPlaceHolder="Search by Name or Address"
-      (searchEvent)="search($event)"
       >
-
-      
-
       <!-- filter body -->
       <ng-container filter__body>
         <div  class="filters__group">

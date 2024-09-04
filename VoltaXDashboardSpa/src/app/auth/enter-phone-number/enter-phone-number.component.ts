@@ -7,7 +7,7 @@ import { AuthService } from 'src/_services/auth.service';
 @Component({
   selector: 'app-enter-phone-number',
   templateUrl: './enter-phone-number.component.html',
-  styleUrls: ['./enter-phone-number.component.css']
+  styleUrls: ['./enter-phone-number.component.sass']
 })
 export class EnterPhoneNumberComponent implements OnInit {
 
@@ -31,9 +31,7 @@ export class EnterPhoneNumberComponent implements OnInit {
 
   // on init cycle hook
   ngOnInit() {
-    this._route.queryParams.subscribe((params) => {
-      this.email = params['email'];
-    })
+    this.email = this._authService.getAuthInformation().unique_name;
   }
 
   sendPhoneVerification(){
@@ -41,9 +39,7 @@ export class EnterPhoneNumberComponent implements OnInit {
     addPhoneNumberDto.email = this.email;
     addPhoneNumberDto.phone = this.form.value.phone;
     this._authService.sendPhoneVerificationSms(addPhoneNumberDto).subscribe((data) => {
-        this._snackBar.open("Phone verification SMS Sent","dismiss",{duration:2000});
-        console.log("phone verification sms sent");
-        this._router.navigate(['/auth/verify-phone'], { queryParams: { phone: this.form.value.phone } });
+        this._router.navigate(['/auth/verify-phone']);
     })
   }
 

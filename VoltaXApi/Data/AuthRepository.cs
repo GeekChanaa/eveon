@@ -86,9 +86,9 @@ namespace VoltaXApi.Data
         }
 
         // Verifying the phone number
-        public async Task<bool> VerifyPhoneNumber(string phoneNumber, string token)
+        public async Task<bool> VerifyPhoneNumber(string email, string token)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Phone == phoneNumber);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null || user.PhoneVerificationToken != token)
                 return false;
 
