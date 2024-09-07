@@ -10,5 +10,6 @@ namespace VoltaXApi.Data
         Task<double> GetPartnerChargePointRevenue(int partnerID,string chargePointID ,DateTime? start = null , DateTime? end = null);
         Task AddAsync(ChargePoint chargePoint);
         Task<ChargePointListDto> GetChargePointByIdAsync(int id);
+        Task<List<ChargePointListDto>> GetChargingStationChargePoints(int chargingStationID);
     }
 }

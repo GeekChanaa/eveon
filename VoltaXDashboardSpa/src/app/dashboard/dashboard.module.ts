@@ -42,6 +42,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 import { ChargePointConnectorsComponent } from './charging-points/charging-point/charge-point-connectors/charge-point-connectors.component';
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
+import { ChargingStationChargePointsComponent } from './charging-stations/charging-station-charge-points/charging-station-charge-points.component';
 
 @NgModule({
     declarations: [
@@ -79,7 +80,8 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
     CompleteProfileComponent,
     DebitCardsComponent,
     ChargePointConnectorsComponent,
-    ProfileSecurityComponent
+    ProfileSecurityComponent,
+    ChargingStationChargePointsComponent
     
   ],
     imports: [

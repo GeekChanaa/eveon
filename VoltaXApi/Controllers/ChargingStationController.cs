@@ -88,15 +88,18 @@ namespace VoltaXApi.Controllers
             try
             {
                 int id = await _repository.CreateChargingStation(chargingStation);
+                return Ok(new { id = id });
             }
             catch (Exception ex)
             {
-                Console.WriteLine("this is the stack trace");
-                Console.WriteLine(ex.StackTrace);
+                Console.Write("this is the stack trace : ");
+                Console.Write(ex.StackTrace);
+                Console.Write(ex.Message);
+                if(ex.InnerException != null)
+                    Console.WriteLine(ex.InnerException);
                 return BadRequest(ex.Message);
             }
 
-            return CreatedAtAction("GetById", new { id = chargingStation }, chargingStation);
         }
 
         // Charging Stations of partner

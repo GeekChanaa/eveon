@@ -76,6 +76,14 @@ namespace VoltaXApi.Data
             return chargePointDto;
         }
 
+        
+        public async Task<List<ChargePointListDto>> GetChargingStationChargePoints(int chargingStationID)
+        {
+            var chargepoints = await this._context.ChargePoints.Where(cp => cp.ChargingStationID == chargingStationID).ToListAsync();
+            List<ChargePointListDto> chargePointsDto = _mapper.Map<List<ChargePoint>, List<ChargePointListDto>>(chargepoints);
+            return chargePointsDto;
+        }
+
 
 
     }

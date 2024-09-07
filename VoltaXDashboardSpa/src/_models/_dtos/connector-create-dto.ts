@@ -1,6 +1,8 @@
 export interface ConnectorCreateDto {
     connectorType?: string;
-    power?: number;
     speed: number;
+    pricePerKWh : number;
+    pricePerMinute : number;
+    pricePerHour : number;
 }
   

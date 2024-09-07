@@ -7,6 +7,13 @@ export interface Connector {
     power: number;
     speed: number;
     chargePoint?: ChargePoint;
+    pricePerKWh : number; 
+    flatFee : number; 
+    pricePerMinute : number; 
+    pricePerHour : number; 
+    maxPower : number; 
+    startTime : string; 
+    endTime : string; 
     [key: string]: any;
   }
   

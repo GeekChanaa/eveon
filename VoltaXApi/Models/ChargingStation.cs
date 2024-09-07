@@ -12,7 +12,7 @@ namespace VoltaXApi.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public ChargingStationNetworkEnum Network { get; set; }
         public ChargingStationCategoryEnum Category { get; set; }
-        public string ChargerQuantity { get; set; }
+        public int ChargerQuantity { get; set; }
         public string? Country { get; set; }
         
         public string? State { get; set; }

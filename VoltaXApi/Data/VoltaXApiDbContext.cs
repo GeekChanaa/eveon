@@ -8,9 +8,7 @@ namespace VoltaXApi.Data
         private IConfiguration _configuration;
 
 
-        public VoltaXApiDbContext(DbContextOptions<VoltaXApiDbContext> options) : base(options)
-        {
-
+        public VoltaXApiDbContext(DbContextOptions<VoltaXApiDbContext> options) : base(options){
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,14 +18,16 @@ namespace VoltaXApi.Data
                 .WithMany(u => u.Orders)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<ChargePoint>()
+                .HasIndex(e => e.ChargePointId)
+                .IsUnique();
+
             modelBuilder.Entity<ChargeTag>()
                 .HasIndex(e => e.TagID)
                 .IsUnique();
+
             modelBuilder.Entity<ConnectorStatus>()
                 .HasKey(cs => new { cs.ConnectorID, cs.ChargePointID });
-            modelBuilder.Entity<Connector>()
-                .HasIndex(cs => new { cs.ConnectorID, cs.ChargePointID })
-                .IsUnique();
             
             modelBuilder.Entity<Transaction>()
                     .HasOne(t => t.ChargePoint)
@@ -44,7 +44,6 @@ namespace VoltaXApi.Data
             public DbSet<ChargePoint> ChargePoints { get; set; }
             public DbSet<ChargeTag> ChargeTags { get; set; }
             public DbSet<Connector> Connectors { get; set; }
-            public DbSet<ConnectorTarif> ConnectorTarifs { get; set; }
             public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
             public DbSet<Order> Orders { get; set; }
             public DbSet<Transaction> Transactions { get; set; }
@@ -57,6 +56,5 @@ namespace VoltaXApi.Data
             public DbSet<Notification> Notifications { get; set; }
             public DbSet<NotificationSetting> NotificationSettings { get; set; }
             public DbSet<NotificationType> NotificationTypes { get; set; }
-            // Add any Dbset configurations here
     }
 }

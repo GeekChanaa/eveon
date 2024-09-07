@@ -71,5 +71,17 @@ namespace VoltaXApi.Controllers
             }
             return Ok(entity);
         }
+
+        [HttpGet("GetChargingStationChargePoints/{id}")]
+        public async Task<IActionResult> GetChargingStationChargePoints(int id)
+        {
+            var entity = await this._repository.GetChargingStationChargePoints(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
+        }
+
     }
 }

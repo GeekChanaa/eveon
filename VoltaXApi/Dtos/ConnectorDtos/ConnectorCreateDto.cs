@@ -1,11 +1,8 @@
-namespace VoltaXApi.Models
+namespace VoltaXApi.Dtos
 {
-    public class Connector : IEntity
+    public class ConnectorCreateDto
     {
-    
-        public int ID { get; set; }
-        public string? ConnectorID{ get; set; }
-        public int ChargePointID { get; set; }
+        public int ConnectorID { get; set; }
         public string? ConnectorType { get; set; }
         public decimal Power { get; set; } = 0 ;
         public double Speed { get; set; }
@@ -16,7 +13,6 @@ namespace VoltaXApi.Models
         public decimal MaxPower { get; set; }  
         public TimeSpan? StartTime { get; set; }    
         public TimeSpan? EndTime { get; set; }      
-        public ChargePoint? ChargePoint { get; set; }
     
     }
 }

@@ -124,12 +124,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
     // use context
+    // await SqlScriptExecuter.ExecuteSqlScript();
     // GlobalSeeder.Seed(dbContext).Wait();
     // await UserSeeder.Seed(100,dbContext);
 
     // SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);
-    // await SqlScriptExecuter.ExecuteSqlScript();
 }
 
 // Set WebSocketsOptions

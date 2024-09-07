@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20240829130640_recreate")]
+    [Migration("20240906171620_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -135,6 +135,9 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ChargePointId")
+                        .IsUnique();
+
                     b.HasIndex("ChargingStationID");
 
                     b.ToTable("ChargePoints");
@@ -192,9 +195,8 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<string>("ChargerQuantity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ChargerQuantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -350,24 +352,42 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ChargePointID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ConnectorID")
-                        .HasColumnType("int");
+                    b.Property<string>("ConnectorID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<decimal>("FlatFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MaxPower")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Power")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerHour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerKWh")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerMinute")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Speed")
                         .HasColumnType("float");
 
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ChargePointID");
-
-                    b.HasIndex("ConnectorID", "ChargePointID")
-                        .IsUnique();
 
                     b.ToTable("Connectors");
                 });
@@ -397,36 +417,6 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("ChargePointID1");
 
                     b.ToTable("ConnectorStatuses");
-                });
-
-            modelBuilder.Entity("VoltaXApi.Models.ConnectorTarif", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("ConnectorID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Quantity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ConnectorID");
-
-                    b.ToTable("ConnectorTarifs");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Country", b =>
@@ -1001,17 +991,6 @@ namespace VoltaXApi.Migrations
                         .IsRequired();
 
                     b.Navigation("ChargePoint");
-
-                    b.Navigation("Connector");
-                });
-
-            modelBuilder.Entity("VoltaXApi.Models.ConnectorTarif", b =>
-                {
-                    b.HasOne("VoltaXApi.Models.Connector", "Connector")
-                        .WithMany()
-                        .HasForeignKey("ConnectorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Connector");
                 });

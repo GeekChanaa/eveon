@@ -11,6 +11,8 @@ export interface ChargingStationCreateDto {
     RestaurantsAmenity: string;
     WashroomAmenity: string;
     SittingAreaAmenity: string;
+    Latitude : string;
+    Longitude : string;
     chargePoints : any[]
 }
   

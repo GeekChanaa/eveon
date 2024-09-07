@@ -43,8 +43,11 @@ export class ChargePointService extends AbstractService<ChargePoint>{
     return result;
   }
 
-  // Get Partner Charge Points : 
   getPartnerChargePoints(partnerID : number,page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<ChargePoint[]>>{
     return super.getAll(page,itemsPerPage,itemParams,"GetPartnerChargePoints/"+partnerID);
+  }
+
+  getChargingStationChargePoints(id : number){
+    return this._http.get<any[]>(this.baseUrl+"GetChargingStationChargePoints/"+id);
   }
 }

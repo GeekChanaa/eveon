@@ -1,16 +1,14 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
 import { CityNameDto } from 'src/_models/_dtos/city-name-dto';
 import { ConnectorCreateDto } from 'src/_models/_dtos/connector-create-dto';
-import { ConnectorTarifCreateDto } from 'src/_models/_dtos/connector-tarif-create-dto';
-import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
-import { ChargePointService } from 'src/_services/charge-point.service';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
-import { ConnectorTarifService } from 'src/_services/connector-tarif.service';
-import { ConnectorService } from 'src/_services/connector.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
 declare var $: any;
@@ -25,6 +23,9 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   form: FormGroup;
   opacity: number = 0;
   activeDiv = 1;
+
+  latitude : number = 0;
+  longitude : number = 0;
 
   chargingStationCategories : any = {};
 
@@ -47,10 +48,9 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   constructor(
     private _cityService: CityService,
     private _chargingStationService: ChargingStationService,
-    private _chargePointService: ChargePointService,
-    private _connectorService: ConnectorService,
-    private _connectorTarifService: ConnectorTarifService,
-    private _enumService : EnumMappingService
+    private _enumService : EnumMappingService,
+    private _modalService:  ActionModalService,
+    private _router : Router
   ) {
     this.form = new FormGroup({
       chargingStationName: new FormControl(''),
@@ -79,13 +79,9 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
           chargePointConnectors: new FormArray([
             new FormGroup({
               chargePointConnectorSpeed: new FormControl('7.3'),
-              chargePointConnectorQuantity: new FormControl('1'),
-              chargePointConnectorTarifs: new FormArray([
-                new FormGroup({
-                  chargePointConnectorTarifUnit: new FormControl('KW'),
-                  chargePointConnectorTarifCurrency: new FormControl('MAD'),
-                })
-              ])
+              chargePointConnectorPricePerKWh : new FormControl(""),
+              chargePointConnectorPricePerMinute : new FormControl(""),
+              chargePointConnectorPricePerHour : new FormControl("")
             })
           ])
         })
@@ -101,10 +97,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     return ((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray);
   }
 
-  getChargePointConnectorTarifs(i: number, j: number) {
-    return (((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).at(j).get('chargePointConnectorTarifs') as FormArray);
-  }
-
   addChargePoint() {
     const chargePoints = this.form.get('chargePoints') as FormArray;
 
@@ -118,39 +110,24 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
         chargePointConnectors: new FormArray([
           new FormGroup({
             chargePointConnectorSpeed: new FormControl('7.3'),
-            chargePointConnectorQuantity: new FormControl('1'),
-            chargePointConnectorTarifs: new FormArray([
-              new FormGroup({
-                chargePointConnectorTarifUnit: new FormControl('KW'),
-                chargePointConnectorTarifCurrency: new FormControl('MAD'),
-              })
-            ])
+            chargePointConnectorPricePerKWh : new FormControl(""),
+            chargePointConnectorPricePerMinute : new FormControl(""),
+            chargePointConnectorPricePerHour : new FormControl("")
           })
         ])
       }));
     } else {
-      alert('Maximum 5 charge points are allowed');
+      this._modalService.popup(ActionModalStatusEnum.Warning,"Attention !","Maximum 5 charge points are allowed",4000);
     }
   }
 
 
   addChargePointConnector(i: number) {
     ((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).push(new FormGroup({
-      chargePointConnectorSpeed: new FormControl(''),
-      chargePointConnectorQuantity: new FormControl('1'),
-      chargePointConnectorTarifs: new FormArray([
-        new FormGroup({
-          chargePointConnectorTarifUnit: new FormControl('KW'),
-          chargePointConnectorTarifCurrency: new FormControl('MAD'),
-        })
-      ])
-    }));
-  }
-
-  addChargePointConnectorTarif(i: number, j: number) {
-    (((this.form.get('chargePoints') as FormArray).at(i).get('chargePointConnectors') as FormArray).at(j).get('chargePointConnectorTarifs') as FormArray).push(new FormGroup({
-      chargePointConnectorTarifUnit: new FormControl('KW'),
-      chargePointConnectorTarifCurrency: new FormControl('MAD'),
+      chargePointConnectorSpeed: new FormControl('7.3'),
+      chargePointConnectorPricePerKWh : new FormControl(""),
+      chargePointConnectorPricePerMinute : new FormControl(""),
+      chargePointConnectorPricePerHour : new FormControl("")
     }));
   }
 
@@ -187,6 +164,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       RestaurantsAmenity: formValues.chargingStationAmenities.restaurants,
       WashroomAmenity: formValues.chargingStationAmenities.washroom,
       SittingAreaAmenity: formValues.chargingStationAmenities.sittingArea,
+      Latitude: this.latitude.toString(),
+      Longitude: this.longitude.toString(),
       chargePoints : []
     };
     formValues.chargePoints.forEach((cp : any) => {
@@ -208,8 +187,10 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
         const connectorObj: ConnectorCreateDto = {
           connectorType: "cType2",
           speed: connector.chargePointConnectorSpeed,
+          pricePerKWh: connector.chargePointConnectorPricePerHour,
+          pricePerMinute: connector.chargePointConnectorPricePerMinute,
+          pricePerHour: connector.chargePointConnectorPricePerHour
         };
-        
         chargePoint.connectors.push(connectorObj)
         
       });
@@ -219,7 +200,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
     // Create the station first because the chargePoints depend on its ID
     this._chargingStationService.createChargingStation(chargingStation).subscribe((createdStation) => {
-      console.log("CHARGING STATION CREATED ");
+      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Charging Station Created Successfully",4000);
+      this._router.navigateByUrl('/dashboard/charging-stations');
     });
   }
 
@@ -257,17 +239,17 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     connectors.removeAt(connectorIndex);
   }
 
-  removeChargePointConnectorTarif(chargePointIndex: number, connectorIndex: number, tarifIndex: number) {
-    const tarifs = this.getChargePointConnectorTarifs(chargePointIndex, connectorIndex);
-    tarifs.removeAt(tarifIndex)
-  }
-
   getFormControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
   }
 
   getChargingStationCategoriesKeys(){
     return Object.keys(this.chargingStationCategories);
+  }
+
+  selectMap(location : any){
+    this.latitude = location.latitude;
+    this.longitude = location.longitude;
   }
 
 }

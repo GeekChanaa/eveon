@@ -8,13 +8,14 @@ namespace VoltaXApi.Data.Seeders
         public static async Task<List<ChargingStation>> Seed(int count, VoltaXApiDbContext dbContext)
         {
             IRepository<ChargingStation> repo = new Repository<ChargingStation>(dbContext);
+            int counter = 1;
             var moroccoCities = dbContext.Cities.Where(u => u.Country.Name == "Morocco").Select(u => u.Name).ToList();
             var faker = new Faker<ChargingStation>()
-                .RuleFor(cs => cs.Name, f => f.Company.CompanyName())
+                .RuleFor(cs => cs.Name, f => $"VX{counter++.ToString("D4")}")  
                 .RuleFor(cs => cs.Address, f => f.Address.FullAddress())
                 .RuleFor(cs => cs.Network, f => f.PickRandom<ChargingStationNetworkEnum>())
                 .RuleFor(cs => cs.Category, f => f.PickRandom<ChargingStationCategoryEnum>())
-                .RuleFor(cs => cs.ChargerQuantity, f => f.Random.Int(1, 10).ToString())
+                .RuleFor(cs => cs.ChargerQuantity, f => f.Random.Int(1, 10))
                 .RuleFor(cs => cs.Country, f => f.Address.Country())
                 .RuleFor(cs => cs.State, f => f.Address.State())
                 .RuleFor(cs => cs.City, f => f.PickRandom(moroccoCities))

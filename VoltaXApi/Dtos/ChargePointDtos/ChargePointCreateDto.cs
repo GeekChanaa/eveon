@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using VoltaXApi.Models;
 
-namespace VoltaXApi.Models
+namespace VoltaXApi.Dtos
 {
-    public class ChargePoint : IEntity
+    public class ChargePointCreateDto
     {
-        [Key]
-        public int ID { get; set; }
         public string ChargePointId { get; set; }
         public int ChargingStationID { get; set; }
         public string Name { get; set; }
@@ -17,13 +16,6 @@ namespace VoltaXApi.Models
         public string Password { get; set; }
         public string ClientCertThumb { get; set; }
         public ChargePointCategoryEnum Category { get; set; }
-
-        public ChargingStation? ChargingStation { get; set; }
-
-        public virtual ICollection<Connector>? Connectors { get; set; }
-        public virtual ICollection<Transaction>? Transactions { get; set; }
-        
-        
-    
+        public virtual ICollection<ConnectorCreateDto>? Connectors { get; set; }
     }
 }

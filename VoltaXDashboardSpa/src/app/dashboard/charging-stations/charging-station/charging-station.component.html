@@ -22,92 +22,86 @@
             </div>
             <div class="settings__fieldset">
               <ng-container *ngIf="chargingStationLoaded">
-                <app-display-cell inpType="text" title="name" (updatePropertyEvent)="update($event,'name')" [val]="chargingStation.name"></app-display-cell>
-                <app-display-cell inpType="text" title="address" (updatePropertyEvent)="update($event,'address')" [val]="chargingStation.address"></app-display-cell>
-                <app-display-cell inpType="select_enum" enumName="ChargingStationNetworkEnum" title="network" (updatePropertyEvent)="update($event,'network')" val="{{chargingStation.network}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" title="category" (updatePropertyEvent)="update($event,'category')" enumName="ChargingStationCategoryEnum" val="{{chargingStation.category}}"></app-display-cell>
-                <app-display-cell inpType="text" title="chargerQuantity" (updatePropertyEvent)="update($event,'chargerQuantity')" val="{{chargingStation.chargerQuantity}}"></app-display-cell>
-                <app-display-cell inpType="text" title="city" (updatePropertyEvent)="update($event,'city')" val="{{chargingStation.city}}"></app-display-cell>
-                <app-display-cell inpType="text" title="organisation" (updatePropertyEvent)="update($event,'organisation')" val="{{chargingStation.organisation}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" enumName="ParkingTypeEnum" title="parkingType" (updatePropertyEvent)="update($event,'parkingType')" val="{{chargingStation.parkingType}}"></app-display-cell>
-                <app-display-cell inpType="select_enum" enumName="ChargingStationStatusEnum" title="status" (updatePropertyEvent)="update($event,'status')" val="{{chargingStation.status}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                  inpType="text"
+                  title="name"
+                 
+                  [val]="chargingStation.name" [editable]="false"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="text"
+                  title="address"
+                 
+                  [val]="chargingStation.address"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="select_enum"
+                  enumName="ChargingStationNetworkEnum"
+                  title="network"
+                  val="{{chargingStation.network}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="select_enum"
+                  title="category"
+                   enumName="ChargingStationCategoryEnum" 
+                  val="{{chargingStation.category}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                  inpType="text"
+                  title="chargerQuantity"
+                  
+                  val="{{chargingStation.chargerQuantity}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                  inpType="text"
+                  title="city"
+                   
+                  val="{{chargingStation.city}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="text"
+                  title="organisation"
+                  val="{{chargingStation.organisation}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="select_enum"
+                  enumName="ParkingTypeEnum"
+                  title="parkingType" 
+                  val="{{chargingStation.parkingType}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                  inpType="select_enum"
+                  enumName="ChargingStationStatusEnum"
+                  title="status" 
+                  val="{{chargingStation.status}}"></app-display-cell>
               </ng-container>
               
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ChargePointsTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Charge Points</div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="chargingStation.chargePoints.length > 0 && !cpfShow">
-                <div class="mb-8" *ngFor="let chargePoint of chargingStation.chargePoints">
-                  <app-charging-station-charge-point (deleteEvent)="deleteChargePoint($event)" [chargePoint]="chargePoint"></app-charging-station-charge-point>
-                </div>
-              </ng-container>
-
-              <ng-container *ngIf="(chargingStation.chargePoints.length <= 0 && !cpfShow)">
-                <app-empty-card></app-empty-card>
-              </ng-container>
-              <ng-container *ngIf="cpfShow">
-                <form [formGroup]="chargePointForm">
-                  <app-form-field class="field" title="serialNumber" description="tbd" [control]="getControl('serialNumber')"></app-form-field>
-                  <app-form-field class="field" title="make" description="tbd" [control]="getControl('make')"></app-form-field>
-                  <div class="field">
-                    <div class="field__label">Status
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <div class="field__wrap">
-                        <select class="select" formControlName="status">
-                          <option value="0">Available</option>
-                          <option value="1">Under Maintenance</option>
-                          <option value="2">Offline</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <app-form-field class="field" title="comment" description="tbd" [control]="getControl('comment')"></app-form-field>
-                  <div class="field">
-                    <div class="field__label">Category
-                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                        <svg class="icon icon-info">
-                          <use xlink:href="#icon-info"></use>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="field__wrap">
-                      <div class="field__wrap">
-                        <select class="select" formControlName="category">
-                          <option value="0">The Tower</option>
-                          <option value="1">The Tower plus</option>
-                          <option value="2">VX Commercial</option>
-                          <option value="3">The Tower DC</option>
-                          <option value="4">VX Home</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex">
-                    <button (click)="cpfOnSubmit()" class="button">Create</button>
-                    <button (click)="cpfShow = false" class="button-stroke btn-cancel">Cancel</button>
-
-                  </div>
-                </form>
-              </ng-container>
-
-              <ng-container *ngIf="!cpfShow">
-                <div>
-                  <button (click)="showChargePointForm()" class="button">Add Charge Point</button>
-                </div>
-              </ng-container>
-
-
-            </div>
-
+            <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">
+              <app-charging-station-charge-points [chargingStationID]="chargingStation.id"></app-charging-station-charge-points>
+            </ng-container>
+            
           </div>
 
         </div>

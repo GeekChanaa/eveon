@@ -9,20 +9,9 @@ namespace VoltaXApi.Data.Seeders
     {
         public static async Task Seed(VoltaXApiDbContext context)
         {
-            // var users = await UserSeeder.Seed(100,context);
-            // var chargingStations = await ChargingStationSeeder.Seed(100, context);
-            // var chargePoints = await ChargePointSeeder.Seed(100,chargingStations, context);
-            // var connectors = await ConnectorSeeder.Seed(100,chargePoints ,context);
-            // var comments = await CommentSeeder.Seed(100,users,chargingStations,chargePoints,context);
-            // var orders = await OrderSeeder.Seed(100,users,cards,context);
-            // var transactions = await TransactionSeeder.Seed(100,users,chargePoints,context);
             var chargeStations = await ChargingStationSeeder.Seed(100,context);
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
             var connectors = await ConnectorSeeder.Seed(100,chargePoints,context);
-            var connectorTarifs = await ConnectorTarifSeeder.Seed(100,connectors,context);
-
-            
-
             var users = await UserSeeder.Seed(100,context);
             var debitCards = await DebitCardSeeder.Seed(200,users,context);
             var cards = await CardSeeder.Seed(200, users,context);

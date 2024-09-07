@@ -26,7 +26,14 @@ export class ConnectorsComponent implements OnInit {
     id: 0,
     chargePointID: 0,
     power: 0,
-    speed: 0
+    speed: 0,
+    pricePerKWh: 0,
+    flatFee: 0,
+    pricePerMinute: 0,
+    pricePerHour: 0,
+    maxPower: 0,
+    startTime: '',
+    endTime: ''
   }
 
   // Constructor

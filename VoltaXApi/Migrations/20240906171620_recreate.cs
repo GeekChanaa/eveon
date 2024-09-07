@@ -21,7 +21,7 @@ namespace VoltaXApi.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Network = table.Column<int>(type: "int", nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
-                    ChargerQuantity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChargerQuantity = table.Column<int>(type: "int", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -376,11 +376,18 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ConnectorID = table.Column<int>(type: "int", nullable: false),
+                    ConnectorID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ChargePointID = table.Column<int>(type: "int", nullable: false),
                     ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Power = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Speed = table.Column<double>(type: "float", nullable: false)
+                    Speed = table.Column<double>(type: "float", nullable: false),
+                    PricePerKWh = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FlatFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PricePerMinute = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PricePerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaxPower = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -538,28 +545,6 @@ namespace VoltaXApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ConnectorTarifs",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ConnectorID = table.Column<int>(type: "int", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConnectorTarifs", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ConnectorTarifs_Connectors_ConnectorID",
-                        column: x => x.ConnectorID,
-                        principalTable: "Connectors",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Administrators_UserID",
                 table: "Administrators",
@@ -569,6 +554,12 @@ namespace VoltaXApi.Migrations
                 name: "IX_Cards_UserID",
                 table: "Cards",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChargePoints_ChargePointId",
+                table: "ChargePoints",
+                column: "ChargePointId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChargePoints_ChargingStationID",
@@ -618,20 +609,9 @@ namespace VoltaXApi.Migrations
                 column: "ChargePointID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connectors_ConnectorID_ChargePointID",
-                table: "Connectors",
-                columns: new[] { "ConnectorID", "ChargePointID" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ConnectorStatuses_ChargePointID1",
                 table: "ConnectorStatuses",
                 column: "ChargePointID1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ConnectorTarifs_ConnectorID",
-                table: "ConnectorTarifs",
-                column: "ConnectorID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DebitCards_UserID",
@@ -706,9 +686,6 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "ConnectorStatuses");
-
-            migrationBuilder.DropTable(
-                name: "ConnectorTarifs");
 
             migrationBuilder.DropTable(
                 name: "DebitCards");

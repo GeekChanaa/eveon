@@ -5,8 +5,8 @@ namespace VoltaXApi.Dtos
     public class ChargingStationListDto
     {
         public int ID { get; set; }
-        public string Name { get; set; } // name of the station
-        public string Address { get; set; } // location of the station
+        public string Name { get; set; } 
+        public string Address { get; set; } 
         public ChargingStationNetworkEnum Network { get; set; }
         public ChargingStationCategoryEnum Category { get; set; }
         public int ChargerQuantity { get; set; }

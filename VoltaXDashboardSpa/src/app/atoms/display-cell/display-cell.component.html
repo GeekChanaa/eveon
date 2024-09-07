@@ -5,7 +5,7 @@
         <use xlink:href="#icon-info"></use>
       </svg>
     </div>
-    <div class="field__edit" (click)="editing = true">
+    <div class="field__edit" *ngIf="editable" (click)="editing = true">
       <svg class="icon icon-edit">
         <use xlink:href="#icon-edit"></use>
       </svg>
@@ -16,27 +16,32 @@
       {{val | titlecase}}
     </ng-container>
     <ng-container *ngIf="inpType == 'select_enum'">
-      {{enumMappings[val]}}
+      {{val}}
     </ng-container>
   </div>
   <div class="field__wrap flex" *ngIf="editing">
 
     <ng-container *ngIf="inpType == 'text'">
-      <input [(ngModel)]="updatedValue" class="field__input" type="text" value="{{val}}">
+      <input #inputField [(ngModel)]="updatedValue" class="field__input" type="text" value="{{val}}">
     </ng-container>
 
     <ng-container *ngIf="inpType == 'select_enum'">
       <select class="select" [(ngModel)]="updatedValue">
-        <option *ngFor="let key of getEnumKeys()" [value]="key">{{enumMappings[key]}}</option>
+        <option *ngFor="let value of getEnumValues()" [value]="value">{{value}}</option>
     </select>
-    
     </ng-container>
 
 
-    <button class="button-stroke inp-btn" (click)="update()" >
-      <svg class="icon icon-check">
-        <use xlink:href="#icon-check"></use>
-      </svg>
+    <button class="button-stroke inp-btn" (click)="updateVal()" >
+      <ng-container *ngIf="!isLoading"> 
+        <svg class="icon icon-check">
+          <use xlink:href="#icon-check"></use>
+        </svg> 
+      </ng-container>
+      <ng-container *ngIf="isLoading"> 
+        <app-svg-spinner></app-svg-spinner> 
+      </ng-container>
+      
     </button>
     <button class="button-stroke inp-btn" (click)="editing = false">
       <svg class="icon icon-close">

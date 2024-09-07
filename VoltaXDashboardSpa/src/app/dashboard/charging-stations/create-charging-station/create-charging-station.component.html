@@ -190,6 +190,25 @@
                     </div>
                   </div>
                 </div>
+
+
+
+                <div class="create__card card">
+                  <div class="card__head">
+                    <div class="title-blue card__title">Choose Charging Station Location</div>
+                  </div>
+                  <div class="file">
+                    <div class="file__label">Location
+                      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
+                        data-position="right">
+                        <svg class="icon icon-info">
+                          <use xlink:href="#icon-info"></use>
+                        </svg>
+                      </div>
+                    </div>
+                    <app-map-picker (locationSelected)="selectMap($event)"></app-map-picker>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -298,29 +317,6 @@
                         </button>
                       </div>
                       <div class="create__group" [formGroupName]="j">
-                        
-                        
-
-                        <div class="field">
-                          <div class="field__label">Quantity
-                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                              <svg class="icon icon-info">
-                                <use xlink:href="#icon-info"></use>
-                              </svg>
-                            </div>
-                          </div>
-                          <div class="field__wrap">
-                            <div class="field__wrap">
-                              <select class="select" formControlName="chargePointConnectorQuantity">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
 
                         <div class="field">
                           <div class="field__label">Speed
@@ -342,54 +338,50 @@
                           </div>
                         </div>
 
-                        <div class="create__card card charge_point_connector_tarif"
-                          formArrayName="chargePointConnectorTarifs"
-                          *ngFor="let tarifCtrl of getChargePointConnectorTarifs(i,j).controls; let k=index">
-                          <div class="create__group" [formGroupName]="k">
-                            <div class="btn__remove_container">
-                              <button type="button"  class="btn__remove" (click)="removeChargePointConnectorTarif(i,j,k)">
-                                <svg viewBox="0 0 1024 1024"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M176.662 817.173c-8.19 8.471-7.96 21.977 0.51 30.165 8.472 8.19 21.978 7.96 30.166-0.51l618.667-640c8.189-8.472 7.96-21.978-0.511-30.166-8.471-8.19-21.977-7.96-30.166 0.51l-618.666 640z" fill="" /><path d="M795.328 846.827c8.19 8.471 21.695 8.7 30.166 0.511 8.471-8.188 8.7-21.694 0.511-30.165l-618.667-640c-8.188-8.471-21.694-8.7-30.165-0.511-8.471 8.188-8.7 21.694-0.511 30.165l618.666 640z" fill="" /></svg>
-                              </button>
-                            </div>
-
-                            <div class="field">
-                              <div class="field__label">Unit
-                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                  <svg class="icon icon-info">
-                                    <use xlink:href="#icon-info"></use>
-                                  </svg>
-                                </div>
-                              </div>
-                              <div class="field__wrap">
-                                <div class="field__wrap">
-                                  <select class="select" formControlName="chargePointConnectorTarifUnit">
-                                    <option value="KW">KW</option>
-                                    <option value="per minute">Per Minute</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div class="field">
-                              <div class="field__label">Currency
-                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                  <svg class="icon icon-info">
-                                    <use xlink:href="#icon-info"></use>
-                                  </svg>
-                                </div>
-                              </div>
-                              <div class="field__wrap">
-                                <select class="select" formControlName="chargePointConnectorTarifCurrency">
-                                  <option value="MAD">MAD</option>
-                                  <option value="EUR">EUR</option>
-                                  <option value="USD">USD</option>
-                                </select>
-                              </div>
+                        <div class="field">
+                          <div class="field__label">Price per KWH
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
                             </div>
                           </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerKWh" placeholder="Value"
+                              required>
+                          </div>
                         </div>
+
+                        <div class="field">
+                          <div class="field__label">Price Per Minute
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerMinute" placeholder="Value"
+                              required>
+                          </div>
+                        </div>
+
+                        <div class="field">
+                          <div class="field__label">Price Per Hour
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerHour" placeholder="Value"
+                              required>
+                          </div>
+                        </div>
+
+                        
                       </div>
-                      <button type="button"  class="button mt-20" (click)="addChargePointConnectorTarif(i,j)">Add Tarif</button>
                     </div>
                     <button type="button"  class="button" (click)="addChargePointConnector(i)">Add Connector</button>
                   </div>
