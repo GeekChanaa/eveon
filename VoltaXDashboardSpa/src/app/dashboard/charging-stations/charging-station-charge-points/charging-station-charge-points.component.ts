@@ -11,20 +11,14 @@ export class ChargingStationChargePointsComponent implements OnInit {
 
   @Input() chargingStationID : number = 0;
   chargePoints : any[] = [];
-  chargePointForm : FormGroup;
   cpfShow : Boolean = false;
+  isChargePointVisible : boolean = false;
+  displayedChargePointID : number = 0;
 
   constructor(
     private _chargePointService: ChargePointService
   ) { 
-    this.chargePointForm = new FormGroup({
-      serialNumber : new FormControl(''),
-      make : new FormControl(''),
-      status : new FormControl('Available'),
-      category : new FormControl('TheTower'),
-      comment : new FormControl(''),
-      chargePointCategory : new FormControl(''),
-    })
+    
   }
 
   ngOnInit() {
@@ -35,44 +29,23 @@ export class ChargingStationChargePointsComponent implements OnInit {
   getChargingStationChargePoints(){
     this._chargePointService.getChargingStationChargePoints(this.chargingStationID).subscribe((data) => {
       this.chargePoints = data;
+      this.cpfShow = false;
     })
   }
-
-
-  
-  // Charge Point Form
-  showChargePointForm(){
-    this.cpfShow = true;
-  }
-
-  cpfOnSubmit(){
-    var cpf = this.chargePointForm.value;
-    const chargePoint : any = {
-      name: "",
-      serialNumber: cpf.serialNumber,
-      category : cpf.category,
-      make: cpf.make,
-      status: cpf.status,
-      comment: cpf.comment,
-      username: '',
-      password: '',
-      clientCertThumb: '',
-      chargePointId: '',
-      chargingStationID: this.chargingStationID
-    }
-    this._chargePointService.create(chargePoint).subscribe((data) => {
-      this.getChargingStationChargePoints();
-    })
-  }
-
-  getControl(name: string): FormControl {
-    return this.chargePointForm.get(name) as FormControl;
-  }
-
   deleteChargePoint(id : number){
     this._chargePointService.deleteById(id).subscribe((data) => {
       this.getChargingStationChargePoints();
     });
+  }
+
+  refresh(){
+    this.getChargingStationChargePoints();
+    this.isChargePointVisible = false;
+  }
+
+  showChargePoint(id : number){
+    this.isChargePointVisible = true;
+    this.displayedChargePointID = id;
   }
 
 

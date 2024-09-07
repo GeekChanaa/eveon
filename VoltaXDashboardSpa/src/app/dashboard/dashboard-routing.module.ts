@@ -60,16 +60,8 @@ const routes: Routes = [
   {
     path: "charging-stations",
     component: ChargingStationsComponent,
-    
-  },
-  {
-    path: "charging-stations/create",
-    component: CreateChargingStationComponent,
-    
-  },
-  {
-    path: 'charging-stations/:id',
-    component: ChargingStationComponent,
+    loadChildren : () => import('./charging-stations/charging-stations.module')
+      .then(m=>m.ChargingStationsModule)
   },
   {
     path: "charging-strategies",

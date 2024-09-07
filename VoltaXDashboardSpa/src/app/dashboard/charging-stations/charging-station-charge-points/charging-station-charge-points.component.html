@@ -1,10 +1,10 @@
 <div class="settings__anchor" id="account" data-value="Account"></div>
 <div class="title-purple settings__title">Charge Points</div>
-<div class="settings__fieldset">
+<div class="settings__fieldset" *ngIf="!isChargePointVisible">
   <div> Choose a Charge Point to view it</div>
   <ng-container *ngIf="chargePoints.length > 0 && !cpfShow">
-    <div class="charge-point-links-container" *ngFor="let chargePoint of chargePoints">
-      <button class="charge-point-link"> {{chargePoint.name}} </button>
+    <div class="charge-point-links-container" >
+      <button *ngFor="let chargePoint of chargePoints" class="charge-point-link" (click)="showChargePoint(chargePoint.id)"> {{chargePoint.name}} </button>
     </div>  
   </ng-container>
 
@@ -12,85 +12,22 @@
     <app-empty-card></app-empty-card>
   </ng-container>
   <ng-container *ngIf="cpfShow">
-    <form [formGroup]="chargePointForm">
-      <app-form-field
-        class="field"
-        title="serialNumber"
-        description="tbd"
-        [control]="getControl('serialNumber')"
-      ></app-form-field>
-      <app-form-field
-        class="field"
-        title="make"
-        description="tbd"
-        [control]="getControl('make')"
-      ></app-form-field>
-      <div class="field">
-        <div class="field__label">
-          Status
-          <div
-            class="tooltip"
-            title="Maximum 100 characters. No HTML or emoji allowed"
-          >
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="field__wrap">
-          <div class="field__wrap">
-            <select class="select" formControlName="status">
-              <option value="Available">Available</option>
-              <option value="UnderMaintenance">Under Maintenance</option>
-              <option value="Offline">Offline</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <app-form-field
-        class="field"
-        title="comment"
-        description="tbd"
-        [control]="getControl('comment')"
-      ></app-form-field>
-      <div class="field">
-        <div class="field__label">
-          Category
-          <div
-            class="tooltip"
-            title="Maximum 100 characters. No HTML or emoji allowed"
-          >
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="field__wrap">
-          <div class="field__wrap">
-            <select class="select" formControlName="category">
-              <option value="TheTower">The Tower</option>
-              <option value="TheTowerPlus">The Tower plus</option>
-              <option value="VXCommercial">VX Commercial</option>
-              <option value="TheTowerDC">The Tower DC</option>
-              <option value="VXHome">VX Home</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="flex">
-        <button (click)="cpfOnSubmit()" class="button">Create</button>
-        <button (click)="cpfShow = false" class="button-stroke btn-cancel">
-          Cancel
-        </button>
-      </div>
-    </form>
+    <app-charging-station-add-charge-point
+      (successEvent)="refresh()"
+      (cancelEvent)="cpfShow = false"></app-charging-station-add-charge-point>
   </ng-container>
 
   <ng-container *ngIf="!cpfShow">
     <div>
-      <button (click)="showChargePointForm()" class="button">
+      <button (click)="cpfShow = true" class="button">
         Add Charge Point
       </button>
     </div>
   </ng-container>
+</div>
+
+<div class="charge-point-container" *ngIf="isChargePointVisible">
+  <app-charging-station-charge-point
+    [chargePointID]="displayedChargePointID"
+    (refreshEvent)="refresh()"></app-charging-station-charge-point>
 </div>

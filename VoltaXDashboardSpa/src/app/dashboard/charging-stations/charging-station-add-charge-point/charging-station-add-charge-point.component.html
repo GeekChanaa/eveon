@@ -1,0 +1,72 @@
+<form [formGroup]="chargePointForm">
+  <app-form-field
+    class="field"
+    title="serialNumber"
+    description="tbd"
+    [control]="getControl('serialNumber')"
+  ></app-form-field>
+  <app-form-field
+    class="field"
+    title="make"
+    description="tbd"
+    [control]="getControl('make')"
+  ></app-form-field>
+  <div class="field">
+    <div class="field__label">
+      Status
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select class="select" formControlName="status">
+          <option value="Available">Available</option>
+          <option value="UnderMaintenance">Under Maintenance</option>
+          <option value="Offline">Offline</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <app-form-field
+    class="field"
+    title="comment"
+    description="tbd"
+    [control]="getControl('comment')"
+  ></app-form-field>
+  <div class="field">
+    <div class="field__label">
+      Category
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select class="select" formControlName="category">
+          <option value="TheTower">The Tower</option>
+          <option value="TheTowerPlus">The Tower plus</option>
+          <option value="VXCommercial">VX Commercial</option>
+          <option value="TheTowerDC">The Tower DC</option>
+          <option value="VXHome">VX Home</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="flex">
+    <button (click)="cpfOnSubmit()" class="button">Create</button>
+    <button (click)="cancelEvent.emit()" class="button-stroke btn-cancel">
+      Cancel
+    </button>
+  </div>
+</form>

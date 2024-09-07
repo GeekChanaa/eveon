@@ -1,0 +1,68 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="charging station"
+      names="charging stations"
+      [searchByAttributes]="['Name','Address']"
+      routeName="charging-stations"
+      createLink="/dashboard/charging-stations/create"
+      [fields]="fields" 
+      [getItemsObservable]="getChargingStationsObservable.bind(this)"
+      [deleteItemObservable]="deleteChargingStationObservable.bind(this)"
+      [updateItemObservable]="updateChargingStationObservable.bind(this)"
+      (displayEvent)="display($event)"
+      searchByPlaceHolder="Search by Name or Address"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By City
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.city">
+                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">By Category
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.category">
+                      <option value="0">Public</option>
+                      <option value="1">Private</option>
+                      <option value="2">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

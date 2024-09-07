@@ -5,8 +5,6 @@ import { AlarmManagementComponent } from './alarm-management/alarm-management.co
 import { ChargingCardsComponent } from './charging-cards/charging-cards.component';
 import { ChargingPointsComponent } from './charging-points/charging-points.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
-import { ChargingStationsComponent } from './charging-stations/charging-stations.component';
-import { CreateChargingStationComponent } from './charging-stations/create-charging-station/create-charging-station.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { CommentManagementComponent } from './comment-management/comment-management.component';
 import { ConnectorsComponent } from './connectors/connectors.component';
@@ -27,9 +25,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
-import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
-import { ChargingStationChargePointComponent } from './charging-stations/charging-station-charge-point/charging-station-charge-point.component';
 import { UserComponent } from './users/user/user.component';
 import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
 import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
@@ -42,12 +38,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 import { ChargePointConnectorsComponent } from './charging-points/charging-point/charge-point-connectors/charge-point-connectors.component';
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
-import { ChargingStationChargePointsComponent } from './charging-stations/charging-station-charge-points/charging-station-charge-points.component';
 
 @NgModule({
     declarations: [
         HomeComponent,
-    ChargingStationsComponent,
     ChargingPointsComponent,
     ConnectorsComponent,
     StationLoadBalanceComponent,
@@ -63,14 +57,11 @@ import { ChargingStationChargePointsComponent } from './charging-stations/chargi
     OcppConfigurationComponent,
     UsersComponent,
     TabsStatisticsComponent,
-    CreateChargingStationComponent,
     DashboardComponent,
     ProfileComponent,
     CreateChargingCardComponent,
-    ChargingStationComponent,
     ChargingPointsComponent,
     RechargeCardsComponent,
-    ChargingStationChargePointComponent,
     UserComponent,
     ChargingPointComponent,
     ChargingCardComponent,
@@ -81,7 +72,6 @@ import { ChargingStationChargePointsComponent } from './charging-stations/chargi
     DebitCardsComponent,
     ChargePointConnectorsComponent,
     ProfileSecurityComponent,
-    ChargingStationChargePointsComponent
     
   ],
     imports: [
