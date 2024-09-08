@@ -16,7 +16,10 @@ export class ChargingStationsListComponent implements OnInit {
 
   cities : any[] = [];
   fields: string[] = [];
-  filters : any = {};
+  filters : any = {
+    category:"",
+    city : ""
+  };
   
 
   chargingStation: ChargingStation = {
@@ -69,11 +72,6 @@ export class ChargingStationsListComponent implements OnInit {
     });
   }
   
-  // delete item
-  display(id : number){
-    this._router.navigate(['/dashboard/charging-stations',id])
-  }
-
   // Getting Morocco Cities: 
   getAllMoroccoCityNames(){
     this._cityService.getAllMoroccoCityNames().subscribe((data) => {
@@ -81,5 +79,11 @@ export class ChargingStationsListComponent implements OnInit {
     })
   }
 
+  resetFilters(){
+    this.filters = {
+      category:"",
+      city : ""
+    }
+  }
   
 }

@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class City : IEntity
+    public class City  : IEntity
     {
         public int ID { get; set; }
         public string? Name { get; set; }
@@ -10,12 +10,12 @@ namespace VoltaXApi.Models
         public string? CountryCode { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public bool Flag { get; set; }
         public string? WikiDataId { get; set; }
-
-        public State State { get; set; }
-        public Country Country { get; set; }
+        public State? State { get; set; }
+        public Country? Country { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "//oh6ecrD/Hth4d42VTQcW9c3/UmYv4kK7uVKauUZEA=",
+  "Hash": "XzCt6QhKNSQqZ96la4fz4VdpWwCDNQP/pLh90+LbXUM=",
   "Source": "VoltaXApi",
   "BasePath": "_content/VoltaXApi",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "VoltaXApi\\wwwroot",
       "Source": "VoltaXApi",
-      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\voltaxapi\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\wwwroot\\",
       "BasePath": "_content/VoltaXApi",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\voltaxapi\\wwwroot\\ProfilePictures\\.png",
+      "Identity": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\wwwroot\\ProfilePictures\\.png",
       "SourceId": "VoltaXApi",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\voltaxapi\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\wwwroot\\",
       "BasePath": "_content/VoltaXApi",
       "RelativePath": "ProfilePictures/.png",
       "AssetKind": "All",

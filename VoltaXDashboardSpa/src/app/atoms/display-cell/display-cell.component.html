@@ -16,7 +16,7 @@
       {{val | titlecase}}
     </ng-container>
     <ng-container *ngIf="inpType == 'select_enum'">
-      {{val}}
+      {{val | camelCaseToSpace}}
     </ng-container>
   </div>
   <div class="field__wrap flex" *ngIf="editing">
@@ -27,7 +27,7 @@
 
     <ng-container *ngIf="inpType == 'select_enum'">
       <select class="select" [(ngModel)]="updatedValue">
-        <option *ngFor="let value of getEnumValues()" [value]="value">{{value}}</option>
+        <option *ngFor="let value of getEnumValues()" [value]="value">{{value.toString() | camelCaseToSpace}}</option>
     </select>
     </ng-container>
 

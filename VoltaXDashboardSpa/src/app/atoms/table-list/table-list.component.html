@@ -32,7 +32,7 @@
           </div>
           <ng-content select="[filter__body]"></ng-content>
           <div class="filters__btns">
-            <button class="button-stroke filters__button">Reset</button>
+            <button class="button-stroke filters__button" (click)="resetFilters()">Reset</button>
             <button class="button filters__button" (click)="applyFilters()">Apply</button>
           </div>
           
@@ -87,17 +87,12 @@
             </ng-container>
             <div class="row__col options_col">
               <div class="actions__container">
-                  <button (click)="delete(item.id)" class="table__action"> 
+                  <button (click)="delete(item.id)" class="table__action delete-btn"> 
                       <svg class="icon icon-trash">
                           <use xlink:href="#icon-trash"></use>
                       </svg>   
                   </button>
-                  <button (click)="update(item.id)" class="table__action"> 
-                      <svg class="icon icon-edit">
-                          <use xlink:href="#icon-edit"></use>
-                      </svg> 
-                  </button>
-                  <button (click)="display(item.id)" class="table__action"> 
+                  <button (click)="display(item.id)" class="table__action display-btn"> 
                       <svg class="icon icon-info">
                           <use xlink:href="#icon-info"></use>
                       </svg>  

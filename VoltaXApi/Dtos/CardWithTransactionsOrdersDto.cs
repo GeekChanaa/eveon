@@ -12,7 +12,7 @@ namespace VoltaXApi.Dtos
         public CardStatusEnum Status { get; set; }
         public double Balance { get; set; }
         public string Note { get; set; }
-        public int UserID { get; set; }
+        public int? UserID { get; set; }
         public ICollection<CardOrderDto> Orders { get; set; }
         public ICollection<CardTransactionDto> Transactions { get; set; }
     }

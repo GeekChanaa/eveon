@@ -7,18 +7,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.Models
 {
-    public class ChargeTag : IEntity
+    public class ChargeTag  : IEntity
     {
-        [Key]
         public int ID { get; set; }
-        public string TagID { get; set; }
+        public string? TagID { get; set; }
         public string TagName { get; set; }
         public string ParentTagId { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool? Blocked { get; set; }
-        public int  CardID { get; set; }
-        
+        public int?  CardID { get; set; }
         public Card? Card { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         
         
     }

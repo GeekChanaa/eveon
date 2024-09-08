@@ -42,7 +42,10 @@ namespace VoltaXApi.Data
         // Get Card with its transactions and orders
         public async Task<CardWithTransactionsOrdersDto> GetCardByID(int CardID)
         {
-            var card = await _context.Cards.Include(u => u.Transactions).Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
+            var card = await _context.Cards
+                .Include(u => u.Transactions)
+                    .ThenInclude(u => u.ChargePoint)
+                .Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
 
             var cardDto = new CardWithTransactionsOrdersDto
             {
@@ -65,7 +68,7 @@ namespace VoltaXApi.Data
                 {
                     ID = t.ID,
                     Uid = t.Uid,
-                    ChargePointID = t.ChargePointID,
+                    ChargePointID = t.ChargePoint.ChargePointId,
                     ConnectorID = t.ConnectorID,
                     StartTagId = t.StartTagId,
                     StartTime = t.StartTime,

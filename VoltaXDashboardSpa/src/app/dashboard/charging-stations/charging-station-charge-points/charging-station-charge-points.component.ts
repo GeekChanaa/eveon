@@ -40,7 +40,7 @@ export class ChargingStationChargePointsComponent implements OnInit {
 
   refresh(){
     this.getChargingStationChargePoints();
-    this.isChargePointVisible = false;
+    this.isChargePointVisible = false;  
   }
 
   showChargePoint(id : number){

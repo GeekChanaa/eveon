@@ -35,7 +35,10 @@ namespace VoltaXApi.Migrations
                     RestaurantsAmenity = table.Column<bool>(type: "bit", nullable: false),
                     WashroomAmenity = table.Column<bool>(type: "bit", nullable: false),
                     SittingAreaAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    PartnerID = table.Column<int>(type: "int", nullable: true)
+                    PartnerID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,10 +70,11 @@ namespace VoltaXApi.Migrations
                     Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Emoji = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmojiU = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Flag = table.Column<bool>(type: "bit", nullable: false),
-                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +92,10 @@ namespace VoltaXApi.Migrations
                     ConnectorId = table.Column<int>(type: "int", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Result = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ErrorCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ErrorCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,7 +112,10 @@ namespace VoltaXApi.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ForCustomers = table.Column<bool>(type: "bit", nullable: false),
                     ForAdmins = table.Column<bool>(type: "bit", nullable: false),
-                    ForPartners = table.Column<bool>(type: "bit", nullable: false)
+                    ForPartners = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,7 +143,10 @@ namespace VoltaXApi.Migrations
                     IsPhoneNumberVerified = table.Column<bool>(type: "bit", nullable: false),
                     PhoneVerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ResetPasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,8 +159,8 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ChargePointId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ChargingStationID = table.Column<int>(type: "int", nullable: false),
+                    ChargePointId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChargingStationID = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Make = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -156,18 +169,19 @@ namespace VoltaXApi.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClientCertThumb = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false)
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChargePoints", x => x.ID);
-                    table.UniqueConstraint("AK_ChargePoints_ChargePointId", x => x.ChargePointId);
                     table.ForeignKey(
                         name: "FK_ChargePoints_ChargingStations_ChargingStationID",
                         column: x => x.ChargingStationID,
                         principalTable: "ChargingStations",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -177,17 +191,18 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CountryID = table.Column<int>(type: "int", nullable: false),
+                    CountryID = table.Column<int>(type: "int", nullable: true),
                     CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FipsCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Iso2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Latitude = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Flag = table.Column<bool>(type: "bit", nullable: false),
-                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -196,8 +211,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_States_Countries_CountryID",
                         column: x => x.CountryID,
                         principalTable: "Countries",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -206,7 +220,10 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<int>(type: "int", nullable: false)
+                    UserID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -215,8 +232,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_Administrators_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -232,7 +248,10 @@ namespace VoltaXApi.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     Balance = table.Column<double>(type: "float", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false)
+                    UserID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,8 +260,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_Cards_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -251,11 +269,14 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CVV = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CVV = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -264,8 +285,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_DebitCards_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -274,17 +294,19 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    NotificationTypeID = table.Column<int>(type: "int", nullable: false),
+                    NotificationTypeID = table.Column<int>(type: "int", nullable: true),
                     Read = table.Column<bool>(type: "bit", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SenderID = table.Column<int>(type: "int", nullable: true),
                     ReceiverID = table.Column<int>(type: "int", nullable: true),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActionOn = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Urgent = table.Column<bool>(type: "bit", nullable: false)
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActionOn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Urgent = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -293,8 +315,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_Notifications_NotificationTypes_NotificationTypeID",
                         column: x => x.NotificationTypeID,
                         principalTable: "NotificationTypes",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Notifications_Users_ReceiverID",
                         column: x => x.ReceiverID,
@@ -314,10 +335,13 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<bool>(type: "bit", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false),
-                    NotificationTypeID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: true),
+                    NotificationTypeID = table.Column<int>(type: "int", nullable: true),
                     Urgent = table.Column<bool>(type: "bit", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -326,14 +350,12 @@ namespace VoltaXApi.Migrations
                         name: "FK_NotificationSettings_NotificationTypes_NotificationTypeID",
                         column: x => x.NotificationTypeID,
                         principalTable: "NotificationTypes",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_NotificationSettings_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -342,12 +364,15 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChargingStationID = table.Column<int>(type: "int", nullable: true),
                     ChargePointID = table.Column<int>(type: "int", nullable: true),
-                    CommentTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CommentTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -366,8 +391,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_Comments_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -377,7 +401,7 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ConnectorID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID = table.Column<int>(type: "int", nullable: false),
+                    ChargePointID = table.Column<int>(type: "int", nullable: true),
                     ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Power = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Speed = table.Column<double>(type: "float", nullable: false),
@@ -387,7 +411,10 @@ namespace VoltaXApi.Migrations
                     PricePerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MaxPower = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true)
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -396,8 +423,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_Connectors_ChargePoints_ChargePointID",
                         column: x => x.ChargePointID,
                         principalTable: "ChargePoints",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -413,10 +439,11 @@ namespace VoltaXApi.Migrations
                     CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Latitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Longitude = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Flag = table.Column<bool>(type: "bit", nullable: false),
-                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    WikiDataId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -444,7 +471,10 @@ namespace VoltaXApi.Migrations
                     ParentTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Blocked = table.Column<bool>(type: "bit", nullable: true),
-                    CardID = table.Column<int>(type: "int", nullable: false)
+                    CardID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -453,8 +483,7 @@ namespace VoltaXApi.Migrations
                         name: "FK_ChargeTags_Cards_CardID",
                         column: x => x.CardID,
                         principalTable: "Cards",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -463,9 +492,12 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CardID = table.Column<int>(type: "int", nullable: false),
+                    CardID = table.Column<int>(type: "int", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     RechargeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -490,7 +522,7 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uid = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ChargePointID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConnectorID = table.Column<int>(type: "int", nullable: false),
                     StartTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -501,7 +533,11 @@ namespace VoltaXApi.Migrations
                     MeterStop = table.Column<double>(type: "float", nullable: true),
                     StopReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Amount = table.Column<double>(type: "float", nullable: false),
-                    CardID = table.Column<int>(type: "int", nullable: true)
+                    CardID = table.Column<int>(type: "int", nullable: true),
+                    ChargePointID1 = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -512,10 +548,10 @@ namespace VoltaXApi.Migrations
                         principalTable: "Cards",
                         principalColumn: "ID");
                     table.ForeignKey(
-                        name: "FK_Transactions_ChargePoints_ChargePointID",
-                        column: x => x.ChargePointID,
+                        name: "FK_Transactions_ChargePoints_ChargePointID1",
+                        column: x => x.ChargePointID1,
                         principalTable: "ChargePoints",
-                        principalColumn: "ChargePointId");
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -527,7 +563,10 @@ namespace VoltaXApi.Migrations
                     ID = table.Column<int>(type: "int", nullable: false),
                     LastStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastStatusTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ChargePointID1 = table.Column<int>(type: "int", nullable: true)
+                    ChargePointID1 = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -554,12 +593,6 @@ namespace VoltaXApi.Migrations
                 name: "IX_Cards_UserID",
                 table: "Cards",
                 column: "UserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ChargePoints_ChargePointId",
-                table: "ChargePoints",
-                column: "ChargePointId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChargePoints_ChargingStationID",
@@ -664,9 +697,9 @@ namespace VoltaXApi.Migrations
                 column: "CardID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_ChargePointID",
+                name: "IX_Transactions_ChargePointID1",
                 table: "Transactions",
-                column: "ChargePointID");
+                column: "ChargePointID1");
         }
 
         /// <inheritdoc />

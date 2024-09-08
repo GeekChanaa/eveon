@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace VoltaXApi.Models
 {
-    public class ChargingStation : IEntity
+    public class ChargingStation  : IEntity
     {
         public int ID { get; set; }
         public string Name { get; set; } 
@@ -37,5 +37,8 @@ namespace VoltaXApi.Models
         public int? PartnerID { get; set; }
         // Navigation properties
         public ICollection<ChargePoint>? ChargePoints { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

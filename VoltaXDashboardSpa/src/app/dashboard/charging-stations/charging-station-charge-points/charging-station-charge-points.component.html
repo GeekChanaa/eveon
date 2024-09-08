@@ -11,8 +11,9 @@
   <ng-container *ngIf="chargePoints.length <= 0 && !cpfShow">
     <app-empty-card></app-empty-card>
   </ng-container>
-  <ng-container *ngIf="cpfShow">
+  <ng-container *ngIf="cpfShow && chargingStationID != null && chargingStationID != undefined">
     <app-charging-station-add-charge-point
+      [chargingStationID]="chargingStationID"
       (successEvent)="refresh()"
       (cancelEvent)="cpfShow = false"></app-charging-station-add-charge-point>
   </ng-container>

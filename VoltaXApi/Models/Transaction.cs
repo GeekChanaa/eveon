@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.Models
 {
-    public class Transaction : IEntity
+    public class Transaction  : IEntity
     {
-
-        [Key]
         public int ID { get; set; }
         public string? Uid { get; set; }
         public string? ChargePointID { get; set; }
@@ -21,8 +19,10 @@ namespace VoltaXApi.Models
         public double Amount { get; set; }
         public int? CardID { get; set; }
         public Card? Card { get; set; }
-        
         public ChargePoint? ChargePoint { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 
 }

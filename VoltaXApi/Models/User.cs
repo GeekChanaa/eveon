@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace VoltaXApi.Models
 {
-    public class User : IEntity
+    public class User  : IEntity
     {
         public int ID { get; set; }
         public string FirstName { get; set; }
@@ -32,6 +32,9 @@ namespace VoltaXApi.Models
         public IEnumerable<Order>? Orders { get; set; }
         public ICollection<DebitCard>? DebitCards { get; set; }
         public ICollection<Card>? Cards { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         
     }
 }

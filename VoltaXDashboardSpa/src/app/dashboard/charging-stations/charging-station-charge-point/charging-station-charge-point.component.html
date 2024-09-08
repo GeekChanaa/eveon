@@ -1,6 +1,13 @@
 
-<div>Charge Point : {{ chargePoint.chargePointId }}</div>
-<button (click)="deleteChargePoint(chargePoint.id)" class="ml-auto" mat-button color="primary">delete</button>
+<div class="head">
+  <div class="head-name">
+    Charge Point : <b>{{ chargePoint.chargePointId }}</b>
+  </div>
+  <div class="head-actions">
+    <button routerLink="/dashboard/charge-points/{{chargePoint.id}}" class="button-stroke button-small button-edit">Edit</button>
+    <button (click)="deleteChargePoint(chargePoint.id)" class="button-stroke-red button-edit button-small">Delete</button>
+  </div>
+</div>
 
 
 <div class="card__display">

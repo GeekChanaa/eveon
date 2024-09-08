@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20240906171620_recreate")]
+    [Migration("20240907181313_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -33,7 +33,18 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("UserID")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -61,8 +72,16 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("CardType")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("MaxCount")
                         .HasColumnType("int");
@@ -74,7 +93,10 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserID")
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -97,9 +119,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("ChargePointId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ChargingStationID")
+                    b.Property<int?>("ChargingStationID")
                         .HasColumnType("int");
 
                     b.Property<string>("ClientCertThumb")
@@ -109,6 +131,14 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Make")
                         .IsRequired()
@@ -129,14 +159,14 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("ChargePointId")
-                        .IsUnique();
 
                     b.HasIndex("ChargingStationID");
 
@@ -154,11 +184,19 @@ namespace VoltaXApi.Migrations
                     b.Property<bool?>("Blocked")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CardID")
+                    b.Property<int?>("CardID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("ParentTagId")
                         .HasColumnType("nvarchar(max)");
@@ -168,6 +206,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("TagName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -204,6 +245,14 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Latitude")
                         .HasColumnType("nvarchar(max)");
@@ -242,6 +291,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("WashroomAmenity")
                         .HasColumnType("bit");
 
@@ -272,6 +324,11 @@ namespace VoltaXApi.Migrations
 
                     b.Property<bool>("Flag")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<decimal>("Latitude")
                         .HasColumnType("decimal(18,2)");
@@ -320,6 +377,14 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CommentTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
@@ -327,7 +392,10 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserID")
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -349,7 +417,7 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("ChargePointID")
+                    b.Property<int?>("ChargePointID")
                         .HasColumnType("int");
 
                     b.Property<string>("ConnectorID")
@@ -358,11 +426,19 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
 
                     b.Property<decimal>("FlatFee")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<decimal>("MaxPower")
                         .HasColumnType("decimal(18,2)");
@@ -385,6 +461,9 @@ namespace VoltaXApi.Migrations
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ChargePointID");
@@ -403,13 +482,24 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ChargePointID1")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("LastStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastStatusTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ConnectorID", "ChargePointID");
@@ -430,7 +520,7 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Capital")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
@@ -450,6 +540,11 @@ namespace VoltaXApi.Migrations
 
                     b.Property<bool>("Flag")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Iso2")
                         .HasColumnType("nvarchar(max)");
@@ -490,7 +585,7 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Translations")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("WikiDataId")
@@ -517,14 +612,25 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserID")
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -548,8 +654,16 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ErrorCode")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("LogTime")
                         .HasColumnType("datetime2");
@@ -559,6 +673,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Result")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -574,11 +691,9 @@ namespace VoltaXApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Action")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ActionOn")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -588,10 +703,14 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NotificationTypeID")
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("NotificationTypeID")
                         .HasColumnType("int");
 
                     b.Property<bool>("Read")
@@ -602,6 +721,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int?>("SenderID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Urgent")
                         .HasColumnType("bit");
@@ -632,16 +754,27 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Email")
                         .HasColumnType("bit");
 
-                    b.Property<int>("NotificationTypeID")
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("NotificationTypeID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Urgent")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserID")
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -661,6 +794,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -674,9 +810,17 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("ForPartners")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -694,10 +838,21 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int>("CardID")
+                    b.Property<int?>("CardID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime>("RechargeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserID")
@@ -723,10 +878,10 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("CountryCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CountryID")
+                    b.Property<int?>("CountryID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FipsCode")
@@ -734,6 +889,11 @@ namespace VoltaXApi.Migrations
 
                     b.Property<bool>("Flag")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Iso2")
                         .HasColumnType("nvarchar(max)");
@@ -778,10 +938,21 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ChargePointID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ChargePointID1")
+                        .HasColumnType("int");
 
                     b.Property<int>("ConnectorID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<double>("MeterStart")
                         .HasColumnType("float");
@@ -810,11 +981,14 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Uid")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.HasIndex("CardID");
 
-                    b.HasIndex("ChargePointID");
+                    b.HasIndex("ChargePointID1");
 
                     b.ToTable("Transactions");
                 });
@@ -836,6 +1010,9 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -849,6 +1026,11 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("bit");
@@ -880,6 +1062,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.ToTable("Users");
@@ -889,9 +1074,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("User");
                 });
@@ -900,9 +1083,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany("Cards")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("User");
                 });
@@ -911,9 +1092,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.ChargingStation", "ChargingStation")
                         .WithMany("ChargePoints")
-                        .HasForeignKey("ChargingStationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChargingStationID");
 
                     b.Navigation("ChargingStation");
                 });
@@ -922,9 +1101,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany()
-                        .HasForeignKey("CardID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CardID");
 
                     b.Navigation("Card");
                 });
@@ -956,9 +1133,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("ChargePoint");
 
@@ -971,9 +1146,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
                         .WithMany("Connectors")
-                        .HasForeignKey("ChargePointID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChargePointID");
 
                     b.Navigation("ChargePoint");
                 });
@@ -999,9 +1172,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany("DebitCards")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("User");
                 });
@@ -1010,9 +1181,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.NotificationType", "NotificationType")
                         .WithMany()
-                        .HasForeignKey("NotificationTypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NotificationTypeID");
 
                     b.HasOne("VoltaXApi.Models.User", "Receiver")
                         .WithMany()
@@ -1033,15 +1202,11 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.NotificationType", "NotificationType")
                         .WithMany()
-                        .HasForeignKey("NotificationTypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NotificationTypeID");
 
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("NotificationType");
 
@@ -1053,8 +1218,7 @@ namespace VoltaXApi.Migrations
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany("Orders")
                         .HasForeignKey("CardID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("VoltaXApi.Models.User", null)
                         .WithMany("Orders")
@@ -1067,9 +1231,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.Country", "Country")
                         .WithMany("States")
-                        .HasForeignKey("CountryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CountryID");
 
                     b.Navigation("Country");
                 });
@@ -1082,8 +1244,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
                         .WithMany("Transactions")
-                        .HasForeignKey("ChargePointID")
-                        .HasPrincipalKey("ChargePointId");
+                        .HasForeignKey("ChargePointID1");
 
                     b.Navigation("Card");
 

@@ -258,6 +258,34 @@ body.dark .row__col:after
     margin-left: 8px
     border: 1px solid var(--primary3)
     border-radius: 50%
+    &.delete-btn
+        color: var(--primary7)
+        fill: var(--primary7)
+        border-color: var(--primary7)
+        transition: ease-in-out all .4s
+        svg
+            fill: var(--primary7)
+            transition: ease-in-out all .4s
+        &:hover
+            color: red
+            border-color: red
+            fill: red
+            svg
+                fill: red
+    &.display-btn
+        color: var(--primary7)
+        fill: var(--primary7)
+        border-color: var(--primary7)
+        transition: ease-in-out all .4s
+        svg
+            fill: var(--primary7)
+            transition: ease-in-out all .4s
+        &:hover
+            color: blue
+            border-color: blue
+            fill: blue
+            svg
+                fill: blue
 
 
 .table__action svg

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { ChargePointService } from 'src/_services/charge-point.service';
 
 @Component({
@@ -15,7 +17,8 @@ export class ChargingStationAddChargePointComponent implements OnInit {
   @Output() cancelEvent : EventEmitter<void> = new EventEmitter();
 
   constructor(
-    private _chargePointService: ChargePointService
+    private _chargePointService: ChargePointService,
+    private _modalService:  ActionModalService
   ) {
     this.chargePointForm = new FormGroup({
       serialNumber : new FormControl(''),
@@ -46,7 +49,10 @@ export class ChargingStationAddChargePointComponent implements OnInit {
       chargingStationID: this.chargingStationID
     }
     this._chargePointService.create(chargePoint).subscribe((data) => {
+      this._modalService.popup(ActionModalStatusEnum.Success, "Success", "The Charge Point has been created succesfully", 4000);
       this.successEvent.emit();
+    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong", 4000);
     })
   }
 

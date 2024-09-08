@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaXApi.Models
 {
-    public class ConnectorStatus : IEntity
+    public class ConnectorStatus  : IEntity
     {   
         public int ID { get; set; }
         public string? ChargePointID { get; set; }
@@ -16,5 +16,8 @@ namespace VoltaXApi.Models
         [ForeignKey(nameof(ConnectorID))]
         public Connector? Connector { get; set; }
         public ChargePoint? ChargePoint { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace VoltaXApi.Models
 {
-    public class Country : IEntity
+    public class Country  : IEntity
     {
         public int ID { get; set; }
         public string? Name { get; set; }
@@ -24,12 +24,13 @@ namespace VoltaXApi.Models
         public decimal? Longitude { get; set; }
         public string? Emoji { get; set; }
         public string? EmojiU { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
         public bool Flag { get; set; }
         public string? WikiDataId { get; set; }
 
         public virtual ICollection<State>? States { get; set; }
         public virtual ICollection<City>? Cities { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -28,6 +28,7 @@ export class TableListComponent implements OnInit {
   @Input() deleteItemObservable! : (id : number) => Observable<any>;
   @Input() updateItemObservable! : (id : number, model : any) => Observable<any>;
   @Output() applyFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
+  @Output() resetFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
   @Output() displayEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -128,13 +129,26 @@ export class TableListComponent implements OnInit {
     this.getAll(); 
   }
 
-  applyFilters(){
-    this.itemParams.FilterValue = [ this.filters.city, this.filters.category]; 
-    this.itemParams.FilterBy = ["City","Category"]; 
-    this.getAll();
+  applyFilters() {
+    this.itemParams.FilterValue = [];
+    this.itemParams.FilterBy = [];
+  
+    for (const key in this.filters) {
+      if (this.filters[key]) {  
+        this.itemParams.FilterValue.push(this.filters[key]);  
+        this.itemParams.FilterBy.push(this.capitalizeFirstLetter(key));  
+      }
+    }
+    console.log("this is the filters");
+    console.log(this.filters);
+    this.getAll();  
   }
 
-  filters : any = {};
+  capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  @Input() filters : any = {};
 
   update = (id: number) =>  this.updateEvent.emit(id);
 
@@ -238,4 +252,7 @@ export class TableListComponent implements OnInit {
     
   }
   
+  resetFilters(){
+    this.resetFiltersEvent.emit();
+  }
 }

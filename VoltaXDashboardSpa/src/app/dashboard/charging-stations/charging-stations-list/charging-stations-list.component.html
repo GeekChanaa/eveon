@@ -7,11 +7,12 @@
       routeName="charging-stations"
       createLink="/dashboard/charging-stations/create"
       [fields]="fields" 
+      [filters]="filters"
       [getItemsObservable]="getChargingStationsObservable.bind(this)"
       [deleteItemObservable]="deleteChargingStationObservable.bind(this)"
       [updateItemObservable]="updateChargingStationObservable.bind(this)"
-      (displayEvent)="display($event)"
       searchByPlaceHolder="Search by Name or Address"
+      (resetFiltersEvent)="resetFilters()"
       >
       <!-- filter body -->
       <ng-container filter__body>
@@ -30,6 +31,7 @@
                 <div class="field__wrap">
                   <div class="field__wrap">
                     <select class="select" [(ngModel)]="filters.city">
+                      <option value="" selected>None</option>
                       <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
                     </select>
                   </div>
@@ -47,9 +49,10 @@
                 <div class="field__wrap">
                   <div class="field__wrap">
                     <select class="select" [(ngModel)]="filters.category">
-                      <option value="0">Public</option>
-                      <option value="1">Private</option>
-                      <option value="2">Partner</option>
+                      <option value="" selected>None</option>
+                      <option value="Public">Public</option>
+                      <option value="Private">Private</option>
+                      <option value="Partner">Partner</option>
                     </select>
                   </div>
                 </div>

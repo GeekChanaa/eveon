@@ -19,21 +19,21 @@ export class EnumMappingService {
       2: 'Partner',
     },
     ChargePointCategory: {
-      0: 'The Tower',
-      1: 'The Tower Plus',
-      2: 'VX Commercial',
-      3: 'The Tower DC',
-      4: 'VX Home',
+      0: 'TheTower',
+      1: 'TheTowerPlus',
+      2: 'VXCommercial',
+      3: 'TheTowerDC',
+      4: 'VXHome',
     },
     ChargePointStatus: {
       0: 'Available',
       1: 'Offline',
-      2: 'Under Maintenance',
+      2: 'UnderMaintenance',
     },
     UserRole: {
       0: 'Admin',
       1: 'Customer',
-      2: 'Premium Customer',
+      2: 'PremiumCustomer',
       3: 'Support',
       4: 'Partner',
     },
@@ -44,7 +44,7 @@ export class EnumMappingService {
     },
     ChargingStationStatusEnum: {
       0: 'Available',
-      1: 'Under Maintenance',
+      1: 'UnderMaintenance',
       2: 'Offline'
     },
     ChargingStationNetworkEnum: {
@@ -53,9 +53,9 @@ export class EnumMappingService {
       2: 'Partner'
     },
     ParkingTypeEnum: {
-      0: 'Parallel Parking',
-      1: 'Perpendicular Parking',
-      2: 'Angle Parking'
+      0: 'ParallelParking',
+      1: 'PerpendicularParking',
+      2: 'AngleParking'
     },
   };
 

@@ -1,12 +1,9 @@
 namespace VoltaXApi.Models
 {
-    public class Card : IEntity
+    public class Card  : IEntity
     {
-    
         public int ID { get; set; }
-    
         public string CardNumber { get; set; }
-        
         public CardTypeEnum CardType { get; set; }
     
         public DateTime ExpirationDate { get; set; }
@@ -14,9 +11,12 @@ namespace VoltaXApi.Models
         public CardStatusEnum Status { get; set; }
         public double Balance { get; set; }
         public string Note { get; set; }
-        public int UserID { get; set; }
+        public int? UserID { get; set; }
         public User? User { get; set; }
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Transaction>? Transactions { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
