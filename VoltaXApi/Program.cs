@@ -18,6 +18,8 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using VoltaXApi.Settings;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+    {
+        var supportedCultures = new[] { new CultureInfo("en-US") };
+        options.DefaultRequestCulture = new RequestCulture("en-US");
+        options.SupportedCultures = supportedCultures;
+        options.SupportedUICultures = supportedCultures;
+    });
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -35,6 +45,7 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IStateRepository, StateRepository>();
 builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
+builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
@@ -44,6 +55,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
+
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
@@ -108,6 +121,7 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 app.UseRouting();
+app.UseRequestLocalization();
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -123,7 +137,7 @@ app.UseStaticFiles(new StaticFileOptions
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
-    // use context
+
     // await SqlScriptExecuter.ExecuteSqlScript();
     // GlobalSeeder.Seed(dbContext).Wait();
     // await UserSeeder.Seed(100,dbContext);
@@ -132,15 +146,12 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.SetCommandTimeout(6000);
 }
 
-// Set WebSocketsOptions
 var webSocketOptions = new WebSocketOptions()
 {
     ReceiveBufferSize = 8 * 1024
 };
 
-// Accept WebSocket
 app.UseWebSockets(webSocketOptions);
 
-// Integrate custom OCPP middleware for message processing
 app.UseOCPPMiddleware();
 app.Run();

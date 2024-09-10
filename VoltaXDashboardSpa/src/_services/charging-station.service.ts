@@ -65,8 +65,12 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
     return this._http.get<any[]>(this.baseUrl+"GetPartnerTop10ChargingStationsByRevenue/"+partnerID);
   }
 
-  createChargingStation(chargingStationCreateDto : ChargingStationCreateDto){
-    return this._http.post<ChargingStationCreateDto>(this.baseUrl+"Add", chargingStationCreateDto, this.httpOptions);
+  getChargingStationByID(chargingStationID : number){
+    return this._http.get<any>(this.baseUrl+"GetChargingStationForDisplay/"+chargingStationID);
+  }
+
+  createChargingStation(chargingStationCreateDto : FormData){
+    return this._http.post<ChargingStationCreateDto>(this.baseUrl+"Add", chargingStationCreateDto);
   }
 
 

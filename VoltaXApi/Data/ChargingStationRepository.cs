@@ -23,6 +23,23 @@ namespace VoltaXApi.Data
             _chargePointRepo = new ChargePointRepository(context,mapper);
         }
 
+
+        
+        public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
+        {
+            var chargingStationQueryable = _context.ChargingStations.AsQueryable();
+
+            if(includableHelper.includeChargePoints) 
+                chargingStationQueryable = chargingStationQueryable.Include(s => s.ChargePoints);
+            if(includableHelper.includeImages) 
+                chargingStationQueryable = chargingStationQueryable.Include(s => s.ChargingStationImages).ThenInclude(s => s.Image);
+           
+            var chargingStation = await chargingStationQueryable.FirstOrDefaultAsync(s => s.ID == chargingStationID);
+
+            var chargingStationDto = _mapper.Map<ChargingStation, ChargingStationListDto>(chargingStation);
+            return chargingStationDto;
+        }
+
         public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID)
         {
             var chargingStation = await this._context.ChargingStations
@@ -200,15 +217,14 @@ namespace VoltaXApi.Data
             return top10Stations;
         }
 
-        public async Task<int> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto)
+        public async Task<ChargingStation> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto)
         {
             ChargingStation chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationCreateDto);
             await this.AddAsync(chargingStation);
-            return chargingStation.ID;
+            return chargingStation;
         }
 
-
-
+        
     }
 
 

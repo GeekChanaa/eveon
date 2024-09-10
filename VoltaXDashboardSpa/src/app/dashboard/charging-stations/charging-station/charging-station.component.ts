@@ -9,6 +9,7 @@ import { ParkingTypeEnum } from 'src/_models/_enums/parking-type';
 import { ChargingStationStatusEnum } from 'src/_models/_enums/charging-station-status';
 import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
+import  {environment} from 'src/environments/environment';
 
 enum ChargingStationTabsEnum {
   InformationsTab = "InformationsTab",
@@ -32,29 +33,9 @@ export class ChargingStationComponent implements OnInit {
   chargingStationCategoryValues : { [key: number]: string; } = {};
   updateChargingStationObservable = (id : number, model : any) => this._chargingStationService.edit(id, model);
 
-  // charging station entity
-  chargingStation: ChargingStation = {
-    id: 0,
-    name: '',
-    address: '',
-    network: '',
-    category: ChargingStationCategoryEnum.Partner,
-    chargerQuantity: '',
-    country: '',
-    state: '',
-    city: '',
-    latitude: '',
-    longitude: '',
-    organisation: '',
-    parkingType: ParkingTypeEnum.AngleParking,
-    status: ChargingStationStatusEnum.Available,
-    wifiAmenity: '',
-    parkingAmenity: '',
-    restaurantsAmenity: '',
-    washroomAmenity: '',
-    sittingAreaAmenity: '',
-    chargePoints: []
-  };
+  chargingStation: any = {};
+
+  staticUrl : string = environment.apiStaticFilesUrl;
 
   // Form group
   chargePointForm : FormGroup;
@@ -84,21 +65,18 @@ export class ChargingStationComponent implements OnInit {
     this.populatingSelectBoxes();
   }
 
-  // populating options for the selectboxes : 
   populatingSelectBoxes(){
     this._enumService.getEnumMapping("ChargingStationCategoryEnum");
   }
 
-  // get charging Station by id
   getChargingStationByID(id : number){
     this.chargingStationID = id;
-      this._chargingStationService.getById(id).subscribe((cs) => {
+      this._chargingStationService.getChargingStationByID(id).subscribe((cs) => {
         this.chargingStation = cs;
         this.chargingStationLoaded = true;
       })
   }
 
-  // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
   }

@@ -7,6 +7,8 @@ namespace VoltaXApi.Services
     public interface IFileManagementService
     {
         void UploadFile(string fileName, string filePath, IFormFile file);
+        void UploadImage(string fileName, string filePath, IFormFile file);
+        void DeleteFileFromRoot(string relativePath);
         
     }
 }

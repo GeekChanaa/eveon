@@ -95,6 +95,15 @@
                   val="{{chargingStation.status}}"></app-display-cell>
               </ng-container>
               
+
+              <div class="title-blue settings__title images__title">Images</div>
+              
+              <div class="images-container" *ngIf="chargingStation.chargingStationImages != null && chargingStation.chargingStationImages.length > 0">
+                <div class="image-container" *ngFor="let image of chargingStation.chargingStationImages">
+                  <img src="{{staticUrl+image.url}}" alt="">
+                </div>
+              </div>
+              
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ChargePointsTab'">

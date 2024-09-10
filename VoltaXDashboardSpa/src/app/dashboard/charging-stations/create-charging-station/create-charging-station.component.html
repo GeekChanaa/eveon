@@ -181,11 +181,17 @@
                       </div>
                     </div>
                     <div class="file__wrap">
-                      <input class="file__input" type="file" />
-                      <div class="file__box">
+                      <input class="upload-input" type="file" multiple (change)="handleUpload($event)" />
+                      <div class="file__box" *ngIf="chargingStationImages == null || chargingStationImages.length == 0">
                         <svg class="icon icon-upload">
                           <use xlink:href="#icon-upload"></use>
                         </svg>Click or drop image
+                      </div>
+                      <div class="files__box">
+                        <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index">
+                          <div class="image__clear" (click)="clearImage(i)">X</div>
+                          <img src="{{imageUrl}}" alt="">
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -206,7 +212,14 @@
                         </svg>
                       </div>
                     </div>
-                    <app-map-picker (locationSelected)="selectMap($event)"></app-map-picker>
+                    <ng-container *ngIf="userLongitude != 0 && userLatitude != 0">
+                      <app-map-picker 
+                        [lng]="userLongitude"
+                        [lat]="userLatitude"
+                        (locationSelected)="selectMap($event)"></app-map-picker>
+                    </ng-container>
+                    
+                    
                   </div>
                 </div>
               </div>

@@ -34,5 +34,6 @@ namespace VoltaXApi.Dtos
         public bool SittingAreaAmenity { get; set; }
         // Navigation properties
         public ICollection<ChargePointListDto>? ChargePoints { get; set; }
+        public ICollection<ImageDto>? ChargingStationImages { get; set; }
     }
 }

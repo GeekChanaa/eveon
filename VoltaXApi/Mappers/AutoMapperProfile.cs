@@ -16,9 +16,7 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             
             CreateMap<Order,OrderDto>();
-
-            CreateMap<ChargePointCreateDto,ChargePoint>();
-            CreateMap<ConnectorCreateDto,Connector>();
+            
             CreateMap<Transaction,TransactionDto>();
                 
         }

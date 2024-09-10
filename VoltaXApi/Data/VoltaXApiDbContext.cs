@@ -93,6 +93,14 @@ namespace VoltaXApi.Data
                 .Property(nt => nt.IsDeleted)
                 .HasDefaultValue(false);
 
+            modelBuilder.Entity<Image>()
+                .Property(nt => nt.IsDeleted)
+                .HasDefaultValue(false);
+
+            modelBuilder.Entity<ChargingStationImage>()
+                .Property(nt => nt.IsDeleted)
+                .HasDefaultValue(false);
+
             modelBuilder.Entity<ConnectorStatus>()
                 .HasKey(cs => new { cs.ConnectorID, cs.ChargePointID });
 
@@ -130,6 +138,8 @@ namespace VoltaXApi.Data
         public DbSet<Country> Countries { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<Image> Images { get; set; }
+        public DbSet<ChargingStationImage> ChargingStationImages { get; set; }
         public DbSet<DebitCard> DebitCards { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationSetting> NotificationSettings { get; set; }

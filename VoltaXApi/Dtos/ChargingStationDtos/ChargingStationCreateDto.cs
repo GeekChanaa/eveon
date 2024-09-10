@@ -34,7 +34,7 @@ namespace VoltaXApi.Dtos
         public bool WashroomAmenity { get; set; }
         public bool SittingAreaAmenity { get; set; }
         public int? PartnerID { get; set; }
-        // Navigation properties
-        public ICollection<ChargePoint>? ChargePoints { get; set; }
+        public ICollection<ChargePointCreateDto>? ChargePoints { get; set; }
+        public IEnumerable<IFormFile>? ChargingStationImages { get; set; }
     }
 }

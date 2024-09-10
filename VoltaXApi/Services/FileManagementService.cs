@@ -11,6 +11,14 @@ namespace VoltaXApi.Services
     public class FileManagementService : IFileManagementService
     {
 
+        public void UploadImage(string fileName, string folderName, IFormFile file)
+        {
+            if (!IsValidImageFile(file))
+                throw new Exception("Invalid image format");
+
+            UploadFile(fileName, folderName, file);
+        }
+
         public void UploadFile(string fileName, string folderName, IFormFile file)
         {
             try
@@ -33,6 +41,30 @@ namespace VoltaXApi.Services
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private bool IsValidImageFile(IFormFile file)
+        {
+            if (file == null) return false;
+
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+
+            return permittedExtensions.Contains(fileExtension);
+        }
+
+        public void DeleteFileFromRoot(string relativePath)
+        {
+          var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+          var absolutePath = Path.Combine(webRootPath, relativePath);
+          if (File.Exists(absolutePath))
+          {
+              File.Delete(absolutePath);
+          }
+          else
+          {
+              Console.WriteLine("File not found.");
+          }
         }
     }
 }

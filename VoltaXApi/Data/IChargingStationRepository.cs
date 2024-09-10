@@ -4,12 +4,14 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Data
 {
     public interface IChargingStationRepository : IRepository<ChargingStation>
     {
-        new Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID);
+        Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID);
+        Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper helper);
         new Task AddAsync(ChargingStation chargingStation);
         Task<double> GetChargingStationRevenue(int chargingStationID, DateTime? start = null , DateTime? end = null);
         Task<IEnumerable<double>> GetChargingStationRevenueLast7Days(int chargingStationID);
@@ -24,6 +26,6 @@ namespace VoltaXApi.Data
         Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast12Months(int partnerID, int chargingStationID);
         Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID);
 
-        Task<int> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto);
+        Task<ChargingStation> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto);
     }
 }

@@ -37,6 +37,7 @@ namespace VoltaXApi.Models
         public int? PartnerID { get; set; }
         // Navigation properties
         public ICollection<ChargePoint>? ChargePoints { get; set; }
+        public ICollection<ChargingStationImage> ChargingStationImages {get; set;}
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

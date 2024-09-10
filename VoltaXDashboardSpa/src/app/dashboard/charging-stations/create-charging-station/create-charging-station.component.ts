@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Action } from 'rxjs/internal/scheduler/Action';
 import { ChargePointCreateDto } from 'src/_models/_dtos/charge-point-create-dto';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
 import { CityNameDto } from 'src/_models/_dtos/city-name-dto';
 import { ConnectorCreateDto } from 'src/_models/_dtos/connector-create-dto';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
+import { AuthService } from 'src/_services/auth.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
@@ -29,6 +31,13 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   chargingStationCategories : any = {};
 
+  userLatitude : number = 0;
+  userLongitude : number = 0;
+
+  chargingStationImages : File[] = [];
+  displayedImages : string[] = [];
+  fileErrors : string[] = [];
+
   ngAfterViewInit() {
   }
 
@@ -50,7 +59,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     private _chargingStationService: ChargingStationService,
     private _enumService : EnumMappingService,
     private _modalService:  ActionModalService,
-    private _router : Router
+    private _router : Router,
+    private _authService:  AuthService
   ) {
     this.form = new FormGroup({
       chargingStationName: new FormControl(''),
@@ -133,7 +143,14 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   ngOnInit() {
     this.getAllCities();
-    this.chargingStationCategories = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"))
+    this.chargingStationCategories = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
+    this._authService.getUserInformations().then((data : any) => {
+      this.userLatitude = data.latitude;
+      this.userLongitude = data.longitude;
+    },(error) => {
+      this.userLatitude = 35.7595;
+      this.userLongitude = -5.8340;
+    })
   }
 
   // Getting cities by state
@@ -144,64 +161,15 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
 
   onSubmit() {
-    // Extract form values
     const formValues = this.form.value;
-
-    console.log("this is the form value");
-    console.log(formValues);
-
-    // Create ChargingStation object
-    const chargingStation: ChargingStationCreateDto = {
-      Address: formValues.chargingStationAddress,
-      Network: formValues.chargingStationNetwork,
-      Category: formValues.chargingStationCategory,
-      ChargerQuantity: formValues.chargingStationChargerQuantity,
-      City: formValues.chargingStationCity,
-      ParkingType: formValues.chargingStationParkingType,
-      Status: formValues.chargingStationStatus,
-      WifiAmenity: formValues.chargingStationAmenities.wifi,
-      ParkingAmenity: formValues.chargingStationAmenities.parking,
-      RestaurantsAmenity: formValues.chargingStationAmenities.restaurants,
-      WashroomAmenity: formValues.chargingStationAmenities.washroom,
-      SittingAreaAmenity: formValues.chargingStationAmenities.sittingArea,
-      Latitude: this.latitude.toString(),
-      Longitude: this.longitude.toString(),
-      chargePoints : []
-    };
-    formValues.chargePoints.forEach((cp : any) => {
-      let chargePoint: ChargePointCreateDto = {
-        name: cp.chargePointName,
-        chargePointId: cp.chargePointID,
-        serialNumber: cp.chargePointSerialNumber,
-        make: "VoltaX",
-        status: cp.chargePointStatus,
-        comment: '',
-        username: '',
-        password: '',
-        clientCertThumb: '',
-        category: cp.chargePointCategory,
-        connectors : []
-      };
-
-      cp.chargePointConnectors.forEach((connector: any) => {
-        const connectorObj: ConnectorCreateDto = {
-          connectorType: "cType2",
-          speed: connector.chargePointConnectorSpeed,
-          pricePerKWh: connector.chargePointConnectorPricePerHour,
-          pricePerMinute: connector.chargePointConnectorPricePerMinute,
-          pricePerHour: connector.chargePointConnectorPricePerHour
-        };
-        chargePoint.connectors.push(connectorObj)
-        
-      });
-
-      chargingStation.chargePoints.push(chargePoint);
-    })
-
-    // Create the station first because the chargePoints depend on its ID
-    this._chargingStationService.createChargingStation(chargingStation).subscribe((createdStation) => {
+    const chargingStationFormData = this.prepareFormData(formValues, this.userLatitude.toString(), this.userLongitude.toString(), this.chargingStationImages);
+    console.log("this is the chargingStationFormData");
+    console.log(chargingStationFormData);
+    this._chargingStationService.createChargingStation(chargingStationFormData).subscribe((createdStation) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Charging Station Created Successfully",4000);
       this._router.navigateByUrl('/dashboard/charging-stations');
+    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);
     });
   }
 
@@ -251,5 +219,83 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     this.latitude = location.latitude;
     this.longitude = location.longitude;
   }
+  prepareFormData(formValues: any, latitude: string, longitude: string, chargingStationImages : File[]): FormData {
+    let formData = new FormData();
+  
+    formData.append('Address', formValues.chargingStationAddress);
+    formData.append('Network', formValues.chargingStationNetwork.toString());
+    formData.append('Category', formValues.chargingStationCategory.toString());
+    formData.append('ChargerQuantity', formValues.chargingStationChargerQuantity.toString());
+    formData.append('City', formValues.chargingStationCity);
+    formData.append('ParkingType', formValues.chargingStationParkingType);
+    formData.append('Status', formValues.chargingStationStatus.toString());
+    formData.append('WifiAmenity', formValues.chargingStationAmenities.wifi.toString());
+    formData.append('ParkingAmenity', formValues.chargingStationAmenities.parking.toString());
+    formData.append('RestaurantsAmenity', formValues.chargingStationAmenities.restaurants.toString());
+    formData.append('WashroomAmenity', formValues.chargingStationAmenities.washroom.toString());
+    formData.append('SittingAreaAmenity', formValues.chargingStationAmenities.sittingArea.toString());
+    formData.append('Latitude', latitude.toString());
+    formData.append('Longitude', longitude.toString());
+    if (this.chargingStationImages) {
+      console.log("there are some");
+      console.log(this.chargingStationImages);
+      this.chargingStationImages.forEach((image : File, index : number) => {
+        formData.append(`chargingStationImages[${index}]`, image, image.name);
+      });
+    }
+  
+    formValues.chargePoints.forEach((cp: any, chargePointIndex: number) => {
+      formData.append(`chargePoints[${chargePointIndex}].name`, cp.chargePointName);
+      formData.append(`chargePoints[${chargePointIndex}].chargePointId`, cp.chargePointID.toString());
+      formData.append(`chargePoints[${chargePointIndex}].serialNumber`, cp.chargePointSerialNumber);
+      formData.append(`chargePoints[${chargePointIndex}].make`, 'VoltaX');
+      formData.append(`chargePoints[${chargePointIndex}].status`, cp.chargePointStatus);
+      formData.append(`chargePoints[${chargePointIndex}].comment`, '');  // Empty as per original logic
+      formData.append(`chargePoints[${chargePointIndex}].username`, '');
+      formData.append(`chargePoints[${chargePointIndex}].password`, '');
+      formData.append(`chargePoints[${chargePointIndex}].clientCertThumb`, '');
+      formData.append(`chargePoints[${chargePointIndex}].category`, cp.chargePointCategory);
+  
+      cp.chargePointConnectors.forEach((connector: any, connectorIndex: number) => {
+        formData.append(`chargePoints[${chargePointIndex}].connectors[${connectorIndex}].connectorType`, 'cType2');
+        formData.append(`chargePoints[${chargePointIndex}].connectors[${connectorIndex}].speed`, connector.chargePointConnectorSpeed);
+        formData.append(`chargePoints[${chargePointIndex}].connectors[${connectorIndex}].pricePerKWh`, connector.chargePointConnectorPricePerKWh.toString());
+        formData.append(`chargePoints[${chargePointIndex}].connectors[${connectorIndex}].pricePerMinute`, connector.chargePointConnectorPricePerMinute.toString());
+        formData.append(`chargePoints[${chargePointIndex}].connectors[${connectorIndex}].pricePerHour`, connector.chargePointConnectorPricePerHour.toString());
+      });
+    });
+  
+    return formData;
+  }
 
+
+  handleUpload(event: any): void {
+    this.fileErrors = [];
+    if (event.target.files && event.target.files[0]) {
+      for(var i=0; i < event.target.files.length ; i++){
+        const file = event.target.files[i];
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.fileErrors.push('Only image files are allowed.');
+        continue;
+      }
+
+      // Validate file size
+      const maxSizeInMB = 2;
+      const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+      if (file.size > maxSizeInBytes) {
+        this.fileErrors.push('File size must be less than 2MB.');
+        continue;
+      }
+        this.displayedImages.push(URL.createObjectURL(event.target.files[i]))
+        this.chargingStationImages.push(event.target.files[i]);
+      }
+    }
+  }
+
+  clearImage(i : number): void {
+    this.chargingStationImages.splice(i,1);
+    this.displayedImages.splice(i,1);
+  }
+  
 }

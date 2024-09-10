@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using VoltaXApi.Helpers;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.Controllers
 {
@@ -21,16 +22,34 @@ namespace VoltaXApi.Controllers
     public class ChargingStationController : GenericController<ChargingStation>
     {
         private readonly IChargingStationRepository _repository;
+        private readonly IChargingStationService _chargingStationService;
 
-        public ChargingStationController(IChargingStationRepository repository) : base(repository)
+        public ChargingStationController(
+                IChargingStationService chargingStationService,
+                IChargingStationRepository repository) : base(repository)
         {
             _repository = repository;
+            _chargingStationService = chargingStationService;
         }
 
         [HttpGet("{id}")]
         public override async Task<IActionResult> GetById(int id)
         {
             var entity = await this._repository.GetChargingStationByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
+        }
+
+        [HttpGet("GetChargingStationForDisplay/{id}")]
+        public async Task<IActionResult> GetChargingStationForDisplay(int id)
+        {
+            var helper = new ChargingStationIncludableHelper{
+                includeImages = true
+            };
+            var entity = await this._repository.GetChargingStationByIdAsync(id, helper);
             if (entity == null)
             {
                 return NotFound();
@@ -78,23 +97,29 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> Create([FromBody] ChargingStationCreateDto chargingStation)
+        public async Task<IActionResult> Create([FromForm] ChargingStationCreateDto chargingStationDto)
         {
-            if (chargingStation == null)
+            if (chargingStationDto == null)
             {
                 return BadRequest("Entity is null");
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                int id = await _repository.CreateChargingStation(chargingStation);
-                return Ok(new { id = id });
+                var ChargingStationImages = Request.Form.Files.Where(f => f.Name.Contains("chargingStationImages"));
+                chargingStationDto.ChargingStationImages = ChargingStationImages;
+
+                var chargingStation =  await this._chargingStationService.CreateChargingStationWithDetails(chargingStationDto);
+                
+                return Ok(new { id = chargingStation.ID });
             }
             catch (Exception ex)
             {
-                Console.Write("this is the stack trace : ");
-                Console.Write(ex.StackTrace);
-                Console.Write(ex.Message);
                 if(ex.InnerException != null)
                     Console.WriteLine(ex.InnerException);
                 return BadRequest(ex.Message);
