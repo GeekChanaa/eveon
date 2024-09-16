@@ -13,7 +13,8 @@ import  {environment} from 'src/environments/environment';
 
 enum ChargingStationTabsEnum {
   InformationsTab = "InformationsTab",
-  ChargePointsTab = "ChargePointsTab"
+  ChargePointsTab = "ChargePointsTab",
+  ImagesTab = "ImagesTab"
 }
 
 @Component({

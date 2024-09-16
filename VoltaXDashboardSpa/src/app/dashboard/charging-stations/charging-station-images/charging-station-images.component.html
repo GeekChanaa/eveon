@@ -1,0 +1,53 @@
+<div class="settings__anchor" id="basics" data-value="Basics"></div>
+<div class="title-green settings__title">Images</div>
+
+<ng-container *ngIf="!addingImages">
+  <ng-container *ngIf="images != null && images.length > 0">
+    <div class="images-container">
+      <div class="image-container" *ngFor="let image of images">
+        <img src="{{rootPathUrl+image.url}}" alt="">
+        <div class="delete-img">X</div>
+      </div>
+    </div>
+  </ng-container>
+  
+  
+  <ng-container *ngIf="images == null || images.length == 0">
+    There are no images assignes to this charging station.
+  </ng-container>
+</ng-container>
+
+
+<ng-container *ngIf="addingImages">
+  <div class="create__card card">
+    <div class="file">
+      <div class="file__label">Cover images
+        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
+          data-position="right">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="file__wrap">
+        <input class="upload-input" type="file" multiple (change)="handleUpload($event)" />
+        <div class="file__box" *ngIf="chargingStationImages == null || chargingStationImages.length == 0">
+          <svg class="icon icon-upload">
+            <use xlink:href="#icon-upload"></use>
+          </svg>Click or drop image
+        </div>
+        <div class="files__box">
+          <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index">
+            <div class="image__clear" (click)="clearImage(i)">X</div>
+            <img src="{{imageUrl}}" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+
+<button *ngIf="!addingImages" (click)="addingImages = true" class="button add-images-btn">Add Images</button>
+
+<button (click)="addingImages = false" class="button button-stroke" *ngIf="addingImages"> Cancel </button>

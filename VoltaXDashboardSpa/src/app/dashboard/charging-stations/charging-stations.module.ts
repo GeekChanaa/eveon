@@ -11,6 +11,7 @@ import { ChargingStationAddChargePointComponent } from './charging-station-add-c
 import { ChargingStationRoutingModule } from './charging-station-routing.module';
 import { ChargingStationsComponent } from './charging-stations.component';
 import { ChargingStationsListComponent } from './charging-stations-list/charging-stations-list.component';
+import { ChargingStationImagesComponent } from './charging-station-images/charging-station-images.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { ChargingStationsListComponent } from './charging-stations-list/charging
     CreateChargingStationComponent,
     ChargingStationAddChargePointComponent,
     ChargingStationsComponent,
-    ChargingStationsListComponent
+    ChargingStationsListComponent,
+    ChargingStationImagesComponent
   ],
     imports: [
         AtomsModule,

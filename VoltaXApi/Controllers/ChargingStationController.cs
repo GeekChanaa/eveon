@@ -46,9 +46,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargingStationForDisplay/{id}")]
         public async Task<IActionResult> GetChargingStationForDisplay(int id)
         {
-            var helper = new ChargingStationIncludableHelper{
-                includeImages = true
-            };
+            var helper = new ChargingStationIncludableHelper{};
             var entity = await this._repository.GetChargingStationByIdAsync(id, helper);
             if (entity == null)
             {
@@ -178,7 +176,7 @@ namespace VoltaXApi.Controllers
             return Ok(await _repository.GetPartnerTop10ChargingStationsByRevenue(partnerID));
         }
 
-
+        
 
 
 

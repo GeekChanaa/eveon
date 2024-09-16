@@ -5,12 +5,18 @@
       <div class="settings__menu">
         <button (click)="changeTab('InformationsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+
+        <button (click)="changeTab('ImagesTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'ImagesTab'}">Images</button>
+
         <button (click)="changeTab('ChargePointsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'ChargePointsTab'}">Charge Points</button>
+        
       </div>
       <div class="settings__wrapper">
         <select class="select">
           <option (click)="changeTab('InformationsTab')">Informations</option>
+          <option (click)="changeTab('ImagesTab')">Images</option>
           <option (click)="changeTab('ChargePointsTab')">Charge Points</option>
         </select>
         <div class="settings__list">
@@ -28,7 +34,6 @@
                   [object]="chargingStation"
                   inpType="text"
                   title="name"
-                 
                   [val]="chargingStation.name" [editable]="false"></app-display-cell>
                 
                 <app-display-cell 
@@ -95,20 +100,17 @@
                   val="{{chargingStation.status}}"></app-display-cell>
               </ng-container>
               
-
-              <div class="title-blue settings__title images__title">Images</div>
-              
-              <div class="images-container" *ngIf="chargingStation.chargingStationImages != null && chargingStation.chargingStationImages.length > 0">
-                <div class="image-container" *ngFor="let image of chargingStation.chargingStationImages">
-                  <img src="{{staticUrl+image.url}}" alt="">
-                </div>
-              </div>
-              
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ChargePointsTab'">
             <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">
               <app-charging-station-charge-points [chargingStationID]="chargingStation.id"></app-charging-station-charge-points>
+            </ng-container>
+            
+          </div>
+          <div class="settings__item" *ngIf="tabsEnum == 'ImagesTab'">
+            <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">
+              <app-charging-station-images [chargingStationID]="chargingStation.id"></app-charging-station-images>
             </ng-container>
             
           </div>
