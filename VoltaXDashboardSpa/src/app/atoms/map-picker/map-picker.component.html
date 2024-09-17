@@ -1,5 +1,5 @@
 <div #mapContainer [ngClass]="{'map-picker-error' : !locationChosen}" style="width: 100%; height: 400px;"></div>
 
-<div *ngIf="!locationChosen" class="map-error">
+<div *ngIf="!locationChosen && !noEdit" class="map-error">
   Please choose a location by clicking on the map.
 </div>

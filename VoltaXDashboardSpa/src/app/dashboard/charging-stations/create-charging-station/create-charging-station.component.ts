@@ -9,6 +9,7 @@ import { ConnectorCreateDto } from 'src/_models/_dtos/connector-create-dto';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
+import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
@@ -38,6 +39,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   displayedImages : string[] = [];
   fileErrors : string[] = [];
 
+  chargePointIDTouched : boolean = false;
+  checkingChagePointID : boolean = false;
+  chargePointTimeout: any = {};
+  chargePointExist : boolean = false;
+
   ngAfterViewInit() {
   }
 
@@ -60,7 +66,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     private _enumService : EnumMappingService,
     private _modalService:  ActionModalService,
     private _router : Router,
-    private _authService:  AuthService
+    private _authService:  AuthService,
+    private _chargePointService: ChargePointService
   ) {
     this.form = new FormGroup({
       chargingStationName: new FormControl(''),
@@ -163,8 +170,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   onSubmit() {
     const formValues = this.form.value;
     const chargingStationFormData = this.prepareFormData(formValues, this.userLatitude.toString(), this.userLongitude.toString(), this.chargingStationImages);
-    console.log("this is the chargingStationFormData");
-    console.log(chargingStationFormData);
     this._chargingStationService.createChargingStation(chargingStationFormData).subscribe((createdStation) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Charging Station Created Successfully",4000);
       this._router.navigateByUrl('/dashboard/charging-stations');
@@ -237,8 +242,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     formData.append('Latitude', latitude.toString());
     formData.append('Longitude', longitude.toString());
     if (this.chargingStationImages) {
-      console.log("there are some");
-      console.log(this.chargingStationImages);
       this.chargingStationImages.forEach((image : File, index : number) => {
         formData.append(`chargingStationImages[${index}]`, image, image.name);
       });
@@ -296,6 +299,23 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   clearImage(i : number): void {
     this.chargingStationImages.splice(i,1);
     this.displayedImages.splice(i,1);
+  }
+
+  isChargePointIDUnique(chargePointID: string): void {
+    this.chargePointIDTouched = true;
+    this.checkingChagePointID = true;
+    clearTimeout(this.chargePointTimeout);
+    this.chargePointTimeout = setTimeout(() => {
+      this._chargePointService.isChargePointIDUnique(chargePointID).subscribe(
+        (data) => {
+          this.chargePointExist = data;
+          this.checkingChagePointID = false;
+        },
+        (error) => {
+          clearTimeout(this.chargePointTimeout);
+        }
+      );
+    }, 800);
   }
   
 }

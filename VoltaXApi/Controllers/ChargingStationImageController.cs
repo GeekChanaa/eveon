@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.Controllers
 {
@@ -19,10 +20,14 @@ namespace VoltaXApi.Controllers
     public class ChargingStationImageController : GenericController<ChargingStationImage>
     {
         private readonly IChargingStationImageRepository _repository;
+        private readonly IChargingStationImageService _chargingStationImageService;
 
-        public ChargingStationImageController(IChargingStationImageRepository repository) : base(repository)
+        public ChargingStationImageController(
+            IChargingStationImageRepository repository,
+            IChargingStationImageService service) : base(repository)
         {
             _repository = repository;
+            _chargingStationImageService = service;
         }
 
         [HttpGet("GetChargingStationImages/{chargingStationID}")]
@@ -31,5 +36,16 @@ namespace VoltaXApi.Controllers
           var images = await this._repository.GetChargingStationImages(chargingStationID);
           return Ok(images);
         }
+
+        [HttpPost("UploadChargingStationImages/{chargingStationID}")]
+        public async Task<IActionResult> UploadChargingStationImages(int chargingStationID)
+        {
+          var ChargingStationImages = Request.Form.Files.Where(f => f.Name.Contains("chargingStationImages"));
+              
+          await this._chargingStationImageService.UploadChargingStationImages(ChargingStationImages,chargingStationID);
+          return StatusCode(200);
+        }
+
+        
     }
 }

@@ -6,10 +6,11 @@ namespace VoltaXApi.Models
     {
         public int ID { get; set; }
         public string ChargePointId { get; set; }
+        [Required]
         public int? ChargingStationID { get; set; }
         public string Name { get; set; }
         public string SerialNumber { get; set; }
-        public string Make { get; set; }
+        public string? Make { get; set; } = "VoltaX";
         public ChargePointStatusEnum Status { get; set; }
         public string? Comment { get; set; }
         public string? Username { get; set; }

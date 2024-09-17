@@ -73,5 +73,9 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
     return this._http.post<ChargingStationCreateDto>(this.baseUrl+"Add", chargingStationCreateDto);
   }
 
+  getChargingStationNames(){
+    return this._http.get<any[]>(this.baseUrl+"GetChargingStationNames");
+  }
+
 
 }

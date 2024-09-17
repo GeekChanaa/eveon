@@ -6,7 +6,7 @@
     <div class="images-container">
       <div class="image-container" *ngFor="let image of images">
         <img src="{{rootPathUrl+image.url}}" alt="">
-        <div class="delete-img">X</div>
+        <div (click)="deleteImage(image.id)" class="delete-img">X</div>
       </div>
     </div>
   </ng-container>
@@ -48,6 +48,25 @@
 </ng-container>
 
 
-<button *ngIf="!addingImages" (click)="addingImages = true" class="button add-images-btn">Add Images</button>
 
-<button (click)="addingImages = false" class="button button-stroke" *ngIf="addingImages"> Cancel </button>
+<div class="form-actions">
+  <button *ngIf="!addingImages" (click)="addingImages = true" class="button add-images-btn">Add Images</button>
+
+  <ng-container *ngIf="addingImages">
+    
+    <button (click)="addingImages = false" class="button button-stroke"> Cancel </button>
+    
+    <button 
+      [disabled]="imagesUploading" 
+      [ngClass]="{'disabled' : imagesUploading}" 
+      class="button add-images-btn"
+      (click)="uploadImages()">
+      <ng-container *ngIf="imagesUploading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+      <ng-container *ngIf="!imagesUploading"> Upload Images </ng-container>
+      
+    </button>
+  </ng-container>
+  
+  
+
+</div>

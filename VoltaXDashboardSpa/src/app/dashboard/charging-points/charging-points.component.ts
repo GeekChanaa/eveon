@@ -8,7 +8,7 @@ import { ChargePointService } from 'src/_services/charge-point.service';
 @Component({
   selector: 'app-charging-points',
   templateUrl: './charging-points.component.html',
-  styleUrls: ['./charging-points.component.css'],
+  styleUrls: ['./charging-points.component.sass'],
 })
 export class ChargingPointsComponent implements OnInit {
   // Data

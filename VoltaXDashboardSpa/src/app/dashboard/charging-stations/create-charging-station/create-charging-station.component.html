@@ -262,8 +262,15 @@
                         </div>
                       </div>
                       <div class="field__wrap">
-                        <input class="field__input" type="text" formControlName="chargePointID" placeholder="Value"
+                        <input 
+                          (ngModelChange)="isChargePointIDUnique($event)" 
+                          class="field__input" type="text" formControlName="chargePointID" placeholder="Value"
                           required>
+                        <app-svg-spinner *ngIf="checkingChagePointID"></app-svg-spinner>
+                        <div class="error-message">
+                          <ng-container *ngIf="chargePointExist"> Charge Point ID already exists </ng-container>
+                        </div>
+                        
                       </div>
                     </div>
 

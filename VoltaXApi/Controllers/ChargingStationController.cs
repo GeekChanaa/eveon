@@ -13,6 +13,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using VoltaXApi.Helpers;
 using VoltaXApi.Services;
+using MailKit.Search;
 
 namespace VoltaXApi.Controllers
 {
@@ -174,6 +175,13 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
         {
             return Ok(await _repository.GetPartnerTop10ChargingStationsByRevenue(partnerID));
+        }
+
+        [HttpGet("GetChargingStationNames")]
+        public async Task<IActionResult> GetChargingStationNames([FromQuery] string? searchTerm = "") 
+        {
+            return Ok(await _repository.GetChargingStationNames(searchTerm));
+
         }
 
         

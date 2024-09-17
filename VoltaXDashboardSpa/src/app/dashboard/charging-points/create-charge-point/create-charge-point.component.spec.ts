@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { ConnectorsComponent } from './connectors.component';
+import { CreateChargePointComponent } from './create-charge-point.component';
 
-describe('ConnectorsComponent', () => {
-  let component: ConnectorsComponent;
-  let fixture: ComponentFixture<ConnectorsComponent>;
+describe('CreateChargePointComponent', () => {
+  let component: CreateChargePointComponent;
+  let fixture: ComponentFixture<CreateChargePointComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConnectorsComponent ]
+      declarations: [ CreateChargePointComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConnectorsComponent);
+    fixture = TestBed.createComponent(CreateChargePointComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

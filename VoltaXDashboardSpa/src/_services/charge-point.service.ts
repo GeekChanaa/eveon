@@ -49,4 +49,8 @@ export class ChargePointService extends AbstractService<ChargePoint>{
   getChargingStationChargePoints(id : number){
     return this._http.get<any[]>(this.baseUrl+"GetChargingStationChargePoints/"+id);
   }
+
+  isChargePointIDUnique(chargePointID : string){
+    return this._http.get<boolean>(this.baseUrl+"IsChargePointIDUnique/"+chargePointID);
+  }
 }

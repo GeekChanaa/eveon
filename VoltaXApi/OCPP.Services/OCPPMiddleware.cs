@@ -150,7 +150,6 @@ namespace OCPP.Core.Server
 
                     if (chargePointStatus != null)
                     {
-                        Console.WriteLine("this is the chargepoint status check");
                         if (context.WebSockets.IsWebSocketRequest)
                         {
                             // Match supported sub protocols

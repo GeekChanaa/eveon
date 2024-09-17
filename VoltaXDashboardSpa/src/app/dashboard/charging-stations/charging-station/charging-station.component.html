@@ -101,6 +101,14 @@
               </ng-container>
               
             </div>
+
+            <div class="title-green settings__title section__title">Location</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <app-map-picker *ngIf="chargingStation.latitude != null && chargingStation.latitude != 0" [noEdit]="true" [lat]="chargingStation.latitude" [lng]="chargingStation.longitude"></app-map-picker>
+            </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ChargePointsTab'">
             <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">

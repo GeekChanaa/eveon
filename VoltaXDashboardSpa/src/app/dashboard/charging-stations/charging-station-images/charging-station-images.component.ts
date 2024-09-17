@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { ChargingStationImageService } from 'src/_services/charging-station-image.service';
 import { environment } from 'src/environments/environment';
 
@@ -18,9 +20,11 @@ export class ChargingStationImagesComponent implements OnInit {
   displayedImages : string[] = [];
   fileErrors : string[] = [];
 
+  imagesUploading : boolean = false;
 
   constructor(
-    private _chargingStationImageService : ChargingStationImageService
+    private _chargingStationImageService : ChargingStationImageService,
+    private _modalService : ActionModalService
   ) { }
 
   ngOnInit() {
@@ -29,9 +33,17 @@ export class ChargingStationImagesComponent implements OnInit {
 
   getImages(){
     this._chargingStationImageService.getChargingStationImages(this.chargingStationID).subscribe((data) => {
-      console.log("this is the images");
-      console.log(data);
       this.images = data;
+    })
+  }
+
+  deleteImage(id : number){
+    this._chargingStationImageService.deleteById(id).subscribe((data) => {
+      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Images Uploaded Successfully",4000);
+      this.getImages();
+    },(error)=> {
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something went wrong please try again later",4000);
+      this.getImages();
     })
   }
 
@@ -63,6 +75,25 @@ export class ChargingStationImagesComponent implements OnInit {
   clearImage(i : number): void {
     this.chargingStationImages.splice(i,1);
     this.displayedImages.splice(i,1);
+  }
+
+  uploadImages(){
+    this.imagesUploading = true;
+    let formData = new FormData();
+
+    if (this.chargingStationImages) {
+      this.chargingStationImages.forEach((image : File, index : number) => {
+        formData.append(`chargingStationImages[${index}]`, image, image.name);
+      });
+    }
+
+    this._chargingStationImageService.uploadChargingStationImages(formData,this.chargingStationID).subscribe((data) => {
+      this.imagesUploading = false;
+      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Images Uploaded Successfully",4000);
+    },(error) => {
+      this.imagesUploading = false;
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something went wrong please try again later",4000);
+    })
   }
 
 }

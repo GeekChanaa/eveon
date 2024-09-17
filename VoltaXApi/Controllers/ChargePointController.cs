@@ -49,7 +49,7 @@ namespace VoltaXApi.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return CreatedAtAction("GetById", new { id = chargePoint.ID }, chargePoint);
+            return Ok(new { id = chargePoint.ID });
         }
 
         // Charging Stations of partner
@@ -81,6 +81,12 @@ namespace VoltaXApi.Controllers
                 return NotFound();
             }
             return Ok(entity);
+        }
+
+        [HttpGet("IsChargePointIDUnique/{chargePointID}")]
+        public async Task<ActionResult<bool>> IsChargePointIDUnique(string chargePointID)
+        {
+            return await this._repository.IsChargePointIDUnique(chargePointID);
         }
 
     }

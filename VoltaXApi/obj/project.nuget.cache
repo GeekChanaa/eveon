@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3WwTToD0omaJ+VjIYkMGYpR3/shXfxvJTIihfH6iFKKuP+u6qajrTXxxOc5hyh5tezITKWiaFYAPnCRpmfq74g==",
+  "dgSpecHash": "kFRRQZEi4o6hH8ANxTOg75VU//pOONI57C8cMZe2xgkUfdv3SkiteJh9mEqFWur//3x8Cr7awEFzk0jB6mceYw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\VoltaXApi\\VoltaXApi.csproj",
+  "projectFilePath": "C:\\Users\\XPS\\OneDrive\\Bureau\\charging\\VoltaX\\voltaxapi\\VoltaXApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\XPS\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\XPS\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

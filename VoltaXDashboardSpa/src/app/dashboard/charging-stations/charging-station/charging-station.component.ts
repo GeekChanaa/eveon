@@ -72,10 +72,10 @@ export class ChargingStationComponent implements OnInit {
 
   getChargingStationByID(id : number){
     this.chargingStationID = id;
-      this._chargingStationService.getChargingStationByID(id).subscribe((cs) => {
-        this.chargingStation = cs;
-        this.chargingStationLoaded = true;
-      })
+    this._chargingStationService.getChargingStationByID(id).subscribe((cs) => {
+      this.chargingStation = cs;
+      this.chargingStationLoaded = true;
+    })
   }
 
   changeTab(tab : any){

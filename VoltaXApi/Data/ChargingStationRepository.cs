@@ -10,6 +10,7 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Mappers;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 
 namespace VoltaXApi.Data
 {
@@ -222,6 +223,17 @@ namespace VoltaXApi.Data
             ChargingStation chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationCreateDto);
             await this.AddAsync(chargingStation);
             return chargingStation;
+        }
+
+        public async Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "")
+        {
+            if(searchTerm.IsNullOrEmpty())
+                return await this._context.ChargingStations
+                    .Select(cs => new ChargingStationSelectDto {Name = cs.Name, ID = cs.ID}).ToListAsync();
+            else
+                return await this._context.ChargingStations.Where(cs => cs.Name.Contains(searchTerm))
+                    .Select(cs => new ChargingStationSelectDto {Name = cs.Name, ID = cs.ID}).ToListAsync();
+
         }
 
         

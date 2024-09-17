@@ -3,11 +3,9 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { AlarmManagementComponent } from './alarm-management/alarm-management.component';
 import { ChargingCardsComponent } from './charging-cards/charging-cards.component';
-import { ChargingPointsComponent } from './charging-points/charging-points.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { CommentManagementComponent } from './comment-management/comment-management.component';
-import { ConnectorsComponent } from './connectors/connectors.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
@@ -19,7 +17,6 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { UsersComponent } from './users/users.component';
 import { DashboardComponent } from './dashboard.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { BrowserModule } from '@angular/platform-browser';
 import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
@@ -36,14 +33,11 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
 import {MatExpansionModule} from '@angular/material/expansion'; 
 import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
-import { ChargePointConnectorsComponent } from './charging-points/charging-point/charge-point-connectors/charge-point-connectors.component';
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
 
 @NgModule({
     declarations: [
-        HomeComponent,
-    ChargingPointsComponent,
-    ConnectorsComponent,
+      HomeComponent,
     StationLoadBalanceComponent,
     ChargingCardsComponent,
     ChargingStrategiesComponent,
@@ -60,7 +54,6 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
     DashboardComponent,
     ProfileComponent,
     CreateChargingCardComponent,
-    ChargingPointsComponent,
     RechargeCardsComponent,
     UserComponent,
     ChargingPointComponent,
@@ -70,7 +63,6 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
     NotificationSettingsComponent,
     CompleteProfileComponent,
     DebitCardsComponent,
-    ChargePointConnectorsComponent,
     ProfileSecurityComponent,
     
   ],

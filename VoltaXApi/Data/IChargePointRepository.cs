@@ -11,5 +11,6 @@ namespace VoltaXApi.Data
         Task AddAsync(ChargePoint chargePoint);
         Task<ChargePointListDto> GetChargePointByIdAsync(int id);
         Task<List<ChargePointListDto>> GetChargingStationChargePoints(int chargingStationID);
+        Task<bool> IsChargePointIDUnique(string chargePointID);
     }
 }

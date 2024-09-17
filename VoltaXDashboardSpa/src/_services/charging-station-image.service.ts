@@ -20,4 +20,8 @@ export class ChargingStationImageService extends AbstractService<ChargingStation
   getChargingStationImages(id : number){
     return this._http.get<any[]>(this.baseUrl+"GetChargingStationImages/"+id);
   }
+
+  uploadChargingStationImages(images : FormData, chargingStationID : number){
+    return this._http.post<any>(this.baseUrl+"UploadChargingStationImages/"+chargingStationID, images);
+  }
 }

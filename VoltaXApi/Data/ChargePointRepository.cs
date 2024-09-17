@@ -84,6 +84,12 @@ namespace VoltaXApi.Data
             return chargePointsDto;
         }
 
+        public async Task<bool> IsChargePointIDUnique(string chargePointID)
+        {
+            return await this._context.ChargePoints.AnyAsync(cp => cp.ChargePointId == chargePointID);
+        }
+
+
 
 
     }

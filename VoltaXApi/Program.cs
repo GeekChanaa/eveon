@@ -47,6 +47,7 @@ builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
+builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();

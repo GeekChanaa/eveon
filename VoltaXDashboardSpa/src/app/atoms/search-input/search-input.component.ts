@@ -24,6 +24,9 @@ export class SearchInputComponent implements OnInit {
     // Initialize filteredOptions with options
     this.filteredOptions = this.options;
 
+    console.log("this is the options in the beginning");
+    console.log(this.options);
+
     // Subscribe to value changes of control
     this.control.valueChanges.subscribe(value => {
       this.filteredOptions = this.filterOptions(value);
@@ -31,6 +34,7 @@ export class SearchInputComponent implements OnInit {
   }
 
   filterOptions(value: string): string[] {
+
     // Filter options based on input value
     return this.options.filter(option => option.name.toLowerCase().includes(value.toLowerCase()));
   }

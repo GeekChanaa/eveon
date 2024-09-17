@@ -33,7 +33,6 @@ export class TableListComponent implements OnInit {
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
 
-
   constructor( 
     private _enumMappingService : EnumMappingService,
     private _modalService : ActionModalService,

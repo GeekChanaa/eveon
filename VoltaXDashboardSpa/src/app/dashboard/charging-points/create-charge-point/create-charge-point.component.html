@@ -1,0 +1,207 @@
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">New Charge Point</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="create">
+        <div class="create__row">
+          <div class="create__col">
+              <div class="create__card card charge_point_form">
+                    <div class="create__group create__group3" *ngIf="chargingStations != null && chargingStations.length > 0">
+                  
+                    <div class="field">
+                      <div class="field__label">Charging Station
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <app-search-input class="field__wrap"
+                        (optionSelected)="updateChargingStationID($event)"
+                        [control]="chargingStationIDControl"
+                        [options]="chargingStations"></app-search-input>
+                    </div>
+                    <div class="field">
+                      <div class="field__label">Charge Point Name
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input class="field__input" type="text" formControlName="chargePointName" placeholder="Value"
+                          required>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Charge Point ID
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input 
+                          (ngModelChange)="isChargePointIDUnique($event)" 
+                          class="field__input" type="text" formControlName="chargePointID" placeholder="Value"
+                          required>
+                        <app-svg-spinner *ngIf="checkingChagePointID"></app-svg-spinner>
+                        <div class="error-message">
+                          <ng-container *ngIf="chargePointExist"> Charge Point ID already exists </ng-container>
+                        </div>
+                        
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Category
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="chargePointCategory">
+                            <option value="TheTower">The Tower</option>
+                            <option value="TheTowerPlus">The Tower plus</option>
+                            <option value="VXCommercial">VX Commercial</option>
+                            <option value="TheTowerDC">The Tower DC</option>
+                            <option value="VXHome">VX Home</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="field">
+                      <div class="field__label">Charge Point Serial number
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input class="field__input" type="text" formControlName="chargePointSerialNumber"
+                          placeholder="Value" required>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Charge Point Status
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="chargePointStatus">
+                            <option value="Available">Available</option>
+                            <option value="Offline">Offline</option>
+                            <option value="UnderMaintenance">Under Maintenance</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="create__card card charge_point_connector_form" formArrayName="chargePointConnectors"
+                      *ngFor="let connectorCtrl of getChargePointConnectors().controls; let j=index">
+                      <div class="btn__remove_container">
+                        <button type="button"  class="btn__remove" (click)="removeChargePointConnector(j)">
+                          <svg viewBox="0 0 1024 1024"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M176.662 817.173c-8.19 8.471-7.96 21.977 0.51 30.165 8.472 8.19 21.978 7.96 30.166-0.51l618.667-640c8.189-8.472 7.96-21.978-0.511-30.166-8.471-8.19-21.977-7.96-30.166 0.51l-618.666 640z" fill="" /><path d="M795.328 846.827c8.19 8.471 21.695 8.7 30.166 0.511 8.471-8.188 8.7-21.694 0.511-30.165l-618.667-640c-8.188-8.471-21.694-8.7-30.165-0.511-8.471 8.188-8.7 21.694-0.511 30.165l618.666 640z" fill="" /></svg>
+                        </button>
+                      </div>
+                      <div class="create__group" [formGroupName]="j">
+
+                        <div class="field">
+                          <div class="field__label">Speed
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <div class="field__wrap">
+                              <select class="select" formControlName="chargePointConnectorSpeed">
+                                <option value="7.3">7.3 KWh</option>
+                                <option value="11">11 KWh</option>
+                                <option value="22">22 KWh</option>
+                                <option value="43">43 KWh</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="field">
+                          <div class="field__label">Price per KWH
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerKWh" placeholder="Value"
+                              required>
+                          </div>
+                        </div>
+
+                        <div class="field">
+                          <div class="field__label">Price Per Minute
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerMinute" placeholder="Value"
+                              required>
+                          </div>
+                        </div>
+
+                        <div class="field">
+                          <div class="field__label">Price Per Hour
+                            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                              <svg class="icon icon-info">
+                                <use xlink:href="#icon-info"></use>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="field__wrap">
+                            <input class="field__input" type="text" formControlName="chargePointConnectorPricePerHour" placeholder="Value"
+                              required>
+                          </div>
+                        </div>
+
+                        
+                      </div>
+                    </div>
+                    <button type="button"  class="button" (click)="addChargePointConnector()">Add Connector</button>
+                  </div>
+                </div>
+            </div>
+            <div *ngIf="activeDiv === 3">
+              <h4>this is the preview</h4>
+            </div>
+            
+          </div>
+        </div>
+        <div class="btns_group">
+          <button *ngIf="activeDiv > 1" type="button" class="button-stroke btn_previous" (click)="showPreviousDiv()"> Previous step </button>
+          
+          <button type="button" *ngIf="activeDiv <= 2" class="button btn_next" (click)="showNextDiv()"> Next step </button>
+          
+          <button class="button" type="submit"> Submit </button>
+        </div>
+    </form>
+  </div>

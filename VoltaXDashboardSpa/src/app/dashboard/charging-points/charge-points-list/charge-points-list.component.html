@@ -1,29 +1,27 @@
-<router-outlet></router-outlet>
-<!-- <div class="page__inner">
+<div class="page__inner">
   <div class="page__container">
     <app-table-list 
-      name="charging point"
-      names="charging points"
+      name="charge point"
+      names="charge points"
+      [searchByAttributes]="['ChargePointId','Address']"
+      routeName="charging-points"
+      createLink="/dashboard/charging-points/create"
       [fields]="fields" 
-      [data]="data"
-      (next)="nextPage()"
-      (previous)="previousPage()"
-      (deleteEvent)="delete($event)"
-      (displayEvent)="display($event)"
-      (updateEvent)="update($event)"
-      (sortEvent)="sort($event)"
-      (applyFiltersEvent)="applyFilters()"
-      searchByPlaceHolder="Search by Name or Address"
-      (searchEvent)="search($event)"
-      createLink="/dashboard/charging-points/create">
-
+      [filters]="filters"
+      [getItemsObservable]="getChargePointsObservable.bind(this)"
+      [deleteItemObservable]="deleteChargePointObservable.bind(this)"
+      [updateItemObservable]="updateChargePointObservable.bind(this)"
+      searchByPlaceHolder="Search by Name"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
       <ng-container filter__body>
         <div  class="filters__group">
         
           <div class="filters__item">
             <div class="filters__list">
               <div class="field">
-                <div class="field__label">By Status
+                <div class="field__label">By City
                   <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
@@ -32,10 +30,9 @@
                 </div>
                 <div class="field__wrap">
                   <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.status">
-                      <option value="0">Available</option>
-                      <option value="1">Offline</option>
-                      <option value="2">Under Maintenance</option>
+                    <select class="select" [(ngModel)]="filters.city">
+                      <option value="" selected>None</option>
+                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
                     </select>
                   </div>
                 </div>
@@ -52,11 +49,10 @@
                 <div class="field__wrap">
                   <div class="field__wrap">
                     <select class="select" [(ngModel)]="filters.category">
-                      <option value="0">The Tower</option>
-                      <option value="1">The Tower Plus</option>
-                      <option value="2">VX Commercial</option>
-                      <option value="3">The Tower DC</option>
-                      <option value="4">VX Home</option>
+                      <option value="" selected>None</option>
+                      <option value="Public">Public</option>
+                      <option value="Private">Private</option>
+                      <option value="Partner">Partner</option>
                     </select>
                   </div>
                 </div>
@@ -69,8 +65,7 @@
         </div>
       </ng-container>
 
-
+      
     </app-table-list>
   </div>
 </div>
- -->

@@ -5,7 +5,7 @@
     <form class="form">
       <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
 
-      <button class="form__button">
+      <button class="form__button" (click)="search()">
         <svg class="icon icon-search">
           <use xlink:href="#icon-search"></use>
         </svg>
