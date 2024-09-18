@@ -49,6 +49,7 @@ builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImage
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
@@ -57,6 +58,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

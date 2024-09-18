@@ -55,5 +55,17 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.GetUserNamesByName(name);
         }
+
+        [HttpGet("IsEmailUnique/{email}")]
+        public async Task<ActionResult<bool>> IsEmailUnique(string email)
+        {
+            return await this._repository.IsEmailUnique(email);
+        }
+
+        [HttpGet("IsPhoneUnique/{phone}")]
+        public async Task<ActionResult<bool>> IsPhoneUnique(string phone)
+        {
+            return await this._repository.IsPhoneUnique(phone);
+        }
     }
 }

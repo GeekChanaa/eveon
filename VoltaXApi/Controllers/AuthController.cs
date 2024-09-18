@@ -68,7 +68,7 @@ namespace VoltaXApi.Controllers
             MailRequest requ = new MailRequest{
                 Phone = "",
                 Email = "support@voltaxcharging.com",
-                Name = "IQOR Imane",
+                Name = "CHANAA mohammed",
                 ToEmail = createdUser.Email,
                 Subject = "Email Verification",
                 Body = ""
@@ -183,7 +183,7 @@ namespace VoltaXApi.Controllers
             MailRequest requ = new MailRequest{
                 Phone = "",
                 Email = "no-reply@voltaxcharging.com",
-                Name = "IQOR Imane",
+                Name = "CHANAA mohammed",
                 ToEmail = email,
                 Subject = "Password Reset",
                 Body = ""
@@ -266,6 +266,21 @@ namespace VoltaXApi.Controllers
             await this._repo.CreateEmailVerificationToken(userID);
 
             // sending email verification via email
+            return StatusCode(200);
+        }
+
+        [HttpGet("testingEmail")]
+        public async Task<IActionResult> TestingEmail()
+        {
+            MailRequest requ = new MailRequest{
+                Phone = "",
+                Email = "support@voltaxcharging.com",
+                Name = "CHANAA Mohammed",
+                ToEmail = "chanaa.projects@gmail.com",
+                Subject = "Email Verification",
+                Body = ""
+            };
+            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/verify-email?");
             return StatusCode(200);
         }
     }

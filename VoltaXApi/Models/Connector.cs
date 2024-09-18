@@ -10,9 +10,9 @@ namespace VoltaXApi.Models
         public decimal Power { get; set; } = 0 ;
         public double? Speed { get; set; }
         public decimal PricePerKWh { get; set; }   
-        public decimal FlatFee { get; set; }  = 0 ;     
         public decimal PricePerMinute { get; set; }   
         public decimal PricePerHour { get; set; }  
+        public decimal FlatFee { get; set; }  = 0 ;     
         public decimal MaxPower { get; set; }  
         public TimeSpan? StartTime { get; set; }    
         public TimeSpan? EndTime { get; set; }      

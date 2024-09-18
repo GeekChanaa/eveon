@@ -18,11 +18,22 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ConnectorController : GenericController<Connector>
     {
-        private readonly IRepository<Connector> _repository;
+        private readonly IConnectorRepository _repository;
 
-        public ConnectorController(IRepository<Connector> repository) : base(repository)
+        public ConnectorController(IConnectorRepository repository) : base(repository)
         {
             _repository = repository;
+        }
+
+        [HttpGet("GetChargePointConnectors/{id}")]
+        public async Task<IActionResult> GetChargePointConnectors(int id)
+        {
+            var entity = await this._repository.GetChargePointConnectors(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
         }
 
         

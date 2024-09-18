@@ -89,5 +89,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.IsChargePointIDUnique(chargePointID);
         }
 
+        [HttpGet("GetChargePointByID/{chargePointID}")]
+        public async Task<IActionResult> GetChargePointByID(int chargePointID)
+        {
+            var helper = new ChargePointIncludableHelper{};
+            return Ok(await this._repository.GetChargePointByID(chargePointID,helper));
+        }
+
     }
 }

@@ -13,5 +13,7 @@ namespace VoltaXApi.Data
         Task<List<DebitCardListingDto>> GetUserDebitCards(int UserId);
         Task<List<UserNameDto>> GetUserNames();
         Task<List<UserNameDto>> GetUserNamesByName(string name);
+        Task<bool> IsEmailUnique(string email);
+        Task<bool> IsPhoneUnique(string phone);
     }
 }

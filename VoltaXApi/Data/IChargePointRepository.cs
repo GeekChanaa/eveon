@@ -1,4 +1,5 @@
 using VoltaXApi.Dtos;
+using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
@@ -12,5 +13,6 @@ namespace VoltaXApi.Data
         Task<ChargePointListDto> GetChargePointByIdAsync(int id);
         Task<List<ChargePointListDto>> GetChargingStationChargePoints(int chargingStationID);
         Task<bool> IsChargePointIDUnique(string chargePointID);
+        Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper);
     }
 }

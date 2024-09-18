@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using VoltaXApi.Dtos;
 using AutoMapper;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Data
 {
@@ -89,6 +90,20 @@ namespace VoltaXApi.Data
             return await this._context.ChargePoints.AnyAsync(cp => cp.ChargePointId == chargePointID);
         }
 
+        public async Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper)
+        {
+            var chargePointQueryable = _context.ChargePoints.Include(u => u.ChargingStation).AsQueryable();
+
+            
+
+            if(includableHelper.includeConnectors) 
+                chargePointQueryable = chargePointQueryable.Include(s => s.Connectors);
+           
+            var chargePoint = await chargePointQueryable.FirstOrDefaultAsync(s => s.ID == chargePointID);
+
+            var chargePointDto = _mapper.Map<ChargePoint, ChargePointDisplayDto>(chargePoint);
+            return chargePointDto;
+        }
 
 
 
