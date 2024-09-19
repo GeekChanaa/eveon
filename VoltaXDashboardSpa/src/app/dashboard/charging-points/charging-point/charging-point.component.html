@@ -1,12 +1,15 @@
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">Charge Point</div>
+    <div class="page__title h3">Charge Point : {{chargePoint.name}}</div>
     <div class="settings">
       <div class="settings__menu">
         <button (click)="changeTab('InformationsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+
+
         <button (click)="changeTab('ConnectorsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'ConnectorsTab'}">Connectors</button>
+        
       </div>
       <div class="settings__wrapper">
         <select class="select">
@@ -20,20 +23,94 @@
             <div class="settings__profile">
 
             </div>
-            <div class="settings__fieldset" *ngIf="chargePointLoaded">
-              <app-display-cell (updatePropertyEvent)="update($event,'name')" title="name" val="{{chargePoint.name}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'serialNumber')" title="serialNumber" inpType="text" val="{{chargePoint.serialNumber}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'make')" title="make" inpType="text" val="{{chargePoint.make}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'status')" title="status" inpType="select_enum" enumName="ChargePointStatus" val="{{chargePoint.status}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'comment')" title="comment" inpType="text" val="{{chargePoint.comment}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'category')" title="category" inpType="select_enum" enumName="ChargePointCategory" val="{{chargePoint.category}}"></app-display-cell>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="chargePointLoaded">
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="Charging Station"
+                  [editable]="false"
+                  [link]="'/dashboard/charging-stations/'+chargePoint.chargingStationID"
+                  [isLink]="true"
+                  [val]="chargePoint.chargingStationName" [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="name"
+                  [val]="chargePoint.name" [editable]="false"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="Charge Point ID"
+                  [val]="chargePoint.chargePointId"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="select_enum"
+                  enumName="ChargePointStatus"
+                  title="status"
+                  val="{{chargePoint.status}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateChargePointObservable.bind(this)" 
+                    [object]="chargePoint"
+                    inpType="select_enum"
+                    title="category"
+                    enumName="ChargePointCategory" 
+                    val="{{chargePoint.category}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="make"
+                  val="{{chargePoint.make}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="username"
+                  val="{{chargePoint.username}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="password"
+                  val="{{chargePoint.password}}"></app-display-cell>
+                
+                
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="clientCertThumb"
+                  val="{{chargePoint.clientCertThumb}}"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateChargePointObservable.bind(this)" 
+                  [object]="chargePoint"
+                  inpType="text"
+                  title="comment"
+                  val="{{chargePoint.comment}}"></app-display-cell>
+              </ng-container>
+              
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'ConnectorsTab'">
-            <!-- <app-charge-point-connectors [chargePointID]="chargePoint.id" (reloadChargePoint)="getChargePointByID(chargePoint.id)" (deleteConnectorEvent)="deleteConnector($event)"  [connectors]="chargePoint.connectors"></app-charge-point-connectors> -->
+            <ng-container *ngIf="chargePoint.id != null && chargePoint.id != undefined">
+              <app-charge-point-connectors [chargePointID]="chargePoint.id"></app-charge-point-connectors>
+            </ng-container>
+            
           </div>
-
-          
 
         </div>
       </div>

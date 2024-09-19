@@ -22,14 +22,12 @@ namespace VoltaXApi.Data
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            // Email verification initial configuration
             user.IsEmailVerified = false;
             user.EmailVerificationToken = GenerateVerificationToken();
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
-            // Creating a standard recharge card for the user
             Card userCard = new Card
             {
                 CardNumber = GenerateCardNumber(),
@@ -49,13 +47,9 @@ namespace VoltaXApi.Data
 
         private string GenerateCardNumber()
         {
-            // Generate a new GUID
             Guid guid = Guid.NewGuid();
             
-            // Convert the GUID to a string and remove the hyphens
             string cardNumber = guid.ToString().Replace("-", "");
-            
-            // Return the first 16 characters of the card number
             return cardNumber.Substring(0, 16);
         }
 

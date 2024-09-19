@@ -53,4 +53,15 @@ export class ChargePointService extends AbstractService<ChargePoint>{
   isChargePointIDUnique(chargePointID : string){
     return this._http.get<boolean>(this.baseUrl+"IsChargePointIDUnique/"+chargePointID);
   }
+
+  getChargePointByID(id : number){
+    return this._http.get<any[]>(this.baseUrl+"getChargePointByID/"+id);
+  }
+
+  isChargePointSerialNumberUnique(chargePointSerialNumber : string){
+    return this._http.get<boolean>(this.baseUrl+"isChargePointSerialNumberUnique/"+chargePointSerialNumber);
+  }
+
+  
+
 }

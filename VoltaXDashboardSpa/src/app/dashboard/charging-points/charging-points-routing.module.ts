@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CreateChargePointComponent } from './create-charge-point/create-charge-point.component';
 import { ChargePointsListComponent } from './charge-points-list/charge-points-list.component';
+import { ChargingPointComponent } from './charging-point/charging-point.component';
 const routes: Routes = [
   {
     path: "",
@@ -10,6 +11,10 @@ const routes: Routes = [
   {
     path: "create",
     component: CreateChargePointComponent
+  },
+  {
+    path: ":id",
+    component: ChargingPointComponent
   },
   
 ];

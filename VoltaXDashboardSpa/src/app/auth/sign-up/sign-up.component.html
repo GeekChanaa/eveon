@@ -58,7 +58,7 @@
         </div>
       </div>
       
-      <button class="button login__button" [disabled]="signUpFormValid" (click)="register()">
+      <button class="button login__button" [ngClass]="{'disabled': !form.valid}" [disabled]="!form.valid" (click)="register()">
         <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
         <ng-container *ngIf="!isLoading"> Sign Up </ng-container>
         

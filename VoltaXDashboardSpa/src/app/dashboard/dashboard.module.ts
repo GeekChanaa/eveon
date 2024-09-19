@@ -24,7 +24,6 @@ import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 import { UserComponent } from './users/user/user.component';
-import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
 import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
@@ -38,33 +37,31 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
 @NgModule({
     declarations: [
       HomeComponent,
-    StationLoadBalanceComponent,
-    ChargingCardsComponent,
-    ChargingStrategiesComponent,
-    CommentManagementComponent,
-    HomeChargerBindListComponent,
-    TransactionsComponent,
-    RechargeOrdersComponent,
-    AlarmManagementComponent,
-    OcppLocalListComponent,
-    ChargingProfileComponent,
-    OcppConfigurationComponent,
-    UsersComponent,
-    TabsStatisticsComponent,
-    DashboardComponent,
-    ProfileComponent,
-    CreateChargingCardComponent,
-    RechargeCardsComponent,
-    UserComponent,
-    ChargingPointComponent,
-    ChargingCardComponent,
-    StatisticsComponent,
-    AppTableCustomButtonDirective,
-    NotificationSettingsComponent,
-    CompleteProfileComponent,
-    DebitCardsComponent,
-    ProfileSecurityComponent,
-    
+      StationLoadBalanceComponent,
+      ChargingCardsComponent,
+      ChargingStrategiesComponent,
+      CommentManagementComponent,
+      HomeChargerBindListComponent,
+      TransactionsComponent,
+      RechargeOrdersComponent,
+      AlarmManagementComponent,
+      OcppLocalListComponent,
+      ChargingProfileComponent,
+      OcppConfigurationComponent,
+      UsersComponent,
+      TabsStatisticsComponent,
+      DashboardComponent,
+      ProfileComponent,
+      CreateChargingCardComponent,
+      RechargeCardsComponent,
+      UserComponent,
+      ChargingCardComponent,
+      StatisticsComponent,
+      AppTableCustomButtonDirective,
+      NotificationSettingsComponent,
+      CompleteProfileComponent,
+      DebitCardsComponent,
+      ProfileSecurityComponent,
   ],
     imports: [
         DashboardRoutingModule,

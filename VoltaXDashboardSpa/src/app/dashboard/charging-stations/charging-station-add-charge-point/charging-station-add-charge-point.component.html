@@ -1,16 +1,38 @@
 <form [formGroup]="chargePointForm">
   <app-form-field
     class="field"
+    title="name"
+    description="tbd"
+    [control]="getControl('name')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="chargePointID"
+    description="tbd"
+    [isError]="chargePointExist"
+    [errorMessage]="'Charge Point ID already exists'"
+    [control]="getControl('chargePointID')"
+    [loading]="checkingChagePointID"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
     title="serialNumber"
     description="tbd"
+    [isError]="chargePointSerialNumberExist"
+    [errorMessage]="'Charge Point Serial Number already exists'"
+    [loading]="checkingChargePointSerialNumber"
     [control]="getControl('serialNumber')"
   ></app-form-field>
+
   <app-form-field
     class="field"
     title="make"
     description="tbd"
     [control]="getControl('make')"
   ></app-form-field>
+  
   <div class="field">
     <div class="field__label">
       Status
@@ -33,12 +55,35 @@
       </div>
     </div>
   </div>
+
   <app-form-field
     class="field"
     title="comment"
     description="tbd"
     [control]="getControl('comment')"
   ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="client Cert Thumb"
+    description="tbd"
+    [control]="getControl('clientCertThumb')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="username"
+    description="tbd"
+    [control]="getControl('username')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="password"
+    description="tbd"
+    [control]="getControl('password')"
+  ></app-form-field>
+
   <div class="field">
     <div class="field__label">
       Category
@@ -63,7 +108,7 @@
       </div>
     </div>
   </div>
-  <div class="flex">
+  <div class="btns-container">
     <button (click)="cpfOnSubmit()" class="button">Create</button>
     <button (click)="cancelEvent.emit()" class="button-stroke btn-cancel">
       Cancel

@@ -21,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActionModalComponent } from './action-modal/action-modal.component';
 import { SvgSpinnerComponent } from './svg-spinner/svg-spinner.component';
 import { MapPickerComponent } from './map-picker/map-picker.component';
+import { DisplayItemComponent } from './display-item/display-item.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { MapPickerComponent } from './map-picker/map-picker.component';
     EmptyCardComponent,
     ActionModalComponent,
     SvgSpinnerComponent,
-    MapPickerComponent
+    MapPickerComponent,
+    DisplayItemComponent
    ],
   imports: [
     CommonModule,
@@ -63,7 +65,8 @@ import { MapPickerComponent } from './map-picker/map-picker.component';
     EmptyCardComponent,
     ActionModalComponent,
     SvgSpinnerComponent,
-    MapPickerComponent
+    MapPickerComponent,
+    DisplayItemComponent
   ],
   providers: [],
 })

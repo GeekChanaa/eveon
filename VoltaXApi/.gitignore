@@ -31,6 +31,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+sql-scripts/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -452,5 +453,3 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-sql-scripts/

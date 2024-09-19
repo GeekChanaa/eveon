@@ -48,6 +48,14 @@ export class UserService extends AbstractService<User>{
   getAllUsersNamesByName(name: string){
     return this._http.get<UserNameDto[]>(this.baseUrl + "GetUserNamesByName?name="+name);
   }
+
+  isEmailUnique(email:string){
+    return this._http.get<any>(this.baseUrl + "IsEmailUnique/"+email);
+  }
+
+  isPhoneUnique(phone:string){
+    return this._http.get<any>(this.baseUrl + "IsPhoneUnique/"+phone);
+  }
   
 
 }

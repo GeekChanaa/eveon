@@ -97,14 +97,11 @@
                           <use xlink:href="#icon-info"></use>
                       </svg>  
                   </button>
-                  <!-- Custom button -->
                   <ng-container *ngIf="customButtonTemplate">
                       <ng-container *ngTemplateOutlet="customButtonTemplate.template; context: { $implicit: item }"></ng-container>
                   </ng-container>
               </div>
           </div>
-          
-            <!-- Additional Columns -->
           </div>
 
         </div>
@@ -114,6 +111,7 @@
         <button 
           class="button-stroke pagination__btn" 
           [ngClass]="{'inactive' : currentPage == 1}"
+          [disabled]="currentPage == 1"
           (click)="previousPage()"
           >
           <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
@@ -135,6 +133,7 @@
         <button  
           class="button-stroke pagination__btn" 
           (click)="nextPage()" 
+          [disabled]="currentPage == pagination.totalPages"
           [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
           >
           <svg class="icon icon-arrow-next">

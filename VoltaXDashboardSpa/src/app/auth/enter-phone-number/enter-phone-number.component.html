@@ -8,16 +8,26 @@
     <div class="entry__fieldset">
       <div class="field field_icon" [ngClass]="{'error': form.controls['phone'].invalid && (form.controls['phone'].dirty || form.controls['phone'].touched)}">
         <div class="field__wrap" >
-          <input class="field__input" type="phone" formControlName="phone" placeholder="Your phone">
+          <input (ngModelChange)="isPhoneUnique($event)" class="field__input" type="phone" formControlName="phone" placeholder="Your phone">
+          <app-svg-spinner *ngIf="checkingPhone"></app-svg-spinner>
+          
           <div class="field__icon">
             <svg class="icon icon-mail">
               <use xlink:href="#icon-mail"></use>
             </svg>
           </div>
         </div>
+        <div class="error" *ngIf="phoneExists">
+          Phone already exists
+        </div>
       </div>
       
-      <button (click)="sendPhoneVerification()" class="button entry__button" href="index.html#header">Send Verification Code</button>
+      <button 
+        (click)="sendPhoneVerification()" 
+        [disabled]="!isPhoneValid()"
+        [ngClass]="{'disabled':!isPhoneValid()}"
+        class="button entry__button" 
+        href="index.html#header">Send Verification Code</button>
     </div>
   </form>
   <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>

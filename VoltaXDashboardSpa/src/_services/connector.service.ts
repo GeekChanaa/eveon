@@ -11,10 +11,14 @@ import { environment } from 'src/environments/environment';
 export class ConnectorService extends AbstractService<Connector>{
 
   constructor(protected http : HttpClient) {
-    super(http,environment.apiUrl+"/api/connector");
+    super(http,environment.apiUrl+"/api/connector/");
   }
 
   // Base URL for the api
-  baseUrl = environment.apiUrl+"/api/connector";
+  baseUrl = environment.apiUrl+"/api/connector/";
+
+  getChargePointConnectors(id : number){
+    return this._http.get<any[]>(this.baseUrl+"GetChargePointConnectors/"+id);
+  }
 
 }

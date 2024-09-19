@@ -1,0 +1,34 @@
+<div class="settings__anchor" id="account" data-value="Account"></div>
+<div class="title-purple settings__title">Charge Points</div>
+<div class="settings__fieldset" *ngIf="!isConnectorVisible">
+  <div> Choose a Charge Point to view it</div>
+  <ng-container *ngIf="connectors.length > 0 && !cpfShow">
+    <div class="charge-point-links-container" >
+      <button *ngFor="let connector of connectors" class="charge-point-link" (click)="showConnector(connector.id)"> {{connector.id}} </button>
+    </div>  
+  </ng-container>
+
+  <ng-container *ngIf="connectors.length <= 0 && !cpfShow">
+    <app-empty-card></app-empty-card>
+  </ng-container>
+  <ng-container *ngIf="cpfShow && chargePointID != null && chargePointID != undefined">
+    <app-charge-point-add-connector
+      [chargePointID]="chargePointID"
+      (successEvent)="refresh()"
+      (cancelEvent)="cpfShow = false"></app-charge-point-add-connector>
+  </ng-container>
+
+  <ng-container *ngIf="!cpfShow">
+    <div>
+      <button (click)="cpfShow = true" class="button">
+        Add Connector
+      </button>
+    </div>
+  </ng-container>
+</div>
+
+<div class="charge-point-container" *ngIf="isConnectorVisible">
+  <app-charge-point-connector
+    [connectorID]="displayedConnectorID"
+    (refreshEvent)="refresh()"></app-charge-point-connector>
+</div>

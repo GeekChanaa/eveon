@@ -1,10 +1,17 @@
-<div class="field__label">{{title | camelCaseToSpace}}
-  <div class="tooltip" title="{{description}}">
-    <svg class="icon icon-info">
-      <use xlink:href="#icon-info"></use>
-    </svg>
+<div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
+  <div class="field__label">{{title | camelCaseToSpace}}
+    <div class="tooltip" title="{{description}}">
+      <svg class="icon icon-info">
+        <use xlink:href="#icon-info"></use>
+      </svg>
+    </div>
   </div>
-</div>
-<div class="field__wrap">
-  <input class="field__input" type="text" [formControl]="control" placeholder="Value" required>
+  <div class="field__wrap">
+    <input class="field__input" type="text" [formControl]="control" placeholder="Value" required>
+    <app-svg-spinner *ngIf="loading"></app-svg-spinner>
+    
+  </div>
+  <div class="error" *ngIf="isError && errorMessage != null && errorMessage != ''">
+    {{errorMessage}}
+  </div>
 </div>

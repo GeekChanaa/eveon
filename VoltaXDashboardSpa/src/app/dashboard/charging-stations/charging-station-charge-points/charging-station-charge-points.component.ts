@@ -29,6 +29,7 @@ export class ChargingStationChargePointsComponent implements OnInit {
   getChargingStationChargePoints(){
     this._chargePointService.getChargingStationChargePoints(this.chargingStationID).subscribe((data) => {
       this.chargePoints = data;
+      console.log(this.chargePoints);
       this.cpfShow = false;
     })
   }
@@ -47,7 +48,5 @@ export class ChargingStationChargePointsComponent implements OnInit {
     this.isChargePointVisible = true;
     this.displayedChargePointID = id;
   }
-
-
 
 }

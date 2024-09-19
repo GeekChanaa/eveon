@@ -13,7 +13,13 @@
   </div>
   <div class="field__information" *ngIf="!editing">
     <ng-container *ngIf="inpType == 'text'">
-      {{val | titlecase}}
+      <ng-container *ngIf="isLink">
+        <div class="link" routerLink="{{link}}"> {{val | titlecase}} </div>
+      </ng-container>
+      <ng-container *ngIf="!isLink">
+        {{val | titlecase}}
+      </ng-container>
+      
     </ng-container>
     <ng-container *ngIf="inpType == 'select_enum'">
       {{val | camelCaseToSpace}}

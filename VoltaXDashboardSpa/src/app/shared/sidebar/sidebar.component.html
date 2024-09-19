@@ -24,18 +24,14 @@
     <app-sidebar-dropdown *ngIf="role == 0" [title]="'Station Management'">
       <app-sidebar-link [title]="'charging station'" [link]="'/dashboard/charging-stations'"></app-sidebar-link>
       <app-sidebar-link [title]="'charge point'" [link]="'/dashboard/charging-points'"></app-sidebar-link>
-      <app-sidebar-link [title]="'connector'" [link]="'/dashboard/connectors'"></app-sidebar-link>
-      <app-sidebar-link [title]="'station load balance'" [link]="'/station-load-balance'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
     <app-sidebar-dropdown *ngIf="role == 0" [title]="'business management'">
       <app-sidebar-link [title]="'charging cards'" [link]="'/dashboard/charging-cards'"></app-sidebar-link>
-      <app-sidebar-link [title]="'charging strategies'" [link]="'/dashboard/charging-strategies'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
     <app-sidebar-dropdown *ngIf="role == 0" [title]="'app management'">
       <app-sidebar-link [title]="'comments management'" [link]="'/dashboard/comment-management'"></app-sidebar-link>
-      <app-sidebar-link [title]="'home charger bind list'" [link]="'/dashboard/home-charger-bind-list'"></app-sidebar-link>
     </app-sidebar-dropdown>
 
     <app-sidebar-dropdown *ngIf="role == 0" [title]="'order management'">

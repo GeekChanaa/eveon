@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargePointService } from 'src/_services/charge-point.service';
+import { ChargingStationService } from 'src/_services/charging-station.service';
 import { ConnectorService } from 'src/_services/connector.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
+import { environment } from 'src/environments/environment';
 
 enum ChargePointTabsEnum {
   InformationsTab = "InformationsTab",
@@ -14,78 +18,61 @@ enum ChargePointTabsEnum {
 @Component({
   selector: 'app-charging-point',
   templateUrl: './charging-point.component.html',
-  styleUrls: ['./charging-point.component.css']
+  styleUrls: ['./charging-point.component.sass']
 })
 export class ChargingPointComponent implements OnInit {
 
-  chargePointLoaded : boolean = false;
-  // TabsEnum
   tabsEnum : ChargePointTabsEnum = ChargePointTabsEnum.InformationsTab;
 
-  // connectors
-  connectors : any[] = [];
-
-  // charge point
-  chargePoint : ChargePoint = {
-    id: 0,
-    chargePointId: '',
-    chargingStationID: 0,
-    name: '',
-    serialNumber: '',
-    make: '',
-    status: ChargePointStatusEnum.Available,
-    comment: '',
-    username: '',
-    password: '',
-    clientCertThumb: '',
-    connectors: [],
-    transactions: [],
-    category: ChargePointCategoryEnum.TheTower
-  }
-
   chargePointID : number = 0;
+  chargePointLoaded : boolean = false;
+  parkingTypeValues : { [key: number]: string; } = {};
+  chargingStationStatusValues : { [key: number]: string; } = {};
+  chargingStationCategoryValues : { [key: number]: string; } = {};
+  updateChargePointObservable = (id : number, model : any) => this._chargePointService.edit(id, model);
+
+  chargePoint: any = {};
+
+  staticUrl : string = environment.apiStaticFilesUrl;
+
+  // Form group
+  chargePointForm : FormGroup;
 
   constructor(
+    private _chargingStationService: ChargingStationService,
     private _chargePointService : ChargePointService,
-    private _route : ActivatedRoute,
-    private _connectorService : ConnectorService
-  ) { }
+    private _route: ActivatedRoute,
+    private _enumService : EnumMappingService
+  ) {
+    this.chargePointForm = new FormGroup({
+      serialNumber : new FormControl(''),
+      make : new FormControl(''),
+      status : new FormControl(''),
+      category : new FormControl(''),
+      comment : new FormControl(''),
+      chargePointCategory : new FormControl(''),
+    })
+   }
 
   ngOnInit() {
     var idParam = this._route.snapshot.paramMap.get('id')
     if (idParam != null) {
       var id = parseInt(idParam);
-      this.chargePointID = id;
       this.getChargePointByID(id);
     }
   }
 
-  // get charge point by id
+
   getChargePointByID(id : number){
-    this._chargePointService.getById(id).subscribe((cs) => {
+    this.chargePointID = id;
+    this._chargePointService.getChargePointByID(id).subscribe((cs) => {
       this.chargePoint = cs;
-      console.log(this.chargePoint);
-      this.connectors = this.chargePoint.connectors;
       this.chargePointLoaded = true;
     })
   }
 
-  // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
-  }
-
-  deleteConnector(id : number){
-    this._connectorService.deleteById(id).subscribe();
-  }
-
-  update(vale : any,name : string){
-    this.chargePoint[name] = vale;
-    console.log(this.chargePoint);
-    this.chargePoint.connectors=[];
-    this._chargePointService.edit(this.chargePoint.id, this.chargePoint).subscribe((data) => {
-      this.getChargePointByID(this.chargePoint.id);
-    })
   }
 
 }

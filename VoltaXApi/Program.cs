@@ -102,14 +102,14 @@ builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailS
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    );
-            });
+    {
+        options.AddPolicy("CorsPolicy",
+            builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            );
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -143,9 +143,10 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
 
     // await SqlScriptExecuter.ExecuteSqlScript();
+    // await BrandsAutomobilesSeeder.Populate();
     // GlobalSeeder.Seed(dbContext).Wait();
     // await UserSeeder.Seed(100,dbContext);
-
+    
     // SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);
 }

@@ -33,9 +33,13 @@ export class CreateChargePointComponent implements OnInit {
   fileErrors : string[] = [];
 
   chargePointIDTouched : boolean = false;
+  chargePointSerialNumberTouched : boolean = false;
   checkingChagePointID : boolean = false;
+  checkingChargePointSerialNumber : boolean = false;
   chargePointTimeout: any = {};
+  chargePointSerialNumberTimeout: any = {};
   chargePointExist : boolean = false;
+  chargePointSerialNumberExist : boolean = false;
 
   ngAfterViewInit() {
   }
@@ -171,6 +175,24 @@ export class CreateChargePointComponent implements OnInit {
         },
         (error) => {
           clearTimeout(this.chargePointTimeout);
+        }
+      );
+    }, 800);
+  }
+
+  
+  isChargePointSerialNumberUnique(chargePointSerialNumber: string): void {
+    this.chargePointSerialNumberTouched = true;
+    this.checkingChargePointSerialNumber = true;
+    clearTimeout(this.chargePointSerialNumberTimeout);
+    this.chargePointSerialNumberTimeout = setTimeout(() => {
+      this._chargePointService.isChargePointSerialNumberUnique(chargePointSerialNumber).subscribe(
+        (data) => {
+          this.chargePointSerialNumberExist = data;
+          this.checkingChargePointSerialNumber = false;
+        },
+        (error) => {
+          clearTimeout(this.chargePointSerialNumberTimeout);
         }
       );
     }, 800);

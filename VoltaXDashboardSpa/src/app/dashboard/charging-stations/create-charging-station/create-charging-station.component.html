@@ -10,7 +10,7 @@
             <div *ngIf="activeDiv === 1">
               <div class="create__card card">
                 <div class="card__head">
-                  <div class="title-green card__title">Name & description</div><a
+                  <div class="title-green card__title">Charging Station Informations</div><a
                     class="button-stroke button-small card__button" routerLink="/dashboard/charging-stations">
                     <svg class="icon icon-arrow-left">
                       <use xlink:href="#icon-arrow-left"></use>
@@ -305,8 +305,14 @@
                         </div>
                       </div>
                       <div class="field__wrap">
-                        <input class="field__input" type="text" formControlName="chargePointSerialNumber"
-                          placeholder="Value" required>
+                          <input 
+                            (ngModelChange)="isChargePointSerialNumberUnique($event)" 
+                            class="field__input" type="text" formControlName="chargePointSerialNumber" placeholder="Value"
+                            required>
+                          <app-svg-spinner *ngIf="checkingChargePointSerialNumber"></app-svg-spinner>
+                          <div class="error-message">
+                            <ng-container *ngIf="chargePointSerialNumberExist"> Charge Point Serial Number already exists </ng-container>
+                          </div>
                       </div>
                     </div>
 

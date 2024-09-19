@@ -89,6 +89,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.IsChargePointIDUnique(chargePointID);
         }
 
+        [HttpGet("IsChargePointSerialNumberUnique/{chargePointSerialNumber}")]
+        public async Task<ActionResult<bool>> IsChargePointSerialNumberUnique(string chargePointSerialNumber)
+        {
+            return await this._repository.IsChargePointSerialNumberUnique(chargePointSerialNumber);
+        }
+
         [HttpGet("GetChargePointByID/{chargePointID}")]
         public async Task<IActionResult> GetChargePointByID(int chargePointID)
         {

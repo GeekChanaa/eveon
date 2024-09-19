@@ -17,6 +17,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   @Input() inpType : string = "text";
   @Input() enumName : string = "";
   @Input() editable : boolean = true;
+  @Input() isLink : boolean = false;
+  @Input() link : string = "";
 
   isLoading : boolean = false;
 
@@ -36,6 +38,7 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.updatedValue = this.val;
+    console.log(this.val);
     if(this.inpType == 'select_enum'){
       this.enumMappings = this._enumService.getEnumMapping(this.enumName);
       console.log("this is the enumMappings");
@@ -67,7 +70,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.updateObservable(this.object.id, this.object).subscribe((data) => {
       this.isLoading = false;
-      // this.getobjectByID(this.object.id);
       this._modalService.popup(ActionModalStatusEnum.Success,"Succes !", "Updated successfully", 4000);
       this.editing = false;
     },(error) => {

@@ -8,13 +8,19 @@ import { ChargePointsListComponent } from './charge-points-list/charge-points-li
 import { CreateChargePointComponent } from './create-charge-point/create-charge-point.component';
 import { ChargePointConnectorsComponent } from './charging-point/charge-point-connectors/charge-point-connectors.component';
 import { ChargingPointsComponent } from './charging-points.component';
+import { ChargingPointComponent } from './charging-point/charging-point.component';
+import { ChargePointConnectorComponent } from './charge-point-connector/charge-point-connector.component';
+import { ChargePointAddConnectorComponent } from './charge-point-add-connector/charge-point-add-connector.component';
 
 @NgModule({
     declarations: [
       ChargePointsListComponent,
       CreateChargePointComponent,
       ChargePointConnectorsComponent,
-      ChargingPointsComponent
+      ChargingPointsComponent,
+      ChargingPointComponent,
+      ChargePointConnectorComponent,
+      ChargePointAddConnectorComponent
     ],
     imports: [
         AtomsModule,

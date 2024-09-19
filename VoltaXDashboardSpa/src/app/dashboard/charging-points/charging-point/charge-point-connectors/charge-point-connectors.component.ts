@@ -5,45 +5,51 @@ import { ConnectorService } from 'src/_services/connector.service';
 @Component({
   selector: 'app-charge-point-connectors',
   templateUrl: './charge-point-connectors.component.html',
-  styleUrls: ['./charge-point-connectors.component.css']
+  styleUrls: ['./charge-point-connectors.component.sass']
 })
 export class ChargePointConnectorsComponent implements OnInit {
 
-  @Input() connectors : Connector[] = [];
   @Input() chargePointID : number = 0;
-  connector : any = {};
-  connectorSpeed : number = 0;
-  connectorPower : number = 0;
-  connectorID : number = 0;
-  @Output() deleteConnectorEvent : EventEmitter<number> = new EventEmitter<number>();
-  @Input() reloadChargePoint : EventEmitter<void> = new EventEmitter();
-  showcf : boolean = false;
+  connectors : any[] = [];
+  cpfShow : Boolean = false;
+  isConnectorVisible : boolean = false;
+  displayedConnectorID : number = 0;
 
   constructor(
-    private _connectorService : ConnectorService
-  ) { }
-
-  ngOnInit(
-  ) {
+    private _connectorService: ConnectorService
+  ) { 
+    
   }
 
-  deleteConnector(id : number){
-    this.deleteConnectorEvent.emit(id);
-  }
-
-  // create Connector : 
-  createConnector(){
-    this.connector.connectorType = "Type2";
-    this.connector.chargePointID = this.chargePointID;
-    this.connector.connectorID = this.connectorID;
-    this.connector.speed = this.connectorSpeed;
-    this.connector.power = this.connectorPower;
-    this._connectorService.create(this.connector).subscribe((data) => {
-      this.showcf = false;
-      this.reloadChargePoint.emit();
-    })
+  ngOnInit() {
+    this.getChargePointConnectors();
   }
 
   
+  getChargePointConnectors(){
+    this._connectorService.getChargePointConnectors(this.chargePointID).subscribe((data) => {
+      console.log("this is the data");
+      console.log(data);
+      this.connectors = data;
+      this.cpfShow = false;
+    })
+  }
+
+  deleteChargePoint(id : number){
+    this._connectorService.deleteById(id).subscribe((data) => {
+      this.getChargePointConnectors();
+    });
+  }
+
+  refresh(){
+    this.getChargePointConnectors();
+    this.isConnectorVisible = false;  
+  }
+
+  showConnector(id : number){
+    this.isConnectorVisible = true;
+    this.displayedConnectorID = id;
+  }
+
 
 }

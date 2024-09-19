@@ -50,21 +50,6 @@ namespace VoltaXApi.Data
 
         override public async Task AddAsync(ChargePoint chargePoint)
         {
-            // Get the latest ChargePoint Name in the database
-            var lastChargePoint = await _context.Set<ChargePoint>().OrderByDescending(c => c.Name).FirstOrDefaultAsync();
-
-            int newNumber = 1;
-            if (lastChargePoint != null)
-            {
-                // Extract the number from the Name and increment it
-                var lastNumber = int.Parse(lastChargePoint.Name.Substring(3));  // Note the '3' here, because prefix 'VXC' has length 3
-                newNumber = lastNumber + 1;
-            }
-
-            // Generate new ChargePoint Name
-            chargePoint.Name = $"VXC{newNumber.ToString("D4")}";
-
-            // Add the new ChargePoint to the database
             await _context.Set<ChargePoint>().AddAsync(chargePoint);
             await _context.SaveChangesAsync();
         }
@@ -88,6 +73,11 @@ namespace VoltaXApi.Data
         public async Task<bool> IsChargePointIDUnique(string chargePointID)
         {
             return await this._context.ChargePoints.AnyAsync(cp => cp.ChargePointId == chargePointID);
+        }
+
+        public async Task<bool> IsChargePointSerialNumberUnique(string chargePointSerialNumber)
+        {
+            return await this._context.ChargePoints.AnyAsync(cp => cp.SerialNumber == chargePointSerialNumber);
         }
 
         public async Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper)

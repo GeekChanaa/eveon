@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20240909212906_recreate")]
+    [Migration("20240919140644_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -24,6 +24,49 @@ namespace VoltaXApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("VoltaXApi.Automobile", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<long>("BrandId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Photos")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PressRelease")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Automobiles");
+                });
 
             modelBuilder.Entity("VoltaXApi.Models.Administrator", b =>
                 {
@@ -52,6 +95,44 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Administrators");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Brand", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
@@ -119,9 +200,10 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("ChargePointId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("ChargingStationID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("ClientCertThumb")
@@ -139,7 +221,6 @@ namespace VoltaXApi.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Make")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -163,6 +244,9 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ChargePointId")
+                        .IsUnique();
 
                     b.HasIndex("ChargingStationID");
 
@@ -328,6 +412,10 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ChargingStationID");
+
+                    b.HasIndex("ImageID");
+
                     b.ToTable("ChargingStationImages");
                 });
 
@@ -403,6 +491,9 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CommentTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -430,9 +521,59 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("ChargingStationID");
 
+                    b.HasIndex("ConnectorID");
+
                     b.HasIndex("UserID");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CommentImage", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CommentID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ImageID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ImagePriority")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CommentID");
+
+                    b.HasIndex("ImageID");
+
+                    b.ToTable("CommentImages");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CommentReply", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CommentID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reply")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CommentID");
+
+                    b.ToTable("CommentReplys");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
@@ -938,6 +1079,104 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Report", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int?>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IssueDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReportType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResolvedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("UserID1")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointID");
+
+                    b.HasIndex("ConnectorID");
+
+                    b.HasIndex("UserID1");
+
+                    b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ReportImage", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ImageID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ImagePriority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReportID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ImageID");
+
+                    b.HasIndex("ReportID");
+
+                    b.ToTable("ReportImages");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ReportReply", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Reply")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReportID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ReportID");
+
+                    b.ToTable("ReportReplys");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.State", b =>
                 {
                     b.Property<int>("ID")
@@ -1163,7 +1402,9 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.ChargingStation", "ChargingStation")
                         .WithMany("ChargePoints")
-                        .HasForeignKey("ChargingStationID");
+                        .HasForeignKey("ChargingStationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ChargingStation");
                 });
@@ -1175,6 +1416,25 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("CardID");
 
                     b.Navigation("Card");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargingStationImage", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargingStation", "ChargingStation")
+                        .WithMany("ChargingStationImages")
+                        .HasForeignKey("ChargingStationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargingStation");
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.City", b =>
@@ -1202,6 +1462,10 @@ namespace VoltaXApi.Migrations
                         .WithMany()
                         .HasForeignKey("ChargingStationID");
 
+                    b.HasOne("VoltaXApi.Models.Connector", "Connector")
+                        .WithMany()
+                        .HasForeignKey("ConnectorID");
+
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID");
@@ -1210,7 +1474,39 @@ namespace VoltaXApi.Migrations
 
                     b.Navigation("ChargingStation");
 
+                    b.Navigation("Connector");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CommentImage", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CommentReply", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
@@ -1297,6 +1593,57 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Card");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Report", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID");
+
+                    b.HasOne("VoltaXApi.Models.Connector", "Connector")
+                        .WithMany()
+                        .HasForeignKey("ConnectorID");
+
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID1");
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("Connector");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ReportImage", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.Report", "Report")
+                        .WithMany()
+                        .HasForeignKey("ReportID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Report");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ReportReply", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Report", "Report")
+                        .WithMany()
+                        .HasForeignKey("ReportID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Report");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.State", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Country", "Country")
@@ -1338,6 +1685,8 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.ChargingStation", b =>
                 {
                     b.Navigation("ChargePoints");
+
+                    b.Navigation("ChargingStationImages");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Country", b =>

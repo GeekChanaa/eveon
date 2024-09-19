@@ -124,10 +124,10 @@ body.dark .field_currency .field__input:focus
 .field_copy .field__input 
   padding-right: 48px 
 
-.field.error .field__icon .icon 
+.field__error_container.error .field__icon .icon 
   fill: #FF6A55 
 
-.field.error .field__wrap:after 
+.field__error_container.error .field__wrap:after 
   content: ""
   position: absolute
   top: 0
@@ -136,23 +136,23 @@ body.dark .field_currency .field__input:focus
   width: 48px
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M12 15a1 1 0 0 0 1-1V9a1 1 0 1 0-2 0v5a1 1 0 0 0 1 1zm7.675 2.504L12.87 5.563a1 1 0 0 0-1.738 0L4.327 17.504A1 1 0 0 0 5.196 19h13.61a1 1 0 0 0 .869-1.495zM14.607 4.573c-1.151-2.019-4.062-2.019-5.213 0L2.589 16.514C1.45 18.514 2.894 21 5.196 21h13.61c2.302 0 3.746-2.486 2.606-4.485L14.607 4.573z' fill-rule='evenodd' fill='%23ff6a55'/%3E%3Cpath d='M13 17a1 1 0 1 1-2 0 1 1 0 1 1 2 0z' fill='%23ff6a55'/%3E%3C/svg%3E") no-repeat 50% 50%/24px auto 
 
-.field.error .field__input 
+.field__error_container.error .field__input 
   padding-right: 48px
   background: rgba(255, 188, 153, 0.25)
   border-color: transparent
   color: #FF6A55 
-body.dark .field.error .field__input:focus 
+body.dark .field__error_container.error .field__input:focus 
   border-color: #FF6A55
   color: #FF6A55 
-.field.error .field__input::-webkit-input-placeholder 
+.field__error_container.error .field__input::-webkit-input-placeholder 
   color: #FF6A55 
-.field.error .field__input::-moz-placeholder 
+.field__error_container.error .field__input::-moz-placeholder 
   color: #FF6A55 
-.field.error .field__input:-ms-input-placeholder 
+.field__error_container.error .field__input:-ms-input-placeholder 
   color: #FF6A55 
-.field.error .field__input::-ms-input-placeholder 
+.field__error_container.error .field__input::-ms-input-placeholder 
   color: #FF6A55 
-.field.error .field__input::placeholder 
+.field__error_container.error .field__input::placeholder 
   color: #FF6A55 
 
 .field.success .field__wrap:after 
