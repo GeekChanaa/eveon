@@ -23,7 +23,6 @@ export class CardService extends AbstractService<Card>{
     return this._http.get<any[]>(this.baseUrl+"GetUserRechargeCards?UserID="+userID);
   }
 
-  // get all cards
   getAllCards(page?: number, itemsPerPage?: number, itemParams?: any){
     return super.getAll(page,itemsPerPage,itemParams,"GetAllCards");
   }
@@ -36,6 +35,14 @@ export class CardService extends AbstractService<Card>{
   // get card recharge orders
   getCardOrders(cardID : number){
     return this._http.get<any[]>(this.baseUrl+"GetCardOrders?CardID="+cardID);
+  }
+
+  createCard(card : any){
+    return this._http.post<any>(this.baseUrl+"CreateCard",card);
+  }
+
+  getCardByID(cardID : number){
+    return this._http.get<any>(this.baseUrl+"GetCardForDisplayByID/"+cardID);
   }
 
 }

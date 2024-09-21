@@ -70,5 +70,9 @@ export class TransactionService extends AbstractService<Transaction>{
     return this._http.get<any[]>(this.baseUrl+"GetPartnerLatestTransactions/"+partnerID);
   }
 
+  getCardTransactions(page:  number,itemsPerPage : number,itemParams : any,cardID : number){
+    return super.getAll(page,itemsPerPage,itemParams,"GetCardTransactions/"+cardID);
+  }
+
 
 }

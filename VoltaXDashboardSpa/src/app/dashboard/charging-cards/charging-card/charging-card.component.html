@@ -1,19 +1,23 @@
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">Recharge Card</div>
+    <div class="page__title h3">Charge Point : {{card.name}}</div>
     <div class="settings">
       <div class="settings__menu">
         <button (click)="changeTab('InformationsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+
         <button (click)="changeTab('Transactions')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'Transactions'}">Transactions</button>
-          <button (click)="changeTab('Orders')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'Orders'}">Recharge Orders</button>
+
+        <button (click)="changeTab('Orders')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'Orders'}">Orders</button>
+        
       </div>
       <div class="settings__wrapper">
         <select class="select">
           <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('Orders')">Recharge Orders</option>
+          <option (click)="changeTab('Transactions')">Transactions</option>
+          <option (click)="changeTab('Orders')">Orders</option>
         </select>
         <div class="settings__list">
           <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
@@ -23,67 +27,78 @@
 
             </div>
             <div class="settings__fieldset">
-              <app-display-cell (updatePropertyEvent)="update($event,'cardNumber')" inpType="text" title="Card Number" val="{{chargingCard.cardNumber}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'cardType')" inpType="select_enum" enumName="CardType" title="Card Type" val="{{chargingCard.cardType}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'expirationDate')" inpType="text" title="Expiration Date" val="{{chargingCard.expirationDate}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'maxCount')" inpType="text" title="Max Count" val="{{chargingCard.maxCount}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'status')" inpType="select_enum" enumName="CardStatus" title="Status" val="{{chargingCard.status}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'balance')" inpType="text" title="Balance" val="{{chargingCard.balance}}"></app-display-cell>
-              <app-display-cell (updatePropertyEvent)="update($event,'note')" inpType="text" title="Note" val="{{chargingCard.note}}"></app-display-cell>
+              <ng-container *ngIf="cardLoaded">
+                
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="text"
+                  title="Card"
+                  [editable]="false"
+                  [link]="'/dashboard/users/'+card.userID"
+                  [isLink]="true"
+                  [val]="card.userName" [editable]="false"></app-display-cell>
 
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="number"
+                  title="maxCount"
+                  [val]="card.maxCount"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="number"
+                  title="balance"
+                  [val]="card.balance"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="select_enum"
+                  enumName="CardType"
+                  title="cardType"
+                  val="{{card.cardType}}"></app-display-cell>
+                
+                <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [object]="card"
+                    inpType="select_enum"
+                    title="status"
+                    enumName="CardStatus" 
+                    val="{{card.status}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="text"
+                  title="expirationDate"
+                  val="{{card.expirationDate}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateCardObservable.bind(this)" 
+                  [object]="card"
+                  inpType="text"
+                  title="note"
+                  val="{{card.note}}"></app-display-cell>
+              </ng-container>
+              
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'Transactions'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Transactions</div>
-            <div class="settings__fieldset">
-              <div class="earning">
-                <div class="earning__table">
-                  <div class="earning__row">
-                    <div class="earning__col">Start</div>
-                    <div class="earning__col">End</div>
-                    <div class="earning__col">Energy Consumed</div>
-                    <div class="earning__col">Amount</div>
-                  </div>
-                  <div class="earning__row" *ngFor="let item of chargingCard.transactions">
-                    <div class="earning__col">{{item.startTime | date:'medium'}}</div>
-                    <div class="earning__col">
-                      <div class="status-yellow earning__status">{{item.stopTime | date:'medium'}}</div>
-                    </div>
-                    <div class="earning__col">{{item.meterStop - item.meterStart | number:'1.2-2'}}</div>
-                    <div class="earning__col">{{item.amount | number:'1.2-2'}} DH
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
-
+            <ng-container *ngIf="card.id != null && card.id != undefined">
+              <app-charging-card-transactions [cardID]="card.id"></app-charging-card-transactions>
+            </ng-container>
+            
           </div>
+
           <div class="settings__item" *ngIf="tabsEnum == 'Orders'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Recharge Orders</div>
-            <div class="settings__fieldset">
-              <div class="earning">
-                <div class="earning__table">
-                  <div class="earning__row">
-                    <div class="earning__col">Date</div>
-                    <div class="earning__col">Amount</div>
-                  </div>
-                  <div class="earning__row" *ngFor="let item of chargingCard.orders">
-                    <div class="earning__col">{{item.rechargeDate | date:'medium'}}</div>
-                    
-                    <div class="earning__col">{{item.amount | number:'1.2-2'}} DH
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
-
+            <ng-container *ngIf="card.id != null && card.id != undefined">
+              <app-charging-card-orders  [cardID]="card.id"></app-charging-card-orders>
+            </ng-container>
+            
           </div>
-
-          
 
         </div>
       </div>

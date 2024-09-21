@@ -34,32 +34,28 @@ namespace VoltaXApi.Controllers
         {
             var cards = await PagedList<Card>.CreateAsync((await _repository.GetAllAsync(globalParams)).Include(u => u.User), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(cards.CurrentPage, cards.PageSize, cards.TotalCount, cards.TotalPages);
-            List<CardDto> cardsDto = _mapper.Map<List<CardDto>>(cards);
+            List<CardListDto> cardsDto = _mapper.Map<List<CardListDto>>(cards);
             return Ok(cardsDto);
         }
 
-        // get user recharge cards
         [HttpGet("GetUserRechargeCards")]
         public async Task<ActionResult<List<Card>>> GetUserRechargeCards([FromQuery] int UserID)
         {
             return await this._repository.GetUserRechargeCardsAsync(UserID);
         }
 
-        // get Card Transactions
         [HttpGet("GetCardTransactions")]
         public async Task<ActionResult<List<TransactionDto>>> GetCardTransactions([FromQuery] int CardID)
         {
             return await this._repository.GetCardTransactions(CardID);
         }
 
-        // get Card Orders
         [HttpGet("GetCardOrders")]
         public async Task<ActionResult<List<OrderDto>>> GetCardOrders([FromQuery] int CardID)
         {
             return await this._repository.GetCardOrders(CardID);
         }
         
-        // Get Card ID
         [HttpGet("{id}")]
         public override async Task<IActionResult> GetById(int id)
         {
@@ -69,6 +65,23 @@ namespace VoltaXApi.Controllers
                 return NotFound();
             }
             return Ok(entity);
+        }
+
+        [HttpPost("CreateCard")]
+        public async Task<IActionResult> CreateCard(CreateCardDto cardDto)
+        {
+            await this._repository.CreateCard(cardDto);
+            return StatusCode(204);
+        }
+
+        [HttpGet("GetCardForDisplayByID/{cardID}")]
+        public async Task<IActionResult> GetCardForDisplayByID(int cardID)
+        {
+            Console.WriteLine("this is in here");
+            var card = await this._repository.GetCardForDisplayByID(cardID);
+            Console.WriteLine("this is the card balance : " + card.Balance);
+            Console.WriteLine("this is the card username : " + card.UserName);
+            return Ok(card);
         }
     }
 }

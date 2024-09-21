@@ -40,13 +40,18 @@ export class UserService extends AbstractService<User>{
   }
 
   // Getting all user names
-  getUserNames(){
-    return this._http.get<UserNameDto[]>(this.baseUrl + "GetUserNames")
+  getUserNames() {
+    return this._http.get<any[]>(this.baseUrl + "GetUserNames").pipe(
+      map(users => users.map(user => ({
+        id: user.id,
+        name: user.fullName 
+      })))
+    );
   }
 
   // getting user names by name
   getAllUsersNamesByName(name: string){
-    return this._http.get<UserNameDto[]>(this.baseUrl + "GetUserNamesByName?name="+name);
+    return this._http.get<any[]>(this.baseUrl + "GetUserNamesByName?name="+name);
   }
 
   isEmailUnique(email:string){

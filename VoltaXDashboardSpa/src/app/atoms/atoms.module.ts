@@ -22,6 +22,7 @@ import { ActionModalComponent } from './action-modal/action-modal.component';
 import { SvgSpinnerComponent } from './svg-spinner/svg-spinner.component';
 import { MapPickerComponent } from './map-picker/map-picker.component';
 import { DisplayItemComponent } from './display-item/display-item.component';
+import { DisplayTableListComponent } from './display-table-list/display-table-list.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { DisplayItemComponent } from './display-item/display-item.component';
     ActionModalComponent,
     SvgSpinnerComponent,
     MapPickerComponent,
-    DisplayItemComponent
+    DisplayItemComponent,
+    DisplayTableListComponent
    ],
   imports: [
     CommonModule,
@@ -66,7 +68,9 @@ import { DisplayItemComponent } from './display-item/display-item.component';
     ActionModalComponent,
     SvgSpinnerComponent,
     MapPickerComponent,
-    DisplayItemComponent
+    DisplayItemComponent,
+    DisplayTableListComponent,
+
   ],
   providers: [],
 })

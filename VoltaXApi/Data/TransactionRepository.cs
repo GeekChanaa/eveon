@@ -266,6 +266,12 @@ namespace VoltaXApi.Data
             return await  this._context.Transactions.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).OrderByDescending(u => u.StartTime).Take(nbrTransactions).ToListAsync();
         }
 
+        public IQueryable<Transaction> GetCardTransactions(int cardID)
+        {
+            return _context.Transactions.Where(t => t.CardID == cardID);
+        }
+
+
 
 
     }

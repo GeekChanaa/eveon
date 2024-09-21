@@ -1,139 +1,106 @@
 <!-- inner-->
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">New Charging Card</div>
+    <div class="page__title h3">New Card</div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="create">
         <div class="create__row">
           <div class="create__col">
-            <!-- Chargin station informations -->
-            <div class="create__card card">
-              <div class="card__head">
-                <div class="title-green card__title">Card</div><a
-                  class="button-stroke button-small card__button" href="products-dashboard.html">
-                  <svg class="icon icon-arrow-left">
-                    <use xlink:href="#icon-arrow-left"></use>
-                  </svg><span>Back</span></a>
-              </div>
-              <div class="create__group">
-                <div class="field">
-                  <div class="field__label">Card Type
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
+              <div class="create__card card charge_point_form">
+                    <div class="create__group create__group3" *ngIf="users != null && users.length > 0">
+                  
+                    <div class="field">
+                      <div class="field__label">User
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <app-search-input class="field__wrap"
+                        (optionSelected)="updateUser($event)"
+                        [control]="userControl"
+                        [options]="users"></app-search-input>
                     </div>
-                  </div>
-                  <div class="field__wrap">
-                    <div class="field__wrap">
-                      <select class="select" formControlName="cardType">
-                        <option value="private">Private</option>
-                        <option value="public">Public</option>
-                        <option value="partner">Partner</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="field">
-                  <div class="field__label">Expiration Date
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
+                    <div class="field">
+                      <div class="field__label">Balance
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input 
+                          class="field__input" type="text" formControlName="balance" placeholder="Value"
+                          required>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Card Type
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="cardType">
+                            <option value="Standard">Standard</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Partner">Partner</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <div class="field">
+                      <div class="field__label">Card Status
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="status">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Blocked">Blocked</option>
+                            <option value="Expired">Expired</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Note
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input 
+                          class="field__input" type="text" formControlName="note" placeholder="Value"
+                          required>
+                      </div>
                     </div>
                   </div>
-                  <div class="field__wrap">
-                    <div class="field__wrap">
-                      <input formControlName="expirationDate" class="field__input" type="text"
-                        required>
-                    </div>
-                  </div>
                 </div>
-
-                <div class="field">
-                  <div class="field__label">Max Count
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <div class="field__wrap">
-                      <input formControlName="maxCount" class="field__input" type="text"
-                        required>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <div class="field__label">Status
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <select class="select" formControlName="status">
-                      <option>Purchase now</option>
-                      <option>Purchase tomorrow</option>
-                      <option>Buy later</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-
-              <div class="field">
-                <div class="field__label">Balance
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <input formControlName="balance" class="field__input" type="text" name="title"
-                    required>
-                </div>
-              </div>
-              <div class="field">
-                <div class="field__label">Note
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <input formControlName="note" class="field__input" type="text" name="title"
-                    required>
-                </div>
-              </div>
-              <div class="field">
-                <div class="field__label">User
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <app-search-input (optionSelected)="updateUser($event)" [control]="userControl"
-                    [options]="users"></app-search-input>
-              </div>
-              
-
             </div>
-
-
-            <div class="btns_group">
-              <button class="button" type="submit"> Submit </button>
-            </div>
+            
           </div>
         </div>
-      </div>
+        <div class="btns_group">
+          <button class="button" type="submit"> Submit </button>
+        </div>
     </form>
   </div>

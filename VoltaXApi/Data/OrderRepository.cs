@@ -45,6 +45,11 @@ namespace VoltaXApi.Data
             return invoice;
         }
 
+        public IQueryable<Order> GetCardOrders(int cardID)
+        {
+            return _context.Orders.Where(t => t.CardID == cardID);
+        }
+
     }
 }
 

@@ -1,6 +1,7 @@
+
 namespace VoltaXApi.Models
 {
-  public class ReportImage
+  public class ReportImage : IEntity
   {
     public int ID { get; set; }
     public int ReportID { get; set; }
@@ -8,5 +9,8 @@ namespace VoltaXApi.Models
     public int ImagePriority { get; set; }
     public Report? Report { get; set; }
     public Image? Image { get; set; }
-  }
+      public bool IsDeleted { get; set; }
+      public DateTime CreatedAt { get; set; }
+      public DateTime UpdatedAt { get; set; }
+    }
 }

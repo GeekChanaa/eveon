@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { AlarmManagementComponent } from './alarm-management/alarm-management.component';
-import { ChargingCardsComponent } from './charging-cards/charging-cards.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { CommentManagementComponent } from './comment-management/comment-management.component';
@@ -21,10 +20,8 @@ import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
-import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 import { UserComponent } from './users/user/user.component';
-import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
@@ -38,7 +35,6 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
     declarations: [
       HomeComponent,
       StationLoadBalanceComponent,
-      ChargingCardsComponent,
       ChargingStrategiesComponent,
       CommentManagementComponent,
       HomeChargerBindListComponent,
@@ -52,10 +48,8 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
       TabsStatisticsComponent,
       DashboardComponent,
       ProfileComponent,
-      CreateChargingCardComponent,
       RechargeCardsComponent,
       UserComponent,
-      ChargingCardComponent,
       StatisticsComponent,
       AppTableCustomButtonDirective,
       NotificationSettingsComponent,

@@ -13,8 +13,9 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.NameHidden, opt => opt.MapFrom(src => Mask(src.Name)));
             
             
-            CreateMap<Card,CardDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
+           
+            CreateMap<Card,CardListDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             
             CreateMap<Order,OrderDto>();
             

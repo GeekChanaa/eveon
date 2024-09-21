@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
@@ -27,7 +28,10 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   // User Role
   role : UserRole = UserRole.Customer;
 
+  currentUrl: string = "";
+
   constructor(
+    private router: Router,
     private _authService : AuthService,
     public _enumMappingService : EnumMappingService
   ) { }
@@ -37,6 +41,9 @@ export class SidebarComponent implements OnInit, AfterViewInit {
     var mode = localStorage.getItem("darkMode");
     if(mode == "on")
       this.checked = true;
+    this.router.events.subscribe(() => {
+      this.currentUrl = this.router.url;
+    });
   }
 
   ngAfterViewInit() {
@@ -67,6 +74,14 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   hideHelp() {
     this.help.nativeElement.classList.remove('active');
     this.helpOverlay.nativeElement.classList.remove('active');
+  }
+
+  isActive(link: string): boolean {
+    return this.currentUrl.startsWith(link);
+  }
+
+  isDropdownActive(baseUrl: string): boolean {
+    return this.currentUrl.startsWith(baseUrl);
   }
 
   

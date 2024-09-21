@@ -6,20 +6,18 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '
   styleUrls: ['./sidebar-dropdown.component.css']
 })
 export class SidebarDropdownComponent implements OnInit, AfterViewInit {
-
-  // Input properties
-  @Input() title : string = "";
+  @Input() active: boolean = false;
+  @Input() title: string = "";
+  
   @ViewChild('itemDropDown') itemDropDown!: ElementRef;
-  
-  
-  constructor() { 
+  @ViewChild('topButton') topButton!: ElementRef; // Reference to the 'sidebar__top'
+
+  constructor() { }
+  ngOnInit() {
   }
 
   ngAfterViewInit() {
-    this.itemDropDown.nativeElement.addEventListener('click', (event: any) => this.itemClicked(event, this.itemDropDown));
-  }
-
-  ngOnInit() {
+    this.topButton.nativeElement.addEventListener('click', (event: any) => this.itemClicked(event, this.itemDropDown));
   }
 
   itemClicked(event: Event, item: ElementRef) {

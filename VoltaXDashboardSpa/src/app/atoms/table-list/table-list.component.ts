@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, ContentChild, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
@@ -33,11 +33,23 @@ export class TableListComponent implements OnInit {
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
 
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: MouseEvent) {
+    if (!this._eRef.nativeElement.contains(event.target)) {
+      this.displayMenu = false; // Close the menu if clicked outside
+    }
+  }
   constructor( 
     private _enumMappingService : EnumMappingService,
     private _modalService : ActionModalService,
-    private _router : Router
+    private _router : Router,
+    private _eRef : ElementRef
   ) { }
+
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation(); 
+    this.displayMenu = !this.displayMenu;
+  }
 
   delete(id : number){
     this.deleteItemObservable(id).subscribe((data) => {
@@ -96,6 +108,9 @@ export class TableListComponent implements OnInit {
 
   getAll(){
     this.getItemsObservable(this.currentPage, this.itemsPerPage, this.itemParams).subscribe((data) => {
+      console.log("this is the data")
+      console.log(data.result);
+      
       if(data.result)
         this.data = data.result;
       if(data.pagination){
@@ -138,8 +153,6 @@ export class TableListComponent implements OnInit {
         this.itemParams.FilterBy.push(this.capitalizeFirstLetter(key));  
       }
     }
-    console.log("this is the filters");
-    console.log(this.filters);
     this.getAll();  
   }
 

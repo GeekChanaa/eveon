@@ -1,0 +1,89 @@
+<div class="page__title h3">{{name | titlecase}}</div>
+<div class="row card">
+  <div class="card__head">
+    <div>
+      <button (click)="displayMenu = !displayMenu" class="button-square-stroke button-small ">
+        <svg class="icon icon-moon">
+          <use xlink:href="#icon-moon"></use>
+        </svg>
+      </button>
+      <div class="display__columns" *ngIf="displayMenu">
+        <div class="display__columns_options">
+          <div class="filters__label">Showing</div>
+          <div class="filters__list">
+            <label class="checkbox checkbox_reverse" *ngFor="let field of fields">
+              <input value="{{fieldShown[field]}}" [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
+              <span class="checkbox__inner">
+                <span class="checkbox__tick"></span>
+                <span class="checkbox__text">{{field | camelCaseToSpace}}</span>
+              </span> 
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row__inner">
+    <div class="row__container">
+      <div class="row__wrapper">
+        <div class="row__table">
+          <div class="row__row">
+            <ng-container *ngFor="let field of fields">
+              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">{{field | camelCaseToSpace}} 
+                <svg *ngIf="sortedColumn == field && sortedDirection == 'ASC'" class="icon icon-arrow-down">
+                  <use xlink:href="#icon-arrow-down"></use>
+                </svg> 
+                <svg *ngIf="sortedColumn == field && sortedDirection == 'DESC'" class="icon icon-arrow-down" style="transform: rotate(180deg);">
+                  <use xlink:href="#icon-arrow-down"></use>
+                </svg>  
+          
+          </div>
+            </ng-container>
+          </div>
+          <div class="row__row" *ngFor="let item of data">
+            <ng-container *ngFor="let field of fields">
+              <!-- <div *ngIf="fieldShown[field] && fieldShown[field] instanceof Date" el class="row__col">this date</div> -->
+              <div *ngIf="fieldShown[field]" class="row__col">{{formatValue(item, field)}}</div>
+            </ng-container>
+          </div>
+
+        </div>
+      </div>
+      <div class="row__foot">
+        
+        <button 
+          class="button-stroke pagination__btn" 
+          [ngClass]="{'inactive' : currentPage == 1}"
+          [disabled]="currentPage == 1"
+          (click)="previousPage()">
+          <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
+            <use xlink:href="#icon-arrow-next"></use>
+          </svg>
+        </button>
+
+        <div class="pagination__pages">
+          <div
+            *ngFor="let page of paginationPages"
+            class="pagination__link"
+            [ngClass]="{'active' : currentPage == page}"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </div>
+        </div>
+
+        <button  
+          class="button-stroke pagination__btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage == pagination.totalPages"
+          [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
+          >
+          <svg class="icon icon-arrow-next">
+            <use xlink:href="#icon-arrow-next"></use>
+          </svg>
+        </button>
+        
+      </div>
+    </div>
+  </div>
+</div>

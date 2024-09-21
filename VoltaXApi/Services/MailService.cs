@@ -13,14 +13,18 @@ namespace VoltaXApi.Services
 {
     public class MailService : IMailService
     {
-        private readonly MailSettings _mailSettings;
+				private readonly MailSettings _mailSettings;
 				private readonly IEmailTemplateService _emailTemplateService;
+				private readonly IConfiguration _configuration;
+
         public MailService(
 					IOptions<MailSettings> mailSettings,
-					IEmailTemplateService emailTemplateService)
+					IEmailTemplateService emailTemplateService,
+					IConfiguration config)
         {
             _mailSettings = mailSettings.Value;
 						_emailTemplateService = emailTemplateService;
+						_configuration = config;
         }
 
         public async Task SendEmailAsync(MailRequest mailRequest)
@@ -58,11 +62,6 @@ namespace VoltaXApi.Services
         public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink)
 				{
 					var email = new MimeMessage();
-					Console.WriteLine("this is the mail settings : ");
-					Console.WriteLine("MAIL : " + _mailSettings.Mail);
-					Console.WriteLine("MAIL : " + _mailSettings.Host);
-					Console.WriteLine("MAIL : " + _mailSettings.Password);
-					Console.WriteLine("MAIL : " + _mailSettings.Port);
 					email.From.Add(new MailboxAddress("TESTER", _mailSettings.Mail));
 					email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
 					email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));

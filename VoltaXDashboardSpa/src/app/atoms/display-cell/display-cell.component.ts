@@ -38,11 +38,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.updatedValue = this.val;
-    console.log(this.val);
     if(this.inpType == 'select_enum'){
       this.enumMappings = this._enumService.getEnumMapping(this.enumName);
-      console.log("this is the enumMappings");
-      console.log(this.enumMappings);
     }
   }
 

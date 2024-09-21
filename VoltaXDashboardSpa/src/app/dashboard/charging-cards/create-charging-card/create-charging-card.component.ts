@@ -1,66 +1,33 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { CardStatusEnum } from 'src/_models/_enums/card-status';
 import { CardTypeEnum } from 'src/_models/_enums/card-type';
 import { Card } from 'src/_models/card';
+import { ActionModalService } from 'src/_services/action-modal.service';
+import { AuthService } from 'src/_services/auth.service';
 import { CardService } from 'src/_services/card.service';
+import { ChargePointService } from 'src/_services/charge-point.service';
+import { ChargingStationService } from 'src/_services/charging-station.service';
+import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { UserService } from 'src/_services/user.service';
 declare var $: any;  
 
 @Component({
   selector: 'app-create-charging-card',
   templateUrl: './create-charging-card.component.html',
-  styleUrls: ['./create-charging-card.component.css']
+  styleUrls: ['./create-charging-card.component.sass']
 })
 export class CreateChargingCardComponent implements OnInit, AfterViewInit {
 
-  
-  // FormGroup
   form : FormGroup;
-
-  // card
-  card : Card = {
-    id: 0,
-    cardNumber: '',
-    cardType: CardTypeEnum.Standard,
-    expirationDate: new Date(),
-    maxCount: 0,
-    status: CardStatusEnum.Inactive,
-    balance: 0,
-    note: '',
-    userID: 0,
-    user: null,
-    transactions : [],
-    orders : []
-  };
-
-  // Users
+  card : any = {};
   users : any[] = [];
 
-
   ngAfterViewInit() {
-    
-  }
-  
-
-  constructor(
-    private _chargingCardService:  CardService,
-    private _userService : UserService,
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) { 
-    this.form = new FormGroup({
-      cardType : new FormControl(''),
-      expirationDate : new FormControl(''),
-      maxCount : new FormControl(''),
-      status : new FormControl(''),
-      balance : new FormControl(''),
-      note : new FormControl(''),
-      userID : new FormControl('')
-    })
   }
 
-  // Getting State Control
   get userControl(): FormControl {
     const control = this.form.get('userID');
     if (!control) {
@@ -70,48 +37,103 @@ export class CreateChargingCardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.cardTypes = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
+    this.cardStatuses = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
     this.getAllUserNames();
   }
 
+
+  updateUser(user : any){
+    this.userControl.setValue(user.id);
+  }
+
+  opacity: number = 0;
+  activeDiv = 1;
+
+
+  cardTypes : any = {};
+  cardStatuses : any = {};
+
+
+
+  constructor(
+    private _enumService : EnumMappingService,
+    private _modalService:  ActionModalService,
+    private _router : Router,
+    private _cardService : CardService,
+    private _userService: UserService
+  ) {
+    this.form = new FormGroup({
+      cardType : new FormControl('Standard'),
+      status : new FormControl('Active'),
+      balance : new FormControl(''),
+      note : new FormControl(''),
+      userID : new FormControl('')
+    })
+  }
+
+  get chargePoints() {
+    return this.form.get('chargePoints') as FormArray;
+  }
+
+  getChargePointConnectors() {
+    return (this.form.get('chargePointConnectors') as FormArray);
+  }
+
+  addChargePointConnector() {
+    (this.form.get('chargePointConnectors') as FormArray).push(new FormGroup({
+      chargePointConnectorSpeed: new FormControl('7.3'),
+      chargePointConnectorPricePerKWh : new FormControl(""),
+      chargePointConnectorPricePerMinute : new FormControl(""),
+      chargePointConnectorPricePerHour : new FormControl("")
+    }));
+  }
+
+
+  showSelect() {
+    this.opacity = 1;
+  }
+
+  hideSelect() {
+    this.opacity = 0;
+  }
+
+  getFormControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
+  }
+
+  
   onSubmit(){
     var cardForm = this.form.value;
     this.card.cardType = cardForm.cardType;
-    this.card.expirationDate = cardForm.expirationDate;
-    this.card.maxCount = cardForm.maxCount;
     this.card.status = cardForm.status;
     this.card.note = cardForm.note;
     this.card.userID = cardForm.userID;
     this.card.balance = cardForm.balance;
-    console.log("this is the card : ");
+
+    console.log("this is the card we're pushing");
     console.log(this.card);
+
+    this._cardService.createCard(this.card).subscribe((createdCard) => {
+      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Card Created Successfully",4000);
+      this._router.navigateByUrl('/dashboard/charging-cards');
+    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);
+    });
   }
 
-  // Getting All users
+  
+
   getAllUserNames(){
     this._userService.getUserNames().subscribe((data) => {
       this.users = data;
     })
   }
 
-  // Getting all user names by name
   getAllUsersNamesByName(name : string){
     this._userService.getAllUsersNamesByName(name).subscribe((data) => {
       this.users = data;
     })
-  }
-
-  // User Selected Event
-  updateUser(user : any){
-    this.userControl.setValue(user.id);
-  }
-
-  // card number generator
-  generateCardNumber(): string {
-    let cardNumber = '';
-    for(let i = 0; i < 16; i++) {
-        cardNumber += Math.floor(Math.random() * 10);
-    }
-    return cardNumber;
   }
 
 }

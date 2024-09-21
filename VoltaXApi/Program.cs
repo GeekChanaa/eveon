@@ -142,12 +142,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
 
-    // await SqlScriptExecuter.ExecuteSqlScript();
-    // await BrandsAutomobilesSeeder.Populate();
-    // GlobalSeeder.Seed(dbContext).Wait();
-    // await UserSeeder.Seed(100,dbContext);
+    await SqlScriptExecuter.ExecuteSqlScript();
+    await BrandsAutomobilesSeeder.Populate();
+    GlobalSeeder.Seed(dbContext).Wait();
+    await UserSeeder.Seed(100,dbContext);
     
-    // SeedingNotificationTypes.Initialize(app.Services);
+    //SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);
 }
 

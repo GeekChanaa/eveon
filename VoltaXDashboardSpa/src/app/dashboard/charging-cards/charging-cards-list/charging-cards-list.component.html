@@ -1,0 +1,76 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="charge cards"
+      names="charge cards"
+      [searchByAttributes]="['CardNumber']"
+      routeName="charging-cards"
+      createLink="/dashboard/charging-cards/create"
+      [fields]="fields" 
+      [filters]="filters"
+      [getItemsObservable]="getCardsObservable.bind(this)"
+      [deleteItemObservable]="deleteCardObservable.bind(this)"
+      [updateItemObservable]="updateCardObservable.bind(this)"
+      searchByPlaceHolder="Search by Name"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              
+
+              <div class="field">
+                <div class="field__label">By Type
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.cardType">
+                      <option value="" selected>None</option>
+                      <option value="Standard">Standard</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Partner">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">By Status
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.cardStatus">
+                      <option value="" selected>None</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Blocked">Blocked</option>
+                      <option value="Expired">Expired</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

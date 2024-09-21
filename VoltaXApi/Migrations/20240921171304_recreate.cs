@@ -697,7 +697,10 @@ namespace VoltaXApi.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResolvedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserID1 = table.Column<int>(type: "int", nullable: true)
+                    UserID1 = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -727,7 +730,10 @@ namespace VoltaXApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommentID = table.Column<int>(type: "int", nullable: false),
                     ImageID = table.Column<int>(type: "int", nullable: false),
-                    ImagePriority = table.Column<int>(type: "int", nullable: false)
+                    ImagePriority = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -747,19 +753,22 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CommentReplys",
+                name: "CommentReplies",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CommentID = table.Column<int>(type: "int", nullable: false),
-                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CommentReplys", x => x.ID);
+                    table.PrimaryKey("PK_CommentReplies", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_CommentReplys_Comments_CommentID",
+                        name: "FK_CommentReplies_Comments_CommentID",
                         column: x => x.CommentID,
                         principalTable: "Comments",
                         principalColumn: "ID",
@@ -774,7 +783,10 @@ namespace VoltaXApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ReportID = table.Column<int>(type: "int", nullable: false),
                     ImageID = table.Column<int>(type: "int", nullable: false),
-                    ImagePriority = table.Column<int>(type: "int", nullable: false)
+                    ImagePriority = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -794,19 +806,22 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportReplys",
+                name: "ReportReplies",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ReportID = table.Column<int>(type: "int", nullable: false),
-                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportReplys", x => x.ID);
+                    table.PrimaryKey("PK_ReportReplies", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_ReportReplys_Reports_ReportID",
+                        name: "FK_ReportReplies_Reports_ReportID",
                         column: x => x.ReportID,
                         principalTable: "Reports",
                         principalColumn: "ID",
@@ -877,8 +892,8 @@ namespace VoltaXApi.Migrations
                 column: "ImageID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CommentReplys_CommentID",
-                table: "CommentReplys",
+                name: "IX_CommentReplies_CommentID",
+                table: "CommentReplies",
                 column: "CommentID");
 
             migrationBuilder.CreateIndex(
@@ -962,8 +977,8 @@ namespace VoltaXApi.Migrations
                 column: "ReportID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportReplys_ReportID",
-                table: "ReportReplys",
+                name: "IX_ReportReplies_ReportID",
+                table: "ReportReplies",
                 column: "ReportID");
 
             migrationBuilder.CreateIndex(
@@ -1022,7 +1037,7 @@ namespace VoltaXApi.Migrations
                 name: "CommentImages");
 
             migrationBuilder.DropTable(
-                name: "CommentReplys");
+                name: "CommentReplies");
 
             migrationBuilder.DropTable(
                 name: "ConnectorStatuses");
@@ -1046,7 +1061,7 @@ namespace VoltaXApi.Migrations
                 name: "ReportImages");
 
             migrationBuilder.DropTable(
-                name: "ReportReplys");
+                name: "ReportReplies");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

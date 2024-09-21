@@ -11,6 +11,8 @@ export class SidebarLinkComponent implements OnInit {
   @Input() title : string = "";
   @Input() link : string = "";
 
+  @Input() active:  boolean = false;
+
   constructor() { }
 
   ngOnInit() {

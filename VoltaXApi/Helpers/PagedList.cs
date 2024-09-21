@@ -36,5 +36,19 @@ namespace VoltaXApi.Helpers
             
         }
 
+        public static PagedList<T> Create(IList<T> source, int pageNumber, int pageSize)
+        {
+            var count =  source.Count();
+            if(pageSize > 0){
+                var items = source.Skip((pageNumber - 1 ) * pageSize).Take(pageSize).AsQueryable<T>();
+                return new PagedList<T>(items, count, pageNumber, pageSize);
+            }
+            else{
+                var items = source.AsQueryable<T>();
+                return new PagedList<T>(items, count, pageNumber, pageSize);
+            }
+            
+        }
+
     }
 }

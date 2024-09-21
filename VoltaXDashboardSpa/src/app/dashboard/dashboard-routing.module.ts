@@ -35,6 +35,8 @@ const routes: Routes = [
   {
     path: "charging-cards",
     component: ChargingCardsComponent,
+    loadChildren : () => import('./charging-cards/charging-cards.module')
+      .then(m=>m.ChargingCardsModule)
   },{
     path: "charging-cards/create",
     component: CreateChargingCardComponent,

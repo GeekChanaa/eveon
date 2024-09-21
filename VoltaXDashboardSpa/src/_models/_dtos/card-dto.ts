@@ -3,7 +3,7 @@ import {User} from '../user';
 export interface CardDto {
     id: number;
     cardNumber: string;
-    name: string;
+    userName: string;
     cardType: string;
     expirationDate: Date;
     maxCount: number;

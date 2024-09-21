@@ -49,6 +49,8 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
             userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
+            string spaLink = _config["SpaLink"];
+
             if (await _repo.UserExists(userForRegisterDto.Email))
             {
                 return BadRequest("Email already exists");
@@ -73,7 +75,7 @@ namespace VoltaXApi.Controllers
                 Subject = "Email Verification",
                 Body = ""
             };
-            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
+            await this._mailService.SendVerificationEmailAsync(requ,spaLink+"auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
 
             await _context.SaveChangesAsync();
 
@@ -178,7 +180,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("ResetPassword")]
         public async Task ResetPasswordRequest([FromQuery] string email)
         {
-            Console.WriteLine("Email : "+email);
+            string spaLink = _config["SpaLink"];
             string resetToken = await this._userRepo.GenerateResetPasswordTokenForUser(email);
             MailRequest requ = new MailRequest{
                 Phone = "",
@@ -188,8 +190,7 @@ namespace VoltaXApi.Controllers
                 Subject = "Password Reset",
                 Body = ""
             };
-            Console.WriteLine("this is in here brother");
-            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/reset-password?email="+email+"&token="+resetToken);
+            await this._mailService.SendVerificationEmailAsync(requ,spaLink+"auth/reset-password?email="+email+"&token="+resetToken);
 
         }
 
@@ -255,7 +256,6 @@ namespace VoltaXApi.Controllers
         {
             await this._repo.CreatePhoneVerificationToken(addPhoneNumberDto);
 
-            // sending phone verification token via sms
             return StatusCode(200);
         }
 
@@ -272,6 +272,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("testingEmail")]
         public async Task<IActionResult> TestingEmail()
         {
+            string spaLink = _config["SpaLink"];
             MailRequest requ = new MailRequest{
                 Phone = "",
                 Email = "support@voltaxcharging.com",
@@ -280,7 +281,7 @@ namespace VoltaXApi.Controllers
                 Subject = "Email Verification",
                 Body = ""
             };
-            await this._mailService.SendVerificationEmailAsync(requ,"http://localhost:4200/auth/verify-email?");
+            await this._mailService.SendVerificationEmailAsync(requ,spaLink+"auth/verify-email?");
             return StatusCode(200);
         }
     }

@@ -15,6 +15,8 @@ namespace VoltaXApi.Services
           var facebook = _configuration["SocialLinks:Facebook"];
           var twitter = _configuration["SocialLinks:Twitter"];
           var linkedin = _configuration["SocialLinks:Linkedin"];
+					Console.WriteLine("this is the footer mail ");
+					Console.WriteLine(instagram);
           return $@"<table class=""row row-4"" align=""center"" width=""100%"" border=""0"" cellpadding=""0"" cellspacing=""0"" role=""presentation"" style=""mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff;"">
 						<tbody>
 							<tr>

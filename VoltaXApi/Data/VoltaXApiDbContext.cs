@@ -150,8 +150,8 @@ namespace VoltaXApi.Data
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Automobile> Automobiles { get; set; }
         public DbSet<Report> Reports { get; set; }
-        public DbSet<ReportReply> ReportReplys { get; set; }
-        public DbSet<CommentReply> CommentReplys { get; set; }
+        public DbSet<ReportReply> ReportReplies { get; set; }
+        public DbSet<CommentReply> CommentReplies { get; set; }
         public DbSet<CommentImage> CommentImages { get; set; }
         public DbSet<ReportImage> ReportImages { get; set; }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

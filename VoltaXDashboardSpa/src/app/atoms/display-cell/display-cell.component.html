@@ -21,6 +21,16 @@
       </ng-container>
       
     </ng-container>
+
+    <ng-container *ngIf="inpType == 'number'">
+      <ng-container *ngIf="isLink">
+        <div class="link" routerLink="{{link}}"> {{val}} </div>
+      </ng-container>
+      <ng-container *ngIf="!isLink">
+        {{val}}
+      </ng-container>
+      
+    </ng-container>
     <ng-container *ngIf="inpType == 'select_enum'">
       {{val | camelCaseToSpace}}
     </ng-container>
@@ -29,6 +39,10 @@
 
     <ng-container *ngIf="inpType == 'text'">
       <input #inputField [(ngModel)]="updatedValue" class="field__input" type="text" value="{{val}}">
+    </ng-container>
+
+    <ng-container *ngIf="inpType == 'number'">
+      <input #inputField [(ngModel)]="updatedValue" class="field__input" type="number" value="{{val}}">
     </ng-container>
 
     <ng-container *ngIf="inpType == 'select_enum'">

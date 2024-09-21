@@ -2,7 +2,7 @@ using System;
 
 namespace VoltaXApi.Models
 {
-    public class Report
+    public class Report : IEntity
     {
         public int ID { get; set; } 
         public long UserID { get; set; } 
@@ -17,6 +17,8 @@ namespace VoltaXApi.Models
         public Connector? Connector { get; set; }
         public ChargePoint? ChargePoint { get; set; }
         public User? User { get; set; }
-
+        public bool IsDeleted { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

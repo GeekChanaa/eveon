@@ -85,6 +85,58 @@ namespace VoltaXApi.Data
             return cardDto;
         }
 
+        public async Task CreateCard(CreateCardDto card)
+        {
+            string cardNumber = await this.GenerateCardNumber();
+            Card cardToCreate = new Card{
+                CardNumber = cardNumber,
+                CardType = card.CardType,
+                ExpirationDate = card.ExpirationDate,
+                MaxCount = card.MaxCount,
+                Status = card.Status,
+                Balance = card.Balance,
+                Note = card.Note,
+                UserID = card.UserID,
+            };
+            await this.AddAsync(cardToCreate);
+        }
+
+
+        private async Task<string> GenerateCardNumber()
+        {
+            string cardNumber;
+            bool exists;
+
+            do
+            {
+                cardNumber = GenerateRandomCardNumber(16);
+                exists = await _context.Cards.AnyAsync(c => c.CardNumber == cardNumber);
+
+            } while (exists); 
+
+            return cardNumber;
+        }
+
+        private string GenerateRandomCardNumber(int length)
+        {
+            var random = new Random();
+            var cardNumber = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                cardNumber[i] = random.Next(0, 10).ToString()[0];
+            }
+
+            return new string(cardNumber);
+        }
+
+        public async Task<CardListDto> GetCardForDisplayByID(int cardID)
+        {
+            Card card = await _context.Cards.Where(card => card.ID == cardID).Include(c => c.User).FirstOrDefaultAsync();
+            CardListDto cardToDisplay = this._mapper.Map<Card, CardListDto>(card);
+            return cardToDisplay;
+        }
+
 
 
     }

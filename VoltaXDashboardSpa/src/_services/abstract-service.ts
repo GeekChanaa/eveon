@@ -11,9 +11,6 @@ export abstract class AbstractService<T> {
     protected actionUrl: string) {
   }
 
-  // Http Options (defining some headers)
-  // CONTENT-TYPE The MIME media type for JSON text is application/json. 
-  // Defines the type of data we're sending to the server 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' })
   };

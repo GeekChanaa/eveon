@@ -7,9 +7,9 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class SidebarItemComponent implements OnInit {
 
-  // Input properties
   @Input() title : string = "";
   @Input() link : string = "";
+  @Input() active : boolean = false;
 
   constructor() { }
 

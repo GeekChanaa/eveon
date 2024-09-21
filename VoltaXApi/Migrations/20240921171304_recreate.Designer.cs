@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20240919140644_recreate")]
+    [Migration("20240921171304_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -539,11 +539,20 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("CommentID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ImageID")
                         .HasColumnType("int");
 
                     b.Property<int>("ImagePriority")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -565,15 +574,24 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("CommentID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Reply")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CommentID");
 
-                    b.ToTable("CommentReplys");
+                    b.ToTable("CommentReplies");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
@@ -1093,8 +1111,14 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("EntityId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("IssueDescription")
                         .IsRequired()
@@ -1111,6 +1135,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("UserID")
                         .HasColumnType("bigint");
@@ -1137,14 +1164,23 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ImageID")
                         .HasColumnType("int");
 
                     b.Property<int>("ImagePriority")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ReportID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -1163,6 +1199,12 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Reply")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1170,11 +1212,14 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ReportID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ReportID");
 
-                    b.ToTable("ReportReplys");
+                    b.ToTable("ReportReplies");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.State", b =>

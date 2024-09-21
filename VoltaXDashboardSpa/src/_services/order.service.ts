@@ -71,4 +71,7 @@ export class OrderService extends AbstractService<Order>{
     return this._http.get<InvoiceDTO>(this.baseUrl+"getInvoiceInfo/"+orderID);
   }
 
+  getCardOrders(page:  number,itemsPerPage : number,itemParams : any,cardID : number){
+    return super.getAll(page,itemsPerPage,itemParams,"GetCardOrders/"+cardID);
+  }
 }

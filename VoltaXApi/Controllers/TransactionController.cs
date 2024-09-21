@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -64,6 +65,18 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.GetLatestTransactions();
         }
+
+        [HttpGet("GetCardTransactions/{cardID}")]
+        public async Task<ActionResult<List<Transaction>>> GetCardTransactions(int cardID,[FromQuery] GlobalParams globalParams)
+        {
+            var cards = _repository.GetCardTransactions(cardID);
+            var cardsList = await PagedList<Transaction>.CreateAsync(cards,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(cardsList.CurrentPage, cardsList.PageSize, cardsList.TotalCount, cardsList.TotalPages);
+            return cardsList;
+        }
+
+        
+
         
         /****
             PARTNER TRANSACTIONS MANAGEMENT

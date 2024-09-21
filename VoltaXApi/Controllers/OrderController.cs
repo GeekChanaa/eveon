@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -162,6 +163,15 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> GetInvoiceInfo(int orderID)
         {
             return Ok(await this._repository.GetOrderForInvoice(orderID));
+        }
+
+        [HttpGet("GetCardOrders/{cardID}")]
+        public async Task<ActionResult<List<Order>>> GetCardOrders(int cardID,[FromQuery] GlobalParams globalParams)
+        {
+            var orders = _repository.GetCardOrders(cardID);
+            var ordersList = await PagedList<Order>.CreateAsync(orders,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(ordersList.CurrentPage, ordersList.PageSize, ordersList.TotalCount, ordersList.TotalPages);
+            return ordersList;
         }
     }
 }
