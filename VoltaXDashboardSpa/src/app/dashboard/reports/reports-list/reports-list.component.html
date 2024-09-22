@@ -1,0 +1,54 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="report"
+      names="reports"
+      [searchByAttributes]="['Name','Address']"
+      routeName="reports"
+      createLink="/dashboard/reports/create"
+      [fields]="fields" 
+      [filters]="filters"
+      [getItemsObservable]="getReportsObservable.bind(this)"
+      [deleteItemObservable]="deleteReportObservable.bind(this)"
+      [updateItemObservable]="updateReportObservable.bind(this)"
+      searchByPlaceHolder="Search by Name or Address"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+
+              <div class="field">
+                <div class="field__label">By Category
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.category">
+                      <option value="" selected>None</option>
+                      <option value="Public">Public</option>
+                      <option value="Private">Private</option>
+                      <option value="Partner">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

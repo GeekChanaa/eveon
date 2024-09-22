@@ -18,13 +18,25 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class CommentController : GenericController<Comment>
     {
-        private readonly IRepository<Comment> _repository;
+        private readonly ICommentRepository _repository;
 
-        public CommentController(IRepository<Comment> repository) : base(repository)
+        public CommentController(ICommentRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        // You can override the base methods or add specific methods for this controller
+        [HttpPost("CreateComment")]
+        public async Task<IActionResult> CreateComment(CreateCommentDto commentDto)
+        {
+            await this._repository.CreateComment(commentDto);
+            return StatusCode(204);
+        }
+
+        [HttpGet("GetCommentByID/{commentID}")]
+        public async Task<IActionResult> GetCommentByID(int commentID)
+        {
+            var comment = await this._repository.GetCommentByID(commentID);
+            return Ok(comment);
+        }
     }
 }

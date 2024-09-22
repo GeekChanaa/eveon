@@ -16,25 +16,20 @@
                       <use xlink:href="#icon-arrow-left"></use>
                     </svg><span>Back</span></a>
                 </div>
-                <div class="create__group">
+                <div class="create__group" *ngIf="partners != null && partners.length > 0">
 
                   <div class="field">
-                    <div class="field__label">Network
+                    <div class="field__label">Partner
                       <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                         <svg class="icon icon-info">
                           <use xlink:href="#icon-info"></use>
                         </svg>
                       </div>
                     </div>
-                    <div class="field__wrap">
-                      <div class="field__wrap">
-                        <select class="select" formControlName="chargingStationNetwork">
-                          <option value="0">Public</option>
-                          <option value="1">Private</option>
-                          <option value="2">Partner</option>
-                        </select>
-                      </div>
-                    </div>
+                    <app-search-input class="field__wrap"
+                      (optionSelected)="updatePartner($event)"
+                      [control]="partnerControl"
+                      [options]="partners"></app-search-input>
                   </div>
 
                   <div class="field">

@@ -13,6 +13,7 @@ import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { CityService } from 'src/_services/city.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
+import { UserService } from 'src/_services/user.service';
 
 declare var $: any;
 
@@ -38,6 +39,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   chargingStationImages : File[] = [];
   displayedImages : string[] = [];
   fileErrors : string[] = [];
+
+  partners : any[] = [];
 
   chargePointIDTouched : boolean = false;
   chargePointSerialNumberTouched : boolean = false;
@@ -71,12 +74,14 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     private _modalService:  ActionModalService,
     private _router : Router,
     private _authService:  AuthService,
-    private _chargePointService: ChargePointService
+    private _chargePointService: ChargePointService,
+    private _userService: UserService
   ) {
     this.form = new FormGroup({
       chargingStationName: new FormControl(''),
       chargingStationNetwork: new FormControl('0'),
       chargingStationCategory: new FormControl('0'),
+      chargingStationPartnerID: new FormControl(''),
       chargingStationChargerQuantity: new FormControl('1'),
       chargingStationAddress: new FormControl(''),
       chargingStationCity: new FormControl(''),
@@ -154,6 +159,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   ngOnInit() {
     this.getAllCities();
+    this.getPartners();
     this.chargingStationCategories = Object.values(this._enumService.getEnumMapping("ChargingStationCategoryEnum"));
     this._authService.getUserInformations().then((data : any) => {
       this.userLatitude = data.latitude;
@@ -201,11 +207,23 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     return control as FormControl;
   }
 
-  // Updating city Control
   updateCity(value: any) {
     this.cityControl.setValue(value.name);
   }
 
+  updatePartner(value: any) {
+    this.partnerControl.setValue(value.id);
+  }
+
+  get partnerControl(): FormControl {
+    const control = this.form.get('chargingStationPartnerID');
+    if (!control) {
+      throw new Error('Partner control not found');
+    }
+    return control as FormControl;
+  }
+
+  
 
   removeChargePoint(index: number) {
     const chargePoints = this.form.get('chargePoints') as FormArray;
@@ -230,7 +248,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
   prepareFormData(formValues: any, latitude: string, longitude: string, chargingStationImages : File[]): FormData {
     let formData = new FormData();
-  
+    console.log("this is the chargingsation partnerID");
+    console.log(formValues.chargingStationPartnerID)
     formData.append('Address', formValues.chargingStationAddress);
     formData.append('Network', formValues.chargingStationNetwork.toString());
     formData.append('Category', formValues.chargingStationCategory.toString());
@@ -243,6 +262,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     formData.append('RestaurantsAmenity', formValues.chargingStationAmenities.restaurants.toString());
     formData.append('WashroomAmenity', formValues.chargingStationAmenities.washroom.toString());
     formData.append('SittingAreaAmenity', formValues.chargingStationAmenities.sittingArea.toString());
+    formData.append('PartnerID', formValues.chargingStationPartnerID);
     formData.append('Latitude', latitude.toString());
     formData.append('Longitude', longitude.toString());
     if (this.chargingStationImages) {
@@ -338,6 +358,12 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
         }
       );
     }, 800);
+  }
+
+  getPartners(){
+    this._userService.GetPartnerNames().subscribe((data) => {
+      this.partners = data;
+    })
   }
   
 }

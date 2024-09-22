@@ -1111,15 +1111,15 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("IssueDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReportCategory")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReportDate")
                         .HasColumnType("datetime2");
@@ -1136,10 +1136,7 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("UserID")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("UserID1")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -1148,7 +1145,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("ConnectorID");
 
-                    b.HasIndex("UserID1");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Reports");
                 });
@@ -1647,7 +1644,9 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID1");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ChargePoint");
 

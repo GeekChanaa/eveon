@@ -688,16 +688,15 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<long>(type: "bigint", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
                     ConnectorID = table.Column<int>(type: "int", nullable: true),
                     ChargePointID = table.Column<int>(type: "int", nullable: true),
                     ReportType = table.Column<int>(type: "int", nullable: false),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
+                    ReportCategory = table.Column<int>(type: "int", nullable: false),
                     IssueDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResolvedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserID1 = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -716,10 +715,11 @@ namespace VoltaXApi.Migrations
                         principalTable: "Connectors",
                         principalColumn: "ID");
                     table.ForeignKey(
-                        name: "FK_Reports_Users_UserID1",
-                        column: x => x.UserID1,
+                        name: "FK_Reports_Users_UserID",
+                        column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -992,9 +992,9 @@ namespace VoltaXApi.Migrations
                 column: "ConnectorID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reports_UserID1",
+                name: "IX_Reports_UserID",
                 table: "Reports",
-                column: "UserID1");
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_States_CountryID",

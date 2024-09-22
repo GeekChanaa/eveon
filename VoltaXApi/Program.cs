@@ -54,7 +54,16 @@ builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
 builder.Services.AddScoped<IDebitCardRepository, DebitCardRepository>();
+
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddScoped<IReportService, ReportService>();
+
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
@@ -142,10 +151,10 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
 
-    await SqlScriptExecuter.ExecuteSqlScript();
-    await BrandsAutomobilesSeeder.Populate();
-    GlobalSeeder.Seed(dbContext).Wait();
-    await UserSeeder.Seed(100,dbContext);
+    // await SqlScriptExecuter.ExecuteSqlScript();
+    // await BrandsAutomobilesSeeder.Populate();
+    // GlobalSeeder.Seed(dbContext).Wait();
+    // await UserSeeder.Seed(100,dbContext);
     
     //SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);

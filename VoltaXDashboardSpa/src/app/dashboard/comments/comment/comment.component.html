@@ -1,0 +1,87 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Comment : {{comment.id}}</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button class="settings__link active">Informations</button>
+        
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option>Informations</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="commentLoaded">
+                
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="text"
+                  title="User Name"
+                  [editable]="false"
+                  [link]="'/dashboard/users/'+comment.userID"
+                  [isLink]="true"
+                  [val]="comment.userName"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="text"
+                  title="Charging Station"
+                  [link]="'/dashboard/charging-stations/'+comment.chargingStationID"
+                  [isLink]="true"
+                  [editable]="false"
+                  [val]="comment.chargingStationName" ></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="text"
+                  title="Charge Point"
+                  [editable]="false"
+                  [link]="'/dashboard/charging-points/'+comment.chargePointID"
+                  [isLink]="true"
+                  [val]="comment.chargePointName" [editable]="false"></app-display-cell>
+
+                
+
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="text"
+                  title="Connector"
+                  [editable]="false"
+                  [val]="comment.connectorName"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="number"
+                  title="rating"
+                  [val]="comment.rating"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateCommentObservable.bind(this)" 
+                  [object]="comment"
+                  inpType="text"
+                  title="text"
+                  [val]="comment.text"></app-display-cell>
+
+                  
+              </ng-container>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

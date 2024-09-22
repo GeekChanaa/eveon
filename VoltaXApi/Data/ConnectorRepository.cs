@@ -28,6 +28,15 @@ namespace VoltaXApi.Data
             var connectorsDto = this._mapper.Map<List<Connector> , List<ConnectorListDto>>(connectors);
             return connectorsDto;
         }
+
+        public async Task<List<ConnectorSelectDto>> GetConnectorsIds()
+        {
+            return await this._context.Connectors.Include(u => u.ChargePoint).Select(u => new ConnectorSelectDto {
+                ChargePointID = u.ChargePoint.ChargePointId,
+                ConnectorID = u.ConnectorID,
+                ID = u.ID
+            }).ToListAsync();
+        }
     }
 }
 

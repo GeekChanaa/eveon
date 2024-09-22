@@ -63,7 +63,11 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
 
   updateVal(){
+    console.log("this is the object before");
+    console.log(this.object);
     this.object[this.title] = this.updatedValue;
+    console.log("this is the object after");
+    console.log(this.object);
     this.isLoading = true;
     this.updateObservable(this.object.id, this.object).subscribe((data) => {
       this.isLoading = false;

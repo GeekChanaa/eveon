@@ -15,5 +15,6 @@ namespace VoltaXApi.Data
         Task<bool> IsChargePointIDUnique(string chargePointID);
         Task<bool> IsChargePointSerialNumberUnique(string chargePointID);
         Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper);
+        Task<List<ChargePointSelectDto>> GetChargePointsIds();
     }
 }

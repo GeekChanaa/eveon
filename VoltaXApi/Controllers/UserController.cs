@@ -50,6 +50,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetUserNames();
         }
 
+        [HttpGet("GetPartnerNames")]
+        public async Task<ActionResult<List<UserNameDto>>> GetPartnerNames()
+        {
+            return await this._repository.GetPartnerNames();
+        }
+
         [HttpGet("GetUserNamesByName")]
         public async Task<ActionResult<List<UserNameDto>>> GetUserNamesByName(string name)
         {

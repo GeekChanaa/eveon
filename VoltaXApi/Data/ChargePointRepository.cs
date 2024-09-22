@@ -80,6 +80,14 @@ namespace VoltaXApi.Data
             return await this._context.ChargePoints.AnyAsync(cp => cp.SerialNumber == chargePointSerialNumber);
         }
 
+        public async Task<List<ChargePointSelectDto>> GetChargePointsIds()
+        {
+            return await this._context.ChargePoints.Select(u => new ChargePointSelectDto {
+                ID = u.ID,
+                ChargePointID = u.ChargePointId
+            }).ToListAsync();
+        }
+
         public async Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper)
         {
             var chargePointQueryable = _context.ChargePoints.Include(u => u.ChargingStation).AsQueryable();

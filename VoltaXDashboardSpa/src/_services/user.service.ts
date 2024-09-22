@@ -49,7 +49,6 @@ export class UserService extends AbstractService<User>{
     );
   }
 
-  // getting user names by name
   getAllUsersNamesByName(name: string){
     return this._http.get<any[]>(this.baseUrl + "GetUserNamesByName?name="+name);
   }
@@ -60,6 +59,15 @@ export class UserService extends AbstractService<User>{
 
   isPhoneUnique(phone:string){
     return this._http.get<any>(this.baseUrl + "IsPhoneUnique/"+phone);
+  }
+
+  GetPartnerNames(){
+    return this._http.get<any[]>(this.baseUrl + "GetPartnerNames").pipe(
+      map(users => users.map(user => ({
+        id: user.id,
+        name: user.fullName 
+      })))
+    );
   }
   
 

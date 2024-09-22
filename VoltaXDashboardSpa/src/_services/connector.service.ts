@@ -3,6 +3,7 @@ import { Connector } from 'src/_models/connector';
 import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { map } from 'rxjs';
 
 
 @Injectable({
@@ -19,6 +20,15 @@ export class ConnectorService extends AbstractService<Connector>{
 
   getChargePointConnectors(id : number){
     return this._http.get<any[]>(this.baseUrl+"GetChargePointConnectors/"+id);
+  }
+
+  getConnectorIds(){
+    return this._http.get<any[]>(this.baseUrl+"GetConnectorsIds/").pipe(
+      map(connectors => connectors.map(connector => ({
+        id: connector.id,
+        name: connector.chargePointID + " " + connector.connectorID
+      })))
+    );
   }
 
 }

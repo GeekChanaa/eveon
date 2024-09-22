@@ -4,7 +4,6 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { AlarmManagementComponent } from './alarm-management/alarm-management.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
-import { CommentManagementComponent } from './comment-management/comment-management.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
@@ -36,7 +35,6 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
       HomeComponent,
       StationLoadBalanceComponent,
       ChargingStrategiesComponent,
-      CommentManagementComponent,
       HomeChargerBindListComponent,
       TransactionsComponent,
       RechargeOrdersComponent,

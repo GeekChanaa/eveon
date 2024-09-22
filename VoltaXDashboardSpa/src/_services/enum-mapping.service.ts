@@ -57,6 +57,23 @@ export class EnumMappingService {
       1: 'PerpendicularParking',
       2: 'AngleParking'
     },
+    ReportStatus: {
+      0: 'Pending',
+      1: 'InProgress',
+      2: 'Resolved',
+      3: 'Closed',
+    },
+    ReportType: {
+      0: 'ChargePoint',
+      1: 'Connector',
+      2: 'Website',
+      3: 'Other',
+    },
+    ReportCategory: {
+      0: 'General',
+      1: 'Technical',
+      2: 'Maintenance',
+    },
   };
 
   getEnumMapping(modelName: string): { [id: number]: string } {

@@ -18,6 +18,28 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             
             CreateMap<Order,OrderDto>();
+
+            CreateMap<CreateReportDto,Report>();
+            CreateMap<Report,ReportDisplayDto>()
+                .ForMember(dest => dest.ChargePointName, opt => 
+                            opt.MapFrom(src => src.ChargePoint != null ? src.ChargePoint.ChargePointId : ""))
+                .ForMember(dest => dest.ConnectorName, opt => 
+                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : ""))
+                .ForMember(dest => dest.UserName, opt => 
+                            opt.MapFrom(src => src.User != null ? src.User.FirstName + " " +src.User.LastName : ""));
+            
+
+            CreateMap<CreateCommentDto,Comment>();
+            CreateMap<Comment,CommentDisplayDto>()
+                .ForMember(dest => dest.ChargePointName, opt => 
+                            opt.MapFrom(src => src.ChargePoint != null ? src.ChargePoint.ChargePointId : ""))
+                .ForMember(dest => dest.ConnectorName, opt => 
+                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : ""))
+                .ForMember(dest => dest.ChargingStationName, opt => 
+                            opt.MapFrom(src => src.ChargingStation != null ? src.ChargingStation.Name : ""))
+                .ForMember(dest => dest.UserName, opt => 
+                            opt.MapFrom(src => src.User != null ? src.User.FirstName + " " +src.User.LastName : ""));
+
             
             CreateMap<Transaction,TransactionDto>();
                 

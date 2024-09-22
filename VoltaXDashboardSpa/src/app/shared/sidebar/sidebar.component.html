@@ -34,8 +34,9 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown *ngIf="role == 0" [title]="'app management'" 
-        [active]="isDropdownActive('/dashboard/comment-management')">
-        <app-sidebar-link [title]="'comments management'" [link]="'/dashboard/comment-management'" [active]="isActive('/dashboard/comment-management')"></app-sidebar-link>
+        [active]="isDropdownActive('/dashboard/comments') || isDropdownActive('/dashboard/reports')">
+        <app-sidebar-link [title]="'comments management'" [link]="'/dashboard/comments'" [active]="isActive('/dashboard/comments')"></app-sidebar-link>
+        <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'" [active]="isActive('/dashboard/reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown *ngIf="role == 0" [title]="'order management'" 
@@ -59,6 +60,7 @@
       <app-sidebar-dropdown *ngIf="role == 0" [title]="'Account'" 
         [active]="isDropdownActive('/dashboard/users')">
         <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'" [active]="isActive('/dashboard/users')"></app-sidebar-link>
+        <app-sidebar-link [title]="'partners'" [link]="'/dashboard/partners'" [active]="isActive('/dashboard/partners')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <!-- Partner menu -->

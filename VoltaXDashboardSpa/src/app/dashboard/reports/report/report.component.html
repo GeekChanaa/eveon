@@ -1,0 +1,105 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Report : {{report.name}}</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button class="settings__link active">Informations</button>
+        
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option>Informations</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="reportLoaded">
+                
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="text"
+                  title="User Name"
+                  [editable]="false"
+                  [link]="'/dashboard/users/'+report.userID"
+                  [isLink]="true"
+                  [val]="report.userName" [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  [object]="report"
+                  inpType="text"
+                  title="Charge Point"
+                  [editable]="false"
+                  [link]="'/dashboard/charging-points/'+report.chargePointID"
+                  [isLink]="true"
+                  [val]="report.chargePointName" [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="text"
+                  title="Connector"
+                  [editable]="false"
+                  [val]="report.connectorName"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="text"
+                  title="issueDescription"
+                  [val]="report.issueDescription"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="text"
+                  title="Report Date"
+                  [val]="report.reportDate" ></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="text"
+                  title="Resolve Date"
+                  [val]="report.resolveDate"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="select_enum"
+                  enumName="ReportType"
+                  title="reportType"
+                  val="{{report.reportType}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="select_enum"
+                  enumName="ReportCategory"
+                  title="reportCategory"
+                  val="{{report.reportCategory}}"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updateReportObservable.bind(this)" 
+                  [object]="report"
+                  inpType="select_enum"
+                  enumName="ReportStatus"
+                  title="status"
+                  val="{{report.status}}"></app-display-cell>
+
+                  
+              </ng-container>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

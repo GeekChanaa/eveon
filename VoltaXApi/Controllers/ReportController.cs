@@ -27,5 +27,19 @@ namespace VoltaXApi.Controllers
         {
             _repository = repository;
         }
+
+        [HttpPost("CreateReport")]
+        public async Task<IActionResult> CreateReport(CreateReportDto reportDto)
+        {
+            await this._repository.CreateReport(reportDto);
+            return StatusCode(204);
+        }
+
+        [HttpGet("GetReportByID/{reportID}")]
+        public async Task<IActionResult> GetReportByID(int reportID)
+        {
+            var report = await this._repository.GetReportByID(reportID);
+            return Ok(report);
+        }
     }
 }

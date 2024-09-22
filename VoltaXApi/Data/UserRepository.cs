@@ -62,6 +62,12 @@ namespace VoltaXApi.Data
             return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
         }
 
+        public async Task<List<UserNameDto>> GetPartnerNames()
+        {
+            var users = this._context.Users.Where(u => u.Role == UserRole.Partner).AsQueryable();
+            return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
+        }
+
         public async Task<List<UserNameDto>> GetUserNamesByName(string name)
         {
             var users = this._context.Users.Where(u => (u.FirstName + " " + u.LastName).Contains(name)).AsQueryable();

@@ -36,6 +36,11 @@ namespace VoltaXApi.Controllers
             return Ok(entity);
         }
 
+        [HttpGet("GetConnectorsIds")]
+        public async Task<IActionResult> GetConnectorsIds()
+        {
+            return Ok(await this._repository.GetConnectorsIds());
+        }
         
     }
 }

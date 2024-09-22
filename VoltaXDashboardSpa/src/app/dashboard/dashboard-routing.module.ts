@@ -7,7 +7,6 @@ import { ChargingProfileComponent } from './charging-profile/charging-profile.co
 import { ChargingStationsComponent } from './charging-stations/charging-stations.component';
 import { CreateChargingStationComponent } from './charging-stations/create-charging-station/create-charging-station.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
-import { CommentManagementComponent } from './comment-management/comment-management.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
@@ -23,6 +22,8 @@ import { ChargingStationComponent } from './charging-stations/charging-station/c
 import { UserComponent } from './users/user/user.component';
 import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 import { StatisticsComponent } from './statistics/statistics.component';
+import { CommentsComponent } from './comments/comments.component';
+import { ReportsComponent } from './reports/reports.component';
 const routes: Routes = [
   {
     path: "",
@@ -61,12 +62,20 @@ const routes: Routes = [
       .then(m=>m.ChargingStationsModule)
   },
   {
-    path: "charging-strategies",
-    component: ChargingStrategiesComponent,
+    path: "comments",
+    component: CommentsComponent,
+    loadChildren : () => import('./comments/comments.module')
+      .then(m=>m.CommentsModule)
   },
   {
-    path: "comment-management",
-    component: CommentManagementComponent,
+    path: "reports",
+    component: ReportsComponent,
+    loadChildren : () => import('./reports/reports.module')
+      .then(m=>m.ReportsModule)
+  },
+  {
+    path: "charging-strategies",
+    component: ChargingStrategiesComponent,
   },{
     path: "statistics",
     component: StatisticsComponent,

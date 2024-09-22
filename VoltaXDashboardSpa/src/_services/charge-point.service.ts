@@ -63,5 +63,15 @@ export class ChargePointService extends AbstractService<ChargePoint>{
   }
 
   
+  getChargePointIds(){
+    return this._http.get<any[]>(this.baseUrl+"GetChargePointsIds/").pipe(
+      map(chargePoints => chargePoints.map(chargePoint => ({
+        id: chargePoint.id,
+        name: chargePoint.chargePointID
+      })))
+    );
+  }
+
+  
 
 }
