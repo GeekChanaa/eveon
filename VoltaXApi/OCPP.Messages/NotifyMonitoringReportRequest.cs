@@ -25,15 +25,6 @@ namespace VoltaXApi.OCPP.Messages
       public DateTime GeneratedAt { get; set; }
   }
 
-  public enum MonitorEnumType
-  {
-      UpperThreshold,
-      LowerThreshold,
-      Delta,
-      Periodic,
-      PeriodicClockAligned
-  }
-
   public class MonitoringDataType
   {
       [Required]

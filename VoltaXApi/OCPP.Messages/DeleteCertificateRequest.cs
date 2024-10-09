@@ -6,9 +6,4 @@ namespace VoltaXApi.OCPP.Messages
       public CertificateHashDataType CertificateHashData { get; set; }
   }
 
-  public class CustomDataType
-  {
-      public string VendorId { get; set; }
-  }
-
 }

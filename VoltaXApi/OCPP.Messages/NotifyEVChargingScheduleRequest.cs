@@ -10,17 +10,18 @@ namespace VoltaXApi.OCPP.Messages
       public string ChargingStationId { get; set; }
 
       [Required]
-      public string EvseId { get; set; }
+      public int EvseId { get; set; }
 
       [Required]
       public string ConnectorId { get; set; }
 
       [Required]
-      public List<ChargingSchedulePeriodType> ChargingSchedule { get; set; }
+      public ChargingScheduleType ChargingSchedule { get; set; }
 
       public string Reason { get; set; }
 
       public string Status { get; set; }
+      public string TimeBase { get; set; }
 
       public string ReservationId { get; set; }
 

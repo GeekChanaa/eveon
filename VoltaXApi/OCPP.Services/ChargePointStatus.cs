@@ -23,7 +23,8 @@ using System.Net.WebSockets;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {

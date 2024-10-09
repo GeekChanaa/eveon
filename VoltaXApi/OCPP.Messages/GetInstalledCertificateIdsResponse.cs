@@ -38,13 +38,4 @@ namespace VoltaXApi.OCPP.Messages
       public List<CertificateHashDataType> ChildCertificateHashData { get; set; }
   }
 
-  
-
-  public enum HashAlgorithmEnumType
-  {
-      SHA256,
-      SHA384,
-      SHA512
-  }
-
 }

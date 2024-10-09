@@ -4,7 +4,7 @@ namespace VoltaXApi.OCPP.Messages
   {
       public CustomDataType CustomData { get; set; } 
       public ChargingLimitSourceEnum ChargingLimitSource { get; set; } 
-      public int? EvseId { get; set; } 
+      public int EvseId { get; set; } 
   }
 
   public enum ChargingLimitSourceEnum

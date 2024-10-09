@@ -26,7 +26,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {
@@ -59,7 +60,7 @@ namespace OCPP.Core.Server
                         {
                             // Concat all periods and write them in messag log...
 
-                            DateTimeOffset timeBase = notifyEVChargingScheduleRequest.TimeBase;
+                            DateTimeOffset timeBase = DateTime.Parse(notifyEVChargingScheduleRequest.TimeBase);
                             foreach (ChargingSchedulePeriodType period in notifyEVChargingScheduleRequest.ChargingSchedule?.ChargingSchedulePeriod)
                             {
                                 if (periods.Length > 0)

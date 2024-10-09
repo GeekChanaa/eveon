@@ -22,29 +22,6 @@ namespace VoltaXApi.OCPP.Messages
       NotSupportedAttributeType
   }
 
-  public class ComponentType
-  {
-      [Required]
-      [MaxLength(50)]
-      public string Name { get; set; }
-
-      [MaxLength(50)]
-      public string Instance { get; set; }
-
-      public CustomDataType CustomData { get; set; }
-      public EVSEType Evse { get; set; }
-  }
-
-  public class EVSEType
-  {
-      [Required]
-      public int Id { get; set; }
-
-      public int? ConnectorId { get; set; }
-
-      public CustomDataType CustomData { get; set; }
-  }
-
   public class GetVariableResultType
   {
       [Required]

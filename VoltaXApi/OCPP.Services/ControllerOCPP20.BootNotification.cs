@@ -25,7 +25,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {
@@ -45,8 +46,8 @@ namespace OCPP.Core.Server
                 Logger.LogInformation("BootNotification => Reason={0}", bootReason);
 
                 BootNotificationResponse bootNotificationResponse = new BootNotificationResponse();
-                bootNotificationResponse.CurrentTime = DateTimeOffset.UtcNow;
-                bootNotificationResponse.Interval = 300;    // 300 seconds
+                bootNotificationResponse.CurrentTime = DateTime.Now;
+                bootNotificationResponse.Interval = 300;
 
                 bootNotificationResponse.StatusInfo = new StatusInfoType();
                 bootNotificationResponse.StatusInfo.ReasonCode = string.Empty;

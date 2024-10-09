@@ -17,21 +17,6 @@ namespace VoltaXApi.OCPP.Messages
       public bool Tbc { get; set; } = false; // Default value
   }
 
-  public enum MessagePriorityEnumType
-  {
-      AlwaysFront,
-      InFront,
-      NormalCycle
-  }
-
-  public enum MessageStateEnumType
-  {
-      Charging,
-      Faulted,
-      Idle,
-      Unavailable
-  }
-
   public class MessageInfoType
   {
       public CustomDataType CustomData { get; set; }

@@ -20,19 +20,4 @@ namespace VoltaXApi.OCPP.Messages
       public CustomDataType CustomData { get; set; }
   }
 
-  public enum MessagePriorityEnumType
-  {
-      AlwaysFront,
-      InFront,
-      NormalCycle
-  }
-
-  public enum MessageStateEnumType
-  {
-      Charging,
-      Faulted,
-      Idle,
-      Unavailable
-  }
-
 }

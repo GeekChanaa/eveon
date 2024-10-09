@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {

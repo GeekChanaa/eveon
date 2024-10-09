@@ -34,20 +34,4 @@ namespace VoltaXApi.OCPP.Messages
       public List<ChargingLimitSourceEnumType> ChargingLimitSource { get; set; }
   }
 
-  public enum ChargingProfilePurposeEnumType
-  {
-      ChargingStationExternalConstraints,
-      ChargingStationMaxProfile,
-      TxDefaultProfile,
-      TxProfile
-  }
-
-  public enum ChargingLimitSourceEnumType
-  {
-      EMS,
-      Other,
-      SO,
-      CSO
-  }
-
 }

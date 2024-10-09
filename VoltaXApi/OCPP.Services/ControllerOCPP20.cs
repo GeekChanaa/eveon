@@ -24,7 +24,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace OCPP.Core.Server

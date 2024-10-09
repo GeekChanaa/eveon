@@ -12,10 +12,5 @@ namespace VoltaXApi.OCPP.Messages
 
       public StatusInfoType StatusInfo { get; set; }
   }
-  public enum GenericStatusEnumType
-  {
-      Accepted,
-      Rejected
-  }
 
 }

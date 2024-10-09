@@ -25,7 +25,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {
@@ -40,7 +41,7 @@ namespace OCPP.Core.Server
             heartbeatResponse.CustomData = new CustomDataType();
             heartbeatResponse.CustomData.VendorId = VendorId;
 
-            heartbeatResponse.CurrentTime = DateTimeOffset.UtcNow;
+            heartbeatResponse.CurrentTime = DateTimeOffset.UtcNow.ToString();
 
             msgOut.JsonPayload = JsonConvert.SerializeObject(heartbeatResponse);
             Logger.LogTrace("Heartbeat => Response serialized");

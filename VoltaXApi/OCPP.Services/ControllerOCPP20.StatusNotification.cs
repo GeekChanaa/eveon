@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 
 namespace OCPP.Core.Server
 {
@@ -42,7 +43,7 @@ namespace OCPP.Core.Server
 
                 if (connectorId > 0)
                 {
-                    if (UpdateConnectorStatus(connectorId, newStatus.ToString(), statusNotificationRequest.Timestamp) == false)
+                    if (UpdateConnectorStatus(connectorId, newStatus.ToString(), DateTimeOffset.Parse(statusNotificationRequest.Timestamp)) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }

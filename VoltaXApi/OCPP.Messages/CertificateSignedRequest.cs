@@ -7,10 +7,4 @@ namespace VoltaXApi.OCPP.Messages
       public CertificateSigningUseEnumType? CertificateType { get; set; } // Nullable since it's not required
   }
 
-  public enum CertificateSigningUseEnumType
-  {
-      ChargingStationCertificate,
-      V2GCertificate
-  }
-
 }

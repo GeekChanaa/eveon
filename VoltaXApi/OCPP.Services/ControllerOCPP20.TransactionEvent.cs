@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace OCPP.Core.Server
@@ -32,7 +33,7 @@ namespace OCPP.Core.Server
 
                 string idTag = CleanChargeTagId(transactionEventRequest.IdToken.IdToken, Logger);
                 Console.WriteLine("this is the idTag : " + idTag);
-                connectorId = (transactionEventRequest.Evse != null) ? transactionEventRequest.Evse.ConnectorId : 0;
+                connectorId = (transactionEventRequest.EVSE != null) ? (int) transactionEventRequest.EVSE.ConnectorId : 0;
 
 
                 //  Extract meter values with correct scale
@@ -40,7 +41,7 @@ namespace OCPP.Core.Server
                 double meterKWH = -1;
                 DateTimeOffset? meterTime = null;
                 double stateOfCharge = -1;
-                GetMeterValues(transactionEventRequest.MeterValue, out meterKWH, out currentChargeKW, out stateOfCharge, out meterTime);
+                GetMeterValues(transactionEventRequest.MeterValues, out meterKWH, out currentChargeKW, out stateOfCharge, out meterTime);
 
 
                 if (transactionEventRequest.EventType == TransactionEventEnumType.Started)
@@ -97,7 +98,7 @@ namespace OCPP.Core.Server
                                     transaction.ChargePointID = ChargePointStatus.Id;
                                     transaction.ConnectorID = connectorId;
                                     transaction.StartTagId = idTag;
-                                    transaction.StartTime = transactionEventRequest.Timestamp.UtcDateTime;
+                                    transaction.StartTime =  DateTime.Parse(transactionEventRequest.Timestamp);
                                     transaction.MeterStart  = meterKWH;
                                     transaction.StartResult = transactionEventRequest.TriggerReason.ToString();
                                     dbContext.Add<Transaction>(transaction);
@@ -177,7 +178,7 @@ namespace OCPP.Core.Server
                             else
                             {
                                 Console.WriteLine("UpdateTransaction => Unknown transaction: uid='{0}' / chargepoint='{1}' / tag={2}", transactionEventRequest.TransactionInfo?.TransactionId, ChargePointStatus?.Id, idTag);
-                                WriteMessageLog(ChargePointStatus?.Id, null, msgIn.Action, string.Format("UnknownTransaction:UID={0}/Meter={1}", transactionEventRequest.TransactionInfo?.TransactionId, GetMeterValue(transactionEventRequest.MeterValue)), errorCode);
+                                WriteMessageLog(ChargePointStatus?.Id, null, msgIn.Action, string.Format("UnknownTransaction:UID={0}/Meter={1}", transactionEventRequest.TransactionInfo?.TransactionId, GetMeterValue(transactionEventRequest.MeterValues)), errorCode);
                                 errorCode = ErrorCodes.PropertyConstraintViolation;
                             }
                         }
@@ -299,7 +300,7 @@ namespace OCPP.Core.Server
                                     // write current meter value in "stop" value
                                     Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
 
-                                    transaction.StopTime = transactionEventRequest.Timestamp.UtcDateTime;
+                                    transaction.StopTime = DateTime.Parse(transactionEventRequest.Timestamp);
                                     transaction.MeterStop = meterKWH;
                                     transaction.StopTagId = idTag;
                                     transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
@@ -312,7 +313,7 @@ namespace OCPP.Core.Server
                             else
                             {
                                 Console.WriteLine("EndTransaction => Unknown transaction: uid='{0}' / chargepoint='{1}' / tag={2}", transactionEventRequest.TransactionInfo?.TransactionId, ChargePointStatus?.Id, idTag);
-                                WriteMessageLog(ChargePointStatus?.Id, connectorId, msgIn.Action, string.Format("UnknownTransaction:UID={0}/Meter={1}", transactionEventRequest.TransactionInfo?.TransactionId, GetMeterValue(transactionEventRequest.MeterValue)), errorCode);
+                                WriteMessageLog(ChargePointStatus?.Id, connectorId, msgIn.Action, string.Format("UnknownTransaction:UID={0}/Meter={1}", transactionEventRequest.TransactionInfo?.TransactionId, GetMeterValue(transactionEventRequest.MeterValues)), errorCode);
                                 errorCode = ErrorCodes.PropertyConstraintViolation;
                             }
                         }
@@ -402,8 +403,7 @@ namespace OCPP.Core.Server
                             Console.WriteLine("GetMeterValues => Charging: unexpected unit: '{0}' (Value={1})", sampleValue.UnitOfMeasure?.Unit, sampleValue.Value);
                         }
                     }
-                    else if (sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register ||
-                             sampleValue.Measurand == MeasurandEnumType.Missing)  // Spec: Default=Energy_Active_Import_Register
+                    else if (sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register)  
                     {
                         // charged amount of energy
                         meterKWH = sampleValue.Value;

@@ -2,7 +2,8 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Core;
 using VoltaXApi.Services;
 
@@ -151,7 +152,7 @@ namespace OCPP.Core.Server
             if (string.IsNullOrEmpty(ocppTextMessage))
             {
                 // invalid message
-                ocppTextMessage = string.Format("[{0},\"{1}\",\"{2}\",\"{3}\",{4}]", "4", string.Empty, VoltaXApi.Messages_OCPP20.ErrorCodes.ProtocolError, string.Empty, "{}");
+                ocppTextMessage = string.Format("[{0},\"{1}\",\"{2}\",\"{3}\",{4}]", "4", string.Empty, ErrorCodes.ProtocolError, string.Empty, "{}");
             }
 
             string dumpDir = _configuration.GetValue<string>("MessageDumpDir");
