@@ -11,6 +11,13 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Helpers;
+using OCPP.Core.Server;
+using VoltaXApi.Services;
+using System.Net.WebSockets;
+using VoltaXApi.Messages_OCPP20;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 namespace VoltaXApi.Controllers
 {
@@ -20,10 +27,14 @@ namespace VoltaXApi.Controllers
     public class ChargePointController : GenericController<ChargePoint>
     {
         private readonly IChargePointRepository _repository;
+        private readonly WebSocketManagerService _wsService;
 
-        public ChargePointController(IChargePointRepository repository) : base(repository)
+        public ChargePointController(
+            IChargePointRepository repository,
+            WebSocketManagerService wsService) : base(repository)
         {
             _repository = repository;
+            _wsService = wsService;
         }
 
         // Get ChargePoint Connectors
@@ -54,7 +65,7 @@ namespace VoltaXApi.Controllers
 
         // Charging Stations of partner
         [HttpGet("GetPartnerChargePoints/{partnerID}")]
-        public async Task<ActionResult<List<ChargingStation>>> GetPartnerChargePoints(int partnerID , [FromQuery] GlobalParams globalParams)
+        public async Task<ActionResult<List<ChargingStation>>> GetPartnerChargePoints(int partnerID, [FromQuery] GlobalParams globalParams)
         {
             var chargingStations = await PagedList<ChargePoint>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ChargingStation.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingStations.CurrentPage, chargingStations.PageSize, chargingStations.TotalCount, chargingStations.TotalPages);
@@ -98,8 +109,8 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargePointByID/{chargePointID}")]
         public async Task<IActionResult> GetChargePointByID(int chargePointID)
         {
-            var helper = new ChargePointIncludableHelper{};
-            return Ok(await this._repository.GetChargePointByID(chargePointID,helper));
+            var helper = new ChargePointIncludableHelper { };
+            return Ok(await this._repository.GetChargePointByID(chargePointID, helper));
         }
 
         [HttpGet("GetChargePointsIds")]
@@ -107,6 +118,31 @@ namespace VoltaXApi.Controllers
         {
             return Ok(await this._repository.GetChargePointsIds());
         }
+
+        [HttpPost("{chargePointId}/sendMessage")]
+        public async Task<IActionResult> SendMessageToChargePoint(string chargePointId, [FromBody] string message)
+        {
+            Console.WriteLine("searching for chargepointID : "+ chargePointId);
+            var webSocket = _wsService.GetWebSocket(chargePointId);
+
+            if (webSocket == null || webSocket.State != WebSocketState.Open)
+            {
+                return NotFound("WebSocket connection for this charge point is not available.");
+            }
+            
+            await _wsService.SendMessageAsync(chargePointId, message);
+
+            return Ok("Message sent successfully.");
+        }
+
+        [HttpGet("logging")]
+        public async Task<IActionResult> Logging([FromBody] string message)
+        {
+            return StatusCode(200);
+        }
+
+
+
 
     }
 }

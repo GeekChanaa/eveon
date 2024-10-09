@@ -87,7 +87,7 @@
             </ng-container>
             <div class="row__col options_col">
               <div class="actions__container">
-                  <button (click)="delete(item.id)" class="table__action delete-btn"> 
+                  <button *ngIf="deletable" (click)="delete(item.id)" class="table__action delete-btn"> 
                       <svg class="icon icon-trash">
                           <use xlink:href="#icon-trash"></use>
                       </svg>   

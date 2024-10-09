@@ -1,28 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using VoltaXApi.Messages_OCPP20;
+using VoltaXApi.OCPP.Core;
+using VoltaXApi.Services;
 
 namespace OCPP.Core.Server
 {
     public partial class OCPPMiddleware
     {
-        /// <summary>
-        /// Waits for new OCPP V2.0 messages on the open websocket connection and delegates processing to a controller
-        /// </summary>
         private async Task Receive20(ChargePointStatus chargePointStatus, HttpContext context)
         {
-            ILogger logger = _logFactory.CreateLogger("OCPPMiddleware.OCPP20");
+            var _msgProcessor = new OCPPMessageProcessor(this._logFactory, _configuration,chargePointStatus);
             ControllerOCPP20 controller20 = new ControllerOCPP20(_configuration, _logFactory, chargePointStatus);
 
             byte[] buffer = new byte[1024 * 4];
@@ -38,29 +28,12 @@ namespace OCPP.Core.Server
 
                     if (result.EndOfMessage)
                     {
-                        // read complete message into byte array
                         byte[] bMessage = memStream.ToArray();
-                        // reset memory stream für next message
                         memStream = new MemoryStream(buffer.Length);
 
-                        string dumpDir = _configuration.GetValue<string>("MessageDumpDir");
-                        if (!string.IsNullOrWhiteSpace(dumpDir))
-                        {
-                            string path = Path.Combine(dumpDir, string.Format("{0}_ocpp20-in.txt", DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-ffff")));
-                            try
-                            {
-                                // Write incoming message into dump directory
-                                File.WriteAllBytes(path, bMessage);
-                            }
-                            catch(Exception exp)
-                            {
-                                Console.WriteLine("OCPPMiddleware.Receive20 => Error dumping incoming message to path: '{0}'", path);
-                            }
-                        }
+                        DumpMessage(bMessage, "incoming");
 
-                        string ocppMessage = UTF8Encoding.UTF8.GetString(bMessage);
-                        Console.WriteLine("================ this is the ocppMessage =======");
-                        Console.WriteLine(ocppMessage);
+                        string ocppMessage = Encoding.UTF8.GetString(bMessage);
                         Match match = Regex.Match(ocppMessage, MessageRegExp);
                         if (match != null && match.Groups != null && match.Groups.Count >= 3)
                         {
@@ -71,32 +44,7 @@ namespace OCPP.Core.Server
                             Console.WriteLine("OCPPMiddleware.Receive20 => OCPP-Message: Type={0} / ID={1} / Action={2})", messageTypeId, uniqueId, action);
 
                             OCPPMessage msgIn = new OCPPMessage(messageTypeId, uniqueId, action, jsonPaylod);
-                            if (msgIn.MessageType == "2")
-                            {
-                                // Request from chargepoint to OCPP server
-                                OCPPMessage msgOut = controller20.ProcessRequest(msgIn);
-
-                                // Send OCPP message with optional logging/dump
-                                await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
-                            }
-                            else if (msgIn.MessageType == "3" || msgIn.MessageType == "4")
-                            {
-                                // Process answer from chargepoint
-                                if (_requestQueue.ContainsKey(msgIn.UniqueId))
-                                {
-                                    controller20.ProcessAnswer(msgIn, _requestQueue[msgIn.UniqueId]);
-                                    _requestQueue.Remove(msgIn.UniqueId);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("OCPPMiddleware.Receive20 => HttpContext from caller not found / Msg: {0}", ocppMessage);
-                                }
-                            }
-                            else
-                            {
-                                // Unknown message type
-                                Console.WriteLine("OCPPMiddleware.Receive20 => Unknown message type: {0} / Msg: {1}", msgIn.MessageType, ocppMessage);
-                            }
+                            await _msgProcessor.ProcessMessage(msgIn, chargePointStatus, context, _requestQueue, ocppMessage);
                         }
                         else
                         {
@@ -115,16 +63,13 @@ namespace OCPP.Core.Server
             _chargePointStatusDict.Remove(chargePointStatus.Id, out dummy);
         }
 
-        /// <summary>
-        /// Sends a (Soft-)Reset to the chargepoint
-        /// </summary>
         private async Task Reset20(ChargePointStatus chargePointStatus, HttpContext apiCallerContext)
         {
             ILogger logger = _logFactory.CreateLogger("OCPPMiddleware.OCPP20");
             ControllerOCPP20 controller20 = new ControllerOCPP20(_configuration, _logFactory, chargePointStatus);
 
-            VoltaXApi.Messages_OCPP20.ResetRequest resetRequest = new VoltaXApi.Messages_OCPP20.ResetRequest();
-            resetRequest.Type = VoltaXApi.Messages_OCPP20.ResetEnumType.OnIdle;
+            ResetRequest resetRequest = new ResetRequest();
+            resetRequest.Type = ResetEnumType.OnIdle;
             resetRequest.CustomData = new CustomDataType();
             resetRequest.CustomData.VendorId = ControllerOCPP20.VendorId;
 
@@ -152,15 +97,12 @@ namespace OCPP.Core.Server
             await apiCallerContext.Response.WriteAsync(apiResult);
         }
 
-        /// <summary>
-        /// Sends a Unlock-Request to the chargepoint
-        /// </summary>
         private async Task UnlockConnector20(ChargePointStatus chargePointStatus, HttpContext apiCallerContext)
         {
             ILogger logger = _logFactory.CreateLogger("OCPPMiddleware.OCPP20");
             ControllerOCPP20 controller20 = new ControllerOCPP20(_configuration, _logFactory, chargePointStatus);
 
-            VoltaXApi.Messages_OCPP20.UnlockConnectorRequest unlockConnectorRequest = new VoltaXApi.Messages_OCPP20.UnlockConnectorRequest();
+            UnlockConnectorRequest unlockConnectorRequest = new UnlockConnectorRequest();
             unlockConnectorRequest.EvseId = 0;
             unlockConnectorRequest.CustomData = new CustomDataType();
             unlockConnectorRequest.CustomData.VendorId = ControllerOCPP20.VendorId;
@@ -174,16 +116,12 @@ namespace OCPP.Core.Server
             msgOut.JsonPayload = jsonResetRequest;
             msgOut.TaskCompletionSource = new TaskCompletionSource<string>();
 
-            // store HttpContext with MsgId for later answer processing (=> send anwer to API caller)
             _requestQueue.Add(msgOut.UniqueId, msgOut);
 
-            // Send OCPP message with optional logging/dump
             await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
 
-            // Wait for asynchronous chargepoint response and processing
             string apiResult = await msgOut.TaskCompletionSource.Task;
 
-            // 
             apiCallerContext.Response.StatusCode = 200;
             apiCallerContext.Response.ContentType = "application/json";
             await apiCallerContext.Response.WriteAsync(apiResult);
@@ -191,18 +129,16 @@ namespace OCPP.Core.Server
 
         private async Task SendOcpp20Message(OCPPMessage msg, ILogger logger, WebSocket webSocket)
         {
-            string? ocppTextMessage = null;
+            string? ocppTextMessage;
 
             if (string.IsNullOrEmpty(msg.ErrorCode))
             {
                 if (msg.MessageType == "2")
                 {
-                    // OCPP-Request
                     ocppTextMessage = string.Format("[{0},\"{1}\",\"{2}\",{3}]", msg.MessageType, msg.UniqueId, msg.Action, msg.JsonPayload);
                 }
                 else
                 {
-                    // OCPP-Response
                     ocppTextMessage = string.Format("[{0},\"{1}\",{2}]", msg.MessageType, msg.UniqueId, msg.JsonPayload);
                 }
             }
@@ -235,6 +171,16 @@ namespace OCPP.Core.Server
 
             byte[] binaryMessage = UTF8Encoding.UTF8.GetBytes(ocppTextMessage);
             await webSocket.SendAsync(new ArraySegment<byte>(binaryMessage, 0, binaryMessage.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+        private void DumpMessage(byte[] message, string direction)
+        {
+            string dumpDir = _configuration.GetValue<string>("MessageDumpDir");
+            if (!string.IsNullOrWhiteSpace(dumpDir))
+            {
+                string fileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss-ffff}_{direction}.txt";
+                _fileWriter.WriteMessageToFile(dumpDir, fileName, message);
+            }
         }
     }
 }

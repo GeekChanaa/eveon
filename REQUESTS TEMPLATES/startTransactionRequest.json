@@ -1,0 +1,1 @@
+"[  2,  \"19223204\",  \"RequestStartTransaction\",  {    \"customData\": {      \"vendorId\": \"VOLTAX\"    },    \"evseId\": 1,    \"idToken\": {      \"customData\": {        \"vendorId\": \"VOLTAX\"      },      \"idToken\": \"04A3E1AA8A6B81\",      \"type\": \"Central\"    },    \"remoteStartId\": 0  }]"

@@ -24,6 +24,7 @@ import { ChargingCardComponent } from './charging-cards/charging-card/charging-c
 import { StatisticsComponent } from './statistics/statistics.component';
 import { CommentsComponent } from './comments/comments.component';
 import { ReportsComponent } from './reports/reports.component';
+import { ConnectorRealtimeComponent } from './connector-realtime/connector-realtime.component';
 const routes: Routes = [
   {
     path: "",
@@ -76,7 +77,14 @@ const routes: Routes = [
   {
     path: "charging-strategies",
     component: ChargingStrategiesComponent,
-  },{
+  },
+  {
+    path: "connector-realtime",
+    component: ConnectorRealtimeComponent,
+    loadChildren : () => import('./connector-realtime/connector-realtime.module')
+      .then(m=>m.ConnectorRealtimeModule)
+  },
+  {
     path: "statistics",
     component: StatisticsComponent,
   },

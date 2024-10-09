@@ -17,8 +17,8 @@
       <app-sidebar-item *ngIf="role == 0" [title]="'home'" [link]="'/dashboard'" [active]="isActive('/dashboard')"></app-sidebar-item>
   
       <app-sidebar-dropdown *ngIf="role == 0" [title]="'Operation Monitoring'" 
-        [active]="isDropdownActive('/tbd') || isDropdownActive('/dashboard/statistics')">
-        <app-sidebar-link [title]="'Connector real-time'" [link]="'/tbd'" [active]="isActive('/tbd')"></app-sidebar-link>
+        [active]="isDropdownActive('/dashboard/connector-realtime') || isDropdownActive('/dashboard/statistics')">
+        <app-sidebar-link [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'" [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
         <app-sidebar-link [title]="'statistics'" [link]="'/dashboard/statistics'" [active]="isActive('/dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
@@ -73,8 +73,8 @@
         </app-sidebar-dropdown>
   
         <app-sidebar-dropdown [title]="'Operation Monitoring'" 
-          [active]="isDropdownActive('/partner-dashboard/statistics') || isDropdownActive('/tbd')">
-          <app-sidebar-link [title]="'Connector real-time'" [link]="'/tbd'" [active]="isActive('/tbd')"></app-sidebar-link>
+          [active]="isDropdownActive('/partner-dashboard/statistics') || isDropdownActive('/dashboard/connector-realtime')">
+          <app-sidebar-link [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'" [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
           <app-sidebar-link [title]="'statistics'" [link]="'/partner-dashboard/statistics'" [active]="isActive('/partner-dashboard/statistics')"></app-sidebar-link>
         </app-sidebar-dropdown>
   

@@ -1,0 +1,14 @@
+{
+  "customData": {
+    "vendorId": "VOLTAX"
+  },
+  "evseId": 1,
+  "idToken": {
+    "customData": {
+      "vendorId": "VOLTAX"
+    },
+    "idToken": "string",
+    "type": "Central"
+  },
+  "remoteStartId": 0
+}

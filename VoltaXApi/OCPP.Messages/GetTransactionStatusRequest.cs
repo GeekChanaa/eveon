@@ -1,23 +1,14 @@
-
-
 using System.ComponentModel.DataAnnotations;
 
-namespace VoltaXApi.Messages_OCPP20
+namespace VoltaXApi.OCPP.Messages
 {
-    public class CustomData
-    {
-        [Required]
-        [MaxLength(255)]
-        public string? VendorId { get; set; }
-    }
 
-    public class GetTransactionStatusRequest
-    {
-        public CustomData? CustomData { get; set; }
-        
-        [Required]
-        [MaxLength(36)]
-        public string? TransactionId { get; set; }
-    }
+  public class GetTransactionStatusRequest
+  {
+      public CustomDataType CustomData { get; set; }
+
+      [MaxLength(36)]
+      public string TransactionId { get; set; }
+  }
 
 }

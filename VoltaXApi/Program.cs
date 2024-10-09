@@ -20,8 +20,13 @@ using Newtonsoft.Json.Converters;
 using VoltaXApi.Settings;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using VoltaXApi.OCPP.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders(); 
+builder.Logging.AddConsole();     
+builder.Logging.AddDebug(); 
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -61,7 +66,6 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
-
 builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
@@ -75,6 +79,8 @@ builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -108,6 +114,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
+builder.Services.AddSingleton<WebSocketManagerService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>

@@ -53,7 +53,7 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
       NotificationSettingsComponent,
       CompleteProfileComponent,
       DebitCardsComponent,
-      ProfileSecurityComponent,
+      ProfileSecurityComponent
   ],
     imports: [
         DashboardRoutingModule,
