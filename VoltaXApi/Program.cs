@@ -21,6 +21,9 @@ using VoltaXApi.Settings;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using VoltaXApi.OCPP.Core;
+using VoltaXApi.OCPP.Handlers;
+using VoltaXApi.OCPP.Services;
+using VoltaXApi.OCPP.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,11 +70,17 @@ builder.Services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<WebSocketSubProtocolMatcher>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+
+builder.Services.AddScoped<IWebSocketRequestsHandler, WebSocketRequestsHandler>();
+builder.Services.AddScoped<WebSocketHandler>();
+builder.Services.AddScoped<OCPPMessageProcessor>();
+
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -115,6 +124,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 builder.Services.AddSingleton<WebSocketManagerService>();
+builder.Services.AddSingleton<ChargePointStatusManagerService>();
+builder.Services.AddSingleton<RequestQueueManagerService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>

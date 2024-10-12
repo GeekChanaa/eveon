@@ -1,67 +1,61 @@
 ﻿using Newtonsoft.Json;
+using VoltaXApi.Models;
+using VoltaXApi.Data;
+using System.Net;
 using System.Net.WebSockets;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore;
+using VoltaXApi.Services;
+using VoltaXApi.OCPP.Models;
+using VoltaXApi.OCPP.Handlers;
+using VoltaXApi.OCPP.Services;
+
 using System.Text;
 using System.Text.RegularExpressions;
 using VoltaXApi.OCPP.Messages;
-using VoltaXApi.OCPP.Models;
-using VoltaXApi.OCPP.Core;
-using VoltaXApi.Services;
+
 
 namespace OCPP.Core.Server
 {
     public partial class OCPPMiddleware
     {
-        private async Task Receive20(ChargePointStatus chargePointStatus, HttpContext context)
+        private static string MessageRegExp = "^\\[\\s*(\\d)\\s*,\\s*\"([^\"]*)\"\\s*,(?:\\s*\"(\\w*)\"\\s*,)?\\s*(.*)\\s*\\]$";
+
+        private readonly RequestDelegate _next;
+        private readonly ILoggerFactory _logFactory;
+        private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
+        private readonly FileWriter _fileWriter;
+
+        private readonly WebSocketManagerService _webSocketManagerService;
+        private readonly RequestQueueManagerService _requestQueueManagerService;
+        private readonly ChargePointStatusManagerService _chargePointStatusManagerService;
+        private IWebSocketRequestsHandler _wsRequestsHandler;
+
+        public OCPPMiddleware(RequestDelegate next,
+            ILoggerFactory logFactory,
+            IConfiguration configuration,
+            WebSocketManagerService webSocketManagerService,
+            ChargePointStatusManagerService chargePointStatusManagerService,
+            RequestQueueManagerService requestQueueManagerService)
         {
-            var _msgProcessor = new OCPPMessageProcessor(this._logFactory, _configuration,chargePointStatus);
-            ControllerOCPP20 controller20 = new ControllerOCPP20(_configuration, _logFactory, chargePointStatus);
+            _next = next;
+            _logFactory = logFactory;
+            _configuration = configuration;
+            _webSocketManagerService = webSocketManagerService;
+            _logger = logFactory.CreateLogger("OCPPMiddleware");
+            _fileWriter = new FileWriter();
+            _chargePointStatusManagerService = chargePointStatusManagerService;
+            _requestQueueManagerService = requestQueueManagerService;
+        }
 
-            byte[] buffer = new byte[1024 * 4];
-            MemoryStream memStream = new MemoryStream(buffer.Length);
-
-            while (chargePointStatus.WebSocket.State == WebSocketState.Open)
-            {
-                WebSocketReceiveResult result = await chargePointStatus.WebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                if (result != null && result.MessageType != WebSocketMessageType.Close)
-                {
-                    Console.WriteLine("OCPPMiddleware.Receive20 => Receiving segment: {0} bytes (EndOfMessage={1} / MsgType={2})", result.Count, result.EndOfMessage, result.MessageType);
-                    memStream.Write(buffer, 0, result.Count);
-
-                    if (result.EndOfMessage)
-                    {
-                        byte[] bMessage = memStream.ToArray();
-                        memStream = new MemoryStream(buffer.Length);
-
-                        DumpMessage(bMessage, "incoming");
-
-                        string ocppMessage = Encoding.UTF8.GetString(bMessage);
-                        Match match = Regex.Match(ocppMessage, MessageRegExp);
-                        if (match != null && match.Groups != null && match.Groups.Count >= 3)
-                        {
-                            string messageTypeId = match.Groups[1].Value;
-                            string uniqueId = match.Groups[2].Value;
-                            string action = match.Groups[3].Value;
-                            string jsonPaylod = match.Groups[4].Value;
-                            Console.WriteLine("OCPPMiddleware.Receive20 => OCPP-Message: Type={0} / ID={1} / Action={2})", messageTypeId, uniqueId, action);
-
-                            OCPPMessage msgIn = new OCPPMessage(messageTypeId, uniqueId, action, jsonPaylod);
-                            await _msgProcessor.ProcessMessage(msgIn, chargePointStatus, context, _requestQueue, ocppMessage);
-                        }
-                        else
-                        {
-                            Console.WriteLine("OCPPMiddleware.Receive20 => Error in RegEx-Matching: Msg={0})", ocppMessage);
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("OCPPMiddleware.Receive20 => Receive: unexpected result: CloseStatus={0} / MessageType={1}", result?.CloseStatus, result?.MessageType);
-                    await chargePointStatus.WebSocket.CloseOutputAsync((WebSocketCloseStatus)3001, string.Empty, CancellationToken.None);
-                }
-            }
-            Console.WriteLine("OCPPMiddleware.Receive20 => Websocket closed: State={0} / CloseStatus={1}", chargePointStatus.WebSocket.State, chargePointStatus.WebSocket.CloseStatus);
-            ChargePointStatus dummy;
-            _chargePointStatusDict.Remove(chargePointStatus.Id, out dummy);
+        public async Task Invoke(HttpContext context)
+        {
+            this._wsRequestsHandler = context.RequestServices.GetRequiredService<IWebSocketRequestsHandler>();
+            if (context.WebSockets.IsWebSocketRequest)
+                await this._wsRequestsHandler.Handle(context);
+            else
+                await _next(context);
         }
 
         private async Task Reset20(ChargePointStatus chargePointStatus, HttpContext apiCallerContext)
@@ -84,7 +78,7 @@ namespace OCPP.Core.Server
             msgOut.TaskCompletionSource = new TaskCompletionSource<string>();
 
             // store HttpContext with MsgId for later answer processing (=> send anwer to API caller)
-            _requestQueue.Add(msgOut.UniqueId, msgOut);
+            _requestQueueManagerService.AddMessage(msgOut.UniqueId, msgOut);
 
             // Send OCPP message with optional logging/dump
             await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
@@ -116,8 +110,6 @@ namespace OCPP.Core.Server
             msgOut.UniqueId = Guid.NewGuid().ToString("N");
             msgOut.JsonPayload = jsonResetRequest;
             msgOut.TaskCompletionSource = new TaskCompletionSource<string>();
-
-            _requestQueue.Add(msgOut.UniqueId, msgOut);
 
             await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
 
@@ -166,7 +158,7 @@ namespace OCPP.Core.Server
                 }
                 catch (Exception exp)
                 {
-                    Console.WriteLine( "OCPPMiddleware.SendOcpp20Message=> Error dumping message to path: '{0}'", path);
+                    Console.WriteLine("OCPPMiddleware.SendOcpp20Message=> Error dumping message to path: '{0}'", path);
                 }
             }
 
@@ -174,14 +166,15 @@ namespace OCPP.Core.Server
             await webSocket.SendAsync(new ArraySegment<byte>(binaryMessage, 0, binaryMessage.Length), WebSocketMessageType.Text, true, CancellationToken.None);
         }
 
-        private void DumpMessage(byte[] message, string direction)
+    }
+
+    public static class OCPPMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseOCPPMiddleware(this IApplicationBuilder builder)
         {
-            string dumpDir = _configuration.GetValue<string>("MessageDumpDir");
-            if (!string.IsNullOrWhiteSpace(dumpDir))
-            {
-                string fileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss-ffff}_{direction}.txt";
-                _fileWriter.WriteMessageToFile(dumpDir, fileName, message);
-            }
+            return builder.UseMiddleware<OCPPMiddleware>();
         }
     }
+
+
 }

@@ -1,30 +1,5 @@
-﻿/*
- * OCPP.Core - https://github.com/dallmann-consulting/OCPP.Core
- * Copyright (C) 2020-2021 dallmann consulting GmbH.
- * All Rights Reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using VoltaXApi.Models;
+﻿using VoltaXApi.Models;
 using VoltaXApi.Data;
-using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,18 +9,12 @@ namespace OCPP.Core.Server
     {
         public const string VendorId = "dallmann consulting GmbH";
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public ControllerOCPP20(IConfiguration config, ILoggerFactory loggerFactory, ChargePointStatus chargePointStatus) :
             base(config, loggerFactory, chargePointStatus)
         {
             Logger = loggerFactory.CreateLogger(typeof(ControllerOCPP20));
         }
-
-        /// <summary>
-        /// Processes the charge point message and returns the answer message
-        /// </summary>
+        
         public OCPPMessage ProcessRequest(OCPPMessage msgIn)
         {
             OCPPMessage msgOut = new OCPPMessage();
@@ -134,7 +103,6 @@ namespace OCPP.Core.Server
         /// </summary>
         public void ProcessAnswer(OCPPMessage msgIn, OCPPMessage msgOut)
         {
-            // The response (msgIn) has no action => check action in original request (msgOut)
             switch (msgOut.Action)
             {
                 case "Reset":

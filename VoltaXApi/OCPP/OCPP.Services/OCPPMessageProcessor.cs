@@ -2,6 +2,8 @@ using System.Net.WebSockets;
 using System.Text;
 using Newtonsoft.Json;
 using OCPP.Core.Server;
+using VoltaXApi.OCPP.Models;
+using VoltaXApi.OCPP.Services;
 
 namespace VoltaXApi.OCPP.Core
 {
@@ -11,23 +13,24 @@ namespace VoltaXApi.OCPP.Core
     private readonly IConfiguration _config;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ControllerOCPP20 _controller20;
+    private readonly RequestQueueManagerService _requestQueueManagerService;
 
     public OCPPMessageProcessor(
         ILoggerFactory loggerFactory, 
-        IConfiguration config, 
-        ChargePointStatus chargePointStatus)
+        IConfiguration config,
+        RequestQueueManagerService requestQueueManagerService)
     {
         _config = config;
         _loggerFactory = loggerFactory;
         _logger = _loggerFactory.CreateLogger(typeof(OCPPMessageProcessor));
-        this._controller20 = new ControllerOCPP20(this._config,this._loggerFactory, chargePointStatus);
+        _controller20 = new ControllerOCPP20(this._config,this._loggerFactory, new ChargePointStatus());
+        _requestQueueManagerService = requestQueueManagerService;
     }
 
     public async Task ProcessMessage(
         OCPPMessage message, 
         ChargePointStatus chargePointStatus, 
         HttpContext context,
-        Dictionary<string, OCPPMessage> requestQueue,
         string ocppMessage)
     {
         switch (message.MessageType)
@@ -39,10 +42,10 @@ namespace VoltaXApi.OCPP.Core
 
             case "3":
             case "4":
-                    if (requestQueue.ContainsKey(message.UniqueId))
+                    if (_requestQueueManagerService.ContainsKey(message.UniqueId))
                     {
-                        _controller20.ProcessAnswer(message, requestQueue[message.UniqueId]);
-                        requestQueue.Remove(message.UniqueId);
+                        _controller20.ProcessAnswer(message, _requestQueueManagerService.GetMessage(message.UniqueId));
+                        _requestQueueManagerService.RemoveMessage(message.UniqueId);
                     }
                     else
                     {

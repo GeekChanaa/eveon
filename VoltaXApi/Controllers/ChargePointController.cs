@@ -15,6 +15,7 @@ using OCPP.Core.Server;
 using VoltaXApi.Services;
 using System.Net.WebSockets;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
