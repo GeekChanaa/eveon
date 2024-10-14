@@ -27,6 +27,7 @@
     "html2pdf.js": "^0.10.1",
     "jquery": "^3.7.0",
     "jquery-nice-select": "^1.1.0",
+    "json-schema-to-typescript": "^15.0.2",
     "jspdf": "^2.5.1",
     "ng-apexcharts": "^1.7.6",
     "ngx-slick-carousel": "^15.0.0",
