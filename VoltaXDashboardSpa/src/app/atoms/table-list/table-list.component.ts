@@ -88,6 +88,8 @@ export class TableListComponent implements OnInit {
 
 
   ngOnInit() {
+    if(this.customButtonTemplate)
+      console.log("this is in here");
     this.getAll();
     var i = 0;
     this.fields.forEach((field) => {

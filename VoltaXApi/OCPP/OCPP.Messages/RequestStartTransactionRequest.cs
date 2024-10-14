@@ -4,39 +4,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.OCPP.Messages
 {
-    public class GetChargingProfilesRequestType
+
+    public class RequestStartTransactionRequest
     {
+        public CustomDataType CustomData { get; set; } 
         [Required]
-        public string IdTag { get; set; }
-
+        public string IdToken { get; set; } 
+        public List<AdditionalInfoType> AdditionalInfo { get; set; } 
         [Required]
-        public ChargingProfilePurposeEnumType Purpose { get; set; }
-
-        public int? StackLevel { get; set; }
-
-        public DateTime? ChargingProfileStartDate { get; set; }
-
-        public DateTime? ChargingProfileEndDate { get; set; }
-
-        public int? ChargingProfileInterval { get; set; }
+        public string ChargingStationId { get; set; } 
+        public int? ConnectorId { get; set; } 
+        public ChargingProfileType ChargingProfile { get; set; } 
+        public EVSEType Evse { get; set; } 
+        public DateTime? RemoteStartId { get; set; } 
     }
 
-    public class GetChargingProfilesResponseType
-    {
-        public List<ChargingProfileType> ChargingProfiles { get; set; }
-    }
-
-    public class SetChargingProfileRequestType
-    {
-        [Required]
-        public string IdTag { get; set; }
-
-        [Required]
-        public ChargingProfileType ChargingProfile { get; set; }
-    }
-
-    public class SetChargingProfileResponseType
-    {
-        public string Status { get; set; }
-    }
 }

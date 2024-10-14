@@ -1,0 +1,38 @@
+.settings
+  flex: 0 0 100%
+  flex-wrap: wrap
+  
+.status
+  padding: 6px 12px
+  border: 1px solid var(--primary6)
+  font-size: 1.2em
+  font-weight: 500
+  .status-color
+    color: var(--primary6)
+    font-size: 1.2em
+    font-weight: 500
+    svg
+      height: 18px
+      fill: var(--primary6)
+    &.active
+      color: green
+      svg
+        fill: green
+        animation: blink-animation 1s infinite  
+
+.chargePoint-actions
+  flex: 0 0 100%
+  flex-wrap: wrap
+  display: flex
+  .chargePoint-action
+    flex: 0 0 30%
+    margin-right: auto
+    margin-top: 16px
+@keyframes blink-animation 
+  0% 
+    opacity: 1
+  50% 
+    opacity: 0
+  100% 
+    opacity: 1
+  

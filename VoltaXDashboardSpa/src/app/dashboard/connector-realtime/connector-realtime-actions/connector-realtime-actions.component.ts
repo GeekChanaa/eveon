@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
+import { WebSocketStatusService } from 'src/_services/websocket-status.service';
+import { OCPPActions } from 'src/app/ocpp/messages/requests';
 @Component({
   selector: 'app-connector-realtime-actions',
   templateUrl: './connector-realtime-actions.component.html',
@@ -7,9 +8,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeActionsComponent implements OnInit {
 
-  constructor() { }
+  status : string = "inactive";
+  OCPPActions : any[] = OCPPActions;
+
+  constructor(
+    private _wsStatusService : WebSocketStatusService
+  ) { }
 
   ngOnInit() {
+    const chargePointID = 'VOLTAX02'; 
+    this._wsStatusService.startPolling(chargePointID);
+
+    this._wsStatusService.connectionStatus$.subscribe(
+      data => {
+        this.status = data.isActive ? 'active' : 'inactive';
+      },
+      error => console.error('Error receiving status:', error)
+    );
   }
 
 }

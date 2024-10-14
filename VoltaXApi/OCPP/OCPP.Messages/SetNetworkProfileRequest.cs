@@ -4,13 +4,13 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class SetNetworkProfileRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public int ConfigurationSlot { get; set; }
 
       [Required]
-      public NetworkConnectionProfileType ConnectionData { get; set; }
+      public NetworkConnectionProfileType? ConnectionData { get; set; }
   }
 
   public enum APNAuthenticationEnumType

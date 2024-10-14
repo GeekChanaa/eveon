@@ -1,3 +1,30 @@
-<p>
-  connector-realtime-actions works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Charge Point Real Time</div>
+    <div class="settings">
+      <div class="status"> 
+        Status : 
+        <span class="status-color" [ngClass]="{'active' : status == 'active'}">
+          {{status}}
+          <ng-container *ngIf="status == 'active'">
+            <svg  viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="6" r="6" />
+            </svg>
+          </ng-container>
+
+          <ng-container *ngIf="status == 'inactive'">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M6 10a4 4 0 100-8 4 4 0 000 8zm0 2A6 6 0 106 0a6 6 0 000 12z" />
+            </svg>
+          </ng-container>
+        </span> 
+      </div>
+
+      <div class="chargePoint-actions">
+        <div class="button button-dark chargePoint-action" *ngFor="let ocppAction of OCPPActions">
+          {{ocppAction.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

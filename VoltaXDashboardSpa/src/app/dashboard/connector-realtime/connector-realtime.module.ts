@@ -7,12 +7,14 @@ import { ConnectorRealtimeRoutingModule } from './connector-realtime-routing.mod
 import { ConnectorRealtimeComponent } from './connector-realtime.component';
 import { ConnectorRealtimeListComponent } from './connector-realtime-list/connector-realtime-list.component';
 import { ConnectorRealtimeActionsComponent } from './connector-realtime-actions/connector-realtime-actions.component';
+import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 
 @NgModule({
     declarations: [
       ConnectorRealtimeComponent,
       ConnectorRealtimeListComponent,
-      ConnectorRealtimeActionsComponent
+      ConnectorRealtimeActionsComponent,
+      AppTableCustomButtonDirective
   ],
     imports: [
         AtomsModule,

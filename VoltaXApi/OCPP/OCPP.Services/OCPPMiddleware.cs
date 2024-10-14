@@ -23,7 +23,6 @@ namespace OCPP.Core.Server
 
         private readonly RequestDelegate _next;
         private readonly ILoggerFactory _logFactory;
-        private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly FileWriter _fileWriter;
 
@@ -43,7 +42,6 @@ namespace OCPP.Core.Server
             _logFactory = logFactory;
             _configuration = configuration;
             _webSocketManagerService = webSocketManagerService;
-            _logger = logFactory.CreateLogger("OCPPMiddleware");
             _fileWriter = new FileWriter();
             _chargePointStatusManagerService = chargePointStatusManagerService;
             _requestQueueManagerService = requestQueueManagerService;
@@ -81,7 +79,7 @@ namespace OCPP.Core.Server
             _requestQueueManagerService.AddMessage(msgOut.UniqueId, msgOut);
 
             // Send OCPP message with optional logging/dump
-            await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
+            await SendOcpp20Message(msgOut, chargePointStatus.WebSocket);
 
             // Wait for asynchronous chargepoint response and processing
             string apiResult = await msgOut.TaskCompletionSource.Task;
@@ -111,7 +109,7 @@ namespace OCPP.Core.Server
             msgOut.JsonPayload = jsonResetRequest;
             msgOut.TaskCompletionSource = new TaskCompletionSource<string>();
 
-            await SendOcpp20Message(msgOut, logger, chargePointStatus.WebSocket);
+            await SendOcpp20Message(msgOut, chargePointStatus.WebSocket);
 
             string apiResult = await msgOut.TaskCompletionSource.Task;
 
@@ -120,7 +118,7 @@ namespace OCPP.Core.Server
             await apiCallerContext.Response.WriteAsync(apiResult);
         }
 
-        private async Task SendOcpp20Message(OCPPMessage msg, ILogger logger, WebSocket webSocket)
+        private async Task SendOcpp20Message(OCPPMessage msg, WebSocket webSocket)
         {
             string? ocppTextMessage;
 

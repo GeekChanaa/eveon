@@ -82,6 +82,15 @@ builder.Services.AddScoped<WebSocketHandler>();
 builder.Services.AddScoped<OCPPMessageProcessor>();
 
 
+// Registration of the OCPP Services : 
+builder.Services.AddScoped<IConfigurationService,ConfigurationService>();
+builder.Services.AddScoped<IEVDriverService,EVDriverService>();
+builder.Services.AddScoped<IMonitoringService,MonitoringService>();
+builder.Services.AddScoped<IReportingService,ReportingService>();
+builder.Services.AddScoped<ISmartChargingService,SmartChargingService>();
+builder.Services.AddScoped<ITransactionsService,TransactionsService>();
+
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
@@ -157,7 +166,12 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "OCPP",
+        pattern: "ocpp/{controller=OCPP}/{action=Index}/{id?}");
+});
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(

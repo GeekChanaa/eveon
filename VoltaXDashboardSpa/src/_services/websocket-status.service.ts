@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { interval, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -11,22 +11,25 @@ import { environment } from 'src/environments/environment';
 export class WebSocketStatusService implements OnDestroy {
   private pollingInterval = 5000; 
   private pollingSubscription: Subscription | undefined;
-  public connectionStatus$ = new Subject<{ chargePointID: string; isActive: boolean }>();
+  private connectionStatusSubject = new BehaviorSubject<any | null>(null);
+  public connectionStatus$ = this.connectionStatusSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.startPolling();
-  }
+  constructor(private http: HttpClient) {}
 
-  private startPolling() {
+  public startPolling(chargePointID: string) {
+    this.pollingSubscription?.unsubscribe(); // Unsubscribe from any previous polling
     this.pollingSubscription = interval(this.pollingInterval).subscribe(() => {
-      this.checkWebSocketStatus('your-connection-id');
+      this.checkWebSocketStatus(chargePointID);
     });
   }
 
   private checkWebSocketStatus(chargePointID: string) {
-    this.http.get<{ chargePointID: string; isActive: boolean }>(`${environment.apiUrl}/api/chargePointRealTime/status/${chargePointID}`)
+    this.http.get<{ isActive: boolean }>(`${environment.apiUrl}/api/chargePointRealTime/status/${chargePointID}`)
       .subscribe(
-        response => this.connectionStatus$.next(response),
+        response => {
+          const status: any = { chargePointID, isActive: response.isActive };
+          this.connectionStatusSubject.next(status);
+        },
         error => console.error('Error fetching WebSocket status:', error)
       );
   }

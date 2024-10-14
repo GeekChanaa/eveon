@@ -2,29 +2,33 @@ using System.Net.WebSockets;
 using System.Text;
 using Newtonsoft.Json;
 using OCPP.Core.Server;
+using VoltaXApi.OCPP.Exceptions;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Services;
 
 namespace VoltaXApi.OCPP.Core
 {
-  public class OCPPMessageProcessor : IMessageProcessor
+  public class OCPPMessageProcessor
   {
     private readonly ILogger _logger;
     private readonly IConfiguration _config;
     private readonly ILoggerFactory _loggerFactory;
     private readonly ControllerOCPP20 _controller20;
     private readonly RequestQueueManagerService _requestQueueManagerService;
+    private readonly WebSocketManagerService _wsManagerService;
 
     public OCPPMessageProcessor(
         ILoggerFactory loggerFactory, 
         IConfiguration config,
-        RequestQueueManagerService requestQueueManagerService)
+        RequestQueueManagerService requestQueueManagerService,
+        WebSocketManagerService wsManagerService)
     {
         _config = config;
         _loggerFactory = loggerFactory;
         _logger = _loggerFactory.CreateLogger(typeof(OCPPMessageProcessor));
         _controller20 = new ControllerOCPP20(this._config,this._loggerFactory, new ChargePointStatus());
         _requestQueueManagerService = requestQueueManagerService;
+        _wsManagerService = wsManagerService;
     }
 
     public async Task ProcessMessage(
@@ -37,7 +41,7 @@ namespace VoltaXApi.OCPP.Core
         {
             case "2":
                 OCPPMessage msgOut = _controller20.ProcessRequest(message);
-                await SendMessage(msgOut, chargePointStatus.WebSocket);
+                await SendMessage(msgOut, chargePointStatus.Id);
                 break;
 
             case "3":
@@ -59,29 +63,27 @@ namespace VoltaXApi.OCPP.Core
         }
     }
 
-    private async Task SendMessage(OCPPMessage message, WebSocket webSocket)
-{
-    // Deserialize JsonPayload into an object if it's a stringified JSON
-    var jsonPayloadObject = JsonConvert.DeserializeObject(message.JsonPayload);
-
-    // Construct the OCPP message array
-    var ocppArrayMessage = new object[]
+    public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
-        message.MessageType,  // MessageType (e.g., 2, 3, or 4)
-        message.UniqueId,     // Unique ID (string)
-        message.Action,       // Action (for MessageType 2 only, otherwise null)
-        jsonPayloadObject     // Payload (actual payload or error details)
-    };
 
-    // Serialize the array to JSON
-    string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage);
+        var ocppArrayMessage = new object[]
+        {
+            message.MessageType,
+            message.UniqueId,   
+            message.Action,     
+            message.JsonPayload   
+        };
 
-    // Convert the serialized message to bytes and send over WebSocket
-    byte[] binaryMessage = Encoding.UTF8.GetBytes(serializedMessage);
-    Console.WriteLine("this is the binary message");
-    Console.WriteLine(serializedMessage);
+        string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage);
 
-    await webSocket.SendAsync(new ArraySegment<byte>(binaryMessage), WebSocketMessageType.Text, true, CancellationToken.None);
-}
+        byte[] binaryMessage = Encoding.UTF8.GetBytes(serializedMessage);
+
+        WebSocket webSocket = this._wsManagerService.GetWebSocket(chargePointID);
+        if(webSocket == null){
+            throw new WebSocketNotFoundException("WebSocket not found for the provided ChargePointID."); 
+        }
+
+        await webSocket.SendAsync(new ArraySegment<byte>(binaryMessage), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
   }
 }
