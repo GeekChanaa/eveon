@@ -22,7 +22,6 @@ import { ProfileComponent } from './profile/profile.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 import { UserComponent } from './users/user/user.component';
 import { StatisticsComponent } from './statistics/statistics.component';
-import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import {MatExpansionModule} from '@angular/material/expansion'; 
@@ -49,7 +48,6 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
       RechargeCardsComponent,
       UserComponent,
       StatisticsComponent,
-      AppTableCustomButtonDirective,
       NotificationSettingsComponent,
       CompleteProfileComponent,
       DebitCardsComponent,

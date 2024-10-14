@@ -1,7 +1,8 @@
 export const OCPPActions = [
   {
     name: "Authorize",
-    description: "Authorize a user to start a charging session."
+    description: "Authorize a user to start a charging session.",
+    schemaPath : "/schemas/AuthorizeRequest.json"
   },
   {
     name: "BootNotification",

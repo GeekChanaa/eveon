@@ -21,10 +21,20 @@
       </div>
 
       <div class="chargePoint-actions">
-        <div class="button button-dark chargePoint-action" *ngFor="let ocppAction of OCPPActions">
-          {{ocppAction.name}}
-        </div>
+        <ng-container  *ngFor="let ocppAction of OCPPActions">
+          <div (click)="openRequestHanlderModal(ocppAction)" class="button button-dark chargePoint-action">
+            {{ocppAction.name}}
+          </div>
+        </ng-container>
+        
+        
       </div>
     </div>
   </div>
 </div>
+
+
+
+<ng-container *ngIf="requestHandlerModalVisible">
+  <app-request-handler (closeEvent)="requestHandlerModalVisible = false" [ocppAction]="currentOcppAction"></app-request-handler>
+</ng-container>

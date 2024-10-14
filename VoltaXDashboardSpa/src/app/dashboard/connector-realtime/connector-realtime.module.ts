@@ -8,13 +8,15 @@ import { ConnectorRealtimeComponent } from './connector-realtime.component';
 import { ConnectorRealtimeListComponent } from './connector-realtime-list/connector-realtime-list.component';
 import { ConnectorRealtimeActionsComponent } from './connector-realtime-actions/connector-realtime-actions.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
+import { RequestHandlerComponent } from './connector-realtime-actions/request-handler/request-handler.component';
 
 @NgModule({
     declarations: [
       ConnectorRealtimeComponent,
       ConnectorRealtimeListComponent,
       ConnectorRealtimeActionsComponent,
-      AppTableCustomButtonDirective
+      AppTableCustomButtonDirective,
+      RequestHandlerComponent
   ],
     imports: [
         AtomsModule,

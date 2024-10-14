@@ -1,0 +1,17 @@
+
+<div class="request-handler-overlay"></div>
+<div class="request-handler">
+  <div class="close-button-container">
+    <button class="close-button" (click)="closeModal()"> X </button>
+  </div>
+  <div class="request-handler-container">
+    <div class="request-title">
+      Send : <span class="colored">{{ocppAction.name}}</span>
+    </div>
+
+    <div class="input-container">
+      <textarea></textarea>
+    </div>
+    <button class="button" (click)="generate()">generate</button>
+  </div>
+</div>

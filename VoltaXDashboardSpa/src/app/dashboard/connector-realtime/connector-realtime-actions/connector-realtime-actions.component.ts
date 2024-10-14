@@ -10,6 +10,8 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
 
   status : string = "inactive";
   OCPPActions : any[] = OCPPActions;
+  currentOcppAction : any = {};
+  requestHandlerModalVisible : boolean = false;
 
   constructor(
     private _wsStatusService : WebSocketStatusService
@@ -21,10 +23,15 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
 
     this._wsStatusService.connectionStatus$.subscribe(
       data => {
-        this.status = data.isActive ? 'active' : 'inactive';
+        this.status = data?.isActive ? 'active' : 'inactive';
       },
       error => console.error('Error receiving status:', error)
     );
+  }
+
+  openRequestHanlderModal(ocppAction : any){
+    this.requestHandlerModalVisible = true;
+    this.currentOcppAction = ocppAction;
   }
 
 }
