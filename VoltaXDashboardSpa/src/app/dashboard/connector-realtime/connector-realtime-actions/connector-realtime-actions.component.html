@@ -36,5 +36,5 @@
 
 
 <ng-container *ngIf="requestHandlerModalVisible">
-  <app-request-handler (closeEvent)="requestHandlerModalVisible = false" [ocppAction]="currentOcppAction"></app-request-handler>
+  <app-request-handler [chargePointID]="chargePoint.chargePointId" (closeEvent)="requestHandlerModalVisible = false" [ocppAction]="currentOcppAction"></app-request-handler>
 </ng-container>

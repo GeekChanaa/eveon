@@ -2,16 +2,35 @@
 <div class="request-handler-overlay"></div>
 <div class="request-handler">
   <div class="close-button-container">
-    <button class="close-button" (click)="closeModal()"> X </button>
+    <button class="close-button" (click)="closeModal()">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z"/></svg>
+    </button>
   </div>
   <div class="request-handler-container">
     <div class="request-title">
       Send : <span class="colored">{{ocppAction.name}}</span>
     </div>
 
-    <div class="input-container">
-      <textarea></textarea>
+    <div class="request-description">
+      {{ocppAction.description}}
     </div>
-    <button class="button" (click)="generate()">generate</button>
+
+    <div class="input-container">
+      <div class="textarea-container">
+        <button class="generate-button" (click)="generate()">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 19H16C17.1046 19 18 18.1046 18 17V14.5616C18 13.6438 18.6246 12.8439 19.5149 12.6213L21.0299 12.2425C21.2823 12.1794 21.2823 11.8206 21.0299 11.7575L19.5149 11.3787C18.6246 11.1561 18 10.3562 18 9.43845V5H14" stroke="#222222"/><path d="M10 5H8C6.89543 5 6 5.89543 6 7V9.43845C6 10.3562 5.37541 11.1561 4.48507 11.3787L2.97014 11.7575C2.71765 11.8206 2.71765 12.1794 2.97014 12.2425L4.48507 12.6213C5.37541 12.8439 6 13.6438 6 14.5616V19H10" stroke="#222222"/></svg>
+        </button>
+        <textarea (input)="onTextChange($event)" [value]="jsonOverload" rows="10"></textarea>
+      </div>
+      
+
+      <pre class="language-json">
+        <code [innerHTML]="highlightedJson"></code>
+      </pre>
+    </div>
+
+    <div class="request-actions">
+      <button (click)="sendRequest()" class="button">Send Request</button>
+    </div>
   </div>
 </div>
