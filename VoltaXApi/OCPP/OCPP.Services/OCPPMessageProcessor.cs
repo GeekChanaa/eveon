@@ -1,7 +1,9 @@
 using System.Net.WebSockets;
 using System.Text;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using OCPP.Core.Server;
+using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Exceptions;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Services;
@@ -16,12 +18,14 @@ namespace VoltaXApi.OCPP.Core
     private readonly ControllerOCPP20 _controller20;
     private readonly RequestQueueManagerService _requestQueueManagerService;
     private readonly WebSocketManagerService _wsManagerService;
+    private readonly IHubContext<ChargerHub> _hubContext;
 
     public OCPPMessageProcessor(
         ILoggerFactory loggerFactory, 
         IConfiguration config,
         RequestQueueManagerService requestQueueManagerService,
-        WebSocketManagerService wsManagerService)
+        WebSocketManagerService wsManagerService,
+        IHubContext<ChargerHub> hubContext)
     {
         _config = config;
         _loggerFactory = loggerFactory;
@@ -29,6 +33,7 @@ namespace VoltaXApi.OCPP.Core
         _controller20 = new ControllerOCPP20(this._config,this._loggerFactory, new ChargePointStatus());
         _requestQueueManagerService = requestQueueManagerService;
         _wsManagerService = wsManagerService;
+        _hubContext = hubContext;
     }
 
     public async Task ProcessMessage(
@@ -50,10 +55,11 @@ namespace VoltaXApi.OCPP.Core
                     {
                         _controller20.ProcessAnswer(message, _requestQueueManagerService.GetMessage(message.UniqueId));
                         _requestQueueManagerService.RemoveMessage(message.UniqueId);
+
                     }
                     else
                     {
-                        Console.WriteLine("OCPPMiddleware.Receive20 => HttpContext from caller not found / Msg: {0}", ocppMessage);
+                        Console.WriteLine(" HttpContext from caller not found / Msg: {0}", ocppMessage);
                     }
                 break;
 
@@ -65,7 +71,6 @@ namespace VoltaXApi.OCPP.Core
 
     public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
-
         var ocppArrayMessage = new object[]
         {
             message.MessageType,
@@ -75,6 +80,11 @@ namespace VoltaXApi.OCPP.Core
         };
 
         string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage);
+        Console.WriteLine("SENDING A MESSAGE THROUGH SIGNALR");
+        Console.WriteLine(chargePointID);
+        await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);
+
+        
 
         byte[] binaryMessage = Encoding.UTF8.GetBytes(serializedMessage);
 

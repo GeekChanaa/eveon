@@ -23,7 +23,6 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ChargePointRealTimeController : ControllerBase
     {
-
         private readonly WebSocketManagerService _wsManagerService;
         public ChargePointRealTimeController(
           WebSocketManagerService wsManagerService

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointService } from 'src/_services/charge-point.service';
+import { SignalRChargerService } from 'src/_services/signalR-charger.service';
 import { WebSocketStatusService } from 'src/_services/websocket-status.service';
 import { OCPPActions } from 'src/app/ocpp/messages/requests';
 @Component({
@@ -19,7 +20,8 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   constructor(
     private _wsStatusService : WebSocketStatusService,
     private _route: ActivatedRoute,
-    private _chargePointService: ChargePointService
+    private _chargePointService: ChargePointService,
+    private _signalrChargerService : SignalRChargerService
     ) { }
 
   ngOnInit() {
@@ -28,15 +30,7 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
       var id = parseInt(idParam);
       this.getChargePointByID(id);
     }
-    const chargePointID = 'VOLTAX02'; 
-    this._wsStatusService.startPolling(chargePointID);
-
-    this._wsStatusService.connectionStatus$.subscribe(
-      data => {
-        this.status = data?.isActive ? 'active' : 'inactive';
-      },
-      error => console.error('Error receiving status:', error)
-    );
+    
   }
 
   openRequestHanlderModal(ocppAction : any){
@@ -45,11 +39,31 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   }
 
   getChargePointByID(id : number){
-    this._chargePointService.getChargePointByID(id).subscribe((data) => {
-      this.chargePoint = data;
-      console.log("this is the chargepoint");
-      console.log(this.chargePoint);
+    this._chargePointService.getChargePointByID(id).subscribe((cp) => {
+      this.chargePoint = cp;
+      this._wsStatusService.startPolling(this.chargePoint.chargePointId);
+      this._wsStatusService.connectionStatus$.subscribe(
+        data => {
+          this.status = data?.isActive ? 'active' : 'inactive';
+        },
+        error => console.error('Error receiving status:', error)
+      );
+
+      this._signalrChargerService.startConnection(this.chargePoint.chargePointId);
+      this._signalrChargerService.addMessageListener();
+      
     })
+  }
+
+  // Join the group of a specific charger
+  joinCharger(): void {
+    this._signalrChargerService.joinChargerGroup(this.chargePoint.chargePointId);
+  }
+
+  // Send a message to the charger
+  sendMessage(): void {
+    const message = 'Start charging';
+    this._signalrChargerService.sendMessageToCharger(this.chargePoint.chargePointId, message);
   }
 
 }

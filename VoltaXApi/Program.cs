@@ -24,6 +24,7 @@ using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Handlers;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Helpers;
+using VoltaXApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
+builder.Services.AddSignalR();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
     {
@@ -140,10 +143,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
     {
         options.AddPolicy("CorsPolicy",
-            builder => builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
+            builder => builder.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
             );
     });
 var app = builder.Build();
@@ -171,6 +174,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "OCPP",
         pattern: "ocpp/{controller=OCPP}/{action=Index}/{id?}");
+    endpoints.MapHub<ChargerHub>("/chargerHub");
 });
 app.UseStaticFiles(new StaticFileOptions
 {
