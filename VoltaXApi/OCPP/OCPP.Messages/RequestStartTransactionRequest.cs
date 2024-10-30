@@ -7,16 +7,15 @@ namespace VoltaXApi.OCPP.Messages
 
     public class RequestStartTransactionRequest
     {
-        public CustomDataType CustomData { get; set; } 
+        public CustomDataType? CustomData { get; set; } 
         [Required]
-        public string IdToken { get; set; } 
-        public List<AdditionalInfoType> AdditionalInfo { get; set; } 
-        [Required]
-        public string ChargingStationId { get; set; } 
+        public IdTokenType IdToken { get; set; } 
+        public List<AdditionalInfoType>? AdditionalInfo { get; set; }   
         public int? ConnectorId { get; set; } 
-        public ChargingProfileType ChargingProfile { get; set; } 
-        public EVSEType Evse { get; set; } 
-        public DateTime? RemoteStartId { get; set; } 
+        public ChargingProfileType? ChargingProfile { get; set; } 
+        public EVSEType? Evse { get; set; } 
+        public int? RemoteStartId { get; set; } 
+        public int? EvseId { get; set; } 
     }
 
 }

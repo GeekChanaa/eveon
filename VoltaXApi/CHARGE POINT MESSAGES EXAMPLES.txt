@@ -1,0 +1,4 @@
+-- CHARGE POINT MESSAGES EXAMPLES
+
+-- StatusNotificationRequest
+[2,"11","StatusNotification",{"timestamp":"2024-10-04T12:27:36Z","connectorStatus":"Available","evseId":1,"connectorId":1}]

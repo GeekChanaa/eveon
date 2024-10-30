@@ -8,7 +8,7 @@ namespace VoltaXApi.OCPP.Messages
       [MaxLength(36)]
       public string TransactionId { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 
 

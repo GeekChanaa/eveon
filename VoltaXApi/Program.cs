@@ -65,12 +65,14 @@ builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
 builder.Services.AddScoped<IDebitCardRepository, DebitCardRepository>();
+builder.Services.AddScoped<IMessageLogRepository, MessageLogRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
 
+builder.Services.AddScoped<IOCPPRequestHandler, OCPPRequestHandler>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<WebSocketSubProtocolMatcher>();

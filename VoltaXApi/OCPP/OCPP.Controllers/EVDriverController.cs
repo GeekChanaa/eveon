@@ -17,10 +17,12 @@ using System.Net;
 using VoltaXApi.Services;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Messages;
+using Newtonsoft.Json;
 
 namespace VoltaXApi.OCPP.Controllers
 {
-    [Route("ocpp/[controller]")]
+    [ApiController]
+    [Route("ocpp/[controller]")]    
     public class EVDriverController : Controller
     {
         private readonly IEVDriverService _EVDriverService;
@@ -34,6 +36,9 @@ namespace VoltaXApi.OCPP.Controllers
         [HttpPost("RequestStartTransaction/{chargePointID}")]
         public async Task<IActionResult> RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request)
         {
+            var obj = JsonConvert.SerializeObject(request);
+            Console.WriteLine("this is the object");
+            Console.WriteLine(obj);
             await _EVDriverService.RequestStartTransaction(chargePointID, request);
             return Ok(new { Message = "Request to start transaction sent successfully." });
         }

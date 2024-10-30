@@ -45,7 +45,7 @@ namespace OCPP.Core.Server
                         connectorStatus.ChargePointID = ChargePointStatus.Id;
                         connectorStatus.ConnectorID = connectorId;
                         Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
-                        dbContext.ConnectorStatuses.Add(connectorStatus);
+                        //dbContext.ConnectorStatuses.Add(connectorStatus);
                     }
 
                     if (!string.IsNullOrEmpty(status))

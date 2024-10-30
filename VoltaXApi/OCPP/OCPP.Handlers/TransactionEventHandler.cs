@@ -1,21 +1,10 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using VoltaXApi.Data;
-using VoltaXApi.Models;
-using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace OCPP.Core.Server
+namespace VoltaXApi.OCPP.Handlers
 {
-    public partial class ControllerOCPP20
-    {
-        public string HandleTransactionEvent(OCPPMessage msgIn, OCPPMessage msgOut)
+  public class TransactionEventHandler : IOCPPRequestHandler
+  {
+      public string HandleTransactionEvent(OCPPMessage msgIn, OCPPMessage msgOut)
         {
             string? errorCode = null;
             TransactionEventResponse transactionEventResponse = new TransactionEventResponse();
@@ -442,5 +431,5 @@ namespace OCPP.Core.Server
                 }
             }
         }
-    }
+  }
 }

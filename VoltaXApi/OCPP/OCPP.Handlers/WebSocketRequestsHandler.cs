@@ -52,7 +52,6 @@ namespace VoltaXApi.OCPP.Handlers
 
         if (!context.Request.Path.StartsWithSegments("/OCPP"))
         {
-            Console.WriteLine("Invalid Path.");
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return;
         }

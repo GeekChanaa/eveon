@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
@@ -13,25 +13,28 @@ export class OcppSmartChargingService {
     private _http: HttpClient,
   ) { }
 
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' })
+  };
   
   clearChargingProfile(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"ClearChargingProfile/"+chargePointID,request);
+    return this._http.post<any>(this.baseUrl+"ClearChargingProfile/"+chargePointID,request, this.httpOptions);
   }
   
   getChargingProfiles(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"GetChargingProfiles/"+chargePointID,request);
+    return this._http.post<any>(this.baseUrl+"GetChargingProfiles/"+chargePointID,request, this.httpOptions);
   }
   
   setChargingProfile(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"SetChargingProfile/"+chargePointID,request);
+    return this._http.post<any>(this.baseUrl+"SetChargingProfile/"+chargePointID,request, this.httpOptions);
   }
   
   clearedChargingLimit(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"ClearedChargingLimit/"+chargePointID,request);
+    return this._http.post<any>(this.baseUrl+"ClearedChargingLimit/"+chargePointID,request, this.httpOptions);
   }
   
   getCompositeSchedule(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"GetCompositeSchedule/"+chargePointID,request);
+    return this._http.post<any>(this.baseUrl+"GetCompositeSchedule/"+chargePointID,request, this.httpOptions);
   }
 
 }

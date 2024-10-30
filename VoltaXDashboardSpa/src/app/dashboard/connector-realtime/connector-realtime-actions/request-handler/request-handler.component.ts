@@ -62,6 +62,8 @@ export class RequestHandlerComponent implements OnInit {
   }
 
   sendRequest(){
+    console.log("this is the request we're sending : ");
+    console.log(this.jsonOverload);
     this._requestCallerService.sendOCPPMessage(this.chargePointID,this.ocppAction.name,this.jsonOverload)?.subscribe((data) => {
       console.log("request sent");
       console.log(data);

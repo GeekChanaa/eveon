@@ -1,6 +1,7 @@
 
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
@@ -21,13 +22,18 @@ namespace VoltaXApi.OCPP.Services
         // POST /ocpp/evdriver/requestStartTransaction
         public async Task RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request)
         {
+            var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
+            };
             OCPPMessage msg = new OCPPMessage
             {
                 MessageType = "2",
                 UniqueId = Guid.NewGuid().ToString("N"),
                 Action = "RequestStartTransaction",
-                JsonPayload = JsonConvert.SerializeObject(request)
+                JsonPayload = JsonConvert.SerializeObject(request,settings)
             };
+
             await _messageProcessor.SendMessage(msg, chargePointID);
         }
 

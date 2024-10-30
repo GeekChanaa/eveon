@@ -14,6 +14,9 @@ export class SchemaService {
   generateRandomObject(schemaPath: string): Observable<any> {
     return this.http.get(schemaPath).pipe(
       map(schema => {
+        jsf.JSONSchemaFaker.option({
+          alwaysFakeOptionals: false, 
+        });
         return jsf.JSONSchemaFaker.generate(schema);
       })
     );

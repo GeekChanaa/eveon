@@ -1,10 +1,14 @@
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using OCPP.Core.Server;
 using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Exceptions;
+using VoltaXApi.OCPP.Handlers;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Services;
 
@@ -19,6 +23,7 @@ namespace VoltaXApi.OCPP.Core
     private readonly RequestQueueManagerService _requestQueueManagerService;
     private readonly WebSocketManagerService _wsManagerService;
     private readonly IHubContext<ChargerHub> _hubContext;
+    private readonly IOCPPRequestHandler _reqHandler;
 
     public OCPPMessageProcessor(
         ILoggerFactory loggerFactory, 
@@ -30,7 +35,6 @@ namespace VoltaXApi.OCPP.Core
         _config = config;
         _loggerFactory = loggerFactory;
         _logger = _loggerFactory.CreateLogger(typeof(OCPPMessageProcessor));
-        _controller20 = new ControllerOCPP20(this._config,this._loggerFactory, new ChargePointStatus());
         _requestQueueManagerService = requestQueueManagerService;
         _wsManagerService = wsManagerService;
         _hubContext = hubContext;
@@ -45,7 +49,7 @@ namespace VoltaXApi.OCPP.Core
         switch (message.MessageType)
         {
             case "2":
-                OCPPMessage msgOut = _controller20.ProcessRequest(message);
+                OCPPMessage msgOut = _reqHandler.ProcessRequest(message);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
 
@@ -55,7 +59,6 @@ namespace VoltaXApi.OCPP.Core
                     {
                         _controller20.ProcessAnswer(message, _requestQueueManagerService.GetMessage(message.UniqueId));
                         _requestQueueManagerService.RemoveMessage(message.UniqueId);
-
                     }
                     else
                     {
@@ -73,13 +76,32 @@ namespace VoltaXApi.OCPP.Core
     {
         var ocppArrayMessage = new object[]
         {
-            message.MessageType,
+            JRaw.Parse(message.MessageType),
             message.UniqueId,   
             message.Action,     
-            message.JsonPayload   
+            JRaw.Parse(message.JsonPayload)   
         };
 
-        string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage);
+        if(message.MessageType == "3")
+        {
+            ocppArrayMessage = new object[]
+            {
+                JRaw.Parse(message.MessageType),
+                message.UniqueId,   
+                JRaw.Parse(message.JsonPayload)   
+            };
+        }
+
+        Console.WriteLine("SENDING MESSAGE :  ");
+        Console.WriteLine("message.UniqueId : " + message.UniqueId);
+        Console.WriteLine("message.Action : " + message.Action);
+
+        var settings = new JsonSerializerSettings
+        {
+            Converters = new List<JsonConverter> { new StringEnumConverter() }
+        };
+
+        string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
         Console.WriteLine("SENDING A MESSAGE THROUGH SIGNALR");
         Console.WriteLine(chargePointID);
         await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);

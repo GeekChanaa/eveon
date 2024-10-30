@@ -28,7 +28,8 @@ namespace VoltaXApi.OCPP.Handlers
           ILoggerFactory logFactory,
           IConfiguration config,
           OCPPMessageProcessor msgProcessor,
-          IHubContext<ChargerHub> hubContext)
+          IHubContext<ChargerHub> hubContext,
+          IOCPPRequestHandler reqHandler)
         {
             _webSocketManagerService = webSocketManagerService;
             _config = config;
@@ -51,8 +52,6 @@ namespace VoltaXApi.OCPP.Handlers
 
         private async Task ReceiveOcppMessageAsync(ChargePointStatus chargePointStatus, HttpContext context)
         {
-            ControllerOCPP20 controller20 = new ControllerOCPP20(_config, _logFactory, chargePointStatus);
-
             byte[] buffer = new byte[1024 * 4];
             MemoryStream memStream = new MemoryStream(buffer.Length);
 
@@ -72,25 +71,13 @@ namespace VoltaXApi.OCPP.Handlers
                         DumpMessage(bMessage, "incoming");
 
                         string ocppMessage = Encoding.UTF8.GetString(bMessage);
-                        Console.WriteLine("Sending the Message for the chargepoint : " + chargePointStatus.Id);
+                        
                         await _hubContext.Clients.Group(chargePointStatus.Id).SendAsync("SentMessage", JsonConvert.SerializeObject(ocppMessage));
 
-                        Match match = Regex.Match(ocppMessage, MessageRegExp);
-                        if (match != null && match.Groups != null && match.Groups.Count >= 3)
-                        {
-                            string messageTypeId = match.Groups[1].Value;
-                            string uniqueId = match.Groups[2].Value;
-                            string action = match.Groups[3].Value;
-                            string jsonPaylod = match.Groups[4].Value;
-                            Console.WriteLine("OCPPMiddleware.Receive20 => OCPP-Message: Type={0} / ID={1} / Action={2})", messageTypeId, uniqueId, action);
+                        var msgIn = await ValidatingOCPPMessage(chargePointStatus, ocppMessage, context);
 
-                            OCPPMessage msgIn = new OCPPMessage(messageTypeId, uniqueId, action, jsonPaylod);
-                            await _msgProcessor.ProcessMessage(msgIn, chargePointStatus, context, ocppMessage);
-                        }
-                        else
-                        {
-                            Console.WriteLine("OCPPMiddleware.Receive20 => Error in RegEx-Matching: Msg={0})", ocppMessage);
-                        }
+                        await _msgProcessor.ProcessMessage(msgIn, chargePointStatus, context, ocppMessage);
+
                     }
                 }
                 else
@@ -110,6 +97,26 @@ namespace VoltaXApi.OCPP.Handlers
             {
                 string fileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss-ffff}_{direction}.txt";
                 _fileWriter.WriteMessageToFile(dumpDir, fileName, message);
+            }
+        }
+
+        private async  Task<OCPPMessage>? ValidatingOCPPMessage(ChargePointStatus chargePointStatus,string ocppMessage, HttpContext context)
+        {
+            Match match = Regex.Match(ocppMessage, MessageRegExp);
+            if (match != null && match.Groups != null && match.Groups.Count >= 3)
+            {
+                string messageTypeId = match.Groups[1].Value;
+                string uniqueId = match.Groups[2].Value;
+                string action = match.Groups[3].Value;
+                string jsonPaylod = match.Groups[4].Value;
+                Console.WriteLine("OCPPMiddleware.Receive20 => OCPP-Message: Type={0} / ID={1} / Action={2})", messageTypeId, uniqueId, action);
+
+                return new OCPPMessage(messageTypeId, uniqueId, action, jsonPaylod);
+            }
+            else
+            {
+                Console.WriteLine("OCPPMiddleware.Receive20 => Error in RegEx-Matching: Msg={0})", ocppMessage);
+                return null;
             }
         }
     }
