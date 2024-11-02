@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
@@ -10,16 +12,19 @@ namespace VoltaXApi.OCPP.Handlers
   {
 
     private readonly ILogger _logger;
+    private readonly IMessageLogRepository _msgLogRepo;
 
     public BootNotificationHandler(
-      ILoggerFactory loggerFactory
+      ILoggerFactory loggerFactory,
+      IMessageLogRepository messageLogRepository
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(BootNotificationHandler));
+      _msgLogRepo = messageLogRepository;
     }
 
 
-    public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut)
+    public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
     {
       string? errorCode = null;
       string? bootReason = null;
@@ -63,7 +68,7 @@ namespace VoltaXApi.OCPP.Handlers
         errorCode = ErrorCodes.FormationViolation;
       }
 
-      // WriteMessageLog(ChargePointStatus.Id, null, msgIn.Action, bootReason, errorCode);
+      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode);
       return errorCode;
     }
   }

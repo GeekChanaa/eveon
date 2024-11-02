@@ -1,17 +1,32 @@
+using System.Text;
+using Newtonsoft.Json;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
+using VoltaXApi.OCPP.Helpers;
+using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-  public class NotifyEVChargingScheduleHandler : IOCPPRequestHandler
-  {
-      public string HandleNotifyEVChargingSchedule(OCPPMessage msgIn, OCPPMessage msgOut)
+    public class NotifyEVChargingScheduleHandler : IOCPPRequestHandler
+    {
+    private readonly IMessageLogRepository _msgLogRepo;
+        private readonly ILogger _logger;
+        public NotifyEVChargingScheduleHandler(
+            ILoggerFactory loggerFactory,
+            IMessageLogRepository messageLogRepository
+        )
+        {
+            _logger = loggerFactory.CreateLogger(typeof(NotifyEVChargingScheduleHandler));
+        }
+        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
             string errorCode = null;
 
-            Logger.LogTrace("Processing NotifyEVChargingSchedule...");
+            _logger.LogTrace("Processing NotifyEVChargingSchedule...");
             NotifyEVChargingScheduleResponse notifyEVChargingScheduleResponse = new NotifyEVChargingScheduleResponse();
             notifyEVChargingScheduleResponse.CustomData = new CustomDataType();
-            notifyEVChargingScheduleResponse.CustomData.VendorId = VendorId;
+            notifyEVChargingScheduleResponse.CustomData.VendorId = OCPPHelper.VendorId;
 
             StringBuilder periods = new StringBuilder();
             int connectorId = 0;
@@ -19,10 +34,10 @@ namespace VoltaXApi.OCPP.Handlers
             try
             {
                 NotifyEVChargingScheduleRequest notifyEVChargingScheduleRequest = JsonConvert.DeserializeObject<NotifyEVChargingScheduleRequest>(msgIn.JsonPayload);
-                Logger.LogTrace("NotifyEVChargingSchedule => Message deserialized");
+                _logger.LogTrace("NotifyEVChargingSchedule => Message deserialized");
 
 
-                if (ChargePointStatus != null)
+                if (chargePointStatus != null)
                 {
                     // Known charge station
                     if (notifyEVChargingScheduleRequest.ChargingSchedule != null)
@@ -50,7 +65,7 @@ namespace VoltaXApi.OCPP.Handlers
                         }
                     }
                     connectorId = notifyEVChargingScheduleRequest.EvseId;
-                    Logger.LogInformation("NotifyEVChargingSchedule => {0}", periods.ToString());
+                    _logger.LogInformation("NotifyEVChargingSchedule => {0}", periods.ToString());
                 }
                 else
                 {
@@ -59,16 +74,16 @@ namespace VoltaXApi.OCPP.Handlers
                 }
 
                 msgOut.JsonPayload = JsonConvert.SerializeObject(notifyEVChargingScheduleResponse);
-                Logger.LogTrace("NotifyEVChargingSchedule => Response serialized");
+                _logger.LogTrace("NotifyEVChargingSchedule => Response serialized");
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp, "NotifyEVChargingSchedule => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "NotifyEVChargingSchedule => Exception: {0}", exp.Message);
                 errorCode = ErrorCodes.InternalError;
             }
 
-            WriteMessageLog(ChargePointStatus.Id, connectorId, msgIn.Action, periods.ToString(), errorCode);
+            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, periods.ToString(), errorCode);
             return errorCode;
         }
-  }
+    }
 }

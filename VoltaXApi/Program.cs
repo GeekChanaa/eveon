@@ -25,6 +25,7 @@ using VoltaXApi.OCPP.Handlers;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.Hubs;
+using VoltaXApi.OCPP.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IStateRepository, StateRepository>();
 builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
+builder.Services.AddScoped<IChargeTagRepository, ChargeTagRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
@@ -72,7 +74,42 @@ builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
 
-builder.Services.AddScoped<IOCPPRequestHandler, OCPPRequestHandler>();
+builder.Services.AddScoped<OCPPRequestHandler>();
+builder.Services.AddScoped<OCPPRequestHandlerFactory>();
+
+builder.Services.AddScoped<BootNotificationHandler>();
+builder.Services.AddScoped<HeartBeatHandler>();
+builder.Services.AddScoped<AuthorizeHandler>();
+builder.Services.AddScoped<ClearedChargingLimitHandler>();
+builder.Services.AddScoped<DataTransferHandler>();
+builder.Services.AddScoped<FirmwareStatusNotificationHandler>();
+builder.Services.AddScoped<LogStatusNotificationHandler>();
+builder.Services.AddScoped<MeterValuesHandler>();
+builder.Services.AddScoped<NotifyChargingLimitHandler>();
+builder.Services.AddScoped<NotifyEVChargingScheduleHandler>();
+builder.Services.AddScoped<ResetHandler>();
+builder.Services.AddScoped<StatusNotificationHandler>();
+builder.Services.AddScoped<UnlockConnectorHandler>();
+
+builder.Services.AddScoped<Func<BootNotificationHandler>>(sp => () => sp.GetService<BootNotificationHandler>());
+builder.Services.AddScoped<Func<HeartBeatHandler>>(sp => () => sp.GetService<HeartBeatHandler>());
+builder.Services.AddScoped<Func<AuthorizeHandler>>(sp => () => sp.GetService<AuthorizeHandler>());
+builder.Services.AddScoped<Func<ClearedChargingLimitHandler>>(sp => () => sp.GetService<ClearedChargingLimitHandler>());
+builder.Services.AddScoped<Func<DataTransferHandler>>(sp => () => sp.GetService<DataTransferHandler>());
+builder.Services.AddScoped<Func<FirmwareStatusNotificationHandler>>(sp => () => sp.GetService<FirmwareStatusNotificationHandler>());
+builder.Services.AddScoped<Func<LogStatusNotificationHandler>>(sp => () => sp.GetService<LogStatusNotificationHandler>());
+builder.Services.AddScoped<Func<MeterValuesHandler>>(sp => () => sp.GetService<MeterValuesHandler>());
+builder.Services.AddScoped<Func<NotifyChargingLimitHandler>>(sp => () => sp.GetService<NotifyChargingLimitHandler>());
+builder.Services.AddScoped<Func<NotifyEVChargingScheduleHandler>>(sp => () => sp.GetService<NotifyEVChargingScheduleHandler>());
+builder.Services.AddScoped<Func<ResetHandler>>(sp => () => sp.GetService<ResetHandler>());
+builder.Services.AddScoped<Func<StatusNotificationHandler>>(sp => () => sp.GetService<StatusNotificationHandler>());
+builder.Services.AddScoped<Func<UnlockConnectorHandler>>(sp => () => sp.GetService<UnlockConnectorHandler>());
+
+
+
+
+
+
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<WebSocketSubProtocolMatcher>();

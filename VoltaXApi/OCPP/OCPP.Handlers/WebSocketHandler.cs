@@ -28,8 +28,7 @@ namespace VoltaXApi.OCPP.Handlers
           ILoggerFactory logFactory,
           IConfiguration config,
           OCPPMessageProcessor msgProcessor,
-          IHubContext<ChargerHub> hubContext,
-          IOCPPRequestHandler reqHandler)
+          IHubContext<ChargerHub> hubContext)
         {
             _webSocketManagerService = webSocketManagerService;
             _config = config;
@@ -102,16 +101,19 @@ namespace VoltaXApi.OCPP.Handlers
 
         private async  Task<OCPPMessage>? ValidatingOCPPMessage(ChargePointStatus chargePointStatus,string ocppMessage, HttpContext context)
         {
+            Console.WriteLine("this is the validation of the ocpp message");
+            Console.WriteLine(ocppMessage);
             Match match = Regex.Match(ocppMessage, MessageRegExp);
             if (match != null && match.Groups != null && match.Groups.Count >= 3)
             {
                 string messageTypeId = match.Groups[1].Value;
                 string uniqueId = match.Groups[2].Value;
                 string action = match.Groups[3].Value;
-                string jsonPaylod = match.Groups[4].Value;
-                Console.WriteLine("OCPPMiddleware.Receive20 => OCPP-Message: Type={0} / ID={1} / Action={2})", messageTypeId, uniqueId, action);
-
-                return new OCPPMessage(messageTypeId, uniqueId, action, jsonPaylod);
+                string jsonPayload = match.Groups[4].Value;
+                var msg =  new OCPPMessage(messageTypeId, uniqueId, action, jsonPayload);
+                Console.WriteLine("ocppmessag.jsonpayload");
+                Console.WriteLine(msg.JsonPayload);
+                return msg;
             }
             else
             {

@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
@@ -9,15 +11,18 @@ namespace VoltaXApi.OCPP.Handlers
   {
 
     private readonly ILogger _logger;
+    private readonly IMessageLogRepository _msgLogRepo;
 
     public ClearedChargingLimitHandler(
-      ILoggerFactory loggerFactory
+      ILoggerFactory loggerFactory,
+      IMessageLogRepository messageLogRepository
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(ClearedChargingLimitHandler));
+      _msgLogRepo = messageLogRepository;
     }
 
-      public Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut)
+      public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
       {
 
           string errorCode = null;
@@ -26,9 +31,6 @@ namespace VoltaXApi.OCPP.Handlers
           ClearedChargingLimitResponse clearedChargingLimitResponse = new ClearedChargingLimitResponse();
           clearedChargingLimitResponse.CustomData = new CustomDataType();
           clearedChargingLimitResponse.CustomData.VendorId = OCPPHelper.VendorId;
-
-          string source = null;
-          int connectorId = 0;
 
           try
           {
@@ -57,7 +59,7 @@ namespace VoltaXApi.OCPP.Handlers
               errorCode = ErrorCodes.InternalError;
           }
 
-          // WriteMessageLog(ChargePointStatus.Id, connectorId, msgIn.Action, source, errorCode);
+          // await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, source, errorCode);
           return errorCode;
       }
   }

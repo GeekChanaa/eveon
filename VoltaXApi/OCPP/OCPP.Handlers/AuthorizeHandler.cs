@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
 using VoltaXApi.OCPP.Helpers;
@@ -15,18 +16,21 @@ namespace VoltaXApi.OCPP.Handlers
   public class AuthorizeHandler : IOCPPRequestHandler
   {
     private readonly ILogger _logger;
+    private readonly IMessageLogRepository _msgLogRepo;
     private readonly IChargeTagRepository _chargeTagRepository;
 
     public AuthorizeHandler(
       ILoggerFactory loggerFactory,
-      IChargeTagRepository chargeTagRepository
+      IChargeTagRepository chargeTagRepository,
+      IMessageLogRepository messageLogRepository
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(AuthorizeHandler));
       _chargeTagRepository = chargeTagRepository;
+      _msgLogRepo = messageLogRepository;
     }
 
-      public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut)
+      public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
       {
           string? errorCode = null;
           AuthorizeResponse authorizeResponse = new AuthorizeResponse();
@@ -100,7 +104,7 @@ namespace VoltaXApi.OCPP.Handlers
               errorCode = ErrorCodes.FormationViolation;
           }
 
-          // WriteMessageLog(ChargePointStatus?.Id, null, msgIn.Action, $"'{idTag}'=>{authorizeResponse.IdTokenInfo?.Status}", errorCode);
+          await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgIn.Action, $"'{idTag}'=>{authorizeResponse.IdTokenInfo?.Status}", errorCode);
           return errorCode;
       }
   }

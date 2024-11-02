@@ -1,3 +1,4 @@
+using OCPP.Core.Server;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
@@ -6,5 +7,6 @@ namespace VoltaXApi.Data
     {
         Task<int> GetNumberOfConnectorsByStatus(string status);
         Task<int> GetPartnerNumberOfConnectorsByStatus(int partnerID,string status);
+        Task<bool> UpdateConnectorStatus(int connectorId, string? status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus);
     }
 }

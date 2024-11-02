@@ -22,33 +22,22 @@ namespace VoltaXApi.Data
             _mapper = mapper;
         }
         
-        public bool WriteMessageLog(string chargePointId, int? connectorId, string message, string result, string errorCode)
+        public async Task<bool> SaveLogMessage(string chargePointId, int? connectorId, string message, string result, string errorCode)
         {
             try
             {
-                int dbMessageLog = 2;
-                if (dbMessageLog > 0 && !string.IsNullOrWhiteSpace(chargePointId))
+                if (!string.IsNullOrWhiteSpace(chargePointId))
                 {
-                    bool doLog = (dbMessageLog > 1 ||
-                                    (message != "BootNotification" &&
-                                     message != "Heartbeat" &&
-                                     message != "DataTransfer" &&
-                                     message != "StatusNotification"));
-
-                    if (doLog)
-                    {
-                        var optionsBuilder = new DbContextOptionsBuilder<VoltaXApiDbContext>();
-                        MessageLog msgLog = new MessageLog();
-                        msgLog.ChargePointId = chargePointId;
-                        msgLog.ConnectorId = connectorId;
-                        msgLog.LogTime = DateTime.UtcNow;
-                        msgLog.Message = message;
-                        msgLog.Result = result;
-                        msgLog.ErrorCode = errorCode;
-                        _context.MessageLogs.Add(msgLog);
-                        _context.SaveChanges();
-                        return true;
-                    }
+                    MessageLog msgLog = new MessageLog();
+                    msgLog.ChargePointId = chargePointId;
+                    msgLog.ConnectorId = connectorId;
+                    msgLog.LogTime = DateTime.UtcNow;
+                    msgLog.Message = message;
+                    msgLog.Result = result;
+                    msgLog.ErrorCode = errorCode;
+                    await _context.MessageLogs.AddAsync(msgLog);
+                    await _context.SaveChangesAsync();
+                    return true;
                 }
             }
             catch (Exception exp)

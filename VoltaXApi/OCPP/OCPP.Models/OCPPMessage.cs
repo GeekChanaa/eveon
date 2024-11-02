@@ -12,7 +12,7 @@ namespace VoltaXApi.OCPP.Models
 
         public string Action { get; set; }
 
-        public string JsonPayload { get; set; }
+        public string? JsonPayload { get; set; }
 
         public string ErrorCode { get; set; }
 

@@ -1,31 +1,48 @@
+using Newtonsoft.Json;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
+using VoltaXApi.OCPP.Helpers;
+using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-  public class LogStatusNotificationHandler : IOCPPRequestHandler
-  {
-      public string HandleLogStatusNotification(OCPPMessage msgIn, OCPPMessage msgOut)
+    public class LogStatusNotificationHandler : IOCPPRequestHandler
+    {
+        private readonly IMessageLogRepository _msgLogRepo;
+        private readonly ILogger _logger;
+        public LogStatusNotificationHandler(
+          ILoggerFactory loggerFactory,
+          IMessageLogRepository messageLogRepository
+        )
+        {
+            _logger = loggerFactory.CreateLogger(typeof(LogStatusNotificationHandler));
+            _msgLogRepo = messageLogRepository;
+        }
+
+
+        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
             string errorCode = null;
 
-            Logger.LogTrace("Processing LogStatusNotification...");
+            _logger.LogTrace("Processing LogStatusNotification...");
             LogStatusNotificationResponse logStatusNotificationResponse = new LogStatusNotificationResponse();
             logStatusNotificationResponse.CustomData = new CustomDataType();
-            logStatusNotificationResponse.CustomData.VendorId = VendorId;
+            logStatusNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
 
             string status = null;
 
             try
             {
                 LogStatusNotificationRequest logStatusNotificationRequest = JsonConvert.DeserializeObject<LogStatusNotificationRequest>(msgIn.JsonPayload);
-                Logger.LogTrace("LogStatusNotification => Message deserialized");
+                _logger.LogTrace("LogStatusNotification => Message deserialized");
 
 
-                if (ChargePointStatus != null)
+                if (chargePointStatus != null)
                 {
                     // Known charge station
                     status = logStatusNotificationRequest.Status.ToString();
-                    Logger.LogInformation("LogStatusNotification => Status={0}", status);
+                    _logger.LogInformation("LogStatusNotification => Status={0}", status);
                 }
                 else
                 {
@@ -34,16 +51,16 @@ namespace VoltaXApi.OCPP.Handlers
                 }
 
                 msgOut.JsonPayload = JsonConvert.SerializeObject(logStatusNotificationResponse);
-                Logger.LogTrace("LogStatusNotification => Response serialized");
+                _logger.LogTrace("LogStatusNotification => Response serialized");
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp, "LogStatusNotification => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "LogStatusNotification => Exception: {0}", exp.Message);
                 errorCode = ErrorCodes.InternalError;
             }
 
-            WriteMessageLog(ChargePointStatus.Id, null, msgIn.Action, status, errorCode);
+            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, status, errorCode);
             return errorCode;
         }
-  }
+    }
 }

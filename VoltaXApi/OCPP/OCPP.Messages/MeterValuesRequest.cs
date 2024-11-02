@@ -54,7 +54,8 @@ namespace VoltaXApi.OCPP.Messages
       Power_Reactive_Export,
       Power_Reactive_Import,
       SoC,
-      Voltage
+      Voltage,
+      Missing
   }
 
   public enum PhaseEnumType

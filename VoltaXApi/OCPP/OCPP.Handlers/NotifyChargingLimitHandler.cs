@@ -1,17 +1,34 @@
+using System.Text;
+using Newtonsoft.Json;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
+using VoltaXApi.OCPP.Helpers;
+using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-  public class NotifyChargingLimitHandler : IOCPPRequestHandler
-  {
-      public string HandleNotifyChargingLimit(OCPPMessage msgIn, OCPPMessage msgOut)
+    public class NotifyChargingLimitHandler : IOCPPRequestHandler
+    {
+    private readonly IMessageLogRepository _msgLogRepo;
+        private readonly ILogger _logger;
+        public NotifyChargingLimitHandler(
+            ILoggerFactory loggerFactory,
+            IMessageLogRepository messageLogRepository
+        )
+        {
+            _logger = loggerFactory.CreateLogger(typeof(NotifyChargingLimitHandler));
+        }
+
+
+        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
             string errorCode = null;
 
-            Logger.LogTrace("Processing NotifyChargingLimit...");
+            _logger.LogTrace("Processing NotifyChargingLimit...");
             NotifyChargingLimitResponse notifyChargingLimitResponse = new NotifyChargingLimitResponse();
             notifyChargingLimitResponse.CustomData = new CustomDataType();
-            notifyChargingLimitResponse.CustomData.VendorId = VendorId;
+            notifyChargingLimitResponse.CustomData.VendorId = OCPPHelper.VendorId;
 
             string source = null;
             StringBuilder periods = new StringBuilder();
@@ -20,10 +37,10 @@ namespace VoltaXApi.OCPP.Handlers
             try
             {
                 NotifyChargingLimitRequest notifyChargingLimitRequest = JsonConvert.DeserializeObject<NotifyChargingLimitRequest>(msgIn.JsonPayload);
-                Logger.LogTrace("NotifyChargingLimit => Message deserialized");
+                _logger.LogTrace("NotifyChargingLimit => Message deserialized");
 
 
-                if (ChargePointStatus != null)
+                if (chargePointStatus != null)
                 {
                     // Known charge station
                     source = notifyChargingLimitRequest.ChargingLimit?.ChargingLimitSource.ToString();
@@ -51,7 +68,7 @@ namespace VoltaXApi.OCPP.Handlers
                         }
                     }
                     connectorId = notifyChargingLimitRequest.EvseId;
-                    Logger.LogInformation("NotifyChargingLimit => {0}", periods);
+                    _logger.LogInformation("NotifyChargingLimit => {0}", periods);
                 }
                 else
                 {
@@ -60,16 +77,16 @@ namespace VoltaXApi.OCPP.Handlers
                 }
 
                 msgOut.JsonPayload = JsonConvert.SerializeObject(notifyChargingLimitResponse);
-                Logger.LogTrace("NotifyChargingLimit => Response serialized");
+                _logger.LogTrace("NotifyChargingLimit => Response serialized");
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp, "NotifyChargingLimit => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "NotifyChargingLimit => Exception: {0}", exp.Message);
                 errorCode = ErrorCodes.InternalError;
             }
 
-            WriteMessageLog(ChargePointStatus.Id, connectorId, msgIn.Action, source, errorCode);
+            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, source, errorCode);
             return errorCode;
         }
-  }
+    }
 }

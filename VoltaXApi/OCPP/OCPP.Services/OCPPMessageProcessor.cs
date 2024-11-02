@@ -23,14 +23,15 @@ namespace VoltaXApi.OCPP.Core
     private readonly RequestQueueManagerService _requestQueueManagerService;
     private readonly WebSocketManagerService _wsManagerService;
     private readonly IHubContext<ChargerHub> _hubContext;
-    private readonly IOCPPRequestHandler _reqHandler;
+    private readonly OCPPRequestHandler _reqHandler;
 
     public OCPPMessageProcessor(
         ILoggerFactory loggerFactory, 
         IConfiguration config,
         RequestQueueManagerService requestQueueManagerService,
         WebSocketManagerService wsManagerService,
-        IHubContext<ChargerHub> hubContext)
+        IHubContext<ChargerHub> hubContext,
+        OCPPRequestHandler requestHandler)
     {
         _config = config;
         _loggerFactory = loggerFactory;
@@ -38,6 +39,7 @@ namespace VoltaXApi.OCPP.Core
         _requestQueueManagerService = requestQueueManagerService;
         _wsManagerService = wsManagerService;
         _hubContext = hubContext;
+        _reqHandler = requestHandler;
     }
 
     public async Task ProcessMessage(
@@ -46,10 +48,13 @@ namespace VoltaXApi.OCPP.Core
         HttpContext context,
         string ocppMessage)
     {
+        Console.WriteLine("process message : JSON APAYLOAD");
+        Console.WriteLine(message.JsonPayload);
+        Console.WriteLine(chargePointStatus.Id);
         switch (message.MessageType)
         {
             case "2":
-                OCPPMessage msgOut = _reqHandler.ProcessRequest(message);
+                OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
 
@@ -57,7 +62,7 @@ namespace VoltaXApi.OCPP.Core
             case "4":
                     if (_requestQueueManagerService.ContainsKey(message.UniqueId))
                     {
-                        _controller20.ProcessAnswer(message, _requestQueueManagerService.GetMessage(message.UniqueId));
+                        await _controller20.ProcessAnswer(message, _requestQueueManagerService.GetMessage(message.UniqueId));
                         _requestQueueManagerService.RemoveMessage(message.UniqueId);
                     }
                     else
@@ -74,6 +79,11 @@ namespace VoltaXApi.OCPP.Core
 
     public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
+        Console.WriteLine("this is the message in the sendmessage");
+        Console.WriteLine(message.MessageType);
+        Console.WriteLine(message.UniqueId);
+        Console.WriteLine(message.Action);
+        Console.WriteLine(message.JsonPayload);
         var ocppArrayMessage = new object[]
         {
             JRaw.Parse(message.MessageType),

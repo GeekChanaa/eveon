@@ -59,7 +59,6 @@ namespace OCPP.Core.Server
         private async Task Reset20(ChargePointStatus chargePointStatus, HttpContext apiCallerContext)
         {
             ILogger logger = _logFactory.CreateLogger("OCPPMiddleware.OCPP20");
-            ControllerOCPP20 controller20 = new ControllerOCPP20(_configuration, _logFactory, chargePointStatus);
 
             ResetRequest resetRequest = new ResetRequest();
             resetRequest.Type = ResetEnumType.OnIdle;

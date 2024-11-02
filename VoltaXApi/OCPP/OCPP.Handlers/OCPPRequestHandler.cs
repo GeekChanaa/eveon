@@ -6,104 +6,75 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using OCPP.Core.Server;
+using VoltaXApi.Data;
 using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Core;
+using VoltaXApi.OCPP.Factories;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-    public class OCPPRequestHandler : IOCPPRequestHandler
-    {
+    public class OCPPRequestHandler
+    {   
         public const string VENDOR_ID = "VoltaX Charging";
+        private readonly IMessageLogRepository _msgLogRepo;
+        private readonly ILogger _logger;
+        private readonly OCPPRequestHandlerFactory _handlerFactory;
         
-        public OCPPRequestHandler()
+        public OCPPRequestHandler(
+            ILoggerFactory loggerFactory,
+            IMessageLogRepository messageLogRepository,
+            OCPPRequestHandlerFactory handlerFactory
+        )
         {
+            _logger = loggerFactory.CreateLogger(typeof(LogStatusNotificationHandler));
+            _msgLogRepo = messageLogRepository;
+            _handlerFactory = handlerFactory;
         }
 
-        public OCPPMessage ProcessRequest(OCPPMessage msgIn)
+        public async Task<OCPPMessage> ProcessRequest(OCPPMessage msgIn, ChargePointStatus chargePointStatus)
         {
-          OCPPMessage msgOut = new OCPPMessage();
-          msgOut.MessageType = "3";
-          msgOut.UniqueId = msgIn.UniqueId;
-          msgOut.Action = msgIn.Action;
+            OCPPMessage msgOut = new OCPPMessage
+            {
+                MessageType = "3",
+                UniqueId = msgIn.UniqueId,
+                Action = msgIn.Action
+            };
 
-          string errorCode = null;
+            if (msgIn.MessageType == "2")
+            {
+                var handler = _handlerFactory.GetHandler(msgIn.Action);
 
-          if (msgIn.MessageType == "2")
-          {
-              switch (msgIn.Action)
-              {
-                  case "BootNotification":
-                      errorCode = HandleBootNotification(msgIn, msgOut);
-                      break;
+                if (handler != null)
+                {
+                    string errorCode = await handler.Handle(msgIn, msgOut, chargePointStatus);
+                    if (!string.IsNullOrEmpty(errorCode))
+                    {
+                        msgOut.MessageType = "4"; // Error type
+                        msgOut.ErrorCode = errorCode;
+                        _logger.LogDebug("ControllerOCPP20 => Return error code message: ErrorCode={0}", errorCode);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No handler for this action");
+                    // Log unsupported action
+                    string errorCode = ErrorCodes.NotSupported;
+                    await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, msgIn.JsonPayload, errorCode);
+                    msgOut.MessageType = "4";
+                    msgOut.ErrorCode = errorCode;
+                }
+            }
+            else
+            {
+                _logger.LogError("ControllerOCPP20 => Protocol error: wrong message type", msgIn.MessageType);
+                msgOut.MessageType = "4";
+                msgOut.ErrorCode = ErrorCodes.ProtocolError;
+            }
 
-                  case "Heartbeat":
-                      errorCode = HandleHeartBeat(msgIn, msgOut);
-                      break;
-
-                  case "Authorize":
-                      errorCode = HandleAuthorize(msgIn, msgOut);
-                      break;
-
-                  case "TransactionEvent":
-                      errorCode = HandleTransactionEvent(msgIn, msgOut);
-                      break;
-
-                  case "MeterValues":
-                      errorCode = HandleMeterValues(msgIn, msgOut);
-                      break;
-
-                  case "StatusNotification":
-                      errorCode = HandleStatusNotification(msgIn, msgOut);
-                      break;
-
-                  case "DataTransfer":
-                      errorCode = HandleDataTransfer(msgIn, msgOut);
-                      break;
-
-                  case "LogStatusNotification":
-                      errorCode = HandleLogStatusNotification(msgIn, msgOut);
-                      break;
-
-                  case "FirmwareStatusNotification":
-                      errorCode = HandleFirmwareStatusNotification(msgIn, msgOut);
-                      break;
-
-                  case "ClearedChargingLimit":
-                      errorCode = HandleClearedChargingLimit(msgIn, msgOut);
-                      break;
-
-                  case "NotifyChargingLimit":
-                      errorCode = HandleNotifyChargingLimit(msgIn, msgOut);
-                      break;
-
-                  case "NotifyEVChargingSchedule":
-                      errorCode = HandleNotifyEVChargingSchedule(msgIn, msgOut);
-                      break;
-
-                  default:
-                      errorCode = ErrorCodes.NotSupported;
-                      WriteMessageLog(ChargePointStatus.Id, null, msgIn.Action, msgIn.JsonPayload, errorCode);
-                      break;
-              }
-          }
-          else
-          {
-              Logger.LogError("ControllerOCPP20 => Protocol error: wrong message type", msgIn.MessageType);
-              errorCode = ErrorCodes.ProtocolError;
-          }
-
-          if (!string.IsNullOrEmpty(errorCode))
-          {
-              // Inavlid message type => return type "4" (CALLERROR)
-              msgOut.MessageType = "4";
-              msgOut.ErrorCode = errorCode;
-              Logger.LogDebug("ControllerOCPP20 => Return error code messge: ErrorCode={0}", errorCode);
-          }
-          
-          return msgOut;
+            return msgOut;
         }
     }
 

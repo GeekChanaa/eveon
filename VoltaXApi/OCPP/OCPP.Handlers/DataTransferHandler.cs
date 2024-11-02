@@ -1,10 +1,26 @@
+using Newtonsoft.Json;
+using OCPP.Core.Server;
+using VoltaXApi.Data;
+using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-  public class DataTransferHandler : IOCPPRequestHandler
-  {
-      public string HandleDataTransfer(OCPPMessage msgIn, OCPPMessage msgOut)
+    public class DataTransferHandler : IOCPPRequestHandler
+    {
+        private readonly ILogger _logger;
+        private readonly IMessageLogRepository _msgLogRepo;
+        
+        public DataTransferHandler(
+          ILoggerFactory loggerFactory,
+          IMessageLogRepository messageLogRepository
+        )
+        {
+            _logger = loggerFactory.CreateLogger(typeof(DataTransferHandler));
+            _msgLogRepo = messageLogRepository;
+        }
+
+        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
             string errorCode = null;
             DataTransferResponse dataTransferResponse = new DataTransferResponse();
@@ -13,14 +29,14 @@ namespace VoltaXApi.OCPP.Handlers
 
             try
             {
-                Logger.LogTrace("Processing data transfer...");
+                _logger.LogTrace("Processing data transfer...");
                 DataTransferRequest dataTransferRequest = JsonConvert.DeserializeObject<DataTransferRequest>(msgIn.JsonPayload);
-                Logger.LogTrace("DataTransfer => Message deserialized");
+                _logger.LogTrace("DataTransfer => Message deserialized");
 
-                if (ChargePointStatus != null)
+                if (chargePointStatus != null)
                 {
                     // Known charge station
-                    msgWritten = WriteMessageLog(ChargePointStatus.Id, null, msgIn.Action, string.Format("VendorId={0} / MessageId={1} / Data={2}", dataTransferRequest.VendorId, dataTransferRequest.MessageId, dataTransferRequest.Data), errorCode);
+                    msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, string.Format("VendorId={0} / MessageId={1} / Data={2}", dataTransferRequest.VendorId, dataTransferRequest.MessageId, dataTransferRequest.Data), errorCode);
                     dataTransferResponse.Status = DataTransferStatusEnumType.Accepted;
                 }
                 else
@@ -30,19 +46,19 @@ namespace VoltaXApi.OCPP.Handlers
                 }
 
                 msgOut.JsonPayload = JsonConvert.SerializeObject(dataTransferResponse);
-                Logger.LogTrace("DataTransfer => Response serialized");
+                _logger.LogTrace("DataTransfer => Response serialized");
             }
             catch (Exception exp)
             {
-                Logger.LogError(exp, "DataTransfer => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "DataTransfer => Exception: {0}", exp.Message);
                 errorCode = ErrorCodes.InternalError;
             }
 
             if (!msgWritten)
             {
-                WriteMessageLog(ChargePointStatus.Id, null, msgIn.Action, null, errorCode);
+                await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, null, errorCode);
             }
             return errorCode;
         }
-  }
+    }
 }
