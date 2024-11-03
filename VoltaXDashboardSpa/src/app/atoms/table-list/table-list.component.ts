@@ -22,6 +22,7 @@ export class TableListComponent implements OnInit {
   @Input() searchByAttributes: string[] = [];
   @Input() data: any[] = [];
   @Input() deletable: boolean = true;
+  @Input() isLoading: boolean = true;
   @Input() createLink: string = "/create";
   @Input() routeName : string = "";
   @Input() searchByPlaceHolder: string = "Search by name";
@@ -88,8 +89,6 @@ export class TableListComponent implements OnInit {
 
 
   ngOnInit() {
-    if(this.customButtonTemplate)
-      console.log("this is in here");
     this.getAll();
     var i = 0;
     this.fields.forEach((field) => {
@@ -110,16 +109,17 @@ export class TableListComponent implements OnInit {
   }
 
   getAll(){
+    this.isLoading = true;
     this.getItemsObservable(this.currentPage, this.itemsPerPage, this.itemParams).subscribe((data) => {
-      console.log("this is the data")
-      console.log(data.result);
-      
+      this.isLoading = false;
       if(data.result)
         this.data = data.result;
       if(data.pagination){
         this.pagination = data.pagination;
         this.generatePaginationLinks();
       }
+    },(error) => {
+      this.isLoading = false;
     })
   }
 

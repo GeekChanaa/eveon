@@ -12,6 +12,9 @@ namespace VoltaXApi.Data.Seeders
             var chargeStations = await ChargingStationSeeder.Seed(100,context);
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
             var connectors = await ConnectorSeeder.Seed(100,chargePoints,context);
+            var chargePointUptimes = await ChargePointUptimeSeeder.Seed(100,chargePoints,context);
+            var connectorUptimes = await ConnectorUptimeSeeder.Seed(100,connectors,context);
+            
             var users = await UserSeeder.Seed(100,context);
             var debitCards = await DebitCardSeeder.Seed(200,users,context);
             var cards = await CardSeeder.Seed(200, users,context);

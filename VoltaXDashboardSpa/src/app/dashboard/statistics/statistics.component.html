@@ -12,7 +12,7 @@
           <div class="income__line">
             <div class="income__details">
               <div class="income__label">Recharge Amount (EUR)
-                <div class="tooltip" title="Small description Earning">
+                <div class="tooltip" title="Small description stats">
                   <svg class="icon icon-info">
                     <use xlink:href="#icon-info"></use>
                   </svg>
@@ -117,21 +117,21 @@
       </div>
     </div>
   </div>
-  <div class="earning">
-    <div class="earning__table">
-      <div class="earning__row">
-        <div class="earning__col">Start</div>
-        <div class="earning__col">End</div>
-        <div class="earning__col">Energy Consumed</div>
-        <div class="earning__col">Amount</div>
+  <div class="stats">
+    <div class="stats__table">
+      <div class="stats__row">
+        <div class="stats__col">Start</div>
+        <div class="stats__col">End</div>
+        <div class="stats__col">Energy Consumed</div>
+        <div class="stats__col">Amount</div>
       </div>
-      <div class="earning__row" *ngFor="let item of latestTransactions">
-        <div class="earning__col">{{item.startTime | date:'medium'}}</div>
-        <div class="earning__col">
-          <div class="status-yellow earning__status">{{item.stopTime | date:'medium'}}</div>
+      <div class="stats__row" *ngFor="let item of latestTransactions">
+        <div class="stats__col">{{item.startTime | date:'medium'}}</div>
+        <div class="stats__col">
+          <div class="status-yellow stats__status">{{item.stopTime | date:'medium'}}</div>
         </div>
-        <div class="earning__col">{{item.meterStop - item.meterStart | number:'1.2-2'}}</div>
-        <div class="earning__col">{{item.amount | number:'1.2-2'}} DH
+        <div class="stats__col">{{item.meterStop - item.meterStart | number:'1.2-2'}}</div>
+        <div class="stats__col">{{item.amount | number:'1.2-2'}} DH
         </div>
       </div>
       

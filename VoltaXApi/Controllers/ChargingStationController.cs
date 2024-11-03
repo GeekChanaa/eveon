@@ -181,7 +181,12 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> GetChargingStationNames([FromQuery] string? searchTerm = "") 
         {
             return Ok(await _repository.GetChargingStationNames(searchTerm));
+        }
 
+        [HttpGet("ChargingStationExistsByName/{name}")]
+        public async Task<IActionResult> ChargingStationExistsByName(string name) 
+        {
+            return Ok(await _repository.ChargingStationExistsByName(name));
         }
 
         

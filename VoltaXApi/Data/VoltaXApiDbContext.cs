@@ -104,9 +104,25 @@ namespace VoltaXApi.Data
             modelBuilder.Entity<ConnectorStatus>()
                 .HasKey(cs => new { cs.ConnectorID, cs.ChargePointID });
 
+            modelBuilder.Entity<Connector>()
+                .HasIndex(cs => new { cs.ConnectorID, cs.ChargePointID })
+                .IsUnique();
+
             modelBuilder.Entity<ChargePoint>()
                 .HasIndex(e => e.ChargePointId)
                 .IsUnique();
+
+            modelBuilder.Entity<ChargingStation>()
+                .HasIndex(e => e.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<ChargePointUptime>()
+                .Property(c => c.ChargePointUptimeStatus)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<ConnectorUptime>()
+                .Property(c => c.ConnectorUptimeStatus)
+                .HasConversion<string>();
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -154,6 +170,9 @@ namespace VoltaXApi.Data
         public DbSet<CommentReply> CommentReplies { get; set; }
         public DbSet<CommentImage> CommentImages { get; set; }
         public DbSet<ReportImage> ReportImages { get; set; }
+        public DbSet<ChargePointUptime> ChargePointUptimes { get; set; }
+        public DbSet<ConnectorUptime> ConnectorUptimes { get; set; }
+        public DbSet<ChargingSession> ChargingSessions { get; set; }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
@@ -204,5 +223,7 @@ namespace VoltaXApi.Data
         {
             modelBuilder.Entity<T>().HasQueryFilter(e => !e.IsDeleted);
         }
+
+        
     }
 }

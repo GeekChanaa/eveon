@@ -42,6 +42,9 @@ namespace VoltaXApi.Mappers
 
             
             CreateMap<Transaction,TransactionDto>();
+
+            CreateMap<ChargePointUptime,ChargePointUptimeListDto>();
+            CreateMap<ConnectorUptime,ConnectorUptimeListDto>();
                 
         }
 

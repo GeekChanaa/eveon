@@ -68,6 +68,9 @@ builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
 builder.Services.AddScoped<IDebitCardRepository, DebitCardRepository>();
 builder.Services.AddScoped<IMessageLogRepository, MessageLogRepository>();
+builder.Services.AddScoped<IChargePointUptimeRepository, ChargePointUptimeRepository>();
+builder.Services.AddScoped<IConnectorUptimeRepository, ConnectorUptimeRepository>();
+builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
@@ -88,6 +91,7 @@ builder.Services.AddScoped<MeterValuesHandler>();
 builder.Services.AddScoped<NotifyChargingLimitHandler>();
 builder.Services.AddScoped<NotifyEVChargingScheduleHandler>();
 builder.Services.AddScoped<ResetHandler>();
+builder.Services.AddScoped<SecurityEventNotificationHandler>();
 builder.Services.AddScoped<StatusNotificationHandler>();
 builder.Services.AddScoped<UnlockConnectorHandler>();
 
@@ -102,6 +106,7 @@ builder.Services.AddScoped<Func<MeterValuesHandler>>(sp => () => sp.GetService<M
 builder.Services.AddScoped<Func<NotifyChargingLimitHandler>>(sp => () => sp.GetService<NotifyChargingLimitHandler>());
 builder.Services.AddScoped<Func<NotifyEVChargingScheduleHandler>>(sp => () => sp.GetService<NotifyEVChargingScheduleHandler>());
 builder.Services.AddScoped<Func<ResetHandler>>(sp => () => sp.GetService<ResetHandler>());
+builder.Services.AddScoped<Func<SecurityEventNotificationHandler>>(sp => () => sp.GetService<SecurityEventNotificationHandler>());
 builder.Services.AddScoped<Func<StatusNotificationHandler>>(sp => () => sp.GetService<StatusNotificationHandler>());
 builder.Services.AddScoped<Func<UnlockConnectorHandler>>(sp => () => sp.GetService<UnlockConnectorHandler>());
 
@@ -228,8 +233,8 @@ using (var scope = app.Services.CreateScope())
 
     // await SqlScriptExecuter.ExecuteSqlScript();
     // await BrandsAutomobilesSeeder.Populate();
-    // GlobalSeeder.Seed(dbContext).Wait();
     // await UserSeeder.Seed(100,dbContext);
+    // GlobalSeeder.Seed(dbContext).Wait();
     
     //SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000);

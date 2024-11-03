@@ -15,7 +15,7 @@ import {
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css']
+  styleUrls: ['./statistics.component.sass']
 })
 export class StatisticsComponent implements OnInit {
 

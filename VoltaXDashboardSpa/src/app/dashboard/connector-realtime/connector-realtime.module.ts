@@ -9,6 +9,15 @@ import { ConnectorRealtimeListComponent } from './connector-realtime-list/connec
 import { ConnectorRealtimeActionsComponent } from './connector-realtime-actions/connector-realtime-actions.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { RequestHandlerComponent } from './connector-realtime-actions/request-handler/request-handler.component';
+import { ConnectorRealtimeDetailsSettingsComponent } from './connector-realtime-details-settings/connector-realtime-details-settings.component';
+import { ConnectorRealtimeFirmwareComponent } from './connector-realtime-firmware/connector-realtime-firmware.component';
+import { ConnectorRealtimeLogsComponent } from './connector-realtime-logs/connector-realtime-logs.component';
+import { ConnectorRealtimeMainComponent } from './connector-realtime-main/connector-realtime-main.component';
+import { ConnectorRealtimeOcppConfigurationComponent } from './connector-realtime-ocpp-configuration/connector-realtime-ocpp-configuration.component';
+import { ConnectorRealtimeOverviewComponent } from './connector-realtime-overview/connector-realtime-overview.component';
+import { ConnectorRealtimePricingAccessComponent } from './connector-realtime-pricing-access/connector-realtime-pricing-access.component';
+import { ConnectorRealtimeUptimeReportsComponent } from './connector-realtime-uptime-reports/connector-realtime-uptime-reports.component';
+import { ConnectorRealtimeRatingsComponent } from './connector-realtime-ratings/connector-realtime-ratings.component';
 
 @NgModule({
     declarations: [
@@ -16,7 +25,16 @@ import { RequestHandlerComponent } from './connector-realtime-actions/request-ha
       ConnectorRealtimeListComponent,
       ConnectorRealtimeActionsComponent,
       AppTableCustomButtonDirective,
-      RequestHandlerComponent
+      RequestHandlerComponent,
+      ConnectorRealtimeDetailsSettingsComponent,
+      ConnectorRealtimeFirmwareComponent,
+      ConnectorRealtimeLogsComponent,
+      ConnectorRealtimeMainComponent,
+      ConnectorRealtimeOcppConfigurationComponent,
+      ConnectorRealtimeOverviewComponent,
+      ConnectorRealtimePricingAccessComponent,
+      ConnectorRealtimeUptimeReportsComponent,
+      ConnectorRealtimeRatingsComponent
   ],
     imports: [
         AtomsModule,

@@ -11,6 +11,7 @@ export class SearchInputComponent implements OnInit {
   @Input() options: any[] = [];
   @Input() control: FormControl = new FormControl('');
   @Output() optionSelected = new EventEmitter<any>();
+  @Output() ngModelChange = new EventEmitter<string>();
 
   // Add a new property for filtered options
   filteredOptions: any[] = [];
@@ -24,12 +25,10 @@ export class SearchInputComponent implements OnInit {
     // Initialize filteredOptions with options
     this.filteredOptions = this.options;
 
-    console.log("this is the options in the beginning");
-    console.log(this.options);
-
     // Subscribe to value changes of control
     this.control.valueChanges.subscribe(value => {
       this.filteredOptions = this.filterOptions(value);
+      this.ngModelChange.emit(value);
     });
   }
 
@@ -49,8 +48,8 @@ export class SearchInputComponent implements OnInit {
 
   selectOption(option: string, inputElem: HTMLInputElement) {
     inputElem.value = option;
+    this.control.setValue(option);
     this.showList = false;
-    console.log(option);
     this.optionSelected.emit(option);
   }
 

@@ -52,37 +52,64 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChargingStations",
+                name: "ChargePointUptimes",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Network = table.Column<int>(type: "int", nullable: false),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    ChargerQuantity = table.Column<int>(type: "int", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Latitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Longitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Organisation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParkingType = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    WifiAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    ParkingAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    RestaurantsAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    WashroomAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    SittingAreaAmenity = table.Column<bool>(type: "bit", nullable: false),
-                    PartnerID = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ChargePointID = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ChargePointUptimeStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChargingStations", x => x.ID);
+                    table.PrimaryKey("PK_ChargePointUptimes", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChargingSessions",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChargePointID = table.Column<int>(type: "int", nullable: false),
+                    ConnectorID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    CardID = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StoppedReason = table.Column<int>(type: "int", nullable: false),
+                    ChargingSessionStatus = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChargingSessions", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ConnectorUptimes",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ConnectorID = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ConnectorUptimeStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConnectorUptimes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,38 +243,6 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChargePoints",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ChargePointId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ChargingStationID = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClientCertThumb = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChargePoints", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ChargePoints_ChargingStations_ChargingStationID",
-                        column: x => x.ChargingStationID,
-                        principalTable: "ChargingStations",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "States",
                 columns: table => new
                 {
@@ -275,35 +270,6 @@ namespace VoltaXApi.Migrations
                         column: x => x.CountryID,
                         principalTable: "Countries",
                         principalColumn: "ID");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ChargingStationImages",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ChargingStationID = table.Column<int>(type: "int", nullable: false),
-                    ImageID = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChargingStationImages", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ChargingStationImages_ChargingStations_ChargingStationID",
-                        column: x => x.ChargingStationID,
-                        principalTable: "ChargingStations",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ChargingStationImages_Images_ImageID",
-                        column: x => x.ImageID,
-                        principalTable: "Images",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -340,6 +306,7 @@ namespace VoltaXApi.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     Balance = table.Column<double>(type: "float", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Blocked = table.Column<bool>(type: "bit", nullable: true),
                     UserID = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -351,6 +318,45 @@ namespace VoltaXApi.Migrations
                     table.ForeignKey(
                         name: "FK_Cards_Users_UserID",
                         column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChargingStations",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Network = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    ChargerQuantity = table.Column<int>(type: "int", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Longitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Organisation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParkingType = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    WifiAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    ParkingAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    RestaurantsAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    WashroomAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    SittingAreaAmenity = table.Column<bool>(type: "bit", nullable: false),
+                    PartnerID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChargingStations", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ChargingStations_Users_PartnerID",
+                        column: x => x.PartnerID,
                         principalTable: "Users",
                         principalColumn: "ID");
                 });
@@ -451,38 +457,6 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Connectors",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ConnectorID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID = table.Column<int>(type: "int", nullable: true),
-                    ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Power = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Speed = table.Column<double>(type: "float", nullable: true),
-                    PricePerKWh = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PricePerMinute = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PricePerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FlatFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MaxPower = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Connectors", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Connectors_ChargePoints_ChargePointID",
-                        column: x => x.ChargePointID,
-                        principalTable: "ChargePoints",
-                        principalColumn: "ID");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Cities",
                 columns: table => new
                 {
@@ -568,6 +542,99 @@ namespace VoltaXApi.Migrations
                         name: "FK_Orders_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChargePoints",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChargePointId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ChargingStationID = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientCertThumb = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChargePoints", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ChargePoints_ChargingStations_ChargingStationID",
+                        column: x => x.ChargingStationID,
+                        principalTable: "ChargingStations",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChargingStationImages",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChargingStationID = table.Column<int>(type: "int", nullable: false),
+                    ImageID = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChargingStationImages", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ChargingStationImages_ChargingStations_ChargingStationID",
+                        column: x => x.ChargingStationID,
+                        principalTable: "ChargingStations",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChargingStationImages_Images_ImageID",
+                        column: x => x.ImageID,
+                        principalTable: "Images",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Connectors",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ConnectorID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ChargePointID = table.Column<int>(type: "int", nullable: true),
+                    ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Power = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Speed = table.Column<double>(type: "float", nullable: true),
+                    PricePerKWh = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PricePerMinute = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PricePerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FlatFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaxPower = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Connectors", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Connectors_ChargePoints_ChargePointID",
+                        column: x => x.ChargePointID,
+                        principalTable: "ChargePoints",
                         principalColumn: "ID");
                 });
 
@@ -872,6 +939,17 @@ namespace VoltaXApi.Migrations
                 column: "ImageID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChargingStations_Name",
+                table: "ChargingStations",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChargingStations_PartnerID",
+                table: "ChargingStations",
+                column: "PartnerID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cities_CountryID",
                 table: "Cities",
                 column: "CountryID");
@@ -920,6 +998,13 @@ namespace VoltaXApi.Migrations
                 name: "IX_Connectors_ChargePointID",
                 table: "Connectors",
                 column: "ChargePointID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Connectors_ConnectorID_ChargePointID",
+                table: "Connectors",
+                columns: new[] { "ConnectorID", "ChargePointID" },
+                unique: true,
+                filter: "[ChargePointID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConnectorStatuses_ChargePointID1",
@@ -1025,7 +1110,13 @@ namespace VoltaXApi.Migrations
                 name: "Brands");
 
             migrationBuilder.DropTable(
+                name: "ChargePointUptimes");
+
+            migrationBuilder.DropTable(
                 name: "ChargeTags");
+
+            migrationBuilder.DropTable(
+                name: "ChargingSessions");
 
             migrationBuilder.DropTable(
                 name: "ChargingStationImages");
@@ -1041,6 +1132,9 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "ConnectorStatuses");
+
+            migrationBuilder.DropTable(
+                name: "ConnectorUptimes");
 
             migrationBuilder.DropTable(
                 name: "DebitCards");
@@ -1091,13 +1185,13 @@ namespace VoltaXApi.Migrations
                 name: "Connectors");
 
             migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
                 name: "ChargePoints");
 
             migrationBuilder.DropTable(
                 name: "ChargingStations");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

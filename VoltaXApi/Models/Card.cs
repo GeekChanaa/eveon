@@ -10,6 +10,7 @@ namespace VoltaXApi.Models
         public CardStatusEnum Status { get; set; }
         public double Balance { get; set; }
         public string Note { get; set; }
+        public bool? Blocked { get; set; }
         public int? UserID { get; set; }
         public User? User { get; set; }
         public ICollection<Order>? Orders { get; set; }

@@ -23,6 +23,7 @@ import { SvgSpinnerComponent } from './svg-spinner/svg-spinner.component';
 import { MapPickerComponent } from './map-picker/map-picker.component';
 import { DisplayItemComponent } from './display-item/display-item.component';
 import { DisplayTableListComponent } from './display-table-list/display-table-list.component';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { DisplayTableListComponent } from './display-table-list/display-table-li
     SvgSpinnerComponent,
     MapPickerComponent,
     DisplayItemComponent,
-    DisplayTableListComponent
+    DisplayTableListComponent,
+    ProgressBarComponent
    ],
   imports: [
     CommonModule,
@@ -70,6 +72,7 @@ import { DisplayTableListComponent } from './display-table-list/display-table-li
     MapPickerComponent,
     DisplayItemComponent,
     DisplayTableListComponent,
+    ProgressBarComponent
 
   ],
   providers: [],

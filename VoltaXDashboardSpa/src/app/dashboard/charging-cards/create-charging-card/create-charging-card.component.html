@@ -35,6 +35,9 @@
                         <input 
                           class="field__input" type="text" formControlName="balance" placeholder="Value"
                           required>
+                        <div class="field__error" *ngIf="form.get('balance')?.errors != null">
+                          Please enter a valid number.
+                        </div>
                       </div>
                     </div>
 
@@ -100,7 +103,7 @@
           </div>
         </div>
         <div class="btns_group">
-          <button class="button" type="submit"> Submit </button>
+          <button [disabled]="form.invalid" [ngClass]="{'disabled': form.invalid}" class="button" type="submit"> Submit </button>
         </div>
     </form>
   </div>

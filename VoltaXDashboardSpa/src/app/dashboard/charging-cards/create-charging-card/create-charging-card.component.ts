@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { CardStatusEnum } from 'src/_models/_enums/card-status';
@@ -66,7 +66,7 @@ export class CreateChargingCardComponent implements OnInit, AfterViewInit {
     this.form = new FormGroup({
       cardType : new FormControl('Standard'),
       status : new FormControl('Active'),
-      balance : new FormControl(''),
+      balance : new FormControl('0',[Validators.pattern('^[0-9]*$')] ),
       note : new FormControl(''),
       userID : new FormControl('')
     })

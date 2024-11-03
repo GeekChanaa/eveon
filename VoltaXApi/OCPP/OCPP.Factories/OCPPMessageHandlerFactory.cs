@@ -19,6 +19,7 @@ namespace VoltaXApi.OCPP.Factories
                                          Func<NotifyChargingLimitHandler> notifyChargingLimitHandlerFactory,
                                          Func<NotifyEVChargingScheduleHandler> notifyEVChargingScheduleHandlerFactory,
                                          Func<ResetHandler> resetHandlerFactory,
+                                         Func<SecurityEventNotificationHandler> securityEventNotificationFactory,
                                          Func<StatusNotificationHandler> statusNotificationHandlerFactory,
                                          Func<UnlockConnectorHandler> unlockConnectorHandlerFactory)
         {
@@ -37,6 +38,7 @@ namespace VoltaXApi.OCPP.Factories
                 { "Reset", new Lazy<IOCPPRequestHandler>(resetHandlerFactory) },
                 { "StatusNotification", new Lazy<IOCPPRequestHandler>(statusNotificationHandlerFactory) },
                 { "UnlockConnector", new Lazy<IOCPPRequestHandler>(unlockConnectorHandlerFactory) },
+                { "SecurityEventNotification", new Lazy<IOCPPRequestHandler>(securityEventNotificationFactory) },
             };
         }
 

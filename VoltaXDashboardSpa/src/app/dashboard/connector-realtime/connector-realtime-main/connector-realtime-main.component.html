@@ -1,0 +1,86 @@
+<div class="page__inner">
+  <div class="page__container page__container--large">
+    <div class="page__title h3">
+      Charge Point Realtime
+      <div class="status"> 
+        <span class="status-color" [ngClass]="{'active' : status == 'active'}">
+          <ng-container *ngIf="status == 'active'">
+            <svg  viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="6" r="6" />
+            </svg>
+          </ng-container>
+
+          <ng-container *ngIf="status == 'inactive'">
+            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M6 10a4 4 0 100-8 4 4 0 000 8zm0 2A6 6 0 106 0a6 6 0 000 12z" />
+            </svg>
+          </ng-container>
+        </span> 
+      </div>
+    </div>
+    <div class="charger__navbar">
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</div>
+    </div>
+    <div class="settings">
+      
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Overview')">
+        <app-connector-realtime-overview class="settings__container"></app-connector-realtime-overview>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('PricingAccess')">
+        <app-connector-realtime-pricing-access class="settings__container"></app-connector-realtime-pricing-access>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('DetailsSettings')">
+        <app-connector-realtime-details-settings class="settings__container"></app-connector-realtime-details-settings>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Actions')">
+        <app-connector-realtime-actions [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-actions>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('OCPPConfiguration')">
+        <app-connector-realtime-ocpp-configuration class="settings__container"></app-connector-realtime-ocpp-configuration>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Firmware')">
+        <app-connector-realtime-firmware class="settings__container"></app-connector-realtime-firmware>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('UptimeReports')">
+        <app-connector-realtime-uptime-reports [chargePointID]="chargePoint.id" class="settings__container"></app-connector-realtime-uptime-reports>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Logs')">
+        <app-connector-realtime-logs class="settings__container"></app-connector-realtime-logs>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Ratings')">
+        <app-connector-realtime-ratings class="settings__container"></app-connector-realtime-ratings>
+      </ng-container>
+      
+
+      
+    </div>
+
+    <div class="overview">
+      this is the overview container
+    </div>
+
+    
+  </div>
+</div>
+
+
+
+
+

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
@@ -18,6 +18,7 @@ export class CreateChargePointComponent implements OnInit {
   form: FormGroup;
   opacity: number = 0;
   activeDiv = 1;
+  isLoading : boolean = false;
 
   chargingStationID : number = 0;
 
@@ -36,24 +37,18 @@ export class CreateChargePointComponent implements OnInit {
   chargePointSerialNumberTouched : boolean = false;
   checkingChagePointID : boolean = false;
   checkingChargePointSerialNumber : boolean = false;
+
+  chargingStationNameExists : boolean = false;
+  checkingChargingStationName : boolean = false;
+
   chargePointTimeout: any = {};
   chargePointSerialNumberTimeout: any = {};
+  chargingStationNameTimeout: any = {};
   chargePointExist : boolean = false;
   chargePointSerialNumberExist : boolean = false;
 
   ngAfterViewInit() {
   }
-
-  showNextDiv() {
-    this.activeDiv = this.activeDiv === 3 ? 1 : this.activeDiv + 1;
-  }
-
-  showPreviousDiv() {
-    if(this.activeDiv == 1) return; 
-    this.activeDiv = this.activeDiv - 1;
-  }
-
-
 
   constructor(
     private _chargingStationService: ChargingStationService,
@@ -75,9 +70,10 @@ export class CreateChargePointComponent implements OnInit {
           chargePointConnectorSpeed: new FormControl('7.3'),
           chargePointConnectorPricePerKWh : new FormControl(""),
           chargePointConnectorPricePerMinute : new FormControl(""),
-          chargePointConnectorPricePerHour : new FormControl("")
+          chargePointConnectorPricePerHour : new FormControl(""),
+          chargePointConnectorID : new FormControl(""),
         })
-      ])
+      ], this.duplicateConnectorIDValidator)
     });
   }
 
@@ -94,7 +90,8 @@ export class CreateChargePointComponent implements OnInit {
       chargePointConnectorSpeed: new FormControl('7.3'),
       chargePointConnectorPricePerKWh : new FormControl(""),
       chargePointConnectorPricePerMinute : new FormControl(""),
-      chargePointConnectorPricePerHour : new FormControl("")
+      chargePointConnectorPricePerHour : new FormControl(""),
+      chargePointConnectorID : new FormControl("")
     }));
   }
 
@@ -105,6 +102,8 @@ export class CreateChargePointComponent implements OnInit {
 
 
   onSubmit() {
+    this.isLoading = true;
+
     const formValues = this.form.value;
     let chargePoint : any = {};
     chargePoint.serialNumber =  formValues.chargePointSerialNumber;
@@ -120,13 +119,16 @@ export class CreateChargePointComponent implements OnInit {
       co.pricePerKWh = connector.chargePointConnectorPricePerKWh;
       co.pricePerMinute = connector.chargePointConnectorPricePerMinute;
       co.pricePerHour = connector.chargePointConnectorPricePerHour;
+      co.connectorID = connector.chargePointConnectorID;
       chargePoint.connectors.push(co);
     });
 
     this._chargePointService.create(chargePoint).subscribe((createdConnector) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Charge Point Created Successfully",4000);
-      this._router.navigateByUrl('/dashboard/charging-stations');
+      this._router.navigateByUrl('/dashboard/charging-points');
     },(error) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);
     });
   }
@@ -198,10 +200,38 @@ export class CreateChargePointComponent implements OnInit {
     }, 800);
   }
 
+  ChargingStationNameExists(chargingStationName: string): void {
+    this.chargePointIDTouched = true;
+    this.checkingChargingStationName = true;
+    clearTimeout(this.chargingStationNameTimeout);
+    this.chargingStationNameTimeout = setTimeout(() => {
+      this._chargingStationService.chargingStationExistsByName(chargingStationName).subscribe(
+        (data) => {
+          this.chargingStationNameExists = data;
+          this.checkingChargingStationName = false;
+        },
+        (error) => {
+          clearTimeout(this.chargingStationNameTimeout);
+        }
+      );
+    }, 800);
+  }
+
   getChargingStationNames(){
     this._chargingStationService.getChargingStationNames().subscribe((data) => {
       this.chargingStations = data;
     })
+  }
+
+
+  duplicateConnectorIDValidator(formArray: AbstractControl): ValidationErrors | null {
+    const connectorIDs = formArray.value.map((connector: any) => connector.chargePointConnectorID);
+    const uniqueConnectorIDs = new Set(connectorIDs);
+
+    if (uniqueConnectorIDs.size !== connectorIDs.length) {
+      return { duplicateConnectorID: true }; 
+    }
+    return null;
   }
 
 }

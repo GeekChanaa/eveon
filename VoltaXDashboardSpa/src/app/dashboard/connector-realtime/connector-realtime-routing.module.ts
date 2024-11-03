@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ConnectorRealtimeListComponent } from './connector-realtime-list/connector-realtime-list.component';
 import { ConnectorRealtimeActionsComponent } from './connector-realtime-actions/connector-realtime-actions.component';
+import { ConnectorRealtimeMainComponent } from './connector-realtime-main/connector-realtime-main.component';
 const routes: Routes = [
   {
     path: "",
@@ -9,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: ":id",
-    component: ConnectorRealtimeActionsComponent
+    component: ConnectorRealtimeMainComponent
   }
   
 ];

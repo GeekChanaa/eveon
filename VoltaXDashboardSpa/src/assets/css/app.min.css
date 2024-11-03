@@ -3143,7 +3143,11 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
     flex-grow: 1;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto; }
+    margin: 0 auto; 
+  }
+  .page__container--large{
+    max-width: 90%;
+  }
     .page__container.wide {
       max-width: 100%; }
   .page__title {

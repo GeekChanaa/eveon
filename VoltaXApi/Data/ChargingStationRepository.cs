@@ -236,6 +236,11 @@ namespace VoltaXApi.Data
 
         }
 
+        public async Task<bool> ChargingStationExistsByName(string name)
+        {
+            return await this._context.ChargingStations.AnyAsync(u => u.Name == name);
+        }
+
         
     }
 

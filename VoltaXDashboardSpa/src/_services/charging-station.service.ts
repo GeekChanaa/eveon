@@ -77,5 +77,11 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
     return this._http.get<any[]>(this.baseUrl+"GetChargingStationNames");
   }
 
+  chargingStationExistsByName(name : string){
+    return this._http.get<boolean>(this.baseUrl+"ChargingStationExistsByName/"+name);
+  }
+
+  
+
 
 }

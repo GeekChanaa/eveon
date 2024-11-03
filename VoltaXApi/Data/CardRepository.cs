@@ -39,6 +39,12 @@ namespace VoltaXApi.Data
             return _mapper.ProjectTo<OrderDto>(Orders).ToList();
         }
 
+
+        public async Task<Card> GetCardByNumber(string cardNumber)
+        {
+            return await _context.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber);
+        }
+
         // Get Card with its transactions and orders
         public async Task<CardWithTransactionsOrdersDto> GetCardByID(int CardID)
         {
@@ -119,16 +125,18 @@ namespace VoltaXApi.Data
 
         private string GenerateRandomCardNumber(int length)
         {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             var cardNumber = new char[length];
 
             for (int i = 0; i < length; i++)
             {
-                cardNumber[i] = random.Next(0, 10).ToString()[0];
+                cardNumber[i] = chars[random.Next(chars.Length)];
             }
 
             return new string(cardNumber);
         }
+
 
         public async Task<CardListDto> GetCardForDisplayByID(int cardID)
         {

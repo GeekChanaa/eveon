@@ -1,0 +1,49 @@
+
+.stats 
+  padding-bottom: 24px
+  background: #FCFCFC
+  border-radius: 8px 
+  body.dark .stats 
+    background: #1A1D1F 
+  .stats__table 
+    display: table
+    width: 100% 
+  .stats__row 
+    display: table-row 
+    &:first-child .stats__col 
+      padding-top: 16px
+      padding-bottom: 16px
+      font-size: 12px
+      font-weight: 700
+      line-height: 1.33333
+      font-weight: 500
+      color: #6F767E 
+    &:nth-child(2n) .stats__col 
+      background: rgba(239, 239, 239, 0.35) 
+      body.dark .stats__row:nth-child(2n) .stats__col 
+        background: rgba(39, 43, 48, 0.3) 
+  .stats__col 
+    display: table-cell
+    padding: 10px 16px
+    font-size: 14px
+    font-weight: 600
+    line-height: 1.71429 
+    .stats__col:first-child 
+      padding-left: 24px
+      white-space: nowrap
+      color: #6F767E 
+      @media only screen and (max-width: 767px) 
+        .stats__col:first-child 
+          padding-left: 16px  
+    @media only screen and (max-width: 767px) 
+      .stats__col:nth-child(2) 
+        display: none  
+    .stats__col:last-child 
+      padding-right: 24px 
+      @media only screen and (max-width: 767px) 
+        .stats__col:last-child 
+          padding-right: 16px  
+  .stats__status 
+    font-size: 14px
+    line-height: 28px
+    font-weight: 600 

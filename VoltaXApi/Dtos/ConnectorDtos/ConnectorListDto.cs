@@ -6,6 +6,7 @@ namespace VoltaXApi.Dtos
     {
         public int ID { get; set; }
         public string? ConnectorType { get; set; }
+        public string? ConnectorID { get; set; }
         public decimal Power { get; set; }
         public double Speed { get; set; }
         public decimal PricePerKWh { get; set; }   

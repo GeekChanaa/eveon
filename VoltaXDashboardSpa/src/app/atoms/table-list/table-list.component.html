@@ -1,5 +1,6 @@
 <div class="page__title h3">{{name | titlecase}}</div>
 <div class="row card">
+  <app-progress-bar *ngIf="isLoading"></app-progress-bar>
   <div class="card__head">
     <div class="title-purple card__title">{{names | titlecase}}</div>
     <form class="form">
