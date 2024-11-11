@@ -124,6 +124,7 @@ namespace VoltaXApi.Data
                 .Property(c => c.ConnectorUptimeStatus)
                 .HasConversion<string>();
 
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 if (typeof(IEntity).IsAssignableFrom(entityType.ClrType))
@@ -147,6 +148,11 @@ namespace VoltaXApi.Data
         public DbSet<Card> Cards { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
         public DbSet<ChargePoint> ChargePoints { get; set; }
+        public DbSet<ChargePointBrand> ChargePointBrands { get; set; }
+        public DbSet<ChargePointFeatures> ChargePointFeaturess { get; set; }
+        public DbSet<ChargePointIntegration> ChargePointIntegrations { get; set; }
+        public DbSet<ChargePointModel> ChargePointModels { get; set; }
+        public DbSet<SupportedKwh> SupportedKwhs { get; set; }
         public DbSet<ChargeTag> ChargeTags { get; set; }
         public DbSet<Connector> Connectors { get; set; }
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }

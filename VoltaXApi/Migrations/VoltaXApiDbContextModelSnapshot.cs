@@ -202,6 +202,9 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("ChargePointModelID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ChargingStationID")
                         .IsRequired()
                         .HasColumnType("int");
@@ -214,6 +217,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool?>("HasChargeCable")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -234,6 +240,9 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("ShowOnMap")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -248,9 +257,166 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("ChargePointId")
                         .IsUnique();
 
+                    b.HasIndex("ChargePointModelID");
+
                     b.HasIndex("ChargingStationID");
 
                     b.ToTable("ChargePoints");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointBrand", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ChargePointBrands");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointFeatures", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool?>("AutoCharge")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AutoSchedules")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AutoStart")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ChargePointModelID")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("FirmwareManagement")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("LoadBalancing")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LocalAuthListManagement")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Powerbank")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ReleaseDetection")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("SolarCharge")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointModelID")
+                        .IsUnique();
+
+                    b.ToTable("ChargePointFeaturess");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointIntegration", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ChargePointModelID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Method")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointModelID");
+
+                    b.ToTable("ChargePointIntegrations");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointModel", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int?>("ChargePointBrandID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConnectorCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointBrandID");
+
+                    b.ToTable("ChargePointModels");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargePointUptime", b =>
@@ -378,6 +544,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("ChargingSessions");
                 });
@@ -1401,6 +1569,27 @@ namespace VoltaXApi.Migrations
                     b.ToTable("States");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.SupportedKwh", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ChargePointModelID")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointModelID");
+
+                    b.ToTable("SupportedKwhs");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
                 {
                     b.Property<int>("ID")
@@ -1568,13 +1757,50 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
                 {
+                    b.HasOne("VoltaXApi.Models.ChargePointModel", "ChargePointModel")
+                        .WithMany()
+                        .HasForeignKey("ChargePointModelID");
+
                     b.HasOne("VoltaXApi.Models.ChargingStation", "ChargingStation")
                         .WithMany("ChargePoints")
                         .HasForeignKey("ChargingStationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ChargePointModel");
+
                     b.Navigation("ChargingStation");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointFeatures", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePointModel", "Model")
+                        .WithOne("Features")
+                        .HasForeignKey("VoltaXApi.Models.ChargePointFeatures", "ChargePointModelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointIntegration", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePointModel", "Model")
+                        .WithMany("Integrations")
+                        .HasForeignKey("ChargePointModelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointModel", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePointBrand", "ChargePointBrand")
+                        .WithMany("Models")
+                        .HasForeignKey("ChargePointBrandID");
+
+                    b.Navigation("ChargePointBrand");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargeTag", b =>
@@ -1584,6 +1810,17 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("CardID");
 
                     b.Navigation("Card");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargingSession", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargingStation", b =>
@@ -1832,6 +2069,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.SupportedKwh", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePointModel", "ChargePointModel")
+                        .WithMany("SupportedKwhs")
+                        .HasForeignKey("ChargePointModelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePointModel");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
@@ -1859,6 +2107,20 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Connectors");
 
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointBrand", b =>
+                {
+                    b.Navigation("Models");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointModel", b =>
+                {
+                    b.Navigation("Features");
+
+                    b.Navigation("Integrations");
+
+                    b.Navigation("SupportedKwhs");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargingStation", b =>

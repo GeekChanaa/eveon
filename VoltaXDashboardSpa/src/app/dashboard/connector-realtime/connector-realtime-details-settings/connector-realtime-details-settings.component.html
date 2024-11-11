@@ -1,3 +1,98 @@
 <div class="title-purple card__title">
   Details & Settings
 </div>
+
+<div class="details__container">
+  <div class="details-informations__container">
+    <div class="details-informations__item">
+      <div class="details-informations__item-name">
+        Name
+      </div>
+      <div class="details-informations__item-value">
+        {{chargePoint.name}}
+      </div>
+    </div>
+
+    <div class="details-informations__item">
+      <div class="details-informations__item-name">
+        Charging Station
+      </div>
+      <div class="details-informations__item-value">
+        {{chargePoint.chargingStationName}}
+      </div>
+    </div>
+
+    <div class="details-informations__item">
+      <div class="details-informations__item-name">
+        Location
+      </div>
+      <div class="details-informations__item-value">
+        {{chargePoint.country}}, {{chargePoint.state}} {{chargePoint.city}} 
+      </div>
+    </div>
+
+    <div class="details-informations__item">
+      <div class="details-informations__item-name">
+        Comment
+      </div>
+      <div class="details-informations__item-value">
+        {{chargePoint.comment}}
+      </div>
+    </div>
+  </div>
+  <div class="details-location__container">
+    <app-map-picker [lat]="chargePoint.latitude" [lng]="chargePoint.longitude"></app-map-picker>
+  </div>
+</div>
+
+<div class="settings__container">
+  <div class="setting__container">
+    <div class="setting__logo">
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" >
+
+        <path d="M0 0h48v48H0z" fill="none"/>
+        <g id="Shopicon">
+          <path style="fill: var(--primary8)" d="M25.074,4.03c-5.543-0.298-10.82,1.648-14.84,5.462C6.214,13.307,4,18.46,4,24.001c0,6.297,3.021,12.302,8.081,16.062
+            c0.888,0.661,2.141,0.473,2.799-0.412c0.658-0.887,0.474-2.14-0.412-2.799C10.357,33.799,8,29.115,8,24.001
+            c0-4.433,1.771-8.556,4.988-11.607c3.215-3.05,7.424-4.592,11.877-4.37c8.053,0.423,14.69,7.062,15.112,15.113
+            c0.373,7.106-4.053,13.685-10.763,15.997c-0.729,0.25-1.517,0.132-2.156-0.325C26.386,38.33,26,37.583,26,36.762V32.65
+            c2.323-0.829,4-3.049,4-5.648v-3.946c0-0.002,0-0.003,0-0.005v-6.008c0-1.104-0.896-2-2-2s-2,0.896-2,2v2.959h-4v-2.959
+            c0-1.104-0.896-2-2-2s-2,0.896-2,2v9c0,0.001,0,0.003,0,0.005v0.954c0,2.598,1.677,4.818,4,5.648v4.113
+            c0,2.1,1.022,4.082,2.736,5.304c1.112,0.794,2.396,1.202,3.699,1.202c0.696,0,1.397-0.116,2.082-0.353
+            c8.388-2.89,13.92-11.109,13.454-19.987C43.445,12.859,35.145,4.558,25.074,4.03z"/>
+        </g>
+        </svg>
+    </div>
+    <div class="setting__informations">
+      <div class="setting__name">
+        Charging cable available at the charge point
+      </div>
+      <div class="setting__description">
+        Specifies whether there's a cable that extends from the charge point or not.
+      </div>
+    </div>
+    <div class="setting__toggle">
+      <app-toggle [isToggled]="chargePoint.hasChargeCable" (toggled)="hasChargeCableToggle($event)"></app-toggle>
+    </div>
+  </div>
+
+
+  <div class="setting__container">
+    <div class="setting__logo setting__logo-map">
+      <svg style="fill: var(--primary7);" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.37892 10.2236L8 16L12.6211 10.2236C13.5137 9.10788 14 7.72154 14 6.29266V6C14 2.68629 11.3137 0 8 0C4.68629 0 2 2.68629 2 6V6.29266C2 7.72154 2.4863 9.10788 3.37892 10.2236ZM8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z"/>
+        </svg>
+    </div>
+    <div class="setting__informations">
+      <div class="setting__name">
+        Show charge point on map
+      </div>
+      <div class="setting__description">
+        Specifies whether the Charge point will appear on the map for the users or not
+      </div>
+    </div>
+    <div class="setting__toggle">
+      <app-toggle [isToggled]="chargePoint.showOnMap" (toggled)="showChargeOnMapToggle($event)"></app-toggle>
+    </div>
+  </div>
+</div>

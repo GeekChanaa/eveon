@@ -7,6 +7,6 @@ namespace VoltaXApi.Data
 {
     public interface IChargingSessionRepository : IRepository<ChargingSession>
     {
-
+        Task<List<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID);
     }
 }

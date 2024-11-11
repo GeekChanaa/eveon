@@ -25,11 +25,11 @@
 
   
 .settings
-  flex: 0 0 69%
+  flex: 0 0 64%
   flex-wrap: wrap
 
 .overview
-  flex: 0 0 30%
+  flex: 0 0 35%
   margin-left: auto
   background: white
   padding: 24px
@@ -57,3 +57,24 @@
       svg
         fill: green
         animation: blink-animation 1s infinite  
+
+
+.connector-status-container
+  opacity: 0
+  display: none
+  transition: all 0.3s ease-in-out
+
+
+.connector-status-container.show
+  display: block
+  opacity: 1
+
+
+.connector-status-container
+  position: fixed
+  max-width: 500px
+  background: white
+  border-radius: 18px
+  border: 1px solid var(--primary4)
+  margin-top: 20px
+  z-index: 100

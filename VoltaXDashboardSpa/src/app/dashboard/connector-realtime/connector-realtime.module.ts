@@ -18,6 +18,8 @@ import { ConnectorRealtimeOverviewComponent } from './connector-realtime-overvie
 import { ConnectorRealtimePricingAccessComponent } from './connector-realtime-pricing-access/connector-realtime-pricing-access.component';
 import { ConnectorRealtimeUptimeReportsComponent } from './connector-realtime-uptime-reports/connector-realtime-uptime-reports.component';
 import { ConnectorRealtimeRatingsComponent } from './connector-realtime-ratings/connector-realtime-ratings.component';
+import { ConnectorRealtimeChargingSessionsComponent } from './connector-realtime-charging-sessions/connector-realtime-charging-sessions.component';
+import { ConnectorRealtimeMainOverviewComponent } from './connector-realtime-main-overview/connector-realtime-main-overview.component';
 
 @NgModule({
     declarations: [
@@ -33,8 +35,10 @@ import { ConnectorRealtimeRatingsComponent } from './connector-realtime-ratings/
       ConnectorRealtimeOcppConfigurationComponent,
       ConnectorRealtimeOverviewComponent,
       ConnectorRealtimePricingAccessComponent,
-      ConnectorRealtimeUptimeReportsComponent,
-      ConnectorRealtimeRatingsComponent
+      ConnectorRealtimeUptimeReportsComponent,  
+      ConnectorRealtimeRatingsComponent,
+      ConnectorRealtimeChargingSessionsComponent,
+      ConnectorRealtimeMainOverviewComponent
   ],
     imports: [
         AtomsModule,

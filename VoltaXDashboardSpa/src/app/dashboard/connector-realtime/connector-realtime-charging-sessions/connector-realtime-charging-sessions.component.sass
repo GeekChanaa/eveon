@@ -1,0 +1,22 @@
+@import ./../../../../styles/table-stats
+
+
+.stopped-reason-description-container
+  opacity: 0
+  display: none
+  transition: all 0.3s ease-in-out
+
+
+.stopped-reason-description-container.show
+  display: block
+  opacity: 1
+
+
+.stopped-reason-description-container
+  position: fixed
+  max-width: 600px
+  background: white
+  border-radius: 18px
+  border: 1px solid var(--primary4)
+  margin-top: 20px
+  z-index: 100

@@ -72,6 +72,14 @@ export class ChargePointService extends AbstractService<ChargePoint>{
     );
   }
 
+  setShowOnMap(chargePointID : number,val : boolean){
+    return this._http.put<any>(this.baseUrl+"setShowOnMap/"+chargePointID,val)
+  }
+
+  setHasChargeCable(chargePointID : number,val : boolean){
+    return this._http.put<any>(this.baseUrl+"setHasChargeCable/"+chargePointID,val)
+  }
+
   
 
 }

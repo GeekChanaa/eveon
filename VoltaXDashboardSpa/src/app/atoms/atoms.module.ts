@@ -24,6 +24,9 @@ import { MapPickerComponent } from './map-picker/map-picker.component';
 import { DisplayItemComponent } from './display-item/display-item.component';
 import { DisplayTableListComponent } from './display-table-list/display-table-list.component';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
+import { ConnectorStatusDescriptionComponent } from './connector-status-description/connector-status-description.component';
+import { StoppedReasonDescriptionComponent } from './stopped-reason-description/stopped-reason-description.component';
+import { ToggleComponent } from './toggle/toggle.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +48,10 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
     MapPickerComponent,
     DisplayItemComponent,
     DisplayTableListComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    ConnectorStatusDescriptionComponent,
+    StoppedReasonDescriptionComponent,
+    ToggleComponent
    ],
   imports: [
     CommonModule,
@@ -72,7 +78,10 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
     MapPickerComponent,
     DisplayItemComponent,
     DisplayTableListComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    ConnectorStatusDescriptionComponent,
+    StoppedReasonDescriptionComponent,
+    ToggleComponent
 
   ],
   providers: [],

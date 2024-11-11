@@ -57,7 +57,10 @@ namespace VoltaXApi.Data
 
         public async Task<ChargePointListDto> GetChargePointByIdAsync(int id)
         {
-            var chargePoint= await this._context.ChargePoints.Include(u => u.Connectors).FirstOrDefaultAsync(u => u.ID == id);
+            var chargePoint= await this._context.ChargePoints
+                .Include(u => u.Connectors)
+                .Include(u => u.ChargingStation)
+                .FirstOrDefaultAsync(u => u.ID == id);
             ChargePointListDto chargePointDto = _mapper.Map<ChargePointListDto>(chargePoint);
             return chargePointDto;
         }
@@ -95,9 +98,9 @@ namespace VoltaXApi.Data
 
         public async Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper)
         {
-            var chargePointQueryable = _context.ChargePoints.Include(u => u.ChargingStation).AsQueryable();
-
-            
+            var chargePointQueryable = _context.ChargePoints
+                .Include(u => u.ChargingStation)
+                .Include(u => u.ChargePointModel).AsQueryable();
 
             if(includableHelper.includeConnectors) 
                 chargePointQueryable = chargePointQueryable.Include(s => s.Connectors);
@@ -108,6 +111,19 @@ namespace VoltaXApi.Data
             return chargePointDto;
         }
 
+        public async Task SetShowOnMap(int chargepointID, bool val)
+        {
+            var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargepointID);
+            cp.ShowOnMap = val;
+            await this._context.SaveChangesAsync();
+        }
+
+        public async Task SetHasChargeCable(int chargepointID, bool val)
+        {
+            var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargepointID);
+            cp.HasChargeCable = val;
+            await this._context.SaveChangesAsync();
+        }
 
 
     }

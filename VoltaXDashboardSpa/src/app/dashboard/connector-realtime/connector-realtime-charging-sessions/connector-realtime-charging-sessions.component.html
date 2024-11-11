@@ -1,0 +1,39 @@
+<div class="title-purple card__title">
+  <div class="title">Charging Sessions</div>
+</div>
+
+<div class="stats">
+  <div class="stats__table">
+    <div class="stats__row">
+      <div class="stats__col">Start</div>
+      <div class="stats__col">End</div>
+      <div class="stats__col">User</div>
+      <div class="stats__col">Status</div>
+      <div class="stats__col">Stopped Reason <span
+        (mouseover)="isHovered = true"
+        (mouseleave)="isHovered = false">
+        <div class="tooltip">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+        <div class="stopped-reason-description-container" [ngClass]="{'show' : isHovered}">
+          <app-stopped-reason-description></app-stopped-reason-description>
+        </div>
+      </span> </div>
+    </div>
+    <div class="stats__row" *ngFor="let item of chargingSessions">
+      <div class="stats__col">{{item.startDate | date:'medium'}}</div>
+      <div class="stats__col">{{item.endDate | date:'medium'}}</div>
+      <div class="stats__col">{{item.userName}}</div>
+      <div class="stats__col">{{item.chargingSessionStatus}}</div>
+      <div class="stats__col">{{item.stoppedReason}}</div>
+      <div class="stats__col">
+        <div class="status-yellow stats__status">{{item.chargePointUptimeStatus}}</div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<div class="separator"></div>

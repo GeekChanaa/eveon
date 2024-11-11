@@ -45,6 +45,19 @@ namespace VoltaXApi.Mappers
 
             CreateMap<ChargePointUptime,ChargePointUptimeListDto>();
             CreateMap<ConnectorUptime,ConnectorUptimeListDto>();
+
+
+            // Mappers For brands/  Models charge points for seeders
+            CreateMap<ChargePointBrandSeederDto,ChargePointBrand>();
+            CreateMap<ChargePointModelSeederDto, ChargePointModel>()
+                .ForMember(dest => dest.SupportedKwhs, opt => opt.MapFrom(src => 
+                    src.SupportedKwhs.Select(kwh => new SupportedKwh
+                    {
+                        Value = kwh,
+                        ChargePointModelID = src.ID
+                    }).ToList()));
+;
+
                 
         }
 

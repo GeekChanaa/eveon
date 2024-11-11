@@ -13,7 +13,8 @@ export enum ChargerNavbarEnum{
   Firmware = 6,
   UptimeReports = 7,
   Logs = 8,
-  Ratings = 9
+  Ratings = 9,
+  ChargingSessions = 10
 }
 
 @Component({
@@ -26,6 +27,8 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   selectedMenuItem : ChargerNavbarEnum = ChargerNavbarEnum.Overview;
 
   status : string = "inactive";
+
+  isHovered: boolean = false;
   
   chargePoint : any = {};
 

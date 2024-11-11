@@ -142,6 +142,24 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
 
+        [HttpPut("SetShowOnMap/{chargePointID}")]
+        public async Task<IActionResult> SetShowOnMap(int chargePointID, [FromBody] bool val)
+        {
+            await this._repository.SetShowOnMap(chargePointID, val);
+            return StatusCode(200);
+        }
+
+        [HttpPut("SetHasChargeCable/{chargePointID}")]
+        public async Task<IActionResult> SetHasChargeCable(int chargePointID, [FromBody] bool val)
+        {
+            await this._repository.SetHasChargeCable(chargePointID, val);
+            return StatusCode(200);
+        }
+
+
+        // setShowOnMap
+        // setHasChargeCable
+
 
 
 

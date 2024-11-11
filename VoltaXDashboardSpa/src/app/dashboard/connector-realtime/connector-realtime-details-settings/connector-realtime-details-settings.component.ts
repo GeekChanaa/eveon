@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ChargePointService } from 'src/_services/charge-point.service';
 
 @Component({
   selector: 'app-connector-realtime-details-settings',
@@ -7,9 +8,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeDetailsSettingsComponent implements OnInit {
 
-  constructor() { }
+  @Input() chargePoint : any = {};
+
+  constructor(
+    private _chargePointService : ChargePointService
+  ) { }
 
   ngOnInit() {
+  }
+
+  showChargeOnMapToggle(val : boolean){
+    console.log("showing the charge ; " +  val);
+    this._chargePointService.setShowOnMap(this.chargePoint.id, val).subscribe((data) => {
+      console.log("this is good");
+    })
+  }
+
+  hasChargeCableToggle(val : boolean){
+    this._chargePointService.setHasChargeCable(this.chargePoint.id, val).subscribe((data) => {
+      console.log("this is good");
+    })
   }
 
 }

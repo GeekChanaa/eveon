@@ -26,6 +26,7 @@ using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Factories;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -140,6 +141,7 @@ builder.Services.AddScoped<ITransactionsService,TransactionsService>();
 
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddAutoMapper(typeof(ChargingSessionProfile));
 builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
@@ -231,13 +233,13 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
 
-    // await SqlScriptExecuter.ExecuteSqlScript();
-    // await BrandsAutomobilesSeeder.Populate();
-    // await UserSeeder.Seed(100,dbContext);
-    // GlobalSeeder.Seed(dbContext).Wait();
+    var mapper = app.Services.GetRequiredService<IMapper>();
+    
+    
+    // GlobalSeeder.Seed(dbContext, mapper).Wait();
     
     //SeedingNotificationTypes.Initialize(app.Services);
-    dbContext.Database.SetCommandTimeout(6000);
+    dbContext.Database.SetCommandTimeout(6000); 
 }
 
 var webSocketOptions = new WebSocketOptions()

@@ -15,7 +15,17 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors));
 
             CreateMap<ChargePoint, ChargePointDisplayDto>()
-                .ForMember(dest => dest.ChargingStationName, opt => opt.MapFrom(src => src.ChargingStation.Name));
+                .ForMember(dest => dest.ChargingStationName, opt => opt.MapFrom(src => src.ChargingStation.Name))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.ChargingStation.Country))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.ChargingStation.State))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.ChargingStation.City))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.ChargingStation.Latitude))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.ChargingStation.Longitude))
+                .ForMember(dest => dest.ChargingStationName, opt => opt.MapFrom(src => src.ChargingStation.Name))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.ChargePointModel.Name))
+                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl));
+
+                
 
             CreateMap<ConnectorCreateDto, Connector>()
                 .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.Speed));
@@ -29,7 +39,15 @@ namespace VoltaXApi.Mappers
                 
 
             CreateMap<ChargePoint, ChargePointListDto>()
-                .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors));
+                .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors))
+                .ForMember(dest => dest.ChargingStationName, opt => opt.MapFrom(src => src.ChargingStation.Name))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.ChargingStation.Country))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.ChargingStation.State))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.ChargingStation.City))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.ChargingStation.Latitude))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.ChargingStation.Longitude))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.ChargePointModel.Name))
+                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl));
 
             CreateMap<Connector, ConnectorListDto>();
 

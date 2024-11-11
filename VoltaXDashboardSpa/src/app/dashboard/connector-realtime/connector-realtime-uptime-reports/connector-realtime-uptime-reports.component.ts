@@ -35,8 +35,6 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
     this._chargePointUptimeService.getChargePointUptime(this.chargePointID).subscribe((data) => {
       if(data.result)
         this.cpUptimeLogs = data.result
-      console.log("uptime logs cp : ")
-      console.log(data.result);
     })
   }
 

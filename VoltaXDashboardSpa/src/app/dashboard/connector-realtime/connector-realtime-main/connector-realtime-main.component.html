@@ -2,8 +2,11 @@
   <div class="page__container page__container--large">
     <div class="page__title h3">
       Charge Point Realtime
-      <div class="status"> 
-        <span class="status-color" [ngClass]="{'active' : status == 'active'}">
+      <div class="status" 
+      [ngClass]="{'active' : status == 'active'}" 
+      (mouseover)="isHovered = true"
+      (mouseleave)="isHovered = false"> 
+        <span class="status-color" >
           <ng-container *ngIf="status == 'active'">
             <svg  viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
               <circle cx="6" cy="6" r="6" />
@@ -16,7 +19,14 @@
             </svg>
           </ng-container>
         </span> 
+
+        <div class="connector-status-container" [ngClass]="{'show' : isHovered}">
+          <app-connector-status-description></app-connector-status-description>
+        </div>
+  
       </div>
+      
+      
     </div>
     <div class="charger__navbar">
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</div>
@@ -28,6 +38,7 @@
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</div>
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</div>
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</div>
     </div>
     <div class="settings">
       
@@ -41,7 +52,7 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('DetailsSettings')">
-        <app-connector-realtime-details-settings class="settings__container"></app-connector-realtime-details-settings>
+        <app-connector-realtime-details-settings *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-details-settings>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Actions')">
@@ -68,12 +79,16 @@
         <app-connector-realtime-ratings class="settings__container"></app-connector-realtime-ratings>
       </ng-container>
       
+      <ng-container *ngIf="selectedMenuItem == getMenu('ChargingSessions')">
+        <app-connector-realtime-charging-sessions *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-charging-sessions>
+      </ng-container>
+      
 
       
     </div>
 
-    <div class="overview">
-      this is the overview container
+    <div class="overview" *ngIf="chargePoint">
+      <app-connector-realtime-main-overview [chargePoint]="chargePoint"></app-connector-realtime-main-overview>
     </div>
 
     

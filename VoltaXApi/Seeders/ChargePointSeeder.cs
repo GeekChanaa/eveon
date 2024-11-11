@@ -13,6 +13,7 @@ namespace VoltaXApi.Data.Seeders
             IRepository<ChargePoint> repo = new Repository<ChargePoint>(dbContext);
             var chargePointFaker = new Faker<ChargePoint>()
                 .RuleFor(o => o.ChargePointId, f => f.Random.AlphaNumeric(10))
+                .RuleFor(o => o.ChargePointModelID, f => f.Random.Number(1, 170))
                 .RuleFor(o => o.ChargingStationID, f => f.PickRandom(chargingStations).ID)
                 .RuleFor(o => o.Name, f => f.Company.CompanyName())
                 .RuleFor(o => o.SerialNumber, f => f.Random.AlphaNumeric(10))

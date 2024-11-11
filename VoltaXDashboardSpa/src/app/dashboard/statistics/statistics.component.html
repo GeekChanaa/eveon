@@ -1,25 +1,25 @@
 <div class="page__container">
   <div class="page__title h3">Statistics</div>
   <div class="card">
-    <div class="income">
-      <div class="income__list">
-        <div class="income__item">
-          <div class="income__icon" style="background-color: #B5E4CA;">
+    <div class="stat">
+      <div class="stat__list">
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #B5E4CA;">
             <svg class="icon icon-activity">
               <use xlink:href="#icon-activity"></use>
             </svg>
           </div>
-          <div class="income__line">
-            <div class="income__details">
-              <div class="income__label">Recharge Amount (EUR)
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Recharge Amount (EUR)
                 <div class="tooltip" title="Small description stats">
                   <svg class="icon icon-info">
                     <use xlink:href="#icon-info"></use>
                   </svg>
                 </div>
               </div>
-              <div class="income__counter">{{recharge_orders_total_amount | number:'1.2-2'}}</div>
-              <div class="income__indicator">
+              <div class="stat__counter">{{recharge_orders_total_amount | number:'1.2-2'}}</div>
+              <div class="stat__indicator">
                 <div class="balance positive">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>
@@ -29,23 +29,23 @@
             </div>
           </div>
         </div>
-        <div class="income__item">
-          <div class="income__icon" style="background-color: #CABDFF;">
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #CABDFF;">
             <svg class="icon icon-pie-chart">
               <use xlink:href="#icon-pie-chart"></use>
             </svg>
           </div>
-          <div class="income__line">
-            <div class="income__details">
-              <div class="income__label">Recharge Orders
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Recharge Orders
                 <div class="tooltip" title="Small description Balance">
                   <svg class="icon icon-info">
                     <use xlink:href="#icon-info"></use>
                   </svg>
                 </div>
               </div>
-              <div class="income__counter">{{recharge_orders_total_amount | number:'1.2-2' }}</div>
-              <div class="income__indicator">
+              <div class="stat__counter">{{recharge_orders_total_amount | number:'1.2-2' }}</div>
+              <div class="stat__indicator">
                 <div class="balance negative">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>
@@ -55,23 +55,23 @@
             </div>
           </div>
         </div>
-        <div class="income__item">
-          <div class="income__icon" style="background-color: #B1E5FC;">
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #B1E5FC;">
             <svg class="icon icon-shopping-bag">
               <use xlink:href="#icon-shopping-bag"></use>
             </svg>
           </div>
-          <div class="income__line">
-            <div class="income__details">
-              <div class="income__label">Total Energy (Kwh)
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Total Energy (Kwh)
                 <div class="tooltip" title="Small description Total value of sales">
                   <svg class="icon icon-info">
                     <use xlink:href="#icon-info"></use>
                   </svg>
                 </div>
               </div>
-              <div class="income__counter"> {{total_energy_consumed | number:'1.2-2'}} </div>
-              <div class="income__indicator">
+              <div class="stat__counter"> {{total_energy_consumed | number:'1.2-2'}} </div>
+              <div class="stat__indicator">
                 <div class="balance positive">
                   <svg class="icon icon-arrow-top">
                     <use xlink:href="#icon-arrow-top"></use>

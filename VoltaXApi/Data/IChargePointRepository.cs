@@ -17,5 +17,9 @@ namespace VoltaXApi.Data
         Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper);
         Task<List<ChargePointSelectDto>> GetChargePointsIds();
         Task<ChargePoint> GetChargePointByChargePointIDAsync(string chargePointID);
+
+        Task SetShowOnMap(int chargepointID, bool val);
+        Task SetHasChargeCable(int chargepointID, bool val);
+
     }
 }

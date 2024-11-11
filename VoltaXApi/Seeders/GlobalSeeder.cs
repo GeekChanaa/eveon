@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 using Bogus;
+using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data.Seeders
 {
     public static class GlobalSeeder
     {
-        public static async Task Seed(VoltaXApiDbContext context)
+        public static async Task Seed(VoltaXApiDbContext context, IMapper mapper)
         {
+            await ChargePointBrandsSeeder.Seed(context,mapper);
+            await SqlScriptExecuter.ExecuteSqlScript();
+            await BrandsAutomobilesSeeder.Populate();
             var chargeStations = await ChargingStationSeeder.Seed(100,context);
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
             var connectors = await ConnectorSeeder.Seed(100,chargePoints,context);
@@ -21,6 +26,8 @@ namespace VoltaXApi.Data.Seeders
             var orders = await OrderSeeder.Seed(100, cards, context);
             var chargeTags = await ChargeTagSeeder.Seed(100, cards, context);
             var transactions = await TransactionSeeder.Seed(1000, chargeTags, chargePoints, context);
+
+            await ChargingSessionsSeeder.Seed(1000,context);
         }
 
         private static string GenerateRandomTimeZone()
