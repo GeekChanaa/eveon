@@ -6,5 +6,4 @@ namespace VoltaXApi.Models
         Private,
         Partner
     }
-
 }

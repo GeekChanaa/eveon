@@ -37,6 +37,29 @@ namespace VoltaXApi.Data
                 ID = u.ID
             }).ToListAsync();
         }
+
+        public async Task<bool> UpdateConnectorPricing(int connectorID, UpdateConnectorPricingDto updateConnectorPricingDto)
+        {
+            var connector = await _context.Connectors.FirstOrDefaultAsync(c => c.ID == connectorID);
+
+            if (connector == null)
+            {
+                return false; 
+            }
+
+            Console.WriteLine("PricePerKWh : "+  updateConnectorPricingDto.PricePerKWh);
+            Console.WriteLine("PricePerMinute : "+  updateConnectorPricingDto.PricePerMinute);
+            Console.WriteLine("PricePerHour : "+  updateConnectorPricingDto.PricePerHour);
+
+            connector.PricePerKWh = updateConnectorPricingDto.PricePerKWh;
+            connector.PricePerMinute = updateConnectorPricingDto.PricePerMinute;
+            connector.PricePerHour = updateConnectorPricingDto.PricePerHour;
+
+            _context.Connectors.Update(connector);
+            int changes = await _context.SaveChangesAsync();
+
+            return changes > 0;
+        }
     }
 }
 

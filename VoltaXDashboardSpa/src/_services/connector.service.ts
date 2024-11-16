@@ -31,4 +31,8 @@ export class ConnectorService extends AbstractService<Connector>{
     );
   }
 
+  updateConnectorPricing(connectorID : number, updateConnectorPricingDto : any){
+    return this._http.post<any>(this.baseUrl+"UpdateConnectorPricing/"+connectorID, updateConnectorPricingDto)
+  }
+
 }

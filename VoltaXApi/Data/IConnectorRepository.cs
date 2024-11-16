@@ -7,5 +7,6 @@ namespace VoltaXApi.Data
     {
       Task<List<ConnectorListDto>> GetChargePointConnectors(int chargePointID);
       Task<List<ConnectorSelectDto>> GetConnectorsIds();
+      Task<bool> UpdateConnectorPricing(int connectorID, UpdateConnectorPricingDto updateConnectorPricingDto);
     }
 }

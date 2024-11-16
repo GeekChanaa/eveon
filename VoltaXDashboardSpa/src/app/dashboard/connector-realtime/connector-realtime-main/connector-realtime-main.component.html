@@ -48,7 +48,7 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('PricingAccess')">
-        <app-connector-realtime-pricing-access class="settings__container"></app-connector-realtime-pricing-access>
+        <app-connector-realtime-pricing-access *ngIf="chargePoint != null" [ChargePoint]="chargePoint" class="settings__container"></app-connector-realtime-pricing-access>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('DetailsSettings')">
