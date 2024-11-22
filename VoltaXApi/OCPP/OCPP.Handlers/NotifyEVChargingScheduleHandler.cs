@@ -82,7 +82,7 @@ namespace VoltaXApi.OCPP.Handlers
                 errorCode = ErrorCodes.InternalError;
             }
 
-            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, periods.ToString(), errorCode);
+            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, periods.ToString(), errorCode, msgIn, msgOut);
             return errorCode;
         }
     }

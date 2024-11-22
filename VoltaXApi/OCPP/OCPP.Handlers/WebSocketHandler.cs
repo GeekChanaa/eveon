@@ -70,6 +70,9 @@ namespace VoltaXApi.OCPP.Handlers
                         DumpMessage(bMessage, "incoming");
 
                         string ocppMessage = Encoding.UTF8.GetString(bMessage);
+
+                        Console.WriteLine("this is the bbmessage : ");
+                        Console.WriteLine(ocppMessage);
                         
                         await _hubContext.Clients.Group(chargePointStatus.Id).SendAsync("SentMessage", JsonConvert.SerializeObject(ocppMessage));
 
@@ -110,7 +113,7 @@ namespace VoltaXApi.OCPP.Handlers
                 string uniqueId = match.Groups[2].Value;
                 string action = match.Groups[3].Value;
                 string jsonPayload = match.Groups[4].Value;
-                var msg =  new OCPPMessage(messageTypeId, uniqueId, action, jsonPayload);
+                var msg =  new OCPPMessage(messageTypeId, uniqueId, action, jsonPayload, ocppMessage);
                 Console.WriteLine("ocppmessag.jsonpayload");
                 Console.WriteLine(msg.JsonPayload);
                 return msg;

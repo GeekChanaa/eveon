@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { MessageLogService } from 'src/_services/message-log.service';
 
 @Component({
   selector: 'app-connector-realtime-logs',
@@ -7,9 +8,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeLogsComponent implements OnInit {
 
-  constructor() { }
+  @Input() chargePoint : any = {};
+  page : number = 1;
+  itemsPerPage : number = 20;
+  messageLogs : any[] = [];
+
+  constructor(
+    private _messagLogService : MessageLogService
+  ) { }
 
   ngOnInit() {
+    this.getLogs();
+  }
+
+  getLogs(){
+    this._messagLogService.getChargePointMessageLogs(this.chargePoint.chargePointId,this.page,this.itemsPerPage).subscribe((data) => {
+      if(data.result)
+        this.messageLogs = data.result;
+
+      console.log(data.result);
+    })
   }
 
 }

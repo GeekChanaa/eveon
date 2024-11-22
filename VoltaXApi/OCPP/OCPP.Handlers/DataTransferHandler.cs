@@ -36,7 +36,7 @@ namespace VoltaXApi.OCPP.Handlers
                 if (chargePointStatus != null)
                 {
                     // Known charge station
-                    msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, string.Format("VendorId={0} / MessageId={1} / Data={2}", dataTransferRequest.VendorId, dataTransferRequest.MessageId, dataTransferRequest.Data), errorCode);
+                    msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, string.Format("VendorId={0} / MessageId={1} / Data={2}", dataTransferRequest.VendorId, dataTransferRequest.MessageId, dataTransferRequest.Data), errorCode, msgIn, msgOut);
                     dataTransferResponse.Status = DataTransferStatusEnumType.Accepted;
                 }
                 else
@@ -56,7 +56,7 @@ namespace VoltaXApi.OCPP.Handlers
 
             if (!msgWritten)
             {
-                await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, null, errorCode);
+                await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, null, errorCode, msgIn, msgOut);
             }
             return errorCode;
         }

@@ -37,7 +37,7 @@ namespace VoltaXApi.OCPP.Handlers
         msgOut.JsonPayload = JsonConvert.SerializeObject(heartbeatResponse);
         _logger.LogTrace("Heartbeat => Response serialized");
 
-        await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgIn.Action, null, errorCode);
+        await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgIn.Action, null, errorCode, msgIn, msgOut);
         return errorCode;
     }
   }

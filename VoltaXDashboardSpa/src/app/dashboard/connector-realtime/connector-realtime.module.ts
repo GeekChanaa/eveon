@@ -20,6 +20,7 @@ import { ConnectorRealtimeUptimeReportsComponent } from './connector-realtime-up
 import { ConnectorRealtimeRatingsComponent } from './connector-realtime-ratings/connector-realtime-ratings.component';
 import { ConnectorRealtimeChargingSessionsComponent } from './connector-realtime-charging-sessions/connector-realtime-charging-sessions.component';
 import { ConnectorRealtimeMainOverviewComponent } from './connector-realtime-main-overview/connector-realtime-main-overview.component';
+import { ConnectorRealtimeTransactionsComponent } from './connector-realtime-transactions/connector-realtime-transactions.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { ConnectorRealtimeMainOverviewComponent } from './connector-realtime-mai
       ConnectorRealtimeUptimeReportsComponent,  
       ConnectorRealtimeRatingsComponent,
       ConnectorRealtimeChargingSessionsComponent,
-      ConnectorRealtimeMainOverviewComponent
+      ConnectorRealtimeMainOverviewComponent,
+      ConnectorRealtimeTransactionsComponent
   ],
     imports: [
         AtomsModule,

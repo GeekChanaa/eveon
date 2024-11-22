@@ -27,8 +27,8 @@ namespace VoltaXApi.Data
         Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID,DateTime date1, DateTime date2);
         Task<List<Transaction>> GetPartnerLatestTransactions(int partnerID,int nbrTransactions = 20);
         IQueryable<Transaction> GetCardTransactions(int cardID);
-        Task StartTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string idTag, string errorCode, double meterKWH);
-        Task UpdateTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string idTag, string errorCode, double meterKWH);
-        Task EndTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string idTag, string errorCode, double meterKWH);
+        Task StartTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
+        Task UpdateTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
+        Task EndTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
     }
 }

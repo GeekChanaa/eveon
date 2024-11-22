@@ -279,7 +279,7 @@ namespace VoltaXApi.Data
                 TransactionEventResponse transactionEventResponse,
                 ChargePointStatus chargePointStatus,
                 int connectorID,
-                string idTag,
+                string? idTag,
                 string errorCode,
                 double meterKWH)
         {
@@ -293,7 +293,7 @@ namespace VoltaXApi.Data
                 }
                 else
                 {
-                    ChargeTag? ct = _context.ChargeTags.Where(u => u.TagID == idTag).FirstOrDefault();
+                    Card? ct = _context.Cards.Where(u => u.CardNumber == idTag).FirstOrDefault();
                     if (ct != null)
                     {
                         if (ct.Blocked.HasValue && ct.Blocked.Value)
@@ -301,7 +301,7 @@ namespace VoltaXApi.Data
                             Console.WriteLine("StartTransaction => Tag '{0}' blocked)", idTag);
                             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Blocked;
                         }
-                        else if (ct.ExpiryDate.HasValue && ct.ExpiryDate.Value < DateTime.Now)
+                        else if (ct.ExpirationDate < DateTime.Now)
                         {
                             Console.WriteLine("StartTransaction => Tag '{0}' expired)", idTag);
                             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Expired;
@@ -357,7 +357,7 @@ namespace VoltaXApi.Data
             TransactionEventResponse transactionEventResponse,
             ChargePointStatus chargePointStatus,
             int connectorID,
-            string idTag,
+            string? idTag,
             string errorCode,
             double meterKWH
         )
@@ -424,7 +424,7 @@ namespace VoltaXApi.Data
             TransactionEventResponse transactionEventResponse,
             ChargePointStatus chargePointStatus,
             int connectorID,
-            string idTag,
+            string? idTag,
             string errorCode,
             double meterKWH
         )
@@ -432,7 +432,7 @@ namespace VoltaXApi.Data
             try
             {
                 
-                ChargeTag? ct = null;
+                Card? ct = null;
 
                 if (string.IsNullOrWhiteSpace(idTag))
                 {
@@ -442,7 +442,7 @@ namespace VoltaXApi.Data
                 }
                 else
                 {
-                    ct = _context.ChargeTags.Where(c => c.TagID == idTag).FirstOrDefault();
+                    ct = _context.Cards.Where(c => c.CardNumber == idTag).FirstOrDefault();
                     if (ct != null)
                     {
                         if (ct.Blocked.HasValue && ct.Blocked.Value)
@@ -450,7 +450,7 @@ namespace VoltaXApi.Data
                             Console.WriteLine("EndTransaction => Tag '{0}' blocked)", idTag);
                             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Blocked;
                         }
-                        else if (ct.ExpiryDate.HasValue && ct.ExpiryDate.Value < DateTime.Now)
+                        else if (ct.ExpirationDate < DateTime.Now)
                         {
                             Console.WriteLine("EndTransaction => Tag '{0}' expired)", idTag);
                             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Expired;
@@ -503,33 +503,33 @@ namespace VoltaXApi.Data
                 if (transaction != null)
                 {
                     // check current tag against start tag
-                    bool valid = true;
-                    if (!string.Equals(transaction.StartTagId, idTag, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        // tags are different => same group?
-                        ChargeTag? startTag = _context.ChargeTags.Where(c => c.TagID == transaction.StartTagId).FirstOrDefault();
-                        if (startTag != null)
-                        {
-                            if (!string.Equals(startTag.ParentTagId, ct?.ParentTagId, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                Console.WriteLine("EndTransaction => Start-Tag ('{0}') and End-Tag ('{1}') do not match: Invalid!", transaction.StartTagId, ct?.ID);
-                                transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
-                                valid = false;
-                            }
-                            else
-                            {
-                                Console.WriteLine("EndTransaction => Different charge tags but matching group ('{0}')", ct?.ParentTagId);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("EndTransaction => Start-Tag not found: '{0}'", transaction.StartTagId);
-                            // assume "valid" and allow to end the transaction
-                        }
-                    }
+                    // bool valid = true;
+                    // if (!string.Equals(transaction.StartTagId, idTag, StringComparison.InvariantCultureIgnoreCase))
+                    // {
+                    //     // tags are different => same group?
+                    //     ChargeTag? startTag = _context.ChargeTags.Where(c => c.TagID == transaction.StartTagId).FirstOrDefault();
+                    //     if (startTag != null)
+                    //     {
+                    //         if (!string.Equals(startTag.ParentTagId, ct?.ParentTagId, StringComparison.InvariantCultureIgnoreCase))
+                    //         {
+                    //             Console.WriteLine("EndTransaction => Start-Tag ('{0}') and End-Tag ('{1}') do not match: Invalid!", transaction.StartTagId, ct?.ID);
+                    //             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
+                    //             valid = false;
+                    //         }
+                    //         else
+                    //         {
+                    //             Console.WriteLine("EndTransaction => Different charge tags but matching group ('{0}')", ct?.ParentTagId);
+                    //         }
+                    //     }
+                    //     else
+                    //     {
+                    //         Console.WriteLine("EndTransaction => Start-Tag not found: '{0}'", transaction.StartTagId);
+                    //         // assume "valid" and allow to end the transaction
+                    //     }
+                    // }
 
-                    if (valid)
-                    {
+                    // if (valid)
+                    // {
                         // write current meter value in "stop" value
                         Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
 
@@ -541,7 +541,7 @@ namespace VoltaXApi.Data
 
                         // Update connecter status to available
 
-                    }
+                    // }
                 }
                 else
                 {

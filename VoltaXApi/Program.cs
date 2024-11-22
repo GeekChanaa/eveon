@@ -72,6 +72,7 @@ builder.Services.AddScoped<IMessageLogRepository, MessageLogRepository>();
 builder.Services.AddScoped<IChargePointUptimeRepository, ChargePointUptimeRepository>();
 builder.Services.AddScoped<IConnectorUptimeRepository, ConnectorUptimeRepository>();
 builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
@@ -95,6 +96,7 @@ builder.Services.AddScoped<ResetHandler>();
 builder.Services.AddScoped<SecurityEventNotificationHandler>();
 builder.Services.AddScoped<StatusNotificationHandler>();
 builder.Services.AddScoped<UnlockConnectorHandler>();
+builder.Services.AddScoped<TransactionEventHandler>();
 
 builder.Services.AddScoped<Func<BootNotificationHandler>>(sp => () => sp.GetService<BootNotificationHandler>());
 builder.Services.AddScoped<Func<HeartBeatHandler>>(sp => () => sp.GetService<HeartBeatHandler>());
@@ -110,6 +112,7 @@ builder.Services.AddScoped<Func<ResetHandler>>(sp => () => sp.GetService<ResetHa
 builder.Services.AddScoped<Func<SecurityEventNotificationHandler>>(sp => () => sp.GetService<SecurityEventNotificationHandler>());
 builder.Services.AddScoped<Func<StatusNotificationHandler>>(sp => () => sp.GetService<StatusNotificationHandler>());
 builder.Services.AddScoped<Func<UnlockConnectorHandler>>(sp => () => sp.GetService<UnlockConnectorHandler>());
+builder.Services.AddScoped<Func<TransactionEventHandler>>(sp => () => sp.GetService<TransactionEventHandler>());
 
 
 
@@ -144,6 +147,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(ChargingSessionProfile));
 builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
+builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
+builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

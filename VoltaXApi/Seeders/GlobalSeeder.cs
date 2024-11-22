@@ -26,6 +26,7 @@ namespace VoltaXApi.Data.Seeders
             var orders = await OrderSeeder.Seed(100, cards, context);
             var chargeTags = await ChargeTagSeeder.Seed(100, cards, context);
             var transactions = await TransactionSeeder.Seed(1000, chargeTags, chargePoints, context);
+            var ratings = await RatingSeeder.Seed(1000, users,context);
 
             await ChargingSessionsSeeder.Seed(1000,context);
         }

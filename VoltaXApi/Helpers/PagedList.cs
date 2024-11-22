@@ -19,6 +19,8 @@ namespace VoltaXApi.Helpers
             PageSize = pageSize;
             CurrentPage = pageNumber;
             TotalPages = (int)Math.Ceiling(count / (double) pageSize);
+            Console.WriteLine("this is the items");
+            Console.WriteLine(items);
             this.AddRange(items);
         }
 

@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace VoltaXApi.Controllers
 {
@@ -18,13 +21,28 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class MessageLogController : GenericController<MessageLog>
     {
-        private readonly IRepository<MessageLog> _repository;
+        private readonly IMessageLogRepository _repository;
+        private readonly IMapper _mapper;
 
-        public MessageLogController(IRepository<MessageLog> repository) : base(repository)
+        public MessageLogController(
+            IMessageLogRepository repository,
+            IMapper mapper) : base(repository)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        // You can override the base methods or add specific methods for this controller
+
+        [HttpGet("GetChargePointMessageLogs/{chargePointID}")]
+        public async Task<ActionResult<List<MessageLog>>> GetPartnerMessageLogs(string chargePointId , [FromQuery] GlobalParams globalParams)
+        {
+            Console.WriteLine("this is the chargepointid : "+chargePointId);
+            var msgLogsDto = (await _repository.GetAllAsync(globalParams)).Where(u => u.ChargePointId == chargePointId).ProjectTo<MessageLogListDto>(_mapper.ConfigurationProvider);
+            var MessageLogs = await PagedList<MessageLogListDto>.CreateAsync(msgLogsDto, globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(MessageLogs.CurrentPage, MessageLogs.PageSize, MessageLogs.TotalCount, MessageLogs.TotalPages);
+            return Ok(MessageLogs);
+        }
+
+        
     }
 }

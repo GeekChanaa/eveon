@@ -2,7 +2,8 @@ export const OCPPActions = [
   {
     name: "Authorize",
     description: "Authorize a user to start a charging session.",
-    schemaPath : "/assets/schemas/AuthorizeRequest.json"
+    schemaPath : "/assets/schemas/AuthorizeRequest.json",
+    
   },
   {
     name: "BootNotification",
@@ -217,12 +218,14 @@ export const OCPPActions = [
   {
     name: "RequestStartTransaction",
     description: "Request the start of a charging session.",
-    schemaPath : "/assets/schemas/RequestStartTransactionRequest.json"
+    schemaPath : "/assets/schemas/RequestStartTransactionRequest.json",
+    requestable : true
   },
   {
     name: "RequestStopTransaction",
     description: "Request the end of a charging session.",
-    schemaPath : "/assets/schemas/RequestStopTransactionRequest.json"
+    schemaPath : "/assets/schemas/RequestStopTransactionRequest.json",
+    requestable : true
   },
   {
     name: "ReservationStatusUpdate",
@@ -307,7 +310,8 @@ export const OCPPActions = [
   {
     name: "UnlockConnector",
     description: "Unlock a connector at the charge point.",
-    schemaPath : "/assets/schemas/UnlockConnectorRequest.json"
+    schemaPath : "/assets/schemas/UnlockConnectorRequest.json",
+    requestable : true
   },
   {
     name: "UnpublishFirmware",

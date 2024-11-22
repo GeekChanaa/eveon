@@ -21,7 +21,8 @@ namespace VoltaXApi.OCPP.Factories
                                          Func<ResetHandler> resetHandlerFactory,
                                          Func<SecurityEventNotificationHandler> securityEventNotificationFactory,
                                          Func<StatusNotificationHandler> statusNotificationHandlerFactory,
-                                         Func<UnlockConnectorHandler> unlockConnectorHandlerFactory)
+                                         Func<UnlockConnectorHandler> unlockConnectorHandlerFactory,
+                                         Func<TransactionEventHandler> transactionEventHandlerFactory)
         {
             _handlers = new Dictionary<string, Lazy<IOCPPRequestHandler>>
             {
@@ -39,6 +40,7 @@ namespace VoltaXApi.OCPP.Factories
                 { "StatusNotification", new Lazy<IOCPPRequestHandler>(statusNotificationHandlerFactory) },
                 { "UnlockConnector", new Lazy<IOCPPRequestHandler>(unlockConnectorHandlerFactory) },
                 { "SecurityEventNotification", new Lazy<IOCPPRequestHandler>(securityEventNotificationFactory) },
+                { "TransactionEvent", new Lazy<IOCPPRequestHandler>(transactionEventHandlerFactory) },
             };
         }
 

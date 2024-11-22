@@ -1,3 +1,4 @@
+
 namespace VoltaXApi.Dtos
 {
     public class ConnectorCreateDto

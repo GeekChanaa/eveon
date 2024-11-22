@@ -1,5 +1,3 @@
-
-
 namespace VoltaXApi.Models
 {
   public enum ChargingSessionStatusEnum

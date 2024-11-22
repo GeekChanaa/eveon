@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.Hubs;
@@ -43,6 +45,8 @@ namespace VoltaXApi.OCPP.Handlers
                 Action = msgIn.Action
             };
 
+            
+
             if (msgIn.MessageType == "2")
             {
                 var handler = _handlerFactory.GetHandler(msgIn.Action);
@@ -50,6 +54,8 @@ namespace VoltaXApi.OCPP.Handlers
                 if (handler != null)
                 {
                     string errorCode = await handler.Handle(msgIn, msgOut, chargePointStatus);
+                    
+                    
                     if (!string.IsNullOrEmpty(errorCode))
                     {
                         msgOut.MessageType = "4"; // Error type
@@ -62,7 +68,7 @@ namespace VoltaXApi.OCPP.Handlers
                     Console.WriteLine("No handler for this action");
                     // Log unsupported action
                     string errorCode = ErrorCodes.NotSupported;
-                    await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, msgIn.JsonPayload, errorCode);
+                    await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, msgIn.JsonPayload, errorCode, msgIn, msgOut);
                     msgOut.MessageType = "4";
                     msgOut.ErrorCode = errorCode;
                 }

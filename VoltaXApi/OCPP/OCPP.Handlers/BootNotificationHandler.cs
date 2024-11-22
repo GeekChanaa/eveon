@@ -13,14 +13,17 @@ namespace VoltaXApi.OCPP.Handlers
 
     private readonly ILogger _logger;
     private readonly IMessageLogRepository _msgLogRepo;
+    private readonly IChargePointRepository _chargePointRepository;
 
     public BootNotificationHandler(
       ILoggerFactory loggerFactory,
-      IMessageLogRepository messageLogRepository
+      IMessageLogRepository messageLogRepository,
+      IChargePointRepository chargePointRepository
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(BootNotificationHandler));
       _msgLogRepo = messageLogRepository;
+      _chargePointRepository = chargePointRepository;
     }
 
 
@@ -39,6 +42,16 @@ namespace VoltaXApi.OCPP.Handlers
         _logger.LogTrace("BootNotification => Message deserialized");
 
         bootReason = bootNotificationRequest?.Reason.ToString();
+
+        // Updating ChargePoint Informations based on the bootnotificationRequest
+        _logger.LogTrace("Updating Informations for ChargePoint : " + chargePointStatus.Id);
+        var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+        chargePoint.Model = bootNotificationRequest.ChargingStation.Model;
+        chargePoint.SerialNumber = bootNotificationRequest.ChargingStation.SerialNumber;
+        chargePoint.VendorName = bootNotificationRequest.ChargingStation.VendorName;
+        await _chargePointRepository.Update(chargePoint);
+
+        
         _logger.LogInformation("BootNotification => Reason={0}", bootReason);
 
         BootNotificationResponse bootNotificationResponse = new BootNotificationResponse();
@@ -68,7 +81,7 @@ namespace VoltaXApi.OCPP.Handlers
         errorCode = ErrorCodes.FormationViolation;
       }
 
-      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode);
+      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode, msgIn, msgOut);
       return errorCode;
     }
   }

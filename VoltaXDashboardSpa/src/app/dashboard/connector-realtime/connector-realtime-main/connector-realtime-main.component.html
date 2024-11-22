@@ -72,11 +72,11 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Logs')">
-        <app-connector-realtime-logs class="settings__container"></app-connector-realtime-logs>
+        <app-connector-realtime-logs *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-logs>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Ratings')">
-        <app-connector-realtime-ratings class="settings__container"></app-connector-realtime-ratings>
+        <app-connector-realtime-ratings *ngIf="chargePoint != null" [chargePointID]="chargePoint.id" class="settings__container"></app-connector-realtime-ratings>
       </ng-container>
       
       <ng-container *ngIf="selectedMenuItem == getMenu('ChargingSessions')">

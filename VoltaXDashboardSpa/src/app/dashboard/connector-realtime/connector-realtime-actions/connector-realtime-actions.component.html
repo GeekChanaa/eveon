@@ -5,7 +5,7 @@
 
 <div class="chargePoint-actions">
   <ng-container  *ngFor="let ocppAction of OCPPActions">
-    <div (click)="openRequestHanlderModal(ocppAction)" class="button button-dark chargePoint-action">
+    <div *ngIf="ocppAction.requestable" (click)="openRequestHanlderModal(ocppAction)" class="button button-dark chargePoint-action">
       {{ocppAction.name}}
     </div>
   </ng-container>

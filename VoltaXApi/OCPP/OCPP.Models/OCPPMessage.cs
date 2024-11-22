@@ -17,6 +17,7 @@ namespace VoltaXApi.OCPP.Models
         public string ErrorCode { get; set; }
 
         public string ErrorDescription { get; set; }
+        public string? RawMessage { get; set; }
 
         [JsonIgnore]
         public TaskCompletionSource<string> TaskCompletionSource { get; set; }
@@ -26,12 +27,13 @@ namespace VoltaXApi.OCPP.Models
         {
         }
 
-        public OCPPMessage(string messageType, string uniqueId, string action, string jsonPayload)
+        public OCPPMessage(string messageType, string uniqueId, string action, string jsonPayload, string rawMessage = "")
         {
             MessageType = messageType;
             UniqueId = uniqueId;
             Action = action;
             JsonPayload = jsonPayload;
+            RawMessage = rawMessage;
         }
     }
 }

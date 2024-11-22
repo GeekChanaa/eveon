@@ -27,6 +27,7 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { ConnectorStatusDescriptionComponent } from './connector-status-description/connector-status-description.component';
 import { StoppedReasonDescriptionComponent } from './stopped-reason-description/stopped-reason-description.component';
 import { ToggleComponent } from './toggle/toggle.component';
+import { RatingComponent } from './rating/rating.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { ToggleComponent } from './toggle/toggle.component';
     ProgressBarComponent,
     ConnectorStatusDescriptionComponent,
     StoppedReasonDescriptionComponent,
+    RatingComponent,
     ToggleComponent
    ],
   imports: [
@@ -81,8 +83,8 @@ import { ToggleComponent } from './toggle/toggle.component';
     ProgressBarComponent,
     ConnectorStatusDescriptionComponent,
     StoppedReasonDescriptionComponent,
-    ToggleComponent
-
+    ToggleComponent,
+    RatingComponent
   ],
   providers: [],
 })

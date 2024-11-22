@@ -27,7 +27,7 @@ namespace VoltaXApi.OCPP.Messages
 
         public ReasonEnumType? Reason { get; set; }
 
-        public List<MeterValueType> MeterValues { get; set; }
+        public List<MeterValueType> MeterValue { get; set; }
 
         public TransactionType TransactionInfo { get; set; }
     }

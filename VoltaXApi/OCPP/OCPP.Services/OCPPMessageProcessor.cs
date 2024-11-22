@@ -48,13 +48,12 @@ namespace VoltaXApi.OCPP.Core
         HttpContext context,
         string ocppMessage)
     {
-        Console.WriteLine("process message : JSON APAYLOAD");
-        Console.WriteLine(message.JsonPayload);
-        Console.WriteLine(chargePointStatus.Id);
         switch (message.MessageType)
         {
             case "2":
                 OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
+                Console.WriteLine("this is the ocppmessageprocessor ");
+                Console.WriteLine(msgOut.RawMessage);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
 
@@ -79,11 +78,6 @@ namespace VoltaXApi.OCPP.Core
 
     public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
-        Console.WriteLine("this is the message in the sendmessage");
-        Console.WriteLine(message.MessageType);
-        Console.WriteLine(message.UniqueId);
-        Console.WriteLine(message.Action);
-        Console.WriteLine(message.JsonPayload);
         var ocppArrayMessage = new object[]
         {
             JRaw.Parse(message.MessageType),
@@ -102,18 +96,13 @@ namespace VoltaXApi.OCPP.Core
             };
         }
 
-        Console.WriteLine("SENDING MESSAGE :  ");
-        Console.WriteLine("message.UniqueId : " + message.UniqueId);
-        Console.WriteLine("message.Action : " + message.Action);
-
         var settings = new JsonSerializerSettings
         {
             Converters = new List<JsonConverter> { new StringEnumConverter() }
         };
 
         string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
-        Console.WriteLine("SENDING A MESSAGE THROUGH SIGNALR");
-        Console.WriteLine(chargePointID);
+
         await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);
 
         

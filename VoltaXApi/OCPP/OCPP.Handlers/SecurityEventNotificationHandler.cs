@@ -55,7 +55,7 @@ namespace VoltaXApi.OCPP.Handlers
         errorCode = ErrorCodes.FormationViolation;
       }
 
-      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode);
+      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode, msgIn, msgOut);
       return errorCode;
     }
   }

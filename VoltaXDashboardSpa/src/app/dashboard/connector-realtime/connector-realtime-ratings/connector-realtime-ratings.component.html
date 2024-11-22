@@ -1,3 +1,22 @@
 <div class="title-purple card__title">
   Ratings
 </div>
+
+<div class="ratings__container">
+  <div class="rating__container" *ngFor="let rating of ratings">
+    <div class="rating__header">
+      <div class="rating__user_avatar">
+        <img src="/assets/images/avatar.jpg" alt="">
+      </div>
+      <div class="rating__user_name">
+        {{rating.username}}
+      </div>
+      <div class="rating__score">
+        <app-rating [score]="rating.score"></app-rating> 
+      </div>
+    </div>
+    <div class="rating__comment">
+      {{rating.comment}}
+    </div>
+  </div>
+</div>

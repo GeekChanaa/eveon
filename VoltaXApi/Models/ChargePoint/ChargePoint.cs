@@ -9,7 +9,10 @@ namespace VoltaXApi.Models
         [Required]
         public int? ChargingStationID { get; set; }
         public string Name { get; set; }
-        public string SerialNumber { get; set; }
+        public string? SerialNumber { get; set; }
+        public string? VendorName { get; set; }
+        public string? FirmwareVersion { get; set; }
+        public string? Model { get; set; }
         public string? Make { get; set; } = "VoltaX";
         public int? ChargePointModelID { get; set;}
         public ChargePointStatusEnum Status { get; set; }

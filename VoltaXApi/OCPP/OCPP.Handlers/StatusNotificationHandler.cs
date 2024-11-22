@@ -44,7 +44,7 @@ namespace VoltaXApi.OCPP.Handlers
                 connectorId = statusNotificationRequest.ConnectorId;
 
                 // Write raw status in DB
-                msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty);
+                msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty, msgIn, msgOut);
 
                 ConnectorStatusEnumType newStatus = statusNotificationRequest.ConnectorStatus;
 
@@ -92,7 +92,7 @@ namespace VoltaXApi.OCPP.Handlers
 
             if (!msgWritten)
             {
-                await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, null, errorCode);
+                await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, null, errorCode, msgIn, msgOut);
             }
             return errorCode;
         }
