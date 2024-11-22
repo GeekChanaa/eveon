@@ -1,30 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
+using OCPP.Core.Server;
+using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 using VoltaXApi.OCPP.Messages;
-using OCPP.Core.Server;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.Data
 {
     public class TransactionRepository : Repository<Transaction>, ITransactionRepository
     {
-        public TransactionRepository(VoltaXApiDbContext context) : base(context)
-        {
+        private readonly IMapper _mapper;
 
+        public TransactionRepository(VoltaXApiDbContext context, IMapper mapper)
+            : base(context)
+        {
+            _mapper = mapper;
         }
 
         public Task<double> CountEnergy(Expression<Func<Transaction, bool>> predicate)
         {
-            var energySumTask = _context.Transactions
-                .Where(predicate)
-                .SumAsync(t => t.MeterStart);
+            var energySumTask = _context.Transactions.Where(predicate).SumAsync(t => t.MeterStart);
 
             return energySumTask;
         }
@@ -32,8 +35,8 @@ namespace VoltaXApi.Data
         public async Task<double> GetTotalEnergyConsumedAsync()
         {
             // Get all transactions where both MeterStart and MeterStop are not null
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null)
+            var transactions = await _context
+                .Transactions.Where(t => t.MeterStart != null && t.MeterStop != null)
                 .ToListAsync();
 
             // Calculate the total energy consumed
@@ -49,8 +52,10 @@ namespace VoltaXApi.Data
         public async Task<double> GetTotalEnergyConsumedTodayAsync()
         {
             var today = DateTime.Today;
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today
+                )
                 .ToListAsync();
 
             double totalEnergy = 0;
@@ -63,15 +68,20 @@ namespace VoltaXApi.Data
         }
 
         // Get Energy consumed between 2 dates
-        public async Task<double> GetTotalEnergyConsumedBetween(DateTime dateStart, DateTime dateEnd)
+        public async Task<double> GetTotalEnergyConsumedBetween(
+            DateTime dateStart,
+            DateTime dateEnd
+        )
         {
             var today = DateTime.Today;
-            var transactions = await _context.Transactions
-                                            .Where(t => t.MeterStart != null
-                                                    && t.MeterStop != null
-                                                    && t.StartTime >= dateStart
-                                                    && t.StartTime <= dateEnd)
-                                            .ToListAsync();
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null
+                    && t.MeterStop != null
+                    && t.StartTime >= dateStart
+                    && t.StartTime <= dateEnd
+                )
+                .ToListAsync();
 
             double totalEnergy = 0;
             foreach (var transaction in transactions)
@@ -85,8 +95,10 @@ namespace VoltaXApi.Data
         public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync()
         {
             var startDate = DateTime.Today.AddDays(-30);
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate
+                )
                 .ToListAsync();
 
             var energyByDay = new Dictionary<DateTime, double>();
@@ -108,12 +120,13 @@ namespace VoltaXApi.Data
             return energyByDay;
         }
 
-
         public async Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync()
         {
             var startDate = DateTime.Today.AddYears(-1);
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate
+                )
                 .ToListAsync();
 
             var energyByMonth = new Dictionary<string, double>();
@@ -135,17 +148,22 @@ namespace VoltaXApi.Data
             return energyByMonth;
         }
 
-        // Getting latest Transactions 
+        // Getting latest Transactions
         public async Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20)
         {
-            return await this._context.Transactions.OrderByDescending(u => u.StartTime).Take(nbrTransactions).ToListAsync();
+            return await this
+                ._context.Transactions.OrderByDescending(u => u.StartTime)
+                .Take(nbrTransactions)
+                .ToListAsync();
         }
 
-
-        public Task<double> CountPartnerEnergy(int partnerID, Expression<Func<Transaction, bool>> predicate)
+        public Task<double> CountPartnerEnergy(
+            int partnerID,
+            Expression<Func<Transaction, bool>> predicate
+        )
         {
-            var energySumTask = _context.Transactions
-                .Where(predicate)
+            var energySumTask = _context
+                .Transactions.Where(predicate)
                 .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
                 .SumAsync(t => t.MeterStart);
 
@@ -155,8 +173,8 @@ namespace VoltaXApi.Data
         public async Task<double> GetPartnerTotalEnergyConsumedAsync(int partnerID)
         {
             // Get all transactions where both MeterStart and MeterStop are not null
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null)
+            var transactions = await _context
+                .Transactions.Where(t => t.MeterStart != null && t.MeterStop != null)
                 .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
                 .ToListAsync();
 
@@ -173,8 +191,10 @@ namespace VoltaXApi.Data
         public async Task<double> GetPartnerTotalEnergyConsumedTodayAsync(int partnerID)
         {
             var today = DateTime.Today;
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today
+                )
                 .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
                 .ToListAsync();
 
@@ -188,16 +208,22 @@ namespace VoltaXApi.Data
         }
 
         // Get Energy consumed between 2 dates
-        public async Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID, DateTime dateStart, DateTime dateEnd)
+        public async Task<double> GetPartnerTotalEnergyConsumedBetween(
+            int partnerID,
+            DateTime dateStart,
+            DateTime dateEnd
+        )
         {
             var today = DateTime.Today;
-            var transactions = await _context.Transactions
-                                            .Where(t => t.MeterStart != null
-                                                    && t.MeterStop != null
-                                                    && t.StartTime >= dateStart
-                                                    && t.StartTime <= dateEnd)
-                                            .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
-                                            .ToListAsync();
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null
+                    && t.MeterStop != null
+                    && t.StartTime >= dateStart
+                    && t.StartTime <= dateEnd
+                )
+                .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
+                .ToListAsync();
 
             double totalEnergy = 0;
             foreach (var transaction in transactions)
@@ -208,11 +234,15 @@ namespace VoltaXApi.Data
             return totalEnergy;
         }
 
-        public async Task<Dictionary<DateTime, double>> GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID)
+        public async Task<
+            Dictionary<DateTime, double>
+        > GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID)
         {
             var startDate = DateTime.Today.AddDays(-30);
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate
+                )
                 .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
                 .ToListAsync();
 
@@ -235,12 +265,15 @@ namespace VoltaXApi.Data
             return energyByDay;
         }
 
-
-        public async Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(int partnerID)
+        public async Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(
+            int partnerID
+        )
         {
             var startDate = DateTime.Today.AddYears(-1);
-            var transactions = await _context.Transactions
-                .Where(t => t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate)
+            var transactions = await _context
+                .Transactions.Where(t =>
+                    t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate
+                )
                 .Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID)
                 .ToListAsync();
 
@@ -263,10 +296,19 @@ namespace VoltaXApi.Data
             return energyByMonth;
         }
 
-        // Getting latest Transactions 
-        public async Task<List<Transaction>> GetPartnerLatestTransactions(int partnerID, int nbrTransactions = 20)
+        // Getting latest Transactions
+        public async Task<List<Transaction>> GetPartnerLatestTransactions(
+            int partnerID,
+            int nbrTransactions = 20
+        )
         {
-            return await this._context.Transactions.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).OrderByDescending(u => u.StartTime).Take(nbrTransactions).ToListAsync();
+            return await this
+                ._context.Transactions.Where(u =>
+                    u.ChargePoint.ChargingStation.PartnerID == partnerID
+                )
+                .OrderByDescending(u => u.StartTime)
+                .Take(nbrTransactions)
+                .ToListAsync();
         }
 
         public IQueryable<Transaction> GetCardTransactions(int cardID)
@@ -275,56 +317,23 @@ namespace VoltaXApi.Data
         }
 
         public async Task StartTransaction(
-                TransactionEventRequest transactionEventRequest,
-                TransactionEventResponse transactionEventResponse,
-                ChargePointStatus chargePointStatus,
-                int connectorID,
-                string? idTag,
-                string errorCode,
-                double meterKWH)
+            TransactionEventRequest transactionEventRequest,
+            TransactionEventResponse transactionEventResponse,
+            ChargePointStatus chargePointStatus,
+            int connectorID,
+            string? idTag,
+            string errorCode,
+            double meterKWH
+        )
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(idTag))
-                {
-                    // no RFID-Tag => accept request
-                    transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
-                    Console.WriteLine("StartTransaction => no charge tag => accepted");
-                }
-                else
-                {
-                    Card? ct = _context.Cards.Where(u => u.CardNumber == idTag).FirstOrDefault();
-                    if (ct != null)
-                    {
-                        if (ct.Blocked.HasValue && ct.Blocked.Value)
-                        {
-                            Console.WriteLine("StartTransaction => Tag '{0}' blocked)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Blocked;
-                        }
-                        else if (ct.ExpirationDate < DateTime.Now)
-                        {
-                            Console.WriteLine("StartTransaction => Tag '{0}' expired)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Expired;
-                        }
-                        else
-                        {
-                            Console.WriteLine("StartTransaction => Tag '{0}' accepted)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("StartTransaction => Tag '{0}' unknown)", idTag);
-                        transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Unknown;
-                    }
-                }
+                transactionEventResponse.IdTokenInfo.Status = await ValidateCard(idTag);
 
-                if (transactionEventResponse.IdTokenInfo.Status == AuthorizationStatusEnumType.Accepted)
+                if (transactionEventResponse.IdTokenInfo.Status== AuthorizationStatusEnumType.Accepted)
                 {
                     try
                     {
-                        Console.WriteLine("StartTransaction => Meter='{0}' (kWh)", meterKWH);
-                        Console.WriteLine(transactionEventRequest.TransactionInfo.TransactionId);
                         Transaction transaction = new Transaction();
                         transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
                         transaction.ChargePointID = chargePointStatus.Id;
@@ -351,7 +360,6 @@ namespace VoltaXApi.Data
             }
         }
 
-
         public async Task UpdateTransaction(
             TransactionEventRequest transactionEventRequest,
             TransactionEventResponse transactionEventResponse,
@@ -364,51 +372,69 @@ namespace VoltaXApi.Data
         {
             try
             {
-                Transaction? transaction = _context.Transactions
-                    .Where(t => t.Uid == transactionEventRequest.TransactionInfo.TransactionId)
+                Transaction? transaction = _context
+                    .Transactions.Where(t =>
+                        t.Uid == transactionEventRequest.TransactionInfo.TransactionId
+                    )
                     .OrderByDescending(t => t.ID)
                     .FirstOrDefault();
-                if (transaction == null ||
-                    transaction.ChargePointID != chargePointStatus.Id ||
-                    transaction.StopTime.HasValue)
+                if (
+                    transaction == null
+                    || transaction.ChargePointID != chargePointStatus.Id
+                    || transaction.StopTime.HasValue
+                )
                 {
                     // unknown transaction id or already stopped transaction
                     // => find latest transaction for the charge point and check if its open
-                    Console.WriteLine("UpdateTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
+                    Console.WriteLine(
+                        "UpdateTransaction => Unknown or closed transaction uid={0}",
+                        transactionEventRequest.TransactionInfo?.TransactionId
+                    );
                     // find latest transaction for this charge point
-                    transaction = _context.Transactions
-                        .Where(t => t.ChargePointID == chargePointStatus.Id && t.ConnectorID == connectorID)
+                    transaction = _context
+                        .Transactions.Where(t =>
+                            t.ChargePointID == chargePointStatus.Id && t.ConnectorID == connectorID
+                        )
                         .OrderByDescending(t => t.ID)
                         .FirstOrDefault();
 
                     if (transaction != null)
                     {
-                        Console.WriteLine("UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'", transaction.ID, transaction.StartTime.ToString("O"), transaction?.StopTime?.ToString("O"));
+                        Console.WriteLine(
+                            "UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",
+                            transaction.ID,
+                            transaction.StartTime.ToString("O"),
+                            transaction?.StopTime?.ToString("O")
+                        );
                         if (transaction.StopTime.HasValue)
                         {
-                            Console.WriteLine("UpdateTransaction => Last transaction (id={0}) is already closed ", transaction.ID);
+                            Console.WriteLine(
+                                "UpdateTransaction => Last transaction (id={0}) is already closed ",
+                                transaction.ID
+                            );
                             transaction = null;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("UpdateTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'", chargePointStatus.Id, connectorID);
+                        Console.WriteLine(
+                            "UpdateTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",
+                            chargePointStatus.Id,
+                            connectorID
+                        );
                     }
                 }
 
                 if (transaction != null)
                 {
-                    // write current meter value in "stop" value
                     if (meterKWH >= 0)
                     {
-                        Console.WriteLine("UpdateTransaction => Meter='{0}' (kWh)", meterKWH);
                         transaction.MeterStop = meterKWH;
                         _context.SaveChanges();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("UpdateTransaction => Unknown transaction: uid='{0}' / chargepoint='{1}' / tag={2}", transactionEventRequest.TransactionInfo?.TransactionId, chargePointStatus?.Id, idTag);
                     errorCode = ErrorCodes.PropertyConstraintViolation;
                 }
             }
@@ -431,72 +457,61 @@ namespace VoltaXApi.Data
         {
             try
             {
-                
-                Card? ct = null;
-
                 if (string.IsNullOrWhiteSpace(idTag))
-                {
-                    // no RFID-Tag => accept request
                     transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
-                    Console.WriteLine("EndTransaction => no charge tag => accepted");
-                }
                 else
-                {
-                    ct = _context.Cards.Where(c => c.CardNumber == idTag).FirstOrDefault();
-                    if (ct != null)
-                    {
-                        if (ct.Blocked.HasValue && ct.Blocked.Value)
-                        {
-                            Console.WriteLine("EndTransaction => Tag '{0}' blocked)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Blocked;
-                        }
-                        else if (ct.ExpirationDate < DateTime.Now)
-                        {
-                            Console.WriteLine("EndTransaction => Tag '{0}' expired)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Expired;
-                        }
-                        else
-                        {
-                            Console.WriteLine("EndTransaction => Tag '{0}' accepted)", idTag);
-                            transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("EndTransaction => Tag '{0}' unknown)", idTag);
-                        transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Unknown;
-                    }
-                }
+                    transactionEventResponse.IdTokenInfo.Status = await ValidateCard(idTag);
 
-                Transaction? transaction = _context.Transactions
-                    .Where(t => t.Uid == transactionEventRequest.TransactionInfo.TransactionId)
+                Transaction? transaction = _context
+                    .Transactions.Where(t =>
+                        t.Uid == transactionEventRequest.TransactionInfo.TransactionId
+                    )
                     .OrderByDescending(t => t.ID)
                     .FirstOrDefault();
-                if (transaction == null ||
-                    transaction.ChargePointID != chargePointStatus.Id ||
-                    transaction.StopTime.HasValue)
+                if (
+                    transaction == null
+                    || transaction.ChargePointID != chargePointStatus.Id
+                    || transaction.StopTime.HasValue
+                )
                 {
                     // unknown transaction id or already stopped transaction
                     // => find latest transaction for the charge point and check if its open
-                    Console.WriteLine("EndTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
+                    Console.WriteLine(
+                        "EndTransaction => Unknown or closed transaction uid={0}",
+                        transactionEventRequest.TransactionInfo?.TransactionId
+                    );
                     // find latest transaction for this charge point
-                    transaction = _context.Transactions
-                        .Where(t => t.ChargePointID == chargePointStatus.Id && t.ConnectorID == connectorID)
+                    transaction = _context
+                        .Transactions.Where(t =>
+                            t.ChargePointID == chargePointStatus.Id && t.ConnectorID == connectorID
+                        )
                         .OrderByDescending(t => t.ID)
                         .FirstOrDefault();
 
                     if (transaction != null)
                     {
-                        Console.WriteLine("EndTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'", transaction.ID, transaction.StartTime.ToString("O"), transaction?.StopTime?.ToString("O"));
+                        Console.WriteLine(
+                            "EndTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",
+                            transaction.ID,
+                            transaction.StartTime.ToString("O"),
+                            transaction?.StopTime?.ToString("O")
+                        );
                         if (transaction.StopTime.HasValue)
                         {
-                            Console.WriteLine("EndTransaction => Last transaction (id={0}) is already closed ", transaction.ID);
+                            Console.WriteLine(
+                                "EndTransaction => Last transaction (id={0}) is already closed ",
+                                transaction.ID
+                            );
                             transaction = null;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'", chargePointStatus.Id, connectorID);
+                        Console.WriteLine(
+                            "EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",
+                            chargePointStatus.Id,
+                            connectorID
+                        );
                     }
                 }
 
@@ -530,22 +545,27 @@ namespace VoltaXApi.Data
 
                     // if (valid)
                     // {
-                        // write current meter value in "stop" value
-                        Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
+                    // write current meter value in "stop" value
+                    Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
 
-                        transaction.StopTime = DateTime.Parse(transactionEventRequest.Timestamp);
-                        transaction.MeterStop = meterKWH;
-                        transaction.StopTagId = idTag;
-                        transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
-                        _context.SaveChanges();
+                    transaction.StopTime = DateTime.Parse(transactionEventRequest.Timestamp);
+                    transaction.MeterStop = meterKWH;
+                    transaction.StopTagId = idTag;
+                    transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
+                    _context.SaveChanges();
 
-                        // Update connecter status to available
+                    // Update connecter status to available
 
                     // }
                 }
                 else
                 {
-                    Console.WriteLine("EndTransaction => Unknown transaction: uid='{0}' / chargepoint='{1}' / tag={2}", transactionEventRequest.TransactionInfo?.TransactionId, chargePointStatus?.Id, idTag);
+                    Console.WriteLine(
+                        "EndTransaction => Unknown transaction: uid='{0}' / chargepoint='{1}' / tag={2}",
+                        transactionEventRequest.TransactionInfo?.TransactionId,
+                        chargePointStatus?.Id,
+                        idTag
+                    );
                     // await _msgLogRepo.SaveLogMessage(ChargePointStatus?.Id, connectorID, msgIn.Action, string.Format("UnknownTransaction:UID={0}/Meter={1}", transactionEventRequest.TransactionInfo?.TransactionId, GetMeterValue(transactionEventRequest.MeterValues)), errorCode);
                     errorCode = ErrorCodes.PropertyConstraintViolation;
                 }
@@ -558,9 +578,36 @@ namespace VoltaXApi.Data
             }
         }
 
+        public async Task<List<TransactionListDto>> GetChargePointTransactions(string chargePointId)
+        {
+            var transactions = await _context
+                .Transactions.Where(u => u.ChargePointID == chargePointId)
+                .OrderByDescending(u => u.StartTime)
+                .ToListAsync();
+            var transactionsDto = _mapper.Map<List<Transaction>, List<TransactionListDto>>(
+                transactions
+            );
+            return transactionsDto;
+        }
 
+        public async Task<AuthorizationStatusEnumType> ValidateCard(string idTag)
+        {
+            if (string.IsNullOrWhiteSpace(idTag))
+            {
+                return AuthorizationStatusEnumType.Accepted;
+            }
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.CardNumber == idTag);
 
+            if (card == null)
+                return AuthorizationStatusEnumType.Unknown;
 
+            if (card.Blocked.HasValue && card.Blocked.Value)
+                return AuthorizationStatusEnumType.Blocked;
+
+            if (card.ExpirationDate < DateTime.Now)
+                return AuthorizationStatusEnumType.Expired;
+
+            return AuthorizationStatusEnumType.Accepted;
+        }
     }
 }
-

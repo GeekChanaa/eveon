@@ -73,6 +73,7 @@ builder.Services.AddScoped<IChargePointUptimeRepository, ChargePointUptimeReposi
 builder.Services.AddScoped<IConnectorUptimeRepository, ConnectorUptimeRepository>();
 builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
@@ -149,6 +150,7 @@ builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
 builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
+builder.Services.AddAutoMapper(typeof(TransactionMapperProfile));
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

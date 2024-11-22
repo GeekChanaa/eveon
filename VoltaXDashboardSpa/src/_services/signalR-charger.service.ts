@@ -40,12 +40,12 @@ export class SignalRChargerService {
   }
 
   // Listen for messages
-  public addMessageListener(): void {
+  public addMessageListener(messageSentCallback? : any, messageReceivedCallback? : any): void {
     this.hubConnection?.on('ReceiveMessage', (message : any) => {
-      console.log('Received message: ', message);
+      messageReceivedCallback(message);
     });
     this.hubConnection?.on('SentMessage', (message : any) => {
-      console.log('Sent Message: ', message);
+      messageSentCallback(message);
     })
   }
 }

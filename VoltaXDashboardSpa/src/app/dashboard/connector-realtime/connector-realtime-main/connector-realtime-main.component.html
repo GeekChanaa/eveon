@@ -6,7 +6,7 @@
       [ngClass]="{'active' : status == 'active'}" 
       (mouseover)="isHovered = true"
       (mouseleave)="isHovered = false"> 
-        <span class="status-color" >
+        <span class="status-color">
           <ng-container *ngIf="status == 'active'">
             <svg  viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
               <circle cx="6" cy="6" r="6" />
@@ -39,6 +39,7 @@
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</div>
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</div>
       <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</div>
+      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 11}" (click)="selectMenuItem(11)" class="charger__navbar-item">Transactions</div>
     </div>
     <div class="settings">
       
@@ -81,6 +82,10 @@
       
       <ng-container *ngIf="selectedMenuItem == getMenu('ChargingSessions')">
         <app-connector-realtime-charging-sessions *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-charging-sessions>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Transactions')">
+        <app-connector-realtime-transactions *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-transactions>
       </ng-container>
       
 

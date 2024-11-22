@@ -14,16 +14,19 @@ namespace VoltaXApi.OCPP.Handlers
     private readonly ILogger _logger;
     private readonly IMessageLogRepository _msgLogRepo;
     private readonly IChargePointRepository _chargePointRepository;
+    private readonly IChargePointModelRepository _chargePointModelRepository;
 
     public BootNotificationHandler(
       ILoggerFactory loggerFactory,
       IMessageLogRepository messageLogRepository,
-      IChargePointRepository chargePointRepository
+      IChargePointRepository chargePointRepository,
+      IChargePointModelRepository chargePointModelRepository
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(BootNotificationHandler));
       _msgLogRepo = messageLogRepository;
       _chargePointRepository = chargePointRepository;
+      _chargePointModelRepository = chargePointModelRepository;
     }
 
 
@@ -47,6 +50,11 @@ namespace VoltaXApi.OCPP.Handlers
         _logger.LogTrace("Updating Informations for ChargePoint : " + chargePointStatus.Id);
         var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
         chargePoint.Model = bootNotificationRequest.ChargingStation.Model;
+        int? chargePointModelID = await this._chargePointModelRepository.GetChargePointModelIDByIdentifier(chargePoint.Model);
+        Console.WriteLine("this is the chargePointModelID : "+ chargePointModelID);
+        Console.WriteLine("this is the Model : "+ chargePoint.Model);
+        if(chargePointModelID != null)
+          chargePoint.ChargePointModelID = chargePointModelID;
         chargePoint.SerialNumber = bootNotificationRequest.ChargingStation.SerialNumber;
         chargePoint.VendorName = bootNotificationRequest.ChargingStation.VendorName;
         await _chargePointRepository.Update(chargePoint);

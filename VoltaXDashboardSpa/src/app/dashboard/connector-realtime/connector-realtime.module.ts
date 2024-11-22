@@ -21,6 +21,7 @@ import { ConnectorRealtimeRatingsComponent } from './connector-realtime-ratings/
 import { ConnectorRealtimeChargingSessionsComponent } from './connector-realtime-charging-sessions/connector-realtime-charging-sessions.component';
 import { ConnectorRealtimeMainOverviewComponent } from './connector-realtime-main-overview/connector-realtime-main-overview.component';
 import { ConnectorRealtimeTransactionsComponent } from './connector-realtime-transactions/connector-realtime-transactions.component';
+import { RequestsComponentsModule } from '../requests-components/requests-components.module';
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import { ConnectorRealtimeTransactionsComponent } from './connector-realtime-tra
         CommonModule,
         SharedModule,
         FormsModule,
-        ConnectorRealtimeRoutingModule
+        ConnectorRealtimeRoutingModule,
+        RequestsComponentsModule
     ],
   })
   export class ConnectorRealtimeModule { }

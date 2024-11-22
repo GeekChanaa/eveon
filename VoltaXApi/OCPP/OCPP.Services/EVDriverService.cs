@@ -40,12 +40,17 @@ namespace VoltaXApi.OCPP.Services
         // POST /ocpp/evdriver/requestStopTransaction
         public async Task RequestStopTransaction(string chargePointID, RequestStopTransactionRequest request)
         {
+            var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new StringEnumConverter() },
+                NullValueHandling = NullValueHandling.Ignore
+            };
             OCPPMessage msg = new OCPPMessage
             {
                 MessageType = "2",
                 UniqueId = Guid.NewGuid().ToString("N"),
                 Action = "RequestStopTransaction",
-                JsonPayload = JsonConvert.SerializeObject(request)
+                JsonPayload = JsonConvert.SerializeObject(request,settings)
             };
             await _messageProcessor.SendMessage(msg, chargePointID);
         }

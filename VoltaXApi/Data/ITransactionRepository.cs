@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VoltaXApi.Models;
+using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
 using VoltaXApi.OCPP.Messages;
 using OCPP.Core.Server;
@@ -18,6 +19,7 @@ namespace VoltaXApi.Data
         Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync();
         Task<double> GetTotalEnergyConsumedBetween(DateTime date1, DateTime date2);
         Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20);
+        Task<List<TransactionListDto>> GetChargePointTransactions(string chargePointId);
         // Partner Functions
         Task<double> CountPartnerEnergy(int partnerID,Expression<Func<Transaction, bool>> predicate);
         Task<double> GetPartnerTotalEnergyConsumedAsync(int partnerID);

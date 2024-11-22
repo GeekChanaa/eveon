@@ -1,0 +1,19 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Transaction Id 
+      <div class="tooltip" title="The id of the transaction you want to stop">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <input [(ngModel)]="transactionID" placeholder="Transaction ID" class="field__input" type="text" required>
+      </div>
+    </div>
+
+    <button (click)="stopTransaction()" class="button button__primary button-small stop__btn">Stop Transaction</button>
+  </div>
+</div>

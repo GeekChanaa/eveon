@@ -1,0 +1,86 @@
+@import ./../../../../styles/table-stats
+
+
+.stopped-reason-description-container
+  opacity: 0
+  display: none
+  transition: all 0.3s ease-in-out
+
+
+.stopped-reason-description-container.show
+  display: block
+  opacity: 1
+
+
+.stopped-reason-description-container
+  position: fixed
+  max-width: 600px
+  background: white
+  border-radius: 18px
+  border: 1px solid var(--primary4)
+  margin-top: 20px
+  z-index: 100  
+
+.stop-btn
+  color: var(--primary7)
+  fill: var(--primary7)
+  border-color: var(--primary7)
+  transition: ease-in-out all 0.4s
+
+
+.table__action
+    position:initial
+    height: 34px
+    width: 34px
+    margin-left: 8px
+    border: 1px solid var(--primary3)
+    border-radius: 50%
+    svg
+      height: 12px
+
+.request__modal_overlay
+  position: fixed
+  top: 0
+  left: 0
+  height: 100vh
+  width: 100vw
+  backdrop-filter: blur(10px)
+  z-index: 2
+
+.request__modal
+  position: fixed
+  top: 50%
+  left: 50%
+  transform: translate(-50%,-50%)
+  background: white
+  border-radius: 12px
+  width: 500px
+  z-index: 3
+  padding: 32px
+  border: 1px solid var(--primary5)
+
+
+.close-button-container
+  position: absolute
+  top: 12px
+  right: 12px
+  
+  .close-button
+    transition: ease-in-out all .2s
+    padding: 8px
+    border-radius: 50%
+    display: flex
+    align-items: center
+    justify-content: center
+    text-align: center
+    height: 32px
+    width: 32px
+    &:hover
+      svg
+        fill: var(--primary9)
+    svg
+      height: 24px
+      fill: var(--primary9)
+
+    &:hover
+      background: var(--primary3)

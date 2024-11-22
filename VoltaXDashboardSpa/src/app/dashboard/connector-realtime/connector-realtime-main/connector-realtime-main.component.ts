@@ -14,7 +14,8 @@ export enum ChargerNavbarEnum{
   UptimeReports = 7,
   Logs = 8,
   Ratings = 9,
-  ChargingSessions = 10
+  ChargingSessions = 10,
+  Transactions = 11
 }
 
 @Component({
@@ -55,8 +56,6 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   getChargePointByID(id : number){
     this._chargePointService.getChargePointByID(id).subscribe((cp) => {
       this.chargePoint = cp;
-      console.log("this is the chargepoint : " );
-      console.log(cp);
       this._wsStatusService.startPolling(this.chargePoint.chargePointId);
       this._wsStatusService.connectionStatus$.subscribe(
         data => {
@@ -66,7 +65,6 @@ export class ConnectorRealtimeMainComponent implements OnInit {
       );
 
       this._signalrChargerService.startConnection(this.chargePoint.chargePointId);
-      this._signalrChargerService.addMessageListener();
       
     })
   }
@@ -74,12 +72,6 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   // Join the group of a specific charger
   joinCharger(): void {
     this._signalrChargerService.joinChargerGroup(this.chargePoint.chargePointId);
-  }
-
-  // Send a message to the charger
-  sendMessage(): void {
-    const message = 'Start charging';
-    this._signalrChargerService.sendMessageToCharger(this.chargePoint.chargePointId, message);
   }
 
   getMenu(stepName: string): ChargerNavbarEnum | undefined {

@@ -48,7 +48,7 @@ namespace VoltaXApi.OCPP.Core
         HttpContext context,
         string ocppMessage)
     {
-        switch (message.MessageType)
+            switch (message.MessageType)
         {
             case "2":
                 OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
@@ -98,10 +98,13 @@ namespace VoltaXApi.OCPP.Core
 
         var settings = new JsonSerializerSettings
         {
-            Converters = new List<JsonConverter> { new StringEnumConverter() }
+            Converters = new List<JsonConverter> { new StringEnumConverter() },
+            NullValueHandling = NullValueHandling.Ignore
         };
 
         string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
+        Console.WriteLine("this is the right way to go");
+        Console.WriteLine(serializedMessage);
 
         await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);
 

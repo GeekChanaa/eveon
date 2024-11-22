@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
+import { TransactionService } from 'src/_services/transaction.service';
 
 @Component({
   selector: 'app-connector-realtime-transactions',
@@ -7,9 +11,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeTransactionsComponent implements OnInit {
 
-  constructor() { }
+  @Input() chargePoint : any = {};
+
+  transactions : any[] = [];
+  isHovered : boolean = false;
+  stoppingTransactionID? : string;
+
+  constructor(
+    private _transactionService: TransactionService,
+    private _modalService : ActionModalService
+  ) { }
 
   ngOnInit() {
+    this.getTransactions();
+  }
+
+  // Get ChargePoint Transactions
+  getTransactions(){
+    this._transactionService.getChargePointTransactions(this.chargePoint.chargePointId).subscribe((data) => {
+      this.transactions = data;
+    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
+    })
+  }
+
+  closeModal(){
+    this.stoppingTransactionID = undefined;
   }
 
 }
