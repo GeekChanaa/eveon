@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using OCPP.Core.Server;
+using VoltaXApi.Data;
 using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Models;
@@ -23,12 +24,14 @@ namespace VoltaXApi.OCPP.Handlers
         private readonly FileWriter _fileWriter;
         private readonly OCPPMessageProcessor _msgProcessor;
         private readonly IHubContext<ChargerHub> _hubContext;
+        private readonly IChargePointUptimeRepository _chargePointUTRepository;
         public WebSocketHandler(
           WebSocketManagerService webSocketManagerService,
           ILoggerFactory logFactory,
           IConfiguration config,
           OCPPMessageProcessor msgProcessor,
-          IHubContext<ChargerHub> hubContext)
+          IHubContext<ChargerHub> hubContext,
+          IChargePointUptimeRepository chargePointUptimeRepository)
         {
             _webSocketManagerService = webSocketManagerService;
             _config = config;
@@ -36,6 +39,7 @@ namespace VoltaXApi.OCPP.Handlers
             _fileWriter = new FileWriter();
             _msgProcessor = msgProcessor;
             _hubContext = hubContext;
+            _chargePointUTRepository = chargePointUptimeRepository;
         }
 
         public async Task AcceptWebSocketAsync(HttpContext context, string subProtocol, ChargePointStatus chargePointStatus)
@@ -43,6 +47,7 @@ namespace VoltaXApi.OCPP.Handlers
             using (WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync(subProtocol))
             {
                 Console.WriteLine($"WebSocket connection with charge point '{chargePointStatus.Id}'");
+                await this._chargePointUTRepository.StartOnline(chargePointStatus.Id);
                 chargePointStatus.WebSocket = webSocket;
                 _webSocketManagerService.AddWebSocket(chargePointStatus.Id, webSocket);
                 await ReceiveOcppMessageAsync(chargePointStatus, context);
@@ -85,10 +90,12 @@ namespace VoltaXApi.OCPP.Handlers
                 else
                 {
                     Console.WriteLine("OCPPMiddleware.Receive20 => Receive: unexpected result: CloseStatus={0} / MessageType={1}", result?.CloseStatus, result?.MessageType);
+                    await _chargePointUTRepository.StopNormal(chargePointStatus.Id);
                     await chargePointStatus.WebSocket.CloseOutputAsync((WebSocketCloseStatus)3001, string.Empty, CancellationToken.None);
                 }
             }
             Console.WriteLine("OCPPMiddleware.Receive20 => Websocket closed: State={0} / CloseStatus={1}", chargePointStatus.WebSocket.State, chargePointStatus.WebSocket.CloseStatus);
+            await _chargePointUTRepository.StopNormal(chargePointStatus.Id);
             _webSocketManagerService.RemoveWebSocket(chargePointStatus.Id);
         }
 

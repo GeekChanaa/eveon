@@ -1,0 +1,62 @@
+<div class="message__container">
+  <div class="message__info">
+    <div class="message__property">
+      Connector ID
+    </div>
+    <div class="message__value">
+      {{messageLog.connectorId}}
+    </div>
+  </div>
+
+  <div class="message__info">
+    <div class="message__property">
+      Time
+    </div>
+    <div class="message__value">
+      {{messageLog.logTime}}
+    </div>
+  </div>
+
+
+  <div class="message__info">
+    <div class="message__property">
+      Message
+    </div>
+    <div class="message__value">
+      {{messageLog.message}}
+    </div>
+  </div>
+
+  <div class="message__info">
+    <div class="message__property">
+      Result
+    </div>
+    <div class="message__value">
+      {{messageLog.result}}
+    </div>
+  </div>
+
+  <div class="message__info">
+    <div class="message__property">
+      Message Sent
+    </div>
+    <div class="message__value">
+      <pre class="language-json">
+        <code [innerHTML]="highlightedSentContent"></code>
+      </pre>
+    </div>
+  </div>
+
+  <div class="message__info">
+    <div class="message__property">
+      Message Received
+    </div>
+    <div class="message__value">
+      <pre class="language-json">
+        <code [innerHTML]="highlightedReceivedContent"></code>
+      </pre>
+    </div>
+  </div>
+
+
+</div>

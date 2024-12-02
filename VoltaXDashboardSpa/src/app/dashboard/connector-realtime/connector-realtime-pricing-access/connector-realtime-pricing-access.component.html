@@ -2,6 +2,13 @@
   Pricing & Access
 </div>
 
+<ng-container *ngIf="isLoading">
+  <app-preloader-container></app-preloader-container>
+</ng-container>
+
+<ng-container *ngIf="!isLoading && (connectors == null || connectors.length == 0)">
+  <app-empty-card [action]="'/dashboard/charging-points/'+ChargePoint.id" [actionName]="'Add Connectors'"></app-empty-card>
+</ng-container>
 
 <div class="setting__container" *ngFor="let connector of connectors; let i = index">
   <div class="setting__logo setting__logo-map">
@@ -21,7 +28,16 @@
         <input formControlName="pricePerKwh" placeholder="Price per Kwh" class="field__input price__input" type="text" required>
         <input formControlName="pricePerMinute" placeholder="Price per Minute" class="field__input price__input" type="text" required>
         <input formControlName="pricePerHour" placeholder="Price per Hour" class="field__input price__input" type="text" required>
-        <button (click)="updateConnectorPricing(i)" class="button button-small button-primary update-button">Update</button>
+        <button (click)="updateConnectorPricing(i)" [disabled]="isLoadingUpdate[connector.id]" [ngClass]="{'disabled' : isLoadingUpdate[connector.id]}" class="button button-small button-primary update-button">
+          <ng-container *ngIf="!isLoadingUpdate[connector.id]">
+            Update
+          </ng-container>
+          
+          <ng-container *ngIf="isLoadingUpdate[connector.id]" >
+            <app-svg-spinner></app-svg-spinner>
+          </ng-container>
+          
+        </button>
       </div>
     </div>
   </div>

@@ -1,0 +1,22 @@
+
+  <div *ngIf="status == 'available'" class="status__description-item-dot status__description-item-dot--available"></div>
+
+  <div *ngIf="status == 'maintenance'" class="status__description-item-dot status__description-item-dot--maintenance"></div>
+
+  <div *ngIf="status == 'error'" class="status__description-item-dot status__description-item-dot--error"></div>
+
+  <div *ngIf="status == 'disconnected'" class="status__description-item-dot status__description-item-dot--disconnected"></div>
+
+  <div *ngIf="status == 'reserved'" class="status__description-item-dot status__description-item-dot--busy-reserved"></div>
+
+  <div *ngIf="status == 'blocked'" class="status__description-item-dot status__description-item-dot--busy-blocked"></div>
+
+  <div *ngIf="status == 'scheduled'" class="status__description-item-dot status__description-item-dot--busy-scheduled"></div>
+
+  <div *ngIf="status == 'released'" class="status__description-item-dot status__description-item-dot--busy-non-released"></div>
+
+  <div *ngIf="status == 'charging'" class="status__description-item-dot status__description-item-dot--busy-non-charging"></div>
+
+  <div *ngIf="status == 'other'" class="status__description-item-dot status__description-item-dot--other"></div>
+
+  <div *ngIf="status == 'charging'" class="status__description-item-dot status__description-item-dot--charging"></div>

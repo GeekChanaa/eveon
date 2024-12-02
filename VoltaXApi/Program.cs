@@ -62,6 +62,7 @@ builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
+builder.Services.AddScoped<IChargePointService, ChargePointService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();

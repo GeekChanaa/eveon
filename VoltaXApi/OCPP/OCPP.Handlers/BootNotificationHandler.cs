@@ -5,6 +5,7 @@ using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
@@ -15,18 +16,21 @@ namespace VoltaXApi.OCPP.Handlers
     private readonly IMessageLogRepository _msgLogRepo;
     private readonly IChargePointRepository _chargePointRepository;
     private readonly IChargePointModelRepository _chargePointModelRepository;
+    private readonly IChargePointService _chargePointService;
 
     public BootNotificationHandler(
       ILoggerFactory loggerFactory,
       IMessageLogRepository messageLogRepository,
       IChargePointRepository chargePointRepository,
-      IChargePointModelRepository chargePointModelRepository
+      IChargePointModelRepository chargePointModelRepository,
+      IChargePointService chargePointService
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(BootNotificationHandler));
       _msgLogRepo = messageLogRepository;
       _chargePointRepository = chargePointRepository;
       _chargePointModelRepository = chargePointModelRepository;
+      _chargePointService = chargePointService;
     }
 
 
@@ -47,27 +51,18 @@ namespace VoltaXApi.OCPP.Handlers
         bootReason = bootNotificationRequest?.Reason.ToString();
 
         // Updating ChargePoint Informations based on the bootnotificationRequest
-        _logger.LogTrace("Updating Informations for ChargePoint : " + chargePointStatus.Id);
-        var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
-        chargePoint.Model = bootNotificationRequest.ChargingStation.Model;
-        int? chargePointModelID = await this._chargePointModelRepository.GetChargePointModelIDByIdentifier(chargePoint.Model);
-        Console.WriteLine("this is the chargePointModelID : "+ chargePointModelID);
-        Console.WriteLine("this is the Model : "+ chargePoint.Model);
-        if(chargePointModelID != null)
-          chargePoint.ChargePointModelID = chargePointModelID;
-        chargePoint.SerialNumber = bootNotificationRequest.ChargingStation.SerialNumber;
-        chargePoint.VendorName = bootNotificationRequest.ChargingStation.VendorName;
-        await _chargePointRepository.Update(chargePoint);
+        await _chargePointService.SetBootNotificationInfo(chargePointStatus, bootNotificationRequest);
 
-        
+
         _logger.LogInformation("BootNotification => Reason={0}", bootReason);
-
         BootNotificationResponse bootNotificationResponse = new BootNotificationResponse();
         bootNotificationResponse.CurrentTime = DateTime.Now;
         bootNotificationResponse.Interval = 300;
 
-        bootNotificationResponse.CustomData = new CustomDataType();
-        bootNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
+        bootNotificationResponse.CustomData = new CustomDataType
+        {
+          VendorId = OCPPHelper.VendorId
+        };
 
         // if (ChargePointStatus != null)
         // {

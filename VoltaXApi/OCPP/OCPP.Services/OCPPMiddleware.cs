@@ -89,31 +89,6 @@ namespace OCPP.Core.Server
             await apiCallerContext.Response.WriteAsync(apiResult);
         }
 
-        private async Task UnlockConnector20(ChargePointStatus chargePointStatus, HttpContext apiCallerContext)
-        {
-            UnlockConnectorRequest unlockConnectorRequest = new UnlockConnectorRequest();
-            unlockConnectorRequest.EvseId = 0;
-            unlockConnectorRequest.CustomData = new CustomDataType();
-            unlockConnectorRequest.CustomData.VendorId = ControllerOCPP20.VendorId;
-
-            string jsonResetRequest = JsonConvert.SerializeObject(unlockConnectorRequest);
-
-            OCPPMessage msgOut = new OCPPMessage();
-            msgOut.MessageType = "2";
-            msgOut.Action = "UnlockConnector";
-            msgOut.UniqueId = Guid.NewGuid().ToString("N");
-            msgOut.JsonPayload = jsonResetRequest;
-            msgOut.TaskCompletionSource = new TaskCompletionSource<string>();
-
-            await SendOcpp20Message(msgOut, chargePointStatus.WebSocket);
-
-            string apiResult = await msgOut.TaskCompletionSource.Task;
-
-            apiCallerContext.Response.StatusCode = 200;
-            apiCallerContext.Response.ContentType = "application/json";
-            await apiCallerContext.Response.WriteAsync(apiResult);
-        }
-
         private async Task SendOcpp20Message(OCPPMessage msg, WebSocket webSocket)
         {
             string? ocppTextMessage;

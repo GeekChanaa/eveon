@@ -7,6 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface IChargePointUptimeRepository : IRepository<ChargePointUptime>
     {
-
+        Task StartOnline(string chargePointID); 
+        Task StopNormal(string chargePointID); 
     }
 }

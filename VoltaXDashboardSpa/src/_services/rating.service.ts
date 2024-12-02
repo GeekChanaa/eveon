@@ -17,8 +17,8 @@ export class RatingService extends AbstractService<Rating>{
 
   baseUrl = environment.apiUrl+"/api/Rating/";
   
-  getChargePointRatings(chargePointID : number){
-    return this._http.get<any[]>(this.baseUrl+"GetChargePointRatings/"+chargePointID)
+  getChargePointRatings(chargePointID: number ,page?: number, itemsPerPage?: number, itemParams?: any){
+    return this.getAll(page, itemsPerPage, itemParams, "GetChargePointRatings/"+chargePointID)
   }
 
 }

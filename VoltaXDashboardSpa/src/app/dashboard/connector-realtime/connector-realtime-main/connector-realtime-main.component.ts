@@ -59,7 +59,7 @@ export class ConnectorRealtimeMainComponent implements OnInit {
       this._wsStatusService.startPolling(this.chargePoint.chargePointId);
       this._wsStatusService.connectionStatus$.subscribe(
         data => {
-          this.status = data?.isActive ? 'active' : 'inactive';
+          this.status = data?.isActive ? 'available' : 'disconnected';
         },
         error => console.error('Error receiving status:', error)
       );

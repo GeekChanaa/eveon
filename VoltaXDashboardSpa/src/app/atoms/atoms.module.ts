@@ -28,6 +28,9 @@ import { ConnectorStatusDescriptionComponent } from './connector-status-descript
 import { StoppedReasonDescriptionComponent } from './stopped-reason-description/stopped-reason-description.component';
 import { ToggleComponent } from './toggle/toggle.component';
 import { RatingComponent } from './rating/rating.component';
+import { PreloaderContainerComponent } from './preloader-container/preloader-container.component';
+import { ConnectorStatusDotComponent } from './connector-status-dot/connector-status-dot.component';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +56,10 @@ import { RatingComponent } from './rating/rating.component';
     ConnectorStatusDescriptionComponent,
     StoppedReasonDescriptionComponent,
     RatingComponent,
-    ToggleComponent
+    ToggleComponent,
+    PreloaderContainerComponent,
+    ConnectorStatusDotComponent,
+    PaginationComponent
    ],
   imports: [
     CommonModule,
@@ -84,7 +90,10 @@ import { RatingComponent } from './rating/rating.component';
     ConnectorStatusDescriptionComponent,
     StoppedReasonDescriptionComponent,
     ToggleComponent,
-    RatingComponent
+    RatingComponent,
+    PreloaderContainerComponent,
+    ConnectorStatusDotComponent,
+    PaginationComponent
   ],
   providers: [],
 })

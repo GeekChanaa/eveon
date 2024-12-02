@@ -2,7 +2,11 @@
   Ratings
 </div>
 
-<div class="ratings__container">
+<app-preloader-container *ngIf="isLoading"></app-preloader-container>
+
+<app-empty-card *ngIf="!isLoading && (ratings == null || ratings.length == 0)"></app-empty-card>
+
+<div class="ratings__container" *ngIf="!isLoading && ratings !=null && ratings.length > 0">
   <div class="rating__container" *ngFor="let rating of ratings">
     <div class="rating__header">
       <div class="rating__user_avatar">
@@ -19,4 +23,11 @@
       {{rating.comment}}
     </div>
   </div>
-</div>
+
+  <div class="pagination__container">
+    <app-pagination
+      [pagination]="pagination"
+      (refreshEvent)="getChargePointRatings($event)"
+      ></app-pagination>
+  </div>
+</div>  

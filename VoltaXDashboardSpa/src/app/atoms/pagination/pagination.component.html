@@ -1,0 +1,36 @@
+<div class="row__foot">
+        
+  <button 
+    class="button-stroke pagination__btn" 
+    [ngClass]="{'inactive' : currentPage == 1}"
+    [disabled]="currentPage == 1"
+    (click)="previousPage()"
+    >
+    <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
+      <use xlink:href="#icon-arrow-next"></use>
+    </svg>
+  </button>
+
+  <div class="pagination__pages">
+    <div
+      *ngFor="let page of paginationPages"
+      class="pagination__link"
+      [ngClass]="{'active' : currentPage == page}"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </div>
+  </div>
+
+  <button  
+    class="button-stroke pagination__btn" 
+    (click)="nextPage()" 
+    [disabled]="currentPage == pagination.totalPages"
+    [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
+    >
+    <svg class="icon icon-arrow-next">
+      <use xlink:href="#icon-arrow-next"></use>
+    </svg>
+  </button>
+  
+</div>

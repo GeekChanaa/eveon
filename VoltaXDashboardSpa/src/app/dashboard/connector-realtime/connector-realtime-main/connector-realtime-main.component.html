@@ -7,17 +7,8 @@
       (mouseover)="isHovered = true"
       (mouseleave)="isHovered = false"> 
         <span class="status-color">
-          <ng-container *ngIf="status == 'active'">
-            <svg  viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="6" cy="6" r="6" />
-            </svg>
-          </ng-container>
-
-          <ng-container *ngIf="status == 'inactive'">
-            <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M6 10a4 4 0 100-8 4 4 0 000 8zm0 2A6 6 0 106 0a6 6 0 000 12z" />
-            </svg>
-          </ng-container>
+          <app-connector-status-dot [status]="status"></app-connector-status-dot>
+          {{status}}
         </span> 
 
         <div class="connector-status-container" [ngClass]="{'show' : isHovered}">

@@ -16,6 +16,10 @@
     align-items: center
     justify-content: center
     border-bottom: 1px solid var(--primary4)
+    cursor: pointer
+    transition: ease-in-out all .3s
+    &:hover
+      background: var(--primary3)
     .message__icon
       flex: 0 0 10%
       width: 10%
@@ -34,7 +38,59 @@
     .message__result
       flex: 0 0 25%
       width: 25%
+      text-overflow: ellipsis
+      overflow: hidden
     .message__time
       flex: 0 0 47%
       width: 47%
-     
+
+
+.message__modal_overlay
+  position: fixed
+  top: 0
+  left: 0
+  height: 100vh
+  width: 100vw
+  backdrop-filter: blur(10px)
+  z-index: 2
+
+.message__modal
+  position: fixed
+  top: 50%
+  left: 50%
+  transform: translate(-50%,-50%)
+  background: white
+  border-radius: 12px
+  width: 500px
+  z-index: 3
+  padding: 32px
+  border: 1px solid var(--primary5)
+
+
+.button__refresh
+  border-radius: 50%
+  background: transparent
+  padding: 8px !important
+  height: auto
+  margin-right: 12px
+  &:hover
+    background: var(--primary2)
+
+  svg
+    height: 24px
+    width: 24px
+    margin-left: 0px
+    margin-right: 0px
+
+.table__actions_container
+  display: flex
+  margin-top: 32px
+  margin-left: auto
+  width: max-content
+  font-weight: 600
+  font-size: 1.2em
+  align-items: center
+  app-toggle
+    margin-left: 16px
+
+

@@ -10,5 +10,27 @@ namespace VoltaXApi.Data
         public ChargePointUptimeRepository(VoltaXApiDbContext context) : base(context)
         {
         }
+
+        public async Task StartOnline(string chargePointID)
+        {
+            ChargePointUptime chargePointUT = new ChargePointUptime{
+                ChargePointID = (await this._context.ChargePoints.FirstOrDefaultAsync(u => u.ChargePointId == chargePointID)).ID,
+                StartDate = DateTime.Now,
+                EndDate = null,
+                ChargePointUptimeStatus = ChargePointUptimeStatusEnum.Available
+            };
+
+            await _context.ChargePointUptimes.AddAsync(chargePointUT);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task StopNormal(string chargePointID)
+        {
+            var cpID = (await this._context.ChargePoints.FirstOrDefaultAsync(u => u.ChargePointId == chargePointID)).ID;
+            var chargePointUT = await this._context.ChargePointUptimes.FirstOrDefaultAsync(u => u.ChargePointID == cpID);
+            chargePointUT.EndDate = DateTime.Now;
+            await this.Update(chargePointUT);
+        }
+
     }
 }

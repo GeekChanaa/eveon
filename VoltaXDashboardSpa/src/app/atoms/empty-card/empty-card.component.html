@@ -2,4 +2,7 @@
   <div>
     <img src="{{imgSrc}}" alt="">
   </div>
+  <ng-container *ngIf="action != null && action != ''">
+    <button routerLink="{{action}}" class="button button-primary">{{actionName}}</button>
+  </ng-container>
 </div>

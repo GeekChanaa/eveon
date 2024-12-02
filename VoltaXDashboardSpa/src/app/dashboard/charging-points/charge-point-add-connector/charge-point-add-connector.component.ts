@@ -27,6 +27,7 @@ export class ChargePointAddConnectorComponent implements OnInit {
       speed: new FormControl('7.3'),
       pricePerKWh : new FormControl(""),
       pricePerMinute : new FormControl(""),
+      connectorID : new FormControl(""),
       pricePerHour : new FormControl("")
     })
    }
@@ -39,6 +40,7 @@ export class ChargePointAddConnectorComponent implements OnInit {
     const connector : any = {
       speed: cpf.speed,
       pricePerKWh: cpf.pricePerKWh,
+      connectorID: cpf.connectorID,
       pricePerMinute: cpf.pricePerMinute,
       pricePerHour: cpf.pricePerHour,
       chargePointID: this.chargePointID

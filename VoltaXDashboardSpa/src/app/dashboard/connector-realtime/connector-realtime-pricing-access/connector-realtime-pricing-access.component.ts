@@ -15,6 +15,10 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
   connectors : any[] = [];
   @Input() ChargePoint : any = {};
 
+  isLoadingUpdate : any[] = [];
+
+  isLoading : boolean = false;
+
   constructor(
     private _connectorService : ConnectorService,
     private _fb: FormBuilder,
@@ -28,30 +32,34 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
   }
 
   getConnectors() {
+    this.isLoading = true;
     this._connectorService.getChargePointConnectors(this.ChargePoint.id).subscribe((data) => {
+      this.isLoading = false;
       this.connectors = data;
       this.createFormGroupsForConnectors();
-      console.log("Connectors loaded:", this.connectors);
+    },(error) => {
+      this.isLoading = false;
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong, please try again later", 4000)
     });
   }
 
   updateConnectorPricing(index: number) {
     const updatedData = this.formArray.at(index).value;
     const connectorId = this.connectors[index].id;
+    this.isLoadingUpdate[connectorId] = true;
 
     this._connectorService.updateConnectorPricing(connectorId, updatedData).subscribe(response => {
-      console.log(`Connector ${connectorId} updated successfully`, response);
+      this.isLoadingUpdate[connectorId] = false;
       this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Pricing for connector "+ connectorId+" Updated successfully" , 4000)
     }, error => {
-      console.error(`Error updating connector ${connectorId}`, error);
+      this.isLoadingUpdate[connectorId] = false;
       this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong, please try again later", 4000)
     });
   }
 
   createFormGroupsForConnectors() {
     this.connectors.forEach((connector) => {
-      console.log("this is the connector");
-      console.log(connector);
+      this.isLoadingUpdate[connector.id] = false;
       const group = this._fb.group({
         pricePerKwh: [connector.pricePerKWh || '', Validators.required],
         pricePerMinute: [connector.pricePerMinute || '', Validators.required],

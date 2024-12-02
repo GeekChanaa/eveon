@@ -103,8 +103,6 @@ namespace VoltaXApi.OCPP.Core
         };
 
         string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
-        Console.WriteLine("this is the right way to go");
-        Console.WriteLine(serializedMessage);
 
         await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);
 
