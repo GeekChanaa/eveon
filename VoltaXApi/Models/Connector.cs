@@ -1,6 +1,6 @@
 namespace VoltaXApi.Models
 {
-    public class Connector  : IEntity
+    public class Connector : IEntity
     {
     
         public int ID { get; set; }

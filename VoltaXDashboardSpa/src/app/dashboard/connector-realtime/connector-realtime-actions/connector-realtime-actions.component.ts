@@ -15,7 +15,7 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   @Input() chargePoint : any = {};
 
   currentOcppAction : any = {};
-  requestHandlerModalVisible : boolean = false;
+  requestHandlerModalVisible : string = "";
   
   ngOnInit() {
   }
@@ -23,8 +23,11 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   OCPPActions : any[] = OCPPActions;
 
   openRequestHanlderModal(ocppAction : any){
-    this.requestHandlerModalVisible = true;
-    this.currentOcppAction = ocppAction;
+    this.requestHandlerModalVisible = ocppAction;
+  }
+
+  closeModal(){
+    this.requestHandlerModalVisible = "";
   }
 
   

@@ -99,6 +99,7 @@ builder.Services.AddScoped<SecurityEventNotificationHandler>();
 builder.Services.AddScoped<StatusNotificationHandler>();
 builder.Services.AddScoped<UnlockConnectorHandler>();
 builder.Services.AddScoped<TransactionEventHandler>();
+builder.Services.AddScoped<NotifyReportHandler>();
 
 builder.Services.AddScoped<Func<BootNotificationHandler>>(sp => () => sp.GetService<BootNotificationHandler>());
 builder.Services.AddScoped<Func<HeartBeatHandler>>(sp => () => sp.GetService<HeartBeatHandler>());
@@ -115,6 +116,7 @@ builder.Services.AddScoped<Func<SecurityEventNotificationHandler>>(sp => () => s
 builder.Services.AddScoped<Func<StatusNotificationHandler>>(sp => () => sp.GetService<StatusNotificationHandler>());
 builder.Services.AddScoped<Func<UnlockConnectorHandler>>(sp => () => sp.GetService<UnlockConnectorHandler>());
 builder.Services.AddScoped<Func<TransactionEventHandler>>(sp => () => sp.GetService<TransactionEventHandler>());
+builder.Services.AddScoped<Func<NotifyReportHandler>>(sp => () => sp.GetService<NotifyReportHandler>());
 
 
 

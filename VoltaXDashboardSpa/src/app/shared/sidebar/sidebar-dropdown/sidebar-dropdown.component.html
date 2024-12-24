@@ -1,9 +1,10 @@
 <div #itemDropDown class="sidebar__item sidebar__item_dropdown" [ngClass]="{'active': active}">
   <div #topButton class="sidebar__top">
     <button class="sidebar__head">
-      <svg class="icon icon-diamond">
-        <use xlink:href="#icon-diamond"></use>
-      </svg>{{ title | titlecase }}
+      <svg class="icon {{iconID}}">
+        <use [attr.href]="'#' + iconID"></use>
+      </svg>
+      {{ title | titlecase }}
       <svg class="icon icon-arrow-down">
         <use xlink:href="#icon-arrow-down"></use>
       </svg>

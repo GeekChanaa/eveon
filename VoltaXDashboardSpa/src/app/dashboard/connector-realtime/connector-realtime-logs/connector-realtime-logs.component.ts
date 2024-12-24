@@ -54,7 +54,13 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
     this._sRChargerService.addMessageListener(this.messageReceived)
   }
 
+  resetSearch(){
+    this.itemParams.SearchBy = []; // array of fields to search in
+    this.itemParams.SearchValue = ''; 
+  }
+
   getLogs(page : number = 1){
+    this.resetSearch();
     if(this.filters.message == "TransactionEvent" && this.eventType != "") 
       this.searchByEventType();
     this.isLoading = true;

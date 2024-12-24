@@ -1,0 +1,41 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Card ID (TokenID)
+      <div class="tooltip" title="The id of the transaction you want to stop">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select [(ngModel)]="tokenID"  class="select select_small" >
+          <option value="None">Card</option>
+          <option *ngFor="let card of cards">{{card.cardNumber+" "+card.userName}} </option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Remote Start ID
+        <div class="tooltip" title="Remote Start ID">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input [(ngModel)]="remoteStartID" placeholder="Remote Start ID" class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+  <button (click)="startTransaction()" class="button button__primary button-small stop__btn">Start Transaction</button>
+</div>

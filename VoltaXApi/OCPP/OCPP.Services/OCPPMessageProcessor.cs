@@ -48,12 +48,10 @@ namespace VoltaXApi.OCPP.Core
         HttpContext context,
         string ocppMessage)
     {
-            switch (message.MessageType)
+        switch (message.MessageType)
         {
             case "2":
                 OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
-                Console.WriteLine("this is the ocppmessageprocessor ");
-                Console.WriteLine(msgOut.RawMessage);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
 

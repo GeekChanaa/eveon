@@ -4,10 +4,16 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { AtomsModule } from 'src/app/atoms/atoms.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestStopTransactionComponent } from './request-stop-transaction/request-stop-transaction.component';
+import { RequestStartTransactionComponent } from './request-start-transaction/request-start-transaction.component';
+import { RequestUnlockConnectorComponent } from './request-unlock-connector/request-unlock-connector.component';
+import { RequestGetBaseReportComponent } from './request-get-base-report/request-get-base-report.component';
 
 @NgModule({
     declarations: [
-      RequestStopTransactionComponent
+      RequestStopTransactionComponent,
+      RequestStartTransactionComponent,
+      RequestUnlockConnectorComponent,
+      RequestGetBaseReportComponent
     ],
     imports: [
         AtomsModule,
@@ -17,7 +23,10 @@ import { RequestStopTransactionComponent } from './request-stop-transaction/requ
         FormsModule
     ],
     exports: [
-      RequestStopTransactionComponent
+      RequestStopTransactionComponent,
+      RequestStartTransactionComponent,
+      RequestUnlockConnectorComponent,
+      RequestGetBaseReportComponent
     ]
   })
   export class RequestsComponentsModule { }

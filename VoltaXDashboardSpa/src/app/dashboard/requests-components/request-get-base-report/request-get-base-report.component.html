@@ -1,0 +1,23 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Report Base
+      <div class="tooltip" title="The id of the transaction you want to stop">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select [(ngModel)]="reportBase"  class="select select_small" >
+          <option value="SummaryInventory">Summary Inventory</option>
+          <option value="FullInventory">Full Inventory</option>
+          <option value="ConfigurationInventory">Configuration Inventory</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+  <button (click)="getBaseReport()" class="button button__primary button-small request__button">Send GetBaseReport Request</button>
+</div>

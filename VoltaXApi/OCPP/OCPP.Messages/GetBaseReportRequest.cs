@@ -10,7 +10,7 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       public ReportBaseEnumType ReportBase { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 
   public enum ReportBaseEnumType

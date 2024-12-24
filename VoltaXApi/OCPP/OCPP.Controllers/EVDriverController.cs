@@ -37,8 +37,6 @@ namespace VoltaXApi.OCPP.Controllers
         public async Task<IActionResult> RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request)
         {
             var obj = JsonConvert.SerializeObject(request);
-            Console.WriteLine("this is the object");
-            Console.WriteLine(obj);
             await _EVDriverService.RequestStartTransaction(chargePointID, request);
             return Ok(new { Message = "Request to start transaction sent successfully." });
         }
