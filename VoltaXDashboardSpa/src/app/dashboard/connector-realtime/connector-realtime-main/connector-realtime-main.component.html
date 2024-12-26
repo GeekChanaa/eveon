@@ -20,17 +20,18 @@
       
     </div>
     <div class="charger__navbar">
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</div>
-      <div [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 11}" (click)="selectMenuItem(11)" class="charger__navbar-item">Transactions</div>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
+      <button  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</button>
+      <button  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 11}" (click)="selectMenuItem(11)" class="charger__navbar-item">Transactions</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 12}" (click)="selectMenuItem(12)" class="charger__navbar-item">Configurations</button>
     </div>
     <div class="settings">
       
@@ -77,6 +78,10 @@
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Transactions')">
         <app-connector-realtime-transactions *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-transactions>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('Configurations')">
+        <app-connector-realtime-configurations *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-configurations>
       </ng-container>
       
 

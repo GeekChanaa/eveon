@@ -31,7 +31,6 @@ export class ConnectorRealtimeTransactionsComponent implements OnInit {
     this._transactionService.getChargePointTransactions(this.chargePoint.chargePointId).subscribe((data) => {
       this.transactions = data;
     },(error) => {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
     })
   }
 

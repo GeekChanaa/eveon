@@ -4,6 +4,7 @@ using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
@@ -11,17 +12,17 @@ namespace VoltaXApi.OCPP.Handlers
     {
 
         private readonly IMessageLogRepository _msgLogRepo;
-        private readonly IConnectorStatusRepository _connectorStatusRepo;
+        private readonly IConnectorStatusService _connectorStatusService;
         private readonly ILogger _logger;
         public StatusNotificationHandler(
             ILoggerFactory loggerFactory,
             IMessageLogRepository messageLogRepository,
-            IConnectorStatusRepository connectorStatusRepository
+            IConnectorStatusService connectorStatusService
         )
         {
             _msgLogRepo = messageLogRepository;
             _logger = loggerFactory.CreateLogger(typeof(StatusNotificationHandler));
-            _connectorStatusRepo = connectorStatusRepository;
+            _connectorStatusService = connectorStatusService;
         }
         public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
@@ -33,6 +34,7 @@ namespace VoltaXApi.OCPP.Handlers
             statusNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
 
             int connectorId = 0;
+            int evseId = 0;
             bool msgWritten = false;
 
             try
@@ -42,6 +44,7 @@ namespace VoltaXApi.OCPP.Handlers
                 _logger.LogTrace("StatusNotification => Message deserialized");
 
                 connectorId = statusNotificationRequest.ConnectorId;
+                evseId = statusNotificationRequest.EvseId;
 
                 // Write raw status in DB
                 msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty, msgIn, msgOut);
@@ -52,7 +55,7 @@ namespace VoltaXApi.OCPP.Handlers
 
                 if (connectorId > 0)
                 {
-                    if (await _connectorStatusRepo.UpdateConnectorStatus(connectorId, newStatus.ToString(), DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
+                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus.ToString(), DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }

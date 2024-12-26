@@ -63,6 +63,8 @@ builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImage
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
 builder.Services.AddScoped<IChargePointService, ChargePointService>();
+builder.Services.AddScoped<IConnectorService, ConnectorService>();
+builder.Services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
@@ -244,8 +246,6 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
 
     var mapper = app.Services.GetRequiredService<IMapper>();
-    
-    
     // GlobalSeeder.Seed(dbContext, mapper).Wait();
     
     //SeedingNotificationTypes.Initialize(app.Services);

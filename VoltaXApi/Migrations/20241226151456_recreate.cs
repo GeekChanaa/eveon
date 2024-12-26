@@ -772,7 +772,8 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ConnectorID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConnectorID = table.Column<int>(type: "int", nullable: false),
+                    EvseID = table.Column<int>(type: "int", nullable: false),
                     ChargePointID = table.Column<int>(type: "int", nullable: true),
                     ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Power = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1186,9 +1187,9 @@ namespace VoltaXApi.Migrations
                 column: "ChargePointID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Connectors_ConnectorID_ChargePointID",
+                name: "IX_Connectors_EvseID_ConnectorID_ChargePointID",
                 table: "Connectors",
-                columns: new[] { "ConnectorID", "ChargePointID" },
+                columns: new[] { "EvseID", "ConnectorID", "ChargePointID" },
                 unique: true,
                 filter: "[ChargePointID] IS NOT NULL");
 

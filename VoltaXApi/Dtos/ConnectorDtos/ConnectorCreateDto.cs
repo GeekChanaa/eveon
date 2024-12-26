@@ -4,6 +4,7 @@ namespace VoltaXApi.Dtos
     public class ConnectorCreateDto
     {
         public string ConnectorID { get; set; }
+        public string EvseID { get; set; }
         public string? ConnectorType { get; set; }
         public decimal Power { get; set; } = 0 ;
         public string? Speed { get; set; }

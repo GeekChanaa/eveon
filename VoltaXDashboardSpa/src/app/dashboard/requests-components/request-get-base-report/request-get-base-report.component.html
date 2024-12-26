@@ -1,23 +1,54 @@
 
 <div class="request__container">
-  <div class="field">
-    <div class="field__label">Report Base
-      <div class="tooltip" title="The id of the transaction you want to stop">
-        <svg class="icon icon-info">
-          <use xlink:href="#icon-info"></use>
-        </svg>
+  <ng-container *ngIf="!isRequested">
+    <div class="field">
+      <div class="field__label">Report Base
+        <div class="tooltip" 
+          (mouseover)="isHovered = true"
+          (mouseleave)="isHovered = false">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
       </div>
-    </div>
-    <div class="field__wrap">
+      <div class="base-report-explanation-container" [ngClass]="{'show' : isHovered}">
+        <app-get-base-report-explanation></app-get-base-report-explanation>
+      </div>
       <div class="field__wrap">
-        <select [(ngModel)]="reportBase"  class="select select_small" >
-          <option value="SummaryInventory">Summary Inventory</option>
-          <option value="FullInventory">Full Inventory</option>
-          <option value="ConfigurationInventory">Configuration Inventory</option>
-        </select>
+        <div class="field__wrap">
+          <select [(ngModel)]="reportBase"  class="select select_small" >
+            <option value="SummaryInventory">Summary Inventory</option>
+            <option value="FullInventory">Full Inventory</option>
+            <option value="ConfigurationInventory">Configuration Inventory</option>
+          </select>
+        </div>
       </div>
+  
     </div>
+    <button (click)="getBaseReport()" class="button button__primary button-small request__button">
+      <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
+      <ng-container *ngIf="!isLoading">Send GetBaseReport Request</ng-container>
+    </button>
+  </ng-container>
+  
+  <ng-container *ngIf="isRequested">
+    <div class="requestid__container">
+      <div class="label">Request ID</div>
+      {{this.requestId}}
+      <button class="btn__copy">
+        
+      </button>
 
-  </div>
-  <button (click)="getBaseReport()" class="button button__primary button-small request__button">Send GetBaseReport Request</button>
+      <button class="btn__copy" (click)="copyToClipboard()">
+        <svg *ngIf="!showCheckIcon" class="icon icon-copy tooltip" title="Copy the requestID">
+          <use xlink:href="#icon-copy"></use>
+        </svg>
+
+        <svg *ngIf="showCheckIcon" class="icon icon-check">
+          <use xlink:href="#icon-check"></use>
+        </svg>
+      </button>
+    </div>
+  </ng-container>
+  
 </div>

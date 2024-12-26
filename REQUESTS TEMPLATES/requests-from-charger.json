@@ -5,7 +5,16 @@
 [2,"21","Authorize",{"idToken":{"idToken":"COOCDOC","type":"Central"}}]
 
 // Boot notification
-[2,"1","BootNotification",{"chargingStation":{"model":"NG910-60027","vendorName":"Alfen BV","serialNumber":"ACE0158711","firmwareVersion":"7.0.5-4328"},"reason":"PowerUp"}]  
+[2,"1","BootNotification",{"chargingStation":{"model":"NG920-61021","vendorName":"Alfen BV","serialNumber":"ACE0158711","firmwareVersion":"7.0.5-4328"},"reason":"PowerUp"}]  
 
 // Status Notification
 [2,"2","StatusNotification",{"connectorId":0,"errorCode":"NoError","status":"Available"}]
+
+// Notify Report for Summary
+
+
+
+// REQUESTS THAT I SHOULD TRY AND HANDLE IN MY APPLICATION  : 
+
+
+

@@ -1,5 +1,6 @@
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
@@ -17,12 +18,17 @@ namespace VoltaXApi.OCPP.Services
 
     public async Task GetBaseReport(string chargePointID, GetBaseReportRequest request)
     {
+        var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
+                
+            };
         OCPPMessage msg = new OCPPMessage
         {
             MessageType = "2",
             UniqueId = Guid.NewGuid().ToString("N"),
             Action = "GetBaseReport",
-            JsonPayload = JsonConvert.SerializeObject(request)
+            JsonPayload = JsonConvert.SerializeObject(request,settings)
         };
         await _messageProcessor.SendMessage(msg, chargePointID);
     }

@@ -141,6 +141,13 @@ namespace VoltaXApi.Data
             await _context.SaveChangesAsync();
         }
 
+        public virtual async Task RemoveByID(int ID)
+        {
+            var entity = await this.GetByIdAsync(ID);
+            _context.Set<TEntity>().Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
         public virtual async Task RemoveRange(IEnumerable<TEntity> entities)
         {
             _context.Set<TEntity>().RemoveRange(entities);

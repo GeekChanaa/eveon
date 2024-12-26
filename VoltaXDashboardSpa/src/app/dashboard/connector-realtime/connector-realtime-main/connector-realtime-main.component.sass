@@ -9,11 +9,15 @@
   border-bottom: 1px solid var(--primary4)
   .charger__navbar-item
     padding: 12px
-    cursor: pointer
     color: var(--primary8)
+    cursor: auto
     transition: ease-in-out all .2s
-    &:hover
-      color: black
+    font-size: 14px
+    font-weight: 600
+    &:not(.disabled)
+      cursor: pointer
+      &:hover
+        color: black
     &.charger__navbar-item--active
       border-bottom: 2px solid var(--secondary2)
       color: black

@@ -172,5 +172,19 @@ namespace VoltaXApi.OCPP.Controllers
             return NotFound(ex.Message);
         }
     }
+
+    [HttpPost("RefreshConnectors/{chargePointID}")]
+    public async Task<IActionResult> RefreshConnectors(string chargePointID)
+    {
+        try
+        {
+            await _configService.RefreshConnectors(chargePointID);
+            return Ok("Message Sent");
+        }
+        catch (WebSocketNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
     }
 }

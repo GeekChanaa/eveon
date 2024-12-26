@@ -15,6 +15,7 @@ namespace VoltaXApi.Data
         Task AddAsync(TEntity entity);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         Task Remove(TEntity entity);
+        Task RemoveByID(int ID);
         Task RemoveRange(IEnumerable<TEntity> entities);
         Task Update(TEntity entity);
         Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate);

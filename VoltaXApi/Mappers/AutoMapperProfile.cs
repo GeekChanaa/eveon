@@ -24,7 +24,7 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.ChargePointName, opt => 
                             opt.MapFrom(src => src.ChargePoint != null ? src.ChargePoint.ChargePointId : ""))
                 .ForMember(dest => dest.ConnectorName, opt => 
-                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : ""))
+                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : 0))
                 .ForMember(dest => dest.UserName, opt => 
                             opt.MapFrom(src => src.User != null ? src.User.FirstName + " " +src.User.LastName : ""));
             
@@ -34,7 +34,7 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.ChargePointName, opt => 
                             opt.MapFrom(src => src.ChargePoint != null ? src.ChargePoint.ChargePointId : ""))
                 .ForMember(dest => dest.ConnectorName, opt => 
-                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : ""))
+                            opt.MapFrom(src => src.Connector != null ? src.Connector.ConnectorID : 0))
                 .ForMember(dest => dest.ChargingStationName, opt => 
                             opt.MapFrom(src => src.ChargingStation != null ? src.ChargingStation.Name : ""))
                 .ForMember(dest => dest.UserName, opt => 

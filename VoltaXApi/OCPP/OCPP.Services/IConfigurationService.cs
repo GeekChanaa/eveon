@@ -16,5 +16,6 @@ namespace VoltaXApi.OCPP.Services
     Task Reset(string ChargePointID, ResetRequest request);
     Task ChangeAvailability(string ChargePointID, ChangeAvailabilityRequest request);
     Task TriggerMessage(string ChargePointID, TriggerMessageRequest request);
+    Task RefreshConnectors(string ChargePointID);
   }
 }

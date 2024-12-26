@@ -3,6 +3,8 @@ using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Core;
 using Newtonsoft.Json;
+using OCPP.Core.Server;
+using Newtonsoft.Json.Converters;
 
 namespace VoltaXApi.OCPP.Services
 {
@@ -131,6 +133,30 @@ namespace VoltaXApi.OCPP.Services
             UniqueId = Guid.NewGuid().ToString("N"),
             Action = "TriggerMessage",
             JsonPayload = JsonConvert.SerializeObject(request)
+        };
+        await _messageProcessor.SendMessage(msg, ChargePointID);
+    }
+
+    public async Task RefreshConnectors(string ChargePointID)
+    {
+        Random random = new Random();
+        GetBaseReportRequest request = new GetBaseReportRequest{
+            RequestId = random.Next(100000, 10000000),
+            ReportBase = ReportBaseEnumType.SummaryInventory,
+            CustomData = new CustomDataType{VendorId = ControllerOCPP20.VendorId}
+        };
+
+        var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
+            };
+        
+        OCPPMessage msg = new OCPPMessage
+        {
+            MessageType = "2",
+            UniqueId = Guid.NewGuid().ToString("N"),
+            Action = "GetBaseReport",
+            JsonPayload = JsonConvert.SerializeObject(request,settings)
         };
         await _messageProcessor.SendMessage(msg, ChargePointID);
     }

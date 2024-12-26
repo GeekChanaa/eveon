@@ -7,13 +7,15 @@ import { RequestStopTransactionComponent } from './request-stop-transaction/requ
 import { RequestStartTransactionComponent } from './request-start-transaction/request-start-transaction.component';
 import { RequestUnlockConnectorComponent } from './request-unlock-connector/request-unlock-connector.component';
 import { RequestGetBaseReportComponent } from './request-get-base-report/request-get-base-report.component';
+import { RequestRefreshChargerComponentsComponent } from './request-refresh-charger-components/request-refresh-charger-components.component';
 
 @NgModule({
     declarations: [
       RequestStopTransactionComponent,
       RequestStartTransactionComponent,
       RequestUnlockConnectorComponent,
-      RequestGetBaseReportComponent
+      RequestGetBaseReportComponent,
+      RequestRefreshChargerComponentsComponent
     ],
     imports: [
         AtomsModule,
@@ -26,7 +28,8 @@ import { RequestGetBaseReportComponent } from './request-get-base-report/request
       RequestStopTransactionComponent,
       RequestStartTransactionComponent,
       RequestUnlockConnectorComponent,
-      RequestGetBaseReportComponent
+      RequestGetBaseReportComponent,
+      RequestRefreshChargerComponentsComponent
     ]
   })
   export class RequestsComponentsModule { }

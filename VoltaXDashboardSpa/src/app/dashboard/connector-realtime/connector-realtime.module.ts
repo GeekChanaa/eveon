@@ -23,6 +23,7 @@ import { ConnectorRealtimeMainOverviewComponent } from './connector-realtime-mai
 import { ConnectorRealtimeTransactionsComponent } from './connector-realtime-transactions/connector-realtime-transactions.component';
 import { RequestsComponentsModule } from '../requests-components/requests-components.module';
 import { ConnectorRealtimeMessageLogComponent } from './connector-realtime-logs/connector-realtime-message-log/connector-realtime-message-log.component';
+import { ConnectorRealtimeConfigurationsComponent } from './connector-realtime-configurations/connector-realtime-configurations.component';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,8 @@ import { ConnectorRealtimeMessageLogComponent } from './connector-realtime-logs/
       ConnectorRealtimeChargingSessionsComponent,
       ConnectorRealtimeMainOverviewComponent,
       ConnectorRealtimeTransactionsComponent,
-      ConnectorRealtimeMessageLogComponent
+      ConnectorRealtimeMessageLogComponent,
+      ConnectorRealtimeConfigurationsComponent
   ],
     imports: [
         AtomsModule,

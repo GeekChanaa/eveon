@@ -20,7 +20,7 @@ namespace VoltaXApi.OCPP.Controllers
         public async Task<IActionResult> GetBaseReport(string chargePointID, GetBaseReportRequest request)
         {
             await _reportingService.GetBaseReport(chargePointID, request);
-            return Ok(new { Message = "GetBaseReport request sent successfully." });
+            return Ok(new {RequestID = request.RequestId,Message = "GetBaseReport request sent successfully." });
         }
 
         [HttpPost("GetReport/{chargePointID}")]

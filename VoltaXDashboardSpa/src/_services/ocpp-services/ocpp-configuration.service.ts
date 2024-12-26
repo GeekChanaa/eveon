@@ -58,4 +58,8 @@ export class OcppConfigurationService {
     return this._http.post<any>(this.baseUrl+"TriggerMessage/"+chargePointID,request, this.httpOptions);
   }
 
+  refreshConnectors(chargePointID : string){
+    return this._http.post<any>(this.baseUrl+"RefreshConnectors/"+chargePointID,null, this.httpOptions);
+  }
+
 }

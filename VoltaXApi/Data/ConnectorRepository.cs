@@ -60,6 +60,12 @@ namespace VoltaXApi.Data
 
             return changes > 0;
         }
+
+        public async Task<Connector?> GetConnectorByConnectorIdEvseId(int? connectorId, int evseId, int chargePointID)
+        {
+            return await _context.Connectors
+                            .Where(u=> u.ChargePointID == chargePointID && u.ConnectorID == connectorId && u.EvseID == evseId).FirstOrDefaultAsync();
+        }
     }
 }
 

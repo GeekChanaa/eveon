@@ -867,9 +867,8 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ChargePointID")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConnectorID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ConnectorID")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConnectorType")
                         .HasColumnType("nvarchar(max)");
@@ -879,6 +878,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
+
+                    b.Property<int>("EvseID")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("FlatFee")
                         .HasColumnType("decimal(18,2)");
@@ -916,7 +918,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("ChargePointID");
 
-                    b.HasIndex("ConnectorID", "ChargePointID")
+                    b.HasIndex("EvseID", "ConnectorID", "ChargePointID")
                         .IsUnique()
                         .HasFilter("[ChargePointID] IS NOT NULL");
 

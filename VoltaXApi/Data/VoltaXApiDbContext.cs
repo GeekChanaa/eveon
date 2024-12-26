@@ -105,7 +105,7 @@ namespace VoltaXApi.Data
                 .HasKey(cs => new { cs.ConnectorID, cs.ChargePointID });
 
             modelBuilder.Entity<Connector>()
-                .HasIndex(cs => new { cs.ConnectorID, cs.ChargePointID })
+                .HasIndex(cs => new { cs.EvseID,cs.ConnectorID, cs.ChargePointID })
                 .IsUnique();
 
             modelBuilder.Entity<ChargePoint>()

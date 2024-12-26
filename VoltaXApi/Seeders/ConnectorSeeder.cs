@@ -16,6 +16,7 @@ namespace VoltaXApi.Data.Seeders
                     .RuleFor(c => c.ChargePointID, f => f.PickRandom(chargePointIds))
                     .RuleFor(c => c.Power, f => f.Random.Decimal(1.0m, 1000.0m))  // Random power between 1.0 and 1000.0 kW
                     .RuleFor(c => c.ConnectorID, GenerateConnectorID())
+                    .RuleFor(c => c.EvseID, GenerateConnectorID())
                     .RuleFor(c => c.ConnectorType, f => f.PickRandom(new string[] { "Type1", "Type2", "Type3" }))
                     .RuleFor(c => c.Power, f => f.Random.Decimal(1.0m, 1000.0m))  // Random power between 1.0 and 1000.0 kW
                     .RuleFor(c => c.Speed, f => f.Random.Double(1.0, 100.0))  // Random speed between 1.0 and 100.0
@@ -35,12 +36,10 @@ namespace VoltaXApi.Data.Seeders
             return connectors;
         }
 
-        public static string GenerateConnectorID()
+        public static int GenerateConnectorID()
         {
-            Guid guid = Guid.NewGuid();
-            
-            string cardNumber = guid.ToString().Replace("-", "");
-            return cardNumber.Substring(0, 16);
+            Random random = new Random();
+            return random.Next(100000, 10000000);
         }
     }
 }

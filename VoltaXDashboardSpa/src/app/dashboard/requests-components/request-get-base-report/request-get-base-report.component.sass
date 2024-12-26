@@ -1,2 +1,35 @@
 .request__button
   margin-top: 12px
+
+.btn__copy
+  padding: 8px
+  border-radius: 50%
+  transition: ease-in-out all .2s
+  &:hover
+    background: var(--primary2)
+
+.label
+  color: var(--primary6)
+  font-size: 14px
+
+.requestid__container
+  font-size: 18px
+
+.base-report-explanation-container
+  opacity: 0
+  display: none
+  transition: all 0.3s ease-in-out
+
+
+.base-report-explanation-container.show
+  display: block
+  opacity: 1
+
+.base-report-explanation-container
+  position: fixed
+  max-width: 700px
+  background: white
+  border-radius: 18px
+  border: 1px solid var(--primary4)
+  margin-top: 20px
+  z-index: 100

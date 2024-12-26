@@ -31,6 +31,7 @@ import { RatingComponent } from './rating/rating.component';
 import { PreloaderContainerComponent } from './preloader-container/preloader-container.component';
 import { ConnectorStatusDotComponent } from './connector-status-dot/connector-status-dot.component';
 import { PaginationComponent } from './pagination/pagination.component';
+import { GetBaseReportExplanationComponent } from './get-base-report-explanation/get-base-report-explanation.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { PaginationComponent } from './pagination/pagination.component';
     ToggleComponent,
     PreloaderContainerComponent,
     ConnectorStatusDotComponent,
-    PaginationComponent
+    PaginationComponent,
+    GetBaseReportExplanationComponent
    ],
   imports: [
     CommonModule,
@@ -93,7 +95,8 @@ import { PaginationComponent } from './pagination/pagination.component';
     RatingComponent,
     PreloaderContainerComponent,
     ConnectorStatusDotComponent,
-    PaginationComponent
+    PaginationComponent,
+    GetBaseReportExplanationComponent
   ],
   providers: [],
 })

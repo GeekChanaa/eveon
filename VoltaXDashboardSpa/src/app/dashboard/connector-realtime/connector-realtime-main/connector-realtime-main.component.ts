@@ -15,7 +15,8 @@ export enum ChargerNavbarEnum{
   Logs = 8,
   Ratings = 9,
   ChargingSessions = 10,
-  Transactions = 11
+  Transactions = 11,
+  Configurations = 12
 }
 
 @Component({
@@ -30,6 +31,7 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   status : string = "inactive";
 
   isHovered: boolean = false;
+  disabledActions : boolean = true;
   
   chargePoint : any = {};
 
@@ -60,12 +62,13 @@ export class ConnectorRealtimeMainComponent implements OnInit {
       this._wsStatusService.connectionStatus$.subscribe(
         data => {
           this.status = data?.isActive ? 'available' : 'disconnected';
+          console.log("this is the disabled Actions");
+          console.log(this.status);
+          this.disabledActions = this.status == 'available';
         },
         error => console.error('Error receiving status:', error)
       );
-
       this._signalrChargerService.startConnection(this.chargePoint.chargePointId);
-      
     })
   }
 

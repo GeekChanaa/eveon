@@ -1,0 +1,11 @@
+<div class="title">Refresh Charger Components</div>
+
+<div class="description">
+  This request updates all connectors on the current charge point. It removes any connectors that don’t match the same EVSE ID or Connector ID and refreshes the statuses of the remaining connectors. Afterward, you'll be asked to provide additional details for any connectors that are not yet configured.
+</div>
+
+<div class="action">
+  <button class="button__small" (click)="refreshConnectors()">
+    Refresh Connectors
+  </button>
+</div>
