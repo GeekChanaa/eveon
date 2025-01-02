@@ -12,10 +12,12 @@ import { ConnectorService } from 'src/_services/connector.service';
 export class ConnectorRealtimePricingAccessComponent implements OnInit {
 
   formArray: FormArray;
+  flatFeeFormArray : FormArray;
   connectors : any[] = [];
   @Input() ChargePoint : any = {};
 
   isLoadingUpdate : any[] = [];
+  isLoadingFFUpdate : any[] = [];
 
   isLoading : boolean = false;
 
@@ -25,6 +27,7 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     private _modalService : ActionModalService
   ) { 
     this.formArray = this._fb.array([]);
+    this.flatFeeFormArray = this._fb.array([]);
   }
 
   ngOnInit() {
@@ -36,7 +39,10 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     this._connectorService.getChargePointConnectors(this.ChargePoint.id).subscribe((data) => {
       this.isLoading = false;
       this.connectors = data;
+      console.log("this is the connector data");
+      console.log(this.connectors);
       this.createFormGroupsForConnectors();
+      this.createFlatFeeFormGroupsForConnectors();
     },(error) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong, please try again later", 4000)
@@ -57,9 +63,24 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     });
   }
 
+  updateConnectorFlatFee(index: number) {
+    const flatFee = this.flatFeeFormArray.at(index).value;
+    const connectorId = this.connectors[index].id;
+    this.isLoadingFFUpdate[connectorId] = true;
+
+    this._connectorService.updateConnectorFlateFee(connectorId, flatFee.flatFee).subscribe(response => {
+      this.isLoadingFFUpdate[connectorId] = false;
+      this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Flat fee for connector "+ connectorId+" Updated successfully" , 4000)
+    }, error => {
+      this.isLoadingFFUpdate[connectorId] = false;
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong, please try again later", 4000)
+    });
+  }
+
+
   createFormGroupsForConnectors() {
     this.connectors.forEach((connector) => {
-      this.isLoadingUpdate[connector.id] = false;
+      this.isLoadingFFUpdate[connector.id] = false;
       const group = this._fb.group({
         pricePerKwh: [connector.pricePerKWh || '', Validators.required],
         pricePerMinute: [connector.pricePerMinute || '', Validators.required],
@@ -69,8 +90,22 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     });
   }
 
+  createFlatFeeFormGroupsForConnectors() {
+    this.connectors.forEach((connector) => {
+      this.isLoadingUpdate[connector.id] = false;
+      const group = this._fb.group({
+        flatFee: [connector.flatFee || '', Validators.required]
+      });
+      this.flatFeeFormArray.push(group);
+    });
+  }
+
   getConnectorFormGroup(index: number): FormGroup {
     return this.formArray.at(index) as FormGroup;
+  }
+
+  getFlatFeeConnectorFormGroup(index: number): FormGroup {
+    return this.flatFeeFormArray.at(index) as FormGroup;
   }
 
 }

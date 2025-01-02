@@ -128,7 +128,6 @@ export class TableListComponent implements OnInit {
     this.getAll();
   }
 
-  // Previous Page
   previousPage() {
     this.currentPage--;
     this.getAll();
@@ -264,7 +263,6 @@ export class TableListComponent implements OnInit {
     } else {
       this.paginationPages = [currentPage - 1, currentPage, '...', totalPages];
     }
-    
   }
   
   resetFilters(){

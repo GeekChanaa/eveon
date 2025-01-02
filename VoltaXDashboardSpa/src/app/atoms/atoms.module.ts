@@ -32,6 +32,10 @@ import { PreloaderContainerComponent } from './preloader-container/preloader-con
 import { ConnectorStatusDotComponent } from './connector-status-dot/connector-status-dot.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { GetBaseReportExplanationComponent } from './get-base-report-explanation/get-base-report-explanation.component';
+import { StoppedReasonTagComponent } from './stopped-reason-tag/stopped-reason-tag.component';
+import { CamelToKebabPipe } from 'src/_pipes/camel-to-kebab.pipe';
+import { ChargingSessionStatusDescriptionComponent } from './charging-session-status-description/charging-session-status-description.component';
+import { ChargingSessionStatusTagComponent } from './charging-session-status-tag/charging-session-status-tag.component';
 
 @NgModule({
   declarations: [
@@ -61,15 +65,20 @@ import { GetBaseReportExplanationComponent } from './get-base-report-explanation
     PreloaderContainerComponent,
     ConnectorStatusDotComponent,
     PaginationComponent,
-    GetBaseReportExplanationComponent
-   ],
+    GetBaseReportExplanationComponent,
+    StoppedReasonTagComponent,
+    CamelToKebabPipe,
+    ChargingSessionStatusDescriptionComponent,
+    ChargingSessionStatusTagComponent
+  ],
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
     MatRippleModule,
-    MatButtonModule
+    MatButtonModule,
+    
   ],
   exports: [
     CardComponent,
@@ -96,7 +105,11 @@ import { GetBaseReportExplanationComponent } from './get-base-report-explanation
     PreloaderContainerComponent,
     ConnectorStatusDotComponent,
     PaginationComponent,
-    GetBaseReportExplanationComponent
+    GetBaseReportExplanationComponent,
+    StoppedReasonTagComponent,
+    CamelToKebabPipe,
+    ChargingSessionStatusDescriptionComponent,
+    ChargingSessionStatusTagComponent
   ],
   providers: [],
 })

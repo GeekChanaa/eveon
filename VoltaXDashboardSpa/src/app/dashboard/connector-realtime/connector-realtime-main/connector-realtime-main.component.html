@@ -21,7 +21,7 @@
     </div>
     <div class="charger__navbar">
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
-      <button  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</button>
       <button  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</button>
@@ -37,7 +37,7 @@
       
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Overview')">
-        <app-connector-realtime-overview class="settings__container"></app-connector-realtime-overview>
+        <app-connector-realtime-overview *ngIf="chargePoint != null" [ChargePoint]="chargePoint" class="settings__container"></app-connector-realtime-overview>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('PricingAccess')">

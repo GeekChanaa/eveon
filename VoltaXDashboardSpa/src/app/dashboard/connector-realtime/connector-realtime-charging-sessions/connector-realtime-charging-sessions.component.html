@@ -3,37 +3,86 @@
 </div>
 
 <div class="stats">
-  <div class="stats__table">
-    <div class="stats__row">
-      <div class="stats__col">Start</div>
-      <div class="stats__col">End</div>
-      <div class="stats__col">User</div>
-      <div class="stats__col">Status</div>
-      <div class="stats__col">Stopped Reason <span
-        (mouseover)="isHovered = true"
-        (mouseleave)="isHovered = false">
-        <div class="tooltip">
-          <svg class="icon icon-info">
-            <use xlink:href="#icon-info"></use>
-          </svg>
+  <ng-container
+    *ngIf="chargingSessions == null || chargingSessions.length == 0"
+  >
+    <app-empty-card></app-empty-card>
+  </ng-container>
+  <ng-container *ngIf="isLoading">
+    <app-preloader-container></app-preloader-container>
+  </ng-container>
+  <ng-container *ngIf="!isLoading">
+
+    <ng-container *ngIf="chargingSessions.length > 0">
+      <div class="stats__table">
+        <div class="stats__row">
+          <div class="stats__col">Start</div>
+          <div class="stats__col">End</div>
+          <div class="stats__col">User</div>
+          <div class="stats__col">
+            Status
+            <span
+              (mouseover)="isStatusHovered = true"
+              (mouseleave)="isStatusHovered = false"
+            >
+              <div class="tooltip">
+                <svg class="icon icon-info">
+                  <use xlink:href="#icon-info"></use>
+                </svg>
+                <div
+                  class="stopped-reason-description-container"
+                  [ngClass]="{ show: isStatusHovered }"
+                >
+                  <app-charging-session-status-description></app-charging-session-status-description>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="stats__col">
+            Stopped Reason
+            <span (mouseover)="isHovered = true" (mouseleave)="isHovered = false">
+              <div class="tooltip">
+                <svg class="icon icon-info">
+                  <use xlink:href="#icon-info"></use>
+                </svg>
+              </div>
+              <div
+                class="stopped-reason-description-container"
+                [ngClass]="{ show: isHovered }"
+              >
+                <app-stopped-reason-description></app-stopped-reason-description>
+              </div>
+            </span>
+          </div>
         </div>
-        <div class="stopped-reason-description-container" [ngClass]="{'show' : isHovered}">
-          <app-stopped-reason-description></app-stopped-reason-description>
+
+        <div class="stats__row" *ngFor="let item of chargingSessions">
+          <div class="stats__col">{{ item.startDate | date: "medium" }}</div>
+          <div class="stats__col">{{ item.endDate | date: "medium" }}</div>
+          <div class="stats__col">{{ item.userName }}</div>
+          <div class="stats__col">
+            <app-charging-session-status-tag
+              [chargingSessionStatus]="item.chargingSessionStatus"
+            ></app-charging-session-status-tag>
+          </div>
+          <div class="stats__col">
+            <app-stopped-reason-tag
+              [stoppedReason]="item.stoppedReason"
+            ></app-stopped-reason-tag>
+          </div>
         </div>
-      </span> </div>
-    </div>
-    <div class="stats__row" *ngFor="let item of chargingSessions">
-      <div class="stats__col">{{item.startDate | date:'medium'}}</div>
-      <div class="stats__col">{{item.endDate | date:'medium'}}</div>
-      <div class="stats__col">{{item.userName}}</div>
-      <div class="stats__col">{{item.chargingSessionStatus}}</div>
-      <div class="stats__col">{{item.stoppedReason}}</div>
-      <div class="stats__col">
-        <div class="status-yellow stats__status">{{item.chargePointUptimeStatus}}</div>
       </div>
-    </div>
+      <div class="pagination__container">
+        <app-pagination
+          [pagination]="pagination"
+          (refreshEvent)="getChargingSessions($event)"
+          ></app-pagination>
+      </div>
+    </ng-container>
+
     
-  </div>
-</div>
+  </ng-container>
+  
+</div>  
 
 <div class="separator"></div>

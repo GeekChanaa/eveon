@@ -28,7 +28,7 @@ export class ConnectorRealtimeTransactionsComponent implements OnInit {
 
   // Get ChargePoint Transactions
   getTransactions(){
-    this._transactionService.getChargePointTransactions(this.chargePoint.chargePointId).subscribe((data) => {
+    this._transactionService.getChargePointTransactions(this.chargePoint.id).subscribe((data) => {
       this.transactions = data;
     },(error) => {
     })

@@ -42,8 +42,8 @@ export class TransactionService extends AbstractService<Transaction>{
     return this.http.get<any[]>(this.baseUrl+"GetLatestTransactions");
   }
 
-  getChargePointTransactions(chargePointId : string){
-    return this.http.get<any[]>(this.baseUrl+"GetChargePointTransactions/"+chargePointId);
+  getChargePointTransactions(chargePointID : number){
+    return this.http.get<any[]>(this.baseUrl+"GetChargePointTransactions/"+chargePointID);
   }
 
 

@@ -16,6 +16,8 @@ export class PaginationComponent implements OnInit {
 
   ngOnInit() {
     this.currentPage = this.pagination.currentPage;
+    console.log("this is the paginatio for this component");
+    console.log(this.pagination);
     this.generatePaginationLinks();
   }
 

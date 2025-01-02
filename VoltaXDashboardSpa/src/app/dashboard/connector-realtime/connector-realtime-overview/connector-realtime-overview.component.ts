@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-connector-realtime-overview',
@@ -7,9 +7,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeOverviewComponent implements OnInit {
 
-  constructor() { }
+  @Input() ChargePoint : any = {}
+
+  countChargingSessions : number = 0;
+  countChargingSessionsLastWeek : number = 0;
+
+  constructor(
+  ) { }
 
   ngOnInit() {
+
   }
+
+  getStatistics(){
+
+  }
+
 
 }
