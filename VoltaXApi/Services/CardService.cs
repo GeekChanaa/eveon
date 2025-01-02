@@ -9,6 +9,13 @@ namespace VoltaXApi.Services
     {
       private readonly ICardRepository _cardRepository;
 
+      public CardService(
+        ICardRepository cardRepository
+      ) 
+      {
+        _cardRepository = cardRepository;
+      }
+
       public async Task<AuthorizationStatusEnumType> ValidateCard(string idTag)
         {
             if (string.IsNullOrWhiteSpace(idTag))

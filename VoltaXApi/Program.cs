@@ -24,6 +24,7 @@ using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Factories;
 using AutoMapper;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ChargingSessionInvoiceGeneratorService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
@@ -146,7 +148,7 @@ builder.Services.AddScoped<IReportingService,ReportingService>();
 builder.Services.AddScoped<ISmartChargingService,SmartChargingService>();
 builder.Services.AddScoped<ITransactionsService,TransactionsService>();
 
-
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(ChargingSessionProfile));

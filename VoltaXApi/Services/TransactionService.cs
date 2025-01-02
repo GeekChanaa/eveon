@@ -4,6 +4,7 @@ using VoltaXApi.Dtos;
 using VoltaXApi.OCPP.Messages;
 using OCPP.Core.Server;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.Data.Seeders;
 
 namespace VoltaXApi.Services
 {
@@ -46,9 +47,22 @@ namespace VoltaXApi.Services
     {
       try
       {
-        int cardTagID = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First().ID;
+        Card? card = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First();
+        int cardTagID = card.ID;
         int chargePointID = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id)).ID;
-        int chargingSessionID = (await _chargingSessionRepository.GetLastChargingSession(connectorID)).ID;
+
+        ChargingSession chargingSession = new()
+        {
+          ConnectorID = connectorID,
+          UserID = (int)(card.UserID == null ? 1 : card.UserID),
+          CardID = card.ID,
+          StartDate = DateTime.Now,
+          StoppedReason = ReasonEnumType.Local,
+          ChargingSessionStatus = ChargingSessionStatusEnum.Pending
+        };
+
+        await this._chargingSessionRepository.AddAsync(chargingSession);
+
 
         transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
         if (transactionEventResponse.IdTokenInfo.Status == AuthorizationStatusEnumType.Accepted)
@@ -59,7 +73,7 @@ namespace VoltaXApi.Services
             transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
             transaction.ConnectorID = connectorID;
             transaction.StartCardID = cardTagID;
-            transaction.ChargingSessionID = chargingSessionID;
+            transaction.ChargingSessionID = chargingSession.ID;
             transaction.StartTime = DateTime.Parse(transactionEventRequest.Timestamp);
             transaction.MeterStart = meterKWH;
             transaction.StartResult = transactionEventRequest.TriggerReason.ToString();
@@ -176,7 +190,9 @@ namespace VoltaXApi.Services
     {
       try
       {
+        Console.WriteLine("updating transactin");
         int cardTagID = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First().ID;
+        Console.WriteLine("updating transactin 2");
         ChargePoint chargePoint = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id));
 
         if (string.IsNullOrWhiteSpace(idTag))
@@ -184,6 +200,7 @@ namespace VoltaXApi.Services
         else
           transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
 
+        Console.WriteLine("updating transactin 3");
         Transaction? transaction = _context
             .Transactions.Where(t =>
                 t.Uid == transactionEventRequest.TransactionInfo.TransactionId

@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Helpers;
+using VoltaXApi.Services;
+using VoltaxApi.Dtos;
 
 namespace VoltaXApi.Controllers
 {
@@ -20,10 +22,14 @@ namespace VoltaXApi.Controllers
     public class ChargingSessionController : GenericController<ChargingSession>
     {
         private readonly IChargingSessionRepository _repository;
+        private readonly ChargingSessionInvoiceGeneratorService _invoiceGenerator; 
 
-        public ChargingSessionController(IChargingSessionRepository repository) : base(repository)
+        public ChargingSessionController(
+            IChargingSessionRepository repository,
+            ChargingSessionInvoiceGeneratorService invoiceGeneratorService) : base(repository)
         {
             _repository = repository;
+            _invoiceGenerator = invoiceGeneratorService;
         }
 
         [HttpGet("GetChargePointChargingSessions/{chargePointID}")]
@@ -35,7 +41,38 @@ namespace VoltaXApi.Controllers
             return chargingSessionsList;
         }
 
-        
+        [HttpGet("GetChargingSessionInformations/{chargingSessionID}")]
+        public async Task<IActionResult> GetChargingSessionInformations(int chargingSessionID)
+        {
+            return Ok(await _repository.GetChargingSessionInformations(chargingSessionID));
+        }
+
+        [HttpGet("GetChargingSessionInvoice/{chargingSessionID}")]
+        public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID)
+        {
+            var chargingSession = await _repository.GetChargingSessionInformations(chargingSessionID);
+            var chargingSessionInvoice = new ChargingSessionInvoice
+            {
+                UserName = chargingSession.UserName,
+                SessionDate = chargingSession.StartDate,
+                ChargePointName = chargingSession.ChargePointName,
+                TotalKwhCharged = chargingSession.KwhCharged ?? 0,
+                TotalPrice = chargingSession.TotalPrice ?? 0,
+                Transactions = chargingSession.Transactions
+                                            .Select(cs => new TransactionItem
+                                            {
+                                                StartTime = cs.StartTime,
+                                                StopTime = cs.StopTime,
+                                                MeterStart = cs.MeterStart,
+                                                MeterStop = cs.MeterStop,
+                                                Amount = cs.Amount
+                                            })
+                                            .ToList()
+            };
+            var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
+
+            return File(pdfBytes, "application/pdf", "Invoice.pdf");
+        }
 
 
     }

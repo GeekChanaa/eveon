@@ -12,7 +12,7 @@
       <div class="field__wrap">
         <select [(ngModel)]="tokenID"  class="select select_small" >
           <option value="None">Card</option>
-          <option *ngFor="let card of cards">{{card.cardNumber+" "+card.userName}} </option>
+          <option *ngFor="let card of cards" value="{{card.cardNumber}}">{{card.cardNumber+" "+card.userName}} </option>
         </select>
       </div>
     </div>

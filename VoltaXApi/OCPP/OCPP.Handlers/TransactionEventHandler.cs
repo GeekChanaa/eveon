@@ -20,14 +20,14 @@ namespace VoltaXApi.OCPP.Handlers
         public TransactionEventHandler(
             ILoggerFactory loggerFactory,
             IMessageLogRepository messageLogRepository,
-            ITransactionService transactionRepository,
+            ITransactionService transactionService,
             IConnectorRepository connectorRepository,
             IChargePointRepository chargePointRepository
         )
         {
             _logger = loggerFactory.CreateLogger(typeof(TransactionEventHandler));
             _msgLogRepo = messageLogRepository;
-            _transactionService = transactionRepository;
+            _transactionService = transactionService;
             _connectorRepository = connectorRepository;
             _chargePointRepository = chargePointRepository;
         }

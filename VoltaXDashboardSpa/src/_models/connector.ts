@@ -3,6 +3,8 @@ import { ChargePoint } from "./charge-point";
 export interface Connector {
     id: number;
     chargePointID: number;
+    connectorID: number;
+    evseID: number;
     connectorType?: string;
     power: number;
     speed: number;

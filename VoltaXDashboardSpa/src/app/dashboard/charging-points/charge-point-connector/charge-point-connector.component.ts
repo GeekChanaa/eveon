@@ -17,6 +17,8 @@ export class ChargePointConnectorComponent implements OnInit {
   @Output() refreshEvent : EventEmitter<number> = new EventEmitter<number>();
   @Input() connectorID : number = 0;
 
+  editingConnector : number = 0;
+
   chargePointCategory : string = "";
   chargePointStatus : string = "";
 
@@ -46,9 +48,11 @@ export class ChargePointConnectorComponent implements OnInit {
   getConnector(){
     this._connectorService.getById(this.connectorID).subscribe((data) => {
       this.connector = data;
-      console.log("this is the connector");
-      console.log(this.connector);
     })
+  }
+
+  editConnector(id : number){
+    this.editingConnector = id;
   }
 
 

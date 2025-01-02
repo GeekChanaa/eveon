@@ -1,0 +1,58 @@
+<form [formGroup]="connectorForm">
+  
+  <app-form-field
+    class="field"
+    title="Connector ID"
+    description="tbd"
+    [control]="getControl('connectorID')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="EVSE ID"
+    description="tbd"
+    [control]="getControl('evseID')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="speed"
+    description="tbd"
+    [control]="getControl('speed')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Price Per Kwh"
+    description="tbd"
+    [control]="getControl('pricePerKWh')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Price Per Minute"
+    description="tbd"
+    [control]="getControl('pricePerMinute')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Price Per Hour"
+    description="tbd"
+    [control]="getControl('pricePerHour')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Flat Fee"
+    description="flat fee means a fixed cost charged for using the charger, regardless of the charging duration or the amount of energy consumed."
+    [control]="getControl('flatFee')"
+  ></app-form-field>
+
+  <div class="flex form__actions">
+    <button (click)="cpfOnSubmit()" class="button submit__button">Update</button>
+    <button (click)="cancelEvent.emit()" class="button-stroke btn-cancel">
+      Cancel
+    </button>
+  </div>
+</form>

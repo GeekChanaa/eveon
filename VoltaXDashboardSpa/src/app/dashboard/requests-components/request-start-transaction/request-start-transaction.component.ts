@@ -15,7 +15,7 @@ export class RequestStartTransactionComponent implements OnInit {
   @Output() successEvent : EventEmitter<void> = new EventEmitter();
 
   cards : any[] = [];
-  tokenID : number = 0;
+  tokenID : string = "";
   remoteStartID : number = 0;
   constructor(
     private _cardService: CardService,
@@ -41,6 +41,8 @@ export class RequestStartTransactionComponent implements OnInit {
         idToken : this.tokenID
       }
     };
+    console.log("this is the start transaction");
+    console.log(startTransactionRequest);
     this._evDriverService.requestStartTransaction(this.chargePointID, startTransactionRequest).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Success","Transaction Started Successfully",4000);
       this.successEvent.emit()

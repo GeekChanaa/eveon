@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <div class="stats__row" *ngFor="let item of chargingSessions">
+        <div class="stats__row" *ngFor="let item of chargingSessions" routerLink="/dashboard/connector-realtime/{{chargePoint.id}}/charging-session/{{item.id}}">
           <div class="stats__col">{{ item.startDate | date: "medium" }}</div>
           <div class="stats__col">{{ item.endDate | date: "medium" }}</div>
           <div class="stats__col">{{ item.userName }}</div>

@@ -1,0 +1,152 @@
+<div class="page__inner">
+  <div class="page__container page__container--large">
+    <div class="page__title h3" *ngIf="chargingSessionID !=0">
+      Charging Session #{{chargingSessionID}}
+  </div>
+  <ng-container *ngIf="isLoading">
+    <app-preloader-container></app-preloader-container>
+  </ng-container>
+  
+  <ng-container *ngIf="!isLoading">
+    <div class="settings">  
+      <div class="title-purple card__title">
+        Informations
+      </div>
+      <div class="card__info">
+        <app-display-item
+          class="card__display_item"
+          name="Charge Point"
+          tooltip="info"
+          value="{{ chargingSession.chargePointName }}"
+        ></app-display-item>
+  
+        <app-display-item
+          class="card__display_item"
+          name="Charged By User"
+          tooltip="info"
+          value="{{ chargingSession.userName }}"
+        ></app-display-item>
+  
+        <app-display-item
+          class="card__display_item"
+          name="Card Used"
+          tooltip="info"
+          value="{{ chargingSession.card.cardNumber }}"
+        ></app-display-item>
+  
+        <app-display-item
+          class="card__display_item"
+          name="Connector"
+          tooltip="info"
+          value="{{ chargingSession.connectorID }}"
+        ></app-display-item>
+  
+        <app-display-item
+          class="card__display_item"
+          name="Start Date"
+          tooltip="info"
+          value="{{ chargingSession.startDate }}"
+        ></app-display-item>
+  
+        <app-display-item
+          class="card__display_item"
+          name="End Date"
+          tooltip="info"
+          value="{{ chargingSession.endDate }}"
+        ></app-display-item>
+      </div>
+      
+    </div>
+  </ng-container>
+  
+  
+  
+
+  <div class="settings">
+    <div class="title-purple card__title">
+      Price
+    </div>  
+    <div class="card__price">
+      <div class="card__price_details">
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">kWh Charged</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged}}</div>
+        </div>
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">Price Charged</div>
+          <div class="card__price_details_item-value">{{chargingSession.connectorRatio}}</div>
+        </div>
+        <div class="card__price_details_item card__price_details_item--footer">
+          <div class="card__price_details_item-name">Total Price</div>
+          <div class="card__price_details_item-value">{{chargingSession.totalPrice}}</div>
+        </div>
+      </div>
+      <div class="card__price_recharge_card">
+        <div class="card__price_recharge_card-number"> 
+          <div class="card__price_recharge_card-number--value">Card Number</div>
+          {{chargingSession.card.cardNumber}} </div>
+        <div class="card__price_recharge_card-amount"> 
+          Balance : {{chargingSession.card.balance}} </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="settings">
+    <div class="title-purple card__title">
+      Price Breakdown
+    </div>
+    
+    <div class="price-breakdown">
+      <!-- VAT Toggle -->
+      <div class="vat-toggle">
+        <label>
+          <input type="radio" name="vatOption" value="withVAT" checked>
+          With VAT
+        </label>
+        <label>
+          <input type="radio" name="vatOption" value="withoutVAT">
+          Without VAT
+        </label>
+      </div>
+      
+      <!-- Price Table -->
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>kWh charged</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> {{chargingSession.startDate}} </td>
+            <td> {{chargingSession.totalPrice}} </td>
+            <td> Charged {{chargingSession.kwhCharged}} kWhs at {{chargingSession.totalPrice}} US$</td>
+            <td> {{chargingSession.kwhCharged}} </td>
+            <td> {{chargingSession.totalPrice}} </td>
+          </tr>
+          <tr>
+            <td colspan="3">Total</td>
+            <td>{{chargingSession.kwhCharged}}</td>
+            <td>{{chargingSession.totalPrice}}</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Download Invoice PDF Section -->
+      <div class="download__pdf">
+        <button (click)="getInvoice()" class="button">Get Invoice</button>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+
+
+
+

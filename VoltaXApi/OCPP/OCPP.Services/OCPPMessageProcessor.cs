@@ -51,6 +51,8 @@ namespace VoltaXApi.OCPP.Core
         switch (message.MessageType)
         {
             case "2":
+                Console.WriteLine("process message in");
+                Console.WriteLine(message.JsonPayload);
                 OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
@@ -76,6 +78,8 @@ namespace VoltaXApi.OCPP.Core
 
     public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
+        Console.WriteLine("SEND MESSAGE LOGGING");
+        Console.WriteLine(message.JsonPayload);
         var ocppArrayMessage = new object[]
         {
             JRaw.Parse(message.MessageType),

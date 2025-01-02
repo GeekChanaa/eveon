@@ -11,6 +11,7 @@ import { ChargingPointsComponent } from './charging-points.component';
 import { ChargingPointComponent } from './charging-point/charging-point.component';
 import { ChargePointConnectorComponent } from './charge-point-connector/charge-point-connector.component';
 import { ChargePointAddConnectorComponent } from './charge-point-add-connector/charge-point-add-connector.component';
+import { ChargePointEditConnectorComponent } from './charge-point-edit-connector/charge-point-edit-connector.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { ChargePointAddConnectorComponent } from './charge-point-add-connector/c
       ChargingPointsComponent,
       ChargingPointComponent,
       ChargePointConnectorComponent,
-      ChargePointAddConnectorComponent
+      ChargePointAddConnectorComponent,
+      ChargePointEditConnectorComponent
     ],
     imports: [
         AtomsModule,
