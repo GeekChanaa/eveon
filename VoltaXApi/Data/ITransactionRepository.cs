@@ -19,7 +19,7 @@ namespace VoltaXApi.Data
         Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync();
         Task<double> GetTotalEnergyConsumedBetween(DateTime date1, DateTime date2);
         Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20);
-        Task<List<TransactionListDto>> GetChargePointTransactions(string chargePointId);
+        Task<List<TransactionListDto>> GetChargePointTransactions(int chargePointId);
         // Partner Functions
         Task<double> CountPartnerEnergy(int partnerID,Expression<Func<Transaction, bool>> predicate);
         Task<double> GetPartnerTotalEnergyConsumedAsync(int partnerID);
@@ -29,8 +29,5 @@ namespace VoltaXApi.Data
         Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID,DateTime date1, DateTime date2);
         Task<List<Transaction>> GetPartnerLatestTransactions(int partnerID,int nbrTransactions = 20);
         IQueryable<Transaction> GetCardTransactions(int cardID);
-        Task StartTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
-        Task UpdateTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
-        Task EndTransaction( TransactionEventRequest transactionEventRequest, TransactionEventResponse transactionEventResponse, ChargePointStatus chargePointStatus, int connectorID, string? idTag, string errorCode, double meterKWH);
     }
 }

@@ -187,8 +187,10 @@ namespace VoltaXApi.Data
             return await query.ToListAsync();
         }
 
-        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate)
         {
+            if(predicate == null)
+                return await dbSet.CountAsync();
             return await dbSet.CountAsync(predicate);
         }
     }

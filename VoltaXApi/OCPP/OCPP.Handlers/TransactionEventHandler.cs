@@ -5,24 +5,31 @@ using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
     public class TransactionEventHandler : IOCPPRequestHandler
     {
         private readonly IMessageLogRepository _msgLogRepo;
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly ITransactionService _transactionService;
+        private readonly IConnectorRepository _connectorRepository;
+        private readonly IChargePointRepository _chargePointRepository;
         private readonly ILogger _logger;
 
         public TransactionEventHandler(
             ILoggerFactory loggerFactory,
             IMessageLogRepository messageLogRepository,
-            ITransactionRepository transactionRepository
+            ITransactionService transactionRepository,
+            IConnectorRepository connectorRepository,
+            IChargePointRepository chargePointRepository
         )
         {
             _logger = loggerFactory.CreateLogger(typeof(TransactionEventHandler));
             _msgLogRepo = messageLogRepository;
-            _transactionRepository = transactionRepository;
+            _transactionService = transactionRepository;
+            _connectorRepository = connectorRepository;
+            _chargePointRepository = chargePointRepository;
         }
 
         public async Task<string> Handle(
@@ -45,15 +52,18 @@ namespace VoltaXApi.OCPP.Handlers
 
                 TransactionEventRequest transactionEventRequest =
                     JsonConvert.DeserializeObject<TransactionEventRequest>(msgIn.JsonPayload);
-                Console.WriteLine("TransactionEvent => Message deserialized");
+
                 string idTag = "";
                 if (transactionEventRequest.IdToken != null)
                     idTag = CleanChargeTagId(transactionEventRequest.IdToken.IdToken, _logger);
-                Console.WriteLine("this is the idTag : " + idTag);
-                connectorId =
-                    (transactionEventRequest.EVSE != null)
-                        ? (int)transactionEventRequest.EVSE.ConnectorId
-                        : 0;
+
+                var chargePoint = await this._chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+                
+                var connector = await this._connectorRepository
+                    .GetConnectorByConnectorIdEvseId(
+                        (int)transactionEventRequest.EVSE.ConnectorId, 
+                        (int)transactionEventRequest.EVSE.Id, 
+                        chargePoint.ID);
 
                 //  Extract meter values with correct scale
                 double currentChargeKW = -1;
@@ -71,11 +81,11 @@ namespace VoltaXApi.OCPP.Handlers
 
                 if (transactionEventRequest.EventType == TransactionEventEnumType.Started)
                 {
-                    await _transactionRepository.StartTransaction(
+                    await _transactionService.StartTransaction(
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connectorId,
+                        connector.ID,
                         idTag,
                         errorCode,
                         meterKWH
@@ -83,11 +93,11 @@ namespace VoltaXApi.OCPP.Handlers
                 }
                 else if (transactionEventRequest.EventType == TransactionEventEnumType.Updated)
                 {
-                    await _transactionRepository.UpdateTransaction(
+                    await _transactionService.UpdateTransaction(
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connectorId,
+                        connector.ID,
                         idTag,
                         errorCode,
                         meterKWH
@@ -95,11 +105,11 @@ namespace VoltaXApi.OCPP.Handlers
                 }
                 else if (transactionEventRequest.EventType == TransactionEventEnumType.Ended)
                 {
-                    await _transactionRepository.EndTransaction(
+                    await _transactionService.EndTransaction(
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connectorId,
+                        connector.ID,
                         idTag,
                         errorCode,
                         meterKWH

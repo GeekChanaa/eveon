@@ -344,35 +344,6 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChargingSessions",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ChargePointID = table.Column<int>(type: "int", nullable: false),
-                    ConnectorID = table.Column<int>(type: "int", nullable: false),
-                    UserID = table.Column<int>(type: "int", nullable: false),
-                    CardID = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    StoppedReason = table.Column<int>(type: "int", nullable: false),
-                    ChargingSessionStatus = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChargingSessions", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ChargingSessions_Users_UserID",
-                        column: x => x.UserID,
-                        principalTable: "Users",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ChargingStations",
                 columns: table => new
                 {
@@ -772,7 +743,7 @@ namespace VoltaXApi.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ConnectorID = table.Column<int>(type: "int", nullable: false),
+                    ConnectorID = table.Column<int>(type: "int", nullable: true),
                     EvseID = table.Column<int>(type: "int", nullable: false),
                     ChargePointID = table.Column<int>(type: "int", nullable: true),
                     ConnectorType = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -800,42 +771,37 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "ChargingSessions",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Uid = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChargePointID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConnectorID = table.Column<int>(type: "int", nullable: false),
-                    StartTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MeterStart = table.Column<double>(type: "float", nullable: false),
-                    StartResult = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StopTagId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StopTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    MeterStop = table.Column<double>(type: "float", nullable: true),
-                    StopReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    CardID = table.Column<int>(type: "int", nullable: true),
-                    ChargePointID1 = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    CardID = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StoppedReason = table.Column<int>(type: "int", nullable: false),
+                    ChargingSessionStatus = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.ID);
+                    table.PrimaryKey("PK_ChargingSessions", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Transactions_Cards_CardID",
-                        column: x => x.CardID,
-                        principalTable: "Cards",
-                        principalColumn: "ID");
+                        name: "FK_ChargingSessions_Connectors_ConnectorID",
+                        column: x => x.ConnectorID,
+                        principalTable: "Connectors",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Transactions_ChargePoints_ChargePointID1",
-                        column: x => x.ChargePointID1,
-                        principalTable: "ChargePoints",
-                        principalColumn: "ID");
+                        name: "FK_ChargingSessions_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -948,6 +914,60 @@ namespace VoltaXApi.Migrations
                         principalTable: "Users",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Uid = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ChargingSessionID = table.Column<int>(type: "int", nullable: false),
+                    ConnectorID = table.Column<int>(type: "int", nullable: true),
+                    StartCardID = table.Column<int>(type: "int", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MeterStart = table.Column<double>(type: "float", nullable: false),
+                    StartResult = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StopCardID = table.Column<int>(type: "int", nullable: true),
+                    StopTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MeterStop = table.Column<double>(type: "float", nullable: true),
+                    StopReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChargePointID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Cards_StartCardID",
+                        column: x => x.StartCardID,
+                        principalTable: "Cards",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Transactions_Cards_StopCardID",
+                        column: x => x.StopCardID,
+                        principalTable: "Cards",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Transactions_ChargePoints_ChargePointID",
+                        column: x => x.ChargePointID,
+                        principalTable: "ChargePoints",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Transactions_ChargingSessions_ChargingSessionID",
+                        column: x => x.ChargingSessionID,
+                        principalTable: "ChargingSessions",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Connectors_ConnectorID",
+                        column: x => x.ConnectorID,
+                        principalTable: "Connectors",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -1111,6 +1131,11 @@ namespace VoltaXApi.Migrations
                 filter: "[TagID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChargingSessions_ConnectorID",
+                table: "ChargingSessions",
+                column: "ConnectorID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ChargingSessions_UserID",
                 table: "ChargingSessions",
                 column: "UserID");
@@ -1191,7 +1216,7 @@ namespace VoltaXApi.Migrations
                 table: "Connectors",
                 columns: new[] { "EvseID", "ConnectorID", "ChargePointID" },
                 unique: true,
-                filter: "[ChargePointID] IS NOT NULL");
+                filter: "[ConnectorID] IS NOT NULL AND [ChargePointID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConnectorStatuses_ChargePointID1",
@@ -1284,14 +1309,29 @@ namespace VoltaXApi.Migrations
                 column: "ChargePointModelID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_CardID",
+                name: "IX_Transactions_ChargePointID",
                 table: "Transactions",
-                column: "CardID");
+                column: "ChargePointID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_ChargePointID1",
+                name: "IX_Transactions_ChargingSessionID",
                 table: "Transactions",
-                column: "ChargePointID1");
+                column: "ChargingSessionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_ConnectorID",
+                table: "Transactions",
+                column: "ConnectorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_StartCardID",
+                table: "Transactions",
+                column: "StartCardID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_StopCardID",
+                table: "Transactions",
+                column: "StopCardID");
         }
 
         /// <inheritdoc />
@@ -1317,9 +1357,6 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "ChargeTags");
-
-            migrationBuilder.DropTable(
-                name: "ChargingSessions");
 
             migrationBuilder.DropTable(
                 name: "ChargingStationImages");
@@ -1386,6 +1423,9 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cards");
+
+            migrationBuilder.DropTable(
+                name: "ChargingSessions");
 
             migrationBuilder.DropTable(
                 name: "Countries");

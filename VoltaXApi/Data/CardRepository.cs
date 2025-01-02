@@ -12,9 +12,14 @@ namespace VoltaXApi.Data
     {
 
         private readonly IMapper _mapper;
-        public CardRepository(VoltaXApiDbContext context, IMapper mapper) : base(context)
+        private readonly ITransactionRepository _transactionRepository;
+        public CardRepository(
+            VoltaXApiDbContext context, 
+            ITransactionRepository transactionRepository,
+            IMapper mapper) : base(context)
         {
             _mapper = mapper;
+            _transactionRepository = transactionRepository;
         }
 
         // Get all user recharge cards
@@ -26,9 +31,8 @@ namespace VoltaXApi.Data
         // get card transactions
         public async Task<List<TransactionDto>> GetCardTransactions(int CardID)
         {
-            var card = await _context.Cards.Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ID == CardID);
-            var transactions = card?.Transactions.AsQueryable();
-            return _mapper.ProjectTo<TransactionDto>(transactions).ToList();
+            var cardTransactions = _transactionRepository.GetCardTransactions(CardID);
+            return _mapper.ProjectTo<TransactionDto>(cardTransactions).ToList();
         }
 
         // get card Orders
@@ -49,61 +53,21 @@ namespace VoltaXApi.Data
         public async Task<CardWithTransactionsOrdersDto> GetCardByID(int CardID)
         {
             var card = await _context.Cards
-                .Include(u => u.Transactions)
-                    .ThenInclude(u => u.ChargePoint)
                 .Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
 
-            var cardDto = new CardWithTransactionsOrdersDto
-            {
-                ID = card.ID,
-                CardNumber = card.CardNumber,
-                CardType = card.CardType,
-                ExpirationDate = card.ExpirationDate,
-                MaxCount = card.MaxCount,
-                Status = card.Status,
-                Balance = card.Balance,
-                Note = card.Note,
-                UserID = card.UserID,
-                Orders = card.Orders.Select(o => new CardOrderDto
-                {
-                    ID = o.ID,
-                    Amount = o.Amount,
-                    RechargeDate = o.RechargeDate
-                }).ToList(),
-                Transactions = card.Transactions.Select(t => new CardTransactionDto
-                {
-                    ID = t.ID,
-                    Uid = t.Uid,
-                    ChargePointID = t.ChargePoint.ChargePointId,
-                    ConnectorID = t.ConnectorID,
-                    StartTagId = t.StartTagId,
-                    StartTime = t.StartTime,
-                    MeterStart = t.MeterStart,
-                    StartResult = t.StartResult,
-                    StopTagId = t.StopTagId,
-                    StopTime = t.StopTime,
-                    MeterStop = t.MeterStop,
-                    StopReason = t.StopReason,
-                    Amount = t.Amount
-                }).ToList()
-            };
+            var cardTransactions = await _transactionRepository.GetCardTransactions(card.ID).ToListAsync();
+            var cardTransactionsDto = _mapper.Map<List<Transaction>, List<CardTransactionDto>>(cardTransactions);
+
+            var cardDto = _mapper.Map<Card,CardWithTransactionsOrdersDto>(card);
+            cardDto.Transactions = cardTransactionsDto;
 
             return cardDto;
         }
 
         public async Task CreateCard(CreateCardDto card)
         {
-            string cardNumber = await this.GenerateCardNumber();
-            Card cardToCreate = new Card{
-                CardNumber = cardNumber,
-                CardType = card.CardType,
-                ExpirationDate = card.ExpirationDate,
-                MaxCount = card.MaxCount,
-                Status = card.Status,
-                Balance = card.Balance,
-                Note = card.Note,
-                UserID = card.UserID,
-            };
+            Card cardToCreate = _mapper.Map<CreateCardDto, Card>(card);
+            card.CardNumber = await this.GenerateCardNumber();
             await this.AddAsync(cardToCreate);
         }
 
@@ -115,26 +79,12 @@ namespace VoltaXApi.Data
 
             do
             {
-                cardNumber = GenerateRandomCardNumber(16);
+                cardNumber = CardHelper.GenerateRandomCardNumber(16);
                 exists = await _context.Cards.AnyAsync(c => c.CardNumber == cardNumber);
 
             } while (exists); 
 
             return cardNumber;
-        }
-
-        private string GenerateRandomCardNumber(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            var cardNumber = new char[length];
-
-            for (int i = 0; i < length; i++)
-            {
-                cardNumber[i] = chars[random.Next(chars.Length)];
-            }
-
-            return new string(cardNumber);
         }
 
 

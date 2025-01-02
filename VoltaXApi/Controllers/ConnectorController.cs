@@ -47,6 +47,12 @@ namespace VoltaXApi.Controllers
         {
             return Ok(await this._repository.UpdateConnectorPricing(connectorID, updateConnectorPricingDto));
         }
+
+        [HttpPost("UpdateConnectorFlatFee/{connectorID}")]
+        public async Task<IActionResult> UpdateConnectorFlatFee(int connectorID, [FromBody] UpdateConnectorFlatFeeDto flatFee)
+        {
+            return Ok(await this._repository.UpdateConnectorFlatFee(connectorID, flatFee.FlatFee));
+        }
         
     }
 }

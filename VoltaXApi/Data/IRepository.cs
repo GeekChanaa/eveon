@@ -18,7 +18,7 @@ namespace VoltaXApi.Data
         Task RemoveByID(int ID);
         Task RemoveRange(IEnumerable<TEntity> entities);
         Task Update(TEntity entity);
-        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate);
         Task<IEnumerable<TEntity>> GetPagedAsync( Expression<Func<TEntity, bool>> filter, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy, int? pageNumber, int? pageSize);
     }
 }

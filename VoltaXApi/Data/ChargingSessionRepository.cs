@@ -3,6 +3,7 @@ using VoltaXApi.Dtos;
 using Microsoft.EntityFrameworkCore;
 using OCPP.Core.Server;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace VoltaXApi.Data
 {
@@ -16,12 +17,21 @@ namespace VoltaXApi.Data
             _mapper = mapper;
         }
 
-        public async Task<List<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID)
+        public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID)
         {
-            var chargingSessions = await _context.ChargingSessions.Include(u => u.User).Where(cs => cs.ChargePointID == chargePointID).ToListAsync();
-            var result = _mapper.Map<List<ChargingSession>,List<ChargePointChargingSessionListDto>>(chargingSessions);
-            return result;
+            var chargingSessions = _context.ChargingSessions.Include(u => u.User).Include(u=> u.Connector)
+                .Where(cs => cs.Connector.ChargePointID == chargePointID).AsQueryable().ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
+            return chargingSessions;
         }
+
+        public async Task<ChargingSession> GetLastChargingSession(int connectorID)
+        {
+            return await this._context.ChargingSessions
+                    .Where(c => c.ConnectorID == connectorID && c.EndDate != null)
+                    .OrderByDescending(c => c.StartDate)
+                    .FirstOrDefaultAsync();
+        }
+
 
     }
 }

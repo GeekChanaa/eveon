@@ -76,7 +76,7 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargePointTransactions/{chargePointId}")]
-        public async Task<ActionResult<List<TransactionListDto>>> GetChargePointTransactions(string chargePointId)
+        public async Task<ActionResult<List<TransactionListDto>>> GetChargePointTransactions(int chargePointId)
         {
             return await this._repository.GetChargePointTransactions(chargePointId);
         }

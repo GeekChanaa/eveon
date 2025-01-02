@@ -14,7 +14,6 @@ namespace VoltaXApi.Models
         public int? UserID { get; set; }
         public User? User { get; set; }
         public ICollection<Order>? Orders { get; set; }
-        public ICollection<Transaction>? Transactions { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

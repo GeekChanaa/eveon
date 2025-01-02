@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -26,10 +27,15 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargePointChargingSessions/{chargePointID}")]
-        public async Task<List<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID)
+        public async Task<List<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID, [FromQuery] GlobalParams globalParams)
         {
-            return await this._repository.GetChargePointChargingSessions(chargePointID); 
+            var chargingSessions = this._repository.GetChargePointChargingSessions(chargePointID);
+            var chargingSessionsList = await PagedList<ChargePointChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
+            return chargingSessionsList;
         }
+
+        
 
 
     }
