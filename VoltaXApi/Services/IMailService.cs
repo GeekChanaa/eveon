@@ -9,5 +9,6 @@ namespace VoltaXApi.Services
     {
         Task SendVerificationEmailAsync(MailRequest mailRequest,string verificationLink);
         Task SendEmailAsync(MailRequest mailRequest);
+        Task SendReportEmail(SystemReport report);
     }
 }

@@ -13,6 +13,7 @@ namespace VoltaXApi.Models
         public decimal PricePerKWh { get; set; } = 0;
         public decimal PricePerMinute { get; set; } = 0; 
         public decimal PricePerHour { get; set; } = 0;
+        public decimal CostPerKwh { get; set; } = 0;
         public decimal FlatFee { get; set; }  = 0 ;     
         public decimal MaxPower { get; set; }  = 100;
         public TimeSpan? StartTime { get; set; }    

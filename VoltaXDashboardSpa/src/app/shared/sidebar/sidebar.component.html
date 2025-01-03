@@ -48,6 +48,8 @@
       <app-sidebar-dropdown iconID="icon-setting" *ngIf="role == 0" [title]="'maintenance management'" 
         [active]="isDropdownActive('/dashboard/alarm-management')">
         <app-sidebar-link [title]="'alarm management'" [link]="'/dashboard/alarm-management'" [active]="isActive('/dashboard/alarm-management')"></app-sidebar-link>
+        <app-sidebar-link [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'" [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
+        <app-sidebar-link [title]="'System Reports'" [link]="'/dashboard/system-reports'" [active]="isActive('/dashboard/system-reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-maintenance" *ngIf="role == 0" [title]="'ocpp operation'"

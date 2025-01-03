@@ -25,6 +25,7 @@ import { StatisticsComponent } from './statistics/statistics.component';
 import { CommentsComponent } from './comments/comments.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ConnectorRealtimeComponent } from './connector-realtime/connector-realtime.component';
+import { SystemReportsComponent } from './system-reports/system-reports.component';
 const routes: Routes = [
   {
     path: "",
@@ -51,6 +52,12 @@ const routes: Routes = [
     component: ChargingPointsComponent,
     loadChildren : () => import('./charging-points/charging-points.module')
       .then(m=>m.ChargingPointsModule)
+  },
+  {
+    path: "system-reports",
+    component: SystemReportsComponent,
+    loadChildren : () => import('./system-reports/system-reports.module')
+      .then(m=>m.SystemReportsModule)
   },
   {
     path: "charging-profile",

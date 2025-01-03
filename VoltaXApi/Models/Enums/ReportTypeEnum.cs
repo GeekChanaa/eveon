@@ -5,6 +5,6 @@ namespace VoltaXApi.Models
       ChargePoint, 
       Connector,   
       Website,     
-      Other         
+      Other  
   }
 }

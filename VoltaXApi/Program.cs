@@ -66,6 +66,8 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IConnectorService, ConnectorService>();
 builder.Services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
+builder.Services.AddScoped<ISystemReportService, SystemReportService>();
+builder.Services.AddScoped<ISystemReportRepository, SystemReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
@@ -194,6 +196,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
+builder.Services.AddSingleton(resolver =>
+{
+    var configuration = resolver.GetRequiredService<IConfiguration>();
+    var globalConfig = new GlobalConfigurations();
+    configuration.GetSection("GlobalConfigurations").Bind(globalConfig);
+    return globalConfig;
+});
 builder.Services.AddSingleton<WebSocketManagerService>();
 builder.Services.AddSingleton<ChargePointStatusManagerService>();
 builder.Services.AddSingleton<RequestQueueManagerService>();

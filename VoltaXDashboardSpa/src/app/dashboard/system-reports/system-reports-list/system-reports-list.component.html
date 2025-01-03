@@ -1,16 +1,16 @@
 <div class="page__inner">
   <div class="page__container">
     <app-table-list 
-      name="charge point"
-      names="charge points"
-      [searchByAttributes]="['ChargePointId','Address']"
-      routeName="charging-points"
-      createLink="/dashboard/charging-points/create"
+      name="system report"
+      names="system reports"
+      [searchByAttributes]="['IssueDescription']"
+      routeName="system-reports"
+      createLink="/dashboard/system-reports/create"
       [fields]="fields" 
       [filters]="filters"
-      [deletable]="false"
-      [getItemsObservable]="getChargePointsObservable.bind(this)"
-      [updateItemObservable]="updateChargePointObservable.bind(this)"
+      [getItemsObservable]="getSystemReportsObservable.bind(this)"
+      [deleteItemObservable]="deleteSystemReportObservable.bind(this)"
+      [updateItemObservable]="updateSystemReportObservable.bind(this)"
       searchByPlaceHolder="Search by Name"
       (resetFiltersEvent)="resetFilters()"
       >
@@ -64,14 +64,6 @@
           
         </div>
       </ng-container>
-
-      <ng-template appTableCustomButton let-item>
-        <button class="sidebar__add table__action connector__btn" routerLink="/dashboard/connector-realtime/{{item.id}}"> 
-          <svg class="icon icon-charging-station">
-              <use xlink:href="#icon-charging-station"></use>
-          </svg>  
-        </button>
-      </ng-template>
 
       
     </app-table-list>

@@ -281,6 +281,8 @@ namespace VoltaXApi.Controllers
                 Subject = "Email Verification",
                 Body = ""
             };
+
+            
             await this._mailService.SendVerificationEmailAsync(requ,spaLink+"auth/verify-email?");
             return StatusCode(200);
         }

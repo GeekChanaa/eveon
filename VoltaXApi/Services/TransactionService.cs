@@ -190,17 +190,14 @@ namespace VoltaXApi.Services
     {
       try
       {
-        Console.WriteLine("updating transactin");
         int cardTagID = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First().ID;
-        Console.WriteLine("updating transactin 2");
-        ChargePoint chargePoint = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id));
+        ChargePoint chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
 
         if (string.IsNullOrWhiteSpace(idTag))
           transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
         else
           transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
 
-        Console.WriteLine("updating transactin 3");
         Transaction? transaction = _context
             .Transactions.Where(t =>
                 t.Uid == transactionEventRequest.TransactionInfo.TransactionId
@@ -213,13 +210,10 @@ namespace VoltaXApi.Services
             || transaction.StopTime.HasValue
         )
         {
-          // unknown transaction id or already stopped transaction
-          // => find latest transaction for the charge point and check if its open
           Console.WriteLine(
               "EndTransaction => Unknown or closed transaction uid={0}",
               transactionEventRequest.TransactionInfo?.TransactionId
           );
-          // find latest transaction for this charge point
           transaction = _context
               .Transactions.Where(t => t.ConnectorID == connectorID)
               .OrderByDescending(t => t.ID)
@@ -227,12 +221,6 @@ namespace VoltaXApi.Services
 
           if (transaction != null)
           {
-            Console.WriteLine(
-                "EndTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",
-                transaction.ID,
-                transaction.StartTime.ToString("O"),
-                transaction?.StopTime?.ToString("O")
-            );
             if (transaction.StopTime.HasValue)
             {
               Console.WriteLine(
@@ -254,41 +242,21 @@ namespace VoltaXApi.Services
 
         if (transaction != null)
         {
-          // check current tag against start tag
-          // bool valid = true;
-          // if (!string.Equals(transaction.StartTagId, idTag, StringComparison.InvariantCultureIgnoreCase))
-          // {
-          //     // tags are different => same group?
-          //     ChargeTag? startTag = _context.ChargeTags.Where(c => c.TagID == transaction.StartTagId).FirstOrDefault();
-          //     if (startTag != null)
-          //     {
-          //         if (!string.Equals(startTag.ParentTagId, ct?.ParentTagId, StringComparison.InvariantCultureIgnoreCase))
-          //         {
-          //             Console.WriteLine("EndTransaction => Start-Tag ('{0}') and End-Tag ('{1}') do not match: Invalid!", transaction.StartTagId, ct?.ID);
-          //             transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
-          //             valid = false;
-          //         }
-          //         else
-          //         {
-          //             Console.WriteLine("EndTransaction => Different charge tags but matching group ('{0}')", ct?.ParentTagId);
-          //         }
-          //     }
-          //     else
-          //     {
-          //         Console.WriteLine("EndTransaction => Start-Tag not found: '{0}'", transaction.StartTagId);
-          //         // assume "valid" and allow to end the transaction
-          //     }
-          // }
+          
 
-          // if (valid)
-          // {
-          // write current meter value in "stop" value
           Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
 
           transaction.StopTime = DateTime.Parse(transactionEventRequest.Timestamp);
           transaction.MeterStop = meterKWH;
           transaction.StopCardID = cardTagID;
           transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
+
+          double kwhCharged = (double)(transaction.MeterStop - transaction.MeterStart);
+
+          // Updating the Amount of the card related to the tag id.
+
+          await _cardService.SubstractAmountFromCard(cardTagID, kwhCharged, connectorID);
+
           _context.SaveChanges();
 
           // Update connecter status to available
