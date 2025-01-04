@@ -60,8 +60,14 @@
       </div>
     </div>
   </div>
+
+
   <div class="row__inner">
-    <div class="row__container">
+
+    <ng-container *ngIf="data == null || data.length == 0">
+      <app-empty-card></app-empty-card>
+    </ng-container>
+    <div class="row__container" *ngIf="!isLoading && data != null && data.length > 0">
       <div class="row__wrapper">
         <div class="row__table">
           <div class="row__row">
@@ -77,7 +83,6 @@
             </ng-container>
             <div class="row__col">Options</div>
           </div>
-          <ng-container *ngIf="!isLoading && data != null && data.length > 0">
             <div class="row__row" *ngFor="let item of data">
               <ng-container *ngFor="let field of fields">
                 <!-- <div *ngIf="fieldShown[field] && fieldShown[field] instanceof Date" el class="row__col">this date</div> -->
@@ -101,11 +106,8 @@
                 </div>
             </div>
             </div>
-          </ng-container>
 
-          <ng-container *ngIf="data == null || data.length == 0">
-            <app-empty-card></app-empty-card>
-          </ng-container>
+         
           
           
           

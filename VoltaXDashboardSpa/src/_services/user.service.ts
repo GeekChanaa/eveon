@@ -61,6 +61,10 @@ export class UserService extends AbstractService<User>{
     return this._http.get<any>(this.baseUrl + "IsPhoneUnique/"+phone);
   }
 
+  getSupportUserNames(){
+    return this._http.get<any>(this.baseUrl + "GetSupportUserNames/");
+  }
+
   GetPartnerNames(){
     return this._http.get<any[]>(this.baseUrl + "GetPartnerNames").pipe(
       map(users => users.map(user => ({
@@ -69,6 +73,9 @@ export class UserService extends AbstractService<User>{
       })))
     );
   }
+
+
+
   
 
 }

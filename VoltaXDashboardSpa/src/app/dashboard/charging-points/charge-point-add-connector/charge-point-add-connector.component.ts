@@ -28,7 +28,10 @@ export class ChargePointAddConnectorComponent implements OnInit {
       pricePerKWh : new FormControl(""),
       pricePerMinute : new FormControl(""),
       connectorID : new FormControl(""),
-      pricePerHour : new FormControl("")
+      evseID : new FormControl(""),
+      pricePerHour : new FormControl(""),
+      costPerKwh : new FormControl(""),
+      flatFee : new FormControl(""),
     })
    }
 
@@ -41,9 +44,12 @@ export class ChargePointAddConnectorComponent implements OnInit {
       speed: cpf.speed,
       pricePerKWh: cpf.pricePerKWh,
       connectorID: cpf.connectorID,
+      evseID: cpf.evseID,
       pricePerMinute: cpf.pricePerMinute,
       pricePerHour: cpf.pricePerHour,
-      chargePointID: this.chargePointID
+      chargePointID: this.chargePointID,
+      costPerKwh: cpf.costPerKwh,
+      flatFee: cpf.flatFee, 
     }
     this._connectorService.create(connector).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success, "Success", "The Connector has been added succesfully", 4000);

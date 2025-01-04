@@ -83,13 +83,28 @@ namespace VoltaXApi.Services
 
 				}
 
-				public async Task SendReportEmail(SystemReport report)
+				public async Task SendReportEmailToAdmin(SystemReport report)
 				{
 					MailRequest mailRequest = new() {
 						Name = "System",
 						ToEmail = "chanaa.projects@gmail.com",
 						Subject = "System Report"
 					};
+					await SendReportEmail(mailRequest, report);
+				}
+
+				public async Task SendReportEmailToSupport(SystemReport report, string email)
+				{
+					MailRequest mailRequest = new() {
+						Name = "System",
+						ToEmail = email,
+						Subject = "System Report"
+					};
+					await SendReportEmail(mailRequest, report);
+				}
+
+				public async Task SendReportEmail(MailRequest mailRequest, SystemReport report)
+				{
 					PrepareEmailElements(mailRequest,out var email, out var builder);
 					var template = GetEmailTemplate("system-report");
 					var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
@@ -121,7 +136,7 @@ namespace VoltaXApi.Services
 				private void PrepareEmailElements(MailRequest mailRequest,out MimeMessage message, out BodyBuilder builder)
 				{
 					message = new MimeMessage();
-					message.From.Add(new MailboxAddress("TESTER", _mailSettings.Mail));
+					message.From.Add(new MailboxAddress(mailRequest.Subject, _mailSettings.Mail));
 					message.Sender = MailboxAddress.Parse(_mailSettings.Mail);
 					message.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
 					message.Subject = mailRequest.Subject;

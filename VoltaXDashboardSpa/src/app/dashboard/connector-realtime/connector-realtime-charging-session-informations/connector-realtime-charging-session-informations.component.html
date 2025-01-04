@@ -64,6 +64,35 @@
 
   <div class="settings">
     <div class="title-purple card__title">
+      Cost
+    </div>  
+    <div class="card__price">
+      <div class="card__price_details">
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">kWh Charged</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged}}</div>
+        </div>
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">Cost Per Kwh</div>
+          <div class="card__price_details_item-value">{{chargingSession.connectorCostRatio}}</div>
+        </div>
+        <div class="card__price_details_item card__price_details_item--footer">
+          <div class="card__price_details_item-name">Total Cost</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged * chargingSession.connectorCostRatio}}</div>
+        </div>
+      </div>
+      <div class="card__price_recharge_card">
+        <div class="card__price_recharge_card-number"> 
+          <div class="card__price_recharge_card-number--value">Card Number</div>
+          {{chargingSession.card.cardNumber}} </div>
+        <div class="card__price_recharge_card-amount"> 
+          Balance : {{chargingSession.card.balance}} </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <div class="title-purple card__title">
       Price
     </div>  
     <div class="card__price">
@@ -98,17 +127,16 @@
     </div>
     
     <div class="price-breakdown">
-      <!-- VAT Toggle -->
-      <div class="vat-toggle">
-        <label>
-          <input type="radio" name="vatOption" value="withVAT" checked>
-          With VAT
-        </label>
-        <label>
-          <input type="radio" name="vatOption" value="withoutVAT">
-          Without VAT
-        </label>
+      <div class="vat-toggle-container">
+        <app-toggle-buttons class="vat-toggle"
+          [optionOne]="'With VAT'" 
+          [optionTwo]="'Without VAT'"
+          [selectedOption]="'With VAT'" 
+          (selectionChange)="onToggleChange($event)">
+      </app-toggle-buttons>
       </div>
+
+      
       
       <!-- Price Table -->
       <table class="price-table">

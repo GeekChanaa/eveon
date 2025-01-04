@@ -1,0 +1,14 @@
+<div class="toggle-container">
+  <button 
+    class="toggle-button" 
+    [class.active]="selectedOption === optionOne" 
+    (click)="toggle(optionOne)">
+    {{ optionOne }}
+  </button>
+  <button 
+    class="toggle-button" 
+    [class.active]="selectedOption === optionTwo" 
+    (click)="toggle(optionTwo)">
+    {{ optionTwo }}
+  </button>
+</div>

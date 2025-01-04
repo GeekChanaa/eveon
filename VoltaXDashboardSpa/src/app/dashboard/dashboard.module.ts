@@ -28,6 +28,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
+import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 
 @NgModule({
     declarations: [
@@ -51,7 +52,8 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
       NotificationSettingsComponent,
       CompleteProfileComponent,
       DebitCardsComponent,
-      ProfileSecurityComponent
+      ProfileSecurityComponent,
+      GlobalConfigurationsComponent
   ],
     imports: [
         DashboardRoutingModule,

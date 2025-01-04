@@ -44,6 +44,13 @@
 
   <app-form-field
     class="field"
+    title="Cost Per Kwh"
+    description="tbd"
+    [control]="getControl('costPerKwh')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
     title="Flat Fee"
     description="flat fee means a fixed cost charged for using the charger, regardless of the charging duration or the amount of energy consumed."
     [control]="getControl('flatFee')"

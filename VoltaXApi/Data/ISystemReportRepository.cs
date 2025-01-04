@@ -10,5 +10,6 @@ namespace VoltaXApi.Data
 {
     public interface ISystemReportRepository : IRepository<SystemReport>
     {
+        Task<SystemReportDisplayDto> GetSystemReport(int systemReportID);
     }
 }

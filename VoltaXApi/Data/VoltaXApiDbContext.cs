@@ -13,6 +13,18 @@ namespace VoltaXApi.Data
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SystemReport>(entity =>
+            {
+                entity.HasOne(sr => sr.Resolved)
+                    .WithMany()
+                    .HasForeignKey(sr => sr.ResolvedByID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sr => sr.Assigned)
+                    .WithMany()
+                    .HasForeignKey(sr => sr.AssignedID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
             modelBuilder.Entity<ChargeTag>()
                 .HasIndex(e => e.TagID)
                 .IsUnique();

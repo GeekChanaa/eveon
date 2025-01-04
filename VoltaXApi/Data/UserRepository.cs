@@ -83,5 +83,18 @@ namespace VoltaXApi.Data
         {
             return await _context.Users.AnyAsync(u => u.Phone == phone);
         }
+
+        public async Task<List<UserNameDto>> GetSupportUserNames()
+        {
+            var users = await _context.Users.Where(u => u.Role == UserRole.Support).ToListAsync();
+            return _mapper.Map<List<User>,List<UserNameDto>>(users);
+        }
+
+        public async Task<string> GetUserEmailByID(int userID)
+        {
+            return (await _context.Users.FirstOrDefaultAsync(u => u.ID == userID)).Email;
+        }
+
+        
     }
 }

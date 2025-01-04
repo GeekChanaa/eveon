@@ -32,6 +32,7 @@ export class ChargePointEditConnectorComponent implements OnInit {
           connectorID : new FormControl(""),
           evseID : new FormControl(""),
           flatFee : new FormControl(""),
+          costPerKwh : new FormControl(""),
       })
    }
 
@@ -50,6 +51,7 @@ export class ChargePointEditConnectorComponent implements OnInit {
         connectorID: data.connectorID || '',
         evseID: data.evseID || '',
         flatFee: data.flatFee || '',
+        costPerKwh: data.costPerKwh || '',
       });
     })
   }
@@ -65,6 +67,7 @@ export class ChargePointEditConnectorComponent implements OnInit {
       connectorID: cpf.connectorID,
       evseID: cpf.evseID,
       flatFee: cpf.flatFee,
+      costPerKwh: cpf.costPerKwh,
     };
     this._connectorService.edit(this.connector.id,this.connector).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success, "Success", "The Connector has been edited succesfully", 4000);

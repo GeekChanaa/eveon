@@ -153,6 +153,7 @@ builder.Services.AddScoped<ITransactionsService,TransactionsService>();
 QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddAutoMapper(typeof(SystemReportMapperProfile));
 builder.Services.AddAutoMapper(typeof(ChargingSessionProfile));
 builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));

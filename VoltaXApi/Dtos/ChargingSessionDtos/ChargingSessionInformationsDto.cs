@@ -13,6 +13,7 @@ namespace VoltaXApi.Dtos
     public int? CardID { get; set; }
     public int? ConnectorID { get; set; }
     public decimal? ConnectorRatio { get; set; }
+    public decimal? ConnectorCostRatio { get; set; }
     public int? ChargePointID { get; set; }
     public string? ChargePointName { get; set; }
     public double? KwhCharged { get; set; }

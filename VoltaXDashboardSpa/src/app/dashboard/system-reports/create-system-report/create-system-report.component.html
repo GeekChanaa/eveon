@@ -1,3 +1,212 @@
-<p>
-  create-system-report works!
-</p>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">New System Report</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="create">
+        <div class="create__row">
+          <div class="create__col">
+              <div class="create__card card charge_point_form">
+                <app-progress-bar *ngIf="isLoading"></app-progress-bar>
+                <div class="create__group create__group3" *ngIf="!isLoading">
+                    <div class="field">
+                      <div class="field__label">Issue Description
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <input  class="field__input" type="text" formControlName="issueDescription" placeholder="Issue Description"
+                          required>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Criticality
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-enum-select 
+                            [enumType]="reportCriticality"
+                            formControlName="criticality"></app-enum-select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Status
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-enum-select 
+                            [enumType]="reportStatus"
+                            formControlName="status"></app-enum-select>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="field">
+                      <div class="field__label">Category
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-enum-select 
+                            [enumType]="reportCategory"
+                            formControlName="reportCategory"></app-enum-select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Send Email ? 
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-toggle formControlName="isEmail"></app-toggle>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Send Notification ?
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-toggle formControlName="isNotification"></app-toggle>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Connector
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="connectorID">
+                            <option [value]="null">None</option>
+                            <option *ngFor="let connector of connectors" value="{{connector.id}}">{{connector.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">ChargePoint
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="chargePointID">
+                            <option [value]="null">None</option>
+                            <option *ngFor="let chargePoint of chargePoints" value="{{chargePoint.id}}">{{chargePoint.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <div class="field">
+                      <div class="field__label">Assigned User
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="assignedID">
+                            <option [value]="null">None</option>
+                            <option *ngFor="let support of supports" value="{{support.id}}">{{support.fullName}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Concerned User
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="userID">
+                            <option [value]="null">None</option>
+                            <option *ngFor="let support of supports" value="{{support.id}}">{{support.fullName}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Card
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <select class="select" formControlName="cardID">
+                            <option [value]="null">None</option>
+                            <option *ngFor="let card of cards" value="{{card.id}}">{{card.fullName}} {{card.cardNumber}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="btns_group">
+          <button [disabled]="form.invalid"  [ngClass]="{'disabled': form.invalid}" class="button" type="submit"> 
+            <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+            <ng-container *ngIf="!isLoading"> Submit </ng-container>
+          </button>
+        </div>
+    </form>
+  </div>

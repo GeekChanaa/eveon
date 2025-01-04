@@ -14,4 +14,11 @@ export class SystemReportService extends AbstractService<SystemReport>{
     super(http,environment.apiUrl+"/api/SystemReport/");
   }
 
+  createSystemReport(report : any){
+    return this._http.post<any>(this.baseUrl+"CreateSystemReport",report);
+  }
+
+  getSystemReportInformations(id : number){
+    return this._http.get<any>(this.baseUrl+"GetSystemReport/"+id);
+  }
 }

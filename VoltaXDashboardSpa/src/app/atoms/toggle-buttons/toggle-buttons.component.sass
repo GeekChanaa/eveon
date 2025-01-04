@@ -1,0 +1,32 @@
+.toggle-container 
+  display: flex
+  justify-content: center
+  align-items: center
+  border-radius: 5px
+  overflow: hidden
+  width: fit-content
+  padding: 2px
+  background: var(--primary2)
+
+
+.toggle-button 
+  padding: 8px 16px
+  font-size: 1em
+  font-weight: 600
+  border: none
+  background-color: #f0f0f0
+  color: #333
+  cursor: pointer
+  transition: background-color 0.3s ease, color 0.3s ease
+  border-radius: 6px
+  margin: 2px
+
+
+.toggle-button.active 
+  background-color: var(--secondary1)
+  color: white
+
+
+.toggle-button:not(.active):hover 
+  background-color: #e0e0e0
+

@@ -50,7 +50,8 @@ namespace VoltaXApi.Data
                     EndDate = cs.EndDate,
                     ConnectorID = cs.ConnectorID,
                     ConnectorRatio = cs.Connector.PricePerKWh,
-                    Transactions = cs.Transactions.ToList()
+                    Transactions = cs.Transactions.ToList(),
+                    ConnectorCostRatio = cs.Connector.CostPerKwh
                 })
                 .FirstOrDefaultAsync();
 

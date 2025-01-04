@@ -36,6 +36,8 @@ import { StoppedReasonTagComponent } from './stopped-reason-tag/stopped-reason-t
 import { CamelToKebabPipe } from 'src/_pipes/camel-to-kebab.pipe';
 import { ChargingSessionStatusDescriptionComponent } from './charging-session-status-description/charging-session-status-description.component';
 import { ChargingSessionStatusTagComponent } from './charging-session-status-tag/charging-session-status-tag.component';
+import { EnumSelectComponent } from './enum-select/enum-select.component';
+import { ToggleButtonsComponent } from './toggle-buttons/toggle-buttons.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +71,9 @@ import { ChargingSessionStatusTagComponent } from './charging-session-status-tag
     StoppedReasonTagComponent,
     CamelToKebabPipe,
     ChargingSessionStatusDescriptionComponent,
-    ChargingSessionStatusTagComponent
+    ChargingSessionStatusTagComponent,
+    EnumSelectComponent,
+    ToggleButtonsComponent,
   ],
   imports: [
     CommonModule,
@@ -87,6 +91,7 @@ import { ChargingSessionStatusTagComponent } from './charging-session-status-tag
     SmallCardComponent,
     DisplayCellComponent,
     FormFieldComponent,
+    ToggleButtonsComponent,
     RechargeCardComponent,
     SelectFormFieldComponent,
     DebitCardComponent,
@@ -109,7 +114,8 @@ import { ChargingSessionStatusTagComponent } from './charging-session-status-tag
     StoppedReasonTagComponent,
     CamelToKebabPipe,
     ChargingSessionStatusDescriptionComponent,
-    ChargingSessionStatusTagComponent
+    ChargingSessionStatusTagComponent,
+    EnumSelectComponent
   ],
   providers: [],
 })

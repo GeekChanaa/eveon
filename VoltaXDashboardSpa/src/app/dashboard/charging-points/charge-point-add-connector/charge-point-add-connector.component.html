@@ -9,6 +9,13 @@
 
   <app-form-field
     class="field"
+    title="EVSE ID"
+    description="tbd"
+    [control]="getControl('evseID')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
     title="speed"
     description="tbd"
     [control]="getControl('speed')"
@@ -33,6 +40,20 @@
     title="Price Per Hour"
     description="tbd"
     [control]="getControl('pricePerHour')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Flat Fee"
+    description="tbd"
+    [control]="getControl('flatFee')"
+  ></app-form-field>
+
+  <app-form-field
+    class="field"
+    title="Cost Per Kwh"
+    description="tbd"
+    [control]="getControl('costPerKwh')"
   ></app-form-field>
 
   <div class="flex form__actions">

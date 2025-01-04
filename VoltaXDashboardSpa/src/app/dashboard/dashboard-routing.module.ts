@@ -26,6 +26,7 @@ import { CommentsComponent } from './comments/comments.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ConnectorRealtimeComponent } from './connector-realtime/connector-realtime.component';
 import { SystemReportsComponent } from './system-reports/system-reports.component';
+import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 const routes: Routes = [
   {
     path: "",
@@ -62,6 +63,10 @@ const routes: Routes = [
   {
     path: "charging-profile",
     component: ChargingProfileComponent,
+  },
+  {
+    path: "global-configurations",
+    component: GlobalConfigurationsComponent,
   },
   {
     path: "charging-stations",

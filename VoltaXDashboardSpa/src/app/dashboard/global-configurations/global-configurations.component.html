@@ -1,3 +1,39 @@
-<p>
-  global-configurations works!
-</p>
+<div class="page__inner">
+  <div class="page__container page__container--large">
+    <div class="page__title h3">Global Configurations</div>
+    
+    
+    <div class="settings">
+      <div class="details__container">
+        <div class="details-informations__container">
+          <div class="details-informations__item">
+            <div class="details-informations__item-name">
+              Connector Default Price Per Kwh
+            </div>
+            <div class="details-informations__item-value">
+              {{configuration.defaultPricePerKwh}}
+            </div>
+          </div>
+      
+          <div class="details-informations__item">
+            <div class="details-informations__item-name">
+              Connector Default Cost Per Kwh
+            </div>
+            <div class="details-informations__item-value link">
+              {{configuration.defaultCostPerKwh}}
+            </div>
+          </div>
+      
+          <div class="details-informations__item">
+            <div class="details-informations__item-name">
+              Connector Default Flat Fee
+            </div>
+            <div class="details-informations__item-value">
+              {{configuration.defaultFlatFee}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

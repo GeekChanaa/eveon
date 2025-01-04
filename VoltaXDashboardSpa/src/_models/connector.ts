@@ -13,6 +13,7 @@ export interface Connector {
     flatFee : number; 
     pricePerMinute : number; 
     pricePerHour : number; 
+    costPerKwh : number; 
     maxPower : number; 
     startTime : string; 
     endTime : string; 

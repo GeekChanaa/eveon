@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Helpers;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.Controllers
 {
@@ -19,10 +20,27 @@ namespace VoltaXApi.Controllers
     public class SystemReportController : GenericController<SystemReport>
     {
         private readonly ISystemReportRepository _repository;
+        private readonly ISystemReportService _systemReportService;
 
-        public SystemReportController(ISystemReportRepository repository) : base(repository)
+        public SystemReportController(
+            ISystemReportRepository repository,
+            ISystemReportService systemReportService) : base(repository)
         {
             _repository = repository;
+            _systemReportService = systemReportService;
+        }
+
+        [HttpPost("CreateSystemReport")]
+        public async Task<IActionResult> CreateReport(SystemReport report)
+        {
+            await this._systemReportService.HandleReport(report);
+            return StatusCode(204);
+        }
+
+        [HttpGet("GetSystemReport/{systemReportID}")]
+        public async Task<IActionResult> GetSystemReport(int systemReportID)
+        {
+            return Ok(await this._repository.GetSystemReport(systemReportID));
         }
     }
 }

@@ -73,5 +73,12 @@ namespace VoltaXApi.Controllers
         {
             return await this._repository.IsPhoneUnique(phone);
         }
+
+        //GetSupportUserNames
+        [HttpGet("GetSupportUserNames/")]
+        public async Task<ActionResult<List<UserNameDto>>> GetSupportUserNames()
+        {
+            return await this._repository.GetSupportUserNames();
+        }
     }
 }

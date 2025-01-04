@@ -41,4 +41,8 @@ export class ConnectorRealtimeChargingSessionInformationsComponent implements On
     this._chargingSessionService.getChargingSessionInvoice(this.chargingSessionID);
   }
 
+  onToggleChange(option: string): void {
+    console.log('Toggle changed to:', option);
+  }
+
 }
