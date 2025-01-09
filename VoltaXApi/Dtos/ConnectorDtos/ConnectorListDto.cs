@@ -12,6 +12,7 @@ namespace VoltaXApi.Dtos
         public double Speed { get; set; }
         public decimal PricePerKWh { get; set; }   
         public decimal PricePerMinute { get; set; }   
+        public decimal PricePerIdleMinute { get; set; }   
         public decimal PricePerHour { get; set; }  
         public decimal FlatFee { get; set; }  
     }

@@ -21,6 +21,7 @@ namespace VoltaXApi.Models
     public User? Assigned { get; set; }
     public User? Resolved { get; set; }
     public Card? Card { get; set; }
+    public ICollection<SystemReportImage>? Images { get; set; }
     public ReportStatusEnum Status { get; set; } = ReportStatusEnum.Pending;
     public ReportCriticality Criticality { get; set; } = ReportCriticality.Informational;
     public bool IsDeleted { get; set; }

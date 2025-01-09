@@ -302,6 +302,45 @@ namespace VoltaXApi.Migrations
                     b.ToTable("ChargePointBrands");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointConfigurationItem", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ComponentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VariableInstance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("VariableMaxLimit")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("VariableMinLimit")
+                        .HasColumnType("float");
+
+                    b.Property<string>("VariableName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VariableUnit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VariableValuesList")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ChargePointConfigurationItems");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.ChargePointFeatures", b =>
                 {
                     b.Property<int>("ID")
@@ -857,6 +896,43 @@ namespace VoltaXApi.Migrations
                     b.ToTable("CommentReplies");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.ConfigurationItemVariableAttribute", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ChargePointConfigurationItemID")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Constant")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DataType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Mutability")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Persistent")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointConfigurationItemID");
+
+                    b.ToTable("ConfigurationItemVariableAttributes");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
                 {
                     b.Property<int>("ID")
@@ -901,6 +977,9 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PricePerHour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerIdleMinute")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PricePerKWh")
@@ -951,8 +1030,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("LastStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LastStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastStatusTime")
                         .HasColumnType("datetime2");
@@ -994,10 +1073,15 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("TransactionID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("TransactionID");
 
                     b.ToTable("ConnectorUptimes");
                 });
@@ -1725,6 +1809,29 @@ namespace VoltaXApi.Migrations
                     b.ToTable("SystemReports");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportImage", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ImageID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SystemReportID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ImageID");
+
+                    b.HasIndex("SystemReportID");
+
+                    b.ToTable("SystemReportImage");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
                 {
                     b.Property<int>("ID")
@@ -2077,6 +2184,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Comment");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.ConfigurationItemVariableAttribute", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePointConfigurationItem", "ChargePointConfigurationItem")
+                        .WithMany("VariableAttributes")
+                        .HasForeignKey("ChargePointConfigurationItemID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePointConfigurationItem");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Connector", b =>
                 {
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
@@ -2101,6 +2219,15 @@ namespace VoltaXApi.Migrations
                     b.Navigation("ChargePoint");
 
                     b.Navigation("Connector");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.ConnectorUptime", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionID");
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.DebitCard", b =>
@@ -2286,6 +2413,25 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportImage", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.SystemReport", "SystemReport")
+                        .WithMany("Images")
+                        .HasForeignKey("SystemReportID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+
+                    b.Navigation("SystemReport");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Transaction", b =>
                 {
                     b.HasOne("VoltaXApi.Models.ChargePoint", null)
@@ -2336,6 +2482,11 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Models");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.ChargePointConfigurationItem", b =>
+                {
+                    b.Navigation("VariableAttributes");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.ChargePointModel", b =>
                 {
                     b.Navigation("Features");
@@ -2367,6 +2518,11 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.State", b =>
                 {
                     b.Navigation("Cities");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.SystemReport", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>

@@ -8,6 +8,10 @@
           <div class="create__col">
               <div class="create__card card charge_point_form">
                 <app-progress-bar *ngIf="isLoading"></app-progress-bar>
+                <ng-container *ngIf="isLoading">
+                  <app-preloader-container ></app-preloader-container>
+                </ng-container>
+                
                 <div class="create__group create__group3" *ngIf="!isLoading">
                     <div class="field">
                       <div class="field__label">Issue Description

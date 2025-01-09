@@ -11,6 +11,7 @@ namespace VoltaXApi.Dtos
         public decimal PricePerKWh { get; set; }   
         public decimal FlatFee { get; set; }  = 0 ;     
         public decimal PricePerMinute { get; set; }   
+        public decimal PricePerIdleMinute { get; set; }   
         public decimal PricePerHour { get; set; }  
         public decimal MaxPower { get; set; }  
         public TimeSpan? StartTime { get; set; }    

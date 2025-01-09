@@ -13,8 +13,10 @@ export class ConnectorRealtimeChargingSessionInformationsComponent implements On
 
   chargingSession : any = {};
 
-  isLoading : boolean = false;
+  vatOption : string = "With VAT";
 
+  isLoading : boolean = false;
+  isDownloading = false;
   constructor(
     private _route: ActivatedRoute,
     private _chargingSessionService : ChargingSessionService
@@ -27,6 +29,10 @@ export class ConnectorRealtimeChargingSessionInformationsComponent implements On
       this.chargingSessionID = parseInt(chargingSessionID);
       this.getChargingSession(this.chargingSessionID);
     }
+
+    this._chargingSessionService.isDownloading$.subscribe((status) => {
+      this.isDownloading = status;
+    });
   }
 
   getChargingSession(id : number){
@@ -37,12 +43,12 @@ export class ConnectorRealtimeChargingSessionInformationsComponent implements On
     })
   }
 
-  getInvoice(){
+  getInvoice() {
     this._chargingSessionService.getChargingSessionInvoice(this.chargingSessionID);
   }
 
   onToggleChange(option: string): void {
-    console.log('Toggle changed to:', option);
+    this.vatOption = option;
   }
 
 }

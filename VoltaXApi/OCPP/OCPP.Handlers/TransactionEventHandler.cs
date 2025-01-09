@@ -56,7 +56,7 @@ namespace VoltaXApi.OCPP.Handlers
                 string idTag = "";
                 if (transactionEventRequest.IdToken != null)
                     idTag = CleanChargeTagId(transactionEventRequest.IdToken.IdToken, _logger);
-
+                
                 var chargePoint = await this._chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
                 
                 var connector = await this._connectorRepository
@@ -85,7 +85,7 @@ namespace VoltaXApi.OCPP.Handlers
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connector.ID,
+                        connector,
                         idTag,
                         errorCode,
                         meterKWH
@@ -97,7 +97,7 @@ namespace VoltaXApi.OCPP.Handlers
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connector.ID,
+                        connector,
                         idTag,
                         errorCode,
                         meterKWH
@@ -109,7 +109,7 @@ namespace VoltaXApi.OCPP.Handlers
                         transactionEventRequest,
                         transactionEventResponse,
                         chargePointStatus,
-                        connector.ID,
+                        connector,
                         idTag,
                         errorCode,
                         meterKWH
@@ -183,7 +183,42 @@ namespace VoltaXApi.OCPP.Handlers
             {
                 foreach (SampledValueType sampleValue in meterValue.SampledValue)
                 {
-
+                    Console.WriteLine("this is the samledValueType : "+ sampleValue.Measurand );
+                    Console.WriteLine("this is the context : "+ sampleValue.Context );
+                    Console.WriteLine("context is transaction : "+ sampleValue.Context );
+                    if(sampleValue.Context == ReadingContextEnumType.Transaction_End)
+                    {
+                        meterKWH = sampleValue.Value;
+                         if (
+                            sampleValue.UnitOfMeasure?.Unit == "W"
+                            || sampleValue.UnitOfMeasure?.Unit == "VA"
+                            || sampleValue.UnitOfMeasure?.Unit == "var"
+                            || sampleValue.UnitOfMeasure?.Unit == null
+                            || sampleValue.UnitOfMeasure == null
+                        )
+                        {
+                            Console.WriteLine(
+                                "GetMeterValues => Charging '{0:0.0}' W",
+                                currentChargeKW
+                            );
+                            // convert W => kW
+                            currentChargeKW = currentChargeKW / 1000;
+                            meterKWH = meterKWH / 1000;
+                        }
+                        else if (
+                            sampleValue.UnitOfMeasure?.Unit == "KW"
+                            || sampleValue.UnitOfMeasure?.Unit == "kVA"
+                            || sampleValue.UnitOfMeasure?.Unit == "kvar"
+                        )
+                        {
+                            // already kW => OK
+                            Console.WriteLine(
+                                "GetMeterValues => Charging '{0:0.0}' kW",
+                                currentChargeKW
+                            );
+                        }
+                        return;
+                    }
                     if (sampleValue.Measurand == MeasurandEnumType.Power_Active_Import)
                     {
                         // current charging power
@@ -228,6 +263,7 @@ namespace VoltaXApi.OCPP.Handlers
                         sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register
                     )
                     {
+                        Console.WriteLine("okay this is : Energy_Active_Import_Register");
                         // charged amount of energy
                         meterKWH = sampleValue.Value;
                         if (

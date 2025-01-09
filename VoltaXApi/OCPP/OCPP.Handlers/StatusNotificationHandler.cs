@@ -26,14 +26,13 @@ namespace VoltaXApi.OCPP.Handlers
         }
         public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
-            Console.WriteLine("this is the handle status ntification");
             string? errorCode = null;
             StatusNotificationResponse statusNotificationResponse = new StatusNotificationResponse();
 
             statusNotificationResponse.CustomData = new CustomDataType();
             statusNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
 
-            int connectorId = 0;
+            int connectorId = -1;
             int evseId = 0;
             bool msgWritten = false;
 
@@ -51,11 +50,12 @@ namespace VoltaXApi.OCPP.Handlers
 
                 ConnectorStatusEnumType newStatus = statusNotificationRequest.ConnectorStatus;
 
-                _logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1} / newStatus={2}", chargePointStatus?.Id, connectorId, newStatus.ToString());
+                _logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1} / EvseID={3} / newStatus={2}", chargePointStatus?.Id, connectorId, newStatus.ToString(), evseId);
 
-                if (connectorId > 0)
+                if (connectorId >= 0)
                 {
-                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus.ToString(), DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
+                    Console.WriteLine("this is the update arr");
+                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }

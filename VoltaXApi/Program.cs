@@ -25,6 +25,7 @@ using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Factories;
 using AutoMapper;
 using QuestPDF.Infrastructure;
+using VoltaxApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         options.SupportedCultures = supportedCultures;
         options.SupportedUICultures = supportedCultures;
     });
+
+builder.Services.Configure<SupportEmails>(builder.Configuration.GetSection("SupportEmails"));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ChargingSessionInvoiceGeneratorService>();

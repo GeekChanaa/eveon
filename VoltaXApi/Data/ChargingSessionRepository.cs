@@ -47,15 +47,37 @@ namespace VoltaXApi.Data
                     TotalPrice = cs.Transactions.Sum(t => t.Amount),
                     KwhCharged = cs.Transactions.Sum(t => (t.MeterStop ?? 0) - t.MeterStart),
                     StartDate = cs.StartDate,
+                    IdleTimeRatio = cs.Connector.PricePerIdleMinute,
                     EndDate = cs.EndDate,
                     ConnectorID = cs.ConnectorID,
                     ConnectorRatio = cs.Connector.PricePerKWh,
                     Transactions = cs.Transactions.ToList(),
-                    ConnectorCostRatio = cs.Connector.CostPerKwh
+                    ConnectorCostRatio = cs.Connector.CostPerKwh,
                 })
                 .FirstOrDefaultAsync();
 
-            return result;
+            // Calculating Idle Time for charging session : 
+            var transactionsTime = result.Transactions.Sum(t => (t.StopTime - t.StartTime).Value.TotalMinutes);
+            result.ChargingTimeInMinutes = transactionsTime;
+            // Get All connectorUptimes for these transactions
+            var connectorUptimes = _context.ConnectorUptimes
+                .Where(u => u.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
+                .Where(u => result.Transactions.Select(u => u.ID).ToList().Contains(u.TransactionID ?? 0))
+                .ToList();
+            var totalConnectedTime = connectorUptimes.Sum(cu => (cu.EndDate - cu.StartDate).Value.TotalMinutes);
+            Console.WriteLine("totalConnectedTime : " + totalConnectedTime);
+            var idleTime = (int) (totalConnectedTime - transactionsTime);
+
+            if(idleTime < 5)
+                result.IdleMinutes = 0;
+            else
+                result.IdleMinutes = (decimal)idleTime;
+
+            result.IdleTimePrice = result.IdleMinutes * result.IdleTimeRatio;
+
+            result.TotalPrice += (double)result.IdleTimePrice + ((double)result.ConnectorRatio * result.KwhCharged);
+            
+            return result;  
         }
 
 

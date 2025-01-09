@@ -3,9 +3,7 @@
 </div>
 
 <div class="stats">
-  <ng-container
-    *ngIf="chargingSessions == null || chargingSessions.length == 0"
-  >
+  <ng-container *ngIf="(chargingSessions == null || chargingSessions.length == 0) && !isLoading">
     <app-empty-card></app-empty-card>
   </ng-container>
   <ng-container *ngIf="isLoading">

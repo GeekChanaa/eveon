@@ -8,6 +8,7 @@ using MimeKit;
 using System.IO;
 using System;
 using MailKit;
+using VoltaxApi.Helpers;
 
 namespace VoltaXApi.Services
 {
@@ -16,22 +17,26 @@ namespace VoltaXApi.Services
 				private readonly MailSettings _mailSettings;
 				private readonly IEmailTemplateService _emailTemplateService;
 				private readonly IConfiguration _configuration;
+				private readonly SupportEmails _supportEmails;
 
         public MailService(
 					IOptions<MailSettings> mailSettings,
 					IEmailTemplateService emailTemplateService,
-					IConfiguration config)
+					IConfiguration config,
+					IOptions<SupportEmails> supportEmails)
         {
             _mailSettings = mailSettings.Value;
 						_emailTemplateService = emailTemplateService;
 						_configuration = config;
+						_supportEmails = supportEmails.Value;
         }
 
         public async Task SendEmailAsync(MailRequest mailRequest)
         {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+						foreach(string toEmail in mailRequest.ToEmails)
+            	email.To.Add(MailboxAddress.Parse(toEmail));
             email.Subject = mailRequest.Subject;
             var builder = new BodyBuilder();
             if (mailRequest.Attachments != null)
@@ -87,7 +92,7 @@ namespace VoltaXApi.Services
 				{
 					MailRequest mailRequest = new() {
 						Name = "System",
-						ToEmail = "chanaa.projects@gmail.com",
+						ToEmails = new List<string>{_supportEmails.Admin},
 						Subject = "System Report"
 					};
 					await SendReportEmail(mailRequest, report);
@@ -97,7 +102,7 @@ namespace VoltaXApi.Services
 				{
 					MailRequest mailRequest = new() {
 						Name = "System",
-						ToEmail = email,
+						ToEmails = new List<string>{email, _supportEmails.Support},
 						Subject = "System Report"
 					};
 					await SendReportEmail(mailRequest, report);
@@ -138,7 +143,8 @@ namespace VoltaXApi.Services
 					message = new MimeMessage();
 					message.From.Add(new MailboxAddress(mailRequest.Subject, _mailSettings.Mail));
 					message.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-					message.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+					foreach(var email in mailRequest.ToEmails)
+						message.To.Add(MailboxAddress.Parse(email));
 					message.Subject = mailRequest.Subject;
 					builder = new BodyBuilder();
 					if (mailRequest.Attachments != null)

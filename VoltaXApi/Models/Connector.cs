@@ -11,6 +11,7 @@ namespace VoltaXApi.Models
         public decimal Power { get; set; } = 0 ;
         public double? Speed { get; set; }
         public decimal PricePerKWh { get; set; } = 0;
+        public decimal PricePerIdleMinute { get; set; } = 0;
         public decimal PricePerMinute { get; set; } = 0; 
         public decimal PricePerHour { get; set; } = 0;
         public decimal CostPerKwh { get; set; } = 0;

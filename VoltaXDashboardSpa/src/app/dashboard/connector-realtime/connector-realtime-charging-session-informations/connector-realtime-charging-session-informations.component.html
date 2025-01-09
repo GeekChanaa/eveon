@@ -45,14 +45,14 @@
           class="card__display_item"
           name="Start Date"
           tooltip="info"
-          value="{{ chargingSession.startDate }}"
+          value="{{ chargingSession.startDate | date:'medium'  }}"
         ></app-display-item>
   
         <app-display-item
           class="card__display_item"
           name="End Date"
           tooltip="info"
-          value="{{ chargingSession.endDate }}"
+          value="{{ chargingSession.endDate | date:'medium'  }}"
         ></app-display-item>
       </div>
       
@@ -70,24 +70,40 @@
       <div class="card__price_details">
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">kWh Charged</div>
-          <div class="card__price_details_item-value">{{chargingSession.kwhCharged}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Cost Per Kwh</div>
-          <div class="card__price_details_item-value">{{chargingSession.connectorCostRatio}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.connectorCostRatio | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item card__price_details_item--footer">
           <div class="card__price_details_item-name">Total Cost</div>
-          <div class="card__price_details_item-value">{{chargingSession.kwhCharged * chargingSession.connectorCostRatio}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged * chargingSession.connectorCostRatio | number:'1.2-2'}}</div>
         </div>
       </div>
-      <div class="card__price_recharge_card">
-        <div class="card__price_recharge_card-number"> 
-          <div class="card__price_recharge_card-number--value">Card Number</div>
-          {{chargingSession.card.cardNumber}} </div>
-        <div class="card__price_recharge_card-amount"> 
-          Balance : {{chargingSession.card.balance}} </div>
+    </div>
+  </div>
+
+  <div class="settings" *ngIf="chargingSession.idleMinutes != 0">
+    <div class="title-purple card__title">
+      Idle Time Price
+    </div>  
+    <div class="card__price">
+      <div class="card__price_details">
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">Idle Minutes</div>
+          <div class="card__price_details_item-value">{{chargingSession.idleMinutes | number:'1.2-2'}}</div>
+        </div>
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">Idle Ratio</div>
+          <div class="card__price_details_item-value">{{chargingSession.idleTimeRatio | number:'1.2-2'}}</div>
+        </div>
+        <div class="card__price_details_item card__price_details_item--footer">
+          <div class="card__price_details_item-name">Total Price</div>
+          <div class="card__price_details_item-value">{{chargingSession.idleTimePrice | number:'1.2-2'}}</div>
+        </div>
       </div>
+      
     </div>
   </div>
 
@@ -99,26 +115,32 @@
       <div class="card__price_details">
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">kWh Charged</div>
-          <div class="card__price_details_item-value">{{chargingSession.kwhCharged}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.kwhCharged | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Price Charged</div>
-          <div class="card__price_details_item-value">{{chargingSession.connectorRatio}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.connectorRatio | number:'1.2-2'}}</div>
+        </div>
+        <div class="card__price_details_item">
+          <div class="card__price_details_item-name">Idle Time Price Charged</div>
+          <div class="card__price_details_item-value">{{chargingSession.idleTimePrice | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item card__price_details_item--footer">
           <div class="card__price_details_item-name">Total Price</div>
-          <div class="card__price_details_item-value">{{chargingSession.totalPrice}}</div>
-        </div>
+          <div class="card__price_details_item-value">{{chargingSession.totalPrice | number:'1.2-2'}}</div>
+        </div>  
       </div>
       <div class="card__price_recharge_card">
         <div class="card__price_recharge_card-number"> 
           <div class="card__price_recharge_card-number--value">Card Number</div>
           {{chargingSession.card.cardNumber}} </div>
         <div class="card__price_recharge_card-amount"> 
-          Balance : {{chargingSession.card.balance}} </div>
+          Balance : {{chargingSession.card.balance | number:'1.2-2'}} </div>
       </div>
     </div>
   </div>
+
+  
 
 
   <div class="settings">
@@ -139,7 +161,7 @@
       
       
       <!-- Price Table -->
-      <table class="price-table">
+      <table class="price-table" *ngIf="vatOption == 'With VAT'">
         <thead>
           <tr>
             <th>Time</th>
@@ -151,24 +173,53 @@
         </thead>
         <tbody>
           <tr>
-            <td> {{chargingSession.startDate}} </td>
-            <td> {{chargingSession.totalPrice}} </td>
-            <td> Charged {{chargingSession.kwhCharged}} kWhs at {{chargingSession.totalPrice}} US$</td>
-            <td> {{chargingSession.kwhCharged}} </td>
-            <td> {{chargingSession.totalPrice}} </td>
+            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} Minutes </td>
+            <td> {{chargingSession.totalPrice | number:'1.2-2'}} </td>
+            <td> Charged {{chargingSession.kwhCharged | number:'1.2-2'}} kWhs at {{chargingSession.totalPrice | number:'1.2-2'}} US$</td>
+            <td> {{chargingSession.kwhCharged | number:'1.2-2'}} </td>
+            <td> {{chargingSession.totalPrice | number:'1.2-2'}} </td>
           </tr>
           <tr>
             <td colspan="3">Total</td>
-            <td>{{chargingSession.kwhCharged}}</td>
-            <td>{{chargingSession.totalPrice}}</td>
+            <td>{{chargingSession.kwhCharged | number:'1.2-2'}}</td>
+            <td>{{chargingSession.totalPrice | number:'1.2-2'}}</td>
           </tr>
         </tbody>
       </table>
-      
-      <!-- Download Invoice PDF Section -->
-      <div class="download__pdf">
-        <button (click)="getInvoice()" class="button">Get Invoice</button>
-      </div>
+
+      <table class="price-table" *ngIf="vatOption == 'Without VAT'">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>kWh charged</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} Minutes </td>
+            <td> {{chargingSession.totalPrice * 0.8 | number:'1.2-2'}} </td>
+            <td> Charged {{chargingSession.kwhCharged | number:'1.2-2'}} kWhs at {{chargingSession.totalPrice | number:'1.2-2'}} US$</td>
+            <td> {{chargingSession.kwhCharged | number:'1.2-2'}} </td>
+            <td> {{chargingSession.totalPrice * 0.8 | number:'1.2-2'}} </td>
+          </tr>
+          <tr>
+            <td> </td>
+            <td> {{chargingSession.totalPrice * 0.2 | number:'1.2-2'}} </td>
+            <td> VAT 20%</td>
+            <td>  </td>
+            <td> {{chargingSession.totalPrice * 0.2 | number:'1.2-2'}} </td>
+          </tr>
+          <tr>
+            <td colspan="3">Total</td>
+            <td>{{chargingSession.kwhCharged | number:'1.2-2'}}</td>
+            <td>{{chargingSession.totalPrice | number:'1.2-2'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    
     </div>
   </div>
   

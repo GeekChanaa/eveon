@@ -5,6 +5,8 @@ using VoltaXApi.OCPP.Messages;
 using OCPP.Core.Server;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.Data.Seeders;
+using VoltaXApi.OCPP.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace VoltaXApi.Services
 {
@@ -16,6 +18,9 @@ namespace VoltaXApi.Services
     private readonly IChargePointRepository _chargePointRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IChargingSessionRepository _chargingSessionRepository;
+    private readonly IConnectorStatusRepository _connectorStatusRepository;
+    private readonly IConnectorUptimeRepository _connectorUptimeRepository;
+    private readonly IEVDriverService _evDriverService;
     private readonly VoltaXApiDbContext _context;
 
     public TransactionService(
@@ -24,6 +29,9 @@ namespace VoltaXApi.Services
       IChargePointRepository chargePointRepository,
       ITransactionRepository transactionRepository,
       IChargingSessionRepository chargingSessionRepository,
+      IConnectorStatusRepository connectorStatusRepository,
+      IConnectorUptimeRepository connectorUptimeRepository,
+      IEVDriverService eVDriverService,
       VoltaXApiDbContext context
     )
     {
@@ -33,13 +41,16 @@ namespace VoltaXApi.Services
       _transactionRepository = transactionRepository;
       _context = context;
       _chargingSessionRepository = chargingSessionRepository;
+      _connectorStatusRepository = connectorStatusRepository;
+      _connectorUptimeRepository = connectorUptimeRepository;
+      _evDriverService = eVDriverService;
     }
 
     public async Task StartTransaction(
         TransactionEventRequest transactionEventRequest,
         TransactionEventResponse transactionEventResponse,
         ChargePointStatus chargePointStatus,
-        int connectorID,
+        Connector connector,
         string? idTag,
         string errorCode,
         double meterKWH
@@ -51,9 +62,10 @@ namespace VoltaXApi.Services
         int cardTagID = card.ID;
         int chargePointID = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id)).ID;
 
+        
         ChargingSession chargingSession = new()
         {
-          ConnectorID = connectorID,
+          ConnectorID = connector.ID,
           UserID = (int)(card.UserID == null ? 1 : card.UserID),
           CardID = card.ID,
           StartDate = DateTime.Now,
@@ -71,14 +83,15 @@ namespace VoltaXApi.Services
           {
             Transaction transaction = new Transaction();
             transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
-            transaction.ConnectorID = connectorID;
+            transaction.ConnectorID = connector.ID;
             transaction.StartCardID = cardTagID;
             transaction.ChargingSessionID = chargingSession.ID;
             transaction.StartTime = DateTime.Parse(transactionEventRequest.Timestamp);
             transaction.MeterStart = meterKWH;
             transaction.StartResult = transactionEventRequest.TriggerReason.ToString();
             await _transactionRepository.AddAsync(transaction);
-          }
+            await _connectorUptimeRepository.TransactionStartUptimeHandle(transaction.ID, connector.ID);
+          } 
           catch (Exception exp)
           {
             errorCode = ErrorCodes.InternalError;
@@ -97,7 +110,7 @@ namespace VoltaXApi.Services
         TransactionEventRequest transactionEventRequest,
         TransactionEventResponse transactionEventResponse,
         ChargePointStatus chargePointStatus,
-        int connectorID,
+        Connector connector,
         string? idTag,
         string errorCode,
         double meterKWH
@@ -105,46 +118,33 @@ namespace VoltaXApi.Services
     {
       try
       {
-        int cardTagID = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First().ID;
+        Card? card = null;
+        
         ChargePoint chargePoint = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id));
-
-        Transaction? transaction = 
-            (await _transactionRepository
+        
+        Transaction? transaction = (await _transactionRepository
               .FindAsync(t => t.Uid == transactionEventRequest.TransactionInfo.TransactionId))
               .OrderByDescending(t => t.ID)
               .FirstOrDefault();
-        if (
-            transaction == null
-            || chargePoint.ChargePointId != chargePointStatus.Id
-            || transaction.StopTime.HasValue
-        )
+            
+          
+        if (transaction == null || chargePoint.ChargePointId != chargePointStatus.Id || transaction.StopTime.HasValue )
         {
-          // unknown transaction id or already stopped transaction
-          // => find latest transaction for the charge point and check if its open
-          Console.WriteLine(
-              "UpdateTransaction => Unknown or closed transaction uid={0}",
-              transactionEventRequest.TransactionInfo?.TransactionId
-          );
-          // find latest transaction for this charge point
+          Console.WriteLine("UpdateTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
+
           transaction = (await _transactionRepository
-              .FindAsync(t => t.ConnectorID == connectorID))
+              .FindAsync(t => t.ConnectorID == connector.ID))
               .OrderByDescending(t => t.ID)
               .FirstOrDefault();
 
           if (transaction != null)
           {
-            Console.WriteLine(
-                "UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",
-                transaction.ID,
-                transaction.StartTime.ToString("O"),
-                transaction?.StopTime?.ToString("O")
-            );
+            card = (await _cardRepository.FindAsync(c => c.ID == transaction.StartCardID)).First();
+            Console.WriteLine("UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",transaction.ID,transaction.StartTime.ToString("O"),transaction?.StopTime?.ToString("O"));
+
             if (transaction.StopTime.HasValue)
             {
-              Console.WriteLine(
-                  "UpdateTransaction => Last transaction (id={0}) is already closed ",
-                  transaction.ID
-              );
+              Console.WriteLine( "UpdateTransaction => Last transaction (id={0}) is already closed ", transaction.ID );
               transaction = null;
             }
           }
@@ -153,17 +153,29 @@ namespace VoltaXApi.Services
             Console.WriteLine(
                 "UpdateTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",
                 chargePointStatus.Id,
-                connectorID
+                connector.ID
             );
           }
         }
 
         if (transaction != null)
         {
+          card = (await _cardRepository.FindAsync(c => c.ID == transaction.StartCardID)).First();
           if (meterKWH >= 0)
           {
             transaction.MeterStop = meterKWH;
             _context.SaveChanges();
+            var kwhs = transaction.MeterStop - transaction.MeterStart;
+            var amount = (decimal) kwhs * connector.PricePerKWh;
+            Console.WriteLine("this is the amount to substract because it's not enough : " + amount);
+            Console.WriteLine("balance : " + card.Balance);
+            if((decimal) card.Balance <= amount+5)
+            { 
+              RequestStopTransactionRequest request = new(){
+                TransactionId = transaction.Uid
+              };
+              await _evDriverService.RequestStopTransaction(chargePoint.ChargePointId, request);
+            }
           }
         }
         else
@@ -182,7 +194,7 @@ namespace VoltaXApi.Services
         TransactionEventRequest transactionEventRequest,
         TransactionEventResponse transactionEventResponse,
         ChargePointStatus chargePointStatus,
-        int connectorID,
+        Connector connector,
         string? idTag,
         string errorCode,
         double meterKWH
@@ -199,15 +211,14 @@ namespace VoltaXApi.Services
           transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
 
         Transaction? transaction = _context
-            .Transactions.Where(t =>
-                t.Uid == transactionEventRequest.TransactionInfo.TransactionId
-            )
-            .OrderByDescending(t => t.ID)
-            .FirstOrDefault();
+                    .Transactions.Where(t =>t.Uid == transactionEventRequest.TransactionInfo.TransactionId)
+                                .OrderByDescending(t => t.ID)
+                                .FirstOrDefault();
+        Console.WriteLine("this is the transactionID : " + transaction.ID);
         if (
             transaction == null
-            || transaction.ConnectorID != connectorID
-            || transaction.StopTime.HasValue
+            || transaction.ConnectorID != connector.ID
+            || transaction.StopTime != null
         )
         {
           Console.WriteLine(
@@ -215,7 +226,7 @@ namespace VoltaXApi.Services
               transactionEventRequest.TransactionInfo?.TransactionId
           );
           transaction = _context
-              .Transactions.Where(t => t.ConnectorID == connectorID)
+              .Transactions.Where(t => t.ConnectorID == connector.ID)
               .OrderByDescending(t => t.ID)
               .FirstOrDefault();
 
@@ -223,20 +234,13 @@ namespace VoltaXApi.Services
           {
             if (transaction.StopTime.HasValue)
             {
-              Console.WriteLine(
-                  "EndTransaction => Last transaction (id={0}) is already closed ",
-                  transaction.ID
-              );
+              Console.WriteLine("EndTransaction => Last transaction (id={0}) is already closed ",transaction.ID);
               transaction = null;
             }
           }
           else
           {
-            Console.WriteLine(
-                "EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",
-                chargePointStatus.Id,
-                connectorID
-            );
+            Console.WriteLine("EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",chargePointStatus.Id,connector.ID);
           }
         }
 
@@ -255,13 +259,9 @@ namespace VoltaXApi.Services
 
           // Updating the Amount of the card related to the tag id.
 
-          await _cardService.SubstractAmountFromCard(cardTagID, kwhCharged, connectorID);
+          await _cardService.SubstractAmountFromCard(cardTagID, kwhCharged, connector.ID);
 
           _context.SaveChanges();
-
-          // Update connecter status to available
-
-          // }
         }
         else
         {

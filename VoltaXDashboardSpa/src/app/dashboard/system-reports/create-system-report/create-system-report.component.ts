@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ReportCategoryEnum } from 'src/_models/_enums/report-category';
 import { ReportCriticality } from 'src/_models/_enums/report-criticality';
@@ -36,7 +37,8 @@ export class CreateSystemReportComponent implements OnInit {
     private _chargePointService: ChargePointService,
     private _cardService : CardService,
     private _modalService: ActionModalService,
-    private _systemReportService : SystemReportService
+    private _systemReportService : SystemReportService,
+    private _router : Router
   ) { 
     this.form = new FormGroup({
       reportCategory : new FormControl(ReportCategoryEnum.General),
@@ -101,7 +103,8 @@ export class CreateSystemReportComponent implements OnInit {
     let systemReport = (this.form.value);
     this._systemReportService.createSystemReport(systemReport).subscribe((data) => {
       this.isLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Card Created Successfully",4000);
+      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","System Report Created.",4000);
+      this._router.navigateByUrl("/dashboard/system-reports");
     },(error) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);

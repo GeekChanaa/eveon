@@ -14,12 +14,12 @@ namespace VoltaXApi.Data
         
         public async Task<int> GetNumberOfConnectorsByStatus(string status)
         {
-            return await this._context.ConnectorStatuses.Where(u => u.LastStatus == status).CountAsync();
+            return await this._context.ConnectorStatuses.Where(u => u.LastStatus.ToString().ToLower() == status.ToLower()).CountAsync();
         }
 
         public async Task<int> GetPartnerNumberOfConnectorsByStatus(int partnerID,string status)
         {
-            return await this._context.ConnectorStatuses.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).Where(u => u.LastStatus == status).CountAsync();
+            return await this._context.ConnectorStatuses.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).Where(u => u.LastStatus.ToString().ToLower() == status.ToLower()).CountAsync();
         }
 
         
@@ -29,6 +29,14 @@ namespace VoltaXApi.Data
                             .Where(u=> u.ChargePointID == chargePointID
                                         && connectorID == u.ConnectorID).FirstOrDefaultAsync();
         }
+
+
+        public async Task<ConnectorStatus?> GetLastConnectorStatus(int connectorID)
+        {
+            return await _context.ConnectorStatuses
+                            .FirstOrDefaultAsync(u => u.ConnectorID == connectorID);
+        }
+
 
     }
 }

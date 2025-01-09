@@ -28,48 +28,6 @@ namespace OCPP.Core.Server
             }
         }
 
-
-        protected bool UpdateConnectorStatus(int connectorId, string? status, DateTimeOffset? statusTime)
-        {
-            try
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<VoltaXApiDbContext>();
-                optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-                using (VoltaXApiDbContext dbContext = new VoltaXApiDbContext(optionsBuilder.Options))
-                {
-                    ConnectorStatus? connectorStatus = dbContext.ConnectorStatuses.Where(u=> u.ChargePointID == ChargePointStatus.Id && connectorId == u.ConnectorID).FirstOrDefault();
-                    if (connectorStatus == null)
-                    {
-                        // no matching entry => create connector status
-                        connectorStatus = new ConnectorStatus();
-                        connectorStatus.ChargePointID = ChargePointStatus.Id;
-                        connectorStatus.ConnectorID = connectorId;
-                        Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
-                        //dbContext.ConnectorStatuses.Add(connectorStatus);
-                    }
-
-                    if (!string.IsNullOrEmpty(status))
-                    {
-                        connectorStatus.LastStatus = status;
-                        connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
-                    }
-                    dbContext.SaveChanges();
-                    Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2}", connectorStatus.ChargePointID, connectorId, status);
-                    return true;
-                }
-            }
-            catch (Exception exp)
-            {
-                Console.WriteLine( "UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", ChargePointStatus?.Id, connectorId, exp.Message);
-                Console.WriteLine("INNER EXCEPTION : ");
-                Console.WriteLine(exp.StackTrace);
-                if(exp.InnerException != null)
-                    Console.WriteLine(exp.InnerException.ToString());
-            }
-
-            return false;
-        }
-
         protected static string CleanChargeTagId(string rawChargeTagId, ILogger logger)
         {
             string idTag = rawChargeTagId;

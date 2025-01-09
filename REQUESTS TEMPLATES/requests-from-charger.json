@@ -10,8 +10,21 @@
 // Status Notification
 [2,"2","StatusNotification",{"connectorId":0,"errorCode":"NoError","status":"Available"}]
 
+
+// Transaction Event Start
+[2,"71","TransactionEvent",{"eventType":"Started","timestamp":"2025-01-02T13:51:33Z","triggerReason":"RemoteStart","seqNo":0,"transactionInfo":{"transactionId":"73efaf11-8bbc-4543-b729-6a91e22800a3","chargingState":"SuspendedEVSE","remoteStartId":0},"meterValue":[{"sampledValue":[{"value":0.128,"context":"Transaction.Begin","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T13:51:35Z"}],"evse":{"id":1,"connectorId":1},"idToken":{"idToken":"3528-0383-4543-9902","type":"Central"}}]
+
+
+// Transaction Event Update
+[2,"72","TransactionEvent",{"eventType":"Updated","timestamp":"2025-01-02T13:46:29Z","triggerReason":"MeterValuePeriodic","seqNo":414,"transactionInfo":{"transactionId":"73efaf11-8bbc-4543-b729-6a91e22800a3"},"meterValue":[{"sampledValue":[{"value":0.130,"context":"Sample.Periodic","measurand":"Energy.Active.Import.Register","location":"Outlet","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T13:46:29Z"}],"evse":{"id":1,"connectorId":1}}]
+// Transaction Event End
+[2,"175","TransactionEvent",{"eventType":"Ended","timestamp":"2025-01-02T14:14:44Z","triggerReason":"EVCommunicationLost","seqNo":14,"transactionInfo":{"transactionId":"73efaf11-8bbc-4543-b729-6a91e22800a3","chargingState":"Idle","stoppedReason":"DeAuthorized"},"meterValue":[{"sampledValue":[{"value":0.027,"context":"Transaction.Begin","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T14:10:46Z"},{"sampledValue":[{"value":5,"context":"Transaction.End","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T14:14:44Z"}],"evse":{"id":2,"connectorId":1},"idToken":{"idToken":"6380-5512-8937-7102","type":"Central"}}]
+
 // Notify Report for Summary
 
+
+// Start transaciton response
+[2,"40f007ad9c8d4045b4bcbd521e34540c",{"status":"Accepted"}]
 
 
 // REQUESTS THAT I SHOULD TRY AND HANDLE IN MY APPLICATION  : 

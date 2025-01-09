@@ -11,6 +11,7 @@ using VoltaXApi.Models;
 using OCPP.Core.Server;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Services
 {
@@ -21,13 +22,15 @@ namespace VoltaXApi.Services
         private readonly IConnectorRepository _connectorRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IChargePointRepository _chargePointRepository;
+        private readonly IConnectorUptimeRepository _connectorUptimeRepository;
 
         public ConnectorStatusService(
           IConnectorStatusRepository csrepo,
           IConnectorRepository connectorRepository,
           IConnectorService connectorService,
           IConfigurationService configurationService,
-          IChargePointRepository chargePointRepository
+          IChargePointRepository chargePointRepository,
+          IConnectorUptimeRepository connectorUptimeRepository
         ){
           this._connectorStatusRepository = csrepo;
           this._connectorStatusRepository = csrepo;
@@ -35,6 +38,7 @@ namespace VoltaXApi.Services
           this._connectorRepository = connectorRepository;
           this._configurationService = configurationService;
           _chargePointRepository = chargePointRepository;
+          _connectorUptimeRepository = connectorUptimeRepository;
         }
 
         public async Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID)
@@ -52,7 +56,7 @@ namespace VoltaXApi.Services
                   connectorStatus = new ConnectorStatus();
                   connectorStatus.ChargePointID = chargePointID;
                   connectorStatus.ConnectorID = connector.ID;
-                  connectorStatus.LastStatus = connectorStatusData.VariableAttribute[0].Value;
+                  connectorStatus.LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value);
                   connectorStatus.LastStatusTime = DateTime.Now;
                   Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
                   await _connectorStatusRepository.AddAsync(connectorStatus);
@@ -61,7 +65,7 @@ namespace VoltaXApi.Services
               {
                 if (!string.IsNullOrEmpty(connectorStatusData.VariableAttribute[0].Value))
                 {
-                    connectorStatus.LastStatus = connectorStatusData.VariableAttribute[0].Value;
+                    connectorStatus.LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value);
                     connectorStatus.LastStatusTime = DateTime.Now;
                     await _connectorStatusRepository.Update(connectorStatus);
                 }
@@ -83,7 +87,7 @@ namespace VoltaXApi.Services
           return true;
         }
 
-        public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, string? status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus)
+        public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus)
         {
           try
           {
@@ -103,16 +107,18 @@ namespace VoltaXApi.Services
                 connectorStatus = new ConnectorStatus();
                 connectorStatus.ChargePointID = chargePointStatus.Id;
                 connectorStatus.ConnectorID = connector.ID;
+                connectorStatus.LastStatus = status;
                 Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
                 await _connectorStatusRepository.AddAsync(connectorStatus);
+                await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
             }
             else{
-              if (!string.IsNullOrEmpty(status))
-              {
-                  connectorStatus.LastStatus = status;
-                  connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
-              }
+              connectorStatus.LastStatus = status;
+              connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
               await _connectorStatusRepository.Update(connectorStatus);
+
+              // Updating uptimeReport
+              await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
             }
 
             

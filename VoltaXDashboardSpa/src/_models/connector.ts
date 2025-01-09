@@ -12,6 +12,7 @@ export interface Connector {
     pricePerKWh : number; 
     flatFee : number; 
     pricePerMinute : number; 
+    pricePerIdleMinute : number; 
     pricePerHour : number; 
     costPerKwh : number; 
     maxPower : number; 

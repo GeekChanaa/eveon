@@ -70,6 +70,7 @@ export class CreateChargePointComponent implements OnInit {
           chargePointConnectorSpeed: new FormControl('7.3'),
           chargePointConnectorPricePerKWh : new FormControl(""),
           chargePointConnectorPricePerMinute : new FormControl(""),
+          chargePointConnectorPricePerIdleMinute : new FormControl(""),
           chargePointConnectorPricePerHour : new FormControl(""),
           chargePointConnectorID : new FormControl(""),
         })
@@ -90,6 +91,7 @@ export class CreateChargePointComponent implements OnInit {
       chargePointConnectorSpeed: new FormControl('7.3'),
       chargePointConnectorPricePerKWh : new FormControl(""),
       chargePointConnectorPricePerMinute : new FormControl(""),
+      chargePointConnectorPricePerIdleMinute : new FormControl(""),
       chargePointConnectorPricePerHour : new FormControl(""),
       chargePointConnectorID : new FormControl("")
     }));
@@ -118,6 +120,7 @@ export class CreateChargePointComponent implements OnInit {
       co.speed = connector.chargePointConnectorSpeed;
       co.pricePerKWh = connector.chargePointConnectorPricePerKWh;
       co.pricePerMinute = connector.chargePointConnectorPricePerMinute;
+      co.pricePerIdleMinute = connector.chargePointConnectorPricePerIdleMinute;
       co.pricePerHour = connector.chargePointConnectorPricePerHour;
       co.connectorID = connector.chargePointConnectorID;
       chargePoint.connectors.push(co);
