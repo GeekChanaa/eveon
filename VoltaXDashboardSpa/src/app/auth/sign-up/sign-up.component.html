@@ -11,8 +11,8 @@
         <div class="field__wrap">
           <input class="field__input" type="text" formControlName="firstName" placeholder="First Name">
           <div class="field__icon">
-            <svg class="icon icon-mail">
-              <use xlink:href="#icon-mail"></use>
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
             </svg>
           </div>
         </div>
@@ -21,8 +21,8 @@
         <div class="field__wrap">
           <input class="field__input" type="text" formControlName="lastName" placeholder="Last Name">
           <div class="field__icon">
-            <svg class="icon icon-mail">
-              <use xlink:href="#icon-mail"></use>
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
             </svg>
           </div>
         </div>
@@ -41,8 +41,8 @@
         <div class="field__wrap"  [ngClass]="{'error': form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)}">
           <input class="field__input" type="password" formControlName="password" placeholder="Your Password">
           <div class="field__icon">
-            <svg class="icon icon-mail">
-              <use xlink:href="#icon-mail"></use>
+            <svg class="icon icon-lock">
+              <use xlink:href="#icon-lock"></use>
             </svg>
           </div>
         </div>
@@ -51,17 +51,18 @@
         <div class="field__wrap" [ngClass]="{'error': form.controls['confirmPassword'].invalid && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched)}">
           <input class="field__input" type="password" formControlName="confirmPassword" placeholder="Confirm Password">
           <div class="field__icon">
-            <svg class="icon icon-mail">
-              <use xlink:href="#icon-mail"></use>
+            <svg class="icon icon-lock">
+              <use xlink:href="#icon-lock"></use>
             </svg>
           </div>
         </div>
       </div>
-      
+      <div class="field__error">
+        {{errorMessage}}
+      </div>
       <button class="button login__button" [ngClass]="{'disabled': !form.valid}" [disabled]="!form.valid" (click)="register()">
         <ng-container *ngIf="isLoading"> <app-svg-spinner></app-svg-spinner> </ng-container>
         <ng-container *ngIf="!isLoading"> Sign Up </ng-container>
-        
       </button>
     </div>
   </form>

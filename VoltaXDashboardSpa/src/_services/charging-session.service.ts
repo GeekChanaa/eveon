@@ -54,6 +54,18 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
         }
       );
   }
+
+  getChargePointNbrChargingSessions(chargePointID : number){
+    return this.http.get<number>(this.baseUrl+"GetChargePointNbrChargingSessions/"+chargePointID);
+  }
+
+  getChargePointNbrChargingSessionsToday(chargePointID : number){
+    return this.http.get<number>(this.baseUrl+"GetChargePointNbrChargingSessionsToday/"+chargePointID);
+  }
+
+  getChargePointNbrChargingSessionsLast30Days(chargePointID : number){
+    return this.http.get<any[]>(this.baseUrl+"GetChargePointNbrChargingSessionsLast30Days/"+chargePointID);
+  }
   
 
 }

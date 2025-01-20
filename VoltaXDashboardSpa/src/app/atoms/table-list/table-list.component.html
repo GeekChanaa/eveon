@@ -72,13 +72,22 @@
         <div class="row__table">
           <div class="row__row">
             <ng-container *ngFor="let field of fields">
-              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">{{field | camelCaseToSpace}} 
-                <svg *ngIf="sortedColumn == field && sortedDirection == 'ASC'" class="icon icon-arrow-down">
-                  <use xlink:href="#icon-arrow-down"></use>
-                </svg> 
-                <svg *ngIf="sortedColumn == field && sortedDirection == 'DESC'" class="icon icon-arrow-down" style="transform: rotate(180deg);">
-                  <use xlink:href="#icon-arrow-down"></use>
-                </svg>  
+              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">
+                {{field | camelCaseToSpace}} 
+                <ng-container *ngIf="sortedColumn == field && itemParams.reverseOrder == 'n'">
+                  <svg  class="icon icon-arrow-down">
+                    <use xlink:href="#icon-arrow-down"></use>
+                  </svg> 
+                </ng-container>
+
+                <ng-container *ngIf="sortedColumn == field && itemParams.reverseOrder == 'y'">
+                  <svg  class="icon icon-arrow-down" style="transform: rotate(180deg);">
+                    <use xlink:href="#icon-arrow-down"></use>
+                  </svg>  
+                </ng-container> 
+                
+                
+                
               </div>
             </ng-container>
             <div class="row__col">Options</div>

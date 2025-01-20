@@ -53,6 +53,20 @@ namespace VoltaXApi.Controllers
         {
             return Ok(await this._repository.UpdateConnectorFlatFee(connectorID, flatFee.FlatFee));
         }
+
+        [HttpPost("ResetPricingChargePointConnectors/{chargePointID}")]
+        public async Task<IActionResult> ResetPricingChargePointConnectors(int chargePointID)
+        {
+            await this._repository.ResetPricingChargePointConnectors(chargePointID);
+            return StatusCode(201);
+        }
+
+        [HttpPost("ResetPricingConnector/{connectorID}")]
+        public async Task<IActionResult> ResetPricingConnector(int connectorID)
+        {
+            await this._repository.ResetPricingConnector(connectorID);
+            return StatusCode(201);
+        }
         
     }
 }

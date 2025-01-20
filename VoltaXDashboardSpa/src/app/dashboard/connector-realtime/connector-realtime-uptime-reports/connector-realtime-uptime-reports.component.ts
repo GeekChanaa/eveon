@@ -12,7 +12,11 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
 
   @Input() chargePointID : number = 0;
   connectors : any[] = [];
-  cpUptimeLogs : any[] = [];
+  uptimeLogs : any[] = [];
+
+  isLoading  : boolean = false;
+
+  report : string = "chargePoint";
 
   constructor(
     private _chargePointUptimeService : ChargePointUptimeService,
@@ -32,9 +36,21 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
   }
 
   getChargePointUptimeLogs(){
+    this.isLoading = true;
     this._chargePointUptimeService.getChargePointUptime(this.chargePointID).subscribe((data) => {
       if(data.result)
-        this.cpUptimeLogs = data.result
+        this.uptimeLogs = data.result
+    })
+  }
+
+  changedReport(connectorID : any){
+    this.isLoading = true;
+    this._connectorUptimeService.getConnectorUptime(connectorID).subscribe((data) => {
+      this.isLoading = false;
+      if(data.result != null)
+        this.uptimeLogs = data.result;
+
+      console.log(this.uptimeLogs);
     })
   }
 

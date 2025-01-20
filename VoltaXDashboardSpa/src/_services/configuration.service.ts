@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
+import { GlobalConfigurations } from 'src/_models/global-configurations';
 
 
 @Injectable({
@@ -15,7 +16,7 @@ export class ConfigurationService {
   baseUrl = environment.apiUrl+"/api/Configuration/";
 
   getGlobalConfigurations(){
-    return this.http.get<any>(this.baseUrl+"GetGlobalConfigurations");
+    return this.http.get<GlobalConfigurations>(this.baseUrl+"GetGlobalConfigurations");
   }
 
 }

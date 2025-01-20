@@ -176,11 +176,12 @@ export class TableListComponent implements OnInit {
   }
 
   sort(field : string){
+    this.sortedColumn = field;
     if(this.itemParams.orderBy == field){
       if(this.itemParams.reverseOrder == 'y')
-      this.itemParams.reverseOrder = 'n'
+        this.itemParams.reverseOrder = 'n'
       else
-      this.itemParams.reverseOrder = 'y'
+        this.itemParams.reverseOrder = 'y'
     }
     else{
       this.itemParams.orderBy = field;

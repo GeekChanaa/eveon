@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Services;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Controllers
 {
@@ -25,6 +26,7 @@ namespace VoltaXApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
+        private readonly IAuthService _authService;
         private readonly IConfiguration _config;
         private readonly VoltaXApiDbContext _context;
         private readonly IUserRepository _userRepo;
@@ -35,12 +37,14 @@ namespace VoltaXApi.Controllers
                 IUserRepository userRepo, 
                 IConfiguration config, 
                 IMailService mailService,
+                IAuthService authService,
                 VoltaXApiDbContext context)
         {
             _repo = repo;
             _config = config;
             _context = context;
             _userRepo = userRepo;
+            _authService = authService;
             _mailService = mailService;
         }
 
@@ -51,9 +55,9 @@ namespace VoltaXApi.Controllers
             userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
             string spaLink = _config["SpaLink"];
 
-            if (await _repo.UserExists(userForRegisterDto.Email))
+            if (await _userRepo.UserExists(userForRegisterDto.Email))
             {
-                return BadRequest("Email already exists");
+                throw new ValidationException("Email already exists");
             }
 
             // Creating user
@@ -65,7 +69,7 @@ namespace VoltaXApi.Controllers
                 Phone = userForRegisterDto.Phone,
             };
 
-            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+            var createdUser = await _authService.Register(userToCreate, userForRegisterDto.Password);
 
             MailRequest requ = new MailRequest{
                 Phone = "",
@@ -91,13 +95,18 @@ namespace VoltaXApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userFromRepo = await _repo.Login(userForLoginDto.Email.ToLower(), userForLoginDto.Password);
+            string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            
+            var userFromRepo = await _authService.Login(userForLoginDto.Email.ToLower(), userForLoginDto.Password, ipAddress);
+            
             if (userFromRepo == null)
             {
                 return Unauthorized();
             }
 
-            var user = await _repo.GetUser(userFromRepo.ID);
+            
+
+            var user = await _userRepo.GetUser(userFromRepo.ID);
 
             var claims = new List<Claim>()
             {
@@ -155,25 +164,20 @@ namespace VoltaXApi.Controllers
         [HttpPost("ResetPassword")]
         public async Task ResetPassword(UserForResetPasswordDto userDto)
         {
-            // Find the user by their email
             var user = await this._userRepo.FindUserByEmail(userDto.Email);
             if (user == null)
-                throw new Exception("User not found");
+                throw new NotFoundException("User not found");
 
-            // Check that the tokens match
             if (user.ResetPasswordToken != userDto.Token)
-                throw new Exception("Invalid token");
+                throw new ValidationException("Invalid token");
 
-            // Update the user's password
             byte[] passHash, passSalt;
-            this._repo.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
+            _authService.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
             user.PasswordHash = passHash;
             user.PasswordSalt = passSalt;
 
-            // Invalidate the token so it can't be used again
             user.ResetPasswordToken = null;
 
-            // Update the user in the database
             await this._userRepo.Update(user);
         }
 
@@ -202,13 +206,13 @@ namespace VoltaXApi.Controllers
             byte[] passwordHash, passwordSalt;
 
             // Getting User
-            var user = await _repo.GetUser(userPasswordChangeDto.ID);
+            var user = await _userRepo.GetUser(userPasswordChangeDto.ID);
 
             // Checking the password
-            if (_repo.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+            if (_authService.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
             {
                 // Changing The password
-                _repo.CreatePasswordHash(userPasswordChangeDto.NewPassword, out passwordHash, out passwordSalt);
+                _authService.CreatePasswordHash(userPasswordChangeDto.NewPassword, out passwordHash, out passwordSalt);
                 user.PasswordSalt = passwordSalt;
                 user.PasswordHash = passwordHash;
                 await _context.SaveChangesAsync();
@@ -225,7 +229,7 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDto verifyEmailDto)
         {
             // Checking the password
-            if (await _repo.VerifyEmail(verifyEmailDto.Email, verifyEmailDto.Token))
+            if (await _authService.VerifyEmail(verifyEmailDto.Email, verifyEmailDto.Token))
             {
                 return StatusCode(200);
             }
@@ -240,7 +244,7 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
         {
             // Checking the password
-            if (await _repo.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token))
+            if (await _authService.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token))
             {
                 return StatusCode(200);
             }
@@ -250,22 +254,19 @@ namespace VoltaXApi.Controllers
             }
         }
     
-        // Send Phone Verification
         [HttpPost("SendPhoneVerificationSMS")]
         public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
         {
-            await this._repo.CreatePhoneVerificationToken(addPhoneNumberDto);
+            await this._authService.CreatePhoneVerificationToken(addPhoneNumberDto);
 
             return StatusCode(200);
         }
 
-        // Send Email Verification
         [HttpPost("SendEmailVerificationCode")]
         public async Task<IActionResult> SendEmailVerificationCode([FromBody] int userID)
         {
-            await this._repo.CreateEmailVerificationToken(userID);
+            await this._authService.CreateEmailVerificationToken(userID);
 
-            // sending email verification via email
             return StatusCode(200);
         }
     }

@@ -155,8 +155,10 @@ namespace VoltaXApi.Data
         
 
         public DbSet<User> Users { get; set; }
+        public DbSet<LoginAttempt> LoginAttempts { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<SystemReport> SystemReports { get; set; }
+        public DbSet<SystemReportComment> SystemReportComments { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
         public DbSet<ChargePoint> ChargePoints { get; set; }

@@ -17,13 +17,16 @@ namespace VoltaXApi.Services
     {
         private readonly IConnectorRepository _connectorRepository;
         private readonly IChargePointRepository _chargePointRepository;
+        private readonly GlobalConfigurations _globalConfig;
 
         public ConnectorService(
           IConnectorRepository connectorRepository,
-          IChargePointRepository chargePointRepository
+          IChargePointRepository chargePointRepository,
+          GlobalConfigurations globalConfigurations
         ){
           _connectorRepository = connectorRepository;
           _chargePointRepository = chargePointRepository;
+          _globalConfig = globalConfigurations;
         }
 
       public async Task<List<ConnectorListDto>?> RefreshChargePointConnectors(List<ReportDataType>? connectorsToRefresh, string chargePointID)
@@ -41,7 +44,10 @@ namespace VoltaXApi.Services
             Connector newConnector = new Connector{
               ChargePointID = chargePoint.ID,
               EvseID = reportData.Component.Evse.Id,
-              ConnectorID = reportData.Component.Evse.ConnectorId
+              ConnectorID = reportData.Component.Evse.ConnectorId,
+              PricePerIdleMinute = (decimal) _globalConfig.DefaultIdleTimePricing,
+              PricePerKWh = (decimal) _globalConfig.DefaultPricePerKwh,
+              CostPerKwh = (decimal) _globalConfig.DefaultCostPerKwh
             };
             await _connectorRepository.AddAsync(newConnector);
           }

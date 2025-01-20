@@ -47,14 +47,12 @@ namespace VoltaXApi.OCPP.Handlers
 
                 // Write raw status in DB
                 msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty, msgIn, msgOut);
-
                 ConnectorStatusEnumType newStatus = statusNotificationRequest.ConnectorStatus;
 
-                _logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1} / EvseID={3} / newStatus={2}", chargePointStatus?.Id, connectorId, newStatus.ToString(), evseId);
+                _logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1}  / newStatus={2} / EvseID={3}", chargePointStatus?.Id, connectorId, newStatus.ToString(), evseId);
 
                 if (connectorId >= 0)
                 {
-                    Console.WriteLine("this is the update arr");
                     if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
                     {
                         errorCode = ErrorCodes.InternalError;

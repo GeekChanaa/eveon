@@ -1,0 +1,77 @@
+<div class="overview js-tabs">
+  <div class="overview__nav">
+    <a #tabsLink class="overview__link js-tabs-link active" href="#">
+      <div class="overview__icon" style="background-color: #B1E5FC;">
+        <svg class="icon icon-shopping-bag">
+          <use xlink:href="#icon-shopping-bag"></use>
+        </svg>
+      </div>
+      <div class="overview__details">
+        <div class="overview__subtitle">Total Energy
+          <div class="tooltip" title="Small description">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="overview__counter">{{totalEnergy | number : '1.0-0' }}</div>
+      </div>
+      <div class="balance background negative">
+        <svg class="icon icon-arrow-bottom">
+          <use xlink:href="#icon-arrow-bottom"></use>
+        </svg>{{totalEnergyToday | number : '1.0-0'}}
+      </div>
+    </a>
+    <a #tabsLink class="overview__link js-tabs-link" href="#">
+      <div class="overview__icon" style="background-color: #CABDFF;">
+        <svg class="icon icon-activity">
+          <use xlink:href="#icon-activity"></use>
+        </svg>
+      </div>
+      <div class="overview__details">
+        <div class="overview__subtitle">Charging Sessions
+          <div class="tooltip" title="Small description">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="overview__counter">{{nbrChargingSessions | number : '1.0-0'}}</div>
+      </div>
+      <div class="balance background positive">
+        <svg class="icon icon-arrow-top">
+          <use xlink:href="#icon-arrow-top"></use>
+        </svg>{{nbrChargingSessionsToday | number : '1.0-0'}}
+      </div>
+    </a>
+    
+  </div>
+  <div class="overview__container">
+    <div #tabsItem class="overview__item js-tabs-item">
+      <div class="overview__chart" *ngIf="energyChart">
+        <apx-chart style="display: block; height: 200px; width: 100%" 
+          [series]="energyChart.series" 
+          [chart]="energyChart.chart" 
+          [xaxis]="energyChart.xaxis" 
+          [stroke]="energyChart.stroke" 
+          [dataLabels]="energyChart.dataLabels" 
+          [colors]="energyChart.colors" 
+          [legend]="energyChart.legend" 
+          [grid]="energyChart.grid"></apx-chart>
+      </div>
+    </div>
+    <div #tabsItem class="overview__item js-tabs-item">
+      <div class="overview__chart" *ngIf="chargingSessionsChart">
+        <apx-chart style="display: block; height: 200px; width: 100%" 
+          [series]="chargingSessionsChart.series" 
+          [chart]="chargingSessionsChart.chart" 
+          [xaxis]="chargingSessionsChart.xaxis" 
+          [stroke]="chargingSessionsChart.stroke" 
+          [dataLabels]="chargingSessionsChart.dataLabels" 
+          [colors]="chargingSessionsChart.colors" 
+          [legend]="chargingSessionsChart.legend" 
+          [grid]="chargingSessionsChart.grid"></apx-chart>
+      </div>
+    </div>
+  </div>
+</div>

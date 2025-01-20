@@ -29,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
+import { ConnectorStatusesComponent } from './home/connector-statuses/connector-statuses.component';
 
 @NgModule({
     declarations: [
@@ -53,7 +54,8 @@ import { GlobalConfigurationsComponent } from './global-configurations/global-co
       CompleteProfileComponent,
       DebitCardsComponent,
       ProfileSecurityComponent,
-      GlobalConfigurationsComponent
+      GlobalConfigurationsComponent,
+      ConnectorStatusesComponent
   ],
     imports: [
         DashboardRoutingModule,
@@ -64,7 +66,8 @@ import { GlobalConfigurationsComponent } from './global-configurations/global-co
         SharedModule,
         FormsModule,
         MatExpansionModule,
-        MatButtonModule
+        MatButtonModule,
+        
     ],
   })
   export class DashboardModule { }

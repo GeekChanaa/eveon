@@ -6,7 +6,7 @@
   </button><a class="sidebar__logo" routerLink="/dashboard">
       <img src="/assets/images/logos/logo.svg" alt="Core">
     </a>
-  
+    
     <div class="sidebar__menu">
       <!-- Customer menu -->
       <app-sidebar-item *ngIf="role == 1" [title]="'home'" [link]="'/my-dashboard'" [active]="isActive('/my-dashboard')"></app-sidebar-item>
@@ -34,8 +34,7 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-comment" *ngIf="role == 0" [title]="'app management'" 
-        [active]="isDropdownActive('/dashboard/comments') || isDropdownActive('/dashboard/reports')">
-        <app-sidebar-link [title]="'comments management'" [link]="'/dashboard/comments'" [active]="isActive('/dashboard/comments')"></app-sidebar-link>
+        [active]="isDropdownActive('/dashboard/reports')">
         <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'" [active]="isActive('/dashboard/reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
@@ -46,8 +45,7 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-setting" *ngIf="role == 0" [title]="'maintenance management'" 
-        [active]="isDropdownActive('/dashboard/alarm-management')">
-        <app-sidebar-link [title]="'alarm management'" [link]="'/dashboard/alarm-management'" [active]="isActive('/dashboard/alarm-management')"></app-sidebar-link>
+        [active]="isDropdownActive('/dashboard/global-configurations') || isDropdownActive('/dashboard/system-reports')">
         <app-sidebar-link [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'" [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
         <app-sidebar-link [title]="'System Reports'" [link]="'/dashboard/system-reports'" [active]="isActive('/dashboard/system-reports')"></app-sidebar-link>
       </app-sidebar-dropdown>

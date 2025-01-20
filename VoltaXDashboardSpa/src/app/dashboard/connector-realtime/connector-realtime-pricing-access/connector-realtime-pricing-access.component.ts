@@ -18,8 +18,11 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
 
   isLoadingUpdate : any[] = [];
   isLoadingFFUpdate : any[] = [];
+  pricingInitialValues: any[] = [];
+  flatFeeInitialValues: any[] = [];
 
   isLoading : boolean = false;
+  
 
   constructor(
     private _connectorService : ConnectorService,
@@ -39,8 +42,6 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     this._connectorService.getChargePointConnectors(this.ChargePoint.id).subscribe((data) => {
       this.isLoading = false;
       this.connectors = data;
-      console.log("this is the connector data");
-      console.log(this.connectors);
       this.createFormGroupsForConnectors();
       this.createFlatFeeFormGroupsForConnectors();
     },(error) => {
@@ -56,6 +57,7 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
 
     this._connectorService.updateConnectorPricing(connectorId, updatedData).subscribe(response => {
       this.isLoadingUpdate[connectorId] = false;
+      this.pricingInitialValues[index] = updatedData;
       this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Pricing for connector "+ connectorId+" Updated successfully" , 4000)
     }, error => {
       this.isLoadingUpdate[connectorId] = false;
@@ -70,6 +72,7 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
 
     this._connectorService.updateConnectorFlateFee(connectorId, flatFee.flatFee).subscribe(response => {
       this.isLoadingFFUpdate[connectorId] = false;
+      this.flatFeeInitialValues[index] = flatFee;
       this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Flat fee for connector "+ connectorId+" Updated successfully" , 4000)
     }, error => {
       this.isLoadingFFUpdate[connectorId] = false;
@@ -79,24 +82,27 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
 
 
   createFormGroupsForConnectors() {
-    this.connectors.forEach((connector) => {
+    this.formArray.clear();
+    this.connectors.forEach((connector, index) => {
       this.isLoadingFFUpdate[connector.id] = false;
       const group = this._fb.group({
         pricePerKwh: [connector.pricePerKWh || '', Validators.required],
-        pricePerMinute: [connector.pricePerMinute || '', Validators.required],
-        pricePerHour: [connector.pricePerHour || '', Validators.required]
+        pricePerIdleMinute: [connector.pricePerIdleMinute || '', Validators.required],
+        costPerKwh: [connector.costPerKwh || '', Validators.required]
       });
       this.formArray.push(group);
+      this.pricingInitialValues[index] = group.value;
     });
   }
 
   createFlatFeeFormGroupsForConnectors() {
-    this.connectors.forEach((connector) => {
+    this.connectors.forEach((connector,index) => {
       this.isLoadingUpdate[connector.id] = false;
       const group = this._fb.group({
         flatFee: [connector.flatFee || '', Validators.required]
       });
       this.flatFeeFormArray.push(group);
+      this.flatFeeInitialValues[index] = group.value; 
     });
   }
 
@@ -108,4 +114,28 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     return this.flatFeeFormArray.at(index) as FormGroup;
   }
 
-}
+  isConnectorFormGroupDirty(index: number): boolean {
+    const formGroup = this.getConnectorFormGroup(index);
+    return JSON.stringify(formGroup.value) !== JSON.stringify(this.pricingInitialValues[index]);
+  }
+
+  isFlatFeeFormGroupDirty(index: number): boolean {
+    const formGroup = this.getFlatFeeConnectorFormGroup(index);
+    return JSON.stringify(formGroup.value) !== JSON.stringify(this.flatFeeInitialValues[index]);
+  }
+
+  resetPricingAllConnectors(){
+    this._connectorService.resetPricingChargePointConnectors(this.ChargePoint.id).subscribe((data)=> {
+      this._modalService.popup(ActionModalStatusEnum.Success, "Success", "All connectors pricing reset successfully" , 4000);
+      this.getConnectors();
+    })
+  }
+
+  resetConnectorPricing(connectorID : number){
+    this._connectorService.resetPricingConnector(connectorID).subscribe((data)=> {
+      this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Connector Pricing Reset Success" , 4000);
+      this.getConnectors();
+    })
+  }
+
+} 

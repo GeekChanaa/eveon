@@ -2,6 +2,18 @@
   Pricing & Access
 </div>
 
+<div class="settings__actions">
+  <button class="reset__button"
+    appConfirmAction
+    [confirmTitle]="'Reset Pricing'"
+    [confirmMessage]="'Do you really want to delete this item?'"
+    [confirmCallback]="resetPricingAllConnectors.bind(this)">
+    Reset to default <svg class="icon icon-reset">
+      <use xlink:href="#icon-reset"></use>
+    </svg>
+  </button>
+</div>
+
 <ng-container *ngIf="isLoading">
   <app-preloader-container></app-preloader-container>
 </ng-container>
@@ -27,10 +39,13 @@
       Change the quota for the price of the charge provided by the charge point:
       <div class="form__container" [formGroup]="getConnectorFormGroup(i)">
         <input formControlName="pricePerKwh" placeholder="Price per Kwh" class="field__input price__input" type="text" required>
-        <input formControlName="pricePerMinute" placeholder="Price per Minute" class="field__input price__input" type="text" required>
-        <input formControlName="pricePerHour" placeholder="Price per Hour" class="field__input price__input" type="text" required>
-        <button (click)="updateConnectorPricing(i)" [disabled]="isLoadingUpdate[connector.id]" [ngClass]="{'disabled' : isLoadingUpdate[connector.id]}" class="button button-small button-primary update-button">
-          <ng-container *ngIf="!isLoadingUpdate[connector.id]">
+        <input formControlName="pricePerIdleMinute" placeholder="Price per Idle Minute" class="field__input price__input" type="text" required>
+        <input formControlName="costPerKwh" placeholder="Cost per Kwh" class="field__input price__input" type="text" required>
+        <button 
+          (click)="updateConnectorPricing(i)" 
+          [disabled]="isLoadingUpdate[connector.id]" 
+          [ngClass]="{'disabled' : isLoadingUpdate[connector.id] || !isConnectorFormGroupDirty(i)}" class="button button-small button-primary update-button">
+          <ng-container *ngIf="!isLoadingUpdate[connector.id] || !isConnectorFormGroupDirty(i)">
             Update
           </ng-container>
           
@@ -49,7 +64,11 @@
       A flat fee is the fixed cost charged for using the charger, regardless of the charging duration or the amount of energy consumed.
       <div class="form__container" [formGroup]="getFlatFeeConnectorFormGroup(i)">
         <input formControlName="flatFee" placeholder="Flat Fee" class="field__input price__input" type="text" required>
-        <button (click)="updateConnectorFlatFee(i)" [disabled]="isLoadingFFUpdate[connector.id]" [ngClass]="{'disabled' : isLoadingFFUpdate[connector.id]}" class="button button-small button-primary update-button">
+        <button 
+        [disabled]="!isFlatFeeFormGroupDirty(i) || isLoadingFFUpdate[connector.id]" 
+        (click)="updateConnectorFlatFee(i)" 
+         [ngClass]="{'disabled' : !isFlatFeeFormGroupDirty(i) || isLoadingFFUpdate[connector.id]}" 
+         class="button button-small button-primary update-button">
           <ng-container *ngIf="!isLoadingFFUpdate[connector.id]">
             Update
           </ng-container>
@@ -60,6 +79,16 @@
           
         </button>
       </div>
+      <button class="reset__button"
+        appConfirmAction
+        [confirmTitle]="'Reset Pricing'"
+        [confirmMessage]="'Do you really want to delete this item?'"
+        [confirmCallback]="resetConnectorPricing.bind(this)"
+        [confirmArgs]="[connector.id]">
+        Reset Pricing <svg class="icon icon-reset">
+          <use xlink:href="#icon-reset"></use>
+        </svg>
+      </button>
     </div>
   </div>
   <div class="setting_action">

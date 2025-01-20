@@ -13,4 +13,4 @@ export class SvgSpinnerComponent implements OnInit {
   ngOnInit() {
   }
 
-}
+} 

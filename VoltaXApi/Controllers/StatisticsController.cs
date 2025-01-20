@@ -24,5 +24,11 @@ namespace VoltaXApi.Controllers
         {
           _statisticsService = service;
         }
+
+        [HttpGet("GetChargePointStatisticsSummary/{ChargePointID}")]
+        public async Task<ActionResult<ChargePointStatisticsSummaryDto>> GetChargePointStatisticsSummary(int chargePointID)
+        {
+            return await _statisticsService.GetChargePointStatisticsSummary(chargePointID);
+        }
     }
 }

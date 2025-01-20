@@ -18,5 +18,9 @@ namespace VoltaXApi.Data
         Task<bool> IsPhoneUnique(string phone);
         Task<List<UserNameDto>> GetSupportUserNames();
         Task<string> GetUserEmailByID(int userID);
+        Task<User?> GetUserByEmail(string email);
+        Task<User> GetUser(int id);
+        Task<bool> UserExists(string email);
+
     }
 }

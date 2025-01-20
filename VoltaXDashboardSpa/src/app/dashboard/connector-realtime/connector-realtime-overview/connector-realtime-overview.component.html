@@ -14,19 +14,19 @@
         <div class="stat__line">
           <div class="stat__details">
             <div class="stat__label">Charging Sessions Number
-              <div class="tooltip" title="Small description stats">
+              <div class="tooltip" title="Number of charging sessions made by this charge point">
                 <svg class="icon icon-info">
                   <use xlink:href="#icon-info"></use>
                 </svg>
               </div>
             </div>
-            <div class="stat__counter">{{20 | number:'1.2-2'}}</div>
+            <div class="stat__counter">{{statisticsSummary?.nbrChargingSessions| number:'1.2-2'}}</div>
             <div class="stat__indicator">
               <div class="balance positive">
                 <svg class="icon icon-arrow-top">
                   <use xlink:href="#icon-arrow-top"></use>
-                </svg>{{20 | number:'1.2-2'}}
-              </div><span>this week</span>
+                </svg>{{statisticsSummary?.nbrChargingSessionsLastWeek| number:'1.2-2'}}
+              </div><span class="stat__period">this week</span>
             </div>
           </div>
         </div>
@@ -40,19 +40,19 @@
         <div class="stat__line">
           <div class="stat__details">
             <div class="stat__label">Total Energy
-              <div class="tooltip" title="Small description Balance">
+              <div class="tooltip" title="Total Energy consumed through this charge point">
                 <svg class="icon icon-info">
                   <use xlink:href="#icon-info"></use>
                 </svg>
               </div>
             </div>
-            <div class="stat__counter">{{20 | number:'1.2-2' }}</div>
+            <div class="stat__counter">{{statisticsSummary?.totalEnergy| number:'1.2-2' }}</div>
             <div class="stat__indicator">
               <div class="balance negative">
                 <svg class="icon icon-arrow-top">
                   <use xlink:href="#icon-arrow-top"></use>
-                </svg>{{20}}
-              </div><span>this week</span>
+                </svg>{{statisticsSummary?.totalEnergyLastWeek | number:'1.2-2'}}
+              </div><span class="stat__period">this week</span>
             </div>
           </div>
         </div>
@@ -61,3 +61,15 @@
     </div>
   </div>
 </div>
+
+
+
+<div class="title-purple card__title">
+  Statistics
+</div>
+
+<ng-container *ngIf="ChargePoint != null">
+  <app-connector-realtime-overview-statistics 
+  [chargePointID]="ChargePoint.id">
+  </app-connector-realtime-overview-statistics>
+</ng-container>

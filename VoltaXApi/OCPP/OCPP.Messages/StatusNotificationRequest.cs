@@ -20,10 +20,15 @@ namespace VoltaXApi.OCPP.Messages
 
   public enum ConnectorStatusEnumType
   {
+      [System.Runtime.Serialization.EnumMember(Value = @"Available")]
       Available,
+      [System.Runtime.Serialization.EnumMember(Value = @"Occupied")]
       Occupied,
+      [System.Runtime.Serialization.EnumMember(Value = @"Reserved")]
       Reserved,
+      [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
       Unavailable,
+      [System.Runtime.Serialization.EnumMember(Value = @"Faulted")]
       Faulted
   }
 

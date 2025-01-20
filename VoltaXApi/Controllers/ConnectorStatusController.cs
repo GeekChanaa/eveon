@@ -31,6 +31,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetNumberOfConnectorsByStatus(status);
         }
 
+        [HttpGet("GetNumberOfConnectorsByAllStatus")]
+        public async Task<ActionResult<ConnectorStatusesDto>> GetNumberOfConnectorsByAllStatus()
+        {
+            return await this._repository.GetNumberOfConnectorsByAllStatus();
+        }
+
         [HttpGet("GetPartnerNumberOfConnectorsByStatus/{partnerID}")]
         public async Task<ActionResult<int>> GetPartnerNumberOfConnectorsByStatus(int partnerID,[FromQuery] string status)
         {

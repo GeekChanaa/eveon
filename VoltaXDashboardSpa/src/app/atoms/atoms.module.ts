@@ -38,6 +38,10 @@ import { ChargingSessionStatusDescriptionComponent } from './charging-session-st
 import { ChargingSessionStatusTagComponent } from './charging-session-status-tag/charging-session-status-tag.component';
 import { EnumSelectComponent } from './enum-select/enum-select.component';
 import { ToggleButtonsComponent } from './toggle-buttons/toggle-buttons.component';
+import { ConnectorStatusTagComponent } from './connector-status-tag/connector-status-tag.component';
+import { SafeUrlPipe } from 'src/pipes/safe-url.pipe';
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive';
 
 @NgModule({
   declarations: [
@@ -74,6 +78,10 @@ import { ToggleButtonsComponent } from './toggle-buttons/toggle-buttons.componen
     ChargingSessionStatusTagComponent,
     EnumSelectComponent,
     ToggleButtonsComponent,
+    ConnectorStatusTagComponent,
+    SafeUrlPipe,
+    ConfirmModalComponent,
+    ConfirmActionDirective
   ],
   imports: [
     CommonModule,
@@ -115,7 +123,11 @@ import { ToggleButtonsComponent } from './toggle-buttons/toggle-buttons.componen
     CamelToKebabPipe,
     ChargingSessionStatusDescriptionComponent,
     ChargingSessionStatusTagComponent,
-    EnumSelectComponent
+    EnumSelectComponent,
+    ConnectorStatusTagComponent,
+    ConfirmModalComponent,
+    ConfirmActionDirective,
+    SafeUrlPipe
   ],
   providers: [],
 })

@@ -8,17 +8,21 @@ using System.Linq.Dynamic.Core;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using AutoMapper;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Data
 {
     public class ConnectorRepository : Repository<Connector>,IConnectorRepository
     {
         private readonly IMapper _mapper;
+        private readonly GlobalConfigurations _globalConfig;
         public ConnectorRepository(
             VoltaXApiDbContext context,
+            GlobalConfigurations globalConfigurations,
             IMapper mapper) : base(context)
         {
           _mapper = mapper;
+          _globalConfig = globalConfigurations;
         }
 
         public async Task<List<ConnectorListDto>> GetChargePointConnectors(int chargePointID)
@@ -48,8 +52,8 @@ namespace VoltaXApi.Data
             }
 
             connector.PricePerKWh = updateConnectorPricingDto.PricePerKWh;
-            connector.PricePerMinute = updateConnectorPricingDto.PricePerMinute;
-            connector.PricePerHour = updateConnectorPricingDto.PricePerHour;
+            connector.PricePerIdleMinute = updateConnectorPricingDto.PricePerIdleMinute;
+            connector.CostPerKwh = updateConnectorPricingDto.CostPerKwh;
 
             _context.Connectors.Update(connector);
             int changes = await _context.SaveChangesAsync();
@@ -79,6 +83,34 @@ namespace VoltaXApi.Data
             return await _context.Connectors
                             .Where(u=> u.ChargePointID == chargePointID && u.ConnectorID == connectorId && u.EvseID == evseId).FirstOrDefaultAsync();
         }
+      
+        public async Task ResetPricingChargePointConnectors(int chargePointID)
+        {
+            var connectors = await _context.Connectors.Where(c => c.ChargePointID == chargePointID).ToListAsync();
+            foreach(var connector in connectors)
+            {
+                connector.PricePerKWh = (decimal) _globalConfig.DefaultPricePerKwh;
+                connector.PricePerIdleMinute = (decimal) _globalConfig.DefaultIdleTimePricing;
+                connector.CostPerKwh = (decimal) _globalConfig.DefaultCostPerKwh ;
+                connector.FlatFee = (decimal) _globalConfig.DefaultFlatFee;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ResetPricingConnector(int connectorID)
+        {
+            var connector = await _context.Connectors.Where(c => c.ID == connectorID).FirstOrDefaultAsync();
+            if(connector == null) 
+                throw new NotFoundException("No connector with this ID exists");
+            connector.PricePerKWh = (decimal) _globalConfig.DefaultPricePerKwh;
+            connector.PricePerIdleMinute = (decimal) _globalConfig.DefaultIdleTimePricing;
+            connector.CostPerKwh = (decimal) _globalConfig.DefaultCostPerKwh ;
+            connector.FlatFee = (decimal) _globalConfig.DefaultFlatFee;
+
+            await _context.SaveChangesAsync();
+        }
+        
     }
 }
 

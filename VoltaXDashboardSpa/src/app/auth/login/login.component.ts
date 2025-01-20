@@ -29,8 +29,7 @@ export class LoginComponent implements OnInit {
         Validators.email
     ]),
     password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(8)
+        Validators.required
     ])
     
     })
@@ -42,6 +41,7 @@ export class LoginComponent implements OnInit {
 
   // Login button
   login(){
+
     this.isLoading = true;
     const formValue = this.form.value;
     var userForLogin : UserForLoginDto = {

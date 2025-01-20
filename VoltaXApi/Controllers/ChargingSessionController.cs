@@ -74,6 +74,27 @@ namespace VoltaXApi.Controllers
             return File(pdfBytes, "application/pdf", "Invoice.pdf");
         }
 
+        [HttpGet("GetChargePointNbrChargingSessions/{chargePointID}")]
+        public async Task<IActionResult> GetChargePointNbrChargingSessions(int chargePointID)
+        {
+            var result = await _repository.GetChargePointNbrChargingSessions(chargePointID);
+            return Ok(result);
+        }
+
+        [HttpGet("GetChargePointNbrChargingSessionsToday/{chargePointID}")]
+        public async Task<IActionResult> GetChargePointNbrChargingSessionsToday(int chargePointID)
+        {
+            var result = await _repository.GetChargePointNbrChargingSessionsToday(chargePointID);
+            return Ok(result);
+        }
+
+        [HttpGet("GetChargePointNbrChargingSessionsLast30Days/{chargePointID}")]
+        public async Task<IActionResult> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
+        {
+            var result = await _repository.GetChargePointNbrChargingSessionsLast30Days(chargePointID);
+            return Ok(result);
+        }
+
 
     }
 }

@@ -1,4 +1,5 @@
 using OCPP.Core.Server;
+using VoltaXApi.Dtos;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
@@ -9,5 +10,6 @@ namespace VoltaXApi.Data
         Task<int> GetPartnerNumberOfConnectorsByStatus(int partnerID,string status);
         Task<ConnectorStatus?> GetConnectorStatusByConnectorID(int connectorID, string chargePointID);
         Task<ConnectorStatus?> GetLastConnectorStatus(int connectorID);
+        Task<ConnectorStatusesDto?> GetNumberOfConnectorsByAllStatus();
     }
 }

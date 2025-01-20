@@ -15,127 +15,150 @@ using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Services
 {
-    public class ConnectorStatusService : IConnectorStatusService
+  public class ConnectorStatusService : IConnectorStatusService
+  {
+    private readonly IConnectorStatusRepository _connectorStatusRepository;
+    private readonly IConnectorService _connectorService;
+    private readonly IConnectorRepository _connectorRepository;
+    private readonly IConfigurationService _configurationService;
+    private readonly IChargePointRepository _chargePointRepository;
+    private readonly IConnectorUptimeRepository _connectorUptimeRepository;
+    private readonly ISystemReportService _systemReportService;
+
+    public ConnectorStatusService(
+      IConnectorStatusRepository csrepo,
+      IConnectorRepository connectorRepository,
+      IConnectorService connectorService,
+      IConfigurationService configurationService,
+      IChargePointRepository chargePointRepository,
+      IConnectorUptimeRepository connectorUptimeRepository,
+      ISystemReportService systemReportService
+    )
     {
-        private readonly IConnectorStatusRepository _connectorStatusRepository;
-        private readonly IConnectorService _connectorService;
-        private readonly IConnectorRepository _connectorRepository;
-        private readonly IConfigurationService _configurationService;
-        private readonly IChargePointRepository _chargePointRepository;
-        private readonly IConnectorUptimeRepository _connectorUptimeRepository;
+      this._connectorStatusRepository = csrepo;
+      this._connectorStatusRepository = csrepo;
+      this._connectorService = connectorService;
+      this._connectorRepository = connectorRepository;
+      this._configurationService = configurationService;
+      _chargePointRepository = chargePointRepository;
+      _connectorUptimeRepository = connectorUptimeRepository;
+      _systemReportService = systemReportService;
+    }
 
-        public ConnectorStatusService(
-          IConnectorStatusRepository csrepo,
-          IConnectorRepository connectorRepository,
-          IConnectorService connectorService,
-          IConfigurationService configurationService,
-          IChargePointRepository chargePointRepository,
-          IConnectorUptimeRepository connectorUptimeRepository
-        ){
-          this._connectorStatusRepository = csrepo;
-          this._connectorStatusRepository = csrepo;
-          this._connectorService = connectorService;
-          this._connectorRepository = connectorRepository;
-          this._configurationService = configurationService;
-          _chargePointRepository = chargePointRepository;
-          _connectorUptimeRepository = connectorUptimeRepository;
-        }
-
-        public async Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID)
+    public async Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID)
+    {
+      try
+      {
+        foreach (var connectorStatusData in ReportData)
         {
-          try
+          ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID);
+          Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorStatusData.Component.Evse.ConnectorId, connectorStatusData.Component.Evse.Id, chargePoint.ID);
+          ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointID);
+          if (connectorStatus == null)
           {
-            foreach(var connectorStatusData in ReportData)
+            // no matching entry => create connector status
+            connectorStatus = new ConnectorStatus
             {
-              ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID);
-              Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorStatusData.Component.Evse.ConnectorId,connectorStatusData.Component.Evse.Id,chargePoint.ID);
-              ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID,chargePointID);
-              if (connectorStatus == null)
-              {
-                  // no matching entry => create connector status
-                  connectorStatus = new ConnectorStatus();
-                  connectorStatus.ChargePointID = chargePointID;
-                  connectorStatus.ConnectorID = connector.ID;
-                  connectorStatus.LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value);
-                  connectorStatus.LastStatusTime = DateTime.Now;
-                  Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
-                  await _connectorStatusRepository.AddAsync(connectorStatus);
-              }
-              else
-              {
-                if (!string.IsNullOrEmpty(connectorStatusData.VariableAttribute[0].Value))
-                {
-                    connectorStatus.LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value);
-                    connectorStatus.LastStatusTime = DateTime.Now;
-                    await _connectorStatusRepository.Update(connectorStatus);
-                }
-              }
-              
-
-            }
-              
+              ChargePointID = chargePointID,
+              ConnectorID = connector.ID,
+              LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value),
+              LastStatusTime = DateTime.Now
+            };
+            Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
+            await _connectorStatusRepository.AddAsync(connectorStatus);
           }
-          catch (Exception exp)
+          else
           {
-              Console.WriteLine("INNER EXCEPTION : ");
-              Console.WriteLine(exp.StackTrace);
-              if(exp.InnerException != null)
-                  Console.WriteLine(exp.InnerException.ToString());
-              return false;
-          }
-
-          return true;
-        }
-
-        public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus)
-        {
-          try
-          {
-            ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
-            Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorId,evseId,chargePoint.ID);
-            if(connector == null)
+            if (!string.IsNullOrEmpty(connectorStatusData.VariableAttribute[0].Value))
             {
-              await this._configurationService.RefreshConnectors(chargePointStatus.Id);
-              return true;
-            }
-            
-            // refresh the connectors if the connector does not exist
-            ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID,chargePointStatus.Id);
-            if (connectorStatus == null)
-            {
-                // no matching entry => create connector status
-                connectorStatus = new ConnectorStatus();
-                connectorStatus.ChargePointID = chargePointStatus.Id;
-                connectorStatus.ConnectorID = connector.ID;
-                connectorStatus.LastStatus = status;
-                Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
-                await _connectorStatusRepository.AddAsync(connectorStatus);
-                await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
-            }
-            else{
-              connectorStatus.LastStatus = status;
-              connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
+              connectorStatus.LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value);
+              connectorStatus.LastStatusTime = DateTime.Now;
               await _connectorStatusRepository.Update(connectorStatus);
-
-              // Updating uptimeReport
-              await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
             }
-
-            
-            Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2}", connectorStatus.ChargePointID, connectorId, status);
-              
-          }
-          catch (Exception exp)
-          {
-              Console.WriteLine( "UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", chargePointStatus?.Id, connectorId, exp.Message);
-              Console.WriteLine("INNER EXCEPTION : ");
-              Console.WriteLine(exp.StackTrace);
-              if(exp.InnerException != null)
-                  Console.WriteLine(exp.InnerException.ToString());
-              return false;
           }
 
+
+        }
+
+      }
+      catch (Exception exp)
+      {
+        Console.WriteLine("INNER EXCEPTION : ");
+        Console.WriteLine(exp.StackTrace);
+        if (exp.InnerException != null)
+          Console.WriteLine(exp.InnerException.ToString());
+        return false;
+      }
+
+      return true;
+    }
+
+    public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus)
+    {
+      try
+      {
+        ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+        Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorId, evseId, chargePoint.ID);
+
+        if (connector == null)
+        {
+          await this._configurationService.RefreshConnectors(chargePointStatus.Id);
           return true;
         }
+
+        // refresh the connectors if the connector does not exist
+        ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointStatus.Id);
+        if (connectorStatus == null)
+        {
+
+          // no matching entry => create connector status
+          connectorStatus = new ConnectorStatus
+          {
+            ChargePointID = chargePointStatus.Id,
+            ConnectorID = connector.ID,
+            LastStatus = status
+          };
+          Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
+          await _connectorStatusRepository.AddAsync(connectorStatus);
+          await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
+        }
+        else
+        {
+          if (status == ConnectorStatusEnumType.Faulted && connectorStatus.LastStatus != status)
+          {
+            SystemReport sysReport = new()
+            {
+              ReportCategory = ReportCategoryEnum.Technical,
+              ConnectorID = connector.ID,
+              IssueDescription = "Connector Faulted",
+              IsEmail = true,
+              IsNotification = true,
+              Criticality = ReportCriticality.High
+            };
+            await _systemReportService.HandleReport(sysReport);
+          }
+          connectorStatus.LastStatus = status;
+          connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
+          await _connectorStatusRepository.Update(connectorStatus);
+
+          // Updating uptimeReport
+          await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
+        }
+
+        Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2}", connectorStatus.ChargePointID, connectorId, status);
+
+      }
+      catch (Exception exp)
+      {
+        Console.WriteLine("UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", chargePointStatus?.Id, connectorId, exp.Message);
+        Console.WriteLine("INNER EXCEPTION : ");
+        Console.WriteLine(exp.StackTrace);
+        if (exp.InnerException != null)
+          Console.WriteLine(exp.InnerException.ToString());
+        return false;
+      }
+
+      return true;
+    }
   }
 }

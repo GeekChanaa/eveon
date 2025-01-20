@@ -95,6 +95,28 @@ namespace VoltaXApi.Data
             return (await _context.Users.FirstOrDefaultAsync(u => u.ID == userID)).Email;
         }
 
+        public async Task<bool> UserExists(string email)
+        {
+            if (await _context.Users.AnyAsync(x => x.Email == email))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<User> GetUser(int id)
+        {
+            // Getting The user and some of its navigation properties
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == id);
+            return user;
+        }
+
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+
         
     }
 }

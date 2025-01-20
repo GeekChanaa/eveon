@@ -25,6 +25,8 @@ import { RequestsComponentsModule } from '../requests-components/requests-compon
 import { ConnectorRealtimeMessageLogComponent } from './connector-realtime-logs/connector-realtime-message-log/connector-realtime-message-log.component';
 import { ConnectorRealtimeConfigurationsComponent } from './connector-realtime-configurations/connector-realtime-configurations.component';
 import { ConnectorRealtimeChargingSessionInformationsComponent } from './connector-realtime-charging-session-informations/connector-realtime-charging-session-informations.component';
+import { ConnectorRealtimeOverviewStatisticsComponent } from './connector-realtime-overview/connector-realtime-overview-statistics/connector-realtime-overview-statistics.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
     declarations: [
@@ -47,7 +49,8 @@ import { ConnectorRealtimeChargingSessionInformationsComponent } from './connect
       ConnectorRealtimeTransactionsComponent,
       ConnectorRealtimeMessageLogComponent,
       ConnectorRealtimeConfigurationsComponent,
-      ConnectorRealtimeChargingSessionInformationsComponent
+      ConnectorRealtimeChargingSessionInformationsComponent,
+      ConnectorRealtimeOverviewStatisticsComponent
   ],
     imports: [
         AtomsModule,
@@ -56,7 +59,8 @@ import { ConnectorRealtimeChargingSessionInformationsComponent } from './connect
         SharedModule,
         FormsModule,
         ConnectorRealtimeRoutingModule,
-        RequestsComponentsModule
+        RequestsComponentsModule,
+        NgApexchartsModule
     ],
   })
   export class ConnectorRealtimeModule { }

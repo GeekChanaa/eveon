@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GlobalConfigurations } from 'src/_models/global-configurations';
 import { ConfigurationService } from 'src/_services/configuration.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { ConfigurationService } from 'src/_services/configuration.service';
 })
 export class GlobalConfigurationsComponent implements OnInit {
 
-  configuration : any = {};
+  configuration? : GlobalConfigurations;
 
   constructor(
     private _configurationService: ConfigurationService
@@ -19,7 +20,7 @@ export class GlobalConfigurationsComponent implements OnInit {
   }
 
   getConfigurations(){
-    this._configurationService.getGlobalConfigurations().subscribe((data) => {
+    this._configurationService.getGlobalConfigurations().subscribe((data : GlobalConfigurations) => {
       this.configuration = data;
     })
   }

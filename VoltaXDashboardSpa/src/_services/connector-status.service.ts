@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
 import { ConnectorStatus } from 'src/_models/connector-status';
+import { ConnectorStatusesDto } from 'src/_models/_dtos/connector-statuses-dto';
 
 
 @Injectable({
@@ -20,6 +21,10 @@ export class ConnectorStatusService extends AbstractService<ConnectorStatus> {
   // Get number of connectors by status
   getNumberOfConnectorsByStatus(status : string){
     return this.http.get<number>(this.baseUrl+"GetNumberOfConnectorsByStatus?status="+status);
+  }
+
+  getNumberOfConnectorsByAllStatus(){
+    return this.http.get<ConnectorStatusesDto>(this.baseUrl+"getNumberOfConnectorsByAllStatus");
   }
 
   // Get number of connectors by status

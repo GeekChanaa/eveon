@@ -27,6 +27,7 @@ export class SignUpComponent implements OnInit {
 
   signUpFormValid : Boolean = false;
   isLoading : boolean = false;
+  errorMessage : string = "";
 
 
   constructor( 
@@ -82,6 +83,7 @@ export class SignUpComponent implements OnInit {
       this._route.navigate(['/auth/verification-mail-sent']);
     },(error) => {
       this.isLoading = false;
+      this.errorMessage = error.error.error;
     })
     
   }

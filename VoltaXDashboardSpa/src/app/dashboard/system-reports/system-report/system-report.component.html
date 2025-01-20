@@ -1,0 +1,132 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="settings">
+      <div class="head">
+        <div class="head-name">
+          System Report : <b>#{{ systemReport.id }}</b>
+        </div>
+        <div class="head-actions">
+          <button (click)="editSystemReport(systemReport.id)" class="button-stroke-blue button-edit button-small">Edit</button>
+          <button (click)="deleteSystemReport(systemReport.id)" class="button-stroke-red button-edit button-small">Delete</button>
+        </div>
+      </div>
+      
+        <div class="system-report-info-container">
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="ID"
+              tooltip="info"  
+              value="{{systemReport.id}}"></app-display-item>
+          </div>
+  
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Assigned To"
+              tooltip="info"  
+              value="{{systemReport.assignedUserName}}"></app-display-item>
+          </div>
+  
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Charge Point"
+              tooltip="info"  
+              value="{{systemReport.chargePointName}}"></app-display-item>
+          </div>
+
+
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Criticality"
+              tooltip="info"  
+              value="{{systemReport.criticality}}"></app-display-item>
+          </div>
+
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Category"
+              tooltip="info"  
+              value="{{systemReport.reportCategory}}"></app-display-item>
+          </div>
+
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Issue Description"
+              tooltip="info"  
+              value="{{systemReport.issueDescription}}"></app-display-item>
+          </div>
+
+          <div class="card__display">
+            <app-display-item 
+              class="card__display_item"
+              name="Connector"
+              tooltip="info"  
+              value="{{systemReport.connectorID}}"></app-display-item>
+          </div>
+        </div>
+      
+        
+    </div>
+    
+
+    <div class="settings system_report__comments_container">
+      <div class="head">
+        <div class="head-name">
+          System Report <b>Comments</b>
+        </div>
+        <div class="head-actions">
+          <button class="button-stroke-blue button-edit button-small">Refresh Comments</button>
+        </div>
+      </div>
+
+      <div class="comments__container">
+        <div class="comment__container" *ngFor="let comment of systemReportComments">
+          <div class="comment__username"> {{comment.userName}} </div>
+          <div class="comment__content"> {{comment.content}} </div>
+        </div>
+      </div>
+
+
+      <div class="add__comment-container">
+        <div class="images__preview">
+          <div class="image__preview" *ngFor="let image of uploadedImages">
+            <img [src]="image | safeUrl" [alt]="image.name" class="preview__img" />
+            <span>{{ image.name }}</span>
+          </div>
+        </div>
+        <div class="add__comment-fields">
+          <textarea 
+            [(ngModel)]="systemReportComment.content"
+            class="field__input"
+            placeholder="Add your comment in here" 
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop($event)">
+
+          </textarea>
+          <input
+            type="file"
+            multiple
+            style="display: none"
+            #fileInput
+            (change)="onFilesSelected($event)"
+          />
+        </div>
+        <div class="add__comment-actions">
+          <button (click)="resetCommentInput()" class="button button-small button-stroke-red btn-cancel">Reset</button>
+          <button 
+            (click)="saveComment()" 
+            class="button button-small button-primary btn-save">Save</button>
+        </div>
+      </div>
+
+
+    </div>  
+  </div>
+</div>
+
+

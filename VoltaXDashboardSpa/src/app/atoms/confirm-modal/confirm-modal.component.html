@@ -1,0 +1,8 @@
+<div class="modal-backdrop" [ngClass]="{'active':isVisible}" *ngIf="isVisible">
+  <div class="modal">
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+    <button class="button button-small" (click)="confirm()">Confirm</button>
+    <button class="button button-small button-stroke" (click)="cancel()">Cancel</button>
+  </div>
+</div>

@@ -6,15 +6,6 @@ namespace VoltaXApi.Data
 {
     public interface IAuthRepository
     {
-        Task<User> Register(User user, string password);
-        Task<User> Login(string email, string login);
-        Task<bool> UserExists(string email);
-        Task<User> GetUser(int id);
-        bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
-        void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);      
-        Task<bool> VerifyEmail(string email, string token);
-        Task<bool> VerifyPhoneNumber(string email, string token);
-        Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
-        Task CreateEmailVerificationToken(int userID);
+        
     }
 }

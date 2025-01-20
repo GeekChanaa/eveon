@@ -1262,6 +1262,28 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.LoginAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LockoutEndTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoginAttempts");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.MessageLog", b =>
                 {
                     b.Property<int>("ID")
@@ -1807,6 +1829,65 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("SystemReports");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportComment", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SystemReportID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("SystemReportID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("SystemReportComments");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportCommentImage", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ImageID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SystemReportCommentID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ImageID");
+
+                    b.HasIndex("SystemReportCommentID");
+
+                    b.ToTable("SystemReportCommentImage");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.SystemReportImage", b =>
@@ -2413,6 +2494,44 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportComment", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.SystemReport", "SystemReport")
+                        .WithMany()
+                        .HasForeignKey("SystemReportID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SystemReport");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportCommentImage", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.SystemReportComment", "SystemReportComment")
+                        .WithMany("SystemReportCommentImages")
+                        .HasForeignKey("SystemReportCommentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+
+                    b.Navigation("SystemReportComment");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.SystemReportImage", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Image", "Image")
@@ -2523,6 +2642,11 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.SystemReport", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.SystemReportComment", b =>
+                {
+                    b.Navigation("SystemReportCommentImages");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.User", b =>

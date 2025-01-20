@@ -19,6 +19,7 @@ export class SystemReportsListComponent implements OnInit {
     reportCategory: ReportCategoryEnum.General,
     userID: 0,
     cardID: 0,
+    status: ReportStatusEnum.Pending,
     connectorID: 0,
     chargePointID: 0,
     resolvedByID: 0,
@@ -26,15 +27,13 @@ export class SystemReportsListComponent implements OnInit {
     issueDescription: '',
     isEmail: false,
     isNotification: false,
-    status: ReportStatusEnum.Pending,
     criticality: ReportCriticality.Informational
   };
 
-  cities : any[] = [];
   fields: string[] = [];
   filters : any = {
     category:"",
-    city : ""
+    status : ""
   };
 
   // Constructor
@@ -65,8 +64,8 @@ export class SystemReportsListComponent implements OnInit {
 
   resetFilters(){
     this.filters = {
-      category:"",
-      city : ""
+      status:"",
+      category : ""
     }
   }
 

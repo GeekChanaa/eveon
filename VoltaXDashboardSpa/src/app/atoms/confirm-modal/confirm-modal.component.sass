@@ -1,0 +1,24 @@
+.modal-backdrop 
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  z-index: 20
+  backdrop-filter: blur(0px)
+  transition: ease-in-out all .8s
+  &.active
+    backdrop-filter: blur(8px)
+
+
+.modal 
+  background: white
+  padding: 20px
+  border-radius: 5px
+  text-align: center
+
+button 
+  margin: 5px

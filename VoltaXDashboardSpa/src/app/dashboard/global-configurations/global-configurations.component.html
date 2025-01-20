@@ -3,7 +3,7 @@
     <div class="page__title h3">Global Configurations</div>
     
     
-    <div class="settings">
+    <div class="settings" *ngIf="configuration">
       <div class="details__container">
         <div class="details-informations__container">
           <div class="details-informations__item">
@@ -30,6 +30,15 @@
             </div>
             <div class="details-informations__item-value">
               {{configuration.defaultFlatFee}}
+            </div>
+          </div>
+
+          <div class="details-informations__item">
+            <div class="details-informations__item-name">
+              Connector Default Idle Time Pricing (per minute)
+            </div>
+            <div class="details-informations__item-value">
+              {{configuration.defaultIdleTimePricing}}
             </div>
           </div>
         </div>

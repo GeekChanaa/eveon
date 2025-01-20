@@ -21,7 +21,7 @@
           <div class="filters__item">
             <div class="filters__list">
               <div class="field">
-                <div class="field__label">By City
+                <div class="field__label">By Status
                   <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
@@ -30,9 +30,12 @@
                 </div>
                 <div class="field__wrap">
                   <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.city">
+                    <select class="select" [(ngModel)]="filters.status">
                       <option value="" selected>None</option>
-                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
+                      <option value="Pending">Pending</option>
+                      <option value="InProgress">InProgress</option>
+                      <option value="Resolved">Resolved</option>
+                      <option value="Closed">Closed</option>
                     </select>
                   </div>
                 </div>
@@ -50,9 +53,9 @@
                   <div class="field__wrap">
                     <select class="select" [(ngModel)]="filters.category">
                       <option value="" selected>None</option>
-                      <option value="Public">Public</option>
-                      <option value="Private">Private</option>
-                      <option value="Partner">Partner</option>
+                      <option value="General">General</option>
+                      <option value="Technical">Technical</option>
+                      <option value="Maintenance">Maintenance</option>
                     </select>
                   </div>
                 </div>

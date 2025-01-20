@@ -26,6 +26,7 @@ using VoltaXApi.OCPP.Factories;
 using AutoMapper;
 using QuestPDF.Infrastructure;
 using VoltaxApi.Helpers;
+using VoltaXApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,10 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug(); 
 
 // Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add(new GlobalExceptionFilter());
+        }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
@@ -61,8 +65,10 @@ builder.Services.AddScoped<IStateRepository, StateRepository>();
 builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
 builder.Services.AddScoped<IChargeTagRepository, ChargeTagRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
+builder.Services.AddScoped<ISystemReportCommentRepository, SystemReportCommentRepository>();
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
 builder.Services.AddScoped<IChargePointService, ChargePointService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
@@ -136,6 +142,7 @@ builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<WebSocketSubProtocolMatcher>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();

@@ -24,6 +24,13 @@ namespace VoltaXApi.Models
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public double? MeterDifference => MeterStop.HasValue 
+            ? MeterStop.Value - MeterStart : null;
+
+        public double? DurationInMinutes => StopTime.HasValue 
+            ? (StopTime.Value - StartTime).TotalMinutes 
+            : null;
     }
 
 }

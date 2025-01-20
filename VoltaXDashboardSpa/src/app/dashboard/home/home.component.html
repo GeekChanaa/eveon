@@ -9,21 +9,8 @@
       <div class="card__head">
         <div class="title-purple card__title">Charge Points Connectors Overview</div>
       </div>
-      <div class="stock">
-        <div class="stock__list">
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Available"
-            description="When a Connector becomes available for a new User (Operative)" [number]="availableConnectors"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Unavailable"
-            description="When a Connector becomes unavailable as the result of a Change Availability command or an event upon
-            which the Charging Station transitions to unavailable at its discretion." [number]="unavailableConnectors"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Occupied" description="When a Connector becomes occupied, so it is not available for a new EV driver. (Operative)"
-            [number]="occupiedConnectors"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Faulted" description="When a Connector (or the EVSE or the entire Charging Station it belongs to) has reported an error and is not
-          available for energy delivery. (Inoperative)"
-            [number]="faultedConnectors"></app-small-card>
-          <app-small-card class="stock__item" style="background-color: #f2efff" title="Reserved" description="When a Connector becomes reserved as a result of ReserveNow command (Operative)"
-            [number]="reservedConnectors"></app-small-card>
-        </div>
+      <div class="connector__status">
+        <app-connector-statuses class="connector__status__list"></app-connector-statuses>
       </div>
     </div>
 
@@ -37,32 +24,32 @@
       <div class="card__head">
         <div class="title-purple card__title">Links</div>
       </div>
-      <div class="stock">
-        <div class="stock__list">
-          <app-small-card [number]="-1" routerLink="/dashboard/charging-stations" class="stock__item" style="background-color: #f2efff"
+      <div class="connector__status">
+        <div class="connector__status__list">
+          <app-small-card [number]="-1" routerLink="/dashboard/charging-stations" class="connector__status__item" style="background-color: #f2efff"
             title="Charging Stations" description="available"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/charging-points" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/dashboard/charging-points" class="connector__status__item" style="background-color: #f2efff"
             title="Charge points" description="Unavailable"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/connectors" class="stock__item" style="background-color: #f2efff"
-            title="Connectors" description="Occupied"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/charging-cards" class="stock__item" style="background-color: #f2efff"
-            title="Chraging Cards" description="Faulted"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/users" class="stock__item" style="background-color: #f2efff" title="Users"
+          <app-small-card [number]="-1" routerLink="/dashboard/connector-realtime" class="connector__status__item" style="background-color: #f2efff"
+            title="Connector Real-time" description="Occupied"></app-small-card>
+          <app-small-card [number]="-1" routerLink="/dashboard/charging-cards" class="connector__status__item" style="background-color: #f2efff"
+            title="Recharge Cards" description="Faulted"></app-small-card>
+          <app-small-card [number]="-1" routerLink="/dashboard/users" class="connector__status__item" style="background-color: #f2efff" title="Users"
             description="Reserved"></app-small-card>
         </div>
       </div>
-      <div class="stock">
-        <div class="stock__list">
-          <app-small-card [number]="-1" routerLink="/dashboard/customers" class="stock__item" style="background-color: #f2efff"
-            title="Customers" description="available"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/recharge-orders" class="stock__item" style="background-color: #f2efff"
+      <div class="connector__status">
+        <div class="connector__status__list">
+          <app-small-card [number]="-1" routerLink="/dashboard/statistics" class="connector__status__item" style="background-color: #f2efff"
+            title="Statistics" description="available"></app-small-card>
+          <app-small-card [number]="-1" routerLink="/dashboard/recharge-orders" class="connector__status__item" style="background-color: #f2efff"
             title="Orders" description="Unavailable"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/transactions" class="stock__item" style="background-color: #f2efff"
+          <app-small-card [number]="-1" routerLink="/dashboard/transactions" class="connector__status__item" style="background-color: #f2efff"
             title="Transactions" description="Occupied"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/alarm-management" class="stock__item" style="background-color: #f2efff"
-            title="Alarms" description="Faulted"></app-small-card>
-          <app-small-card [number]="-1" routerLink="/dashboard/comment-management" class="stock__item" style="background-color: #f2efff"
-            title="Comments" description="Reserved"></app-small-card>
+          <app-small-card [number]="-1" routerLink="/dashboard/system-reports" class="connector__status__item" style="background-color: #f2efff"
+            title="System Reports" description="Faulted"></app-small-card>
+          <app-small-card [number]="-1" routerLink="/dashboard/reports" class="connector__status__item" style="background-color: #f2efff"
+            title="Reports" description="Reserved"></app-small-card>
         </div>
       </div>
     </div>

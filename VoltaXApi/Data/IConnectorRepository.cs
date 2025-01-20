@@ -10,6 +10,8 @@ namespace VoltaXApi.Data
       Task<bool> UpdateConnectorPricing(int connectorID, UpdateConnectorPricingDto updateConnectorPricingDto);
       Task<bool> UpdateConnectorFlatFee(int connectorID, decimal flatFee);
       Task<Connector?> GetConnectorByConnectorIdEvseId(int? connectorId, int evseId, int chargePointID);
+      Task ResetPricingChargePointConnectors(int chargePointID);
+      Task ResetPricingConnector(int connectorID);
       
     }
 }
