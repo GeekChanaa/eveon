@@ -58,6 +58,7 @@ builder.Services.Configure<SupportEmails>(builder.Configuration.GetSection("Supp
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ChargingSessionInvoiceGeneratorService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
