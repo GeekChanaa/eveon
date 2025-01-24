@@ -10,6 +10,6 @@ namespace VoltaXApi.OCPP.Messages
       public int Id { get; set; }
 
       public int? ConnectorId { get; set; }
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 }

@@ -56,7 +56,11 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 builder.Services.Configure<SupportEmails>(builder.Configuration.GetSection("SupportEmails"));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddScoped<ChargingSessionInvoiceGeneratorService>();
+
+builder.Services.AddScoped<IOcppComponentRepository, OcppComponentRepository>();
+builder.Services.AddScoped<IOcppVariableRepository, OcppVariableRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -77,6 +81,7 @@ builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IConnectorService, ConnectorService>();
 builder.Services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
 builder.Services.AddScoped<ISystemReportService, SystemReportService>();
+builder.Services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
 builder.Services.AddScoped<ISystemReportRepository, SystemReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();

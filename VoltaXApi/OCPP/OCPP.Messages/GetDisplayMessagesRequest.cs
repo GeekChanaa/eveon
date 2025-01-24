@@ -11,13 +11,13 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       public int RequestId { get; set; }
 
-      public List<int> Id { get; set; }
+      public List<int>? Id { get; set; }
 
       public MessagePriorityEnumType? Priority { get; set; }
 
       public MessageStateEnumType? State { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 
 }

@@ -2,7 +2,7 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class ClearCacheRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 
 }

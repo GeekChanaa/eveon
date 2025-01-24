@@ -7,7 +7,7 @@ namespace VoltaXApi.OCPP.Messages
 
   public class GetVariablesRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       [MinLength(1)]
@@ -18,7 +18,7 @@ namespace VoltaXApi.OCPP.Messages
   {
       [Required]
       public ComponentType Component { get; set; }
-
+  
       [Required]
       public VariableType Variable { get; set; }
 

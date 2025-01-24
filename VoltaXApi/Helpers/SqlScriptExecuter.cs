@@ -8,8 +8,8 @@ namespace VoltaXApi.Helpers
 
         public static async Task ExecuteSqlScript()
         {
-            string[] files = { "sql-scripts/countries.sql", "sql-scripts/states.sql", "sql-scripts/cities.sql" };
-            string[] tables = { "Countries", "States", "Cities" };
+            string[] files = { "sql-scripts/countries.sql", "sql-scripts/states.sql", "sql-scripts/cities.sql", "sql-scripts/ocpp-components.sql","sql-scripts/ocpp-variables.sql","sql-scripts/ocpp-variable-components.sql" };
+            string[] tables = { "Countries", "States", "Cities","OcppComponents","OcppVariables","OcppVariableComponents" };
 
             using (SqlConnection connection = new SqlConnection("Server=localhost,1433;Database=VoltaX;User=sa;Password=yourStrong(!)Password;TrustServerCertificate=true"))
             {

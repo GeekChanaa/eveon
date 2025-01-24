@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoltaXApi.Data;
 
@@ -11,9 +12,11 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    partial class VoltaXApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250124120335_components_variables_updated")]
+    partial class components_variables_updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1544,14 +1547,8 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("DataType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Isntance")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Instance")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Required")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Unit")
                         .HasColumnType("nvarchar(max)");
@@ -1559,6 +1556,9 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Variable")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("required")
+                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 

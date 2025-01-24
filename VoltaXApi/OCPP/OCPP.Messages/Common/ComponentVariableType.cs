@@ -8,9 +8,7 @@ namespace VoltaXApi.OCPP.Messages
   {
       [Required]
       public ComponentType Component { get; set; }
-
-      public VariableType Variable { get; set; }
-
-      public CustomDataType CustomData { get; set; }
+      public VariableType? Variable { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 }

@@ -32,5 +32,22 @@ namespace VoltaXApi.OCPP.Services
         };
         await _messageProcessor.SendMessage(msg, chargePointID);
     }
+
+    public async Task ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request)
+    {
+        var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
+                
+            };
+        OCPPMessage msg = new OCPPMessage
+        {
+            MessageType = "2",
+            UniqueId = Guid.NewGuid().ToString("N"),
+            Action = "ClearChargingProfile",
+            JsonPayload = JsonConvert.SerializeObject(request,settings)
+        };
+        await _messageProcessor.SendMessage(msg, chargePointID);
+    }
   }
 }

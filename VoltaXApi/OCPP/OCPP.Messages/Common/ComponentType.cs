@@ -10,8 +10,8 @@ namespace VoltaXApi.OCPP.Messages
       [MaxLength(50)]
       public string Name { get; set; }
 
-      public EVSEType Evse { get; set; }
-      public string Instance { get; set; }
-      public CustomDataType CustomData { get; set; }
+      public EVSEType? Evse { get; set; }
+      public string? Instance { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 }

@@ -10,7 +10,7 @@ namespace VoltaXApi.OCPP.Messages
       [MaxLength(50)]
       public string Name { get; set; }
 
-      public string Instance { get; set; }
-      public CustomDataType CustomData { get; set; }
+      public string? Instance { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 }

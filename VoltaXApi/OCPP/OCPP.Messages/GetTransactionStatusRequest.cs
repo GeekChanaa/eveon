@@ -5,7 +5,7 @@ namespace VoltaXApi.OCPP.Messages
 
   public class GetTransactionStatusRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [MaxLength(36)]
       public string TransactionId { get; set; }

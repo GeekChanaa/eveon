@@ -39,7 +39,7 @@ namespace VoltaXApi.OCPP.Controllers
             try
             {
                 await this._configService.SetNetworkProfile(chargePointID,request);
-                return Ok("Message Sent");
+                return Ok(new {Message = "Message Sent"});
             }
             catch (WebSocketNotFoundException ex)
             {
@@ -53,7 +53,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.ClearDisplayMessage(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -67,7 +67,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.GetDisplayMessages(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -81,7 +81,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.PublishFirmware(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -95,7 +95,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.SetDisplayMessage(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -109,7 +109,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.UnpublishFirmware(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -123,7 +123,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.UpdateFirmware(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -137,7 +137,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.Reset(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -151,7 +151,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.ChangeAvailability(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -165,7 +165,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.TriggerMessage(chargePointID, request);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {
@@ -179,7 +179,7 @@ namespace VoltaXApi.OCPP.Controllers
         try
         {
             await _configService.RefreshConnectors(chargePointID);
-            return Ok("Message Sent");
+            return Ok(new {Message = "Message Sent"});
         }
         catch (WebSocketNotFoundException ex)
         {

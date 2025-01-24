@@ -155,6 +155,9 @@ namespace VoltaXApi.Data
         
 
         public DbSet<User> Users { get; set; }
+        public DbSet<OcppVariable> OcppVariables { get; set; }
+        public DbSet<OcppComponent> OcppComponents { get; set; }
+        public DbSet<OcppVariableComponent> OcppVariableComponents { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<SystemReport> SystemReports { get; set; }

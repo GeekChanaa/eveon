@@ -6,10 +6,8 @@ namespace VoltaXApi.OCPP.Messages
 
   public class GetLogRequest
   {
-      public CustomDataType CustomData { get; set; }
-
-      [Required]
-      public LogParametersType Log { get; set; }
+      public CustomDataType? CustomData { get; set; }
+      public LogParametersType? Log { get; set; }
 
       [Required]
       public LogEnumType LogType { get; set; }
@@ -33,7 +31,7 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       [MaxLength(512)]
       public string RemoteLocation { get; set; }
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
       public DateTime? OldestTimestamp { get; set; }
       public DateTime? LatestTimestamp { get; set; }
   }
