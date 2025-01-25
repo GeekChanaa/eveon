@@ -62,8 +62,6 @@ export class ConnectorRealtimeMainComponent implements OnInit {
       this._wsStatusService.connectionStatus$.subscribe(
         data => {
           this.status = data?.isActive ? 'available' : 'disconnected';
-          console.log("this is the disabled Actions");
-          console.log(this.status);
           this.disabledActions = this.status == 'available';
         },
         error => console.error('Error receiving status:', error)

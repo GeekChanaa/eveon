@@ -1,0 +1,29 @@
+
+.documentation__links
+  display: flex
+  width: 100%
+  flex-wrap: wrap
+  .documentation__link
+    height: 30vh
+    margin-top: 32px
+    margin-right: 16px
+    background: white
+    backdrop-filter: blur(12px)
+    border-radius: 8px
+    flex: 0 0 31%
+    padding: 32px
+    opacity: 0.9
+    background: var(--secondary5)
+    cursor: pointer
+    transition: ease-in-out all .3s
+    &:hover
+      background: var(--secondary3)
+    .documentation__icon
+      height: 65%
+    .documentation__footer
+      .documentation__name
+        font-size: 1.3em
+        font-weight: 600
+      .documentation__description
+        font-size: 0.8em
+        color: var(--primary8)

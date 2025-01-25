@@ -1,0 +1,119 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Request Id
+      <div class="tooltip" title="The Id of this request">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.requestId" placeholder="Monitor ID to add" class="field__input" type="text" required>
+        </div>
+    </div>
+  </div>
+  
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Log Type
+          <div class="tooltip" title="Log Type">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <select [(ngModel)]="request.logType"  class="select select_small" >
+              <option value="DiagnosticsLog"> Diagnostics Log </option>
+              <option value="SecurityLog"> Security Log </option>
+            </select>
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Remote Location
+          <div class="tooltip" title="The URL of the location at the remote system where the log should be stored.">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <input 
+              [(ngModel)]="request.log.remoteLocation" 
+              placeholder="Remote Location" 
+              class="field__input" type="text" required>
+        
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Retries
+          <div class="tooltip" title="This specifies how many times the Charging Station must try to upload the log before giving up. If this field is not present, it is left to Charging Station to decide how many times it wants to retry.">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <input 
+              [(ngModel)]="request.retries" 
+              placeholder="Retries" 
+              class="field__input" type="text" required>
+        
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Retry Interval
+          <div class="tooltip" title="The interval in seconds after which a retry may be attempted. If this field is not present, it is left to Charging Station to decide how long to wait between attempts.">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <input 
+              [(ngModel)]="request.retryInterval" 
+              placeholder="Retry Interval" 
+              class="field__input" type="text" required>
+        
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+  
+  <div class="form__actions">
+    <button (click)="getLogRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Get Log Request</ng-container>
+      
+    </button>
+  </div>
+</div>

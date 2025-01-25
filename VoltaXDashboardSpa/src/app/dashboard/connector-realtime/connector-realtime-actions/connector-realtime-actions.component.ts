@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit, Type } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointService } from 'src/_services/charge-point.service';
 import { SignalRChargerService } from 'src/_services/signalR-charger.service';
 import { WebSocketStatusService } from 'src/_services/websocket-status.service';
 import { OCPPActions } from 'src/app/ocpp/messages/requests';
-
 @Component({
   selector: 'app-connector-realtime-actions',
   templateUrl: './connector-realtime-actions.component.html',
@@ -14,6 +13,29 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   
   @Input() chargePoint : any = {};
 
+  requests: string[] = [
+    "RequestStartTransaction",
+    "GetBaseReport",
+    "ChangeAvailabilityRequest",
+    "ClearCacheRequest",
+    "ClearDisplayMessageRequest",
+    "ClearVariableMonitoringRequest",
+    "GetDisplayMessagesRequest",
+    "GetLogRequest",
+    "GetMonitoringReportRequest",
+    "GetReportRequest",
+    "GetTransactionStatusRequest",
+    "GetVariablesRequest",
+    "InstallCertificateRequest",
+    "ResetRequest",
+    "SetDisplayMessageRequest",
+    "SetMonitoringBaseRequest",
+    "SetMonitoringLevelRequest",
+    "SetNetworkProfileRequest",
+    "SetVariableMonitoringRequest",
+    "SetVariablesRequest",
+  ];
+
   currentOcppAction : any = {};
   requestHandlerModalVisible : string = "";
   
@@ -22,7 +44,9 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
 
   OCPPActions : any[] = OCPPActions;
 
-  openRequestHanlderModal(ocppAction : any){
+  openRequestHandlerModal(ocppAction : any){
+    console.log("this is the ocpp Action we want to open");
+    console.log(ocppAction);
     this.requestHandlerModalVisible = ocppAction;
   }
 
@@ -30,6 +54,10 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
     this.requestHandlerModalVisible = "";
   }
 
-  
+
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscapeKey(event: KeyboardEvent) {
+    this.closeModal();
+  }
 
 }

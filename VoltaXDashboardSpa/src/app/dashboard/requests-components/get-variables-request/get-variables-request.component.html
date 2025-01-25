@@ -1,0 +1,143 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Component Name
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select 
+          (change)="onComponentChange()"
+          [(ngModel)]="variableDataType.component.name"  class="select select_small" >
+            <option *ngFor="let co of components" value="{{co.component}}"> {{co.component}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" *ngIf="componentInstances != null && componentInstances.length >0">
+    <div class="field">
+      <div class="field__label">Component Instance
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" >
+            <option *ngFor="let instance of componentInstances" value="{{instance}}"> {{instance}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" *ngIf="componentVariables != null && componentVariables.length >0">
+    <div class="field">
+      <div class="field__label">Variable
+        <div class="tooltip" title="The Name of the variable">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" [(ngModel)]="variableDataType.variable.name">
+            <option *ngFor="let variable of componentVariables" value="{{variable}}"> {{variable.name}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Evse
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select  class="select select_small" 
+          (change)="onConnectorChange()"
+          [(ngModel)]="selectedConnector" >
+            <option  value=""> None </option>
+            <option *ngFor="let connector of connectors" [value]="connector | json"> Connector {{ connector.connectorID }} - EVSE {{ connector.evseID }} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Attribute Type
+          <div class="tooltip" title="Attribute Type">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <select [(ngModel)]="variableDataType.attributeType"  class="select select_small" >
+              <option value="Actual"> Actual </option>
+              <option value="Target"> Target </option>
+              <option value="MinSet"> MinSet </option>
+              <option value="MaxSet"> MaxSet </option>
+            </select>
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+   
+
+
+    <div class="variables__container">
+      <div class="variable__container">
+        <div class="variable__name">Component</div>
+        <div class="variable__name">EvseID</div>
+        <div class="variable__name">ConnectorID</div>
+        <div class="variable__name">Instance</div>
+        <div class="variable__name">Variable</div>
+        <div class="variable__name">Attribute Type</div>
+      </div>
+      <div *ngFor="let varDataType of variableDataTypes" class="variable__container">
+        <div class="variable__name">{{varDataType.component.name}}</div>
+        <div class="variable__name">{{varDataType.component.evse.id}}</div>
+        <div class="variable__name">{{varDataType.component.evse.connectorID}}</div>
+        <div class="variable__name">{{varDataType.component.instance}}</div>
+        <div class="variable__name">{{varDataType.variable.name}}</div>
+        <div class="variable__name">{{varDataType.attributeType}}</div> 
+        
+      </div>
+      <button (click)="addVariableType()" class="button button-small add-btn">Add Variable Type</button>
+    </div>
+  
+  <div class="form__actions">
+    <button (click)="getVariablesRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Get Variables Request</ng-container>
+      
+    </button>
+  </div>
+</div>

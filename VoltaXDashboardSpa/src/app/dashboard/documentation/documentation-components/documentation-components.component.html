@@ -1,0 +1,21 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Components</div>
+
+    <div class="card">
+      List Of Ocpp Components : 
+      <div class="stats">
+        <div class="stats__table">
+          <div class="stats__row">
+            <div class="stats__col">Component</div>
+          </div>
+          <div class="stats__row" *ngFor="let component of components">
+            <div class="stats__col component__name" [routerLink]="['/dashboard/documentation/components/'+component.component]">{{component.component}}</div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

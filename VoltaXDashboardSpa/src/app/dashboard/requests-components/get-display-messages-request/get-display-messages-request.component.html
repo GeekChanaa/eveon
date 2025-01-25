@@ -1,0 +1,105 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Request Id
+      <div class="tooltip" title="The Id of this request">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.requestId" placeholder="Monitor ID to add" class="field__input" type="text" required>
+        </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="field__label"> Display Messages Ids
+      <div class="tooltip" title="If provided the Charging Station shall return Display Messages of the given ids">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+          <input 
+          (keyup.enter)="addMonitorID()"
+          [(ngModel)]="monitorID" placeholder="Monitor ID to add" class="field__input" type="text" required>
+          <button 
+            [disabled]="monitorIDInvalid()"
+            [ngClass]="{'disabled':monitorIDInvalid()}"
+            (click)="addMonitorID()" class="button-small button__add">Add</button>
+        </div>
+    </div>
+  </div>
+
+    <div class="list__monitors">
+      <div 
+        *ngFor="let monitorId of request.id" 
+        (click)="deleteMonitorID(monitorId)"
+        class="monitor__ID"> {{monitorId}} </div>
+    </div>
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Priority
+          <div class="tooltip" title="Priority">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <select [(ngModel)]="request.priority"  class="select select_small" >
+              <option value="AlwaysFront"> Always Front </option>
+              <option value="InFront"> InFront </option>
+              <option value="NormalCycle"> Normal Cycle </option>
+            </select>
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">State
+          <div class="tooltip" title="State">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <select [(ngModel)]="request.state"  class="select select_small" >
+              <option value="Charging"> Charging </option>
+              <option value="Faulted"> Faulted </option>
+              <option value="Idle"> Idle </option>
+              <option value="Unavailable"> Unavailable </option>
+            </select>
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+
+
+
+  
+  <div class="form__actions">
+    <button (click)="getDisplayMessageRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Get Display Messages Request</ng-container>
+      
+    </button>
+  </div>
+</div>

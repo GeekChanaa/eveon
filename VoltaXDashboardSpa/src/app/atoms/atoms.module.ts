@@ -81,7 +81,8 @@ import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive
     ConnectorStatusTagComponent,
     SafeUrlPipe,
     ConfirmModalComponent,
-    ConfirmActionDirective
+    ConfirmActionDirective,
+    CamelCaseToSpacePipe
   ],
   imports: [
     CommonModule,
@@ -127,7 +128,8 @@ import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive
     ConnectorStatusTagComponent,
     ConfirmModalComponent,
     ConfirmActionDirective,
-    SafeUrlPipe
+    SafeUrlPipe,
+    CamelCaseToSpacePipe
   ],
   providers: [],
 })

@@ -1,0 +1,37 @@
+
+<div class="request__container">
+  
+
+    <div class="field">
+      <div class="field">
+        <div class="field__label">Transaction ID
+          <div class="tooltip" title="The Id of the transaction concerned by this request.">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <input 
+              [(ngModel)]="request.transactionId" 
+              placeholder="Transaction ID" 
+              class="field__input" type="text" required>
+        
+          </div>
+        </div>
+    
+      </div>
+  
+    </div>
+  
+  <div class="form__actions">
+    <button (click)="getTransactionStatusRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Get Transaction Status Request</ng-container>
+      
+    </button>
+  </div>
+</div>

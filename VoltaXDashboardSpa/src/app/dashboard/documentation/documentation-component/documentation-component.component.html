@@ -1,0 +1,36 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Component {{component.component}} </div>
+
+    <div class="card">
+      <div class="title-purple card__title">
+        Description
+      </div>
+
+      <div class="component__description">
+        {{component.description}}
+      </div>
+      
+      <div class="title-purple card__title">
+        Variables Associated to the component : {{component.component}}
+      </div>
+       
+      <div class="stats">
+        <div class="stats__table">
+          <div class="stats__row">
+            <div class="stats__col">Variable</div>
+            <div class="stats__col">Data Type</div>
+            <div class="stats__col">Unit</div>
+          </div>
+          <div class="stats__row" *ngFor="let variable of component.associatedVariables">
+            <div class="stats__col component__name" [routerLink]="['/dashboard/documentation/variables/'+variable.name]">{{variable.name}}</div>
+            <div class="stats__col" >{{variable.dataType}}</div>
+            <div class="stats__col" >{{variable.unit}}</div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

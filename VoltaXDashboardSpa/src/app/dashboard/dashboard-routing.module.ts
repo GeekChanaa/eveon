@@ -27,6 +27,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { ConnectorRealtimeComponent } from './connector-realtime/connector-realtime.component';
 import { SystemReportsComponent } from './system-reports/system-reports.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
+import { DocumentationComponent } from './documentation/documentation.component';
 const routes: Routes = [
   {
     path: "",
@@ -95,6 +96,12 @@ const routes: Routes = [
     component: ConnectorRealtimeComponent,
     loadChildren : () => import('./connector-realtime/connector-realtime.module')
       .then(m=>m.ConnectorRealtimeModule)
+  },
+  {
+    path: "documentation",
+    component: DocumentationComponent,
+    loadChildren : () => import('./documentation/documentation.module')
+      .then(m=>m.DocumentationModule)
   },
   {
     path: "statistics",

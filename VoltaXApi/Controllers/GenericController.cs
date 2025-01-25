@@ -101,6 +101,11 @@ namespace VoltaXApi.Controllers
             int count = await _repository.CountAsync(u => true);
             return Ok(count);
         }
+        protected async Task<IActionResult> OkWithPagination<K>(PagedList<K> entities)
+        {
+            Response.AddPagination(entities.CurrentPage, entities.PageSize, entities.TotalCount, entities.TotalPages);
+            return Ok(entities);
+        }
     }
 
 }

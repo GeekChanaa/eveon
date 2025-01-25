@@ -1,0 +1,51 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Connector
+      <div class="tooltip" title="The connector which you want to change the availability for">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select (change)="onSelectConnector($event)"  class="select select_small" >
+          <option *ngFor="let connector of connectors" [value]="connector | json"> connectorID : {{connector.connectorID+" evseId :  "+connector.evseID}} </option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Operational State
+        <div class="tooltip" title="Operational State">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select [(ngModel)]="request.operationalStatus"  class="select select_small" >
+            <option value="Operative"> Operative </option>
+            <option value="Inoperative"> Inoperative </option>
+          </select>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+  <div class="form__actions">
+    <button (click)="changeAvailabilityRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Send Change Availability Request</ng-container>
+      
+    </button>
+  </div>
+</div>

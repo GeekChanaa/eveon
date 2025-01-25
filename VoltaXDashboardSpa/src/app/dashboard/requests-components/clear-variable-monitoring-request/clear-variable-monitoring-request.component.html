@@ -1,0 +1,41 @@
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Ids of the monitors to be cleared (add each monitor by the add button)
+      <div class="tooltip" title="List of the monitors to be cleared, identified by their Id">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+          <input 
+          (keyup.enter)="addMonitorID()"
+          [(ngModel)]="monitorID" placeholder="Monitor ID to add" class="field__input" type="text" required>
+          <button 
+            [disabled]="monitorIDInvalid()"
+            [ngClass]="{'disabled':monitorIDInvalid()}"
+            (click)="addMonitorID()" class="button-small button__add">Add</button>
+        </div>
+    </div>
+  </div>
+
+  <div class="list__monitors">
+    <div 
+      *ngFor="let monitorId of request.id" 
+      (click)="deleteMonitorID(monitorId)"
+      class="monitor__ID"> {{monitorId}} </div>
+  </div>
+
+  
+  <div class="form__actions">
+    <button (click)="clearVariableMonitoringRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Clear Variable Monitoring Request</ng-container>
+      
+    </button>
+  </div>
+</div>
