@@ -7,7 +7,7 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class NotifyDisplayMessagesRequestType
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public List<MessageInfoType> MessageInfo { get; set; }
@@ -19,7 +19,7 @@ namespace VoltaXApi.OCPP.Messages
 
   public class MessageInfoType
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public ComponentType Display { get; set; }
@@ -37,7 +37,7 @@ namespace VoltaXApi.OCPP.Messages
       public DateTime? EndDateTime { get; set; }
 
       [MaxLength(36)]
-      public string TransactionId { get; set; }
+      public string? TransactionId { get; set; }
 
       [Required]
       public MessageContentType Message { get; set; }

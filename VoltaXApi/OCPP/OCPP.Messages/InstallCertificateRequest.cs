@@ -13,7 +13,7 @@ namespace VoltaXApi.OCPP.Messages
       [MaxLength(5500)]
       public string Certificate { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
   }
 
   public enum InstallCertificateUseEnumType

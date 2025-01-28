@@ -1,3 +1,153 @@
-<p>
-  get-report-request works!
-</p>
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Request Id
+      <div class="tooltip" title="The Id of this request">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.requestId" placeholder="Request ID" class="field__input" type="text" required>
+        </div>
+    </div>
+  </div>
+
+
+    <div class="field">
+      <div class="field__label">Component Name
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select 
+          (change)="onComponentChange()"
+          [(ngModel)]="componentVariable.component.name"  class="select select_small" >
+            <option *ngFor="let co of components" value="{{co.component}}"> {{co.component}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+  <div class="field" *ngIf="componentInstances != null && componentInstances.length >0">
+    <div class="field">
+      <div class="field__label">Component Instance
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" >
+            <option *ngFor="let instance of componentInstances" value="{{instance}}"> {{instance}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" *ngIf="componentVariables != null && componentVariables.length >0">
+    <div class="field">
+      <div class="field__label">Variable
+        <div class="tooltip" title="The Name of the variable">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" [(ngModel)]="componentVariable.variable.name">
+            <option *ngFor="let variable of componentVariables" value="{{variable.name}}"> {{variable.name}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="field">
+      <div class="field__label">Evse
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select  class="select select_small" 
+          (change)="onConnectorChange()"
+          [(ngModel)]="selectedConnector" >
+            <option  value=""> None </option>
+            <option *ngFor="let connector of connectors" [value]="connector | json"> Connector {{ connector.connectorID }} - EVSE {{ connector.evseID }} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  
+      <div class="field">
+        <div class="field__label">Component Criteria
+          <div class="tooltip" title="Component Criteria">
+            <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="field__wrap">
+          <div class="field__wrap">
+            <select (change)="addComponentCriteria($event)" [(ngModel)]="componentVariable.componentCriteria"  class="select select_small" >
+              <option value=""> None </option>
+              <option *ngFor="let crit of componentCriterias" value="{{crit}}"> {{crit}} </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="component__criterias_container">
+        <div (click)="removeComponentCriteria(cr)" *ngFor="let cr of selectedComponentCriterias" class="component__criteria">
+          {{cr}}
+        </div>
+      </div>
+   
+
+
+    <div class="variables__container" *ngIf="CVariables !=null && CVariables.length>0">
+      <div class="variable__container">
+        <div class="variable__name">Component</div>
+        <div class="variable__name">EvseID</div>
+        <div class="variable__name">ConnectorID</div>
+        <div class="variable__name">Instance</div>
+        <div class="variable__name">Variable</div>
+      </div>
+      <div *ngFor="let cvar of CVariables" class="variable__container">
+        <div class="variable__name">{{cvar.component.name}}</div>
+        <div class="variable__name">{{cvar.component.evse.id}}</div>
+        <div class="variable__name">{{cvar.component.evse.connectorID}}</div>
+        <div class="variable__name">{{cvar.component.instance}}</div>
+        <div class="variable__name">{{cvar.variable.name}}</div>
+        
+      </div>
+    </div>
+    <button (click)="addComponentVariable()" class="button button-small add-btn">Add Component Variable</button>
+  
+  <div class="form__actions">
+    <button (click)="getReport()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Get Report</ng-container>
+      
+    </button>
+  </div>
+</div>

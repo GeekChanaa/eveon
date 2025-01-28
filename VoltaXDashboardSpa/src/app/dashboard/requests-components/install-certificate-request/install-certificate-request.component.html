@@ -1,3 +1,60 @@
-<p>
-  install-certificate-request works!
-</p>
+
+<div class="request__container">
+  
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Certificate
+        <div class="tooltip" title="A PEM encoded X.509 certificate. (5500 maximum chars)">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.certificate" 
+            placeholder="Certificate" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Certificate Type
+        <div class="tooltip" title="Indicates the certificate type that is sent">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select [(ngModel)]="request.certificateType"  class="select select_small" >
+            <option value="V2GRootCertificate"> V2GRootCertificate </option>
+            <option value="MORootCertificate"> MORootCertificate </option>
+            <option value="CSMSRootCertificate"> CSMSRootCertificate </option>
+            <option value="ManufacturerRootCertificate"> ManufacturerRootCertificate </option>
+          </select>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+<div class="form__actions">
+  <button (click)="installCertificateRequest()" class="button button__primary button-small stop__btn">
+    <ng-container *ngIf="isLoading">
+      <app-svg-spinner></app-svg-spinner>
+    </ng-container>
+    <ng-container *ngIf="!isLoading">Install Certificate</ng-container>
+    
+  </button>
+</div>
+</div>

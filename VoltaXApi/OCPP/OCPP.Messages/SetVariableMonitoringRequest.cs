@@ -5,7 +5,7 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class SetVariableMonitoringRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       [MinLength(1)]
@@ -14,7 +14,7 @@ namespace VoltaXApi.OCPP.Messages
 
   public class SetMonitoringDataType
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       public int? Id { get; set; }
 

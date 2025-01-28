@@ -12,6 +12,7 @@ import { UtilsService } from 'src/_services/utils.service';
 export class RequestGetBaseReportComponent implements OnInit {
 
   @Input() chargePointID : string = "";
+  @Input() cpID : string = "";
   @Output() successEvent : EventEmitter<void> = new EventEmitter();
   reportBase : string = "SummaryInventory";
   requestId : number = 0;

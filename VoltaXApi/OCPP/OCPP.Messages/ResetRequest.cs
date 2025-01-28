@@ -7,7 +7,7 @@ namespace VoltaXApi.OCPP.Messages
   
   public class ResetRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public ResetEnumType Type { get; set; }

@@ -1,3 +1,123 @@
-<p>
-  publish-firmware-request works!
-</p>
+
+<div class="request__container">
+  
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Location
+        <div class="tooltip" title="This contains a string containing a URI pointing to a\r\nlocation from which to retrieve the firmware.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.location" 
+            placeholder="Location" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Retries
+        <div class="tooltip" title="This specifies how many times Charging Station must try\r\nto download the firmware before giving up. If this field is not\r\npresent, it is left to Charging Station to decide how many times it wants to retry.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.retries" 
+            placeholder="Retries" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Checksum
+        <div class="tooltip" title="The MD5 checksum over the entire firmware file as a hexadecimal string of length 32.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.checksum" 
+            placeholder="Checksum" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Request ID
+        <div class="tooltip" title="The Id of the request.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.requestID" 
+            placeholder="Request ID" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Retry Interval
+        <div class="tooltip" title="The interval in seconds\r\nafter which a retry may be\r\nattempted. If this field is not\r\npresent, it is left to Charging\r\nStation to decide how long to wait\r\nbetween attempts.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+            [(ngModel)]="request.retryInterval" 
+            placeholder="Retry Interval" 
+            class="field__input" type="text" required>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+
+<div class="form__actions">
+  <button (click)="publishFirmware()" class="button button__primary button-small stop__btn">
+    <ng-container *ngIf="isLoading">
+      <app-svg-spinner></app-svg-spinner>
+    </ng-container>
+    <ng-container *ngIf="!isLoading">Publish Firmware</ng-container>
+    
+  </button>
+</div>
+</div>

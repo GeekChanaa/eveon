@@ -42,6 +42,12 @@ namespace VoltaXApi.Controllers
             return Ok(await this._repository.GetConnectorsIds());
         }
 
+        [HttpGet("GetChargePointEvsesIds/{chargePointID}")]
+        public async Task<IActionResult> GetChargePointEvsesIds(int chargePointID)
+        {
+            return Ok(await this._repository.GetChargePointEvsesIds(chargePointID));
+        }
+
         [HttpPost("UpdateConnectorPricing/{connectorID}")]
         public async Task<IActionResult> UpdateConnectorPricing(int connectorID, UpdateConnectorPricingDto updateConnectorPricingDto)
         {

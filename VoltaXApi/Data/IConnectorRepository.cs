@@ -12,6 +12,7 @@ namespace VoltaXApi.Data
       Task<Connector?> GetConnectorByConnectorIdEvseId(int? connectorId, int evseId, int chargePointID);
       Task ResetPricingChargePointConnectors(int chargePointID);
       Task ResetPricingConnector(int connectorID);
+      Task<List<int>> GetChargePointEvsesIds(int chargePointID);
       
     }
 }

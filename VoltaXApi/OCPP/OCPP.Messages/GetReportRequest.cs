@@ -7,18 +7,14 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class GetReportRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
-      [Required]
       [MinLength(1)]
-      public List<ComponentVariableType> ComponentVariable { get; set; }
+      public List<ComponentVariableType>? ComponentVariable { get; set; }
 
-      [Required]
       public int RequestId { get; set; }
 
-      [MinLength(1)]
-      [MaxLength(4)]
-      public List<ComponentCriterionEnumType> ComponentCriteria { get; set; }
+      public List<ComponentCriterionEnumType>? ComponentCriteria { get; set; }
   }
 
   public enum ComponentCriterionEnumType

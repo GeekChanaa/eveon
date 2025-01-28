@@ -1,3 +1,34 @@
-<p>
-  unpublish-firmware-request works!
-</p>
+
+<div class="request__container">
+
+
+  <div class="field">
+    <div class="field__label">Checksum
+      <div class="tooltip" title="The MD5 checksum over the entire firmware file as a hexadecimal string of length 32.">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <input 
+          [(ngModel)]="request.checksum" 
+          placeholder="Checksum" 
+          class="field__input" type="text" required>
+      </div>
+    </div>
+
+  </div>
+
+
+<div class="form__actions">
+  <button (click)="unpublishFirmware()" class="button button__primary button-small stop__btn">
+    <ng-container *ngIf="isLoading">
+      <app-svg-spinner></app-svg-spinner>
+    </ng-container>
+    <ng-container *ngIf="!isLoading">Unpublish Firmware</ng-container>
+    
+  </button>
+</div>
+</div>

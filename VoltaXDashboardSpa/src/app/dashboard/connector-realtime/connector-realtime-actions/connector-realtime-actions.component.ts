@@ -45,8 +45,6 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   OCPPActions : any[] = OCPPActions;
 
   openRequestHandlerModal(ocppAction : any){
-    console.log("this is the ocpp Action we want to open");
-    console.log(ocppAction);
     this.requestHandlerModalVisible = ocppAction;
   }
 

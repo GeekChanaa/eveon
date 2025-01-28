@@ -30,6 +30,8 @@
         *ngIf="requestHandlerModalVisible == 'RequestStartTransaction'"></app-request-start-transaction>
       <app-request-get-base-report 
         [chargePointID]="chargePoint.chargePointId"
+        [cpID]="chargePoint.id"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'GetBaseReport'"></app-request-get-base-report>
       <app-change-availability-request 
         [chargePointID]="chargePoint.chargePointId"
@@ -57,36 +59,50 @@
         *ngIf="requestHandlerModalVisible == 'GetMonitoringReportRequest'"></app-get-monitoring-report-request>
       <app-get-report-request 
         [chargePointID]="chargePoint.chargePointId"
+        [cpID]="chargePoint.id"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'GetReportRequest'"></app-get-report-request>
       <app-get-transaction-status-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'GetTransactionStatusRequest'"></app-get-transaction-status-request>
       <app-get-variables-request 
         [chargePointID]="chargePoint.chargePointId"
         [cpID]="chargePoint.id"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'GetVariablesRequest'"></app-get-variables-request>
       <app-install-certificate-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'InstallCertificateRequest'"></app-install-certificate-request>
       <app-reset-request 
         [chargePointID]="chargePoint.chargePointId"
+        [cpID]="chargePoint.id"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'ResetRequest'"></app-reset-request>
       <app-set-display-message-request 
         [chargePointID]="chargePoint.chargePointId"
+        [cpID]="chargePoint.id"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'SetDisplayMessageRequest'"></app-set-display-message-request>
       <app-set-monitoring-base-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'SetMonitoringBaseRequest'"></app-set-monitoring-base-request>
       <app-set-monitoring-level-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'SetMonitoringLevelRequest'"></app-set-monitoring-level-request>
       <app-set-network-profile-request 
+        (successEvent)="closeModal()"
         [chargePointID]="chargePoint.chargePointId"
         *ngIf="requestHandlerModalVisible == 'SetNetworkProfileRequest'"></app-set-network-profile-request>
       <app-set-variable-monitoring-request 
+        (successEvent)="closeModal()"
         [chargePointID]="chargePoint.chargePointId"
         *ngIf="requestHandlerModalVisible == 'SetVariableMonitoringRequest'"></app-set-variable-monitoring-request>
       <app-set-variables-request 
+        (successEvent)="closeModal()"
         [chargePointID]="chargePoint.chargePointId"
         *ngIf="requestHandlerModalVisible == 'SetVariablesRequest'"></app-set-variables-request>
 

@@ -6,7 +6,7 @@ namespace VoltaXApi.OCPP.Messages
 {
   public class SetDisplayMessageRequest
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public MessageInfoType Message { get; set; }

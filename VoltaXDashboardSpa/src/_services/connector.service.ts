@@ -47,4 +47,7 @@ export class ConnectorService extends AbstractService<Connector>{
     return this._http.post<any>(this.baseUrl+"ResetPricingConnector/"+connectorID, {});
   }
 
+  getChargePointEvsesIds(chargePointID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetChargePointEvsesIds/"+chargePointID);
+  }
 }

@@ -101,11 +101,11 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       public OCPPInterfaceEnumType OcppInterface { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
-      public APNType Apn { get; set; }
+      public APNType? Apn { get; set; }
 
-      public VPNType Vpn { get; set; }
+      public VPNType? Vpn { get; set; }
   }
 
   public class VPNType

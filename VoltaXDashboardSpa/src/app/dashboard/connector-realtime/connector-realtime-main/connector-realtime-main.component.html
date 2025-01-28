@@ -57,7 +57,7 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Firmware')">
-        <app-connector-realtime-firmware class="settings__container"></app-connector-realtime-firmware>
+        <app-connector-realtime-firmware *ngIf="chargePoint != null" [chargePoint]="chargePoint"  class="settings__container"></app-connector-realtime-firmware>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('UptimeReports')">

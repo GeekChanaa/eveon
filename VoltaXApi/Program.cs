@@ -60,6 +60,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ChargingSessionInvoiceGeneratorService>();
 
 builder.Services.AddScoped<IOcppComponentRepository, OcppComponentRepository>();
+builder.Services.AddScoped<IRatingReportRepository, RatingReportRepository>();
 builder.Services.AddScoped<IOcppVariableRepository, OcppVariableRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
@@ -163,6 +164,7 @@ builder.Services.AddScoped<IConfigurationService,ConfigurationService>();
 builder.Services.AddScoped<IEVDriverService,EVDriverService>();
 builder.Services.AddScoped<IMonitoringService,MonitoringService>();
 builder.Services.AddScoped<IReportingService,ReportingService>();
+builder.Services.AddScoped<ISecurityService,SecurityService>();
 builder.Services.AddScoped<ISmartChargingService,SmartChargingService>();
 builder.Services.AddScoped<ITransactionsService,TransactionsService>();
 

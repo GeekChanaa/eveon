@@ -1,3 +1,262 @@
-<p>
-  set-display-message-request works!
-</p>
+
+<div class="request__container">
+    <div class="field">
+      <div class="field__label">ID
+        <div class="tooltip" title="Master resource identifier, unique within an exchange context. It is defined within the OCPP context as a positive Integer value (greater or equal to zero).\r\n">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.id" 
+              placeholder="ID" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">Priority
+        <div class="tooltip" title="With what priority should this message be shown">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select [(ngModel)]="request.message.priority"  class="select select_small" >
+            <option value="AlwaysFront"> AlwaysFront </option>
+            <option value="InFront"> InFront </option>
+            <option value="NormalCycle"> NormalCycle </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">State
+        <div class="tooltip" title="During what state should this message be shown. When omitted this message should be shown in any state of the Charging Station.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select [(ngModel)]="request.message.state"  class="select select_small" >
+            <option value="Charging"> Charging </option>
+            <option value="Faulted"> Faulted </option>
+            <option value="Idle"> Idle </option>
+            <option value="Unavailable"> Unavailable </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">Start Date Time
+        <div class="tooltip" title="From what date-time should this message be shown. If omitted: directly.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.startDateTime" 
+              placeholder="Start Date Time" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="field">
+      <div class="field__label">End Date Time
+        <div class="tooltip" title="Until what date-time should this message be shown, after this date/time this message SHALL be removed.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.endDateTime" 
+              placeholder="End Date Time" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">Transaction ID
+        <div class="tooltip" title="During which transaction shall this message be shown.\r\nMessage SHALL be removed by the Charging Station after transaction has\r\nended.">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.transactionId" 
+              placeholder="Transaction ID" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="field">
+      <div class="field__label">Message Format
+        <div class="tooltip" title="Format of the message">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select [(ngModel)]="request.message.message.format"  class="select select_small" >
+            <option value="ASCII"> ASCII </option>
+            <option value="HTML"> HTML </option>
+            <option value="URI"> URI </option>
+            <option value="UTF8"> UTF8 </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="field">
+      <div class="field__label">Message Content
+        <div class="tooltip" title="Message Contents">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.message.content" 
+              placeholder="Message Content" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__label">Message Language
+        <div class="tooltip" title="Message Language">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <input 
+              [(ngModel)]="request.message.message.language" 
+              placeholder="Message Language" 
+              class="field__input" type="text" required>
+        </div>
+      </div>
+    </div>
+
+  <div class="field" *ngIf="componentInstances != null && componentInstances.length >0">
+    <div class="field">
+      <div class="field__label">Component Instance
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" >
+            <option *ngFor="let instance of componentInstances" value="{{instance}}"> {{instance}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field__label">Component Name
+      <div class="tooltip" title="The Name of the component">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select 
+        (change)="onComponentChange()"
+        [(ngModel)]="request.message.display.name"  class="select select_small" >
+          <option *ngFor="let co of components" value="{{co.component}}"> {{co.component}} </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" *ngIf="componentVariables != null && componentVariables.length >0">
+    <div class="field">
+      <div class="field__label">Variable
+        <div class="tooltip" title="The Name of the variable">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select class="select select_small" [(ngModel)]="variableDataType.variable.name">
+            <option *ngFor="let variable of componentVariables" value="{{variable}}"> {{variable.name}} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="field">
+    <div class="field">
+      <div class="field__label">Evse
+        <div class="tooltip" title="The Name of the component">
+          <svg class="icon icon-info">
+            <use xlink:href="#icon-info"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="field__wrap">
+        <div class="field__wrap">
+          <select  class="select select_small" 
+          (change)="onConnectorChange()"
+          [(ngModel)]="selectedConnector" >
+            <option  value=""> None </option>
+            <option *ngFor="let connector of connectors" [value]="connector | json"> Connector {{ connector.connectorID }} - EVSE {{ connector.evseID }} </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="form__actions">
+    <button (click)="setDisplayMessageRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Set Display Message Request</ng-container>
+    </button>
+  </div>
+</div>

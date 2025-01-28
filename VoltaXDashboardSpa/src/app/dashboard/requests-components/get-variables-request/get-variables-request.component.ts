@@ -4,7 +4,6 @@ import { ActionModalService } from 'src/_services/action-modal.service';
 import { ConnectorService } from 'src/_services/connector.service';
 import { OcppComponentsService } from 'src/_services/ocpp-components.service';
 import { OcppMonitoringService } from 'src/_services/ocpp-services/ocpp-monitoring.service';
-import { OcppReportingService } from 'src/_services/ocpp-services/ocpp-reporting.service';
 
 @Component({
   selector: 'app-get-variables-request',

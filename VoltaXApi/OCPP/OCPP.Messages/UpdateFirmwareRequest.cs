@@ -28,13 +28,13 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       public string RetrieveDateTime { get; set; }
 
-      public string InstallDateTime { get; set; }
+      public string? InstallDateTime { get; set; }
 
       [MaxLength(5500)]
-      public string SigningCertificate { get; set; }
+      public string? SigningCertificate { get; set; }
 
       [MaxLength(800)]
-      public string Signature { get; set; }
+      public string? Signature { get; set; }
   }
 
 }

@@ -110,6 +110,15 @@ namespace VoltaXApi.Data
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<int>> GetChargePointEvsesIds(int chargePointID)
+        {
+            return await _context.Connectors
+                .Where(u => u.ChargePointID == chargePointID)
+                .Select(u => u.EvseID)
+                .Distinct()
+                .ToListAsync();
+        }
         
     }
 }

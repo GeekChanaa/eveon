@@ -1,3 +1,31 @@
-<p>
-  set-monitoring-base-request works!
-</p>
+
+<div class="request__container">
+  
+  <div class="field">
+    <div class="field__label">Monitoring Base
+      <div class="tooltip" title="Specify which monitoring base will be set">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select [(ngModel)]="request.monitoringBase"  class="select select_small" >
+          <option value="All"> All </option>
+          <option value="FactoryDefault"> FactoryDefault </option>
+          <option value="HardWiredOnly"> HardWiredOnly </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+<div class="form__actions">
+  <button (click)="setMonitoringBaseRequest()" class="button button__primary button-small stop__btn">
+    <ng-container *ngIf="isLoading">
+      <app-svg-spinner></app-svg-spinner>
+    </ng-container>
+    <ng-container *ngIf="!isLoading">Set Monitoring Base Request</ng-container>
+  </button>
+</div>
+</div>

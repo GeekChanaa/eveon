@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-connector-realtime-firmware',
@@ -7,9 +7,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectorRealtimeFirmwareComponent implements OnInit {
 
-  constructor() { }
+  @Input() chargePoint : any = {};
 
+  requests: string[] = [
+    "PublishFirmwareRequest",
+    "UpdateFirmwareRequest",
+    "UnpublishFirmwareRequest",
+  ];
+
+  currentOcppAction : any = {};
+  requestHandlerModalVisible : string = "";
+  
   ngOnInit() {
+  }
+
+
+  openRequestHandlerModal(ocppAction : any){
+    this.requestHandlerModalVisible = ocppAction;
+  }
+
+  closeModal(){
+    this.requestHandlerModalVisible = "";
+  }
+
+
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscapeKey(event: KeyboardEvent) {
+    this.closeModal();
   }
 
 }
