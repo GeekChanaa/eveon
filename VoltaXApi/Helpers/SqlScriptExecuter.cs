@@ -22,6 +22,7 @@ namespace VoltaXApi.Helpers
                     Console.WriteLine($"Populating the database using {files[i]}");
 
                     // Set IDENTITY_INSERT to ON for the table
+                    if(tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
                     using (SqlCommand command = new SqlCommand($"SET IDENTITY_INSERT {tables[i]} ON;", connection))
                     {
                         await command.ExecuteNonQueryAsync();
@@ -35,6 +36,7 @@ namespace VoltaXApi.Helpers
                     }
 
                     // Set IDENTITY_INSERT back to OFF for the table
+                    if(tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
                     using (SqlCommand command = new SqlCommand($"SET IDENTITY_INSERT {tables[i]} OFF;", connection))
                     {
                         await command.ExecuteNonQueryAsync();

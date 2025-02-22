@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VoltaXApi.Migrations
 {
     /// <inheritdoc />
-    public partial class recreate : Migration
+    public partial class create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -165,6 +165,21 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoginAttempts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FailedAttempts = table.Column<int>(type: "int", nullable: false),
+                    LockoutEndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginAttempts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MessageLogs",
                 columns: table => new
                 {
@@ -205,6 +220,55 @@ namespace VoltaXApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NotificationTypes", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OcppComponents",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Component = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OcppComponents", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OcppVariableComponents",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Component = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Variable = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Instance = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DataType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Required = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OcppVariableComponents", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OcppVariables",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DataType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OcppVariables", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -763,6 +827,37 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RatingReports",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    RatingID = table.Column<int>(type: "int", nullable: true),
+                    ReportCategory = table.Column<int>(type: "int", nullable: false),
+                    IssueDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RatingReports", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_RatingReports_Ratings_RatingID",
+                        column: x => x.RatingID,
+                        principalTable: "Ratings",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_RatingReports_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Connectors",
                 columns: table => new
                 {
@@ -1169,6 +1264,36 @@ namespace VoltaXApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SystemReportComments",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SystemReportID = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemReportComments", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_SystemReportComments_SystemReports_SystemReportID",
+                        column: x => x.SystemReportID,
+                        principalTable: "SystemReports",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SystemReportComments_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SystemReportImage",
                 columns: table => new
                 {
@@ -1217,6 +1342,32 @@ namespace VoltaXApi.Migrations
                         column: x => x.TransactionID,
                         principalTable: "Transactions",
                         principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemReportCommentImage",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageID = table.Column<int>(type: "int", nullable: false),
+                    SystemReportCommentID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemReportCommentImage", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_SystemReportCommentImage_Images_ImageID",
+                        column: x => x.ImageID,
+                        principalTable: "Images",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SystemReportCommentImage_SystemReportComments_SystemReportCommentID",
+                        column: x => x.SystemReportCommentID,
+                        principalTable: "SystemReportComments",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -1422,6 +1573,16 @@ namespace VoltaXApi.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RatingReports_RatingID",
+                table: "RatingReports",
+                column: "RatingID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RatingReports_UserID",
+                table: "RatingReports",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ratings_UserID",
                 table: "Ratings",
                 column: "UserID");
@@ -1465,6 +1626,26 @@ namespace VoltaXApi.Migrations
                 name: "IX_SupportedKwhs_ChargePointModelID",
                 table: "SupportedKwhs",
                 column: "ChargePointModelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemReportCommentImage_ImageID",
+                table: "SystemReportCommentImage",
+                column: "ImageID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemReportCommentImage_SystemReportCommentID",
+                table: "SystemReportCommentImage",
+                column: "SystemReportCommentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemReportComments_SystemReportID",
+                table: "SystemReportComments",
+                column: "SystemReportID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemReportComments_UserID",
+                table: "SystemReportComments",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemReportImage_ImageID",
@@ -1581,6 +1762,9 @@ namespace VoltaXApi.Migrations
                 name: "DebitCards");
 
             migrationBuilder.DropTable(
+                name: "LoginAttempts");
+
+            migrationBuilder.DropTable(
                 name: "MessageLogs");
 
             migrationBuilder.DropTable(
@@ -1590,10 +1774,19 @@ namespace VoltaXApi.Migrations
                 name: "NotificationSettings");
 
             migrationBuilder.DropTable(
+                name: "OcppComponents");
+
+            migrationBuilder.DropTable(
+                name: "OcppVariableComponents");
+
+            migrationBuilder.DropTable(
+                name: "OcppVariables");
+
+            migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Ratings");
+                name: "RatingReports");
 
             migrationBuilder.DropTable(
                 name: "ReportImages");
@@ -1603,6 +1796,9 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "SupportedKwhs");
+
+            migrationBuilder.DropTable(
+                name: "SystemReportCommentImage");
 
             migrationBuilder.DropTable(
                 name: "SystemReportImage");
@@ -1623,19 +1819,25 @@ namespace VoltaXApi.Migrations
                 name: "NotificationTypes");
 
             migrationBuilder.DropTable(
+                name: "Ratings");
+
+            migrationBuilder.DropTable(
                 name: "Reports");
 
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "SystemReportComments");
 
             migrationBuilder.DropTable(
-                name: "SystemReports");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "ChargingSessions");
+
+            migrationBuilder.DropTable(
+                name: "SystemReports");
 
             migrationBuilder.DropTable(
                 name: "Cards");

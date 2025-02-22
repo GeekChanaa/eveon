@@ -13,7 +13,7 @@ namespace VoltaXApi.Data.Seeders
         {
             await ChargePointBrandsSeeder.Seed(context,mapper);
             await SqlScriptExecuter.ExecuteSqlScript();
-            await BrandsAutomobilesSeeder.Populate();
+            // await BrandsAutomobilesSeeder.Populate();
             var chargeStations = await ChargingStationSeeder.Seed(100,context);
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
             var connectors = await ConnectorSeeder.Seed(100,chargePoints,context);
