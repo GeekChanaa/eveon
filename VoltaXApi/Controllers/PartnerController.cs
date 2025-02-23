@@ -26,13 +26,25 @@ namespace VoltaXApi.Controllers
             _repository = repository;
         }
 
-        [HttpGet("GetPartners/{chargePointID}")]
+        [HttpGet("GetPartners")]
         public async Task<List<PartnerListDto>> GetPartners([FromQuery] GlobalParams globalParams)
         {
             var partners = this._repository.GetPartners();
             var partnersList = await PagedList<PartnerListDto>.CreateAsync(partners,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(partnersList.CurrentPage, partnersList.PageSize, partnersList.TotalCount, partnersList.TotalPages);
             return partnersList;
+        }
+
+        [HttpGet("GetPartnerByID/{partnerId}")]
+        public async Task<PartnerDisplayDto> GetPartnerByID(int partnerId)
+        {
+            return await this._repository.GetPartnerByID(partnerId);
+        }
+
+        [HttpPost("CreatePartner")]
+        public async Task CreatePartner(CreatePartnerDto partner)
+        {
+            await _repository.CreatePartner(partner);
         }
     }
 }

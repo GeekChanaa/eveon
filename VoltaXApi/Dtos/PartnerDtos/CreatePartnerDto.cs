@@ -1,9 +1,10 @@
 
-namespace VoltaXApi.Models;
+using VoltaXApi.Models;
 
-public class Partner : IEntity
+namespace VoltaXApi.Dtos;
+
+public class CreatePartnerDto
 {
-    public int ID { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public PartnerTypeEnum Type { get; set; }
@@ -20,10 +21,5 @@ public class Partner : IEntity
     public string? RegistrationNumber { get; set; }
     public string? BankAccountNumber { get; set; }
     public string? LogoUrl { get; set; }
-    public ICollection<ChargingStation>? ChargingStations { get; set; }
-    public ICollection<User>? Users { get; set; }
-    public bool IsDeleted { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 
 }

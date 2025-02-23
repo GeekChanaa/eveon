@@ -8,6 +8,8 @@ namespace VoltaXApi.Mappers
         public PartnerMapperProfile()
         {
             CreateMap<Partner, PartnerListDto>();
+            CreateMap<CreatePartnerDto, Partner>();
+            CreateMap<Partner, PartnerDisplayDto>();
         }
     }
 }
