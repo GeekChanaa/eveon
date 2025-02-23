@@ -28,7 +28,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   updatedValue : any = {};
   editing : boolean = false;
 
-  // constructor
   constructor(
     private _enumService : EnumMappingService,
     private _modalService : ActionModalService,
@@ -63,11 +62,11 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
 
   updateVal(){
-    console.log("this is the object before");
-    console.log(this.object);
+    
     this.object[this.title] = this.updatedValue;
-    console.log("this is the object after");
+    console.log("object");
     console.log(this.object);
+    console.log("object.id : ",this.object.id);
     this.isLoading = true;
     this.updateObservable(this.object.id, this.object).subscribe((data) => {
       this.isLoading = false;

@@ -84,9 +84,20 @@
               </div>
               <button class="button-stroke settings__button">Remove</button>
             </div>
-            <div class="settings__fieldset" *ngIf="user.firstName != ''">
-              <app-display-cell inpType="text" title="First Name" (updatePropertyEvent)="update($event,'firstName')" [val]="user.firstName"></app-display-cell>
-              <app-display-cell inpType="text" title="Last Name" (updatePropertyEvent)="update($event,'lastName')" [val]="user.lastName"></app-display-cell>
+            <div class="settings__fieldset" *ngIf="user.id != null && user.id != 0">
+              <app-display-cell 
+                inpType="text" 
+                title="firstName" 
+                [updateObservable]="updateUserObservable.bind(this)"
+                [val]="user.firstName"
+                [object]="user"></app-display-cell>
+
+              <app-display-cell 
+                inpType="text" 
+                title="lastName" 
+                [updateObservable]="updateUserObservable.bind(this)"
+                [val]="user.lastName"
+                [object]="user"></app-display-cell>
                 
               
               <div class="field">

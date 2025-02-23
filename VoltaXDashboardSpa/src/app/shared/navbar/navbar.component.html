@@ -108,14 +108,15 @@
       <app-navbar-notifications></app-navbar-notifications>
     </div>
     <div class="header__item header__item_user" [ngClass]="{'active' : avatarMenuBody}">
-      <button (click)="header_avatar()" class="header__head"><img src="img/content/avatar.jpg" alt="Avatar"></button>
-      <div class="header__body" >
-        <div class="header__nav">
-          <button class="header__link" (click)="goToProfile()">Profile</button>
-        </div>
+      <button (click)="toggleUserMenu()" class="header__head">
+        <img src="img/content/avatar.jpg" alt="Avatar"></button>
+        <div class="header__body header__item_user_body">
+          <div class="header__nav">
+            <button class="header__link" (click)="goToProfile()">Profile</button>
+          </div>
 
-        <div class="header__nav"><a class="header__link" (click)="logout()">Log out</a></div>
-      </div>
+          <div class="header__nav"><a class="header__link" (click)="logout()">Log out</a></div>
+        </div>
     </div>
   </div>
   <div class="header__btns"><a class="header__link" href="sign-in.html">Sign in</a><a class="button header__button"

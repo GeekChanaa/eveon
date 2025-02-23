@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserRole } from 'src/_models/_enums/user-role';
-import { DebitCard } from 'src/_models/debit-card';
 import { User } from 'src/_models/user';
 import { AuthService } from 'src/_services/auth.service';
-import { DebitCardService } from 'src/_services/debit-card.service';
 import { FileManagementService } from 'src/_services/file-management.service';
 import { UserService } from 'src/_services/user.service';
+
+
 enum ProfilePageTabsEnum {
   AccountInformationsTab = "AccountInformationsTab",
   SecurityTab = "SecurityTab",
@@ -18,7 +16,7 @@ enum ProfilePageTabsEnum {
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.sass']
 })
 export class ProfileComponent implements OnInit {
 
@@ -52,6 +50,8 @@ export class ProfileComponent implements OnInit {
     isPhoneVerified: false
   };
 
+  updateUserObservable = (id : number, model : any) => this._userService.edit(id, model);
+
   // Constructor
   constructor(
     private _authService : AuthService,
@@ -65,30 +65,18 @@ export class ProfileComponent implements OnInit {
     this.getAuthUserInfos();
   }
 
-  // Getting authenticated user informations
   getAuthUserInfos(){
     var decodedToken = this._authService.getAuthInformation();
     var userid = parseInt(decodedToken.nameid);
-
     this._userService.getById(userid).subscribe((user) => {
       this.user = user;
-      console.log(this.user);
     });
   }
 
-  
-
-
-  // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
   }
 
-  
-
-  
-
-  // Upload profile picture
   uploadPicture(files : any){
     const formData = new FormData();
     this.profilePicture = <File>files[0];
@@ -96,15 +84,6 @@ export class ProfileComponent implements OnInit {
     this._fileManagementService.uploadProfilePicture(formData).subscribe((data) => {
       console.log("Profile Picture successfully uploaded to the destination");
     });
-  }
-
- 
-
-  update(vale : any,name : string){
-    this.user[name] = vale;
-    this._userService.edit(this.user.id, this.user).subscribe((data) => {
-      this.getUserByID(this.user.id);
-    })
   }
 
   getUserByID(id : number ){

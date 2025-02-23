@@ -5,6 +5,7 @@ import { DocumentationComponentsComponent } from './documentation-components/doc
 import { DocumentationVariablesComponent } from './documentation-variables/documentation-variables.component';
 import { DocumentationVariableComponent } from './documentation-variable/documentation-variable.component';
 import { DocumentationComponentComponent } from './documentation-component/documentation-component.component';
+import { DocumentationIconsComponent } from './documentation-icons/documentation-icons.component';
 const routes: Routes = [
   {
     path: "",
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: "components",
     component: DocumentationComponentsComponent
+  },
+  {
+    path: "icons",
+    component: DocumentationIconsComponent
   },
   {
     path: "components/:name",

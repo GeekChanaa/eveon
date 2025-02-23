@@ -37,10 +37,8 @@
     <div class="field">
       <div class="field__label">
         Confirm new password
-        <div
-          class="tooltip"
-          title="Maximum 100 characters. No HTML or emoji allowed"
-        >
+        <div class="tooltip"
+          title="Re-enter your password to check if it's the same">
           <svg class="icon icon-info">
             <use xlink:href="#icon-info"></use>
           </svg>
@@ -51,7 +49,12 @@
       </div>
     </div>
   </div>
-  <button class="button-stroke settings__button" (click)="changePassword()">Save</button>
+  <button class="button-stroke settings__button" (click)="changePassword()">
+    <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
+    <ng-container *ngIf="!isLoading">
+      Save
+    </ng-container>
+  </button>
 </div>
 <div class="settings__fieldset" *ngIf="!editingPassword">
   <button class="button" (click)="editingPassword = true">

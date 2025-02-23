@@ -8,49 +8,44 @@
     </a>
     
     <div class="sidebar__menu">
-      <!-- Customer menu -->
-      <app-sidebar-item *ngIf="role == 1" [title]="'home'" [link]="'/my-dashboard'" [active]="isActive('/my-dashboard')"></app-sidebar-item>
-      <app-sidebar-item *ngIf="role == 1" [title]="'my cards'" [link]="'/my-dashboard/my-cards'" [active]="isActive('/my-dashboard/my-cards')"></app-sidebar-item>
-      <app-sidebar-item *ngIf="role == 1" [title]="'my profile'" [link]="'/my-dashboard/profile'" [active]="isActive('/my-dashboard/profile')"></app-sidebar-item>
-  
       <!-- Admin/Operator menu -->
-      <app-sidebar-item *ngIf="role == 0" [title]="'home'" [link]="'/dashboard'" [active]="isActive('/dashboard')"></app-sidebar-item>
+      <app-sidebar-item *ngIf="role == 'Admin'" [title]="'home'" [link]="'/dashboard'" [active]="isActive('/dashboard')"></app-sidebar-item>
   
-      <app-sidebar-dropdown iconID="icon-type2-charger" *ngIf="role == 0" [title]="'Operation Monitoring'" 
+      <app-sidebar-dropdown iconID="icon-type2-charger" *ngIf="role == 'Admin'" [title]="'Operation Monitoring'" 
         [active]="isDropdownActive('/dashboard/connector-realtime') || isDropdownActive('/dashboard/statistics')">
         <app-sidebar-link [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'" [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
         <app-sidebar-link [title]="'statistics'" [link]="'/dashboard/statistics'" [active]="isActive('/dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-charging-station" *ngIf="role == 0" [title]="'Station Management'" 
+      <app-sidebar-dropdown iconID="icon-charging-station" *ngIf="role == 'Admin'" [title]="'Station Management'" 
         [active]="isDropdownActive('/dashboard/charging-stations') || isDropdownActive('/dashboard/charging-points')">
         <app-sidebar-link [title]="'charging station'" [link]="'/dashboard/charging-stations'" [active]="isActive('/dashboard/charging-stations')"></app-sidebar-link>
         <app-sidebar-link [title]="'charge point'" [link]="'/dashboard/charging-points'" [active]="isActive('/dashboard/charging-points')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-money-bill" *ngIf="role == 0" [title]="'business management'" 
+      <app-sidebar-dropdown iconID="icon-money-bill" *ngIf="role == 'Admin'" [title]="'business management'" 
         [active]="isDropdownActive('/dashboard/charging-cards')">
         <app-sidebar-link [title]="'charging cards'" [link]="'/dashboard/charging-cards'" [active]="isActive('/dashboard/charging-cards')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-comment" *ngIf="role == 0" [title]="'app management'" 
+      <app-sidebar-dropdown iconID="icon-comment" *ngIf="role == 'Admin'" [title]="'app management'" 
         [active]="isDropdownActive('/dashboard/reports')">
         <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'" [active]="isActive('/dashboard/reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-invoice" *ngIf="role == 0" [title]="'order management'" 
+      <app-sidebar-dropdown iconID="icon-invoice" *ngIf="role == 'Admin'" [title]="'order management'" 
         [active]="isDropdownActive('/dashboard/transactions') || isDropdownActive('/dashboard/recharge-orders')">
         <app-sidebar-link [title]="'transactions'" [link]="'/dashboard/transactions'" [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
         <app-sidebar-link [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'" [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-setting" *ngIf="role == 0" [title]="'maintenance management'" 
+      <app-sidebar-dropdown iconID="icon-setting" *ngIf="role == 'Admin'" [title]="'maintenance management'" 
         [active]="isDropdownActive('/dashboard/global-configurations') || isDropdownActive('/dashboard/system-reports')">
         <app-sidebar-link [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'" [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
         <app-sidebar-link [title]="'System Reports'" [link]="'/dashboard/system-reports'" [active]="isActive('/dashboard/system-reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-maintenance" *ngIf="role == 0" [title]="'ocpp operation'"
+      <app-sidebar-dropdown iconID="icon-maintenance" *ngIf="role == 'Admin'" [title]="'ocpp operation'"
         [icon]="'/assets/images/icons/updated/bolt.svg'" 
         [active]="isDropdownActive('/dashboard/ocpp-local-list') || isDropdownActive('/dashboard/charging-profile') || isDropdownActive('/dashboard/ocpp-configuration')">
         <app-sidebar-link [title]="'local list'" [link]="'/dashboard/ocpp-local-list'" [active]="isActive('/dashboard/ocpp-local-list')"></app-sidebar-link>
@@ -58,14 +53,14 @@
         <app-sidebar-link [title]="'configuration'" [link]="'/dashboard/ocpp-configuration'" [active]="isActive('/dashboard/ocpp-configuration')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
-      <app-sidebar-dropdown iconID="icon-account-setting" *ngIf="role == 0" [title]="'Account'" 
+      <app-sidebar-dropdown iconID="icon-account-setting" *ngIf="role == 'Admin'" [title]="'Account'" 
         [active]="isDropdownActive('/dashboard/users')">
         <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'" [active]="isActive('/dashboard/users')"></app-sidebar-link>
         <app-sidebar-link [title]="'partners'" [link]="'/dashboard/partners'" [active]="isActive('/dashboard/partners')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <!-- Partner menu -->
-      <ng-container *ngIf="role == 4">
+      <ng-container *ngIf="role == 'Partner'">
         <app-sidebar-dropdown [title]="'Station Management'" 
           [active]="isDropdownActive('/partner-dashboard/charging-stations') || isDropdownActive('/partner-dashboard/charging-points') || isDropdownActive('/partner-dashboard/connectors')">
           <app-sidebar-link [title]="'charging station'" [link]="'/partner-dashboard/charging-stations'" [active]="isActive('/partner-dashboard/charging-stations')"></app-sidebar-link>

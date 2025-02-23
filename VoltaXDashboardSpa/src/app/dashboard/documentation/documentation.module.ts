@@ -10,6 +10,7 @@ import { DocumentationVariablesComponent } from './documentation-variables/docum
 import { DocumentationMainComponent } from './documentation-main/documentation-main.component';
 import { DocumentationComponentComponent } from './documentation-component/documentation-component.component';
 import { DocumentationVariableComponent } from './documentation-variable/documentation-variable.component';
+import { DocumentationIconsComponent } from './documentation-icons/documentation-icons.component';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { DocumentationVariableComponent } from './documentation-variable/documen
       DocumentationVariablesComponent,
       DocumentationMainComponent,
       DocumentationComponentComponent,
-      DocumentationVariableComponent
+      DocumentationVariableComponent,
+      DocumentationIconsComponent
   ],
     imports: [
         DocumentationRoutingModule,
