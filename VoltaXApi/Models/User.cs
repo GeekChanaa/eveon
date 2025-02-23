@@ -21,7 +21,7 @@ namespace VoltaXApi.Models
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
         public string? Password { get; set; }
-
+        public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; } = false;
         public string? EmailVerificationToken { get; set; }
 
@@ -37,5 +37,6 @@ namespace VoltaXApi.Models
         public DateTime UpdatedAt { get; set; }
         
         public string FullName { get { return FirstName+ " " + LastName;} }
+        public Partner? Partner { get; set; }
     }
 }

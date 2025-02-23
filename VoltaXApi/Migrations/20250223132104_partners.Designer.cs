@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoltaXApi.Data;
 
@@ -11,9 +12,11 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    partial class VoltaXApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250223132104_partners")]
+    partial class partners
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1645,13 +1648,6 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LogoUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1676,7 +1672,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Partners");
+                    b.ToTable("Partner");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Rating", b =>

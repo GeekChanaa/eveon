@@ -85,6 +85,7 @@ builder.Services.AddScoped<ISystemReportService, SystemReportService>();
 builder.Services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
 builder.Services.AddScoped<ISystemReportRepository, SystemReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
 builder.Services.AddScoped<IConnectorRepository, ConnectorRepository>();
 builder.Services.AddScoped<IConnectorStatusRepository, ConnectorStatusRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
@@ -177,6 +178,7 @@ builder.Services.AddAutoMapper(typeof(ChargingStationProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
 builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
+builder.Services.AddAutoMapper(typeof(PartnerMapperProfile));
 builder.Services.AddAutoMapper(typeof(TransactionMapperProfile));
 builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
