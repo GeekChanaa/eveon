@@ -7,11 +7,14 @@ import { PartnersRoutingModule } from './partners-routing.module';
 import { PartnersListComponent } from './partners-list/partners-list.component';
 import { PartnersComponent } from './partners.component';
 import { PartnerComponent } from './partner/partner.component';
+import { CreatePartnerComponent } from './create-partner/create-partner.component';
+import { PartnerChargingStationsComponent } from './partner-charging-stations/partner-charging-stations.component';
 @NgModule({
     declarations: [
       PartnersListComponent,
-      PartnersComponent,
-      PartnerComponent
+      PartnerComponent,
+      CreatePartnerComponent,
+      PartnerChargingStationsComponent
     ],
     imports: [
         AtomsModule,

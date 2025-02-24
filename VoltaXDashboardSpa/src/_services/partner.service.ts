@@ -17,5 +17,15 @@ export class PartnerService extends AbstractService<Partner>{
 
   baseUrl = environment.apiUrl+"/api/partner/";
 
-  
+  createPartner(partner : any){
+    return this.http.post(this.baseUrl+"createPartner/",partner);
+  }
+
+  getAllPartners(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetPartners");
+  }
+
+  getPartnerByID(partnerID : number){
+    return this._http.get(this.baseUrl+"GetPartnerByID/"+partnerID)
+  }
 }

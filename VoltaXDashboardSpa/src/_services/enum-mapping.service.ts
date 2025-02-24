@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PartnerTypeEnum } from 'src/_models/_enums/partner-enum-type';
 
 @Injectable({
   providedIn: 'root',
@@ -74,6 +75,14 @@ export class EnumMappingService {
       1: 'Technical',
       2: 'Maintenance',
     },
+    PartnerTypeEnum: {
+      0: 'Vendor',
+      1: 'ServiceProvider',
+      2: 'Reseller',
+      3: 'Affiliate',
+      4: 'Investor',
+      5: 'Other',
+    }
   };
 
   getEnumMapping(modelName: string): { [id: number]: string } {

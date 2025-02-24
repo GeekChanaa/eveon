@@ -1,0 +1,246 @@
+<!-- inner-->
+<div class="page__inner">
+    <div class="page__container">
+      <div class="page__title h3">New Partner</div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="create">
+          <div class="create__row">
+            <div class="create__col">
+                <div class="create__card card charge_point_form">
+                      <div class="create__group create__group3">
+  
+                      <div class="field">
+                        <div class="field__label">Name
+                          <div class="tooltip" title="Name of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="name" placeholder="Name"
+                            required>
+                          <div class="field__error" *ngIf="form.get('name')?.errors != null && form.get('name')?.touched">
+                            Name is Required
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Description
+                          <div class="tooltip" title="Small description of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="name" placeholder="Description">
+                        </div>
+                      </div>
+  
+                      <div class="field">
+                        <div class="field__label">Partner Type
+                          <div class="tooltip" title="Type of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <div class="field__wrap">
+                            <select class="select" formControlName="type">
+                              <option value="Vendor">Vendor</option>
+                              <option value="ServiceProvider">ServiceProvider</option>
+                              <option value="Reseller">Reseller</option>
+                              <option value="Affiliate">Affiliate</option>
+                              <option value="Investor">Investor</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="field">
+                        <div class="field__label">Email
+                          <div class="tooltip" title="Name of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="email" placeholder="Email"
+                            required>
+                          <div class="field__error" *ngIf="form.get('email')?.errors != null && form.get('email')?.touched">
+                            Email is Required
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Email 2
+                          <div class="tooltip" title="Secondary Email of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="email2" placeholder="Email">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Email
+                          <div class="tooltip" title="Third email of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="email3" placeholder="Email">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Phone
+                          <div class="tooltip" title="Phone Number of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="phone" placeholder="Phone Number"
+                            required>
+                          <div class="field__error" *ngIf="form.get('phone')?.errors != null && form.get('phone')?.touched">
+                            Phone is Required
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Phone 2
+                          <div class="tooltip" title="Secondary Phone number of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="phone2" placeholder="Phone Number">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Phone 3
+                          <div class="tooltip" title="Third Phone of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="phone3" placeholder="Phone Number">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Country 
+                          <div class="tooltip" title="Country of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="country" placeholder="Phone Number" [disabled]="true">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">City
+                          <div class="tooltip" title="Type of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <div class="field__wrap">
+                            <select class="select" formControlName="city">
+                              <option *ngFor="let city of cities" value="{{city.name}}">{{city.name}}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Tax Identification Number
+                          <div class="tooltip" title="Tax Identification Number of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="taxIdentificationNumber" placeholder="Tax Identification Number">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Address
+                          <div class="tooltip" title="Address of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="address" placeholder="Address">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Registration Number
+                          <div class="tooltip" title="Registration Number of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="registrationNumber" placeholder="registrationNumber">
+                        </div>
+                      </div>
+
+                      <div class="field">
+                        <div class="field__label">Bank Account Number
+                          <div class="tooltip" title="Bank Account Number of the partner">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="field__wrap">
+                          <input class="field__input" type="text" formControlName="bankAccountNumber" placeholder="Bank Account Number">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              
+            </div>
+          </div>
+          <div class="btns_group">
+            <button [disabled]="form.invalid" [ngClass]="{'disabled': form.invalid}" class="button" type="submit"> 
+                <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
+                <ng-container *ngIf="!isLoading">
+                    Submit
+                </ng-container> 
+            </button>
+          </div>
+      </form>
+    </div>

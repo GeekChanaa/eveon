@@ -49,6 +49,10 @@ export class UserService extends AbstractService<User>{
     );
   }
 
+  getAllUsers(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetUsers");
+  }
+
   getAllUsersNamesByName(name: string){
     return this._http.get<any[]>(this.baseUrl + "GetUserNamesByName?name="+name);
   }

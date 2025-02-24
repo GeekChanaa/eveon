@@ -116,6 +116,29 @@ namespace VoltaXApi.Data
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public IQueryable<UserListDto> GetUsers()
+        {
+            var users = _context.Users.Select(u => new UserListDto{
+                ID = u.ID,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Gender = u.Gender,
+                City = u.City,
+                Car = u.Car,
+                Birthday = u.Birthday,
+                Phone = u.Phone,
+                PartnerName = u.Partner.Name,
+                IsEmailVerified = u.IsEmailVerified,
+                IsPhoneNumberVerified = u.IsPhoneNumberVerified,
+                Role = u.Role,
+                SuspendedAt = u.SuspendedAt > DateTime.Now ? "Yes" : "No",
+            }).AsQueryable();
+
+            return users;
+        }
+
+
 
         
     }

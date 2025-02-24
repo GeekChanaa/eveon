@@ -111,9 +111,6 @@ export class CreateChargingCardComponent implements OnInit, AfterViewInit {
     this.card.userID = cardForm.userID;
     this.card.balance = cardForm.balance;
 
-    console.log("this is the card we're pushing");
-    console.log(this.card);
-
     this._cardService.createCard(this.card).subscribe((createdCard) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Card Created Successfully",4000);
       this._router.navigateByUrl('/dashboard/charging-cards');

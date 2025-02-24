@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-partner-charging-stations',
@@ -6,8 +6,6 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./partner-charging-stations.component.sass']
 })
 export class PartnerChargingStationsComponent implements OnInit {
-
-  @Input() partnerID : number = 0
 
   constructor() { }
 

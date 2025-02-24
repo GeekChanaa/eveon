@@ -7,14 +7,14 @@
           [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
         <button (click)="changeTab('RechargeCardsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
-        <button (click)="changeTab('DebitCardsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'DebitCardsTab'}">Debit Cards</button>
+        <button (click)="changeTab('ChargingSessionsTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'ChargingSessionsTab'}">Charging Sessions</button>
       </div>
       <div class="settings__wrapper">
         <select class="select">
           <option (click)="changeTab('InformationsTab')">Informations</option>
           <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
-          <option (click)="changeTab('DebitCardsTab')">Debit Cards</option>
+          <option (click)="changeTab('ChargingSessionsTab')">Charging Sessions</option>
         </select>
         <div class="settings__list">
           <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
@@ -40,9 +40,9 @@
 
           </div>
 
-          <div class="settings__item" *ngIf="tabsEnum == 'DebitCardsTab'">
+          <div class="settings__item" *ngIf="tabsEnum == 'ChargingSessionsTab'">
             <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Debit Cards</div>
+            <div class="title-purple settings__title">Charging Sessions</div>
             <div class="settings__fieldset">
 
             </div>

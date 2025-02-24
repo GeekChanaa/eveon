@@ -30,6 +30,7 @@ import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component
 import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 import { ConnectorStatusesComponent } from './home/connector-statuses/connector-statuses.component';
+import { PartnersComponent } from './partners/partners.component';
 
 @NgModule({
     declarations: [
@@ -43,19 +44,19 @@ import { ConnectorStatusesComponent } from './home/connector-statuses/connector-
       OcppLocalListComponent,
       ChargingProfileComponent,
       OcppConfigurationComponent,
-      UsersComponent,
       TabsStatisticsComponent,
       DashboardComponent,
       ProfileComponent,
       RechargeCardsComponent,
-      UserComponent,
       StatisticsComponent,
       NotificationSettingsComponent,
       CompleteProfileComponent,
       DebitCardsComponent,
       ProfileSecurityComponent,
       GlobalConfigurationsComponent,
-      ConnectorStatusesComponent
+      ConnectorStatusesComponent,
+      PartnersComponent,
+      UsersComponent
   ],
     imports: [
         DashboardRoutingModule,

@@ -1,0 +1,153 @@
+<div class="page__inner">
+    <div class="page__container">
+      <div class="page__title h3">Charge Point : {{partner.name}}</div>
+      <div class="settings">
+        <div class="settings__menu">
+          <button (click)="changeTab('InformationsTab')" class="settings__link"
+            [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+  
+  
+          <button (click)="changeTab('ChargingStationsTab')" class="settings__link"
+            [ngClass]="{'active' : tabsEnum == 'ChargingStationsTab'}">Charging Stations</button>
+          
+        </div>
+        <div class="settings__wrapper">
+          <select class="select">
+            <option (click)="changeTab('InformationsTab')">Informations</option>
+            <option (click)="changeTab('ChargingStationsTab')">Charging Stations</option>
+          </select>
+          <div class="settings__list">
+            <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
+              <div class="settings__anchor" id="basics" data-value="Basics"></div>
+              <div class="title-green settings__title">Informations</div>
+              <div class="settings__profile">
+  
+              </div>
+              <div class="settings__fieldset">
+                <ng-container *ngIf="partnerLoaded">
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Name"
+                        [val]="partner.name"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Description"
+                        [val]="partner.description"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Email"
+                        [val]="partner.email"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Email2"
+                        [val]="partner.email2"></app-display-cell>
+
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Email3"
+                        [val]="partner.email3"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Phone"
+                        [val]="partner.phone"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Phone2"
+                        [val]="partner.phone2"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Phone3"
+                        [val]="partner.phone3"></app-display-cell>
+
+                    
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Country"
+                        [val]="partner.country"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="City"
+                        [val]="partner.city"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Address"
+                        [val]="partner.address"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Tax Identification Number"
+                        [val]="partner.taxIdentificationNumber"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Registration Number"
+                        [val]="partner.registrationNumber"></app-display-cell>
+                  
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="text"
+                        title="Bank Account Number"
+                        [val]="partner.bankAccountNumber"></app-display-cell>
+
+                    <app-display-cell 
+                        [updateObservable]="updatePartnerObservable.bind(this)" 
+                        [object]="partner"
+                        inpType="select_enum"
+                        title="Type"
+                        enumName="PartnerTypeEnum" 
+                        val="{{partner.type}}"></app-display-cell>
+                  
+                </ng-container>
+                
+              </div>
+            </div>
+            <div class="settings__item" *ngIf="tabsEnum == 'ChargingStationsTab'">
+              <ng-container *ngIf="partner.id != null && partner.id != undefined">
+                <app-partner-charging-stations [partnerID]="partner.id"></app-partner-charging-stations>
+              </ng-container>
+              
+            </div>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

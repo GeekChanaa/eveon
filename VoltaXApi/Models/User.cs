@@ -33,6 +33,7 @@ namespace VoltaXApi.Models
         public ICollection<DebitCard>? DebitCards { get; set; }
         public ICollection<Card>? Cards { get; set; }
         public bool IsDeleted { get; set; } = false;
+        public DateTime SuspendedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         

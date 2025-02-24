@@ -28,6 +28,8 @@ import { ConnectorRealtimeComponent } from './connector-realtime/connector-realt
 import { SystemReportsComponent } from './system-reports/system-reports.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 import { DocumentationComponent } from './documentation/documentation.component';
+import { PartnerComponent } from './partners/partner/partner.component';
+import { PartnersComponent } from './partners/partners.component';
 const routes: Routes = [
   {
     path: "",
@@ -104,6 +106,18 @@ const routes: Routes = [
       .then(m=>m.DocumentationModule)
   },
   {
+    path: "partners",
+    component: PartnersComponent,
+    loadChildren : () => import('./partners/partners.module')
+      .then(m=>m.PartnersModule)
+  },
+  {
+    path: "users",
+    component: UsersComponent,
+    loadChildren : () => import('./users/users.module')
+      .then(m=>m.UsersModule)
+  },
+  {
     path: "statistics",
     component: StatisticsComponent,
   },
@@ -131,16 +145,6 @@ const routes: Routes = [
     path: "transactions",
     component: TransactionsComponent,
   },
-  {
-    path: "users",
-    component: UsersComponent,
-  },{
-    path: "users/:id",
-    component: UserComponent,
-  },{
-    path: "profile",
-    component: ProfileComponent,
-  }
   
 ];
 

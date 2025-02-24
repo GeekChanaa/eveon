@@ -6,12 +6,12 @@ import { UserRole } from 'src/_models/_enums/user-role';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
-  DebitCardsTab = "DebitCardsTab"
+  ChargingSessionsTab = "ChargingSessionsTab"
 }
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+  styleUrls: ['./user.component.sass']
 })
 export class UserComponent implements OnInit {
 

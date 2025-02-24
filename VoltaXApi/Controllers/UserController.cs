@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Services;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -74,11 +75,20 @@ namespace VoltaXApi.Controllers
             return await this._repository.IsPhoneUnique(phone);
         }
 
-        //GetSupportUserNames
         [HttpGet("GetSupportUserNames/")]
         public async Task<ActionResult<List<UserNameDto>>> GetSupportUserNames()
         {
             return await this._repository.GetSupportUserNames();
+        }
+
+
+        [HttpGet("GetUsers")]
+        public async Task<List<UserListDto>> GetUsers([FromQuery] GlobalParams globalParams)
+        {
+            var users = _repository.GetUsers();
+            var usersList = await PagedList<UserListDto>.CreateAsync(users,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(usersList.CurrentPage, usersList.PageSize, usersList.TotalCount, usersList.TotalPages);
+            return usersList;
         }
     }
 }
