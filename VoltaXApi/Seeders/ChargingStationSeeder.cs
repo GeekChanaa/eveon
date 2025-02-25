@@ -10,6 +10,7 @@ namespace VoltaXApi.Data.Seeders
             IRepository<ChargingStation> repo = new Repository<ChargingStation>(dbContext);
             int counter = 1;
             var moroccoCities = dbContext.Cities.Where(u => u.Country.Name == "Morocco").Select(u => u.Name).ToList();
+            var partners = dbContext.Partners.Select(u => u.ID).ToList();
             var faker = new Faker<ChargingStation>()
                 .RuleFor(cs => cs.Name, f => $"VX{counter++.ToString("D4")}")  
                 .RuleFor(cs => cs.Address, f => f.Address.FullAddress())
@@ -19,6 +20,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(cs => cs.Country, f => f.Address.Country())
                 .RuleFor(cs => cs.State, f => f.Address.State())
                 .RuleFor(cs => cs.City, f => f.PickRandom(moroccoCities))
+                .RuleFor(cs => cs.PartnerID, f => f.PickRandom(partners))
                 .RuleFor(cs => cs.Latitude, f => f.Address.Latitude().ToString())
                 .RuleFor(cs => cs.Longitude, f => f.Address.Longitude().ToString())
                 .RuleFor(cs => cs.Organisation, f => f.Company.CompanyName())

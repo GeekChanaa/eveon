@@ -10,7 +10,7 @@ namespace VoltaXApi.Data
 {
     public interface IPartnerRepository : IRepository<Partner>
     {
-        IQueryable<PartnerListDto> GetPartners();
+        IQueryable<PartnerListDto> GetPartners(GlobalParams globalParams);
         Task CreatePartner(CreatePartnerDto partner);
         Task<PartnerDisplayDto> GetPartnerByID(int id);
     }

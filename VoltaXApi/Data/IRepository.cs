@@ -9,7 +9,7 @@ namespace VoltaXApi.Data
 {
     public interface IRepository<TEntity> where TEntity : IEntity
     {
-        Task<IQueryable<TEntity>> GetAllAsync(GlobalParams globalParams);
+        IQueryable<TEntity> GetAllAsync(GlobalParams globalParams);
         Task<TEntity> GetByIdAsync(int id);
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync(TEntity entity);

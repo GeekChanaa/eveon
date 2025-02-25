@@ -22,7 +22,7 @@ namespace VoltaXApi.Data
             this.dbSet = _context.Set<TEntity>();
         }
 
-        public virtual async Task<IQueryable<TEntity>> GetAllAsync(GlobalParams objectParams)
+        public virtual IQueryable<TEntity> GetAllAsync(GlobalParams objectParams)
         {
             var data = this.dbSet.AsQueryable();
             // List of parameters of M
@@ -41,7 +41,6 @@ namespace VoltaXApi.Data
             }
 
             // Searching for an occurence of a string Only string Objects 
-            // Searching for an occurrence of a string in multiple properties
             if (objectParams.SearchBy != null && objectParams.SearchBy.Length > 0)
             {
                 var combinedSearchPredicate = PredicateBuilder.New<TEntity>(false); // 'false' for OR logic
@@ -74,7 +73,6 @@ namespace VoltaXApi.Data
                         {
                             if (prop.Name == objectParams.FilterBy[i])
                             {
-                                Console.WriteLine("this is the prop.Name : " + prop.Name);
                                 if (i == 0)
                                 {
                                     filterQuery1 = prop.Name + " == \"" + objectParams.FilterValue[i] + "\"";

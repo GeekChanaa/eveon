@@ -34,7 +34,8 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-invoice" *ngIf="role == 'Admin'" [title]="'order management'" 
-        [active]="isDropdownActive('/dashboard/transactions') || isDropdownActive('/dashboard/recharge-orders')">
+        [active]="isDropdownActive('/dashboard/transactions') || isDropdownActive('/dashboard/recharge-orders') || isDropdownActive('/dashboard/charging-sessions')">
+        <app-sidebar-link [title]="'Charging Sessions'" [link]="'/dashboard/charging-sessions'" [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
         <app-sidebar-link [title]="'transactions'" [link]="'/dashboard/transactions'" [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
         <app-sidebar-link [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'" [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
       </app-sidebar-dropdown>

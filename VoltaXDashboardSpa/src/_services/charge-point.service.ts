@@ -62,6 +62,10 @@ export class ChargePointService extends AbstractService<ChargePoint>{
     return this._http.get<boolean>(this.baseUrl+"isChargePointSerialNumberUnique/"+chargePointSerialNumber);
   }
 
+  getAllChargePoints(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetAllChargePoints");
+  }
+
   
   getChargePointIds(){
     return this._http.get<any[]>(this.baseUrl+"GetChargePointsIds/").pipe(

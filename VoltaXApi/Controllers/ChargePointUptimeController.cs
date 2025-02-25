@@ -35,7 +35,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargePointUptime/{chargePointID}")]
         public async Task<IActionResult> GetChargePointUptimes(int chargePointID,[FromQuery] GlobalParams globalParams)
         {
-            var chargePointUptimes = await PagedList<ChargePointUptime>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ChargePointID == chargePointID), globalParams.PageNumber, globalParams.PageSize);
+            var chargePointUptimes = await PagedList<ChargePointUptime>.CreateAsync( _repository.GetAllAsync(globalParams).Where(u => u.ChargePointID == chargePointID), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargePointUptimes.CurrentPage, chargePointUptimes.PageSize, chargePointUptimes.TotalCount, chargePointUptimes.TotalPages);
             List<ChargePointUptimeListDto> chargePointUptimesDto = _mapper.Map<List<ChargePointUptimeListDto>>(chargePointUptimes);
             return Ok(chargePointUptimesDto);

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChargePointCRListDto } from 'src/_models/_dtos/charge-point-cr-list-dto';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
@@ -20,21 +21,14 @@ export class ConnectorRealtimeListComponent implements OnInit {
   };
   
 
-  chargePoint: ChargePoint = {
-    id: 0,
+  chargePoint: ChargePointCRListDto = {
     chargePointId: '',
-    chargingStationID: 0,
     name: '',
+    chargingStationName: '',
     serialNumber: '',
-    make: '',
-    category: ChargePointCategoryEnum.TheTower,
-    status: ChargePointStatusEnum.Available,
-    comment: '',
-    username: '',
-    password: '',
-    clientCertThumb: '',
-    connectors: [],
-    transactions: []
+    category: '',
+    status: '',
+    partnerName: ''
   }
 
   // Constructor
@@ -47,7 +41,7 @@ export class ConnectorRealtimeListComponent implements OnInit {
     this._getItemFields();
   }
 
-  getChargePointsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._chargePointService.getAll(currentPage, itemsPerPage, itemParams);
+  getChargePointsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._chargePointService.getAllChargePoints(currentPage, itemsPerPage, itemParams);
   deleteChargePointObservable = (id : number) => this._chargePointService.deleteById(id);
   updateChargePointObservable = (id : number, model : any) => this._chargePointService.edit(id, model);
 

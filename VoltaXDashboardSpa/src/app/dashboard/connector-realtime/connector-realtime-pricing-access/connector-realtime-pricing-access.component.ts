@@ -96,7 +96,8 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
   }
 
   createFlatFeeFormGroupsForConnectors() {
-    this.connectors.forEach((connector,index) => {
+      this.flatFeeFormArray.clear();
+      this.connectors.forEach((connector,index) => {
       this.isLoadingUpdate[connector.id] = false;
       const group = this._fb.group({
         flatFee: [connector.flatFee || '', Validators.required]

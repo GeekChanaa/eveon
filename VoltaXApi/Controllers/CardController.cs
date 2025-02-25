@@ -32,7 +32,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetAllCards")]
         public async Task<IActionResult> GetAllCards([FromQuery] GlobalParams globalParams)
         {
-            var cards = await PagedList<Card>.CreateAsync((await _repository.GetAllAsync(globalParams)).Include(u => u.User), globalParams.PageNumber, globalParams.PageSize);
+            var cards = await PagedList<Card>.CreateAsync((_repository.GetAllAsync(globalParams)).Include(u => u.User), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(cards.CurrentPage, cards.PageSize, cards.TotalCount, cards.TotalPages);
             List<CardListDto> cardsDto = _mapper.Map<List<CardListDto>>(cards);
             return Ok(cardsDto);

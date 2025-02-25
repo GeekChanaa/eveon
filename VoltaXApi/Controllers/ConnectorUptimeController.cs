@@ -35,7 +35,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetConnectorUptime/{connectorID}")]
         public async Task<IActionResult> GetConnectorUptimes(int connectorID,[FromQuery] GlobalParams globalParams)
         {
-            var connectorUptimes = await PagedList<ConnectorUptime>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ConnectorID == connectorID), globalParams.PageNumber, globalParams.PageSize);
+            var connectorUptimes = await PagedList<ConnectorUptime>.CreateAsync(_repository.GetAllAsync(globalParams).Where(u => u.ConnectorID == connectorID), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(connectorUptimes.CurrentPage, connectorUptimes.PageSize, connectorUptimes.TotalCount, connectorUptimes.TotalPages);
             List<ConnectorUptimeListDto> connectorUptimesDto = _mapper.Map<List<ConnectorUptimeListDto>>(connectorUptimes);
             return Ok(connectorUptimesDto);

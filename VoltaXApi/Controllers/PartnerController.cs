@@ -29,7 +29,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetPartners")]
         public async Task<List<PartnerListDto>> GetPartners([FromQuery] GlobalParams globalParams)
         {
-            var partners = this._repository.GetPartners();
+            var partners = this._repository.GetPartners(globalParams);
             var partnersList = await PagedList<PartnerListDto>.CreateAsync(partners,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(partnersList.CurrentPage, partnersList.PageSize, partnersList.TotalCount, partnersList.TotalPages);
             return partnersList;

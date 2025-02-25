@@ -24,9 +24,9 @@ namespace VoltaXApi.Data
             _mapper = mapper;
         }
 
-        public IQueryable<PartnerListDto> GetPartners()
+        public IQueryable<PartnerListDto> GetPartners(GlobalParams globalParams)
         {
-            var partners = _context.Partners.AsQueryable().ProjectTo<PartnerListDto>(_mapper.ConfigurationProvider);
+            var partners = GetAllAsync(globalParams).ProjectTo<PartnerListDto>(_mapper.ConfigurationProvider);
             return partners;
         }
 

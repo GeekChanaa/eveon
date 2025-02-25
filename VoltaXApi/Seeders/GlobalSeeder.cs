@@ -13,6 +13,7 @@ namespace VoltaXApi.Data.Seeders
         {
             await ChargePointBrandsSeeder.Seed(context,mapper);
             await SqlScriptExecuter.ExecuteSqlScript();
+            var partners = await PartnerSeeder.Seed(200,context);
             // await BrandsAutomobilesSeeder.Populate();
             var chargeStations = await ChargingStationSeeder.Seed(100,context);
             var chargePoints = await ChargePointSeeder.Seed(100,chargeStations,context);
@@ -29,6 +30,7 @@ namespace VoltaXApi.Data.Seeders
 
             var chargingSessions = await ChargingSessionsSeeder.Seed(1000,connectors,context);
             var transactions = await TransactionSeeder.Seed(1000,connectors, chargeTags, chargePoints, chargingSessions, context);
+            await SystemReportSeeder.Seed(200,context);
         }
 
         private static string GenerateRandomTimeZone()

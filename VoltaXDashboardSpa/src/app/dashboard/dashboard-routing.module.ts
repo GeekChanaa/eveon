@@ -17,9 +17,6 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { UsersComponent } from './users/users.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CreateChargingCardComponent } from './charging-cards/create-charging-card/create-charging-card.component';
-import { ChargingPointComponent } from './charging-points/charging-point/charging-point.component';
-import { ChargingStationComponent } from './charging-stations/charging-station/charging-station.component';
-import { UserComponent } from './users/user/user.component';
 import { ChargingCardComponent } from './charging-cards/charging-card/charging-card.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { CommentsComponent } from './comments/comments.component';
@@ -28,8 +25,8 @@ import { ConnectorRealtimeComponent } from './connector-realtime/connector-realt
 import { SystemReportsComponent } from './system-reports/system-reports.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 import { DocumentationComponent } from './documentation/documentation.component';
-import { PartnerComponent } from './partners/partner/partner.component';
 import { PartnersComponent } from './partners/partners.component';
+import { ChargingSessionsComponent } from './charging-sessions/charging-sessions.component';
 const routes: Routes = [
   {
     path: "",
@@ -78,6 +75,12 @@ const routes: Routes = [
       .then(m=>m.ChargingStationsModule)
   },
   {
+    path: "charging-sessions",
+    component: ChargingSessionsComponent,
+    loadChildren : () => import('./charging-sessions/charging-sessions.module')
+      .then(m=>m.ChargingSessionsModule)
+  },
+  {
     path: "comments",
     component: CommentsComponent,
     loadChildren : () => import('./comments/comments.module')
@@ -116,6 +119,10 @@ const routes: Routes = [
     component: UsersComponent,
     loadChildren : () => import('./users/users.module')
       .then(m=>m.UsersModule)
+  },
+  {
+    path: "profile",
+    component: ProfileComponent,
   },
   {
     path: "statistics",

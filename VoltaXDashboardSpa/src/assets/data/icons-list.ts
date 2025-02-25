@@ -1,5 +1,6 @@
 export const ICONS_LIST = [
     "icon-sun",
+    "icon-plugged-car",
     "icon-moon",
     "icon-arrow-down",
     "icon-arrow-next",

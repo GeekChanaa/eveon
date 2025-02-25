@@ -21,6 +21,10 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
   // Base URL for the api
   baseUrl = environment.apiUrl+"/api/chargingSession/";
 
+  getAllChargingSessions(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetChargingSessions");
+  }
+
   getChargePointChargingSessions(chargePointID : number,page : number, itemsPerPage?: number, itemParams?: any){
     return super.getAll(page,itemsPerPage,itemParams,"GetChargePointChargingSessions/"+chargePointID);
   }

@@ -32,7 +32,7 @@ namespace VoltaXApi.Controllers
         public virtual async Task<IActionResult> GetAll([FromQuery] GlobalParams globalParams)
         {
             Type t = typeof(T);
-            var classes = await PagedList<T>.CreateAsync(await _repository.GetAllAsync(globalParams), globalParams.PageNumber, globalParams.PageSize);
+            var classes = await PagedList<T>.CreateAsync(_repository.GetAllAsync(globalParams), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(classes.CurrentPage, classes.PageSize, classes.TotalCount, classes.TotalPages);
             return Ok(classes);
         }

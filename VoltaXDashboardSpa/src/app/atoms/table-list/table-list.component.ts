@@ -166,8 +166,12 @@ export class TableListComponent implements OnInit {
 
   update = (id: number) =>  this.updateEvent.emit(id);
 
-  display(id: number){
-    this._router.navigateByUrl("/dashboard/"+this.routeName+"/"+id)
+  display(item: any){ 
+    if(this.name == 'charging session'){
+      this._router.navigateByUrl("dashboard/connector-realtime/"+item.chargePointID+"/charging-session/"+item.id);
+      return;
+    }
+    this._router.navigateByUrl("/dashboard/"+this.routeName+"/"+item.id)
   }
 
   goToPage(page : number){

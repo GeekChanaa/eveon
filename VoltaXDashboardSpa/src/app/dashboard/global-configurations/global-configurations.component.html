@@ -6,39 +6,85 @@
     <div class="settings" *ngIf="configuration">
       <div class="details__container">
         <div class="details-informations__container">
-          <div class="details-informations__item">
-            <div class="details-informations__item-name">
-              Connector Default Price Per Kwh
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #B5E4CA;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
             </div>
-            <div class="details-informations__item-value">
-              {{configuration.defaultPricePerKwh}}
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Connector Default Price Per Kwh
+                  <div class="tooltip" title="Default Price Per KWH for any Connector">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.defaultPricePerKwh | number:'1.2-2'}}</div>
+
+              </div>
             </div>
           </div>
-      
-          <div class="details-informations__item">
-            <div class="details-informations__item-name">
-              Connector Default Cost Per Kwh
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
             </div>
-            <div class="details-informations__item-value link">
-              {{configuration.defaultCostPerKwh}}
-            </div>
-          </div>
-      
-          <div class="details-informations__item">
-            <div class="details-informations__item-name">
-              Connector Default Flat Fee
-            </div>
-            <div class="details-informations__item-value">
-              {{configuration.defaultFlatFee}}
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Connector Default Cost Per Kwh
+                  <div class="tooltip" title="Default Cost Per Kwh for each Connector">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.defaultCostPerKwh| number:'1.2-2' }}</div>
+               
+              </div>
             </div>
           </div>
 
-          <div class="details-informations__item">
-            <div class="details-informations__item-name">
-              Connector Default Idle Time Pricing (per minute)
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #B5E4CA;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
             </div>
-            <div class="details-informations__item-value">
-              {{configuration.defaultIdleTimePricing}}
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Connector Default Flat Fee
+                  <div class="tooltip" title="Default Flat Fee for each connector">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.defaultFlatFee| number:'1.2-2'}}</div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Connector Default Idle Time Pricing (per minute)
+                  <div class="tooltip" title="Default Idle time pricing per minute for each connector">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.defaultIdleTimePricing| number:'1.2-2' }}</div>
+                
+              </div>
             </div>
           </div>
         </div>

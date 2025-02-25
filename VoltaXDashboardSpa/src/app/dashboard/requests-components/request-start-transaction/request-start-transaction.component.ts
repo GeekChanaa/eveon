@@ -15,7 +15,10 @@ export class RequestStartTransactionComponent implements OnInit {
   @Output() successEvent : EventEmitter<void> = new EventEmitter();
 
   cards : any[] = [];
+  filteredCards : any[] = [];
+  filterCardName : string = "";
   tokenID : string = "";
+  cardStatusFilter : string = "";
   remoteStartID : number = 0;
   constructor(
     private _cardService: CardService,
@@ -31,7 +34,15 @@ export class RequestStartTransactionComponent implements OnInit {
     this._cardService.getAllCards(1,-1).subscribe((data) => {
       if(data.result)
         this.cards = (data.result);
+      this.filteredCards = this.cards
+      console.log(this.filteredCards);
     })
+  }
+
+  isValid() : boolean{
+    if(this.remoteStartID != null && this.tokenID != "")
+      return true
+    return false;
   }
 
   startTransaction(){
@@ -41,8 +52,6 @@ export class RequestStartTransactionComponent implements OnInit {
         idToken : this.tokenID
       }
     };
-    console.log("this is the start transaction");
-    console.log(startTransactionRequest);
     this._evDriverService.requestStartTransaction(this.chargePointID, startTransactionRequest).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Success","Transaction Started Successfully",4000);
       this.successEvent.emit()
@@ -50,5 +59,12 @@ export class RequestStartTransactionComponent implements OnInit {
       this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
     })
   }
+
+  filterCards(cardStatus : string){
+    this.cardStatusFilter = cardStatus;
+    this.filteredCards = this.cards.filter(c => (c.status == cardStatus || cardStatus == "") && (c.userName.toLowerCase().includes(this.filterCardName.toLowerCase()) || this.filterCardName == ""));
+  }
+
+
 
 }

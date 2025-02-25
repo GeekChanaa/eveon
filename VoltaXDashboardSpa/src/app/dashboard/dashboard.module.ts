@@ -31,6 +31,7 @@ import { ProfileSecurityComponent } from './profile/profile-security/profile-sec
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 import { ConnectorStatusesComponent } from './home/connector-statuses/connector-statuses.component';
 import { PartnersComponent } from './partners/partners.component';
+import { ChargingSessionsComponent } from './charging-sessions/charging-sessions.component';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,8 @@ import { PartnersComponent } from './partners/partners.component';
       GlobalConfigurationsComponent,
       ConnectorStatusesComponent,
       PartnersComponent,
-      UsersComponent
+      UsersComponent,
+      ChargingSessionsComponent
   ],
     imports: [
         DashboardRoutingModule,

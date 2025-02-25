@@ -93,6 +93,23 @@ namespace VoltaXApi.Data
       return await _context.ChargingSessions.Where(cs => cs.StartDate >= DateTime.Now.AddDays(-1)).CountAsync(cs => cs.Connector.ChargePointID == chargePointID);
     }
 
+    public IQueryable<ChargingSessionListDto> GetChargingSessions()
+    {
+      return _context.ChargingSessions.Select(cs => new ChargingSessionListDto{
+        ID = cs.ID,
+        Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
+        ConnectorID = cs.ConnectorID,
+        ChargePointID = cs.Connector.ChargePointID,
+        UserName = cs.User.FullName,
+        CardNumber = cs.Card.CardNumber,
+        StartDate = cs.StartDate,
+        EndDate = cs.EndDate,
+        StoppedReason = cs.StoppedReason,
+        ChargingSessionStatus = cs.ChargingSessionStatus,
+      }).AsQueryable();
+    }
+     
+
     public async Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
     {
       var chargingSessions = await _context.ChargingSessions

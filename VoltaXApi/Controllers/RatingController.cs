@@ -37,7 +37,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargePointRatings/{chargePointID}")]
         public async Task<IActionResult> GetChargePointRatings(int chargePointID, [FromQuery] GlobalParams globalParams)
         {
-            var ratingsDto = (await _repository.GetAllAsync(globalParams)).Include(u => u.User).Where(u => u.EntityID == chargePointID).Where(u => u.Entity == "ChargePoint").ProjectTo<RatingListDto>(_mapper.ConfigurationProvider);
+            var ratingsDto = _repository.GetAllAsync(globalParams).Include(u => u.User).Where(u => u.EntityID == chargePointID).Where(u => u.Entity == "ChargePoint").ProjectTo<RatingListDto>(_mapper.ConfigurationProvider);
             var ratings = await PagedList<RatingListDto>.CreateAsync(ratingsDto, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(ratings.CurrentPage, ratings.PageSize, ratings.TotalCount, ratings.TotalPages);
             return Ok(ratings);

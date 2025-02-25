@@ -4,6 +4,8 @@ using System.Linq.Dynamic.Core;
 using VoltaXApi.Dtos;
 using AutoMapper;
 using VoltaXApi.Helpers;
+using AutoMapper.QueryableExtensions;
+using Bogus.DataSets;
 
 namespace VoltaXApi.Data
 {
@@ -125,11 +127,20 @@ namespace VoltaXApi.Data
             await this._context.SaveChangesAsync();
         }
 
-        
-        
-
-
-        
+        public IQueryable<ChargePointCRListDto> GetAllChargePoints(GlobalParams globalParams)
+        {
+            var chargePoints = GetAllAsync(globalParams).Select(cp => new ChargePointCRListDto{
+                ID = cp.ID,
+                ChargePointId = cp.ChargePointId,
+                Name = cp.Name,
+                ChargingStationName = cp.ChargingStation.Name,
+                SerialNumber = cp.SerialNumber,
+                Category = cp.Category,
+                Status = cp.Status,
+                PartnerName = cp.ChargingStation.Partner.Name,
+            });
+            return chargePoints;
+        }
 
 
     }

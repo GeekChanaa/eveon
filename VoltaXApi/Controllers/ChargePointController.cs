@@ -68,7 +68,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetPartnerChargePoints/{partnerID}")]
         public async Task<ActionResult<List<ChargingStation>>> GetPartnerChargePoints(int partnerID, [FromQuery] GlobalParams globalParams)
         {
-            var chargingStations = await PagedList<ChargePoint>.CreateAsync((await _repository.GetAllAsync(globalParams)).Where(u => u.ChargingStation.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
+            var chargingStations = await PagedList<ChargePoint>.CreateAsync((_repository.GetAllAsync(globalParams)).Where(u => u.ChargingStation.PartnerID == partnerID), globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingStations.CurrentPage, chargingStations.PageSize, chargingStations.TotalCount, chargingStations.TotalPages);
             return Ok(chargingStations);
         }
@@ -114,6 +114,15 @@ namespace VoltaXApi.Controllers
             return Ok(await this._repository.GetChargePointByID(chargePointID, helper));
         }
 
+        [HttpGet("GetAllChargePoints")]
+        public async Task<List<ChargePointCRListDto>> GetAllChargePoints([FromQuery] GlobalParams globalParams)
+        {
+            var chargePoints = this._repository.GetAllChargePoints(globalParams);
+            var chargePointsList = await PagedList<ChargePointCRListDto>.CreateAsync(chargePoints,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(chargePointsList.CurrentPage, chargePointsList.PageSize, chargePointsList.TotalCount, chargePointsList.TotalPages);
+            return chargePointsList;
+        }
+
         [HttpGet("GetChargePointsIds")]
         public async Task<IActionResult> GetChargePointsIds()
         {
@@ -123,7 +132,6 @@ namespace VoltaXApi.Controllers
         [HttpPost("{chargePointId}/sendMessage")]
         public async Task<IActionResult> SendMessageToChargePoint(string chargePointId, [FromBody] string message)
         {
-            Console.WriteLine("searching for chargepointID : "+ chargePointId);
             var webSocket = _wsService.GetWebSocket(chargePointId);
 
             if (webSocket == null || webSocket.State != WebSocketState.Open)
@@ -157,8 +165,6 @@ namespace VoltaXApi.Controllers
         }
 
 
-        // setShowOnMap
-        // setHasChargeCable
 
 
 

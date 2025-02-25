@@ -20,7 +20,7 @@ namespace VoltaXApi.Models
     public DateTime UpdatedAt { get; set; }
     public User? User { get; set; }
     public Card? Card { get; set; }
-    public ICollection<Transaction> Transactions { get; set; }
+    public ICollection<Transaction>? Transactions { get; set; }
     
   }
 }
