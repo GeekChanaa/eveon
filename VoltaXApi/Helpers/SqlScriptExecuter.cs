@@ -1,47 +1,67 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 using System.IO;
+using VoltaXApi.Data;
 
 namespace VoltaXApi.Helpers
 {
     public static class SqlScriptExecuter
     {
 
-        public static async Task ExecuteSqlScript()
+        public static async Task ExecuteSqlScript(VoltaXApiDbContext dbContext)
         {
-            string[] files = { "sql-scripts/countries.sql", "sql-scripts/states.sql", "sql-scripts/cities.sql", "sql-scripts/ocpp-components.sql","sql-scripts/ocpp-variables.sql","sql-scripts/ocpp-variable-components.sql" };
-            string[] tables = { "Countries", "States", "Cities","OcppComponents","OcppVariables","OcppVariableComponents" };
-
-            using (SqlConnection connection = new SqlConnection("Server=localhost,1433;Database=VoltaX;User=sa;Password=yourStrong(!)Password;TrustServerCertificate=true"))
+            // Get the existing SQL connection from DbContext
+            DbConnection dbConnection = dbContext.Database.GetDbConnection();
+            string[] files = { "sql-scripts/countries.sql", "sql-scripts/states.sql", "sql-scripts/cities.sql", "sql-scripts/ocpp-components.sql", "sql-scripts/ocpp-variables.sql", "sql-scripts/ocpp-variable-components.sql" };
+            string[] tables = { "Countries", "States", "Cities", "OcppComponents", "OcppVariables", "OcppVariableComponents" };
+            // dbContext is the variable of db
+            try
             {
-                connection.Open();
+
+                // Open the connection if not already open
+                if (dbConnection.State != System.Data.ConnectionState.Open)
+                {
+                    await dbConnection.OpenAsync();
+                }
 
                 for (int i = 0; i < files.Length; i++)
                 {
-                    // Read the script from the file
-                    string script = File.ReadAllText(files[i]);
+                    string script = await File.ReadAllTextAsync(files[i]);
                     Console.WriteLine($"Populating the database using {files[i]}");
 
-                    // Set IDENTITY_INSERT to ON for the table
-                    if(tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
-                    using (SqlCommand command = new SqlCommand($"SET IDENTITY_INSERT {tables[i]} ON;", connection))
+                    // Use the existing connection from DbContext
+                    if (dbConnection is SqlConnection sqlConnection)
                     {
-                        await command.ExecuteNonQueryAsync();
-                    }
+                        using (var command = sqlConnection.CreateCommand())
+                        {
+                            command.CommandTimeout = 6000;
 
-                    // Execute the script
-                    using (SqlCommand command = new SqlCommand(script, connection))
-                    {
-                        command.CommandTimeout = 6000;
-                        await command.ExecuteNonQueryAsync();
-                    }
+                            // Set IDENTITY_INSERT ON if needed
+                            if (tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
+                            {
+                                command.CommandText = $"SET IDENTITY_INSERT {tables[i]} ON;";
+                                await command.ExecuteNonQueryAsync();
+                            }
 
-                    // Set IDENTITY_INSERT back to OFF for the table
-                    if(tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
-                    using (SqlCommand command = new SqlCommand($"SET IDENTITY_INSERT {tables[i]} OFF;", connection))
-                    {
-                        await command.ExecuteNonQueryAsync();
+                            // Execute the script
+                            command.CommandText = script;
+                            await command.ExecuteNonQueryAsync();
+
+                            // Set IDENTITY_INSERT OFF if needed
+                            if (tables[i] == "Countries" || tables[i] == "States" || tables[i] == "Cities")
+                            {
+                                command.CommandText = $"SET IDENTITY_INSERT {tables[i]} OFF;";
+                                await command.ExecuteNonQueryAsync();
+                            }
+                        }
                     }
                 }
+            }
+            finally
+            {
+                // Close the connection (optional, depends on your DB context's lifespan)
+                await dbConnection.CloseAsync();
             }
         }
     }

@@ -29,7 +29,10 @@ using VoltaxApi.Helpers;
 using VoltaXApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5000); 
+});
 builder.Logging.ClearProviders(); 
 builder.Logging.AddConsole();     
 builder.Logging.AddDebug(); 
@@ -180,8 +183,13 @@ builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
 builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
 builder.Services.AddAutoMapper(typeof(PartnerMapperProfile));
 builder.Services.AddAutoMapper(typeof(TransactionMapperProfile));
-builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var serverVersion = new MariaDbServerVersion("10.6.15");
+
+    options.UseMySql(connectionString, serverVersion);
+});
 
 
 
@@ -232,12 +240,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
     {
         options.AddPolicy("CorsPolicy",
-            builder => builder.WithOrigins("http://localhost:4200")
+            builder => builder
+                .SetIsOriginAllowed(_ => true) 
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-            );
+        );
     });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
