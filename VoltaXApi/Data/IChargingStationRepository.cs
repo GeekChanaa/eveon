@@ -12,6 +12,8 @@ namespace VoltaXApi.Data
     {
         Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID);
         Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper helper);
+        Task<List<ChargingStationListDto>> GetPartnerChargingStationsList(int partnerID);
+        
         new Task AddAsync(ChargingStation chargingStation);
         Task<double> GetChargingStationRevenue(int chargingStationID, DateTime? start = null , DateTime? end = null);
         Task<IEnumerable<double>> GetChargingStationRevenueLast7Days(int chargingStationID);

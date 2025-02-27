@@ -1,0 +1,20 @@
+<div class="settings__anchor" id="account" data-value="Account"></div>
+<div class="title-purple settings__title">Charging Stations</div>
+<div class="settings__fieldset" *ngIf="!isChargingStationVisible">
+  <div *ngIf="chargingStations.length > 0 && !cpfShow"> Choose a Charge Station to view it</div>
+  <ng-container *ngIf="chargingStations.length > 0 && !cpfShow">
+    <div class="charge-point-links-container" >
+      <button *ngFor="let chargingStation of chargingStations" class="charge-point-link" (click)="showChargingStation(chargingStation.id)"> {{chargingStation.name}} </button>
+    </div>  
+  </ng-container>
+
+  <ng-container *ngIf="chargingStations.length <= 0 && !cpfShow">
+    <app-empty-card></app-empty-card>
+  </ng-container>
+</div>
+
+<div class="charge-point-container" *ngIf="isChargingStationVisible">
+  <app-partner-charging-station
+    [chargingStationID]="displayedChargingStationID"
+    (refreshEvent)="refresh()"></app-partner-charging-station>
+</div>

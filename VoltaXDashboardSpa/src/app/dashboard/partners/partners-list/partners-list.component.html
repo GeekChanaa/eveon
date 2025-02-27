@@ -3,7 +3,7 @@
       <app-table-list 
         name="partner"
         names="partners"
-        [searchByAttributes]="['name']"
+        [searchByAttributes]="['Name']"
         routeName="partners"
         createLink="/dashboard/partners/create"
         [fields]="fields" 
@@ -24,7 +24,7 @@
   
                 <div class="field">
                   <div class="field__label">By Type
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <div class="tooltip" title="The Type of the partner">
                       <svg class="icon icon-info">
                         <use xlink:href="#icon-info"></use>
                       </svg>
@@ -32,32 +32,14 @@
                   </div>
                   <div class="field__wrap">
                     <div class="field__wrap">
-                      <select class="select" [(ngModel)]="filters.cardType">
+                      <select class="select" [(ngModel)]="filters.type">
                         <option value="" selected>None</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Premium">Premium</option>
-                        <option value="Partner">Partner</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-  
-                <div class="field">
-                  <div class="field__label">By Status
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <div class="field__wrap">
-                      <select class="select" [(ngModel)]="filters.cardStatus">
-                        <option value="" selected>None</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Blocked">Blocked</option>
-                        <option value="Expired">Expired</option>
+                        <option value="Vendor">Vendor</option>
+                        <option value="ServiceProvider">ServiceProvider</option>
+                        <option value="Reseller">Reseller</option>
+                        <option value="Affiliate">Affiliate</option>
+                        <option value="Investor">Investor</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
                   </div>

@@ -9,12 +9,15 @@ import { PartnersComponent } from './partners.component';
 import { PartnerComponent } from './partner/partner.component';
 import { CreatePartnerComponent } from './create-partner/create-partner.component';
 import { PartnerChargingStationsComponent } from './partner-charging-stations/partner-charging-stations.component';
+import { PartnerChargingStationComponent } from './partner-charging-station/partner-charging-station.component';
 @NgModule({
     declarations: [
       PartnersListComponent,
       PartnerComponent,
       CreatePartnerComponent,
-      PartnerChargingStationsComponent
+      PartnerChargingStationsComponent,
+      PartnerChargingStationsComponent,
+      PartnerChargingStationComponent
     ],
     imports: [
         AtomsModule,

@@ -13,8 +13,7 @@ export class PartnersListComponent implements OnInit {
 
   fields: string[] = [];
   filters : any = {
-    category:"",
-    city : ""
+    type:""
   };
   
 
@@ -55,8 +54,7 @@ export class PartnersListComponent implements OnInit {
 
   resetFilters(){
     this.filters = {
-      category:"",
-      city : ""
+      type:"",
     }
   }
 

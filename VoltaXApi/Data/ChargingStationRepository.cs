@@ -241,6 +241,18 @@ namespace VoltaXApi.Data
             return await this._context.ChargingStations.AnyAsync(u => u.Name == name);
         }
 
+        public async Task<List<ChargingStationListDto>> GetPartnerChargingStationsList(int partnerID)
+        {
+            return await this._context.ChargingStations
+                .Where(cs => cs.PartnerID == partnerID)
+                .Select(cs => new ChargingStationListDto{
+                    ID = cs.ID,
+                    Name = cs.Name
+                })
+                .ToListAsync();
+        }
+
+
         
     }
 

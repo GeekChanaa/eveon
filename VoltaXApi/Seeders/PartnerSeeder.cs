@@ -14,6 +14,7 @@ public static class PartnerSeeder
         IRepository<Partner> _partnerRepo = new Repository<Partner>(context);
 
         var fakePartners = new Faker<Partner>()
+            .RuleFor(p => p.Name, f => f.Company.CompanyName())
             .RuleFor(p => p.Description, f => f.Company.CompanyName())
             .RuleFor(p => p.Type, f => f.PickRandom<PartnerTypeEnum>())
             .RuleFor(p => p.Email, f => f.Internet.Email())

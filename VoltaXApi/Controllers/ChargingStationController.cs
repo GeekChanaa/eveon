@@ -170,6 +170,17 @@ namespace VoltaXApi.Controllers
             return (await _repository.GetPartnerChargingStationRevenueLast12Months(partnerID,chargingStationID)).ToList();
         }
 
+        [HttpGet("GetPartnerChargingStationsList/{partnerID}")]
+        public async Task<IActionResult> GetPartnerChargingStationsList(int partnerID)
+        {
+            var entity = await this._repository.GetPartnerChargingStationsList(partnerID);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            return Ok(entity);
+        }
+
 
         [HttpGet("GetPartnerTop10ChargingStationsByRevenue/{partnerID}")]
         public async Task<IActionResult> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
