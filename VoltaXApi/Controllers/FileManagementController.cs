@@ -31,18 +31,14 @@ namespace VoltaXApi.Controllers
         public IActionResult UploadProfilePicture(IFormFile imageFile)
         {
             var userID = Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine("this is getting in here b3da");
             try
             {
                 if (Request.Form.Files.Count == 1)
                 {
                     var file = Request.Form.Files[0];
                     string folderName = "ProfilePictures/";
-                    Console.WriteLine("profile picture 1");
                     string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    Console.WriteLine("profile pictures 2");
                     fileName = userID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
-                    Console.WriteLine("profile pictures 3");
                     this._fileManagementService.UploadFile(fileName, folderName, file);
                     return Ok();
                 }

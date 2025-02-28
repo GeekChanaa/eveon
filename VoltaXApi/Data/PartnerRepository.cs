@@ -38,10 +38,37 @@ namespace VoltaXApi.Data
 
         public async Task<PartnerDisplayDto> GetPartnerByID(int id)
         {
-            var partner = await GetByIdAsync(id);
-            return _mapper.Map<Partner,PartnerDisplayDto>(partner);
+            return await _context.Partners.Where(p => p.ID == id).Select(p => new PartnerDisplayDto {
+                ID = p.ID.ToString(),
+                Name = p.Name,
+                Description = p.Description,
+                Type = p.Type,
+                Email = p.Email,
+                Email2 = p.Email2,
+                Email3 = p.Email3,
+                Phone = p.Phone,
+                Phone2 = p.Phone2,
+                Phone3 = p.Phone3,
+                City = p.City,
+                Country = p.Country,
+                Address = p.Address,
+                TaxIdentificationNumber = p.TaxIdentificationNumber,
+                RegistrationNumber = p.RegistrationNumber,
+                BankAccountNumber = p.BankAccountNumber,
+                LogoUrl = p.Image != null ? p.Image.Url : null
+            }).FirstOrDefaultAsync();
+
         }
 
+        public async Task<bool> PartnerEmailExists(string email)
+        {
+            return await _context.Partners.AnyAsync(p => p.Email == email || p.Email2 == email || p.Email3 == email);
+        }
+
+        public async Task<bool> PartnerPhoneExists(string phone)
+        {
+            return await _context.Partners.AnyAsync(p => p.Phone == phone || p.Phone2 == phone || p.Phone3 == phone);
+        }
 
     }
 }

@@ -1,0 +1,133 @@
+.images-container
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  .image-container
+    flex: 0 0 30%
+    margin-right: 16px
+    position: relative
+    height: 250px
+    margin-top: 16px
+    .delete-img
+      position: absolute
+      z-index: 2
+      top: 8px
+      left: 8px
+      background: var(--primary1)
+      border-radius: 50%
+      height: 32px
+      width: 32px
+      cursor: pointer
+      transition: ease-in-out all .2s
+      display: flex
+      align-items: center
+      justify-content: center
+      &:hover
+        background: var(--primary8)
+        color: var(--primary1)
+    img
+      position: absolute
+      top: 0
+      left: 0
+      height: 100%
+      width: 100%
+      object-fit: cover
+
+.add-images-btn
+  margin-top: 12px
+
+
+
+.upload-input
+    position: absolute
+    inset: 0
+    opacity: 0
+    cursor: pointer
+    width: 100%
+    z-index: 2
+
+.file__wrap
+    transition: ease-in-out all .4s
+    background: white
+    &:hover
+        background: yellow
+
+.files__box
+    display: flex
+    height: 100%
+    align-items: center
+    justify-content: center
+    width: 100%
+    position: absolute
+        
+    .image__box
+        flex: 0 0 19%
+        margin-right: 12px
+        margin-left: 12px
+        position: relative
+        overflow: hidden
+        height: 98%
+        margin-top: 1%
+        .image__clear
+            position: absolute
+            top: 8px
+            left: 8px
+            height: 32px
+            width: 32px
+            display: flex
+            align-items: center
+            justify-content: center
+            text-align: center
+            padding: 8px
+            border-radius: 50%
+            background: var(--primary1)
+            color: var(--primary9)
+            transition: ease-in-out all .2s
+            z-index: 5
+            cursor: pointer
+            &:hover
+                background: var(--primary9)
+                color: var(--primary1)
+        img
+            position: absolute
+            top: 0
+            left: 0
+            object-fit: cover
+            width: 100%
+            height: 100%
+            border-radius: 6px
+
+
+
+.field__information
+    font-size: 16px
+    color: #000
+
+.field__label
+    display: flex
+
+.field__edit
+    cursor: pointer
+
+.flex
+    display: flex
+
+.inp-btn
+    margin-left: 5px
+    margin-right: 5px
+    padding: 0 10px
+
+
+.link
+    color: var(--primary7)
+    cursor: pointer
+    transition: ease-in-out all .3s
+    &:hover
+        color: var(--primary9)
+
+
+.field__image
+    img
+        max-height: 150px
+        max-width: 50%
+        margin-top: 32px
