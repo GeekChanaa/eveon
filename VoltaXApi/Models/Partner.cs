@@ -19,7 +19,8 @@ public class Partner : IEntity
     public string? TaxIdentificationNumber { get; set; }
     public string? RegistrationNumber { get; set; }
     public string? BankAccountNumber { get; set; }
-    public string? LogoUrl { get; set; }
+    public int? ImageID { get; set; }
+    public Image? Image { get; set; }
     public ICollection<ChargingStation>? ChargingStations { get; set; }
     public ICollection<User>? Users { get; set; }
     public bool IsDeleted { get; set; }

@@ -33,8 +33,7 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   constructor(
     private _enumService : EnumMappingService,
     private _modalService : ActionModalService,
-    private _elRef: ElementRef, 
-    private _renderer: Renderer2
+    private _elRef: ElementRef
   ) { }
 
   ngOnInit() {
@@ -64,7 +63,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
 
   updateVal(){
-    
     this.object[this.title] = this.updatedValue;
     this.isLoading = true;
     this.updateObservable(this.object.id, this.object).subscribe((data) => {

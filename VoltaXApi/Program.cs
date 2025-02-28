@@ -80,6 +80,7 @@ builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
 builder.Services.AddScoped<IChargePointService, ChargePointService>();
+builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IConnectorService, ConnectorService>();

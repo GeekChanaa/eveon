@@ -134,6 +134,71 @@
                         title="Type"
                         enumName="PartnerTypeEnum" 
                         val="{{partner.type}}"></app-display-cell>
+
+                      <div class="field">
+                        <div class="field__label">Partner Logo
+                          <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                          <div class="field__edit" *ngIf="!editingImage" (click)="editingImage = true">
+                            <svg class="icon icon-edit">
+                              <use xlink:href="#icon-edit"></use>
+                            </svg>
+                          </div>
+                        </div>
+
+                        <div class="field__image" *ngIf="partner.logoUrl && !editingImage">
+                          <img [src]="staticUrl+partner.logoUrl" alt="">
+                        </div>
+                      </div>
+
+                    <div class="create__card card" *ngIf="editingImage">
+                      <div class="file">
+                        <div class="file__label">Partner Logo
+                          <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
+                            data-position="right">
+                            <svg class="icon icon-info">
+                              <use xlink:href="#icon-info"></use>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="file__wrap">
+                          <input class="upload-input" type="file" (change)="handleUpload($event)" />
+                          <div class="file__box" *ngIf="!displayedLogo">
+                            <svg class="icon icon-upload">
+                              <use xlink:href="#icon-upload"></use>
+                            </svg>Click or drop image
+                          </div>
+                          <div class="files__box">
+                            <div *ngIf="displayedLogo != null" class="image__box">
+                              <div class="image__clear" (click)="clearImage()">X</div>
+                              <img [src]="displayedLogo" alt="">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-actions">
+                      <button *ngIf="!editingImage" (click)="editingImage = true" class="button add-images-btn">Edit Image</button>
+                    
+                      <ng-container *ngIf="editingImage">
+                        
+                        <button (click)="editingImage = false" class="button button-stroke"> Cancel </button>
+                        
+                        <button 
+                          [disabled]="imageUploading" 
+                          [ngClass]="{'disabled' : imageUploading}" 
+                          class="button add-images-btn"
+                          (click)="changeLogo()">
+                          <ng-container *ngIf="imageUploading"> <app-svg-spinner></app-svg-spinner> </ng-container>
+                          <ng-container *ngIf="!imageUploading"> Upload Image </ng-container>
+                          
+                        </button>
+                      </ng-container>
+                    </div>
                   
                 </ng-container>
                 

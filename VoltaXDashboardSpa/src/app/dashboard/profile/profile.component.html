@@ -30,59 +30,8 @@
               <div class="settings__avatar">
                 
                 <img src="assets/img/content/avatar.jpg" alt="Avatar">
-                <button class="settings__remove">
-                  <svg class="icon icon-close">
-                    <use xlink:href="#icon-close"></use>
-                  </svg>
-                </button>
-              </div>
-              <div class="settings__file">
                 
-                <!-- <input type="file">
-                <button class="button settings__button" type="button">
-                  <svg class="icon icon-add">
-                    <use xlink:href="#icon-add"></use>
-                  </svg><span>Upload new picture</span>
-                </button> -->
               </div>
-              <div class="filters">
-                <button class="button-square-stroke button-small filters__head">
-                  <svg class="icon icon-filter">
-                    <use xlink:href="#icon-filter"></use>
-                  </svg>
-                </button>
-                <div class="filters__body">
-                  <div class="filters__top">
-                    <div class="title-red filters__title">Upload New Picture</div>
-                    <button class="filters__close">
-                      <svg class="icon icon-close">
-                        <use xlink:href="#icon-close"></use>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="card">
-                    
-                    <div class="file">
-                      
-                      <div class="file__wrap">
-                        <input #file class="file__input" [(ngModel)]="profilePicture" type="file" />
-                        <div class="file__box">
-                          <svg class="icon icon-upload">
-                            <use xlink:href="#icon-upload"></use>
-                          </svg>Click or drop image
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="filters__btns">
-                    <button class="button-stroke filters__button">Reset</button>
-                    <button (click)="uploadPicture(file.files)" class="button filters__button">Apply</button>
-                  </div>
-                </div>
-                <div class="filters__overlay"></div>
-              </div>
-              <button class="button-stroke settings__button">Remove</button>
             </div>
             <div class="settings__fieldset" *ngIf="user.id != null && user.id != 0">
               <app-display-cell 

@@ -21,9 +21,13 @@ namespace VoltaXApi.Controllers
     public class PartnerController : GenericController<Partner>
     {
         private readonly IPartnerRepository _repository;
-        public PartnerController(IPartnerRepository repository) : base(repository)
+        private readonly IPartnerService _partnerService;
+        public PartnerController(
+            IPartnerRepository repository,
+            IPartnerService partnerService) : base(repository)
         {
             _repository = repository;
+            _partnerService = partnerService;
         }
 
         [HttpGet("GetPartners")]
@@ -45,6 +49,41 @@ namespace VoltaXApi.Controllers
         public async Task CreatePartner(CreatePartnerDto partner)
         {
             await _repository.CreatePartner(partner);
+        }
+
+        [HttpGet("PartnerEmailExists")]
+        public async Task<bool> PartnerEmailExists(string email)
+        {
+            return await _repository.PartnerEmailExists(email);
+        }
+
+        [HttpGet("PartnerPhoneExists")]
+        public async Task<bool> PartnerPhoneExists(string phone)
+        {
+            return await _repository.PartnerPhoneExists(phone);
+        }
+
+        [HttpPost("UploadPartnerLogo/{partnerID}")]
+        public async  Task<IActionResult> UploadPartnerLogo(IFormFile imageFile, int partnerID)
+        {
+            try
+            {
+                
+                if (Request.Form.Files.Count == 1)
+                {
+                    var file = Request.Form.Files[0];
+                    await _partnerService.UploadPartnerLogo(file, partnerID);
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }
