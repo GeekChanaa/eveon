@@ -79,7 +79,8 @@ export class SystemReportComponent implements OnInit {
     this.isLoadingCreatingComment = true;
     this._systemReportCommentService.create(this.systemReportComment).subscribe((data) => {
       this.isLoadingCreatingComment = false;
-      this.getSystemReportComments(this.systemReportComment.systemReportID)
+      this.getSystemReportComments(this.systemReportComment.systemReportID);
+      this.resetCommentInput();
     }, (error) => {
       this._modalService.popup(ActionModalStatusEnum.Error,"Erro","Something Went wrong please contact your system administrator",4000);
     })

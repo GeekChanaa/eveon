@@ -20,6 +20,11 @@ export class OrderService extends AbstractService<Order>{
   // Base URL for the api
   baseUrl = environment.apiUrl+"/api/order/";
 
+  getAllRechargeOrders(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetRechargeOrders");
+  }
+
+
   // Counting orders today
   countOrdersToday(){
     return this._http.get<number>(this.baseUrl+"countToday");
@@ -64,6 +69,10 @@ export class OrderService extends AbstractService<Order>{
   // recharge card order
   rechargeCard(orderDto : RechargeOrderDto){
     return this._http.post(this.baseUrl+"RechargeOrder",orderDto);
+  }
+
+  createRechargeOrder(orderDto : any){
+    return this._http.post(this.baseUrl+"CreateRechargeOrder",orderDto);
   }
 
   // Get invoice info

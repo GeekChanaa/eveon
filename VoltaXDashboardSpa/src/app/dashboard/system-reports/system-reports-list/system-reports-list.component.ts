@@ -32,7 +32,8 @@ export class SystemReportsListComponent implements OnInit {
 
   fields: string[] = [];
   filters : any = {
-    category:"",
+    criticality:"",
+    reportCategory:"",
     status : ""
   };
 
@@ -64,8 +65,9 @@ export class SystemReportsListComponent implements OnInit {
 
   resetFilters(){
     this.filters = {
-      status:"",
-      category : ""
+      criticality:"",
+      reportCategory : "",
+      status : ""
     }
   }
 

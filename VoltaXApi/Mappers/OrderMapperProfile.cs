@@ -8,6 +8,7 @@ namespace VoltaXApi.Mappers
         public OrderMapperProfile()
         {
             CreateMap<Order, CardOrderDto>();
+            CreateMap<CreateRechargeOrderDto, Order>();
         }
     }
 }

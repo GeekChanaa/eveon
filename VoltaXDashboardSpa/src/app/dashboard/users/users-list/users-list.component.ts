@@ -12,8 +12,7 @@ export class UsersListComponent implements OnInit {
 
   fields: string[] = [];
   filters : any = {
-    category:"",
-    city : ""
+    role:""
   };
   
 
@@ -63,8 +62,7 @@ export class UsersListComponent implements OnInit {
 
   resetFilters(){
     this.filters = {
-      category:"",
-      city : ""
+      role:""
     }
   }
 }

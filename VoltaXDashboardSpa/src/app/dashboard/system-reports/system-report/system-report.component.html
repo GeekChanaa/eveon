@@ -6,7 +6,7 @@
           System Report : <b>#{{ systemReport.id }}</b>
         </div>
         <div class="head-actions">
-          <button (click)="editSystemReport(systemReport.id)" class="button-stroke-blue button-edit button-small">Edit</button>
+          <button routerLink="/dashboard/system-reports/edit/{{systemReport.id}}" class="button-stroke-blue button-edit button-small">Edit</button>
           <button (click)="deleteSystemReport(systemReport.id)" class="button-stroke-red button-edit button-small">Delete</button>
         </div>
       </div>
@@ -117,7 +117,7 @@
           />
         </div>
         <div class="add__comment-actions">
-          <button (click)="resetCommentInput()" class="button button-small button-stroke-red btn-cancel">Reset</button>
+          <button (click)="resetCommentInput()" class="button button-small button-stroke-red btn-cancel">Clear</button>
           <button 
             (click)="saveComment()" 
             class="button button-small button-primary btn-save">Save</button>

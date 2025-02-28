@@ -1590,6 +1590,9 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("RechargeDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 

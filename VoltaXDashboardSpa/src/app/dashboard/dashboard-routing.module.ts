@@ -121,6 +121,12 @@ const routes: Routes = [
       .then(m=>m.UsersModule)
   },
   {
+    path: "recharge-orders",
+    component: RechargeOrdersComponent,
+    loadChildren : () => import('./recharge-orders/recharge-orders.module')
+      .then(m=>m.RechargeOrdersModule)
+  },
+  {
     path: "profile",
     component: ProfileComponent,
   },
@@ -139,10 +145,6 @@ const routes: Routes = [
   {
     path: "ocpp-local-list",
     component: OcppLocalListComponent,
-  },
-  {
-    path: "recharge-orders",
-    component: RechargeOrdersComponent,
   },
   {
     path: "station-load-balance",

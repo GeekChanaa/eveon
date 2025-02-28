@@ -42,6 +42,7 @@ export class PartnerChargingStationsComponent implements OnInit {
 
   showChargingStation(id : number){
     this.isChargingStationVisible = true;
+    console.log("showing charging station" , id);
     this.displayedChargingStationID = id;
   }
 

@@ -1,0 +1,130 @@
+
+<div class="head">
+  <div class="head-name">
+    Charging Station : <b>{{ chargingStation.chargePointId }}</b>
+  </div>
+  <div class="head-actions">
+    <button routerLink="/dashboard/charging-stations/{{chargingStation.id}}" class="button-stroke button-small button-edit">Edit</button>
+  </div>
+</div>
+
+
+<div class="card__display">
+  <!-- name -->
+  <div class="card__display_item">
+    <span class="item__title">
+      Name
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.name }}</span>
+  </div>
+
+  <!-- serialNumber -->
+  <div class="card__display_item">
+    <span class="item__title">
+      Address
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.address }}</span>
+  </div>
+
+  <div class="card__display_item">
+    <span class="item__title">
+      Network
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.network }}</span>
+  </div>
+
+  <!-- status -->
+  <div class="card__display_item">
+    <span class="item__title">
+      Category
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.category }}</span>
+  </div>
+
+  <!-- comment -->
+  <div class="card__display_item">
+    <span class="item__title">
+      Charger Quantity
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.chargerQuantity }}</span>
+  </div>
+
+  <!-- username -->
+  <div class="card__display_item">
+    <span class="item__title">
+      Country
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.country }}</span>
+  </div>
+
+  <!-- password -->
+  <div class="card__display_item">
+    <span class="item__title">
+      City
+      <div
+        class="tooltip"
+        title="Maximum 100 characters. No HTML or emoji allowed"
+      >
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </span>
+    <br />
+    <span class="item__text">{{ chargingStation.city }}</span>
+  </div>
+
+</div>

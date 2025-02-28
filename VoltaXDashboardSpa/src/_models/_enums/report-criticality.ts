@@ -1,7 +1,7 @@
 export enum ReportCriticality{
-  Informational = 'Informational',
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-  Critical = 'Critical'
+  Informational = 0,
+  Low = 1,
+  Medium = 2,
+  High = 3,
+  Critical = 4,
 }

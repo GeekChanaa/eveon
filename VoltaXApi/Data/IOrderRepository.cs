@@ -13,5 +13,7 @@ namespace VoltaXApi.Data
         Task<double> CountRecharge(Expression<Func<Order, bool>> predicate);
         Task<InvoiceDTO> GetOrderForInvoice(int orderID);
         IQueryable<Order> GetCardOrders(int cardID);
+        Task CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto);
+        IQueryable<RechargeOrderListDto> GetRechargeOrders(GlobalParams globalParams);
     }
 }

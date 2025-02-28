@@ -11,6 +11,9 @@ namespace VoltaXApi.Mappers
             CreateMap<User, UserNameDto>()
                 .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName));
+
+            CreateMap<User, UserListDto>();
+            
         }
     }
 

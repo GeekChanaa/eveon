@@ -34,10 +34,6 @@ namespace VoltaXApi.Controllers
             {
                 return await this._repository.FindAsync( u => u.ForAdmins == true);
             }
-            else if (role == UserRole.Partner)
-            {
-                return await this._repository.FindAsync( u => u.ForPartners == true);
-            }
             else
             {
                 return await this._repository.FindAsync( u => u.ForCustomers == true);

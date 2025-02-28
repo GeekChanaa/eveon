@@ -82,6 +82,27 @@ export class EnumMappingService {
       3: 'Affiliate',
       4: 'Investor',
       5: 'Other',
+    },
+    ReportCriticality: {
+      0: 'Informational',
+      1: 'Low',
+      2: 'Medium',
+      3: 'High',
+      4: 'Critical'
+    },
+    RechargeOrderStatus: {
+      0: 'Pending',
+      1: 'Processing',
+      2: 'Completed',
+      3: 'Failed',
+      4: 'Canceled',
+      5: 'Refunded'
+    },
+    ReportStatusEnum: {
+      0: 'Pending',
+      1: 'InProgress',
+      2: 'Resolved',
+      3: 'Closed'
     }
   };
 

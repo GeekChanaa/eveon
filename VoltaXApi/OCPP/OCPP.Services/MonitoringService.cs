@@ -1,5 +1,3 @@
-
-
 using Newtonsoft.Json;
 using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Messages;
@@ -10,85 +8,52 @@ namespace VoltaXApi.OCPP.Services
   public class MonitoringService : IMonitoringService
   {
     private readonly OCPPMessageProcessor _messageProcessor;
-    public MonitoringService(
-      OCPPMessageProcessor messageProcessor
-    ){
+    private readonly OCPPMessageFactory _messageFactory;
+    
+    public MonitoringService(OCPPMessageProcessor messageProcessor)
+    {
       _messageProcessor = messageProcessor;
-    }
-
-  // POST /ocpp/monitoring/setVariableMonitoring
-  public async Task SetVariableMonitoring(string chargePointID, SetVariableMonitoringRequest request)
-  {
-      OCPPMessage msg = new OCPPMessage
-      {
-          MessageType = "2",
-          UniqueId = Guid.NewGuid().ToString("N"),
-          Action = "SetVariableMonitoring",
-          JsonPayload = JsonConvert.SerializeObject(request)
-      };
-      await _messageProcessor.SendMessage(msg, chargePointID);
-  }
-  public async Task ClearVariableMonitoring(string chargePointID, ClearVariableMonitoringRequest request)
-    {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "ClearVariableMonitoring",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
-    }
-
-    public async Task SetMonitoringLevel(string chargePointID, SetMonitoringLevelRequest request)
-    {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "SetMonitoringLevel",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
-    }
-
-    public async Task SetMonitoringBase(string chargePointID, SetMonitoringBaseRequest request)
-    {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "SetMonitoringBase",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
-    }
-
-    public async Task SetVariables(string chargePointID, SetVariablesRequest request)
-    {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "SetVariables",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
-    }
-
-    public async Task GetVariables(string chargePointID, GetVariablesRequest request)
-    {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetVariables",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      _messageFactory = new OCPPMessageFactory();
     }
     
-  // GET /data/monitoring/systemConfig
-  // PUT /data/monitoring/systemConfig
+    // POST /ocpp/monitoring/setVariableMonitoring
+    public async Task SetVariableMonitoring(string chargePointID, SetVariableMonitoringRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("SetVariableMonitoring", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    public async Task ClearVariableMonitoring(string chargePointID, ClearVariableMonitoringRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("ClearVariableMonitoring", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    public async Task SetMonitoringLevel(string chargePointID, SetMonitoringLevelRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("SetMonitoringLevel", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    public async Task SetMonitoringBase(string chargePointID, SetMonitoringBaseRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("SetMonitoringBase", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    public async Task SetVariables(string chargePointID, SetVariablesRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("SetVariables", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    public async Task GetVariables(string chargePointID, GetVariablesRequest request)
+    {
+      var msg = _messageFactory.CreateMessage("GetVariables", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+    }
+    
+    // GET /data/monitoring/systemConfig
+    // PUT /data/monitoring/systemConfig
   }
 }

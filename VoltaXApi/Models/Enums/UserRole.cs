@@ -5,7 +5,6 @@ namespace VoltaXApi.Models
         Admin,
         Customer,
         PremiumCustomer,
-        Support,
-        Partner
+        Support
     }
 }

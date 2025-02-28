@@ -8,13 +8,15 @@ import { SystemReportsListComponent } from './system-reports-list/system-reports
 import { CreateSystemReportComponent } from './create-system-report/create-system-report.component';
 import { SystemReportComponent } from './system-report/system-report.component';
 import { SystemReportsRoutingModule } from './system-reports-routing.module';
+import { SystemReportEditComponent } from './system-report-edit/system-report-edit.component';
 
 @NgModule({
     declarations: [
       SystemReportsComponent,
       SystemReportsListComponent,
       CreateSystemReportComponent,
-      SystemReportComponent
+      SystemReportComponent,
+      SystemReportEditComponent
     ],
     imports: [
         AtomsModule,
