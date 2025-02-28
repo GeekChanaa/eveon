@@ -1,6 +1,7 @@
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using Microsoft.EntityFrameworkCore;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Data
 {
@@ -21,7 +22,7 @@ namespace VoltaXApi.Data
         Task<User?> GetUserByEmail(string email);
         Task<User> GetUser(int id);
         Task<bool> UserExists(string email);
-        IQueryable<UserListDto> GetUsers();
+        IQueryable<UserListDto> GetUsers(GlobalParams globalParams);
 
     }
 }

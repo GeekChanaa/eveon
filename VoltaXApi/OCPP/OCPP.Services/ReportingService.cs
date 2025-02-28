@@ -1,4 +1,3 @@
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using VoltaXApi.OCPP.Core;
@@ -10,75 +9,42 @@ namespace VoltaXApi.OCPP.Services
   public class ReportingService : IReportingService
   {
     private readonly OCPPMessageProcessor _messageProcessor;
-    public ReportingService(
-      OCPPMessageProcessor messageProcessor
-    ){
+    private readonly OCPPMessageFactory _messageFactory;
+    
+    public ReportingService(OCPPMessageProcessor messageProcessor)
+    {
       _messageProcessor = messageProcessor;
+      _messageFactory = new OCPPMessageFactory();
     }
-
+    
     public async Task GetBaseReport(string chargePointID, GetBaseReportRequest request)
     {
-        var settings = new JsonSerializerSettings
-            {
-                Converters = new List<JsonConverter> { new StringEnumConverter() }
-                
-            };
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetBaseReport",
-            JsonPayload = JsonConvert.SerializeObject(request,settings)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      var msg = _messageFactory.CreateMessage("GetBaseReport", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
     }
-
+    
     public async Task GetReport(string chargePointID, GetReportRequest request)
     {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetReport",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      var msg = _messageFactory.CreateMessage("GetReport", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
     }
-
+    
     public async Task GetMonitoringReport(string chargePointID, GetMonitoringReportRequest request)
     {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetMonitoringReport",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      var msg = _messageFactory.CreateMessage("GetMonitoringReport", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
     }
-
+    
     public async Task GetLog(string chargePointID, GetLogRequest request)
     {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetLog",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      var msg = _messageFactory.CreateMessage("GetLog", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
     }
-
+    
     public async Task CustomerInformation(string chargePointID, CustomerInformationRequest request)
     {
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "CustomerInformation",
-            JsonPayload = JsonConvert.SerializeObject(request)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      var msg = _messageFactory.CreateMessage("CustomerInformation", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
     }
     
     //GET    /data/reporting/systemConfig

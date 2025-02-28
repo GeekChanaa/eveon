@@ -1,6 +1,6 @@
 export enum ReportStatusEnum {
-  Pending = "Pending",
-  InProgress = "InProgress",
-  Resolved = "Resolved",
-  Closed = "Closed"
+  Pending = 0,
+  InProgress = 1,
+  Resolved = 2,
+  Closed = 3
 }

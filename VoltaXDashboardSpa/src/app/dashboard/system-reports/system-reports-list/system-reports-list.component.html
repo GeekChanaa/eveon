@@ -42,6 +42,28 @@
               </div>
 
               <div class="field">
+                <div class="field__label">By Criticality
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.criticality">
+                      <option value="" selected>None</option>
+                      <option value="Informational">Informational</option>
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                      <option value="Critical">Critical</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
                 <div class="field__label">By Category
                   <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                     <svg class="icon icon-info">

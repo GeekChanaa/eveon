@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { RechargeOrderStatus } from 'src/_models/_enums/recharge-order-status-enum';
 import { Order } from 'src/_models/order';
 import { OrderService } from 'src/_services/order.service';
 
@@ -16,7 +17,8 @@ export class ChargingCardOrdersComponent implements OnInit {
     cardID: 0,
     amount: 0,
     rechargeDate: new Date(),
-    card: null
+    card: null,
+    status: RechargeOrderStatus.Pending
   }
 
   constructor(

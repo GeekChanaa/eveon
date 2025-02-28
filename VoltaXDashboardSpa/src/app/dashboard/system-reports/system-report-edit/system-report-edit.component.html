@@ -1,0 +1,52 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">System Report : #{{systemReport.id}}</div>
+    <div class="settings">
+      <div class="settings__menu">
+        
+      </div>
+      <div class="settings__wrapper">
+        <div class="settings__list">
+          <div class="settings__item" >
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="systemReportLoaded">
+
+                  <app-display-cell 
+                      [updateObservable]="updateSystemReportObservable.bind(this)" 
+                      [object]="systemReport"
+                      inpType="text"
+                      title="name"
+                      [val]="systemReport.name"></app-display-cell>
+
+                  <app-display-cell 
+                      [updateObservable]="updateSystemReportObservable.bind(this)" 
+                      [object]="systemReport"
+                      inpType="select_enum"
+                      title="Type"
+                      enumName="ReportCriticality" 
+                      val="{{systemReport.criticality}}"></app-display-cell>
+
+                  <app-display-cell 
+                      [updateObservable]="updateSystemReportObservable.bind(this)" 
+                      [object]="systemReport"
+                      inpType="select_enum"
+                      title="Type"
+                      enumName="ReportStatusEnum" 
+                      val="{{systemReport.status}}"></app-display-cell>
+                
+              </ng-container>
+              
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

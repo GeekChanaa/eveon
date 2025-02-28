@@ -54,7 +54,8 @@ namespace VoltaXApi.Data
                 PasswordSalt = passSalt,
                 IsEmailVerified = true,
                 IsPhoneNumberVerified = true,
-                Role = UserRole.Partner
+                PartnerID = 1,
+                Role = UserRole.Support
             };
 
             var listUsers = new List<User>();

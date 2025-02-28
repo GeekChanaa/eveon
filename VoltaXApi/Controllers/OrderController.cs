@@ -36,6 +36,15 @@ namespace VoltaXApi.Controllers
             return Ok(count);
         }
 
+        [HttpGet("GetRechargeOrders")]
+        public async Task<List<RechargeOrderListDto>> GetRechargeOrders([FromQuery] GlobalParams globalParams)
+        {
+            var partners = this._repository.GetRechargeOrders(globalParams);
+            var partnersList = await PagedList<RechargeOrderListDto>.CreateAsync(partners,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(partnersList.CurrentPage, partnersList.PageSize, partnersList.TotalCount, partnersList.TotalPages);
+            return partnersList;
+        }
+
         [HttpGet("countRechargeAmountToday")]
         public async Task<IActionResult> CountRechargeToday()
         {
@@ -154,6 +163,13 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> RechargeCard(RechargeOrderDto rechargeOrderDto)
         {
             await this._orderService.ProcessPayment(rechargeOrderDto);
+            return StatusCode(200);
+        }
+
+        [HttpPost("CreateRechargeOrder")]
+        public async Task<IActionResult> RechargeCard(CreateRechargeOrderDto rechargeOrderDto)
+        {
+            await this._repository.CreateRechargeOrder(rechargeOrderDto);
             return StatusCode(200);
         }
 

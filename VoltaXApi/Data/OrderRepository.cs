@@ -8,15 +8,34 @@ using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace VoltaXApi.Data
 {
     public class OrderRepository : Repository<Order>,IOrderRepository
     {
-        public OrderRepository(VoltaXApiDbContext context) : base(context)
+        private readonly IMapper _mapper;
+        public OrderRepository(
+            VoltaXApiDbContext context,
+            IMapper mapper) : base(context)
         {
-            
+            _mapper = mapper;
         }
+
+        public IQueryable<RechargeOrderListDto> GetRechargeOrders(GlobalParams globalParams)
+        {
+            var orders = GetAllAsync(globalParams).Select(ro => new RechargeOrderListDto{
+                ID = ro.ID,
+                CardID = ro.CardID,
+                Amount = ro.Amount,
+                CardNumber = ro.Card.CardNumber,
+                Status = ro.Status,
+                RechargeDate = ro.RechargeDate,
+            });
+            return orders;
+        }
+
 
         public Task<double> CountRecharge(Expression<Func<Order, bool>> predicate)
         {
@@ -49,6 +68,13 @@ namespace VoltaXApi.Data
         {
             return _context.Orders.Where(t => t.CardID == cardID);
         }
+
+        public async Task CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
+        {
+            Order order = _mapper.Map<CreateRechargeOrderDto,Order>(rechargeOrderDto);
+            await AddAsync(order);
+        }
+
 
     }
 }

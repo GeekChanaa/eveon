@@ -3,7 +3,7 @@
     <app-table-list 
       name="user"
       names="users"
-      [searchByAttributes]="['name']"
+      [searchByAttributes]="['FirstName','LastName']"
       routeName="users"
       createLink="/dashboard/users/create"
       [fields]="fields" 
@@ -20,27 +20,6 @@
         
           <div class="filters__item">
             <div class="filters__list">
-              
-
-              <div class="field">
-                <div class="field__label">By Type
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.cardType">
-                      <option value="" selected>None</option>
-                      <option value="Standard">Standard</option>
-                      <option value="Premium">Premium</option>
-                      <option value="User">User</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
 
               <div class="field">
                 <div class="field__label">By Status
@@ -52,12 +31,12 @@
                 </div>
                 <div class="field__wrap">
                   <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.cardStatus">
+                    <select class="select" [(ngModel)]="filters.role">
                       <option value="" selected>None</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Blocked">Blocked</option>
-                      <option value="Expired">Expired</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Customer">Customer</option>
+                      <option value="PremiumCustomer">PremiumCustomer</option>
+                      <option value="Support">Support</option>
                     </select>
                   </div>
                 </div>

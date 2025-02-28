@@ -85,7 +85,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetUsers")]
         public async Task<List<UserListDto>> GetUsers([FromQuery] GlobalParams globalParams)
         {
-            var users = _repository.GetUsers();
+            var users = _repository.GetUsers(globalParams);
             var usersList = await PagedList<UserListDto>.CreateAsync(users,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(usersList.CurrentPage, usersList.PageSize, usersList.TotalCount, usersList.TotalPages);
             return usersList;

@@ -3,6 +3,7 @@ using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 namespace VoltaXApi.Data
 {
     public class UserRepository : Repository<User>, IUserRepository
@@ -64,7 +65,7 @@ namespace VoltaXApi.Data
 
         public async Task<List<UserNameDto>> GetPartnerNames()
         {
-            var users = this._context.Users.Where(u => u.Role == UserRole.Partner).AsQueryable();
+            var users = this._context.Users.Where(u => u.PartnerID != null).AsQueryable();
             return await _mapper.ProjectTo<UserNameDto>(users).ToListAsync();
         }
 
@@ -116,25 +117,9 @@ namespace VoltaXApi.Data
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public IQueryable<UserListDto> GetUsers()
+        public IQueryable<UserListDto> GetUsers(GlobalParams globalParams)
         {
-            var users = _context.Users.Select(u => new UserListDto{
-                ID = u.ID,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email,
-                Gender = u.Gender,
-                City = u.City,
-                Car = u.Car,
-                Birthday = u.Birthday,
-                Phone = u.Phone,
-                PartnerName = u.Partner.Name,
-                IsEmailVerified = u.IsEmailVerified,
-                IsPhoneNumberVerified = u.IsPhoneNumberVerified,
-                Role = u.Role,
-                SuspendedAt = u.SuspendedAt > DateTime.Now ? "Yes" : "No",
-            }).AsQueryable();
-
+            var users = GetAllAsync(globalParams).ProjectTo<UserListDto>(_mapper.ConfigurationProvider);
             return users;
         }
 

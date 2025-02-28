@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
@@ -19,6 +19,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   @Input() editable : boolean = true;
   @Input() isLink : boolean = false;
   @Input() link : string = "";
+
+  @ViewChild('inputField', { static: false }) inputField!: ElementRef;
 
   isLoading : boolean = false;
 
@@ -64,9 +66,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   updateVal(){
     
     this.object[this.title] = this.updatedValue;
-    console.log("object");
-    console.log(this.object);
-    console.log("object.id : ",this.object.id);
     this.isLoading = true;
     this.updateObservable(this.object.id, this.object).subscribe((data) => {
       this.isLoading = false;
@@ -76,6 +75,15 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later.", 4000);
     })
+  }
+
+  
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleEnter(event: KeyboardEvent) {
+    if (this.inputField && document.activeElement === this.inputField.nativeElement) {
+      this.updateVal();
+    }
   }
 
 }
