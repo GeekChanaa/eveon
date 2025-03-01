@@ -35,6 +35,9 @@ export class TableListComponent implements OnInit {
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
 
+  public showDeleteConfirmModal = false;
+  private itemToDelete: any = null;
+
   @HostListener('document:click', ['$event'])
   clickOutside(event: MouseEvent) {
     if (!this._eRef.nativeElement.contains(event.target)) {
@@ -273,4 +276,25 @@ export class TableListComponent implements OnInit {
   resetFilters(){
     this.resetFiltersEvent.emit();
   }
+
+  // Method to show confirmation modal
+confirmDelete(itemId: any): void {
+  this.itemToDelete = itemId;
+  this.showDeleteConfirmModal = true;
+}
+
+// Method to cancel delete
+cancelDelete(): void {
+  this.showDeleteConfirmModal = false;
+  this.itemToDelete = null;
+}
+
+// Method to proceed with deletion after confirmation
+proceedWithDelete(): void {
+  if (this.itemToDelete) {
+    this.delete(this.itemToDelete);
+    this.showDeleteConfirmModal = false;
+    this.itemToDelete = null;
+  }
+}
 }

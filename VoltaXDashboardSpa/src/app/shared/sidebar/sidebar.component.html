@@ -48,10 +48,8 @@
   
       <app-sidebar-dropdown iconID="icon-maintenance" *ngIf="role == 'Admin'" [title]="'ocpp operation'"
         [icon]="'/assets/images/icons/updated/bolt.svg'" 
-        [active]="isDropdownActive('/dashboard/ocpp-local-list') || isDropdownActive('/dashboard/charging-profile') || isDropdownActive('/dashboard/ocpp-configuration')">
+        [active]="isDropdownActive('/dashboard/ocpp-local-list')">
         <app-sidebar-link [title]="'local list'" [link]="'/dashboard/ocpp-local-list'" [active]="isActive('/dashboard/ocpp-local-list')"></app-sidebar-link>
-        <app-sidebar-link [title]="'charging profile'" [link]="'/dashboard/charging-profile'" [active]="isActive('/dashboard/charging-profile')"></app-sidebar-link>
-        <app-sidebar-link [title]="'configuration'" [link]="'/dashboard/ocpp-configuration'" [active]="isActive('/dashboard/ocpp-configuration')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-account-setting" *ngIf="role == 'Admin'" [title]="'Account'" 

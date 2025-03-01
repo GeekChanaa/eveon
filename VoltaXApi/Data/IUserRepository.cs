@@ -23,6 +23,8 @@ namespace VoltaXApi.Data
         Task<User> GetUser(int id);
         Task<bool> UserExists(string email);
         IQueryable<UserListDto> GetUsers(GlobalParams globalParams);
+        Task<UserDashboardDisplayInformationsDto> GetUserDashboardDisplayInformations(int userID);
+        Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto);
 
     }
 }

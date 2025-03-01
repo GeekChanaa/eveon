@@ -224,4 +224,10 @@ export class AuthService {
       
     });
   }
+
+  // GoogleLogin
+  googleLogin() {
+    window.location.href = this.baseUrl + "google-login";
+  }
+  
 }

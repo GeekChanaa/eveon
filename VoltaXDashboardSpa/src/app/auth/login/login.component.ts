@@ -35,11 +35,9 @@ export class LoginComponent implements OnInit {
     })
   }
 
-  // On init cycle hook
   ngOnInit() {
   }
 
-  // Login button
   login(){
 
     this.isLoading = true;
@@ -72,6 +70,10 @@ export class LoginComponent implements OnInit {
         this.errorMessage = "Server error, please try again later";
       }
     })
+  }
+
+  googleLogin(){
+    this._authService.googleLogin();
   }
 
 }

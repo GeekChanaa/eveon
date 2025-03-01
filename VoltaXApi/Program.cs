@@ -27,12 +27,14 @@ using AutoMapper;
 using QuestPDF.Infrastructure;
 using VoltaxApi.Helpers;
 using VoltaXApi.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5000); 
-});
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.ListenAnyIP(5000); 
+// });
 builder.Logging.ClearProviders(); 
 builder.Logging.AddConsole();     
 builder.Logging.AddDebug(); 
@@ -54,6 +56,57 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         options.DefaultRequestCulture = new RequestCulture("en-US");
         options.SupportedCultures = supportedCultures;
         options.SupportedUICultures = supportedCultures;
+    });
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.Cookie.SameSite = SameSiteMode.Lax; 
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    })
+    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                                    .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                            ValidateIssuer = false,
+                            ValidateAudience = false
+                        };
+
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                var accessToken = context.Request.Query["access_token"];
+                                // If the request is for our hub...
+                                var path = context.HttpContext.Request.Path;
+                                if (!string.IsNullOrEmpty(accessToken) &&
+                                    (path.StartsWithSegments("/notification")))
+                                {
+                        // Read the token out of the query string
+                        context.Token = accessToken;
+                                }
+                                return Task.CompletedTask;
+                            }
+                        };
+                    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.CallbackPath = "/api/auth/google-response";
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     });
 
 builder.Services.Configure<SupportEmails>(builder.Configuration.GetSection("SupportEmails"));
@@ -184,45 +237,11 @@ builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
 builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
 builder.Services.AddAutoMapper(typeof(PartnerMapperProfile));
 builder.Services.AddAutoMapper(typeof(TransactionMapperProfile));
-builder.Services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    var serverVersion = new MariaDbServerVersion("10.6.15");
-
-    options.UseMySql(connectionString, serverVersion);
-});
+builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                                    .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-                            ValidateIssuer = false,
-                            ValidateAudience = false
-                        };
-
-                        options.Events = new JwtBearerEvents
-                        {
-                            OnMessageReceived = context =>
-                            {
-                                var accessToken = context.Request.Query["access_token"];
-                                // If the request is for our hub...
-                                var path = context.HttpContext.Request.Path;
-                                if (!string.IsNullOrEmpty(accessToken) &&
-                                    (path.StartsWithSegments("/notification")))
-                                {
-                        // Read the token out of the query string
-                        context.Token = accessToken;
-                                }
-                                return Task.CompletedTask;
-                            }
-                        };
-                    });
+                    
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
@@ -243,6 +262,7 @@ builder.Services.AddCors(options =>
         options.AddPolicy("CorsPolicy",
             builder => builder
                 .SetIsOriginAllowed(_ => true) 
+                .WithOrigins("http://localhost:8000", "https://accounts.google.com")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
@@ -262,10 +282,11 @@ if (app.Environment.IsDevelopment())
 
 
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseRequestLocalization();
 app.UseCors("CorsPolicy");
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 

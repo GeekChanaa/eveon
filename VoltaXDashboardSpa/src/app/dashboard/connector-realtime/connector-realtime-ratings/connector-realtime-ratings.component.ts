@@ -21,7 +21,6 @@ export class ConnectorRealtimeRatingsComponent implements OnInit {
   reportedRating : any = {};
   report : any = {};
   userID : number = 0;
-  isReportLoading : boolean = false;
 
   constructor(
     private _ratingService: RatingService,
@@ -60,16 +59,6 @@ export class ConnectorRealtimeRatingsComponent implements OnInit {
     this.reportedRating = {};
   }
 
-  reportRating(){
-    this.isReportLoading = true;
-    this._ratingReportService.create(this.report).subscribe((data) => {
-      this.isReportLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success","Thanks you for your report, we will take this seriously",4000);
-      this.closeModal();
-    },(error)=> {
-      this.isReportLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
-    })
-  }
+  
 
 }

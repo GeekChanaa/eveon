@@ -27,6 +27,7 @@ import { ConnectorRealtimeConfigurationsComponent } from './connector-realtime-c
 import { ConnectorRealtimeChargingSessionInformationsComponent } from './connector-realtime-charging-session-informations/connector-realtime-charging-session-informations.component';
 import { ConnectorRealtimeOverviewStatisticsComponent } from './connector-realtime-overview/connector-realtime-overview-statistics/connector-realtime-overview-statistics.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ratings/connector-realtime-ratings-report/connector-realtime-ratings-report.component';
 
 @NgModule({
     declarations: [
@@ -50,7 +51,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
       ConnectorRealtimeMessageLogComponent,
       ConnectorRealtimeConfigurationsComponent,
       ConnectorRealtimeChargingSessionInformationsComponent,
-      ConnectorRealtimeOverviewStatisticsComponent
+      ConnectorRealtimeOverviewStatisticsComponent,
+      ConnectorRealtimeRatingsReportComponent
   ],
     imports: [
         AtomsModule,

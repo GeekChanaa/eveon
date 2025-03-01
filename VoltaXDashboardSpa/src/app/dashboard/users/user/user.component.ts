@@ -6,7 +6,8 @@ import { UserRole } from 'src/_models/_enums/user-role';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
-  ChargingSessionsTab = "ChargingSessionsTab"
+  ChargingSessionsTab = "ChargingSessionsTab",
+  ActionsTab = "ActionsTab",
 }
 @Component({
   selector: 'app-user',
@@ -17,18 +18,11 @@ export class UserComponent implements OnInit {
 
   // TabsEnum
   tabsEnum : UserTabsEnum = UserTabsEnum.InformationsTab;
+  editingSuspension : boolean = false;
 
   //user
-  user : User = {
-    id: 0,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    role: "Customer",
-    isEmailVerified: false,
-    isPhoneVerified: false
-  }
+  user : any = {};
+  updateUserObservable = (id : number, model : any) => this._userService.editUserDashboardInformations(id, model);
 
   constructor(
     private _userService: UserService,
@@ -38,15 +32,32 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     var idParam = this._route.snapshot.paramMap.get('id')
     if (idParam != null){
-      this._userService.getById(parseInt(idParam)).subscribe((data)=>{
-        this.user = data;
-      })
+      this.getUser(parseInt(idParam));
     }
   }
+
+  getUser(id : number){
+    this._userService.getUserDashboardDisplayInformations(id).subscribe((data)=>{
+      this.user = data;
+    })
+  }
+
 
   // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
   }
+
+  isSuspended(){ 
+    console.log("is suspended : ", this.user.suspendedAt);
+    return new Date(this.user.suspendedAt) > new Date();
+  }
+
+  suspendUser(){
+    this.updateUserObservable(this.user.id, this.user).subscribe((data) => {
+      console.log("updated")
+    })
+  }
+
 
 }

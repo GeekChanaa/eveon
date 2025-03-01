@@ -67,6 +67,7 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
     this.page = page;
     this._messagLogService.getChargePointMessageLogs(this.chargePoint.chargePointId,page,this.itemsPerPage, this.itemParams).subscribe((data) => {
       this.isLoading = false;
+      console.log(data);
       if(data.result)
         this.messageLogs = data.result;
       if(data.pagination)

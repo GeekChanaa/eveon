@@ -40,8 +40,8 @@
     </div>
     <div>
       <button (click)="toggleMenu($event)" class="button-square-stroke button-small ">
-        <svg class="icon icon-moon">
-          <use xlink:href="#icon-moon"></use>
+        <svg class="icon icon-eye">
+          <use xlink:href="#icon-eye"></use>
         </svg>
       </button>
       <div class="display__columns" *ngIf="displayMenu">
@@ -99,7 +99,17 @@
               </ng-container>
               <div class="row__col options_col">
                 <div class="actions__container">
-                    <button *ngIf="deletable" (click)="delete(item.id)" class="table__action delete-btn"> 
+                    <div class="modal-overlay" *ngIf="showDeleteConfirmModal">
+                      <div class="modal-content">
+                        <h3>Confirm Delete</h3>
+                        <p>Are you sure you want to delete this item?</p>
+                        <div class="modal-actions">
+                          <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
+                          <button (click)="proceedWithDelete()" class="btn-delete">Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button *ngIf="deletable" (click)="confirmDelete(item.id)" class="table__action delete-btn"> 
                         <svg class="icon icon-trash">
                             <use xlink:href="#icon-trash"></use>
                         </svg>   

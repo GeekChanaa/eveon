@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl : "http://51.20.70.166",
-  apiStaticFilesUrl : "http://51.20.70.166/StaticFiles/",
+  apiUrl : "https://localhost:8000",
+  apiStaticFilesUrl : "https://localhost:8000/StaticFiles/",
 
 };
 

@@ -99,6 +99,8 @@ export class PartnerComponent implements OnInit {
   
     changeLogo(): void {
       if (!this.selectedFile) return;
+
+      console.log("this is the partner ID : " , this.partnerID);
   
       this.imageUploading = true;
       const formData = new FormData();

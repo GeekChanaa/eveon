@@ -7,11 +7,18 @@ import { UsersRoutingModule } from './users-routing.module';
 import { UsersListComponent } from './users-list/users-list.component';
 import { UserComponent } from './user/user.component';
 import { CreateUserComponent } from './create-user/create-user.component';
+import { CalendarModule } from 'primeng/calendar';
+import { UserChargingSessionsComponent } from './user-charging-sessions/user-charging-sessions.component';
+import { UserActionsComponent } from './user-actions/user-actions.component';
+import { UserRechargeCardsComponent } from './user-recharge-cards/user-recharge-cards.component';
 @NgModule({
     declarations: [
         UsersListComponent,
         UserComponent,
-        CreateUserComponent
+        CreateUserComponent,
+        UserChargingSessionsComponent,
+        UserActionsComponent,
+        UserRechargeCardsComponent
     ],
     imports: [
         AtomsModule,
@@ -19,7 +26,8 @@ import { CreateUserComponent } from './create-user/create-user.component';
         CommonModule,
         SharedModule,
         FormsModule,
-        UsersRoutingModule
+        UsersRoutingModule,
+        CalendarModule
     ],
   })
   export class UsersModule { }

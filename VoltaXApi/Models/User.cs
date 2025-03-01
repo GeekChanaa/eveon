@@ -16,7 +16,6 @@ namespace VoltaXApi.Models
         public DateTime Birthday { get; set; }
         public string? Phone { get; set; }
     
-        // Salting the hashed password is one of the most secured ways to secure passwords
         public  byte[] PasswordHash { get; set; }
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
@@ -33,7 +32,7 @@ namespace VoltaXApi.Models
         public ICollection<DebitCard>? DebitCards { get; set; }
         public ICollection<Card>? Cards { get; set; }
         public bool IsDeleted { get; set; } = false;
-        public DateTime SuspendedAt { get; set; }
+        public DateTime? SuspendedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         

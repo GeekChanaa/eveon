@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Observable, map } from 'rxjs';
 
 import { UserNameDto } from 'src/_models/_dtos/user-name-dto';
+import { UserDashboardEditInformationsDto } from 'src/_models/_dtos/users-dtos/user-dashboard-edit-informations-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,14 @@ export class UserService extends AbstractService<User>{
         name: user.fullName 
       })))
     );
+  }
+
+  getUserDashboardDisplayInformations(id : number){
+    return this._http.get<any>(this.baseUrl + "GetUserDashboardDisplayInformations/"+id);
+  }
+
+  editUserDashboardInformations(id : number, user: UserDashboardEditInformationsDto){
+    return this._http.put<any>(this.baseUrl + "EditUserDashboardInformations/"+id,user);
   }
 
 

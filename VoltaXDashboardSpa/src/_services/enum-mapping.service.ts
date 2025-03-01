@@ -36,7 +36,6 @@ export class EnumMappingService {
       1: 'Customer',
       2: 'PremiumCustomer',
       3: 'Support',
-      4: 'Partner',
     },
     ChargingStationCategoryEnum: {
       0: 'Public',

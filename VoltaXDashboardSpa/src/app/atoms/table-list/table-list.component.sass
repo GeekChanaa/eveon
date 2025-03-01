@@ -330,3 +330,50 @@ body.dark .row__col:after
         cursor: default
         svg
             fill: var(--primary3)
+
+.modal-overlay 
+  position: fixed
+  top: 0
+  left: 0
+  height: 100vh
+  width: 100vw
+  backdrop-filter: blur(10px)
+  z-index: 1000
+
+
+.modal-content 
+  background-color: white
+  padding: 20px
+  border-radius: 5px
+  width: 400px
+  max-width: 90%
+  border: 1px solid var(--primary2)
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translate(-50%,-50%)
+  
+
+
+.modal-actions 
+  display: flex
+  justify-content: flex-end
+  margin-top: 20px
+  gap: 10px
+
+
+.btn-cancel 
+  padding: 8px 16px
+  background-color: #ccc
+  border: none
+  border-radius: 4px
+  cursor: pointer
+
+
+.btn-delete 
+  padding: 8px 16px
+  background-color: #dc3545
+  color: white
+  border: none
+  border-radius: 4px
+  cursor: pointer

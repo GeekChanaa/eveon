@@ -8,25 +8,14 @@
       <div class="stats__col">Amount</div>
       <div class="stats__col">Start Result</div>
       <div class="stats__col">Start Time</div>
-      <div class="stats__col">Stop Time<span
-        (mouseover)="isHovered = true"
-        (mouseleave)="isHovered = false">
-        <div class="tooltip">
-          <svg class="icon icon-info">
-            <use xlink:href="#icon-info"></use>
-          </svg>
-        </div>
-        <div class="stopped-reason-description-container" [ngClass]="{'show' : isHovered}">
-          <app-stopped-reason-description></app-stopped-reason-description>
-        </div>
-      </span> </div>
+      <div class="stats__col">Stop Time</div>
       <div class="stats__col">Actions</div>
     </div>
     <div class="stats__row" *ngFor="let transaction of transactions">
-      <div class="stats__col">{{transaction.amount}}</div>
+      <div class="stats__col">{{transaction.amount | number:'1.2-2'}}</div>
       <div class="stats__col">{{transaction.startResult}}</div>
-      <div class="stats__col">{{transaction.startTime}}</div>
-      <div class="stats__col">{{transaction.stopTime}}</div>
+      <div class="stats__col">{{transaction.startTime | date:"medium"}}</div>
+      <div class="stats__col">{{transaction.stopTime | date:"medium"}}</div>
       <div class="stats__col">
         <button class="table__action stop-btn" (click)="this.stoppingTransactionID = transaction.uid">
           <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

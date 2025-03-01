@@ -16,6 +16,8 @@ import { GlobalComponent } from './global/global.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
 import { MatButtonModule } from '@angular/material/button';
+import { CalendarModule } from 'primeng/calendar';
+import 'prismjs/prism';
 
 @NgModule({
   declarations: [			
@@ -33,7 +35,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatSnackBarModule,
     SlickCarouselModule,
     MatRippleModule,
-    MatButtonModule
+    MatButtonModule,
+    CalendarModule
     
   ],
   providers: [
@@ -41,7 +44,7 @@ import { MatButtonModule } from '@angular/material/button';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    },
+    }
   ],
   bootstrap: [AppComponent]
 })

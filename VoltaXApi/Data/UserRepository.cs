@@ -123,8 +123,26 @@ namespace VoltaXApi.Data
             return users;
         }
 
+        public async Task<UserDashboardDisplayInformationsDto> GetUserDashboardDisplayInformations(int userID)
+        {
+            var user = await GetByIdAsync(userID);
+            return _mapper.Map<User,UserDashboardDisplayInformationsDto>(user);
+        }
 
+        public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
+        {
+            var user = await GetByIdAsync(userID);
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.Email = userDto.Email;
+            user.Phone = userDto.Phone;
+            user.Role = userDto.Role;
+            user.Birthday = userDto.Birthday;
+            user.IsEmailVerified = userDto.IsEmailVerified;
+            user.IsPhoneNumberVerified = userDto.IsPhoneNumberVerified;
+            user.SuspendedAt = userDto.SuspendedAt;
 
-        
+            await Update(user);
+        }
     }
 }

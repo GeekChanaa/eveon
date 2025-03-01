@@ -45,6 +45,18 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetUserDebitCards(UserID);
         }
 
+        [HttpGet("GetUserDashboardDisplayInformations/{userID}")]
+        public async Task<ActionResult<UserDashboardDisplayInformationsDto>> GetUserDashboardDisplayInformations( int UserID)
+        {
+            return await this._repository.GetUserDashboardDisplayInformations(UserID);
+        }
+
+        [HttpPut("EditUserDashboardInformations/{userID}")]
+        public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
+        {
+            await this._repository.EditUserDashboardInformations(userID,userDto);
+        }
+
         [HttpGet("GetUserNames")]
         public async Task<ActionResult<List<UserNameDto>>> GetUserNames()
         {

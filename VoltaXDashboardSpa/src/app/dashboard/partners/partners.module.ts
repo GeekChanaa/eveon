@@ -10,6 +10,7 @@ import { PartnerComponent } from './partner/partner.component';
 import { CreatePartnerComponent } from './create-partner/create-partner.component';
 import { PartnerChargingStationsComponent } from './partner-charging-stations/partner-charging-stations.component';
 import { PartnerChargingStationComponent } from './partner-charging-station/partner-charging-station.component';
+import { CalendarModule } from 'primeng/calendar';
 @NgModule({
     declarations: [
       PartnersListComponent,
@@ -25,7 +26,8 @@ import { PartnerChargingStationComponent } from './partner-charging-station/part
         CommonModule,
         SharedModule,
         FormsModule,
-        PartnersRoutingModule
+        PartnersRoutingModule,
+        CalendarModule
     ],
   })
   export class PartnersModule { }
