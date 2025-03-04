@@ -227,7 +227,7 @@ namespace VoltaXApi.Data
 
         public async Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "")
         {
-            if(searchTerm.IsNullOrEmpty())
+            if(string.IsNullOrEmpty(searchTerm))
                 return await this._context.ChargingStations
                     .Select(cs => new ChargingStationSelectDto {Name = cs.Name, ID = cs.ID}).ToListAsync();
             else

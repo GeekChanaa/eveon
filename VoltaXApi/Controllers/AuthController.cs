@@ -16,9 +16,6 @@ using System.Net.Http;
 using System.Net;
 using VoltaXApi.Services;
 using VoltaXApi.Exceptions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace VoltaXApi.Controllers
 {
@@ -36,9 +33,9 @@ namespace VoltaXApi.Controllers
         private readonly IMailService _mailService;
 
         public AuthController(
-                IAuthRepository repo, 
-                IUserRepository userRepo, 
-                IConfiguration config, 
+                IAuthRepository repo,
+                IUserRepository userRepo,
+                IConfiguration config,
                 IMailService mailService,
                 IAuthService authService,
                 VoltaXApiDbContext context)
@@ -74,19 +71,21 @@ namespace VoltaXApi.Controllers
 
             var createdUser = await _authService.Register(userToCreate, userForRegisterDto.Password);
 
-            MailRequest requ = new MailRequest{
+            MailRequest requ = new MailRequest
+            {
                 Phone = "",
                 Email = "support@voltaxcharging.com",
                 Name = "CHANAA mohammed",
-                ToEmails = new List<string>() {createdUser.Email},
+                ToEmails = new List<string>() { createdUser.Email },
                 Subject = "Email Verification",
                 Body = ""
             };
-            await this._mailService.SendVerificationEmailAsync(requ,spaLink+"auth/verify-email?email="+createdUser.Email+"&token="+createdUser.EmailVerificationToken);
+            await this._mailService.SendVerificationEmailAsync(requ, spaLink + "auth/verify-email?email=" + createdUser.Email + "&token=" + createdUser.EmailVerificationToken);
 
             await _context.SaveChangesAsync();
 
-            var userForLogin = new UserForLoginDto{
+            var userForLogin = new UserForLoginDto
+            {
                 Email = userForRegisterDto.Email,
                 Password = userForRegisterDto.Password
             };
@@ -99,15 +98,15 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            
+
             var userFromRepo = await _authService.Login(userForLoginDto.Email.ToLower(), userForLoginDto.Password, ipAddress);
-            
+
             if (userFromRepo == null)
             {
                 return Unauthorized();
             }
 
-            
+
 
             var user = await _userRepo.GetUser(userFromRepo.ID);
 
@@ -142,82 +141,7 @@ namespace VoltaXApi.Controllers
             });
         }
 
-        [HttpGet("google-login")]
-        public IActionResult GoogleLogin()
-        {
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = Url.Action("GoogleResponse"),
-            };
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-        }
-
-        [HttpGet("google-response")]
-        public async Task<IActionResult> GoogleResponse()
-        {
-            Console.WriteLine("this is in here");
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            
-            if (!authenticateResult.Succeeded)
-                return Unauthorized();
-                
-            Console.WriteLine("this is in here 2");
-            var googleUser = authenticateResult.Principal;
-            var email = googleUser.FindFirstValue(ClaimTypes.Email);
-            var firstName = googleUser.FindFirstValue(ClaimTypes.GivenName);
-            var lastName = googleUser.FindFirstValue(ClaimTypes.Surname);
-            
-            // Check if user exists in your database
-            var user = await _userRepo.FindUserByEmail(email);
-            
-            if (user == null)
-            {
-                // Create a new user
-                user = new User
-                {
-                    Email = email,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    IsEmailVerified = true,
-                    Role = UserRole.Customer
-                };
-                
-                await _userRepo.AddAsync(user);
-            }
-            
-            // Generate JWT token for the user (similar to your existing login method)
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.GivenName, user.FirstName),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(15),
-                SigningCredentials = creds,
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            
-            // Redirect to your frontend with the token or return it directly
-            var tokenString = tokenHandler.WriteToken(token);
-            
-            // Option 1: Return token in response
-            return Ok(new { token = tokenString });
-            
-            // Option 2: Redirect to frontend with token
-            // return Redirect($"{_config["SpaLink"]}auth/oauth-callback?token={tokenString}");
-        }
-
+    
         [HttpPost("CheckToken")]
         public bool ValidateCurrentToken(TokenForValidation token)
         {
@@ -265,15 +189,16 @@ namespace VoltaXApi.Controllers
         {
             string spaLink = _config["SpaLink"];
             string resetToken = await this._userRepo.GenerateResetPasswordTokenForUser(email);
-            MailRequest requ = new MailRequest{
+            MailRequest requ = new MailRequest
+            {
                 Phone = "",
                 Email = "no-reply@voltaxcharging.com",
                 Name = "CHANAA mohammed",
-                ToEmails = new List<string>{email},
+                ToEmails = new List<string> { email },
                 Subject = "Password Reset",
                 Body = ""
             };
-            await this._mailService.SendVerificationEmailAsync(requ,spaLink+"Auth/reset-password?email="+email+"&token="+resetToken);
+            await this._mailService.SendVerificationEmailAsync(requ, spaLink + "Auth/reset-password?email=" + email + "&token=" + resetToken);
 
         }
 
@@ -332,7 +257,7 @@ namespace VoltaXApi.Controllers
                 return StatusCode(500, "Phone number or token incorrect");
             }
         }
-    
+
         [HttpPost("SendPhoneVerificationSMS")]
         public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
         {
@@ -350,6 +275,6 @@ namespace VoltaXApi.Controllers
         }
     }
 
-    
+
 
 }
