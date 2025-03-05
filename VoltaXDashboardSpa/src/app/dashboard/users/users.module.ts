@@ -11,6 +11,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { UserChargingSessionsComponent } from './user-charging-sessions/user-charging-sessions.component';
 import { UserActionsComponent } from './user-actions/user-actions.component';
 import { UserRechargeCardsComponent } from './user-recharge-cards/user-recharge-cards.component';
+import { UserOrdersComponent } from './user-orders/user-orders.component';
 @NgModule({
     declarations: [
         UsersListComponent,
@@ -18,7 +19,8 @@ import { UserRechargeCardsComponent } from './user-recharge-cards/user-recharge-
         CreateUserComponent,
         UserChargingSessionsComponent,
         UserActionsComponent,
-        UserRechargeCardsComponent
+        UserRechargeCardsComponent,
+        UserOrdersComponent
     ],
     imports: [
         AtomsModule,

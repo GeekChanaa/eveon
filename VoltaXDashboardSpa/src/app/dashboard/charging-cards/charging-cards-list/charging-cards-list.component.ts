@@ -12,12 +12,12 @@ export class ChargingCardsListComponent implements OnInit {
 
   fields: string[] = [];
   filters : any = {
-    category:"",
-    city : ""
+    cardType:"",
+    cardStatus : ""
   };
   
 
-  chargePoint: CardDto = {
+  card: CardDto = {
     id: 0,
     cardNumber: '',
     userName: '',
@@ -46,21 +46,21 @@ export class ChargingCardsListComponent implements OnInit {
   updateCardObservable = (id : number, model : any) => this._cardService.edit(id, model);
 
   private _getItemFields() {
-    if (!this.chargePoint || this.chargePoint == undefined) {
+    if (!this.card || this.card == undefined) {
       return;
     }
-    Object.keys(this.chargePoint ?? {}).forEach((element: string) => {
-      if (typeof this.chargePoint?.[element] == "object" && this.chargePoint?.[element] != null && this.chargePoint?.[element].constructor.name == "Date")
+    Object.keys(this.card ?? {}).forEach((element: string) => {
+      if (typeof this.card?.[element] == "object" && this.card?.[element] != null && this.card?.[element].constructor.name == "Date")
         this.fields.push(element);
-      if (typeof this.chargePoint?.[element] != "object") this.fields.push(element);
+      if (typeof this.card?.[element] != "object") this.fields.push(element);
     });
   }
   
 
   resetFilters(){
     this.filters = {
-      category:"",
-      city : ""
+      cardType:"",
+      cardStatus : ""
     }
   }
 }

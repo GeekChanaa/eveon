@@ -27,6 +27,7 @@ import { GlobalConfigurationsComponent } from './global-configurations/global-co
 import { DocumentationComponent } from './documentation/documentation.component';
 import { PartnersComponent } from './partners/partners.component';
 import { ChargingSessionsComponent } from './charging-sessions/charging-sessions.component';
+import { GoodByeComponent } from '../good-bye/good-bye.component';
 const routes: Routes = [
   {
     path: "",

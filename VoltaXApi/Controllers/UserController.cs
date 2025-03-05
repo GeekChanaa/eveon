@@ -93,6 +93,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetSupportUserNames();
         }
 
+        [HttpGet("GetUserInformations/{userID}")]
+        public async Task<ActionResult<UserListDto>> GetUserInformations(int userID)
+        {
+            return await this._repository.GetUserInformations(userID);
+        }
+
 
         [HttpGet("GetUsers")]
         public async Task<List<UserListDto>> GetUsers([FromQuery] GlobalParams globalParams)

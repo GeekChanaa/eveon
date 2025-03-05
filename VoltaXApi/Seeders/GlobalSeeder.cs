@@ -12,7 +12,7 @@ namespace VoltaXApi.Data.Seeders
         public static async Task Seed(VoltaXApiDbContext context, IMapper mapper)
         {
              await ChargePointBrandsSeeder.Seed(context,mapper);
-             await SqlScriptExecuter.ExecuteSqlScript(context);
+            //  await SqlScriptExecuter.ExecuteSqlScript(context);
              var partners = await PartnerSeeder.Seed(200,context);
              await BrandsAutomobilesSeeder.Populate(context);
             var chargeStations = await ChargingStationSeeder.Seed(100,context);

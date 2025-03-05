@@ -7,6 +7,7 @@ import { Observable, map } from 'rxjs';
 
 import { UserNameDto } from 'src/_models/_dtos/user-name-dto';
 import { UserDashboardEditInformationsDto } from 'src/_models/_dtos/users-dtos/user-dashboard-edit-informations-dto';
+import { UserListDto } from 'src/_models/_dtos/user-list-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -85,6 +86,38 @@ export class UserService extends AbstractService<User>{
 
   editUserDashboardInformations(id : number, user: UserDashboardEditInformationsDto){
     return this._http.put<any>(this.baseUrl + "EditUserDashboardInformations/"+id,user);
+  }
+
+  getUserInformations(userID : number){
+    return this._http.get<any>(this.baseUrl + "GetUserInformations/"+userID);
+  }
+
+  downloadUserInformations(user : UserListDto){
+    // Format the content
+    const content = `User Informations\n\n` +
+                    `First Name: ${user.firstName}\n` +
+                    `Last Name: ${user.lastName}\n` +
+                    `Email: ${user.email}\n` +
+                    `Phone: ${user.phone}\n` +
+                    `Car: ${user.car}\n` +
+                    `Birthday: ${user.birthday}\n` +
+                    `City: ${user.city}\n` +
+                    `Gender: ${user.gender}\n`;
+  
+    // Create a Blob
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+  
+    // Create a link and trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'user_info.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  
+    // Cleanup
+    window.URL.revokeObjectURL(url);
   }
 
 

@@ -29,6 +29,12 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
     return super.getAll(page,itemsPerPage,itemParams,"GetChargePointChargingSessions/"+chargePointID);
   }
 
+  getUserChargingSessions(userID : number,page : number, itemsPerPage?: number, itemParams?: any){
+    console.log("this is the getUser CharginSessions");
+    console.log(userID,page,itemsPerPage);
+    return super.getAll(page,itemsPerPage,itemParams,"GetUserChargingSessions/"+userID);
+  }
+
   getChargingSessionInformations(chargingSessionID : number){
     return this.http.get(this.baseUrl+"GetChargingSessionInformations/"+chargingSessionID);
   }

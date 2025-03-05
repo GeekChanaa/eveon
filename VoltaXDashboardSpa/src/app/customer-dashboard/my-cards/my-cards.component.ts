@@ -27,9 +27,9 @@ export class MyCardsComponent implements OnInit {
   // getting user recharge cards
   getRechargeCards(){
     var userID = this._authService.getAuthInformation().nameid;
-    this._cardService.getUserRechargeCards(parseInt(userID)).subscribe((data) => {
-      this.rechargeCards = data;
-    })
+    // this._cardService.getUserRechargeCards(parseInt(userID)).subscribe((data) => {
+    //   this.rechargeCards = data;
+    // })
   }
 
 }

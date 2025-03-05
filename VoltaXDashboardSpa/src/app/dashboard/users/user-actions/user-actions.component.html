@@ -1,3 +1,11 @@
-<p>
-  user-actions works!
-</p>
+<div class="actions__container">
+  <app-card-action 
+    [actionName]="'Send Reset Password Email'" 
+    class="action__card"
+    (actionClick)="sendResetPasswordEmail()"></app-card-action>
+
+  <app-card-action 
+    [actionName]="'Download User Informations'" 
+    class="action__card"
+    (actionClick)="downloadUserInformations()"></app-card-action>
+</div>

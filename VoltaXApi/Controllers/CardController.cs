@@ -38,10 +38,13 @@ namespace VoltaXApi.Controllers
             return Ok(cardsDto);
         }
 
-        [HttpGet("GetUserRechargeCards")]
-        public async Task<ActionResult<List<Card>>> GetUserRechargeCards([FromQuery] int UserID)
+        [HttpGet("GetUserRechargeCards/{userID}")]
+        public async Task<PagedList<CardListDto>> GetUserRechargeCardsAsync(int userID, [FromQuery] GlobalParams globalParams)
         {
-            return await this._repository.GetUserRechargeCardsAsync(UserID);
+            var cards = this._repository.GetUserRechargeCardsAsync(userID,globalParams);
+            var cardsList = await PagedList<CardListDto>.CreateAsync(cards,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(cardsList.CurrentPage, cardsList.PageSize, cardsList.TotalCount, cardsList.TotalPages);
+            return cardsList;
         }
 
         [HttpGet("GetCardTransactions")]

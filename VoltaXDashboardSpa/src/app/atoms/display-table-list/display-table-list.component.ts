@@ -38,14 +38,14 @@ export class DisplayTableListComponent implements OnInit {
 
   pagination: Pagination = {
     currentPage: 0,
-    itemsPerPage: 0,
+    itemsPerPage: 20,
     totalItems: 0,
     totalPages: 0
   }
 
   itemParams : any = {};
 
-  itemsPerPage: number = 20;
+  itemsPerPage: number = 10;
   currentPage: number = 1;
   
   isActive: boolean = false;
@@ -71,13 +71,14 @@ export class DisplayTableListComponent implements OnInit {
   }
 
   getAll(){
-    this.getItemsObservable(this.currentPage, this.itemsPerPage, this.itemParams).subscribe((data) => {      
-      console.log("this is the get all function");
-      console.log(data);
+    this.getItemsObservable(this.currentPage, this.itemsPerPage, this.itemParams).subscribe((data) => { 
       if(data.result)
         this.data = data.result;
       if(data.pagination){
         this.pagination = data.pagination;
+        console.log("this is the pagination brother ");
+        console.log(data.pagination);
+        console.log(this.pagination)
         this.generatePaginationLinks();
       }
     })

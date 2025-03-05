@@ -42,6 +42,7 @@ import { ConnectorStatusTagComponent } from './connector-status-tag/connector-st
 import { SafeUrlPipe } from 'src/pipes/safe-url.pipe';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive';
+import { CardActionComponent } from './card-action/card-action.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive
     SafeUrlPipe,
     ConfirmModalComponent,
     ConfirmActionDirective,
-    CamelCaseToSpacePipe
+    CamelCaseToSpacePipe,
+    CardActionComponent
   ],
   imports: [
     CommonModule,
@@ -129,7 +131,8 @@ import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive
     ConfirmModalComponent,
     ConfirmActionDirective,
     SafeUrlPipe,
-    CamelCaseToSpacePipe
+    CamelCaseToSpacePipe,
+    CardActionComponent
   ],
   providers: [],
 })

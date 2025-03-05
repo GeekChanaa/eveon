@@ -19,8 +19,8 @@ export class CardService extends AbstractService<Card>{
   baseUrl = environment.apiUrl+"/api/card/";
 
   // Get user recharge cards
-  getUserRechargeCards(userID : number) : Observable<any[]>{
-    return this._http.get<any[]>(this.baseUrl+"GetUserRechargeCards?UserID="+userID);
+  getUserRechargeCards(userID : number,page : number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"getUserRechargeCards/"+userID);
   }
 
   getAllCards(page?: number, itemsPerPage?: number, itemParams?: any){

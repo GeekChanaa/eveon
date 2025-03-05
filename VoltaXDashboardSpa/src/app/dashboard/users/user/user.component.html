@@ -9,7 +9,9 @@
           [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
         <button (click)="changeTab('ChargingSessionsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'ChargingSessionsTab'}">Charging Sessions</button>
-        <button (click)="changeTab('ActionsTab')" class="settings__link"
+        <button (click)="changeTab('OrdersTab')" class="settings__link"
+          [ngClass]="{'active' : tabsEnum == 'OrdersTab'}">Orders</button>
+          <button (click)="changeTab('ActionsTab')" class="settings__link"
           [ngClass]="{'active' : tabsEnum == 'ActionsTab'}">Actions</button>
       </div>
       <div class="settings__wrapper">
@@ -17,6 +19,7 @@
           <option (click)="changeTab('InformationsTab')">Informations</option>
           <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
           <option (click)="changeTab('ChargingSessionsTab')">Charging Sessions</option>
+          <option (click)="changeTab('OrdersTab')">Orders</option>
           <option (click)="changeTab('ActionsTab')">Actions</option>
         </select>
         <div class="settings__list">
@@ -96,7 +99,7 @@
             <div class="settings__anchor" id="account" data-value="Account"></div>
             <div class="title-purple settings__title">Recharge Cards</div>
             <div class="settings__fieldset">
-
+              <app-user-recharge-cards [userID]="user.id"></app-user-recharge-cards>
             </div>
 
           </div>
@@ -105,19 +108,30 @@
             <div class="settings__anchor" id="account" data-value="Account"></div>
             <div class="title-purple settings__title">Charging Sessions</div>
             <div class="settings__fieldset">
+              <app-user-charging-sessions [userID]="user.id"></app-user-charging-sessions>
+            </div>
 
+          </div>
+
+          <div class="settings__item" *ngIf="tabsEnum == 'OrdersTab'">
+            <div class="settings__anchor" id="account" data-value="Account"></div>
+            <div class="title-purple settings__title">User Orders</div>
+            <div class="settings__fieldset">
+              <app-user-orders [userID]="user.id"></app-user-orders>
             </div>
 
           </div>
 
           <div class="settings__item" *ngIf="tabsEnum == 'ActionsTab'">
             <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Charging Sessions</div>
+            <div class="title-purple settings__title">User Actions</div>
             <div class="settings__fieldset">
-
+              <app-user-actions [userEmail]="user.email" [userID]="user.id"></app-user-actions>
             </div>
 
           </div>
+
+
 
         </div>
       </div>

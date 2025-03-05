@@ -83,4 +83,8 @@ export class OrderService extends AbstractService<Order>{
   getCardOrders(page:  number,itemsPerPage : number,itemParams : any,cardID : number){
     return super.getAll(page,itemsPerPage,itemParams,"GetCardOrders/"+cardID);
   }
+
+  getUserOrders(page : number, itemsPerPage: number, itemParams: any, userID : number){
+    return super.getAll(page,itemsPerPage,itemParams,"GetUserOrders/"+userID);
+  }
 }

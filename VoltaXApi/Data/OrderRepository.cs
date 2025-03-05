@@ -36,6 +36,19 @@ namespace VoltaXApi.Data
             return orders;
         }
 
+        public IQueryable<RechargeOrderListDto> GetUserRechargeOrders(int userID, GlobalParams globalParams)
+        {
+            var orders = GetAllAsync(globalParams).Where(u => u.Card.UserID == userID).Select(ro => new RechargeOrderListDto{
+                ID = ro.ID,
+                CardID = ro.CardID,
+                Amount = ro.Amount,
+                CardNumber = ro.Card.CardNumber,
+                Status = ro.Status,
+                RechargeDate = ro.RechargeDate,
+            });
+            return orders;
+        }
+
 
         public Task<double> CountRecharge(Expression<Func<Order, bool>> predicate)
         {

@@ -3,6 +3,7 @@ import { UserPasswordChangeDto } from 'src/_models/_dtos/user-password-change-dt
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
+import { UserService } from 'src/_services/user.service';
 
 @Component({
   selector: 'app-profile-security',
@@ -25,6 +26,7 @@ export class ProfileSecurityComponent implements OnInit {
 
   constructor(
     private _authService : AuthService,
+    private _userService: UserService,
     private _modalService : ActionModalService
   ) { }
 
@@ -41,6 +43,12 @@ export class ProfileSecurityComponent implements OnInit {
     },(error) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something Went wrong please try again later ! ", 4000);
+    })
+  }
+
+  downloadUserInformations(){
+    this._userService.getUserInformations(this.userID).subscribe((data) => {
+      this._userService.downloadUserInformations(data);
     })
   }
 

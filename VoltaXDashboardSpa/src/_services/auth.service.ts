@@ -69,9 +69,12 @@ export class AuthService {
     else return false;
   }
 
-  logout(){
-    localStorage.removeItem("token");
-    this.router.navigate(['/']);
+  logout() {
+    this.router.navigate(['/goodbye']).then(() => {
+      setTimeout(() => {
+        localStorage.removeItem("token");
+      }, 4000);
+    });
   }
 
   getAuthInformation(){

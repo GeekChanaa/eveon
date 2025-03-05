@@ -1,3 +1,11 @@
-<p>
-  user-charging-sessions works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-display-table-list 
+      name="User Charging Session"
+      names="User Charging Sessions"
+      routeName="charging-cards"
+      [fields]="fields" 
+      [getItemsObservable]="getUserChargingSessionsObservable.bind(this)">
+    </app-display-table-list>
+  </div>
+</div>

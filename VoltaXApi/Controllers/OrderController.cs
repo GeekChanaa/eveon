@@ -189,5 +189,14 @@ namespace VoltaXApi.Controllers
             Response.AddPagination(ordersList.CurrentPage, ordersList.PageSize, ordersList.TotalCount, ordersList.TotalPages);
             return ordersList;
         }
+
+        [HttpGet("GetUserOrders/{userID}")]
+        public async Task<ActionResult<PagedList<RechargeOrderListDto>>> GetUserOrders(int userID,[FromQuery] GlobalParams globalParams)
+        {
+            var orders = _repository.GetUserRechargeOrders(userID,globalParams);
+            var ordersList = await PagedList<RechargeOrderListDto>.CreateAsync(orders,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(ordersList.CurrentPage, ordersList.PageSize, ordersList.TotalCount, ordersList.TotalPages);
+            return ordersList;
+        }
     }
 }

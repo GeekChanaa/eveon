@@ -4,14 +4,12 @@
 
 
 <div class="chargePoint-actions">
-    <div *ngFor="let request of requests" 
-      (click)="openRequestHandlerModal(request)" 
-      class="chargePoint-action">
-      <svg class="icon icon-info">
-        <use xlink:href="#icon-info"></use>
-      </svg>
-      {{ request | camelCaseToSpace }}
-    </div>
+    <app-card-action
+      class="request__action" 
+      *ngFor="let request of requests" 
+      [actionName]="request"
+      (actionClick)="openRequestHandlerModal(request)"
+      ></app-card-action>
 
 </div>
 

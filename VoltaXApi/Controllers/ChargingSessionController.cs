@@ -33,9 +33,9 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargePointChargingSessions/{chargePointID}")]
-        public async Task<List<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID, [FromQuery] GlobalParams globalParams)
+        public async Task<PagedList<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID, [FromQuery] GlobalParams globalParams)
         {
-            var chargingSessions = this._repository.GetChargePointChargingSessions(chargePointID);
+            var chargingSessions = this._repository.GetChargePointChargingSessions(chargePointID, globalParams);
             var chargingSessionsList = await PagedList<ChargePointChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;
@@ -99,6 +99,15 @@ namespace VoltaXApi.Controllers
         public async Task<List<ChargingSessionListDto>> GetChargingSessions([FromQuery] GlobalParams globalParams)
         {
             var chargingSessions = this._repository.GetChargingSessions();
+            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
+            return chargingSessionsList;
+        }
+
+        [HttpGet("GetUserChargingSessions/{userID}")]
+        public async Task<PagedList<ChargingSessionListDto>> GetUserChargingSessions(int userID, [FromQuery] GlobalParams globalParams)
+        {
+            var chargingSessions = this._repository.GetUserChargingSessions(userID, globalParams);
             var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;

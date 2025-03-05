@@ -7,6 +7,7 @@ import { CustomerDashboardComponent } from './customer-dashboard/customer-dashbo
 import { GlobalComponent } from './global/global.component';
 import { NotFoundComponent } from './global/error-pages/not-found/not-found.component';
 import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
+import { GoodByeComponent } from './good-bye/good-bye.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
     component : GlobalComponent,
     loadChildren : () => import('./global/global.module')
       .then(m=>m.GlobalModule)
+  },
+  { 
+    path: 'goodbye', 
+    component: GoodByeComponent 
   },
   {
     path : "**",

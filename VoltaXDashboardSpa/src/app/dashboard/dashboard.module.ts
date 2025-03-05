@@ -58,7 +58,7 @@ import { ChargingSessionsComponent } from './charging-sessions/charging-sessions
       ConnectorStatusesComponent,
       PartnersComponent,
       UsersComponent,
-      ChargingSessionsComponent
+      ChargingSessionsComponent,
   ],
     imports: [
         DashboardRoutingModule,

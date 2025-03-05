@@ -2,9 +2,6 @@
   <div class="page__container">
     <div class="page__title h3">System Report : #{{systemReport.id}}</div>
     <div class="settings">
-      <div class="settings__menu">
-        
-      </div>
       <div class="settings__wrapper">
         <div class="settings__list">
           <div class="settings__item" >
@@ -20,8 +17,9 @@
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
                       [object]="systemReport"
                       inpType="text"
-                      title="name"
-                      [val]="systemReport.name"></app-display-cell>
+                      title="userName"
+                      [editable]="false"
+                      [val]="systemReport.userName"></app-display-cell>
 
                   <app-display-cell 
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
@@ -38,6 +36,22 @@
                       title="Type"
                       enumName="ReportStatusEnum" 
                       val="{{systemReport.status}}"></app-display-cell>
+
+                  <app-display-cell 
+                      [updateObservable]="updateSystemReportObservable.bind(this)" 
+                      [object]="systemReport"
+                      inpType="text"
+                      title="cardNumber"
+                      [editable]="false"
+                      [val]="systemReport.cardNumber"></app-display-cell>
+
+                  <app-display-cell 
+                      [updateObservable]="updateSystemReportObservable.bind(this)" 
+                      [object]="systemReport"
+                      inpType="text"
+                      title="issueDescription"
+                      [editable]="false"
+                      [val]="systemReport.issueDescription"></app-display-cell>
                 
               </ng-container>
               

@@ -18,13 +18,15 @@ import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard
 import { MatButtonModule } from '@angular/material/button';
 import { CalendarModule } from 'primeng/calendar';
 import 'prismjs/prism';
+import { GoodByeComponent } from './good-bye/good-bye.component';
 
 @NgModule({
   declarations: [			
       AppComponent,
       CustomerDashboardComponent,
       GlobalComponent,
-      PartnerDashboardComponent
+      PartnerDashboardComponent,
+      GoodByeComponent
    ],
   imports: [
     BrowserModule,

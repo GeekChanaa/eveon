@@ -7,7 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface IChargingSessionRepository : IRepository<ChargingSession>
     {
-        IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID);
+        IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams);
         Task<ChargingSession> GetLastChargingSession(int connectorID);
         Task<ChargingSessionInformationsDto> GetChargingSessionInformations(int chargingSessionID);
         Task<List<int>> GetChargePointChargingSessionsIDs(int chargePointID);
@@ -15,5 +15,7 @@ namespace VoltaXApi.Data
         Task<int> GetChargePointNbrChargingSessionsToday(int chargePointID);
         Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID);
         IQueryable<ChargingSessionListDto> GetChargingSessions();
+        IQueryable<ChargingSessionListDto> GetUserChargingSessions(int userID,GlobalParams globalParams);
+
     }
 }

@@ -3,10 +3,13 @@ import { UserService } from 'src/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/_models/user';
 import { UserRole } from 'src/_models/_enums/user-role';
+import { ActionModalService } from 'src/_services/action-modal.service';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
   ChargingSessionsTab = "ChargingSessionsTab",
+  OrdersTab = "OrdersTab",
   ActionsTab = "ActionsTab",
 }
 @Component({
@@ -26,7 +29,8 @@ export class UserComponent implements OnInit {
 
   constructor(
     private _userService: UserService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _modalService: ActionModalService
     ) { }
 
   ngOnInit() {
@@ -55,7 +59,10 @@ export class UserComponent implements OnInit {
 
   suspendUser(){
     this.updateUserObservable(this.user.id, this.user).subscribe((data) => {
-      console.log("updated")
+      this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Account suspenstion taken into account",4000);
+      this.editingSuspension = false;
+    }, (error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong!", 4000);
     })
   }
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OCPP.Core.Server;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Data
 {
@@ -17,7 +18,7 @@ namespace VoltaXApi.Data
       _mapper = mapper;
     }
 
-    public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID)
+    public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams)
     {
       var chargingSessions = _context.ChargingSessions.Include(u => u.User).Include(u => u.Connector)
           .Where(cs => cs.Connector.ChargePointID == chargePointID).AsQueryable().ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
@@ -133,5 +134,24 @@ namespace VoltaXApi.Data
 
       return nbrChargingSessionsByDay;
     }
+
+    public IQueryable<ChargingSessionListDto> GetUserChargingSessions(int userID, GlobalParams globalParams)
+    {
+      return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(cs => new ChargingSessionListDto{
+        ID = cs.ID,
+        Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
+        ConnectorID = cs.ConnectorID,
+        ChargePointID = cs.Connector.ChargePointID,
+        UserName = cs.User.FullName,
+        CardNumber = cs.Card.CardNumber,
+        StartDate = cs.StartDate,
+        EndDate = cs.EndDate,
+        StoppedReason = cs.StoppedReason,
+        ChargingSessionStatus = cs.ChargingSessionStatus,
+      }).AsQueryable();
+    }
+
   }
+
+  
 }

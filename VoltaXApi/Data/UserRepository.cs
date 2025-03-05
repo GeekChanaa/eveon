@@ -144,5 +144,11 @@ namespace VoltaXApi.Data
 
             await Update(user);
         }
+
+        public async Task<UserListDto> GetUserInformations(int userID)
+        {
+            var user = await GetByIdAsync(userID);
+            return _mapper.Map<User,UserListDto>(user);
+        }
     }
 }

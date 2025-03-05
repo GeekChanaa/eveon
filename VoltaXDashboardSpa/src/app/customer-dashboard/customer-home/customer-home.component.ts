@@ -39,9 +39,9 @@ export class CustomerHomeComponent implements OnInit {
   ngOnInit(): void {
     var info = this._authService.getAuthInformation();
     var id = this._authService.getAuthInformation().nameid;
-    this._cardService.getUserRechargeCards(id).subscribe((data) => {
-      this.rechargeCards = data;
-    });
+    // this._cardService.getUserRechargeCards(id).subscribe((data) => {
+    //   this.rechargeCards = data;
+    // });
     this._userService.getById(id).subscribe((data) => {
       this.loggedInUser = data;
     })

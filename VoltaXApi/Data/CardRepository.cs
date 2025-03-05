@@ -23,9 +23,20 @@ namespace VoltaXApi.Data
         }
 
         // Get all user recharge cards
-        public async Task<List<Card>> GetUserRechargeCardsAsync(int UserID)
+        public IQueryable<CardListDto> GetUserRechargeCardsAsync(int userID, GlobalParams globalParams)
         {
-            return await _context.Cards.Where(u => u.UserID == UserID).ToListAsync();
+            return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(u  => new CardListDto{
+                ID = u.ID,
+                CardNumber = u.CardNumber,
+                CardType = u.CardType,
+                ExpirationDate = u.ExpirationDate,
+                MaxCount = u.MaxCount,
+                Status = u.Status,
+                Balance = u.Balance,
+                Note = u.Note,
+                UserID = u.UserID,
+                UserName = u.User.FullName
+            }).AsQueryable();
         }
 
         // get card transactions

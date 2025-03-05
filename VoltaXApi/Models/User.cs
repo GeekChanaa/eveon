@@ -13,8 +13,8 @@ namespace VoltaXApi.Models
         public string? Gender { get; set; }
         public string? City { get; set; }
         public string? Car { get; set; }
-        public DateTime Birthday { get; set; }
-        public string? Phone { get; set; }
+        public DateTime? Birthday { get; set; }
+        public string Phone { get; set; }
     
         public  byte[] PasswordHash { get; set; }
         public  byte[] PasswordSalt { get; set; }
@@ -23,7 +23,6 @@ namespace VoltaXApi.Models
         public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; } = false;
         public string? EmailVerificationToken { get; set; }
-
         public bool IsPhoneNumberVerified { get; set; } = false;
         public string? PhoneVerificationToken { get; set; }
         public UserRole Role { get; set; } = UserRole.Customer;
@@ -35,7 +34,6 @@ namespace VoltaXApi.Models
         public DateTime? SuspendedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        
         public string FullName { get { return FirstName+ " " + LastName;} }
         public Partner? Partner { get; set; }
     }
