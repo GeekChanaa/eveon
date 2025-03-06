@@ -147,8 +147,25 @@ namespace VoltaXApi.Data
 
         public async Task<UserListDto> GetUserInformations(int userID)
         {
-            var user = await GetByIdAsync(userID);
-            return _mapper.Map<User,UserListDto>(user);
+            var user = await _context.Users
+                        .Select(u => new UserListDto{
+                            ID = u.ID,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Email = u.Email,
+                            Gender = u.Gender,
+                            City = u.City,
+                            Car = u.Car,
+                            Birthday = u.Birthday,
+                            Phone = u.Phone,
+                            PartnerName = u.PartnerID == null ? null : u.Partner.Name,
+                            IsEmailVerified = u.IsEmailVerified,
+                            IsPhoneNumberVerified = u.IsPhoneNumberVerified,
+                            Role = u.Role,
+                            ImageUrl = u.Image.Url
+                        })
+                        .FirstOrDefaultAsync(u => u.ID == userID);
+            return user;
         }
     }
 }

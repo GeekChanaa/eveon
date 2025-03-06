@@ -25,7 +25,8 @@ export class CompleteProfilePopupComponent implements OnInit {
     phone: '',
     isEmailVerified: false,
     isPhoneVerified: false,
-    role: "Admin"
+    role: "Admin",
+    imageUrl: ''
   }
 
   emailVerificationCode : string = "";

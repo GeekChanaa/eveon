@@ -21,10 +21,14 @@ namespace VoltaXApi.Controllers
     public class UserController : GenericController<User>
     {
         private readonly IUserRepository _repository;
+        private readonly IUserService _userService;
 
-        public UserController(IUserRepository repository) : base(repository)
+        public UserController(
+            IUserRepository repository,
+            IUserService userService) : base(repository)
         {
             _repository = repository;
+            _userService = userService;
         }
 
         [HttpGet("UserEmailExists")]
@@ -107,6 +111,32 @@ namespace VoltaXApi.Controllers
             var usersList = await PagedList<UserListDto>.CreateAsync(users,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(usersList.CurrentPage, usersList.PageSize, usersList.TotalCount, usersList.TotalPages);
             return usersList;
+        }
+
+        [HttpPost("UploadUserAvatar/{userID}")]
+        public async  Task<IActionResult> UploadUserAvatar(IFormFile imageFile, int userID)
+        {
+            Console.WriteLine("this is the userController Function");
+            try
+            {
+                
+                if (Request.Form.Files.Count == 1)
+                {
+                    var file = Request.Form.Files[0];
+                    await _userService.UploadUserAvatar(file, userID);
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest();
+            }
         }
     }
 }

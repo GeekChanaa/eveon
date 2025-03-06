@@ -120,6 +120,10 @@ export class UserService extends AbstractService<User>{
     window.URL.revokeObjectURL(url);
   }
 
+  uploadUserAvatar(formData : FormData, userID:  number){
+    return this.http.post<any[]>(this.baseUrl + 'UploadUserAvatar/'+userID, formData, { reportProgress: true, observe: 'events' });
+  }
+
 
 
   

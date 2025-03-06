@@ -21,6 +21,7 @@ namespace VoltaXApi.Models
         [NotMapped]
         public string? Password { get; set; }
         public int? PartnerID { get; set; }
+        public int? ImageID { get; set; }
         public bool IsEmailVerified { get; set; } = false;
         public string? EmailVerificationToken { get; set; }
         public bool IsPhoneNumberVerified { get; set; } = false;
@@ -34,6 +35,7 @@ namespace VoltaXApi.Models
         public DateTime? SuspendedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public Image? Image { get; set; }
         public string FullName { get { return FirstName+ " " + LastName;} }
         public Partner? Partner { get; set; }
     }

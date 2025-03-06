@@ -27,11 +27,51 @@
             <div class="title-green settings__title">Profile Informations</div>
             <div class="settings__profile">
               
-              <div class="settings__avatar">
-                
-                <img src="assets/img/content/avatar.jpg" alt="Avatar">
-                
+              <div class="settings__avatar" (click)="openChangeAvatarModal()">
+                <img *ngIf="user.imageUrl == null" src="assets/images/avatar.jpg" alt="Avatar">
+                <img *ngIf="user.imageUrl != null" [src]="staticUrl+user.imageUrl" alt="">
+                <button class="settings__avatar-upload">
+                  <svg class="icon icon-edit">
+                    <use xlink:href="#icon-edit"></use>
+                  </svg>
+                </button>
               </div>
+
+              <ng-container *ngIf="isChangeAvatarModalOpen">
+                <div class="avatar__modal_overlay"></div>
+                <div class="avatar__modal">
+                  <div class="create__card card">
+                    <div class="file">
+                      <div class="file__label">User Avatar
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
+                          data-position="right">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="file__wrap">
+                        <input class="upload-input" type="file" (change)="handleUpload($event)" />
+                        <div class="file__box" *ngIf="!displayedImage">
+                          <svg class="icon icon-upload">
+                            <use xlink:href="#icon-upload"></use>
+                          </svg>Click or drop image
+                        </div>
+                        <div class="files__box">
+                          <div *ngIf="displayedImage != null" class="image__box">
+                            <div class="image__clear" (click)="clearImage()">X</div>
+                            <img [src]="displayedImage" alt="">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form__actions">
+                    <button class="button-small button" (click)="changeAvatar()"> Upload </button>
+                  </div>
+                </div>
+              </ng-container>
             </div>
             <div class="settings__fieldset" *ngIf="user.id != null && user.id != 0">
               <app-display-cell 

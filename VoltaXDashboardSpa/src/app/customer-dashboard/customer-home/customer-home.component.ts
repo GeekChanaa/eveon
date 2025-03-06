@@ -22,7 +22,8 @@ export class CustomerHomeComponent implements OnInit {
     phone: '',
     role: "Customer",
     isEmailVerified: false,
-    isPhoneVerified: false
+    isPhoneVerified: false,
+    imageUrl: ''
   }
 
   constructor(

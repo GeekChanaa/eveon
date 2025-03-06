@@ -16,5 +16,6 @@ export interface User {
     password?: string;
     orders?: Order[];
     role : string;
+    imageUrl : string;
     [key: string]: any;
   }
