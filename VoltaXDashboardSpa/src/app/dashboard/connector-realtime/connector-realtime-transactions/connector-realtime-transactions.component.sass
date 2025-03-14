@@ -1,6 +1,7 @@
 @import ./../../../../styles/table-stats
 
 
+
 .stopped-reason-description-container
   opacity: 0
   display: none
@@ -25,7 +26,21 @@
   color: var(--primary7)
   fill: var(--primary7)
   border-color: var(--primary7)
-  transition: ease-in-out all 0.4s
+  transition: ease-in-out all .3s
+  display: flex
+  align-items: center
+  justify-content: center
+  .stop__square
+      background: var(--primary6)
+      transition: ease-in-out all .3s
+      height: 12px
+      width: 12px
+      border-radius: 2px
+  &:hover
+    border-color: red
+    .stop__square
+      background: red
+
 
 
 .table__action
@@ -35,8 +50,7 @@
     margin-left: 8px
     border: 1px solid var(--primary3)
     border-radius: 50%
-    svg
-      height: 12px
+    
 
 .request__modal_overlay
   position: fixed

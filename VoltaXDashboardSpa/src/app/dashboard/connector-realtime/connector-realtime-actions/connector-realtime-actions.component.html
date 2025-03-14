@@ -42,9 +42,11 @@
         *ngIf="requestHandlerModalVisible == 'ClearCacheRequest'"></app-clear-cache-request>
       <app-clear-display-message-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'ClearDisplayMessageRequest'"></app-clear-display-message-request>
       <app-clear-variable-monitoring-request 
         [chargePointID]="chargePoint.chargePointId"
+        (successEvent)="closeModal()"
         *ngIf="requestHandlerModalVisible == 'ClearVariableMonitoringRequest'"></app-clear-variable-monitoring-request>
       <app-get-display-messages-request 
         [chargePointID]="chargePoint.chargePointId"

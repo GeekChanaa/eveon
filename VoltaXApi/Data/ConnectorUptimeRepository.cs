@@ -64,9 +64,6 @@ namespace VoltaXApi.Data
             var lastUptime = await _context.ConnectorUptimes.Where( u => u.ConnectorID == connectorID)
                                                         .OrderByDescending(u => u.StartDate)
                                                         .FirstOrDefaultAsync();
-
-            Console.WriteLine("this is the last ConnectorID UPTIME : " + lastUptime.ID);
-            Console.WriteLine("this is the last ConnectorID UPTIME : " + lastUptime.ID);
             if(lastUptime == null)
             {
                 ConnectorUptime connectorUptime = new ()

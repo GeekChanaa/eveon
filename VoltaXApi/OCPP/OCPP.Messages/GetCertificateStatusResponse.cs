@@ -8,7 +8,7 @@ namespace VoltaXApi.OCPP.Messages
       [Required]
       public GetCertificateStatusEnumType Status { get; set; }
 
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       public StatusInfoType StatusInfo { get; set; }
 

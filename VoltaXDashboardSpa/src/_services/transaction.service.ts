@@ -4,6 +4,7 @@ import { Transaction } from 'src/_models/transaction';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
 import { Observable } from 'rxjs';
+import { PaginatedResult } from 'src/_models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -42,8 +43,8 @@ export class TransactionService extends AbstractService<Transaction>{
     return this.http.get<any[]>(this.baseUrl+"GetLatestTransactions");
   }
 
-  getChargePointTransactions(chargePointID : number){
-    return this.http.get<any[]>(this.baseUrl+"GetChargePointTransactions/"+chargePointID);
+  getChargePointTransactions(chargePointID : number,page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<any[]>>{
+    return super.getAll(page,itemsPerPage,itemParams,"GetChargePointTransactions/"+chargePointID);
   }
 
 

@@ -4,9 +4,12 @@
 
 
 <div class="chargePoint-actions">
-  <div (click)="openRequestHanlderModal('RefreshChargerComponents')" class="button button-dark chargePoint-action">
-    Refresh Charger Components
-  </div>
+  <app-card-action
+      class="request__action" 
+      icon="reset"
+      [actionName]="'Refresh Charger Components'"
+      (actionClick)="openRequestHanlderModal('RefreshChargerComponents')"
+      ></app-card-action>
 
   
 

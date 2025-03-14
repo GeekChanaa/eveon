@@ -1,0 +1,196 @@
+{
+    "requestId": 516417,
+    "generatedAt": "2025-03-11T15:53:04Z",
+    "tbc": false,
+    "seqNo": 0,
+    "reportData": [
+        {
+            "component": {
+                "name": "ChargingStation"
+            },
+            "variable": {
+                "name": "AvailabilityState"
+            },
+            "variableAttribute": [
+                {
+                    "value": "Available",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "name": "ChargingStation"
+            },
+            "variable": {
+                "name": "Available"
+            },
+            "variableAttribute": [
+                {
+                    "value": "true",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 1,
+                    "connectorId": 1
+                },
+                "name": "Connector"
+            },
+            "variable": {
+                "name": "AvailabilityState"
+            },
+            "variableAttribute": [
+                {
+                    "value": "Available",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 1,
+                    "connectorId": 1
+                },
+                "name": "Connector"
+            },
+            "variable": {
+                "name": "Available"
+            },
+            "variableAttribute": [
+                {
+                    "value": "true",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 2,
+                    "connectorId": 1
+                },
+                "name": "Connector"
+            },
+            "variable": {
+                "name": "AvailabilityState"
+            },
+            "variableAttribute": [
+                {
+                    "value": "Available",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 2,
+                    "connectorId": 1
+                },
+                "name": "Connector"
+            },
+            "variable": {
+                "name": "Available"
+            },
+            "variableAttribute": [
+                {
+                    "value": "true",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 1
+                },
+                "name": "EVSE"
+            },
+            "variable": {
+                "name": "AvailabilityState"
+            },
+            "variableAttribute": [
+                {
+                    "value": "Available",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 1
+                },
+                "name": "EVSE"
+            },
+            "variable": {
+                "name": "Available"
+            },
+            "variableAttribute": [
+                {
+                    "value": "true",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 2
+                },
+                "name": "EVSE"
+            },
+            "variable": {
+                "name": "AvailabilityState"
+            },
+            "variableAttribute": [
+                {
+                    "value": "Available",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        },
+        {
+            "component": {
+                "evse": {
+                    "id": 2
+                },
+                "name": "EVSE"
+            },
+            "variable": {
+                "name": "Available"
+            },
+            "variableAttribute": [
+                {
+                    "value": "true",
+                    "mutability": "ReadWrite",
+                    "persistent": true,
+                    "constant": false
+                }
+            ]
+        }
+    ]
+}

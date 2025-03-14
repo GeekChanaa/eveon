@@ -12,7 +12,7 @@ export class GoodByeComponent implements OnInit {
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.router.navigate(['/']); 
+      this.router.navigate(['/auth/login']); 
     }, 5000);
   }
 

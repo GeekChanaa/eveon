@@ -12,28 +12,31 @@ namespace VoltaXApi.OCPP.Handlers
   public class NotifyReportHandler : IOCPPRequestHandler
   {
 
-    private readonly ILogger _logger;
+    private readonly ILogger<NotifyReportHandler> _logger;
     private readonly IMessageLogRepository _msgLogRepo;
     private readonly IConnectorService _connectorService;
     private readonly IConnectorStatusService _connectorStatusService;
+    private readonly IOCPPConfigurationItemRepository _ocppConfigurationItemRepository;
     public NotifyReportHandler(
-      ILoggerFactory loggerFactory,
       IMessageLogRepository messageLogRepository,
       IConnectorService connectorService,
-      IConnectorStatusService connectorStatusService
+      IConnectorStatusService connectorStatusService,
+      ILogger<NotifyReportHandler> logger,
+      IOCPPConfigurationItemRepository ocppConfigurationItemRepository
     )
     {
-        _logger = loggerFactory.CreateLogger(typeof(HeartBeatHandler));
+        _logger = logger;
         _msgLogRepo = messageLogRepository;
         _connectorService = connectorService;
         _connectorStatusService = connectorStatusService;
+        _ocppConfigurationItemRepository = ocppConfigurationItemRepository;
     }
 
     public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
     {
         string errorCode = null;
 
-        _logger.LogTrace("Processing NotifyReport...");
+        _logger.LogInformation("Processing NotifyReport...");
         NotifyReportRequest notifyReportRequest = JsonConvert.DeserializeObject<NotifyReportRequest>(msgIn.JsonPayload);
 
         var connectors = notifyReportRequest.ReportData.Where(d => d.Component.Name == "Connector" && d.Variable.Name == "AvailabilityState").ToList();
@@ -45,6 +48,10 @@ namespace VoltaXApi.OCPP.Handlers
           await this._connectorStatusService.RefreshConnectorStatuses(connectors,chargePointStatus.Id);
         }
 
+        
+        _logger.LogInformation($"Saving OCPP Configurations for chargepoint : {chargePointStatus.Id}");
+        await _ocppConfigurationItemRepository.SaveConfigurationsFromReportAsync(chargePointStatus.Id,notifyReportRequest);
+        _logger.LogInformation($"Finished saving OCPP Configurations for chargepoint : {chargePointStatus.Id}");
 
 
         NotifyReportResponse notifyReportResponse = new NotifyReportResponse();

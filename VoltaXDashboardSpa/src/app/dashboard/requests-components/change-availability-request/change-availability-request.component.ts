@@ -15,7 +15,9 @@ export class ChangeAvailabilityRequestComponent implements OnInit {
   @Input() chargePointID! : string;
   @Output() successEvent : EventEmitter<void> = new EventEmitter();
   @Input() cpID! : number;
-  request : any = {} ;
+  request : any = {
+    operationalStatus : "Operative"
+  } ;
   connectors : any[] = [];
   isLoading : boolean = false;
 

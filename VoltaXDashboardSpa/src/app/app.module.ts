@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -19,7 +19,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { CalendarModule } from 'primeng/calendar';
 import 'prismjs/prism';
 import { GoodByeComponent } from './good-bye/good-bye.component';
+import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 
+
+export function loadMessagesFactory(service: ValidationMessagesService) {
+  return () => service.loadMessages().toPromise().then(messages => service.setMessages(messages));
+}
 @NgModule({
   declarations: [			
       AppComponent,
@@ -45,6 +50,12 @@ import { GoodByeComponent } from './good-bye/good-bye.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loadMessagesFactory,
+      deps: [ValidationMessagesService],
       multi: true
     }
   ],

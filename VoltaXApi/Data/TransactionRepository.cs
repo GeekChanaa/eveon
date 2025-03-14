@@ -316,15 +316,12 @@ namespace VoltaXApi.Data
             return _context.Transactions.Where(t => t.StartCardID == cardID || t.StopCardID == cardID);
         }
 
-        public async Task<List<TransactionListDto>> GetChargePointTransactions(int chargePointID)
+        public IQueryable<TransactionListDto> GetChargePointTransactions(int chargePointID, GlobalParams globalParams)
         {
-            var transactions = await _context
-                .Transactions.Where(u => u.Connector.ChargePointID == chargePointID)
-                .OrderByDescending(u => u.StartTime)
-                .ToListAsync();
-            var transactionsDto = _mapper.Map<List<Transaction>, List<TransactionListDto>>(
-                transactions
-            );
+            var transactions = GetAllAsync(globalParams).Where(u => u.Connector.ChargePointID == chargePointID)
+                .OrderByDescending(u => u.StartTime);
+
+            var transactionsDto = _mapper.ProjectTo<TransactionListDto>(transactions);
             return transactionsDto;
         }
 

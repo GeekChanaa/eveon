@@ -9,45 +9,25 @@ namespace VoltaXApi.OCPP.Services
 {
   public class OCPPTransactionsService : IOCPPTransactionsService
   {
+    private readonly OCPPMessageFactory _messageFactory;
     private readonly OCPPMessageProcessor _messageProcessor;
+    private readonly ILogger<OCPPTransactionsService> _logger;
     public OCPPTransactionsService(
-      OCPPMessageProcessor messageProcessor
-    ){
+      OCPPMessageProcessor messageProcessor,
+      ILogger<OCPPTransactionsService> logger
+    )
+    {
       _messageProcessor = messageProcessor;
+      _messageFactory = new OCPPMessageFactory();
+      _logger = logger;
     }
 
     public async Task GetTransactionStatusRequest(string chargePointID, GetTransactionStatusRequest request)
     {
-        var settings = new JsonSerializerSettings
-            {
-                Converters = new List<JsonConverter> { new StringEnumConverter() }
-                
-            };
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "GetTransactionStatusRequest",
-            JsonPayload = JsonConvert.SerializeObject(request,settings)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
-    }
-
-    public async Task ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request)
-    {
-        var settings = new JsonSerializerSettings
-            {
-                Converters = new List<JsonConverter> { new StringEnumConverter() }
-                
-            };
-        OCPPMessage msg = new OCPPMessage
-        {
-            MessageType = "2",
-            UniqueId = Guid.NewGuid().ToString("N"),
-            Action = "ClearChargingProfile",
-            JsonPayload = JsonConvert.SerializeObject(request,settings)
-        };
-        await _messageProcessor.SendMessage(msg, chargePointID);
+      _logger.LogInformation("Starting GetTransactionStatusRequest for ChargePoint: {ChargePointID}", chargePointID);
+      var msg = _messageFactory.CreateMessage("GetTransactionStatusRequest", request);
+      await _messageProcessor.SendMessage(msg, chargePointID);
+      _logger.LogInformation("Completed GetTransactionStatusRequest for ChargePoint: {ChargePointID}", chargePointID);
     }
   }
 }

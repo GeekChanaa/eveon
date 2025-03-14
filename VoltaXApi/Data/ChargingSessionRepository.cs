@@ -5,16 +5,20 @@ using OCPP.Core.Server;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using VoltaXApi.Helpers;
+using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Data
 {
   public class ChargingSessionRepository : Repository<ChargingSession>, IChargingSessionRepository
   {
     private readonly IMapper _mapper;
+    private readonly ILogger<ChargingSessionRepository> _logger;
     public ChargingSessionRepository(
         VoltaXApiDbContext context,
+        ILogger<ChargingSessionRepository> logger,
         IMapper mapper) : base(context)
     {
+      _logger = logger;
       _mapper = mapper;
     }
 
@@ -35,6 +39,7 @@ namespace VoltaXApi.Data
 
     public async Task<ChargingSessionInformationsDto> GetChargingSessionInformations(int chargingSessionID)
     {
+      _logger.LogInformation("Start VoltaxAPI.Data.GetChargingSessionInformations for chargingSessionID : "+chargingSessionID);
       var result = await _context.ChargingSessions
           .Where(cs => cs.ID == chargingSessionID)
           .Select(cs => new ChargingSessionInformationsDto
@@ -57,18 +62,21 @@ namespace VoltaXApi.Data
           })
           .FirstOrDefaultAsync();
 
-      // Calculating Idle Time for charging session : 
-      var transactionsTime = result.Transactions.Sum(t => (t.StopTime - t.StartTime).Value.TotalMinutes);
+    // Calculating Charging Time for charging session : 
+      var transactionsTime = result.Transactions?.Any() == true
+        ? result.Transactions.Sum(t => 
+            ((t.StopTime ?? DateTime.UtcNow) - t.StartTime).TotalMinutes): 0;
+
       result.ChargingTimeInMinutes = transactionsTime;
       // Get All connectorUptimes for these transactions
       var connectorUptimes = _context.ConnectorUptimes
           .Where(u => u.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
           .Where(u => result.Transactions.Select(u => u.ID).ToList().Contains(u.TransactionID ?? 0))
           .ToList();
-      var totalConnectedTime = connectorUptimes.Sum(cu => (cu.EndDate - cu.StartDate).Value.TotalMinutes);
-      Console.WriteLine("totalConnectedTime : " + totalConnectedTime);
-      var idleTime = (int)(totalConnectedTime - transactionsTime);
 
+      var totalConnectedTime = connectorUptimes.Sum(cu => ((cu.EndDate ?? DateTime.UtcNow) - cu.StartDate).TotalMinutes);
+
+      var idleTime = (int)(totalConnectedTime - transactionsTime);
       if (idleTime < 5)
         result.IdleMinutes = 0;
       else
@@ -150,6 +158,25 @@ namespace VoltaXApi.Data
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
     }
+
+    public async Task<ChargingSession> StartChargingSession(Connector connector, Card card)
+    {
+      ChargingSession chargingSession = new()
+      {
+        ConnectorID = connector.ID,
+        UserID = (int)(card.UserID == null ? 1 : card.UserID),
+        CardID = card.ID,
+        StartDate = DateTime.Now,
+        StoppedReason = ReasonEnumType.Local,
+        ChargingSessionStatus = ChargingSessionStatusEnum.Pending
+      };
+        
+      await this.AddAsync(chargingSession);
+
+      return chargingSession;
+
+    }
+
 
   }
 

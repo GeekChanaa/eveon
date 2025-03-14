@@ -4,25 +4,21 @@
   Asks the Charging Station to clear a display message that has been configured in the Charging Station to be cleared/removed
 </div>
 <div class="request__container">
-  <div class="field">
-    <div class="field__label">Connector
-      <div class="tooltip" title="The connector which you want to change the availability for">
-        <svg class="icon icon-info">
-          <use xlink:href="#icon-info"></use>
-        </svg>
-      </div>
-    </div>
-    <div class="field__wrap">
-      <div class="field__wrap">
-          <input [(ngModel)]="request.id" placeholder="message Id" class="field__input" type="text" required>
-        </div>
-    </div>
-
-  </div>
-
+  <app-form-field
+    class="field"
+    title="Message ID"
+    placeholder="Message ID"
+    description="Id of the message that SHALL be removed from the Charging Station. (integer)"
+    [control]="getControl('id')"
+    inputType="number"
+  ></app-form-field>
   
   <div class="form__actions">
-    <button (click)="clearDisplayMessageRequest()" class="button button__primary button-small stop__btn">
+    <button 
+      (click)="clearDisplayMessageRequest()" 
+      [disabled]="requestForm.invalid"
+      class="button button__primary button-small stop__btn"
+      [ngClass]="{'disabled' : requestForm.invalid}">
       <ng-container *ngIf="isLoading">
         <app-svg-spinner></app-svg-spinner>
       </ng-container>

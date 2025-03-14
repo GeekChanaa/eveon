@@ -2,31 +2,50 @@
   <div class="title">Transactions</div>
 </div>
 
-<div class="stats">
+<div class="stats" *ngIf="transactions != null && transactions.length > 0">
   <div class="stats__table">
     <div class="stats__row">
-      <div class="stats__col">Amount</div>
       <div class="stats__col">Start Result</div>
       <div class="stats__col">Start Time</div>
       <div class="stats__col">Stop Time</div>
+      <div class="stats__col">Charging Session</div>
+      <div class="stats__col">Amount</div>
       <div class="stats__col">Actions</div>
     </div>
     <div class="stats__row" *ngFor="let transaction of transactions">
-      <div class="stats__col">{{transaction.amount | number:'1.2-2'}}</div>
       <div class="stats__col">{{transaction.startResult}}</div>
       <div class="stats__col">{{transaction.startTime | date:"medium"}}</div>
       <div class="stats__col">{{transaction.stopTime | date:"medium"}}</div>
       <div class="stats__col">
-        <button class="table__action stop-btn" (click)="this.stoppingTransactionID = transaction.uid">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1" y="1" width="14" height="14" fill="#000000"/>
-            </svg>
-        </button>
+        <a routerLink="/dashboard/connector-realtime/{{chargePoint.id}}/charging-session/{{transaction.chargingSessionID}}" class="btn__link">
+          {{transaction.chargingSessionID}}
+        </a>
+        
+      </div>
+      <div class="stats__col">{{transaction.amount | number:'1.2-2'}}</div>
+      <div class="stats__col">
+        <ng-container *ngIf="transaction.stopTime == null">
+          <button class="table__action stop-btn" (click)="this.stoppingTransactionID = transaction.uid">
+            <div class="stop__square"></div>
+          </button>
+        </ng-container>
+        
       </div>
     </div>
     
   </div>
+  <div class="pagination__container">
+    <app-pagination
+      [pagination]="pagination"
+      (refreshEvent)="getTransactions($event)"
+      ></app-pagination>
+  </div>
 </div>
+
+<ng-container *ngIf="transactions == null || transactions.length == 0">
+  <app-empty-card
+   [actionName]="'No Transactions'"></app-empty-card>
+</ng-container>
 
 <div class="separator"></div>
 

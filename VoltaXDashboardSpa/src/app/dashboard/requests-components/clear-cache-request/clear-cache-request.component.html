@@ -4,14 +4,12 @@
   Request a cache clear for the Authorization Cache of the charging station
 </div>
 <div class="request__container">
-  
   <div class="form__actions">
     <button (click)="clearCacheRequest()" class="button button__primary button-small stop__btn">
       <ng-container *ngIf="isLoading">
         <app-svg-spinner></app-svg-spinner>
       </ng-container>
       <ng-container *ngIf="!isLoading">Clear Cache Request</ng-container>
-      
     </button>
   </div>
 </div>

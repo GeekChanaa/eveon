@@ -17,13 +17,6 @@ namespace VoltaXApi.OCPP.Controllers
             _transactionsService = transactionsService;
         }
 
-        [HttpPost("ClearChargingProfile/{chargePointID}")]
-        public async Task<IActionResult> ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request)
-        {
-            await _transactionsService.ClearChargingProfile(chargePointID, request);
-            return Ok(new { Message = "ClearChargingProfile request sent successfully." });
-        }
-
         [HttpPost("GetTransactionStatus/{chargePointID}")]
         public async Task<IActionResult> GetTransactionStatus(string chargePointID, GetTransactionStatusRequest request)
         {

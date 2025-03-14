@@ -31,6 +31,7 @@ namespace VoltaXApi.Controllers
         private readonly VoltaXApiDbContext _context;
         private readonly IUserRepository _userRepo;
         private readonly IMailService _mailService;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
                 IAuthRepository repo,
@@ -38,7 +39,8 @@ namespace VoltaXApi.Controllers
                 IConfiguration config,
                 IMailService mailService,
                 IAuthService authService,
-                VoltaXApiDbContext context)
+                VoltaXApiDbContext context,
+                ILogger<AuthController> logger)
         {
             _repo = repo;
             _config = config;
@@ -46,6 +48,7 @@ namespace VoltaXApi.Controllers
             _userRepo = userRepo;
             _authService = authService;
             _mailService = mailService;
+            _logger = logger;
         }
 
         // Registration Method
@@ -80,7 +83,8 @@ namespace VoltaXApi.Controllers
                 Subject = "Email Verification",
                 Body = ""
             };
-            await this._mailService.SendVerificationEmailAsync(requ, spaLink + "auth/verify-email?email=" + createdUser.Email + "&token=" + createdUser.EmailVerificationToken);
+            string verificationLink = spaLink + "auth/verify-email?email=" + createdUser.Email + "&token=" + createdUser.EmailVerificationToken;
+            await this._mailService.SendVerificationEmailAsync(requ, verificationLink);
 
             await _context.SaveChangesAsync();
 
@@ -118,8 +122,6 @@ namespace VoltaXApi.Controllers
                 new Claim(ClaimTypes.Surname, userFromRepo.LastName),
                 new Claim(ClaimTypes.Role, userFromRepo.Role.ToString())
             };
-
-
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
 

@@ -137,19 +137,19 @@ EOSSH
 main() {
     
     # Modify Kestrel configuration
-    # echo -e "${BLUE}modifying the kestrel config${NC}"
-    # modify_kestrel_config
+    echo -e "${BLUE}modifying the kestrel config${NC}"
+    modify_kestrel_config
 
     # # Update database context configuration
-    # echo -e "${BLUE}modifying the db context${NC}"
-    # update_db_context
+    echo -e "${BLUE}modifying the db context${NC}"
+    update_db_context
 
     # # Handle database migrations
-    # echo -e "${BLUE}updating remote database${NC}"
-    # handle_database_migrations
+    echo -e "${BLUE}updating remote database${NC}"
+    handle_database_migrations
 
     # # Build and push Docker image
-    # build_docker_image
+    build_docker_image
 
     # Deploy to AWS
     deploy_to_aws

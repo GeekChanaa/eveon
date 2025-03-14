@@ -1,0 +1,9 @@
+{
+    "required": "This field is required.",
+    "email": "Please enter a valid email address.",
+    "minlength": "The minimum length is {min} characters.",
+    "maxlength": "The maximum length is {max} characters.",
+    "pattern": "Invalid format.",
+    "match": "Passwords do not match.",
+    "customError": "Custom validation error message."
+  }

@@ -75,9 +75,6 @@ namespace VoltaXApi.OCPP.Handlers
                         DumpMessage(bMessage, "incoming");
 
                         string ocppMessage = Encoding.UTF8.GetString(bMessage);
-
-                        Console.WriteLine("this is the bbmessage : ");
-                        Console.WriteLine(ocppMessage);
                         
                         await _hubContext.Clients.Group(chargePointStatus.Id).SendAsync("SentMessage", JsonConvert.SerializeObject(ocppMessage));
 
@@ -111,8 +108,6 @@ namespace VoltaXApi.OCPP.Handlers
 
         private async  Task<OCPPMessage>? ValidatingOCPPMessage(ChargePointStatus chargePointStatus,string ocppMessage, HttpContext context)
         {
-            Console.WriteLine("this is the validation of the ocpp message");
-            Console.WriteLine(ocppMessage);
             Match match = Regex.Match(ocppMessage, MessageRegExp);
             if (match != null && match.Groups != null && match.Groups.Count >= 3)
             {
@@ -121,8 +116,6 @@ namespace VoltaXApi.OCPP.Handlers
                 string action = match.Groups[3].Value;
                 string jsonPayload = match.Groups[4].Value;
                 var msg =  new OCPPMessage(messageTypeId, uniqueId, action, jsonPayload, ocppMessage);
-                Console.WriteLine("ocppmessag.jsonpayload");
-                Console.WriteLine(msg.JsonPayload);
                 return msg;
             }
             else

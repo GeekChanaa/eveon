@@ -26,7 +26,7 @@ namespace VoltaXApi.OCPP.Messages
 
   public class ReportDataType
   {
-      public CustomDataType CustomData { get; set; }
+      public CustomDataType? CustomData { get; set; }
 
       [Required]
       public ComponentType Component { get; set; }
@@ -35,10 +35,10 @@ namespace VoltaXApi.OCPP.Messages
       public VariableType Variable { get; set; }
 
       [Required]
-      [MinLength(1), MaxLength(4)] // Enforce min and max items in array
+      [MinLength(1), MaxLength(4)] 
       public List<VariableAttributeType> VariableAttribute { get; set; }
 
-      public VariableCharacteristicsType VariableCharacteristics { get; set; }
+      public VariableCharacteristicsType? VariableCharacteristics { get; set; }
   }
 
   public class VariableAttributeType

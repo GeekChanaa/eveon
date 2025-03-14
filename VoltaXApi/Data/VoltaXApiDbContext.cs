@@ -201,6 +201,19 @@ namespace VoltaXApi.Data
         public DbSet<ChargePointConfigurationItem> ChargePointConfigurationItems { get; set; }
         public DbSet<ConfigurationItemVariableAttribute> ConfigurationItemVariableAttributes { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+
+        // OCPP Configurations
+        public DbSet<OCPPConfigurationItem> OCPPConfigurationItems { get; set; }
+        public DbSet<OCPPConfigurationComponent> OCPPConfigurationComponents { get; set; }
+        public DbSet<OCPPConfigurationEVSE> OCPPConfigurationEVSEs { get; set; }
+        public DbSet<OCPPConfigurationVariable> OCPPConfigurationVariables { get; set; }
+        public DbSet<OCPPConfigurationVariableAttribute> OCPPConfigurationVariableAttributes { get; set; }
+        public DbSet<OCPPConfigurationVariableCharacteristic> OCPPConfigurationVariableCharacteristics { get; set; }
+
+        // OCPP Display Messages
+        public DbSet<OCPPDisplayMessageInfo> OCPPDisplayMessageInfos { get; set; }
+        public DbSet<OCPPDisplayMessageContent> OCPPDisplayMessageContents { get; set; }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();

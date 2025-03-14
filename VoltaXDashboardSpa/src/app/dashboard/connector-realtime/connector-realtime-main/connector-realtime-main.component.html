@@ -53,7 +53,7 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('OCPPConfiguration')">
-        <app-connector-realtime-ocpp-configuration class="settings__container"></app-connector-realtime-ocpp-configuration>
+        <app-connector-realtime-ocpp-configuration [chargePoint]="chargePoint" class="settings__container"></app-connector-realtime-ocpp-configuration>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('Firmware')">

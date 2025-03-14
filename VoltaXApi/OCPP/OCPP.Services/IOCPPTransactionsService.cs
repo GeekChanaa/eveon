@@ -7,6 +7,5 @@ namespace VoltaXApi.OCPP.Core
   public interface IOCPPTransactionsService
   {
       Task GetTransactionStatusRequest(string chargePointID, GetTransactionStatusRequest request);
-      Task ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request);
   }
 }

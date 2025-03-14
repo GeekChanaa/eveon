@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class CardActionComponent implements OnInit {
 
   @Input() actionName : string = ""
+  @Input() icon : string = "info"
   @Output() actionClick = new EventEmitter<void>();
   
   constructor() { }

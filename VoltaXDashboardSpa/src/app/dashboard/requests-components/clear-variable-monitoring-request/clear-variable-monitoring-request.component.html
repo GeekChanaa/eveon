@@ -34,7 +34,11 @@
 
   
   <div class="form__actions">
-    <button (click)="clearVariableMonitoringRequest()" class="button button__primary button-small stop__btn">
+    <button 
+    [disabled]="isInvalidForm()"
+    [ngClass]="{'disabled' : isInvalidForm()}"
+    (click)="clearVariableMonitoringRequest()" 
+    class="button button__primary button-small stop__btn">
       <ng-container *ngIf="isLoading">
         <app-svg-spinner></app-svg-spinner>
       </ng-container>

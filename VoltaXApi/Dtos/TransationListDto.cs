@@ -5,6 +5,7 @@ namespace VoltaXApi.Dtos
         public string? Uid { get; set; }
         public string? ChargePointID { get; set; }
         public int ConnectorID { get; set; }
+        public int ChargingSessionID { get; set; }
         public string? StartTagId { get; set; }
         public DateTime StartTime { get; set; }
         public double MeterStart { get; set; }

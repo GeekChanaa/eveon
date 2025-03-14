@@ -55,4 +55,7 @@ export class ClearVariableMonitoringRequestComponent implements OnInit {
     this.request.id = this.request.id.filter((num: number) => num !== monitorID);
   }
 
+  isInvalidForm(){
+    return this.request.id.length < 1
+  }
 }

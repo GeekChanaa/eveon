@@ -7,11 +7,15 @@
     </div>
   </div>
   <div class="field__wrap">
-    <input class="field__input" type="text" [formControl]="control" placeholder="Value" required>
+    <input class="field__input" 
+      type="{{inputType}}" 
+      [formControl]="control" 
+      placeholder="{{placeholder}}"
+      required>
     <app-svg-spinner *ngIf="loading"></app-svg-spinner>
     
   </div>
-  <div class="error" *ngIf="isError && errorMessage != null && errorMessage != ''">
-    {{errorMessage}}
+  <div class="error" *ngIf="control.invalid && control.touched">
+    {{ getErrorMessage() }}
   </div>
 </div>

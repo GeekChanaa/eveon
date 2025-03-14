@@ -7,6 +7,7 @@ using VoltaXApi.OCPP.Models;
 using VoltaXApi.Data.Seeders;
 using VoltaXApi.OCPP.Services;
 using Microsoft.IdentityModel.Tokens;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Services
 {
@@ -58,22 +59,13 @@ namespace VoltaXApi.Services
     {
       try
       {
-        Card? card = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).First();
-        int cardTagID = card.ID;
+        Card? card = await _cardRepository.GetCardByNumber(idTag);
+        if(card == null) throw new CardNotFoundException("Invalid Card");
+
         int chargePointID = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id)).ID;
 
         
-        ChargingSession chargingSession = new()
-        {
-          ConnectorID = connector.ID,
-          UserID = (int)(card.UserID == null ? 1 : card.UserID),
-          CardID = card.ID,
-          StartDate = DateTime.Now,
-          StoppedReason = ReasonEnumType.Local,
-          ChargingSessionStatus = ChargingSessionStatusEnum.Pending
-        };
-
-        await this._chargingSessionRepository.AddAsync(chargingSession);
+        var chargingSession = await _chargingSessionRepository.StartChargingSession(connector,card);
 
 
         transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
@@ -84,7 +76,7 @@ namespace VoltaXApi.Services
             Transaction transaction = new Transaction();
             transaction.Uid = transactionEventRequest.TransactionInfo.TransactionId;
             transaction.ConnectorID = connector.ID;
-            transaction.StartCardID = cardTagID;
+            transaction.StartCardID = card.ID;
             transaction.ChargingSessionID = chargingSession.ID;
             transaction.StartTime = DateTime.Parse(transactionEventRequest.Timestamp);
             transaction.MeterStart = meterKWH;
@@ -167,8 +159,6 @@ namespace VoltaXApi.Services
             _context.SaveChanges();
             var kwhs = transaction.MeterStop - transaction.MeterStart;
             var amount = (decimal) kwhs * connector.PricePerKWh;
-            Console.WriteLine("this is the amount to substract because it's not enough : " + amount);
-            Console.WriteLine("balance : " + card.Balance);
             if((decimal) card.Balance <= amount+5)
             { 
               RequestStopTransactionRequest request = new(){

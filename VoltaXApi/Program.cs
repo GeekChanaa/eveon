@@ -27,6 +27,7 @@ using AutoMapper;
 using QuestPDF.Infrastructure;
 using VoltaxApi.Helpers;
 using VoltaXApi.Filters;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 // builder.WebHost.ConfigureKestrel(options =>
@@ -36,7 +37,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders(); 
 builder.Logging.AddConsole();     
 builder.Logging.AddDebug(); 
+builder.Logging.SetMinimumLevel(LogLevel.Warning); 
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+// Use Serilog as the logging provider
+builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers(options =>
         {
@@ -137,6 +146,10 @@ builder.Services.AddScoped<IConnectorUptimeRepository, ConnectorUptimeRepository
 builder.Services.AddScoped<IChargingSessionRepository, ChargingSessionRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
+builder.Services.AddScoped<IOCPPConfigurationComponentRepository, OCPPConfigurationComponentRepository>();
+builder.Services.AddScoped<IOCPPConfigurationVariableRepository, OCPPConfigurationVariableRepository>();
+
+builder.Services.AddScoped<IOCPPConfigurationItemRepository,OCPPConfigurationItemRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
@@ -220,8 +233,8 @@ builder.Services.AddAutoMapper(typeof(MessageLogMapperProfile));
 builder.Services.AddAutoMapper(typeof(RatingMapperProfile));
 builder.Services.AddAutoMapper(typeof(PartnerMapperProfile));
 builder.Services.AddAutoMapper(typeof(TransactionMapperProfile));
- builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
-         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // builder.Services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
 // {

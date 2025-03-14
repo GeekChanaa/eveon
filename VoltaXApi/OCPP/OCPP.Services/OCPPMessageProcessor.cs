@@ -16,26 +16,24 @@ namespace VoltaXApi.OCPP.Core
 {
   public class OCPPMessageProcessor
   {
-    private readonly ILogger _logger;
     private readonly IConfiguration _config;
-    private readonly ILoggerFactory _loggerFactory;
     private readonly ControllerOCPP20 _controller20;
     private readonly RequestQueueManagerService _requestQueueManagerService;
     private readonly WebSocketManagerService _wsManagerService;
     private readonly IHubContext<ChargerHub> _hubContext;
     private readonly OCPPRequestHandler _reqHandler;
+    private readonly ILogger<OCPPMessageProcessor> _logger;
 
     public OCPPMessageProcessor(
-        ILoggerFactory loggerFactory, 
         IConfiguration config,
         RequestQueueManagerService requestQueueManagerService,
         WebSocketManagerService wsManagerService,
         IHubContext<ChargerHub> hubContext,
-        OCPPRequestHandler requestHandler)
+        OCPPRequestHandler requestHandler,
+        ILogger<OCPPMessageProcessor> logger)
     {
         _config = config;
-        _loggerFactory = loggerFactory;
-        _logger = _loggerFactory.CreateLogger(typeof(OCPPMessageProcessor));
+        _logger = logger;
         _requestQueueManagerService = requestQueueManagerService;
         _wsManagerService = wsManagerService;
         _hubContext = hubContext;
@@ -51,8 +49,6 @@ namespace VoltaXApi.OCPP.Core
         switch (message.MessageType)
         {
             case "2":
-                Console.WriteLine("process message in");
-                Console.WriteLine(message.JsonPayload);
                 OCPPMessage msgOut = await _reqHandler.ProcessRequest(message,chargePointStatus);
                 await SendMessage(msgOut, chargePointStatus.Id);
                 break;
@@ -78,8 +74,6 @@ namespace VoltaXApi.OCPP.Core
 
     public async Task SendMessage(OCPPMessage message, string chargePointID)
     {
-        Console.WriteLine("SEND MESSAGE LOGGING");
-        Console.WriteLine(message.JsonPayload);
         var ocppArrayMessage = new object[]
         {
             JRaw.Parse(message.MessageType),
@@ -106,9 +100,9 @@ namespace VoltaXApi.OCPP.Core
 
         string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
 
+        _logger.LogInformation("Message Sent to the Charger : ");
+        _logger.LogInformation(serializedMessage);
         await _hubContext.Clients.Group(chargePointID).SendAsync("ReceiveMessage", serializedMessage);
-
-        
 
         byte[] binaryMessage = Encoding.UTF8.GetBytes(serializedMessage);
 

@@ -16,7 +16,8 @@ export class GetLogRequestComponent implements OnInit {
   @Input() cpID! : number;
   request : any = {
     id : [],
-    log : {}
+    log : {},
+    logType : "DiagnosticsLog"
   } ;
   isLoading : boolean = false;
 
