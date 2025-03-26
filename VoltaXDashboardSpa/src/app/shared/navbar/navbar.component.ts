@@ -2,6 +2,8 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
+import { UserService } from 'src/_services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -9,17 +11,35 @@ import { AuthService } from 'src/_services/auth.service';
   styleUrls: ['./navbar.component.sass']
 })
 export class NavbarComponent implements OnInit {
+  staticUrl : string = environment.apiStaticFilesUrl;
+  user : any = {};
+  imageUrl : string = "";
 
   constructor(
     private _authService : AuthService,
     private _router: Router,
-    private _eRef: ElementRef
+    private _eRef: ElementRef,
+    private _userService : UserService
   ) { }
 
   avatarMenuBody : boolean = false;
 
   // On init cycle hook
   ngOnInit() {
+    var decodedToken = this._authService.getAuthInformation();
+    let userID = parseInt(decodedToken.nameid);
+    this.getUserByID(userID);
+    this._userService.getAvatarUrl().subscribe((url) => {
+      if(url != null)
+        this.imageUrl = this.staticUrl+url;
+    });
+  }
+
+  getUserByID(id : number ){
+    this._userService.getUserInformations(id).subscribe((data) => {
+      this.user = data;
+      this._userService.setAvatarUrl(this.user.imageUrl);
+    })
   }
 
   // Logout

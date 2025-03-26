@@ -5,7 +5,7 @@ public class OCPPConfigurationVariableAttribute: IEntity
 {
     public int ID { get; set; }
     public AttributeEnumType? Type { get; set; } = AttributeEnumType.Actual;
-    public string Value { get; set; }
+    public string? Value { get; set; }
     public MutabilityEnumType? Mutability { get; set; } = MutabilityEnumType.ReadWrite;
     public bool? Persistent { get; set; } = false;
     public bool? Constant { get; set; } = false;    

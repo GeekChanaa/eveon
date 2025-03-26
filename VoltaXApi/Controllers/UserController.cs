@@ -31,6 +31,12 @@ namespace VoltaXApi.Controllers
             _userService = userService;
         }
 
+        [HttpPost("CreateUserDashboard")]
+        public async Task<ActionResult<int>> CreateUserDashboard(UserDashboardCreateDto userToCreate)
+        {
+            return await this._userService.CreateUserDashboard(userToCreate);
+        }
+
         [HttpGet("UserEmailExists")]
         public async Task<ActionResult<Boolean>> UserEmailExists([FromQuery] string email)
         {

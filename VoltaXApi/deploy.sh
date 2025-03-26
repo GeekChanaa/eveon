@@ -128,6 +128,7 @@ deploy_to_aws() {
         
         # Run new container
         docker run -d --name "$PROJECT_NAME" -p 80:5000 "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
+        # docker run -d --name "voltax-api" -p 80:5000 "jaberfeka/voltax-api:latest"
 EOSSH
 
     echo -e "${GREEN}Deployment to AWS machine completed successfully.${NC}"

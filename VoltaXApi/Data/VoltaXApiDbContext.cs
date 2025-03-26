@@ -135,7 +135,14 @@ namespace VoltaXApi.Data
             modelBuilder.Entity<ConnectorUptime>()
                 .Property(c => c.ConnectorUptimeStatus)
                 .HasConversion<string>();
+            
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Phone)
+                .IsUnique();
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

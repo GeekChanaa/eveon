@@ -26,9 +26,11 @@ export class ConnectorStatusesComponent implements OnInit {
     this._connectorStatusService.getNumberOfConnectorsByAllStatus().subscribe((data) => {
       this.availableConnectors = data.nbrAvailableConnectors;
       this.unavailableConnectors = data.nbrUnavailableConnectors;
-      this.faultedConnectors = data.nbrAvailableConnectors;
+      this.faultedConnectors = data.nbrFaultedConnectors;
       this.occupiedConnectors = data.nbrOccupiedConnectors;
-      this.reservedConnectors = data.nbrFaultedConnectors;	
+      this.reservedConnectors = data.nbrReservedConnectors;	
+
+      console.log(this.faultedConnectors);
     });
   }
 

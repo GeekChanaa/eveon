@@ -80,10 +80,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetCardForDisplayByID/{cardID}")]
         public async Task<IActionResult> GetCardForDisplayByID(int cardID)
         {
-            Console.WriteLine("this is in here");
             var card = await this._repository.GetCardForDisplayByID(cardID);
-            Console.WriteLine("this is the card balance : " + card.Balance);
-            Console.WriteLine("this is the card username : " + card.UserName);
             return Ok(card);
         }
     }

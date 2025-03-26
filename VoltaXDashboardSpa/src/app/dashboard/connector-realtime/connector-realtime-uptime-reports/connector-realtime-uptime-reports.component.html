@@ -27,6 +27,12 @@
     </div>
     
   </div>
+  <div class="pagination__container">
+    <!-- <app-pagination
+      [pagination]="pagination"
+      (refreshEvent)="changedReport($event)"
+      ></app-pagination> -->
+  </div>
 </div>
 
 <app-empty-card *ngIf="uptimeLogs == null || uptimeLogs.length <= 0"></app-empty-card>

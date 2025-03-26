@@ -31,7 +31,7 @@ export class PartnerComponent implements OnInit {
     imageUploading: boolean = false;
     displayedLogo: string | null = null;
     selectedFile: File | null = null;
-
+    timestamp : any = new Date().getTime();
     
     
 

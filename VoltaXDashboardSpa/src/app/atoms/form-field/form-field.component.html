@@ -1,20 +1,53 @@
 <div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
   <div class="field__label">{{title | camelCaseToSpace}}
-    <div class="tooltip" title="{{description}}">
+    <div class="tooltip" *ngIf="description" title="{{description}}">
       <svg class="icon icon-info">
         <use xlink:href="#icon-info"></use>
       </svg>
     </div>
   </div>
+  
   <div class="field__wrap">
-    <input class="field__input" 
-      type="{{inputType}}" 
-      [formControl]="control" 
+    <!-- Text Input -->
+    <input *ngIf="inputType === 'text'" 
+      class="field__input"
+      type="text"
+      [formControl]="control"
       placeholder="{{placeholder}}"
-      required>
-    <app-svg-spinner *ngIf="loading"></app-svg-spinner>
+      >
+
+      <input *ngIf="inputType === 'password'" 
+        class="field__input"
+        type="password"
+        [formControl]="control"
+        placeholder="{{placeholder}}"
+        >
     
+    <!-- Checkbox Input -->
+    <label *ngIf="inputType === 'checkbox'" class="checkbox checkbox_reverse">
+      <input 
+        type="checkbox"
+        [formControl]="control"
+        class="checkbox__input">
+      <span class="checkbox__inner">
+        <span class="checkbox__tick"></span>
+        <span class="checkbox__text">{{placeholder}}</span>
+      </span>
+    </label>
+    
+    <!-- Select Input -->
+    <select *ngIf="inputType === 'select'" 
+      class="select" 
+      [formControl]="control">
+      <option *ngFor="let option of options" 
+        [value]="option.value">
+        {{option.label}}
+      </option>
+    </select>
+    
+    <app-svg-spinner *ngIf="loading"></app-svg-spinner>
   </div>
+  
   <div class="error" *ngIf="control.invalid && control.touched">
     {{ getErrorMessage() }}
   </div>

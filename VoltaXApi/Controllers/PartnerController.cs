@@ -46,9 +46,10 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("CreatePartner")]
-        public async Task CreatePartner(CreatePartnerDto partner)
+        public async Task<IActionResult> CreatePartner(CreatePartnerDto partner)
         {
-            await _repository.CreatePartner(partner);
+            int partnerID = await _repository.CreatePartner(partner);
+            return Ok(partnerID);
         }
 
         [HttpGet("PartnerEmailExists")]

@@ -152,20 +152,12 @@
                         </div>
 
                         <div class="field__image" *ngIf="partner.logoUrl && !editingImage">
-                          <img [src]="staticUrl+partner.logoUrl" alt="">
+                          <img [src]="staticUrl+partner.logoUrl+ '?t=' + timestamp" alt="">
                         </div>
                       </div>
 
                     <div class="create__card card" *ngIf="editingImage">
                       <div class="file">
-                        <div class="file__label">Partner Logo
-                          <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
-                            data-position="right">
-                            <svg class="icon icon-info">
-                              <use xlink:href="#icon-info"></use>
-                            </svg>
-                          </div>
-                        </div>
                         <div class="file__wrap">
                           <input class="upload-input" type="file" (change)="handleUpload($event)" />
                           <div class="file__box" *ngIf="!displayedLogo">
@@ -184,16 +176,15 @@
                     </div>
 
                     <div class="form-actions">
-                      <button *ngIf="!editingImage" (click)="editingImage = true" class="button add-images-btn">Edit Image</button>
                     
                       <ng-container *ngIf="editingImage">
                         
-                        <button (click)="editingImage = false" class="button button-stroke"> Cancel </button>
+                        <button (click)="editingImage = false" class="button button-stroke button-small"> Cancel </button>
                         
                         <button 
                           [disabled]="imageUploading" 
                           [ngClass]="{'disabled' : imageUploading}" 
-                          class="button add-images-btn"
+                          class="button add-images-btn button-small"
                           (click)="changeLogo()">
                           <ng-container *ngIf="imageUploading"> <app-svg-spinner></app-svg-spinner> </ng-container>
                           <ng-container *ngIf="!imageUploading"> Upload Image </ng-container>

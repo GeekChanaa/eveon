@@ -90,6 +90,7 @@ export class ProfileComponent implements OnInit {
   getUserByID(id : number ){
     this._userService.getUserInformations(id).subscribe((data) => {
       this.user = data;
+      this._userService.setAvatarUrl(this.user.imageUrl);
     })
   }
 
@@ -110,6 +111,7 @@ export class ProfileComponent implements OnInit {
       this.editingImage = false;
       this.getUserByID(this.userID);
       this._modalService.popup(ActionModalStatusEnum.Success,"Success !", "Image Uploaded Successfully ! ",4000);
+      this.isChangeAvatarModalOpen = false;
     },(error) => {
       this.imageUploading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something Went wrong please try again later", 4000);
@@ -135,4 +137,7 @@ export class ProfileComponent implements OnInit {
     this.selectedFile = null;
   }
 
+  closeModal(){
+    this.isChangeAvatarModalOpen = false;
+  }
 }

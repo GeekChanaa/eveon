@@ -33,7 +33,10 @@ export class ChangeAvailabilityRequestComponent implements OnInit {
 
   getChargePointConnectors(){
     this._connectorService.getChargePointConnectors(this.cpID).subscribe((data) => {
+      this.request.evse = {};
       this.connectors = data;
+      this.request.evse.id = this.connectors[0].connectorID;
+      this.request.evse.connectorId = this.connectors[0].evseID;
     })
   }
 

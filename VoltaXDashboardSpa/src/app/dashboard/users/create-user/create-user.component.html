@@ -1,3 +1,128 @@
-<p>
-  create-user works!
-</p>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">New User</div>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="create">
+        <div class="create__row">
+          <div class="create__col">
+            <div class="create__card card charge_point_form">
+              <div class="create__group create__group3">
+                <app-form-field
+                  class="field"
+                  title="First Name"
+                  description="tbd"
+                  [control]="getControl('firstName')"
+                ></app-form-field>
+                
+                <app-form-field
+                  class="field"
+                  title="Last Name"
+                  description="tbd"
+                  [control]="getControl('lastName')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Email"
+                  description="tbd"
+                  [control]="getControl('email')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="gender"
+                  inputType="select"
+                  description="tbd"
+                  [control]="getControl('gender')"
+                  [options]="genders"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="City"
+                  description="tbd"
+                  [control]="getControl('city')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Car"
+                  description="tbd"
+                  [control]="getControl('car')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Birthday"
+                  description="tbd"
+                  [control]="getControl('birthday')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Phone"
+                  description="tbd"
+                  [control]="getControl('phone')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Password"
+                  inputType="password"
+                  description="tbd"
+                  [control]="getControl('password')"
+                ></app-form-field> 
+
+                <!-- PartnerID -->
+                <app-form-field
+                  class="field"
+                  title="Partner"
+                  inputType="select"
+                  description="tbd"
+                  [control]="getControl('partnerID')"
+                  [options]="partnersOptions"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Verified Email ?"
+                  inputType="checkbox"
+                  description="tbd"
+                  placeholder="verified"
+                  [control]="getControl('isEmailVerified')"
+                ></app-form-field>
+
+                <app-form-field
+                  class="field"
+                  title="Verified Phone ?"
+                  inputType="checkbox"
+                  description="tbd"
+                  placeholder="verified"
+                  [control]="getControl('isPhoneNumberVerified')"
+                ></app-form-field>
+                
+                <app-form-field
+                  class="field"
+                  title="role"
+                  inputType="select"
+                  description="tbd"
+                  [control]="getControl('role')"
+                  [options]="userRoles"
+                ></app-form-field>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="btns_group">
+        <button [disabled]="userForm.invalid" [ngClass]="{'disabled': userForm.invalid}" class="button" type="submit">
+          <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
+          <ng-container *ngIf="!isLoading">
+            Submit
+          </ng-container>
+        </button>
+      </div>
+    </form>
+  </div>

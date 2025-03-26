@@ -3,7 +3,7 @@ import { User } from 'src/_models/user';
 import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 import { UserNameDto } from 'src/_models/_dtos/user-name-dto';
 import { UserDashboardEditInformationsDto } from 'src/_models/_dtos/users-dtos/user-dashboard-edit-informations-dto';
@@ -14,6 +14,17 @@ import { UserListDto } from 'src/_models/_dtos/user-list-dto';
 })
 export class UserService extends AbstractService<User>{
 
+  private avatarUrlSubject = new BehaviorSubject<string | null>(null);
+  // Method to update avatar URL
+  setAvatarUrl(url: string): void {
+    this.avatarUrlSubject.next(url);
+  }
+
+  // Method to get avatar URL as an observable
+  getAvatarUrl(): Observable<string | null> {
+    return this.avatarUrlSubject.asObservable();
+  }
+  
   constructor(protected http: HttpClient) {
     super(http,environment.apiUrl + "/api/user/");
   }
@@ -122,6 +133,10 @@ export class UserService extends AbstractService<User>{
 
   uploadUserAvatar(formData : FormData, userID:  number){
     return this.http.post<any[]>(this.baseUrl + 'UploadUserAvatar/'+userID, formData, { reportProgress: true, observe: 'events' });
+  }
+
+  createUserDashboard(userToCreate : any){
+    return this.http.post<any>(this.baseUrl + 'CreateUserDashboard', userToCreate);
   }
 
 

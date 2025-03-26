@@ -98,16 +98,14 @@ export class CreatePartnerComponent implements OnInit {
     this.partner.bankAccountNumber = partnerForm.bankAccountNumber;
     this.partner.logoUrl = partnerForm.logoUrl;
 
-    this._partnerService.createPartner(this.partner).subscribe((createdCard) => {
+    this._partnerService.createPartner(this.partner).subscribe((partnerID) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Partner Created Successfully",4000);
-      this._router.navigateByUrl('/dashboard/partners');
+      this._router.navigateByUrl('/dashboard/partners/add-partner-logo/'+partnerID);
     },(error) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);
     });
   }
-
-  
 
 }

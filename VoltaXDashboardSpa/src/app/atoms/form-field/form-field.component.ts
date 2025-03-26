@@ -2,6 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 
+export interface SelectOption<T = string> {
+  value: T;
+  label: string;
+  disabled?: boolean;
+}
 @Component({
   selector: 'app-form-field',
   templateUrl: './form-field.component.html',
@@ -18,6 +23,7 @@ export class FormFieldComponent implements OnInit {
   @Input() loading: boolean = false;
   @Input() isError: boolean = false;
   @Input() errorMessage: string= "";
+  @Input() options : SelectOption[] = [];
   
   constructor(
     private _validationMessagesService : ValidationMessagesService

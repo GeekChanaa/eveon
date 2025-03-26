@@ -31,6 +31,8 @@ export class GetDisplayMessagesRequestComponent implements OnInit {
 
   getDisplayMessageRequest(){
     this.isLoading = true;
+    if(this.request.id.length == 0)
+      this.request.id = null;
     this._configurationService.getDisplayMessages(this.chargePointID, this.request).subscribe((data) => {
       this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success,"Success !", "Request Sent successfully ! ",4000);
@@ -43,6 +45,7 @@ export class GetDisplayMessagesRequestComponent implements OnInit {
 
   addMonitorID(){
     if(this.monitorIDInvalid()) return;
+    if(this.request.id == null) this.request.id = [];
     this.request.id.push(this.monitorID);
     this.monitorID = 0;
   }

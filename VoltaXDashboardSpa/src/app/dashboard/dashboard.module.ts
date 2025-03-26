@@ -8,7 +8,6 @@ import { HomeChargerBindListComponent } from './home-charger-bind-list/home-char
 import { HomeComponent } from './home/home.component';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
-import { OcppLocalListComponent } from './ocpp-local-list/ocpp-local-list.component';
 import { RechargeOrdersComponent } from './recharge-orders/recharge-orders.component';
 import { StationLoadBalanceComponent } from './station-load-balance/station-load-balance.component';
 import { TransactionsComponent } from './transactions/transactions.component';
@@ -20,7 +19,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile/profile.component';
 import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
-import { UserComponent } from './users/user/user.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
@@ -42,7 +40,6 @@ import { ChargingSessionsComponent } from './charging-sessions/charging-sessions
       TransactionsComponent,
       RechargeOrdersComponent,
       AlarmManagementComponent,
-      OcppLocalListComponent,
       ChargingProfileComponent,
       OcppConfigurationComponent,
       TabsStatisticsComponent,

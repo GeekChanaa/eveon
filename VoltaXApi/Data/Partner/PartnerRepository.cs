@@ -30,10 +30,11 @@ namespace VoltaXApi.Data
             return partners;
         }
 
-        public async Task CreatePartner(CreatePartnerDto partner)
+        public async Task<int> CreatePartner(CreatePartnerDto partner)
         {
             var partnerToAdd = _mapper.Map<CreatePartnerDto,Partner>(partner);
             await AddAsync(partnerToAdd);
+            return partnerToAdd.ID;
         }
 
         public async Task<PartnerDisplayDto> GetPartnerByID(int id)

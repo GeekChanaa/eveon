@@ -1,26 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using VoltaXApi.Data;
-using Microsoft.AspNetCore.SignalR;
-using VoltaXApi.Models;
-using VoltaXApi.Dtos;
 using System.Threading.Tasks;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Configuration;
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
-using VoltaXApi.Services;
-using VoltaXApi.OCPP.Services;
-using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Exceptions;
+using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 
 namespace VoltaXApi.OCPP.Controllers
 {
+    [ApiController]
     [Route("ocpp/[controller]")]
     public class ConfigurationController : Controller
     {

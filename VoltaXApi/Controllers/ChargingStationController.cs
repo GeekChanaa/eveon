@@ -119,8 +119,6 @@ namespace VoltaXApi.Controllers
             }
             catch (Exception ex)
             {
-                if(ex.InnerException != null)
-                    Console.WriteLine(ex.InnerException);
                 return BadRequest(ex.Message);
             }
 
@@ -141,7 +139,6 @@ namespace VoltaXApi.Controllers
         {
             if (String.IsNullOrEmpty(start) || String.IsNullOrEmpty(end))
             {
-                Console.WriteLine("this is inside the if");
                 return await this._repository.GetPartnerChargingStationRevenue(partnerID,chargingStationID);
             }
 

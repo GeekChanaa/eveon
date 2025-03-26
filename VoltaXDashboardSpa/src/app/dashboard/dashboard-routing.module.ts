@@ -146,6 +146,8 @@ const routes: Routes = [
   {
     path: "ocpp-local-list",
     component: OcppLocalListComponent,
+    loadChildren : () => import('./ocpp-local-list/ocpp-local-list.module')
+      .then(m=>m.OcppLocalListModule)
   },
   {
     path: "station-load-balance",

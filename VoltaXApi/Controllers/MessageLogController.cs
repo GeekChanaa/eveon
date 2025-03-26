@@ -36,7 +36,6 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargePointMessageLogs/{chargePointID}")]
         public async Task<ActionResult<List<MessageLog>>> GetPartnerMessageLogs(string chargePointId , [FromQuery] GlobalParams globalParams)
         {
-            Console.WriteLine("this is the chargepointid : "+chargePointId);
             var msgLogsDto = _repository.GetAllAsync(globalParams).Where(u => u.ChargePointId == chargePointId).ProjectTo<MessageLogListDto>(_mapper.ConfigurationProvider);
             var MessageLogs = await PagedList<MessageLogListDto>.CreateAsync(msgLogsDto, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(MessageLogs.CurrentPage, MessageLogs.PageSize, MessageLogs.TotalCount, MessageLogs.TotalPages);

@@ -23,6 +23,5 @@ namespace VoltaXApi.OCPP.Controllers
             await _transactionsService.GetTransactionStatusRequest(chargePointID, request);
             return Ok(new { Message = "GetTransactionStatus request sent successfully." });
         }
-
     }
 }
