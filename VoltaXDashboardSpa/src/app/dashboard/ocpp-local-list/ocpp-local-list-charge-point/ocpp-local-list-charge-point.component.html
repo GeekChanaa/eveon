@@ -1,0 +1,49 @@
+<div class="page__inner">
+    <div class="page__container page__container--large">
+        <div class="page__title h3">
+            Local List
+        </div>
+        <div class="stats">
+            <ng-container *ngIf="(localListItems == null || localListItems.length == 0) && !isLoading">
+              <app-empty-card></app-empty-card>
+              <ng-container *ngIf="localListVersion == null">
+                <div class="local__list_null-actions">
+                    <button class="button button-primary"> Create New Local List Version </button>
+                    <button class="button button-primary" (click)="refreshLocalListVersion()"> Refresh Local List Version </button>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="isLoading">
+              <app-preloader-container></app-preloader-container>
+            </ng-container>
+            <ng-container *ngIf="!isLoading">
+          
+              <ng-container *ngIf="localListItems.length > 0">
+                <div class="stats__table">
+                  <div class="stats__row">
+                    <div class="stats__col">Start</div>
+                    <div class="stats__col">End</div>
+                    <div class="stats__col">User</div>
+                  </div>
+          
+                  <div class="stats__row" *ngFor="let item of localListItems">
+                    <div class="stats__col">{{ item.startDate | date: "medium" }}</div>
+                    <div class="stats__col">{{ item.endDate | date: "medium" }}</div>
+                    <div class="stats__col">{{ item.userName }}</div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="localListVersion != null"> 
+                <div class="local__list_null-actions">
+                    <button class="button button-primary"> Add New Local List Authorization </button>
+                </div>
+              </ng-container>
+          
+              
+            </ng-container>
+            
+          </div> 
+    </div>
+      
+</div>

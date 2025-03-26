@@ -22,6 +22,7 @@ export class TableListComponent implements OnInit {
   @Input() searchByAttributes: string[] = [];
   @Input() data: any[] = [];
   @Input() deletable: boolean = true;
+  @Input() displayable: boolean = true;
   @Input() isLoading: boolean = true;
   @Input() createLink: string = "/create";
   @Input() routeName : string = "";

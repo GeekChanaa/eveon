@@ -114,7 +114,7 @@
                             <use xlink:href="#icon-trash"></use>
                         </svg>   
                     </button>
-                    <button (click)="display(item)" class="table__action display-btn"> 
+                    <button *ngIf="displayable" (click)="display(item)" class="table__action display-btn"> 
                         <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
                         </svg>  

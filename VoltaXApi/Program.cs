@@ -149,6 +149,10 @@ builder.Services.AddScoped<IChargePointModelRepository, ChargePointModelReposito
 builder.Services.AddScoped<IOCPPConfigurationComponentRepository, OCPPConfigurationComponentRepository>();
 builder.Services.AddScoped<IOCPPConfigurationVariableRepository, OCPPConfigurationVariableRepository>();
 
+// OCPP Local List 
+builder.Services.AddScoped<IOCPPLocalListItemRepository, OCPPLocalListItemRepository>();
+builder.Services.AddScoped<IOCPPLocalListVersionRepository, OCPPLocalListVersionRepository>();
+
 builder.Services.AddScoped<IOCPPConfigurationItemRepository,OCPPConfigurationItemRepository>();
 
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();

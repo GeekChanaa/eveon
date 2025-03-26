@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoltaXApi.Data;
 
@@ -11,9 +12,11 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    partial class VoltaXApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250326205559_ocpp_local_list")]
+    partial class ocpp_local_list
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1798,7 +1801,7 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("OCPPLocalListVersionID")
+                    b.Property<int?>("OCPPLocalListVersionID")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")
@@ -3037,9 +3040,7 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.OCPPLocalListVersion", "OCPPLocalListVersion")
                         .WithMany("OCPPLocalListItems")
-                        .HasForeignKey("OCPPLocalListVersionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OCPPLocalListVersionID");
 
                     b.Navigation("OCPPLocalListVersion");
                 });

@@ -5,10 +5,11 @@
       names="Ocpp Local List"
       [searchByAttributes]="['ChargePointId','Address']"
       routeName="charging-points"
-      createLink="/dashboard/charging-points/create"
+      createLink="''"
       [fields]="fields" 
       [filters]="filters"
       [deletable]="false"
+      [displayable]="false"
       [createLink]="''"
       [getItemsObservable]="getChargePointsObservable.bind(this)"
       searchByPlaceHolder="Search by Name"
@@ -63,8 +64,15 @@
           </div>
           
         </div>
+        
       </ng-container>
-
+      <ng-template appTableCustomButton let-item>
+        <button class="table__action connector__btn" routerLink="/dashboard/ocpp-local-list/charge-point/{{item.id}}"> 
+          <svg class="icon icon-info">
+              <use xlink:href="#icon-info"></use>
+          </svg>  
+        </button>
+      </ng-template>
       
     </app-table-list>
   </div>

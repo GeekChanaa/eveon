@@ -221,6 +221,11 @@ namespace VoltaXApi.Data
         public DbSet<OCPPDisplayMessageInfo> OCPPDisplayMessageInfos { get; set; }
         public DbSet<OCPPDisplayMessageContent> OCPPDisplayMessageContents { get; set; }
 
+        // OCPP Local List
+        public DbSet<OCPPLocalListItem> OCPPLocalListItems { get; set; }
+        public DbSet<OCPPLocalListVersion> OCPPLocalListVersions { get; set; }
+        
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
