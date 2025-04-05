@@ -17,7 +17,8 @@
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
                       [object]="systemReport"
                       inpType="text"
-                      title="userName"
+                      title="User Name"
+                      tooltip="User in relation to this system report"
                       [editable]="false"
                       [val]="systemReport.userName"></app-display-cell>
 
@@ -25,7 +26,8 @@
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
                       [object]="systemReport"
                       inpType="select_enum"
-                      title="Type"
+                      title="Criticality"
+                      tooltip="Criticality of the system report"
                       enumName="ReportCriticality" 
                       val="{{systemReport.criticality}}"></app-display-cell>
 
@@ -35,21 +37,24 @@
                       inpType="select_enum"
                       title="Type"
                       enumName="ReportStatusEnum" 
+                      tooltip="status of the system report"
                       val="{{systemReport.status}}"></app-display-cell>
 
                   <app-display-cell 
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
                       [object]="systemReport"
                       inpType="text"
-                      title="cardNumber"
+                      title="Card Number"
                       [editable]="false"
+                      tooltip="The card number concerned with this system report"
                       [val]="systemReport.cardNumber"></app-display-cell>
 
                   <app-display-cell 
                       [updateObservable]="updateSystemReportObservable.bind(this)" 
                       [object]="systemReport"
                       inpType="text"
-                      title="issueDescription"
+                      title="Issue Description"
+                      tooltip="Description of the issue reported"
                       [editable]="false"
                       [val]="systemReport.issueDescription"></app-display-cell>
                 

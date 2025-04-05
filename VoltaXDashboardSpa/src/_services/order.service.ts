@@ -24,6 +24,10 @@ export class OrderService extends AbstractService<Order>{
     return super.getAll(page,itemsPerPage,itemParams,"GetRechargeOrders");
   }
 
+  getOrder(orderID : number){
+    return this._http.get<number>(this.baseUrl+"GetOrder/"+orderID);
+  }
+
 
   // Counting orders today
   countOrdersToday(){

@@ -7,7 +7,6 @@
         </div>
         <div class="head-actions">
           <button routerLink="/dashboard/system-reports/edit/{{systemReport.id}}" class="button-stroke-blue button-edit button-small">Edit</button>
-          <button (click)="deleteSystemReport(systemReport.id)" class="button-stroke-red button-edit button-small">Delete</button>
         </div>
       </div>
       
@@ -16,7 +15,7 @@
             <app-display-item 
               class="card__display_item"
               name="ID"
-              tooltip="info"  
+              tooltip="Identifier"  
               value="{{systemReport.id}}"></app-display-item>
           </div>
   
@@ -24,7 +23,7 @@
             <app-display-item 
               class="card__display_item"
               name="Assigned To"
-              tooltip="info"  
+              tooltip="Support person assigned to this system report"  
               value="{{systemReport.assignedUserName}}"></app-display-item>
           </div>
   
@@ -32,7 +31,7 @@
             <app-display-item 
               class="card__display_item"
               name="Charge Point"
-              tooltip="info"  
+              tooltip="Charge Point in relation with this system report"  
               value="{{systemReport.chargePointName}}"></app-display-item>
           </div>
 
@@ -41,7 +40,7 @@
             <app-display-item 
               class="card__display_item"
               name="Criticality"
-              tooltip="info"  
+              tooltip="Criticality of the report"  
               value="{{systemReport.criticality}}"></app-display-item>
           </div>
 
@@ -49,7 +48,7 @@
             <app-display-item 
               class="card__display_item"
               name="Category"
-              tooltip="info"  
+              tooltip="Category of the report"  
               value="{{systemReport.reportCategory}}"></app-display-item>
           </div>
 
@@ -57,7 +56,7 @@
             <app-display-item 
               class="card__display_item"
               name="Issue Description"
-              tooltip="info"  
+              tooltip="Issue description of the report"  
               value="{{systemReport.issueDescription}}"></app-display-item>
           </div>
 
@@ -65,7 +64,7 @@
             <app-display-item 
               class="card__display_item"
               name="Connector"
-              tooltip="info"  
+              tooltip="Connector of the report"  
               value="{{systemReport.connectorID}}"></app-display-item>
           </div>
         </div>

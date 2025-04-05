@@ -27,7 +27,10 @@ export class EnumSelectComponent<T extends Record<string, string | number>> impl
     this.options = Object.entries(this.enumType).map(([key, value]) => ({
       key,
       value: String(value), 
-    }));
+    }))
+    console.log("this is the enumtype = ");
+    console.log(this.enumType);
+    console.log(this.options);
   }
 
   writeValue(value: string): void {

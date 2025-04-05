@@ -8,6 +8,7 @@
       createLink="/dashboard/system-reports/create"
       [fields]="fields" 
       [filters]="filters"
+      [searchable]="false"
       [getItemsObservable]="getSystemReportsObservable.bind(this)"
       [deleteItemObservable]="deleteSystemReportObservable.bind(this)"
       [updateItemObservable]="updateSystemReportObservable.bind(this)"
@@ -22,7 +23,7 @@
             <div class="filters__list">
               <div class="field">
                 <div class="field__label">By Status
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <div class="tooltip" title="Status of the system report">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
                     </svg>
@@ -43,7 +44,7 @@
 
               <div class="field">
                 <div class="field__label">By Criticality
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <div class="tooltip" title="Criticality of the system report">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
                     </svg>
@@ -65,7 +66,7 @@
 
               <div class="field">
                 <div class="field__label">By Category
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                  <div class="tooltip" title="Category of the system report">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
                     </svg>

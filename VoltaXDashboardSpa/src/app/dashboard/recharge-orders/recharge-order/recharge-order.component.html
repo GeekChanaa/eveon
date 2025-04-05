@@ -1,3 +1,39 @@
-<p>
-  recharge-order works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Recharge Order</div>
+    <div class="settings">
+      <div class="settings__wrapper">
+        <div class="settings__list">
+          <div class="settings__item">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset" *ngIf="order.id != null">
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="ID"
+                [val]="order.id"></app-display-cell>
+
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Card Number"
+                [val]="order.cardNumber"></app-display-cell>
+
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Amount"
+                [val]="order.amount"></app-display-cell>
+
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Recharge Date"
+                [val]="order.rechargeDate"></app-display-cell>
+
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="User"
+                [val]="order.userName"></app-display-cell>
+
+              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Status"
+                [val]="order.status"></app-display-cell>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

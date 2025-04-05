@@ -39,6 +39,7 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug(); 
 builder.Logging.SetMinimumLevel(LogLevel.Warning); 
 
+
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -198,12 +199,12 @@ builder.Services.AddScoped<Func<TransactionEventHandler>>(sp => () => sp.GetServ
 builder.Services.AddScoped<Func<NotifyReportHandler>>(sp => () => sp.GetService<NotifyReportHandler>());
 
 
-
-
-
+builder.Services.Configure<CompanyInformations>(builder.Configuration.GetSection("CompanyInformations"));
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
 builder.Services.AddScoped<WebSocketSubProtocolMatcher>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();

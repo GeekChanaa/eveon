@@ -11,7 +11,8 @@ namespace VoltaXApi.Data
     public interface IOrderRepository : IRepository<Order>
     {
         Task<double> CountRecharge(Expression<Func<Order, bool>> predicate);
-        Task<InvoiceDTO> GetOrderForInvoice(int orderID);
+        Task<InvoiceData> GetOrderForInvoice(int orderID);
+        Task<DisplayRechargeOrderDto> GetOrder(int orderID);
         IQueryable<Order> GetCardOrders(int cardID);
         Task CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto);
         IQueryable<RechargeOrderListDto> GetRechargeOrders(GlobalParams globalParams);

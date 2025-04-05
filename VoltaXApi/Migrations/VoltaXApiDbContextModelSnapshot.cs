@@ -1948,7 +1948,7 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("CardID")
+                    b.Property<int>("CardID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -3059,7 +3059,9 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany("Orders")
-                        .HasForeignKey("CardID");
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VoltaXApi.Models.User", null)
                         .WithMany("Orders")

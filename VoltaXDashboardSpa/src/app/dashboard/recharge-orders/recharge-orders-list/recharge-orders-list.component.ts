@@ -18,9 +18,10 @@ export class RechargeOrdersListComponent implements OnInit {
 
   order: RechargeOrderListDto = {
     id: 0,
-    cardID: 0,
+    cardNumber: "",
     amount: 0,
     status: '',
+    userName: '',
     rechargeDate: new Date()
   }
 

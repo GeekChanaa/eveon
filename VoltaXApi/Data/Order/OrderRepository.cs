@@ -10,6 +10,7 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Data
 {
@@ -32,6 +33,7 @@ namespace VoltaXApi.Data
                 CardNumber = ro.Card.CardNumber,
                 Status = ro.Status,
                 RechargeDate = ro.RechargeDate,
+                UserName = ro.Card.User.FullName
             });
             return orders;
         }
@@ -59,22 +61,17 @@ namespace VoltaXApi.Data
             return Amount;
         }
 
-        public async Task<InvoiceDTO> GetOrderForInvoice(int orderID)
+        public async Task<InvoiceData> GetOrderForInvoice(int orderID)
         {
-            var order = _context.Orders.Include(u => u.Card).ThenInclude(u => u.User).FirstOrDefault(u => u.ID == orderID);
-            var invoice = new InvoiceDTO
-            {
-                OrderNumber = order.ID.ToString(),
-                BilledTo = $"{order.Card.User.FirstName} {order.Card.User.LastName}",
-                PayTo = "VoltaX Charging",
-                PaymentMethod = "CMI",
-                Phone = order.Card.User.Phone,
-                Email = order.Card.User.Email,
-                CardID = order.Card.CardNumber,
-                Date = order.RechargeDate.ToString("dd MMM yyyy"),
-            };
-
-            return invoice;
+            return await  _context.Orders.Where(u => u.ID == orderID).Select(o => new InvoiceData{
+                Date = o.RechargeDate.ToString("dd MMM yyyy"),
+                InvoiceNumber = o.ID.ToString(),
+                CardNumber = o.Card.CardNumber,
+                BilledTo = $"{o.Card.User.FirstName} {o.Card.User.LastName}",
+                TotalAmount = o.Amount,
+                AmountHT = o.Amount - o.Amount*0.8,
+                VAT = o.Amount - o.Amount*0.2
+            }).FirstOrDefaultAsync();
         }
 
         public IQueryable<Order> GetCardOrders(int cardID)
@@ -87,6 +84,23 @@ namespace VoltaXApi.Data
             Order order = _mapper.Map<CreateRechargeOrderDto,Order>(rechargeOrderDto);
             await AddAsync(order);
         }
+
+        public async Task<DisplayRechargeOrderDto> GetOrder(int orderID)
+        {
+            DisplayRechargeOrderDto order = await dbSet.Select(o => new DisplayRechargeOrderDto{
+                ID = o.ID,
+                CardID = o.CardID,
+                CardNumber = o.Card.CardNumber,
+                Amount = o.Amount,
+                RechargeDate = o.RechargeDate,
+                UserName = o.Card.User.FullName,
+                Status = o.Status
+            }).FirstOrDefaultAsync(u => u.ID == orderID);
+            if(order == null) throw new NotFoundException("Order With ID Not Found");
+
+            return order;
+        }
+
 
 
     }

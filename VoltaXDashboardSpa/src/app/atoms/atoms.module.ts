@@ -43,6 +43,7 @@ import { SafeUrlPipe } from 'src/pipes/safe-url.pipe';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive';
 import { CardActionComponent } from './card-action/card-action.component';
+import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { CardActionComponent } from './card-action/card-action.component';
     ConfirmModalComponent,
     ConfirmActionDirective,
     CamelCaseToSpacePipe,
-    CardActionComponent
+    CardActionComponent,
+    AppTableCustomButtonDirective
   ],
   imports: [
     CommonModule,
@@ -132,6 +134,7 @@ import { CardActionComponent } from './card-action/card-action.component';
     ConfirmActionDirective,
     SafeUrlPipe,
     CamelCaseToSpacePipe,
+    AppTableCustomButtonDirective,
     CardActionComponent
   ],
   providers: [],

@@ -22,10 +22,14 @@ namespace VoltaXApi.Controllers
     {
         private readonly IOrderRepository _repository;
         private readonly IOrderService _orderService;
+        private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService; 
 
-        public OrderController(IOrderRepository repository) : base(repository)
+        public OrderController(
+            IOrderRepository repository,
+            IInvoiceGeneratorService<InvoiceData> invoiceService) : base(repository)
         {
             _repository = repository;
+            _invoiceService = invoiceService; 
         }
 
         // You can override the base methods or add specific methods for this controller
@@ -181,6 +185,12 @@ namespace VoltaXApi.Controllers
             return Ok(await this._repository.GetOrderForInvoice(orderID));
         }
 
+        [HttpGet("GetOrder/{orderID}")]
+        public async Task<IActionResult> GetOrder(int orderID)
+        {
+            return Ok(await this._repository.GetOrder(orderID));
+        }
+
         [HttpGet("GetCardOrders/{cardID}")]
         public async Task<ActionResult<List<Order>>> GetCardOrders(int cardID,[FromQuery] GlobalParams globalParams)
         {
@@ -197,6 +207,14 @@ namespace VoltaXApi.Controllers
             var ordersList = await PagedList<RechargeOrderListDto>.CreateAsync(orders,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(ordersList.CurrentPage, ordersList.PageSize, ordersList.TotalCount, ordersList.TotalPages);
             return ordersList;
+        }
+
+        [HttpGet("GetOrderInvoice/{orderID}")]
+        public async Task<IActionResult> GetOrderInvoice(int orderID)
+        {
+            InvoiceData orderInvoiceInformations = await _repository.GetOrderForInvoice(orderID);
+            var pdfBytes = _invoiceService.GenerateInvoice(orderInvoiceInformations, "Invoice Testing.pdf");
+            return File(pdfBytes, "application/pdf", "Invoice.pdf");
         }
     }
 }

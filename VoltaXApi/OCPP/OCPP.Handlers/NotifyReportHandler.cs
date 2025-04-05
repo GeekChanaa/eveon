@@ -47,7 +47,6 @@ namespace VoltaXApi.OCPP.Handlers
           // Refreshing Connector Statuses based on the request
           await this._connectorStatusService.RefreshConnectorStatuses(connectors,chargePointStatus.Id);
         }
-
         
         _logger.LogInformation($"Saving OCPP Configurations for chargepoint : {chargePointStatus.Id}");
         await _ocppConfigurationItemRepository.SaveConfigurationsFromReportAsync(chargePointStatus.Id,notifyReportRequest);

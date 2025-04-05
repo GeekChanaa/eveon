@@ -15,7 +15,6 @@ import { OcppLocalListChargePointComponent } from './ocpp-local-list-charge-poin
         OcppLocalListComponent,
         OcppLocalListChargePointsComponent,
         OcppLocalListChargePointComponent,
-        AppTableCustomButtonDirective
     ],
     imports: [
         AtomsModule,

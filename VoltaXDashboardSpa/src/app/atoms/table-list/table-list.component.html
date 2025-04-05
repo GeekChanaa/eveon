@@ -3,7 +3,7 @@
   <app-progress-bar *ngIf="isLoading"></app-progress-bar>
   <div class="card__head">
     <div class="title-purple card__title">{{names | titlecase}}</div>
-    <form class="form">
+    <form class="form" *ngIf="searchable">
       <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
 
       <button class="form__button" (click)="search()">
@@ -12,8 +12,8 @@
         </svg>
       </button>
     </form>
-    <div class="card__nav" *ngIf="createLink != ''">
-      <button routerLink="{{createLink}}" class="card__link">New</button>
+    <div class="card__nav">
+      <button  *ngIf="createLink != ''" routerLink="{{createLink}}" class="card__link">New</button>
     </div>
     <div class="filters" [ngClass]="{'active': isActive}">
       <button class="button-square-stroke button-small filters__head" (click)="toggleActive($event)">

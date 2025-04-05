@@ -16,6 +16,7 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   @Input() object : any = {};
   @Input() inpType : string = "text";
   @Input() enumName : string = "";
+  @Input() tooltip : string = "";
   @Input() editable : boolean = true;
   @Input() isLink : boolean = false;
   @Input() link : string = "";

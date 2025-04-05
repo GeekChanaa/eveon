@@ -34,7 +34,6 @@ import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ra
       ConnectorRealtimeComponent,
       ConnectorRealtimeListComponent,
       ConnectorRealtimeActionsComponent,
-      AppTableCustomButtonDirective,
       RequestHandlerComponent,
       ConnectorRealtimeDetailsSettingsComponent,
       ConnectorRealtimeFirmwareComponent,
