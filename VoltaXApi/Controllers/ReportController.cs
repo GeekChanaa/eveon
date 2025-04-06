@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
 using VoltaXApi.Helpers;
+using VoltaxApi.Dtos;
 
 namespace VoltaXApi.Controllers
 {
@@ -21,17 +22,20 @@ namespace VoltaXApi.Controllers
     public class ReportController : GenericController<Report>
     {
         private readonly IReportRepository _repository;
-        private readonly IReportService _ReportService;
+        private readonly IReportService _reportService;
 
-        public ReportController(IReportRepository repository) : base(repository)
+        public ReportController(
+            IReportRepository repository,
+            IReportService reportService) : base(repository)
         {
             _repository = repository;
+            _reportService = reportService;
         }
 
         [HttpPost("CreateReport")]
         public async Task<IActionResult> CreateReport(CreateReportDto reportDto)
         {
-            await this._repository.CreateReport(reportDto);
+            await this._reportService.HandleReport(reportDto);
             return StatusCode(204);
         }
 
@@ -40,6 +44,15 @@ namespace VoltaXApi.Controllers
         {
             var report = await this._repository.GetReportByID(reportID);
             return Ok(report);
+        }
+
+        [HttpGet("GetAllReports")]
+        public async Task<PagedList<ReportListDto>> GetAllReports([FromQuery] GlobalParams globalParams)
+        {
+            var reports = this._repository.GetAllReports(globalParams);
+            var reportsList = await PagedList<ReportListDto>.CreateAsync(reports,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(reportsList.CurrentPage, reportsList.PageSize, reportsList.TotalCount, reportsList.TotalPages);
+            return reportsList;
         }
     }
 }

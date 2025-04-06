@@ -44,6 +44,14 @@
         {{option.label}}
       </option>
     </select>
+
+    <ng-container *ngIf="inputType == 'textarea'">
+      <textarea 
+        [formControl]="control"
+        placeholder="{{placeholder}}"
+        class="field__input"
+        ></textarea>
+    </ng-container>
     
     <app-svg-spinner *ngIf="loading"></app-svg-spinner>
   </div>

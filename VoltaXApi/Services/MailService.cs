@@ -9,6 +9,7 @@ using System.IO;
 using System;
 using MailKit;
 using VoltaxApi.Helpers;
+using VoltaXApi.Data;
 
 namespace VoltaXApi.Services
 {
@@ -19,19 +20,22 @@ namespace VoltaXApi.Services
 		private readonly IConfiguration _configuration;
 		private readonly SupportEmails _supportEmails;
 		private readonly IWebHostEnvironment _env;
+		private readonly IReportRepository _reportRepo;
 
 		public MailService(
 					IOptions<MailSettings> mailSettings,
 					IEmailTemplateService emailTemplateService,
 					IConfiguration config,
 					IOptions<SupportEmails> supportEmails,
-					IWebHostEnvironment env)
+					IWebHostEnvironment env,
+					IReportRepository reportRepository)
 		{
 			_mailSettings = mailSettings.Value;
 			_emailTemplateService = emailTemplateService;
 			_configuration = config;
 			_supportEmails = supportEmails.Value;
 			_env = env;
+			_reportRepo = reportRepository;
 		}
 
 		public async Task SendEmailAsync(MailRequest mailRequest)
@@ -111,6 +115,33 @@ namespace VoltaXApi.Services
 				Subject = "System Report"
 			};
 			await SendReportEmail(mailRequest, report);
+		}
+
+		public async Task SendReportEmailToSupport(int reportID)
+		{
+			MailRequest mailRequest = new()
+			{
+				Name = "System",
+				ToEmails = new List<string> { _supportEmails.Support },
+				Subject = "System Report"
+			};
+			await SendReportEmail(mailRequest, reportID);
+		}
+
+		public async Task SendReportEmail(MailRequest mailRequest, int reportID)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var report = await _reportRepo.GetByIdAsync(reportID);
+			var template = GetEmailTemplate("system-report");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+						{ "IssueDescription", report.IssueDescription },
+						{ "ReportLink", report.ID.ToString() }
+					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
 		}
 
 		public async Task SendReportEmail(MailRequest mailRequest, SystemReport report)

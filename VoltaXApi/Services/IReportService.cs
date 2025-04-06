@@ -5,5 +5,6 @@ namespace VoltaXApi.Services
 {
     public interface IReportService
     {
+        Task HandleReport(CreateReportDto report);
     }
 }

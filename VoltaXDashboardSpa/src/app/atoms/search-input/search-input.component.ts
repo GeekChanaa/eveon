@@ -12,6 +12,10 @@ export class SearchInputComponent implements OnInit {
   @Input() control: FormControl = new FormControl('');
   @Output() optionSelected = new EventEmitter<any>();
   @Output() ngModelChange = new EventEmitter<string>();
+  @Input() placeholder : string = "Value"
+  @Input() disabled : boolean = false;
+
+  searchString: string = "";
 
   // Add a new property for filtered options
   filteredOptions: any[] = [];
@@ -22,20 +26,20 @@ export class SearchInputComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.options);
     // Initialize filteredOptions with options
     this.filteredOptions = this.options;
 
     // Subscribe to value changes of control
-    this.control.valueChanges.subscribe(value => {
-      this.filteredOptions = this.filterOptions(value);
-      this.ngModelChange.emit(value);
-    });
+    // this.control.valueChanges.subscribe(value => {
+    //   this.filteredOptions = this.filterOptions(value);
+    //   this.ngModelChange.emit(value);
+    // });
   }
 
-  filterOptions(value: string): string[] {
-
-    // Filter options based on input value
-    return this.options.filter(option => option.name.toLowerCase().includes(value.toLowerCase()));
+  filterOptions() {
+    console.log("here ", this.searchString);
+    this.filteredOptions =  this.options.filter(option => option.name.toLowerCase().includes(this.searchString.toLowerCase()));
   }
 
   showSelect() {
@@ -46,9 +50,9 @@ export class SearchInputComponent implements OnInit {
     this.showList = false;
   }
 
-  selectOption(option: string, inputElem: HTMLInputElement) {
-    inputElem.value = option;
-    this.control.setValue(option);
+  selectOption(option: any, inputElem: HTMLInputElement) {
+    inputElem.value = option.id + "-" + option.name;
+    this.control.setValue(option.id);
     this.showList = false;
     this.optionSelected.emit(option);
   }

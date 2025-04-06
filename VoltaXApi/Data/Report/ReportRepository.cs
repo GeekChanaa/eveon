@@ -9,6 +9,7 @@ using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using AutoMapper;
+using VoltaxApi.Dtos;
 
 namespace VoltaXApi.Data
 {
@@ -20,10 +21,11 @@ namespace VoltaXApi.Data
             _mapper = mapper;
         }
 
-        public async Task CreateReport(CreateReportDto report)
+        public async Task<int> CreateReport(CreateReportDto report)
         {
             Report rep = _mapper.Map<CreateReportDto,Report>(report);
             await base.AddAsync(rep);
+            return rep.ID;
         }
 
         public async Task<ReportDisplayDto> GetReportByID(int reportID)
@@ -32,6 +34,25 @@ namespace VoltaXApi.Data
             var report = _mapper.Map<Report,ReportDisplayDto>(rep);
             return report;
         }
+        
+        public IQueryable<ReportListDto> GetAllReports(GlobalParams globalParams)
+        {
+            return GetAllAsync(globalParams).Select(u  => new ReportListDto{
+                ID = u.ID,
+                UserName = u.User.FullName,
+                ChargePointName = u.ChargePoint.ChargePointId,
+                ConnectorName = u.Connector.ConnectorName,
+                ReportType = u.ReportType,
+                ReportCategory = u.ReportCategory,
+                IssueDescription = u.IssueDescription,
+                Status = u.Status,
+                ReportDate = u.ReportDate,
+                ResolvedDate = u.ResolvedDate,
+                IsEmail = u.IsEmail,
+                IsNotification = u.IsNotification
+            }).AsQueryable();
+        }
+
 
     }
 }

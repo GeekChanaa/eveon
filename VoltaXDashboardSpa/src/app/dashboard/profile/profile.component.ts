@@ -61,7 +61,7 @@ export class ProfileComponent implements OnInit {
     imageUrl: ''
   };
 
-  updateUserObservable = (id : number, model : any) => this._userService.edit(id, model);
+  updateUserObservable = (id : number, model : any) => this._userService.editUserDashboardInformations(id, model);
 
   // Constructor
   constructor(

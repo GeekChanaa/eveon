@@ -81,14 +81,14 @@
             <div class="settings__fieldset" *ngIf="user.id != null && user.id != 0">
               <app-display-cell 
                 inpType="text" 
-                title="firstName" 
+                title="First Name" 
                 [updateObservable]="updateUserObservable.bind(this)"
                 [val]="user.firstName"
                 [object]="user"></app-display-cell>
 
               <app-display-cell 
                 inpType="text" 
-                title="lastName" 
+                title="Last Name" 
                 [updateObservable]="updateUserObservable.bind(this)"
                 [val]="user.lastName"
                 [object]="user"></app-display-cell>
@@ -134,6 +134,13 @@
                   <input class="field__input" type="text" name="location">
                 </div>
               </div>
+              <app-display-cell 
+                inpType="text" 
+                title="birthday" 
+                [updateObservable]="updateUserObservable.bind(this)"
+                [val]="user.birthday"
+                [object]="user"></app-display-cell>
+
             </div>
           </div>
           <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'">

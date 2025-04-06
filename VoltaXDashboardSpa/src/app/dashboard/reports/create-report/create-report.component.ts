@@ -27,7 +27,6 @@ export class CreateReportComponent implements OnInit {
 
   ngOnInit() {
     this.getAllUserNames();
-    this.getAllConnectorNames();
     this.getAllChargePointNames();
   }
 
@@ -57,8 +56,9 @@ export class CreateReportComponent implements OnInit {
       reportCategory : new FormControl('General'),
       issueDescription : new FormControl(''),
       status : new FormControl('Pending'),
-    })
-
+      isEmail : new FormControl(false),
+      isNotification : new FormControl(false),
+    });
   }
 
   showSelect() {
@@ -75,17 +75,7 @@ export class CreateReportComponent implements OnInit {
 
   
   onSubmit(){
-    var reportForm = this.form.value;
-    this.report.userID = reportForm.userID;
-    this.report.connectorID = reportForm.connectorID;
-    this.report.chargePointID = reportForm.chargePointID;
-    this.report.reportType = reportForm.reportType;
-    this.report.reportCategory = reportForm.reportCategory;
-    this.report.issueDescription = reportForm.issueDescription;
-    this.report.status = reportForm.status;
-
-    console.log("this is the report i'm truing to create");
-
+    this.report = this.form.value;
     this._reportService.createReport(this.report).subscribe((createdReport) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Report Created Successfully",4000);
       this._router.navigateByUrl('/dashboard/reports');
@@ -102,56 +92,23 @@ export class CreateReportComponent implements OnInit {
     })
   }
 
-  updateUser(user : any){
-    this.userControl.setValue(user.id);
-  }
-
-  get userControl(): FormControl {
-    const control = this.form.get('userID');
-    if (!control) {
-      throw new Error('User control not found');
-    }
-    return control as FormControl;
-  }
-
-
-
   getAllChargePointNames(){
     this._chargePointService.getChargePointIds().subscribe((data) => {
       this.chargePoints = data;
     })
   }
 
-  updateChargePoint(chargePoint : any){
-    this.chargePointControl.setValue(chargePoint.id);
-  }
-
-  get chargePointControl(): FormControl {
-    const control = this.form.get('chargePointID');
-    if (!control) {
-      throw new Error('ChargePoint control not found');
-    }
-    return control as FormControl;
-  }
-
-  getAllConnectorNames(){
-    this._connectorService.getConnectorIds().subscribe((data) => {
-      console.log("this is getting the connectors");
-      console.log(data);
-      this.connectors = data;
+  getChargePointConnectors(chargePointID : number){
+    this._connectorService.getChargePointConnectors(chargePointID).subscribe((data) => {
+      this.connectors = data.map(connector => ({
+        id: connector.id,
+        name: `evseID: ${connector.evseID} - connectorID: ${connector.connectorID}`
+      }));
     })
   }
 
-  updateConnector(connector : any){
-    this.connectorControl.setValue(connector.id);
-  }
-
-  get connectorControl(): FormControl {
-    const control = this.form.get('connectorID');
-    if (!control) {
-      throw new Error('Connector control not found');
-    }
-    return control as FormControl;
+  getControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
   }
 
 }

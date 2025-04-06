@@ -8,6 +8,8 @@ namespace VoltaXApi.Models
         public int? ConnectorID { get; set; }
         public int? ChargePointID { get; set; }
         public ReportTypeEnum ReportType { get; set; } 
+        public bool IsEmail { get; set; } 
+        public bool IsNotification { get; set; } 
         public ReportCategoryEnum ReportCategory { get; set; } 
         public string IssueDescription { get; set; }
         public ReportStatusEnum Status { get; set; }

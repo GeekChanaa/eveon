@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using AutoMapper;
 using VoltaXApi.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace VoltaXApi.Data
 {
@@ -13,13 +14,16 @@ namespace VoltaXApi.Data
 
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly CardExpirationSettings _settings;
         public CardRepository(
             VoltaXApiDbContext context, 
             ITransactionRepository transactionRepository,
+            IOptions<CardExpirationSettings> options,
             IMapper mapper) : base(context)
         {
             _mapper = mapper;
             _transactionRepository = transactionRepository;
+            _settings = options.Value;
         }
 
         // Get all user recharge cards
@@ -79,6 +83,7 @@ namespace VoltaXApi.Data
         {
             Card cardToCreate = _mapper.Map<CreateCardDto, Card>(card);
             card.CardNumber = await this.GenerateCardNumber();
+            card.ExpirationDate = DateTime.Now.AddYears(_settings.DefaultCardValidityYears);
             await this.AddAsync(cardToCreate);
         }
 

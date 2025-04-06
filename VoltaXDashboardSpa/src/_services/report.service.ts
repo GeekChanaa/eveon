@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Report } from 'src/_models/report';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
+import { ReportListDto } from 'src/_models/_dtos/reports-dtos/report-list-dto';
 
 
 @Injectable({
@@ -22,6 +23,10 @@ export class ReportService extends AbstractService<Report>{
 
   getReportByID(reportID : number){
     return this._http.get<any>(this.baseUrl+"getReportByID/"+reportID);
+  }
+
+  getAllReports(page?: number, itemsPerPage?: number, itemParams?: any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetAllReports");
   }
 
 }

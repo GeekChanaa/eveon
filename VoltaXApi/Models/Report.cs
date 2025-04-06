@@ -12,6 +12,8 @@ namespace VoltaXApi.Models
         public ReportCategoryEnum ReportCategory { get; set; } 
         public string IssueDescription { get; set; } 
         public ReportStatusEnum Status { get; set; } = ReportStatusEnum.Pending;
+        public bool IsEmail { get; set; } 
+        public bool IsNotification { get; set; } 
         public DateTime ReportDate { get; set; } = new DateTime();
         public DateTime? ResolvedDate { get; set; } = null;
         public Connector? Connector { get; set; }

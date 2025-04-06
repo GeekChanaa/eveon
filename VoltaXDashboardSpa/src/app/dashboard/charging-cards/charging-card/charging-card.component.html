@@ -34,6 +34,7 @@
                   [object]="card"
                   inpType="text"
                   title="Card Owner"
+                  [tooltip]="'This is the name of the owner of the card'"
                   [editable]="false"
                   [link]="'/dashboard/users/'+card.userID"
                   [isLink]="true"
@@ -41,6 +42,7 @@
 
                 <app-display-cell 
                   [updateObservable]="updateCardObservable.bind(this)" 
+                  [tooltip]="'The maximum total value that can be loaded onto this card.'"
                   [object]="card"
                   inpType="number"
                   title="maxCount"
@@ -49,6 +51,7 @@
                 <app-display-cell 
                   [updateObservable]="updateCardObservable.bind(this)" 
                   [object]="card"
+                  [tooltip]="'The current available funds on your card.'"
                   inpType="number"
                   title="balance"
                   [val]="card.balance"></app-display-cell>
@@ -56,6 +59,7 @@
                 <app-display-cell 
                   [updateObservable]="updateCardObservable.bind(this)" 
                   [object]="card"
+                  [tooltip]="'The category of card, indicating its features and usage.'"
                   inpType="select_enum"
                   enumName="CardType"
                   title="cardType"
@@ -66,6 +70,7 @@
                     [object]="card"
                     inpType="select_enum"
                     title="status"
+                    [tooltip]="'The current status of the recharge card'"
                     enumName="CardStatus" 
                     val="{{card.status}}"></app-display-cell>
                 
@@ -73,12 +78,14 @@
                   [updateObservable]="updateCardObservable.bind(this)" 
                   [object]="card"
                   inpType="text"
+                  [tooltip]="'The date of the expiration of the recharge card.'"
                   title="expirationDate"
                   val="{{card.expirationDate}}"></app-display-cell>
                 
                 <app-display-cell 
                   [updateObservable]="updateCardObservable.bind(this)" 
                   [object]="card"
+                  [tooltip]="'Additional informations about this recharge card.'"
                   inpType="text"
                   title="note"
                   val="{{card.note}}"></app-display-cell>

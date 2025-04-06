@@ -12,48 +12,58 @@
                   
                     <div class="field">
                       <div class="field__label">User
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                        <div class="tooltip" title="The User in relation with or that created the report">
                           <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
                           </svg>
                         </div>
                       </div>
                       <app-search-input class="field__wrap"
-                        (optionSelected)="updateUser($event)"
-                        [control]="userControl"
+                        [control]="getControl('userID')"
+                        placeholder="User"
                         [options]="users"></app-search-input>
                     </div>
 
                     <div class="field">
                       <div class="field__label">ChargePoint
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                        <div class="tooltip" title="Charge Point in relation with the report">
                           <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
                           </svg>
                         </div>
                       </div>
                       <app-search-input class="field__wrap"
-                        (optionSelected)="updateChargePoint($event)"
-                        [control]="chargePointControl"
+                        [control]="getControl('chargePointID')"
+                        placeholder="Charge Point"
+                        (optionSelected)="getChargePointConnectors($event.id)"
                         [options]="chargePoints"></app-search-input>
                     </div>
 
                     <div class="field">
                       <div class="field__label">Connector
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                        <div class="tooltip" title="Connector in relation with the report">
                           <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
                           </svg>
                         </div>
                       </div>
                       <app-search-input class="field__wrap"
-                        (optionSelected)="updateConnector($event)"
-                        [control]="connectorControl"
+                        [control]="getControl('connectorID')"
+                        placeholder="Connector"
+                        [disabled]="connectors == null || connectors.length == 0"
                         [options]="connectors"></app-search-input>
                     </div>
 
+                    <app-form-field
+                      class="field"
+                      inputType="textarea"
+                      title="Isssue Description"
+                      description="Description of the issue that is mentioned by this report."
+                      [control]="getControl('issueDescription')"
+                    ></app-form-field>
+
                     <div class="field">
-                      <div class="field__label">Issue Description
+                      <div class="field__label">Send Email ? 
                         <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
                           <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
@@ -61,11 +71,24 @@
                         </div>
                       </div>
                       <div class="field__wrap">
-                        <input 
-                          class="field__input" 
-                          type="text" 
-                          formControlName="issueDescription" 
-                          placeholder="Describe your problem"required>
+                        <div class="field__wrap">
+                          <app-toggle formControlName="isEmail"></app-toggle>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="field__label">Send Notification ?
+                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                          <svg class="icon icon-info">
+                            <use xlink:href="#icon-info"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="field__wrap">
+                        <div class="field__wrap">
+                          <app-toggle formControlName="isNotification"></app-toggle>
+                        </div>
                       </div>
                     </div>
 

@@ -5,6 +5,7 @@ import { Report } from 'src/_models/report';
 import { ReportTypeEnum } from 'src/_models/_enums/report-type';
 import { ReportCategoryEnum } from 'src/_models/_enums/report-category';
 import { ReportStatusEnum } from 'src/_models/_enums/report-status';
+import { ReportListDto } from 'src/_models/_dtos/reports-dtos/report-list-dto';
 
 @Component({
   selector: 'app-reports-list',
@@ -20,11 +21,11 @@ export class ReportsListComponent implements OnInit {
   };
   
 
-  report: Report = {
-    ID: 0,
-    userID: 0,
-    connectorID: 0,
-    chargePointID: 0,
+  report: ReportListDto = {
+    id: 0,
+    userName: '',
+    connectorName: '',
+    chargePointName: '',
     reportType: ReportTypeEnum.ChargePoint,
     reportCategory: ReportCategoryEnum.General,
     issueDescription: '',
@@ -43,7 +44,7 @@ export class ReportsListComponent implements OnInit {
     this._getItemFields();
   }
 
-  getReportsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._reportService.getAll(currentPage, itemsPerPage, itemParams);
+  getReportsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._reportService.getAllReports(currentPage, itemsPerPage, itemParams);
   deleteReportObservable = (id : number) => this._reportService.deleteById(id);
   updateReportObservable = (id : number, model : any) => this._reportService.edit(id, model);
 
