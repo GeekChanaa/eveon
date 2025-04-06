@@ -128,6 +128,20 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendWarningEmail(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("expiration-card-warning");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName }
+					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		private string GetEmailTemplate(string templateName)
 		{
 			var path = Path.Combine(_env.ContentRootPath, "Assets", "EmailTemplates", $"{templateName}.html");

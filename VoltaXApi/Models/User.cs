@@ -36,6 +36,7 @@ namespace VoltaXApi.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public Image? Image { get; set; }
+        [NotMapped]
         public string FullName { get { return FirstName+ " " + LastName;} }
         public Partner? Partner { get; set; }
     }

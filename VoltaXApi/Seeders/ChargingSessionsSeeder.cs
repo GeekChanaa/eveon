@@ -17,7 +17,7 @@ namespace VoltaXApi.Data.Seeders
       {
           var faker = new Faker<ChargingSession>()
                 .RuleFor(cs => cs.ConnectorID, f => f.PickRandom(connectors).ID) 
-                .RuleFor(cs => cs.UserID, f => f.Random.Number(1, 50)) 
+                .RuleFor(cs => cs.UserID, f => f.Random.Number(1, 20)) 
                 .RuleFor(cs => cs.CardID, f => f.Random.Number(1, 100)) 
                 .RuleFor(cs => cs.StartDate, f => f.Date.Past(1)) 
                 .RuleFor(cs => cs.EndDate, (f, cs) => f.Date.Between(cs.StartDate, DateTime.Now)) 

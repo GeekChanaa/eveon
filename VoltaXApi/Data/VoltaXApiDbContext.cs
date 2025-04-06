@@ -171,6 +171,7 @@ namespace VoltaXApi.Data
         public DbSet<SystemReport> SystemReports { get; set; }
         public DbSet<SystemReportComment> SystemReportComments { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<CardExpirationNotification> CardExpirationNotifications { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
         public DbSet<ChargePoint> ChargePoints { get; set; }
         public DbSet<ChargePointBrand> ChargePointBrands { get; set; }

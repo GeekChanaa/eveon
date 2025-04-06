@@ -14,6 +14,7 @@ namespace VoltaXApi.Data
         Task<Card> GetCardByNumber(string CardNumber);
         Task CreateCard(CreateCardDto card);
         Task<CardListDto> GetCardForDisplayByID(int cardID);
+        Task<List<Card>> GetAllCards();
 
     }
 }

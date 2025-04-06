@@ -106,6 +106,12 @@ namespace VoltaXApi.Data
             return cardToDisplay;
         }
 
+        public async Task<List<Card>> GetAllCards()
+        {
+            return await this.dbSet.Include(u => u.User).ToListAsync();
+        }
+
+
 
 
     }

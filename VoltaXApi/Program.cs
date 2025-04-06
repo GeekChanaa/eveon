@@ -133,6 +133,20 @@ builder.Services.AddScoped<IConnectorService, ConnectorService>();
 builder.Services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
 builder.Services.AddScoped<ISystemReportService, SystemReportService>();
 builder.Services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
+
+
+
+builder.Services.AddSingleton<IHostedService>(serviceProvider =>
+{
+    // Create a scope
+    using var scope = serviceProvider.CreateScope();
+    
+    // Resolve the service from the scope
+    return scope.ServiceProvider.GetRequiredService<CardExpirationWarningService>();
+});
+
+// Register the actual service as scoped
+builder.Services.AddScoped<CardExpirationWarningService>();
 builder.Services.AddScoped<ISystemReportRepository, SystemReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
@@ -149,6 +163,8 @@ builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
 builder.Services.AddScoped<IOCPPConfigurationComponentRepository, OCPPConfigurationComponentRepository>();
 builder.Services.AddScoped<IOCPPConfigurationVariableRepository, OCPPConfigurationVariableRepository>();
+
+builder.Services.AddScoped<ICardExpirationNotificationRepository, CardExpirationNotificationRepository>();
 
 // OCPP Local List 
 builder.Services.AddScoped<IOCPPLocalListItemRepository, OCPPLocalListItemRepository>();
@@ -250,6 +266,7 @@ builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
 // });
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<CardExpirationSettings>(builder.Configuration.GetSection("CardExpirationSettings"));
 
 builder.Services.AddSingleton(resolver =>
 {
@@ -273,6 +290,7 @@ builder.Services.AddCors(options =>
                 .AllowCredentials()
         );
     });
+
 
 var app = builder.Build();
 

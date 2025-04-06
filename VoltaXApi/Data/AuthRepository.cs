@@ -25,7 +25,7 @@ namespace VoltaXApi.Data
                 FirstName = "test",
                 LastName = "test",
                 Email = "customer@gmail.com",
-                Phone = "0610614476",
+                Phone = "06606060",
                 PasswordHash = passHash,
                 PasswordSalt = passSalt,
                 IsEmailVerified = true,
@@ -49,12 +49,12 @@ namespace VoltaXApi.Data
                 FirstName = "test",
                 LastName = "test",
                 Email = "partner@gmail.com",
-                Phone = "0610614476",
+                Phone = "0610614475",
                 PasswordHash = passHash,
                 PasswordSalt = passSalt,
                 IsEmailVerified = true,
                 IsPhoneNumberVerified = true,
-                PartnerID = 1,
+                PartnerID = null,
                 Role = UserRole.Support
             };
 

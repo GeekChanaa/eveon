@@ -12,8 +12,8 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20250326205559_ocpp_local_list")]
-    partial class ocpp_local_list
+    [Migration("20250406153224_card_expiration_notifications")]
+    partial class card_expiration_notifications
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,6 +188,40 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Cards");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CardExpirationNotification", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IntervalName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CardID");
+
+                    b.ToTable("CardExpirationNotifications");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
@@ -976,9 +1010,6 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Power")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerHour")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PricePerIdleMinute")
@@ -1801,7 +1832,7 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("OCPPLocalListVersionID")
+                    b.Property<int>("OCPPLocalListVersionID")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")
@@ -1951,7 +1982,7 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("CardID")
+                    b.Property<int>("CardID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2683,6 +2714,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.CardExpirationNotification", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
                 {
                     b.HasOne("VoltaXApi.Models.ChargePointModel", "ChargePointModel")
@@ -3040,7 +3082,9 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.OCPPLocalListVersion", "OCPPLocalListVersion")
                         .WithMany("OCPPLocalListItems")
-                        .HasForeignKey("OCPPLocalListVersionID");
+                        .HasForeignKey("OCPPLocalListVersionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("OCPPLocalListVersion");
                 });
@@ -3060,7 +3104,9 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany("Orders")
-                        .HasForeignKey("CardID");
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VoltaXApi.Models.User", null)
                         .WithMany("Orders")

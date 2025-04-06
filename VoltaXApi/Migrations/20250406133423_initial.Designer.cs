@@ -12,8 +12,8 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20250313221049_ocpp_configurations_migration")]
-    partial class ocpp_configurations_migration
+    [Migration("20250406133423_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -978,9 +978,6 @@ namespace VoltaXApi.Migrations
                     b.Property<decimal>("Power")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("PricePerHour")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("PricePerIdleMinute")
                         .HasColumnType("decimal(18,2)");
 
@@ -1493,7 +1490,6 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Instance")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -1598,7 +1594,6 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Instance")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -1624,7 +1619,7 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool>("Constant")
+                    b.Property<bool?>("Constant")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1633,23 +1628,22 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Mutability")
+                    b.Property<int?>("Mutability")
                         .HasColumnType("int");
 
                     b.Property<int>("OCPPConfigurationItemID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Persistent")
+                    b.Property<bool?>("Persistent")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Type")
+                    b.Property<int?>("Type")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -1670,7 +1664,7 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DataType")
+                    b.Property<int>("DataType")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -1686,19 +1680,175 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Unit")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ValuesList")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.ToTable("OCPPConfigurationVariableCharacteristics");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPDisplayMessageContent", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Format")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("OCPPDisplayMessageContents");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPDisplayMessageInfo", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ChargePointID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ChargePointID1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DisplayMessageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MessageID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("State")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointID1");
+
+                    b.HasIndex("DisplayID");
+
+                    b.HasIndex("MessageID");
+
+                    b.ToTable("OCPPDisplayMessageInfos");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPLocalListItem", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OCPPLocalListVersionID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TokenStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OCPPLocalListVersionID");
+
+                    b.ToTable("OCPPLocalListItems");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPLocalListVersion", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargePointID");
+
+                    b.ToTable("OCPPLocalListVersions");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.OcppComponent", b =>
@@ -1798,7 +1948,7 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int?>("CardID")
+                    b.Property<int>("CardID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -2437,7 +2587,7 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("EmailVerificationToken")
                         .HasColumnType("nvarchar(max)");
@@ -2480,7 +2630,7 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PhoneVerificationToken")
                         .HasColumnType("nvarchar(max)");
@@ -2499,9 +2649,15 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("ImageID");
 
                     b.HasIndex("PartnerID");
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -2852,11 +3008,60 @@ namespace VoltaXApi.Migrations
                     b.Navigation("ConfigurationItem");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.OCPPDisplayMessageInfo", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID1");
+
+                    b.HasOne("VoltaXApi.Models.OCPPConfigurationComponent", "Display")
+                        .WithMany()
+                        .HasForeignKey("DisplayID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.OCPPDisplayMessageContent", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("Display");
+
+                    b.Navigation("Message");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPLocalListItem", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.OCPPLocalListVersion", "OCPPLocalListVersion")
+                        .WithMany("OCPPLocalListItems")
+                        .HasForeignKey("OCPPLocalListVersionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OCPPLocalListVersion");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPLocalListVersion", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChargePoint");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Order", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Card", "Card")
                         .WithMany("Orders")
-                        .HasForeignKey("CardID");
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VoltaXApi.Models.User", null)
                         .WithMany("Orders")
@@ -3184,6 +3389,11 @@ namespace VoltaXApi.Migrations
             modelBuilder.Entity("VoltaXApi.Models.OCPPConfigurationVariable", b =>
                 {
                     b.Navigation("ConfigurationItems");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.OCPPLocalListVersion", b =>
+                {
+                    b.Navigation("OCPPLocalListItems");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Partner", b =>

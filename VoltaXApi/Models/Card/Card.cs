@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace VoltaXApi.Models
 {
     public class Card  : IEntity
     {
         public int ID { get; set; }
         public string CardNumber { get; set; }
+        [NotMapped]
+        public string LastFourDigits { get { return CardNumber.Substring(CardNumber.Length - 4);} }
         public CardTypeEnum CardType { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }

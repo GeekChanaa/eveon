@@ -187,6 +187,40 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Cards");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.CardExpirationNotification", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IntervalName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CardID");
+
+                    b.ToTable("CardExpirationNotifications");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>
                 {
                     b.Property<int>("ID")
@@ -973,9 +1007,6 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Power")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerHour")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PricePerIdleMinute")
@@ -2678,6 +2709,17 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("UserID");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.CardExpirationNotification", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.ChargePoint", b =>

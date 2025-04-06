@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace VoltaXApi.Models
 {
     public class Connector : IEntity
@@ -13,7 +15,8 @@ namespace VoltaXApi.Models
         public decimal PricePerKWh { get; set; } = 0;
         public decimal PricePerIdleMinute { get; set; } = 0;
         public decimal PricePerMinute { get; set; } = 0; 
-        public decimal PricePerHour { get; set; } = 0;
+        [NotMapped]
+         public decimal PricePerHour { get { return PricePerMinute*60;} }
         public decimal CostPerKwh { get; set; } = 0;
         public decimal FlatFee { get; set; }  = 0 ;     
         public decimal MaxPower { get; set; }  = 100;

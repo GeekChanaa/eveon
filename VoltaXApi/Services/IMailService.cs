@@ -11,5 +11,6 @@ namespace VoltaXApi.Services
         Task SendEmailAsync(MailRequest mailRequest);
         Task SendReportEmailToAdmin(SystemReport report);
         Task SendReportEmailToSupport(SystemReport report, string email);
+		Task SendWarningEmail(MailRequest mailRequest, string userName);
     }
 }
