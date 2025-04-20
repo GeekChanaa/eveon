@@ -10,22 +10,16 @@ import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
 import { RechargeOrdersComponent } from './recharge-orders/recharge-orders.component';
 import { StationLoadBalanceComponent } from './station-load-balance/station-load-balance.component';
-import { TransactionsComponent } from './transactions/transactions.component';
 import { UsersComponent } from './users/users.component';
 import { DashboardComponent } from './dashboard.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
-import { ProfileComponent } from './profile/profile.component';
-import { RechargeCardsComponent } from './profile/recharge-cards/recharge-cards.component';
 import { StatisticsComponent } from './statistics/statistics.component';
-import { NotificationSettingsComponent } from './profile/notification-settings/notification-settings.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import {MatExpansionModule} from '@angular/material/expansion'; 
 import { MatButtonModule } from '@angular/material/button';
-import { DebitCardsComponent } from './profile/debit-cards/debit-cards.component';
-import { ProfileSecurityComponent } from './profile/profile-security/profile-security.component';
 import { GlobalConfigurationsComponent } from './global-configurations/global-configurations.component';
 import { ConnectorStatusesComponent } from './home/connector-statuses/connector-statuses.component';
 import { PartnersComponent } from './partners/partners.component';
@@ -37,20 +31,14 @@ import { ChargingSessionsComponent } from './charging-sessions/charging-sessions
       StationLoadBalanceComponent,
       ChargingStrategiesComponent,
       HomeChargerBindListComponent,
-      TransactionsComponent,
       RechargeOrdersComponent,
       AlarmManagementComponent,
       ChargingProfileComponent,
       OcppConfigurationComponent,
       TabsStatisticsComponent,
       DashboardComponent,
-      ProfileComponent,
-      RechargeCardsComponent,
       StatisticsComponent,
-      NotificationSettingsComponent,
       CompleteProfileComponent,
-      DebitCardsComponent,
-      ProfileSecurityComponent,
       GlobalConfigurationsComponent,
       ConnectorStatusesComponent,
       PartnersComponent,

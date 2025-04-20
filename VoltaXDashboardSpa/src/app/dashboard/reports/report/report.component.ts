@@ -11,8 +11,6 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./report.component.sass']
 })
 export class ReportComponent implements OnInit {
-
-
   reportID : number = 0;
   reportLoaded : boolean = false;
   CardTypesValues : any = {};

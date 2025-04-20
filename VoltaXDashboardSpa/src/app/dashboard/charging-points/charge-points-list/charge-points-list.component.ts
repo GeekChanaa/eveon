@@ -27,7 +27,7 @@ export class ChargePointsListComponent implements OnInit {
     name: '',
     serialNumber: '',
     make: '',
-    category: ChargePointCategoryEnum.TheTower,
+    category: ChargePointCategoryEnum.Single,
     status: ChargePointStatusEnum.Available,
     comment: '',
     username: '',

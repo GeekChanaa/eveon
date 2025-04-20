@@ -24,8 +24,6 @@ namespace VoltaXApi.Data
             _chargePointRepo = new ChargePointRepository(context,mapper);
         }
 
-
-        
         public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
         {
             var chargingStationQueryable = _context.ChargingStations.AsQueryable();
@@ -250,6 +248,20 @@ namespace VoltaXApi.Data
                     Name = cs.Name
                 })
                 .ToListAsync();
+        }
+
+        public async Task<int> GetLatestStationNumberAsync()
+        {
+            var maxNumber = (await dbSet
+                .Where(s => s.Name != null && s.Name.StartsWith("VCS-"))
+                .Select(s => s.Name.Substring(4))
+                .ToListAsync())
+                .Where(numStr => int.TryParse(numStr, out _))
+                .Select(numStr => int.Parse(numStr))
+                .DefaultIfEmpty(0) 
+                .Max();
+                
+            return maxNumber;
         }
 
 

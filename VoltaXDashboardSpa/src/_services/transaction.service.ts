@@ -18,6 +18,14 @@ export class TransactionService extends AbstractService<Transaction>{
   // Base URL for the api
   baseUrl = environment.apiUrl+"/api/transaction/";
 
+  getAllTransactions(page?:  number,itemsPerPage? : number,itemParams? : any){
+    return super.getAll(page,itemsPerPage,itemParams,"GetAllTransactions/");
+  }
+
+  getTransactionByID(transactionUid : string){
+    return this.http.get<any>(this.baseUrl+"GetTransactionByID/"+transactionUid);
+  }
+
   getTotalEnergyConsumed(){
     return this.http.get<number>(this.baseUrl+"TotalEnergyConsumed");
   }

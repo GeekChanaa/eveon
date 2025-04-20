@@ -5,7 +5,6 @@ import { ChargingCardsComponent } from './charging-cards/charging-cards.componen
 import { ChargingPointsComponent } from './charging-points/charging-points.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
 import { ChargingStationsComponent } from './charging-stations/charging-stations.component';
-import { CreateChargingStationComponent } from './charging-stations/create-charging-station/create-charging-station.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
 import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
@@ -42,7 +41,14 @@ const routes: Routes = [
     component: ChargingCardsComponent,
     loadChildren : () => import('./charging-cards/charging-cards.module')
       .then(m=>m.ChargingCardsModule)
-  },{
+  },
+  {
+    path: "profile",
+    component: ProfileComponent,
+    loadChildren : () => import('./profile/profile.module')
+      .then(m=>m.ProfileModule)
+  },
+  {
     path: "charging-cards/create",
     component: CreateChargingCardComponent,
   },{
@@ -128,8 +134,10 @@ const routes: Routes = [
       .then(m=>m.RechargeOrdersModule)
   },
   {
-    path: "profile",
-    component: ProfileComponent,
+    path: "user-info-download-requests",
+    component: RechargeOrdersComponent,
+    loadChildren : () => import('./user-info-download-requests/user-info-download-requests.module')
+      .then(m=>m.UserInfoDownloadRequestsModule)
   },
   {
     path: "statistics",
@@ -156,6 +164,8 @@ const routes: Routes = [
   {
     path: "transactions",
     component: TransactionsComponent,
+    loadChildren : () => import('./transactions/transactions.module')
+      .then(m=>m.TransactionsModule)
   },
   
 ];

@@ -29,6 +29,10 @@ export class PartnerService extends AbstractService<Partner>{
     return this._http.get(this.baseUrl+"GetPartnerByID/"+partnerID)
   }
 
+  getAllPartnersForSelect(){
+    return this._http.get<any[]>(this.baseUrl+"GetAllPartnersForSelect/")
+  }
+
   uploadPartnerLogo(formData : FormData, partnerId:  number){
     return this.http.post<any[]>(this.baseUrl + 'UploadPartnerLogo/'+partnerId, formData, { reportProgress: true, observe: 'events' });
   }

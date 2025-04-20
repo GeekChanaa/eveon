@@ -78,16 +78,26 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargePointTransactions/{chargePointId}")]
         public async Task<ActionResult<List<TransactionListDto>>> GetChargePointTransactions(int chargePointId, [FromQuery] GlobalParams globalParams)
         {
-             var transactions = this._repository.GetChargePointTransactions(chargePointId, globalParams);
+            var transactions = this._repository.GetChargePointTransactions(chargePointId, globalParams);
             var transactionsList = await PagedList<TransactionListDto>.CreateAsync(transactions,globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(transactionsList.CurrentPage, transactionsList.PageSize, transactionsList.TotalCount, transactionsList.TotalPages);
             return transactionsList;
-
-            
         }
 
+        [HttpGet("GetAllTransactions")]
+        public async Task<PagedList<TransactionListDto>> GetAllTransactions([FromQuery] GlobalParams globalParams)
+        {
+            var transactions = this._repository.GetAllTransactions(globalParams);
+            var transactionsList = await PagedList<TransactionListDto>.CreateAsync(transactions,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(transactionsList.CurrentPage, transactionsList.PageSize, transactionsList.TotalCount, transactionsList.TotalPages);
+            return transactionsList;
+        }
 
-        
+        [HttpGet("GetTransactionByID/{transactionID}")]
+        public async Task<ActionResult<TransactionListDto>> GetTransactionByID(string transactionID)
+        {
+            return await this._repository.GetTransactionByID(transactionID);
+        }
 
         
         /****

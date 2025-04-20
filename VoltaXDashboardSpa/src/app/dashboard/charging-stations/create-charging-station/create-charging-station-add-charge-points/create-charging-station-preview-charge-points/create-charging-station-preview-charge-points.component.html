@@ -1,0 +1,49 @@
+<!-- charge-points-list.component.html -->
+<div class="charge-points-list" *ngIf="chargePoints.length > 0">
+  <div class="charge-point-card" *ngFor="let chargePoint of chargePoints; let i = index">
+    <div class="charge-point-header">
+      <div class="charge-point-info">
+        <p>Serial: {{ chargePoint.serialNumber }}</p>
+        <p>Category: {{ chargePoint.category }}</p>
+        <p>Status: <span [ngClass]="'status-' + chargePoint.status.toLowerCase()">{{ chargePoint.status }}</span></p>
+      </div>
+      <div class="charge-point-actions">
+        <button class="btn btn-small" (click)="openEditChargePointModal(i)">Edit</button>
+        <button class="btn btn-small btn-danger" (click)="deleteChargePointHandler(i)">Delete</button>
+      </div>
+    </div>
+   
+    <div class="connectors-section">
+      <div class="connectors-header">
+        <h4>Connectors ({{ chargePoint.connectors?.length || 0 }}/{{ chargePoint.category === 'Single' ? 1 : 2 }})</h4>
+        <button class="btn btn-small"
+                (click)="openAddConnectorModal(i)"
+                [disabled]="!canAddConnector(chargePoint)">
+          Add Connector
+        </button>
+      </div>
+     
+      <div class="connectors-list" *ngIf="chargePoint.connectors?.length > 0">
+        <div class="connector-item" *ngFor="let connector of chargePoint.connectors; let j = index">
+          <div class="connector-info">
+            <p>Power: {{ connector.power }} kW</p>
+            <p>Type: {{ connector.type }}</p>
+            <p>Price per kWh: {{ connector.pricePerKWh || '-' }}</p>
+            <p>Price per Idle Minute: {{ connector.pricePerIdleMinute || '-' }}</p>
+            <p>Cost Per Kwh: {{ connector.costPerKwh || '-' }}</p>
+            <p>Price per Minute: {{ connector.pricePerMinute || '-' }}</p>
+            <p>Flat Fee: {{ connector.flatFee || '-' }}</p>
+          </div>
+          <div class="connector-actions">
+            <button class="btn btn-small" (click)="openEditConnectorModal(i, j)">Edit</button>
+            <button class="btn btn-small btn-danger" (click)="deleteConnectorHandler(i, j)">Delete</button>
+          </div>
+        </div>
+      </div>
+     
+      <div class="no-connectors" *ngIf="!chargePoint.connectors?.length">
+        <p>No connectors added yet.</p>
+      </div>
+    </div>
+  </div>
+</div>

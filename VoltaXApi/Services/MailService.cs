@@ -173,6 +173,48 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("download-request-infos-approved");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName }
+					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("download-request-infos-approved");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName }
+					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendDownloadInfoRequested(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("download-request-infos-requested");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName }
+					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		private string GetEmailTemplate(string templateName)
 		{
 			var path = Path.Combine(_env.ContentRootPath, "Assets", "EmailTemplates", $"{templateName}.html");

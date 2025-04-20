@@ -109,6 +109,18 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetUserInformations(userID);
         }
 
+        [HttpPut("UpdateUserEmail")]
+        public async Task<ActionResult<bool>> UpdateUserEmail(UpdateUserEmailDto user)
+        {
+            return await this._userService.UpdateEmail(user);
+        }
+
+        [HttpPut("UpdateUserPhone")]
+        public async Task<ActionResult<bool>> UpdateUserPhone(UpdateUserPhoneDto user)
+        {
+            return await this._userService.UpdatePhone(user);
+        }
+
 
         [HttpGet("GetUsers")]
         public async Task<List<UserListDto>> GetUsers([FromQuery] GlobalParams globalParams)

@@ -1018,9 +1018,6 @@ namespace VoltaXApi.Migrations
                     b.Property<decimal>("PricePerMinute")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<double?>("Speed")
-                        .HasColumnType("float");
-
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
@@ -2572,6 +2569,9 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StopCardID")
                         .HasColumnType("int");
 
@@ -2697,6 +2697,39 @@ namespace VoltaXApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.UserInfoDownloadRequest", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("RequestTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserInfoDownloadRequests");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Administrator", b =>
@@ -3372,6 +3405,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Image");
 
                     b.Navigation("Partner");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.UserInfoDownloadRequest", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>

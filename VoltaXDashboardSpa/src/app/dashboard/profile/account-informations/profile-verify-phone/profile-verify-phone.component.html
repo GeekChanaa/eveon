@@ -1,0 +1,28 @@
+<ng-container *ngIf="isLoading">
+  <app-svg-spinner></app-svg-spinner>
+</ng-container>
+
+
+<!-- Verification Step -->
+<ng-container *ngIf="formStep == VerifyPhoneFormStepEnum.Verification && !isLoading">
+  <div [formGroup]="verifyPhoneForm">
+    <app-form-field 
+      description="Code"
+      placeholder="Code"
+      title="Code"
+      [control]="getControl(verifyPhoneForm,'code')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="verifyPhone()" class="button button-small btn-primary">
+        Verify
+      </button>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Verified Step -->
+<ng-container *ngIf="formStep == VerifyPhoneFormStepEnum.Verified && !isLoading">
+  <div>
+    Your Phone has been verified successfully !
+  </div>
+</ng-container>

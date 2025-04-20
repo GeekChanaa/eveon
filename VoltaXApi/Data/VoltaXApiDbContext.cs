@@ -206,6 +206,7 @@ namespace VoltaXApi.Data
         public DbSet<ChargePointUptime> ChargePointUptimes { get; set; }
         public DbSet<ConnectorUptime> ConnectorUptimes { get; set; }
         public DbSet<ChargingSession> ChargingSessions { get; set; }
+        public DbSet<UserInfoDownloadRequest> UserInfoDownloadRequests { get; set; }
         public DbSet<ChargePointConfigurationItem> ChargePointConfigurationItems { get; set; }
         public DbSet<ConfigurationItemVariableAttribute> ConfigurationItemVariableAttributes { get; set; }
         public DbSet<Rating> Ratings { get; set; }

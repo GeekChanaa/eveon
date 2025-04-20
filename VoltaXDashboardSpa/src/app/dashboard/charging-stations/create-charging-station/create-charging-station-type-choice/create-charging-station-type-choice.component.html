@@ -1,0 +1,13 @@
+<div class="choice__container">
+    <app-card-action
+    class="choice__action" 
+    [actionName]="'VoltaX Station'"
+    (actionClick)="chooseStation(ChargingStationTypeEnum.VoltaXStation)"
+    ></app-card-action>
+
+    <app-card-action
+      class="choice__action"  
+      [actionName]="'Partner Station'"
+      (actionClick)="chooseStation(ChargingStationTypeEnum.PartnerStation)"
+      ></app-card-action>
+</div>

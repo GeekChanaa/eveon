@@ -1,3 +1,4 @@
+import { ConnectorEnumType } from "./_enums/connector-type-enum";
 import { ChargePoint } from "./charge-point";
 
 export interface Connector {
@@ -5,7 +6,7 @@ export interface Connector {
     chargePointID: number;
     connectorID: number;
     evseID: number;
-    connectorType?: string;
+    connectorType?: ConnectorEnumType;
     power: number;
     speed: number;
     chargePoint?: ChargePoint;

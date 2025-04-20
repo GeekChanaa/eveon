@@ -14,6 +14,7 @@ export interface Transaction {
     stopTime: Date;
     meterStop: number;
     stopReason: string;
+    status : string;
     amount: number;
     cardID: number;
     [key: string]: any;

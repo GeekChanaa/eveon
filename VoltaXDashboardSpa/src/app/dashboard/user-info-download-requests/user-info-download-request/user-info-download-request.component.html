@@ -1,0 +1,69 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Request : #{{request.id}}</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button class="settings__link active">Informations</button>
+        
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option>Informations</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="requestLoaded">
+                
+                <app-display-cell 
+                  [object]="request"
+                  inpType="text"
+                  title="User Name"
+                  [editable]="false"
+                  [link]="'/dashboard/users/'+request.userID"
+                  [isLink]="true"
+                  [val]="request.userName" [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  [object]="request"
+                  inpType="text"
+                  title="Status"
+                  [editable]="false"
+                  [isLink]="true"
+                  [val]="request.status" 
+                  [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  [object]="request"
+                  inpType="text"
+                  title="Request Time"
+                  [editable]="false"
+                  [val]="request.requestTime | date:'medium' "></app-display-cell>
+
+                <ng-container *ngIf="request.status != 'Approved' && request.status != 'Denied'">
+                  <div class="field__label">
+                    Actions
+                  </div>
+                  <div class="actions">
+                    <button (click)="approveRequest()" class="button-small btn-primary">Approve Request</button>
+                    <button (click)="denyRequest()" class="button-small btn-red button-deny">Deny Request</button>
+                  </div>
+                </ng-container>
+                
+
+                  
+              </ng-container>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

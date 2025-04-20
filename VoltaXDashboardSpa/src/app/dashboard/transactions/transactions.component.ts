@@ -6,100 +6,12 @@ import { TransactionService } from 'src/_services/transaction.service';
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.css']
+  styleUrls: ['./transactions.component.sass']
 })
 export class TransactionsComponent implements OnInit {
-
-  // Data
-  data : any[] = [];
-
-  // item params
-  itemParams : any = {};
-
-  // Fields
-  fields : string[] = [];
-
-  // Page params
-  itemsPerPage : number = 20;
-  currentPage : number = 1;
-
-  transaction : Transaction = {
-    id: 0,
-    startTime: new Date(),
-    connectorID: 0,
-    startTagId: '',
-    meterStart: 0,
-    startResult: '',
-    stopTagId: '',
-    stopTime: new Date(),
-    meterStop: 0,
-    stopReason: '',
-    amount: 0,
-    cardID: 0
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
   }
 
-  // Constructor
-  constructor(
-    private _transactionService : TransactionService
-  ) { }
-
-  ngOnInit() {
-    this._getItemFields();
-    this.getAll();
-  }
-
-  
-  // Getting All Products
-  getAll(){
-    this._transactionService.getAll(this.currentPage,this.itemsPerPage, this.itemParams).subscribe(data => {
-      if (data.result) {
-        this.data = data.result;
-      }
-    })
-  }
-
-  // Getting Item Fields
-  private _getItemFields(){
-    // Ensure this.chargingStation is defined
-    if (!this.transaction || this.transaction == undefined) {
-      return;
-    }
-    // Getting item fields
-    Object.keys(this.transaction ?? {}).forEach((element : string) => {
-      console.log(element); 
-      if(typeof this.transaction?.[element] == "object" && this.transaction?.[element] != null && this.transaction?.[element].constructor.name == "Date")
-      this.fields.push(element);
-      if(typeof this.transaction?.[element] != "object") this.fields.push(element);
-    });
-  }
-
-  // Deleting the item
-
-  // Next page
-  nextPage(){
-    this.currentPage++;
-    this.getAll();
-  }
-
-  // Previous Page
-  previousPage(){
-    this.currentPage--;
-    this.getAll();
-  }
-
-  // sorting by field
-  sort(field : string){
-    if(this.itemParams.orderBy == field){
-      if(this.itemParams.reverseOrder == 'y')
-      this.itemParams.reverseOrder = 'n'
-      else
-      this.itemParams.reverseOrder = 'y'
-    }
-    else{
-      this.itemParams.orderBy = field;
-      this.itemParams.reverseOrder = 'n'
-    }
-    this.getAll();
-  }
 
 }

@@ -46,7 +46,7 @@ export class PartnerChargePointsComponent implements OnInit {
     clientCertThumb: '',
     connectors: [],
     transactions: [],
-    category: ChargePointCategoryEnum.TheTower,
+    category: ChargePointCategoryEnum.Single,
   };
 
   // Constructor

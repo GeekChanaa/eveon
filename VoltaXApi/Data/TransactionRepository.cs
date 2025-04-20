@@ -325,6 +325,53 @@ namespace VoltaXApi.Data
             return transactionsDto;
         }
 
+        public IQueryable<TransactionListDto> GetAllTransactions(GlobalParams globalParams)
+        {
+            var transactions = GetAllAsync(globalParams).Select(u => new TransactionListDto{
+                Uid = u.Uid,
+                ChargePointID = u.Connector.ChargePoint.ChargePointId,
+                ConnectorID = u.ConnectorID ?? 0,
+                ConnectorName = u.Connector.ConnectorName,
+                ChargingSessionID = u.ChargingSessionID,
+                StartTagId = u.StartCard.CardNumber,
+                StartTime = u.StartTime,
+                MeterStart = u.MeterStart,
+                StartResult = u.StartResult,
+                StopTagId = u.StopCard.CardNumber,
+                StopTime = u.StopTime,
+                MeterStop = u.MeterStop,
+                StopReason = u.StopReason,
+                Status = u.Status,
+                Amount = u.Amount,
+            })
+                .OrderByDescending(u => u.StartTime);
+            return transactions;
+        }
+
+        public async Task<TransactionListDto> GetTransactionByID(string transactionID)
+        {
+            return await dbSet.Select(u => new TransactionListDto{
+                Uid = u.Uid,
+                ChargePointID = u.Connector.ChargePoint.ChargePointId,
+                ConnectorID = u.ConnectorID ?? 0,
+                ConnectorName = u.Connector.ConnectorName,
+                ChargingSessionID = u.ChargingSessionID,
+                StartTagId = u.StartCard.CardNumber,
+                StartTime = u.StartTime,
+                MeterStart = u.MeterStart,
+                StartResult = u.StartResult,
+                StopTagId = u.StopCard.CardNumber,
+                StopTime = u.StopTime,
+                MeterStop = u.MeterStop,
+                StopReason = u.StopReason,
+                Status = u.Status,
+                Amount = u.Amount,
+            })
+                .FirstOrDefaultAsync(u => u.Uid == transactionID);
+        }
+
+
+
         
     }
 }

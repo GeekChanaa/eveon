@@ -11,6 +11,4 @@ public class OCPPLocalListItemDashboardDto
     public string Token { get; set; }
     public IdTokenEnumType TokenType { get; set; }
     public AuthorizationStatusEnumType TokenStatus { get; set; }
-    public OCPPLocalListVersion? OCPPLocalListVersion { get; set; }
-
 }

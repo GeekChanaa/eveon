@@ -71,6 +71,15 @@ namespace VoltaXApi.Data
             return await _context.Partners.AnyAsync(p => p.Phone == phone || p.Phone2 == phone || p.Phone3 == phone);
         }
 
+        public async Task<List<PartnerListForSelectDto>> GetAllPartners()
+        {
+            return await _context.Partners.Select(p => new PartnerListForSelectDto{
+                ID = p.ID,
+                Name = p.Name
+            }).ToListAsync();
+        }
+
+
     }
 }
 

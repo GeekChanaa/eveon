@@ -22,7 +22,7 @@ export class CustomerHomeComponent implements OnInit {
     phone: '',
     role: "Customer",
     isEmailVerified: false,
-    isPhoneVerified: false,
+    isPhoneNumberVerified: false,
     imageUrl: ''
   }
 

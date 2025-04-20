@@ -1,0 +1,69 @@
+<app-form-field
+  class="field"
+  title="Power"
+  inputType="select"
+  description="Maximum power output available at this charging point (e.g., 7kW, 22kW)."
+  placeholder="Select Power Output"
+  [options]="powerOptions"
+  [control]="getControl('power')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Connector Type"
+  inputType="select"
+  description="The type of connector available at this charging point (e.g., CCS Combo 1, Type 2)."
+  placeholder="Select Connector Type"
+  [options]="connectorTypeOptions"
+  [control]="getControl('type')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Price Per Kwh"
+  inputType="text"
+  description="The cost charged to the user for each kilowatt-hour (kWh) of energy consumed during charging."
+  placeholder="Enter Price per kWh"
+  [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
+  [control]="getControl('pricePerKWh')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Price Per Idle Minute"
+  inputType="text"
+  description="The fee charged per minute when a vehicle remains connected to the charger after it has finished charging (idle fee). Set to 0 to disable."
+  placeholder="Enter Price per Idle Minute"
+  [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
+  [control]="getControl('pricePerIdleMinute')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Price Per Minute"
+  inputType="text"
+  description="The cost charged to the user for each minute the vehicle is actively charging. This is often used in addition to or instead of a per-kWh price. Set to 0 to disable."
+  placeholder="Enter Price per Minute"
+  [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
+  [control]="getControl('pricePerMinute')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Cost Per Kwh"
+  inputType="text"
+  description="The internal cost per kilowatt-hour (kWh) for operating this charging point. This is for your internal tracking and may not be visible to users."
+  placeholder="Enter Internal Cost per kWh"
+  [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
+  [control]="getControl('costPerKwh')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Flat Fee"
+  inputType="text"
+  description="A fixed fee charged to the user for initiating a charging session, regardless of the energy consumed or charging duration. Set to 0 to disable."
+  placeholder="Enter Flat Fee"
+  [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
+  [control]="getControl('flatFee')"
+></app-form-field>

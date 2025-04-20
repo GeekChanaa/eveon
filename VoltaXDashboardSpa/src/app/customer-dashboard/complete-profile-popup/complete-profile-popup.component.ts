@@ -24,7 +24,7 @@ export class CompleteProfilePopupComponent implements OnInit {
     email: '',
     phone: '',
     isEmailVerified: false,
-    isPhoneVerified: false,
+    isPhoneNumberVerified: false,
     role: "Admin",
     imageUrl: ''
   }
@@ -47,7 +47,7 @@ export class CompleteProfilePopupComponent implements OnInit {
       this.user = user;
       if(user.isEmailVerified){
         this.completeProfileStep = 3;
-        if(user.isPhoneVerified){
+        if(user.isPhoneNumberVerified){
           this.completeProfileStep = 5;
         }
       }

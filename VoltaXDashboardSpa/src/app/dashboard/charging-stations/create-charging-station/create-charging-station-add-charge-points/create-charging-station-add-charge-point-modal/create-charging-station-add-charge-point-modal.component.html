@@ -1,0 +1,26 @@
+<app-form-field
+  class="field"
+  title="Serial Number"
+  inputType="text"
+  description="The unique identifier assigned to this charging point by the manufacturer."
+  placeholder="Enter Serial Number"
+  [control]="getControl('serialNumber')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Category"
+  inputType="select_enum"
+  enumName="ChargePointCategory"
+  description="The classification of this charging point based on its intended use or features (e.g., AC, DC, Fast Charger)."
+  [control]="getControl('category')"
+></app-form-field>
+
+<app-form-field
+  class="field"
+  title="Status"
+  inputType="select_enum"
+  enumName="ChargePointStatus"
+  description="The current operational state of the charging point (e.g., Available, Unavailable, Faulted, Charging)."
+  [control]="getControl('status')"
+></app-form-field>

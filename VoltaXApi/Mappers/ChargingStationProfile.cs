@@ -27,8 +27,6 @@ namespace VoltaXApi.Mappers
 
                 
 
-            CreateMap<ConnectorCreateDto, Connector>()
-                .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.Speed));
 
             CreateMap<Image, ImageDto>();
             

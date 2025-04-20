@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Models
 {
@@ -9,9 +10,8 @@ namespace VoltaXApi.Models
         public int? ConnectorID{ get; set; }
         public int EvseID{ get; set; }
         public int? ChargePointID { get; set; }
-        public string? ConnectorType { get; set; }
+        public ConnectorEnumType? ConnectorType { get; set; }
         public decimal Power { get; set; } = 0 ;
-        public double? Speed { get; set; }
         public decimal PricePerKWh { get; set; } = 0;
         public decimal PricePerIdleMinute { get; set; } = 0;
         public decimal PricePerMinute { get; set; } = 0; 

@@ -1,0 +1,28 @@
+<ng-container *ngIf="isLoading">
+  <app-svg-spinner></app-svg-spinner>
+</ng-container>
+
+
+<!-- Verification Step -->
+<ng-container *ngIf="formStep == VerifyEmailFormStepEnum.Verification && !isLoading">
+  <div [formGroup]="verifyEmailForm">
+    <app-form-field 
+      description="Code"
+      placeholder="Code"
+      title="Code"
+      [control]="getControl(verifyEmailForm,'code')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="verifyEmail()" class="button button-small btn-primary">
+        Verify
+      </button>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Verified Step -->
+<ng-container *ngIf="formStep == VerifyEmailFormStepEnum.Verified && !isLoading">
+  <div>
+    Your Email has been verified successfully !
+  </div>
+</ng-container>

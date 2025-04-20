@@ -1,0 +1,58 @@
+<!-- Change Email Step -->
+<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.UpdateEmail">
+  <div [formGroup]="updateEmailForm">
+    <app-form-field 
+      description="New Email"
+      placeholder="Email"
+      title="Email"
+      [control]="getControl(updateEmailForm,'email')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="saveEmail()" class="button button-small btn-primary">
+        Save Email
+      </button>
+    </div>
+  </div>
+</ng-container>
+  
+
+<!-- Verification choice -->
+<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.VerificationChoice">
+  <div class="choice__container">
+    <app-card-action
+    class="choice__action" 
+    [actionName]="'Verify Later'"
+    (actionClick)="closeModal()"
+    ></app-card-action>
+
+    <app-card-action
+      class="choice__action"  
+      [actionName]="'Verify Now'"
+      (actionClick)="formStep = UpdateEmailFormStepEnum.Verification"
+      ></app-card-action>
+</div>
+</ng-container>
+
+<!-- Verification Step -->
+<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verification">
+  <div [formGroup]="verifyEmailForm">
+    <app-form-field 
+      description="Code"
+      placeholder="Code"
+      title="Code"
+      [control]="getControl(verifyEmailForm,'code')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="verifyEmail()" class="button button-small btn-primary">
+        Verify
+      </button>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Verified Step -->
+<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verified">
+  <div>
+    Your Email has been verified successfully !
+  </div>
+</ng-container>

@@ -28,8 +28,8 @@ namespace VoltaXApi.Data.Seeders
             var chargeTags = await ChargeTagSeeder.Seed(100, cards, context);
             var ratings = await RatingSeeder.Seed(1000, users,context);
 
-            var chargingSessions = await ChargingSessionsSeeder.Seed(1000,connectors,context);
-            var transactions = await TransactionSeeder.Seed(1000,connectors, chargeTags, chargePoints, chargingSessions, context);
+            var chargingSessions = await ChargingSessionsSeeder.Seed(1000,context);
+            var transactions = await TransactionSeeder.Seed(1000, context);
             await SystemReportSeeder.Seed(200,context);
         }
 

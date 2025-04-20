@@ -1,0 +1,69 @@
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">Transaction : {{transaction.uid}}</div>
+    <div class="settings">
+      <div class="settings__menu">
+        <button class="settings__link">Informations</button>
+        
+      </div>
+      <div class="settings__wrapper">
+        <select class="select">
+          <option>Informations</option>
+        </select>
+        <div class="settings__list">
+          <div class="settings__item">
+            <div class="settings__anchor" id="basics" data-value="Basics"></div>
+            <div class="title-green settings__title">Informations</div>
+            <div class="settings__profile">
+
+            </div>
+            <div class="settings__fieldset">
+              <ng-container *ngIf="transactionLoaded">
+                
+                <app-display-cell 
+                  inpType="text"
+                  title="Charge Point"
+                  [editable]="false"
+                  [val]="transaction.chargePointID"
+                  [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  inpType="text"
+                  title="Connector"
+                  [editable]="false"
+                  [val]="transaction.connectorName"
+                  [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  inpType="text"
+                  title="Start Time"
+                  [editable]="false"
+                  [val]="transaction.startTime"
+                  [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  inpType="text"
+                  title="Status"
+                  [editable]="false"
+                  [val]="transaction.status"
+                  [editable]="false"></app-display-cell>
+
+                <app-display-cell 
+                  inpType="number"
+                  title="Amount"
+                  [editable]="false"
+                  [val]="transaction.amount"
+                  [editable]="false"></app-display-cell>
+
+                
+              </ng-container>
+              
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

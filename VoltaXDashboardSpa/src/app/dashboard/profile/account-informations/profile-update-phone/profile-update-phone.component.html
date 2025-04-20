@@ -1,0 +1,58 @@
+<!-- Change Phone Step -->
+<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.UpdatePhone">
+  <div [formGroup]="updatePhoneForm">
+    <app-form-field 
+      description="New Phone"
+      placeholder="Phone"
+      title="Phone"
+      [control]="getControl(updatePhoneForm,'phone')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="savePhone()" class="button button-small btn-primary">
+        Save Phone
+      </button>
+    </div>
+  </div>
+</ng-container>
+  
+
+<!-- Verification choice -->
+<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.VerificationChoice">
+  <div class="choice__container">
+    <app-card-action
+    class="choice__action" 
+    [actionName]="'Verify Later'"
+    (actionClick)="closeModal()"
+    ></app-card-action>
+
+    <app-card-action
+      class="choice__action"  
+      [actionName]="'Verify Now'"
+      (actionClick)="formStep = UpdatePhoneFormStepEnum.Verification"
+      ></app-card-action>
+</div>
+</ng-container>
+
+<!-- Verification Step -->
+<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verification">
+  <div [formGroup]="verifyPhoneForm">
+    <app-form-field 
+      description="Code"
+      placeholder="Code"
+      title="Code"
+      [control]="getControl(verifyPhoneForm,'code')"></app-form-field>
+    
+    <div class="form__actions">
+      <button (click)="verifyPhone()" class="button button-small btn-primary">
+        Verify
+      </button>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Verified Step -->
+<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verified">
+  <div>
+    Your Phone has been verified successfully !
+  </div>
+</ng-container>

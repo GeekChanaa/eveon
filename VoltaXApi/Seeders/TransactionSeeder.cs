@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
+using System.Data.Entity;
 
 public static class TransactionSeeder
 {
-    public static async Task<List<Transaction>> Seed(int number, List<Connector> connectors, IList<ChargeTag> chargeTags, IList<ChargePoint> chargePoints, IList<ChargingSession> chargingSessions,VoltaXApiDbContext context)
+    public static async Task<List<Transaction>> Seed(int number,VoltaXApiDbContext context)
     {
+        List<Connector> connectors = context.Connectors.ToList(); 
+        IList<ChargeTag> chargeTags =  context.ChargeTags.ToList();
+        IList<ChargingSession> chargingSessions =  context.ChargingSessions.ToList();
         // Transaction repo 
         IRepository<Transaction> _TransactionRepo = new Repository<Transaction>(context);
         var _faker = new Faker<Transaction>()
@@ -19,6 +23,7 @@ public static class TransactionSeeder
             .RuleFor(t => t.MeterStart, f => f.Random.Double(1, 100))
             .RuleFor(t => t.StartResult, f => f.Random.Words(1))
             .RuleFor(t => t.StopCardID, f => f.PickRandom(chargeTags).ID)
+            .RuleFor(cs => cs.Status, f => f.PickRandom<TransactionStatusEnum>())
             .RuleFor(t => t.StopTime, (f, u) => u.StartTime.AddMinutes(f.Random.Double(10, 90))) 
             .RuleFor(t => t.MeterStop, f => f.Random.Double(1, 200)) 
             .RuleFor(t => t.Amount, f => f.Random.Double(1, 200)) 
@@ -28,4 +33,6 @@ public static class TransactionSeeder
         await _TransactionRepo.AddRangeAsync(Transactions);
         return Transactions;
     }
+
+    
 }

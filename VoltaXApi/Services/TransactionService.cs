@@ -80,6 +80,7 @@ namespace VoltaXApi.Services
             transaction.ChargingSessionID = chargingSession.ID;
             transaction.StartTime = DateTime.Parse(transactionEventRequest.Timestamp);
             transaction.MeterStart = meterKWH;
+            transaction.Status = TransactionStatusEnum.Current;
             transaction.StartResult = transactionEventRequest.TriggerReason.ToString();
             await _transactionRepository.AddAsync(transaction);
             await _connectorUptimeRepository.TransactionStartUptimeHandle(transaction.ID, connector.ID);
@@ -244,6 +245,7 @@ namespace VoltaXApi.Services
           transaction.MeterStop = meterKWH;
           transaction.StopCardID = cardTagID;
           transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
+          transaction.Status = TransactionStatusEnum.Ended;
 
           double kwhCharged = (double)(transaction.MeterStop - transaction.MeterStart);
 

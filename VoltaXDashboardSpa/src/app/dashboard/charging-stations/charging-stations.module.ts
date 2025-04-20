@@ -12,6 +12,13 @@ import { ChargingStationRoutingModule } from './charging-station-routing.module'
 import { ChargingStationsComponent } from './charging-stations.component';
 import { ChargingStationsListComponent } from './charging-stations-list/charging-stations-list.component';
 import { ChargingStationImagesComponent } from './charging-station-images/charging-station-images.component';
+import { CreateChargingStationTypeChoiceComponent } from './create-charging-station/create-charging-station-type-choice/create-charging-station-type-choice.component';
+import { CreateChargingStationAddChargePointsComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-add-charge-points.component';
+import { CreateChargingStationAddressComponent } from './create-charging-station/create-charging-station-address/create-charging-station-address.component';
+import { CreateChargingStationInformationsComponent } from './create-charging-station/create-charging-station-informations/create-charging-station-informations.component';
+import { CreateChargingStationAddChargePointModalComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-add-charge-point-modal/create-charging-station-add-charge-point-modal.component';
+import { CreateChargingStationAddConnectorModalComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-add-connector-modal/create-charging-station-add-connector-modal.component';
+import { CreateChargingStationPreviewChargePointsComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-preview-charge-points/create-charging-station-preview-charge-points.component';
 
 @NgModule({
     declarations: [
@@ -22,7 +29,14 @@ import { ChargingStationImagesComponent } from './charging-station-images/chargi
     ChargingStationAddChargePointComponent,
     ChargingStationsComponent,
     ChargingStationsListComponent,
-    ChargingStationImagesComponent
+    ChargingStationImagesComponent,
+    CreateChargingStationTypeChoiceComponent,
+    CreateChargingStationAddChargePointsComponent,
+    CreateChargingStationAddressComponent,
+    CreateChargingStationInformationsComponent,
+    CreateChargingStationAddChargePointModalComponent,
+    CreateChargingStationAddConnectorModalComponent,
+    CreateChargingStationPreviewChargePointsComponent
   ],
     imports: [
         AtomsModule,

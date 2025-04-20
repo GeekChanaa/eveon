@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
+import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 
 @Component({
   selector: 'app-search-input',
@@ -8,12 +9,16 @@ import { FormControl } from '@angular/forms';
 })
 export class SearchInputComponent implements OnInit {
 
-  @Input() options: any[] = [];
+  @Input() options: {id : any, name : any}[] = [];
   @Input() control: FormControl = new FormControl('');
   @Output() optionSelected = new EventEmitter<any>();
   @Output() ngModelChange = new EventEmitter<string>();
   @Input() placeholder : string = "Value"
   @Input() disabled : boolean = false;
+  @Input() title : string = "";
+  @Input() description : string = "";
+  @Input() isError: boolean = false;
+
 
   searchString: string = "";
 
@@ -23,7 +28,9 @@ export class SearchInputComponent implements OnInit {
 
   showList = false;
 
-  constructor() { }
+  constructor(
+    private _validationMessageService : ValidationMessagesService
+  ) { }
 
   ngOnInit(): void {
     console.log(this.options);
@@ -55,6 +62,26 @@ export class SearchInputComponent implements OnInit {
     this.control.setValue(option.id);
     this.showList = false;
     this.optionSelected.emit(option);
+  }
+
+  getErrorMessage(): string {
+    if (!this.control.errors) return '';
+
+    for (const errorKey in this.control.errors) {
+      console.log("errorkey : ",errorKey);
+      if (this.control.errors.hasOwnProperty(errorKey)) {
+        return this._validationMessageService.getMessage(errorKey, this.control.errors[errorKey]);
+      }
+    }
+    return '';
+  }
+
+  hasRequiredValidator(): boolean {
+    return this.control && this.control.hasValidator(Validators.required);
+  }
+
+  get isInvalid() {
+    return this.control.touched && this.control.invalid;
   }
 
 }

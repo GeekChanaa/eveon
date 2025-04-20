@@ -87,6 +87,27 @@
               </div>
             </div>
           </div>
+
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Connector Default Pricing (per minute)
+                  <div class="tooltip" title="Default pricing per minute for each connector">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.defaultPricePerMinute| number:'1.2-2' }}</div>
+                
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

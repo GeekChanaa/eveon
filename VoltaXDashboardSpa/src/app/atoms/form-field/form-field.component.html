@@ -1,5 +1,6 @@
 <div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
   <div class="field__label">{{title | camelCaseToSpace}}
+    <span class="required-star" *ngIf="control?.validator && hasRequiredValidator()">*</span>
     <div class="tooltip" *ngIf="description" title="{{description}}">
       <svg class="icon icon-info">
         <use xlink:href="#icon-info"></use>
@@ -12,6 +13,8 @@
     <input *ngIf="inputType === 'text'" 
       class="field__input"
       type="text"
+      [disabled]="disabled"
+      [ngClass]="{'disabled' : disabled}"
       [formControl]="control"
       placeholder="{{placeholder}}"
       >
@@ -43,6 +46,13 @@
         [value]="option.value">
         {{option.label}}
       </option>
+    </select>
+
+
+    <select *ngIf="inputType === 'select_enum'"
+      class="select" 
+      [formControl]="control">
+      <option *ngFor="let value of getEnumValues()" [value]="value">{{value.toString() | camelCaseToSpace}}</option>
     </select>
 
     <ng-container *ngIf="inputType == 'textarea'">

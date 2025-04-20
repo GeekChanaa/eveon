@@ -23,7 +23,8 @@ export class ChargingCardTransactionsComponent implements OnInit {
     meterStop: 0,
     stopReason: '',
     amount: 0,
-    cardID: 0
+    cardID: 0,
+    status: ''
   }
 
   constructor(

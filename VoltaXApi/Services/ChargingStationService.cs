@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Dtos;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
+using AutoMapper;
 
 namespace VoltaXApi.Services
 {
@@ -17,21 +18,30 @@ namespace VoltaXApi.Services
         private readonly IRepository<Image> _imageRepo;
         private readonly IRepository<ChargingStationImage> _chargingStationImageRepo;
         private readonly IFileManagementService _fileService;
+        private readonly IMapper _mapper;
 
         public ChargingStationService(
           IChargingStationRepository repo,
           IRepository<Image> imageRepository,
           IRepository<ChargingStationImage> chargingStationImageRepo,
-          IFileManagementService fileService
+          IFileManagementService fileService,
+          IMapper mapper
         ){
           this._repository = repo;
           this._imageRepo = imageRepository;
           this._fileService = fileService;
           this._chargingStationImageRepo = chargingStationImageRepo;
+          this._mapper = mapper;
         }
         public async Task<ChargingStation> CreateChargingStationWithDetails(ChargingStationCreateDto chargingStationDto)
         {
-          ChargingStation chargingStation = await _repository.CreateChargingStation(chargingStationDto);
+          ChargingStation chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationDto);
+          chargingStation.Name = await GenerateStationName();
+          foreach(var chargePoint in chargingStation.ChargePoints)
+          {
+            chargePoint.ChargePointId = await GenerateChargePointId();
+          }
+          await _repository.AddAsync(chargingStation);
 
           if (chargingStationDto.ChargingStationImages != null )
           {
@@ -66,6 +76,22 @@ namespace VoltaXApi.Services
           }
 
           return chargingStation;
+        }
+
+        private async Task<string> GenerateStationName()
+        {
+            var latestStation = await _repository.GetLatestStationNumberAsync();
+            int nextNumber = latestStation + 1;
+            
+            return $"VCS-{nextNumber:D4}"; 
+        }
+
+        private async Task<string> GenerateChargePointId()
+        {
+            var latestChargePointNumber = await _repository.GetLatestStationNumberAsync();
+            int nextNumber = latestChargePointNumber + 1;
+            
+            return $"VOLTAX-{nextNumber:D3}"; 
         }
     }
 }

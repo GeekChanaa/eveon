@@ -1,28 +1,45 @@
-<div class="field__wrap">
-  <input 
-    #inputElem 
-    [(ngModel)]="searchString"
-    (ngModelChange)="filterOptions()"
-    (focus)="showSelect()" 
-    (focusout)="hideSelect()" 
-    class="field__input"
-    [disabled]="disabled"
-    [ngClass]="{'disabled':disabled}"
-    type="text" placeholder="{{placeholder}}" required>
 
-  <input 
-    [formControl]="control"
-    (focus)="showSelect()" 
-    (focusout)="hideSelect()" 
-    class="field__input"
-    type="text"
-    [hidden]="true"
-    required>
 
-  <ul class="list-search-input" [ngClass]="{'show-opacity': showList}">
-    <li *ngFor="let option of filteredOptions" (click)="selectOption(option, inputElem)"
-      class="option-search-input select-option">
-      {{ option.name }}
-    </li>
-  </ul>
+
+<div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
+  <div class="field__label">{{title | camelCaseToSpace}}
+    <span class="required-star" *ngIf="control?.validator && hasRequiredValidator()">*</span>
+    <div class="tooltip" *ngIf="description" title="{{description}}">
+      <svg class="icon icon-info">
+        <use xlink:href="#icon-info"></use>
+      </svg>
+    </div>
+  </div>
+  <div class="field__wrap">
+    <input 
+      #inputElem 
+      [(ngModel)]="searchString"
+      (ngModelChange)="filterOptions()"
+      (focus)="showSelect()" 
+      (focusout)="hideSelect()" 
+      class="field__input"
+      [disabled]="disabled"
+      [ngClass]="{'disabled':disabled}"
+      type="text" placeholder="{{placeholder}}" required>
+  
+    <input 
+      [formControl]="control"
+      (focus)="showSelect()" 
+      (focusout)="hideSelect()" 
+      class="field__input"
+      type="text"
+      [hidden]="true"
+      required>
+  
+    <ul class="list-search-input" [ngClass]="{'show-opacity': showList}">
+      <li *ngFor="let option of filteredOptions" (click)="selectOption(option, inputElem)"
+        class="option-search-input select-option">
+        {{ option.name }}
+      </li>
+    </ul>
+  </div>
+  
+  <div class="error" *ngIf="control.invalid && control.touched">
+    {{ getErrorMessage() }}
+  </div>
 </div>

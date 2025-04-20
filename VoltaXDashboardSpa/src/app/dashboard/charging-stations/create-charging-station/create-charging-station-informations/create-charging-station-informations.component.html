@@ -1,0 +1,70 @@
+<form [formGroup]="form">
+  <div class="field">
+    <div class="field__label">Partner
+      <div class="tooltip" title="The Partner that owns this charging station">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <app-search-input class="field__wrap" placeholder="Partner" [control]="getControl('partnerID')"
+      [options]="partners"></app-search-input>
+  </div>
+
+  <app-form-field class="field" title="Category" inputType="select_enum" enumName="ChargingStationCategoryEnum"
+    description="The category of the charging station" [control]="getControl('category')"></app-form-field>
+
+  <div class="field">
+    <div class="field__label">Charger quantity at location
+      <div class="tooltip" title="The number of charge points in the location">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select class="select" formControlName="chargerQuantity">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <app-form-field class="field" title="Parking Type" inputType="select_enum" enumName="ParkingTypeEnum"
+    description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
+    [control]="getControl('parkingType')"></app-form-field>
+
+  <app-form-field class="field" title="Status" inputType="select_enum" enumName="ChargingStationStatusEnum"
+    description="The current operational status of the charging station (e.g., Available, Unavailable, Offline, Faulted)."
+    [control]="getControl('status')"></app-form-field>
+
+  <app-form-field class="field" title="Wifi" inputType="checkbox" placeholder="Wifi"
+    description="Indicates whether Wifi internet access is available at this charging station."
+    [control]="getControl('wifi')"></app-form-field>
+
+  <app-form-field class="field" title="Parking" inputType="checkbox" placeholder="Parking"
+    description="Indicates whether dedicated parking spaces are available for charging vehicles at this station."
+    [control]="getControl('parking')"></app-form-field>
+
+  <app-form-field class="field" title="Restaurants" inputType="checkbox" placeholder="Restaurants"
+    description="Indicates whether restaurants or food options are located nearby this charging station."
+    [control]="getControl('restaurants')"></app-form-field>
+
+  <app-form-field class="field" title="Washroom" inputType="checkbox" placeholder="Washroom"
+    description="Indicates whether public washroom facilities are available at or near this charging station."
+    [control]="getControl('washroom')"></app-form-field>
+
+  <app-form-field class="field" title="Sitting Area" inputType="checkbox" placeholder="Sitting Area"
+    description="Indicates whether a designated sitting or waiting area is available at this charging station."
+    [control]="getControl('sittingArea')"></app-form-field>
+
+  <div class="form__actions">
+    <button class="button button-stroke" (click)="previousStep()">Previous</button>
+    <button [ngClass]="{'disabled' : form.invalid}" [disabled]="form.invalid" class="button button-primary ml-auto" (click)="saveInformations()">Next</button>
+  </div>
+</form>

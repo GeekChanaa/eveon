@@ -7,5 +7,7 @@ namespace VoltaXApi.Services
     {
         Task UploadUserAvatar(IFormFile file, int partnerID);
         Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate);
+        Task<bool> UpdateEmail(UpdateUserEmailDto user);
+        Task<bool> UpdatePhone(UpdateUserPhoneDto user);
     }
 }

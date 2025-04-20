@@ -29,5 +29,7 @@ namespace VoltaXApi.Data
         Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID,DateTime date1, DateTime date2);
         Task<List<Transaction>> GetPartnerLatestTransactions(int partnerID,int nbrTransactions = 20);
         IQueryable<Transaction> GetCardTransactions(int cardID);
+        IQueryable<TransactionListDto> GetAllTransactions(GlobalParams globalParams);
+        Task<TransactionListDto> GetTransactionByID(string transactionID);
     }
 }

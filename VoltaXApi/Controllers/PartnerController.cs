@@ -39,6 +39,12 @@ namespace VoltaXApi.Controllers
             return partnersList;
         }
 
+        [HttpGet("GetAllPartnersForSelect")]
+        public async Task<List<PartnerListForSelectDto>> GetAllPartners()
+        {
+            return await this._repository.GetAllPartners();
+        }
+
         [HttpGet("GetPartnerByID/{partnerId}")]
         public async Task<PartnerDisplayDto> GetPartnerByID(int partnerId)
         {

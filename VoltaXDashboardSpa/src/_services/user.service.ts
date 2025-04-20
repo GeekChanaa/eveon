@@ -8,6 +8,8 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 import { UserNameDto } from 'src/_models/_dtos/user-name-dto';
 import { UserDashboardEditInformationsDto } from 'src/_models/_dtos/users-dtos/user-dashboard-edit-informations-dto';
 import { UserListDto } from 'src/_models/_dtos/user-list-dto';
+import { UpdateUserEmailDto } from 'src/_models/_dtos/user-dtos/update-user-email-dto';
+import { UpdateUserPhoneDto } from 'src/_models/_dtos/user-dtos/update-user-phone-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -137,6 +139,14 @@ export class UserService extends AbstractService<User>{
 
   createUserDashboard(userToCreate : any){
     return this.http.post<any>(this.baseUrl + 'CreateUserDashboard', userToCreate);
+  }
+
+  updateEmail(user : UpdateUserEmailDto){
+    return this.http.put<any>(this.baseUrl + 'UpdateUserEmail', user);
+  }
+
+  updatePhone(user : UpdateUserPhoneDto){
+    return this.http.put<any>(this.baseUrl + 'UpdateUserPhone', user);
   }
 
 

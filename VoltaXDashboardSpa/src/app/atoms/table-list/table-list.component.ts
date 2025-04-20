@@ -176,6 +176,10 @@ export class TableListComponent implements OnInit {
       this._router.navigateByUrl("dashboard/connector-realtime/"+item.chargePointID+"/charging-session/"+item.id);
       return;
     }
+    if(this.name == 'transaction'){
+      this._router.navigateByUrl("dashboard/transactions/"+item.uid);
+      return;
+    }
     this._router.navigateByUrl("/dashboard/"+this.routeName+"/"+item.id)
   }
 
@@ -279,24 +283,21 @@ export class TableListComponent implements OnInit {
     this.resetFiltersEvent.emit();
   }
 
-  // Method to show confirmation modal
-confirmDelete(itemId: any): void {
-  this.itemToDelete = itemId;
-  this.showDeleteConfirmModal = true;
-}
+  confirmDelete(itemId: any): void {
+    this.itemToDelete = itemId;
+    this.showDeleteConfirmModal = true;
+  }
 
-// Method to cancel delete
-cancelDelete(): void {
-  this.showDeleteConfirmModal = false;
-  this.itemToDelete = null;
-}
-
-// Method to proceed with deletion after confirmation
-proceedWithDelete(): void {
-  if (this.itemToDelete) {
-    this.delete(this.itemToDelete);
+  cancelDelete(): void {
     this.showDeleteConfirmModal = false;
     this.itemToDelete = null;
   }
-}
+
+  proceedWithDelete(): void {
+    if (this.itemToDelete) {
+      this.delete(this.itemToDelete);
+      this.showDeleteConfirmModal = false;
+      this.itemToDelete = null;
+    }
+  }
 }

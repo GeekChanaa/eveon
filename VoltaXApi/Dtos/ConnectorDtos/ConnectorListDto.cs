@@ -9,7 +9,6 @@ namespace VoltaXApi.Dtos
         public int? ConnectorID { get; set; }
         public int? EvseID { get; set; }
         public decimal Power { get; set; }
-        public double Speed { get; set; }
         public decimal PricePerKWh { get; set; }   
         public decimal PricePerMinute { get; set; }   
         public decimal PricePerIdleMinute { get; set; }   

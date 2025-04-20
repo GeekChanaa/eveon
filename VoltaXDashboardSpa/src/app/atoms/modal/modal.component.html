@@ -1,0 +1,15 @@
+<div class="modal-backdrop" [@backdropAnimation]="modalState" (click)="closeOnBackdrop($event)">
+  <div class="modal-container" [@modalAnimation]="modalState" [ngClass]="modalSize">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ title }}</h3>
+      <button class="close-button" (click)="close()">×</button>
+    </div>
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+    <div class="modal-footer" *ngIf="showFooter">
+      <button class="btn-cancel" *ngIf="showCancelButton" (click)="cancel()">{{ cancelText }}</button>
+      <button class="btn-confirm" *ngIf="showConfirmButton" (click)="confirm()">{{ confirmText }}</button>
+    </div>
+  </div>
+</div>

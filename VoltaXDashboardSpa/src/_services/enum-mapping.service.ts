@@ -20,11 +20,8 @@ export class EnumMappingService {
       2: 'Partner',
     },
     ChargePointCategory: {
-      0: 'TheTower',
-      1: 'TheTowerPlus',
-      2: 'VXCommercial',
-      3: 'TheTowerDC',
-      4: 'VXHome',
+      0: 'Single',
+      1: 'Double',
     },
     ChargePointStatus: {
       0: 'Available',

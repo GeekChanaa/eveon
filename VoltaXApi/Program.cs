@@ -120,6 +120,7 @@ builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
 builder.Services.AddScoped<IChargeTagRepository, ChargeTagRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
 builder.Services.AddScoped<ISystemReportCommentRepository, SystemReportCommentRepository>();
+builder.Services.AddScoped<IUserInfoDownloadRequestRepository, UserInfoDownloadRequestRepository>();
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
@@ -226,6 +227,7 @@ builder.Services.AddScoped<WebSocketSubProtocolMatcher>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 

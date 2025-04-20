@@ -12,5 +12,7 @@ namespace VoltaXApi.Services
         Task SendReportEmailToAdmin(SystemReport report);
         Task SendReportEmailToSupport(int reportID);
 		Task SendWarningEmail(MailRequest mailRequest, string userName);
+		Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName);
+		Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
     }
 }

@@ -1,0 +1,74 @@
+
+<div class="charge-points-container">
+  <div class="header-actions">
+    <h2>Charge Points</h2>
+    <button class="btn btn-primary" (click)="openAddChargePointModal()">Add Charge Point</button>
+  </div>
+  
+  <div class="charge-points-list" *ngIf="chargePoints.length > 0">
+    <app-create-charging-station-preview-charge-points
+      [chargePoints]="chargePoints"
+      (editChargePoint)="openEditChargePointModal($event)"
+      (deleteChargePoint)="deleteChargePoint($event)"
+      (addConnector)="openAddConnectorModal($event)"
+      (editConnector)="openEditConnectorModal($event.chargePointIndex, $event.connectorIndex)"
+      (deleteConnector)="deleteConnector($event.chargePointIndex, $event.connectorIndex)">
+    </app-create-charging-station-preview-charge-points>
+  </div>
+  
+  <div class="empty-state" *ngIf="chargePoints.length === 0">
+    <p>No charge points added yet. Click the button above to add your first charge point.</p>
+  </div>
+</div>
+
+<!-- Charge Point Modal -->
+<div class="modal-overlay" *ngIf="showChargePointModal" [@overlayAnimation]>
+  <div class="modal" [@modalAnimation]>
+    <div class="modal-header">
+      <h3>{{ currentChargePointIndex !== null ? 'Edit' : 'Add' }} Charge Point</h3>
+      <button class="close-btn" (click)="closeChargePointModal()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="chargePointForm">
+        <app-create-charging-station-add-charge-point-modal
+          [form]="chargePointForm">
+        </app-create-charging-station-add-charge-point-modal>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn" (click)="closeChargePointModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveChargePoint()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Connector Modal -->
+<div class="modal-overlay" *ngIf="showConnectorModal" [@overlayAnimation]>
+  <div class="modal" [@modalAnimation]>
+    <div class="modal-header">
+      <h3>{{ currentConnectorIndex !== null ? 'Edit' : 'Add' }} Connector</h3>
+      <button class="close-btn" (click)="closeConnectorModal()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="connectorForm">
+        <app-create-charging-station-add-connector-modal
+        [chargingStationType]="chargingStationType"
+          [form]="connectorForm">
+        </app-create-charging-station-add-connector-modal>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn" (click)="closeConnectorModal()">Cancel</button>
+      <button class="button button-primary" [ngClass]="{'disabled':!connectorForm.valid}" [disabled]="!connectorForm.valid" (click)="saveConnector()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="form__actions">
+  <button class="button button-stroke" (click)="previousStep()">Previous</button>
+  <button class="button button-primary ml-auto" (click)="saveInformations()">Next</button>
+</div>

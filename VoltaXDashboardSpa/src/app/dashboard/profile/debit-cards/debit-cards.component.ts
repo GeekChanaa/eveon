@@ -8,7 +8,7 @@ import { UserService } from 'src/_services/user.service';
 @Component({
   selector: 'app-debit-cards',
   templateUrl: './debit-cards.component.html',
-  styleUrls: ['./debit-cards.component.css'],
+  styleUrls: ['./debit-cards.component.sass'],
 })
 export class DebitCardsComponent implements OnInit {
   showDCForm: Boolean = false;

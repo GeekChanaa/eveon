@@ -12,7 +12,7 @@ export interface User {
     city? : string;
     gender? : string;
     isEmailVerified : Boolean;
-    isPhoneVerified : Boolean;
+    isPhoneNumberVerified : Boolean;
     password?: string;
     orders?: Order[];
     role : string;

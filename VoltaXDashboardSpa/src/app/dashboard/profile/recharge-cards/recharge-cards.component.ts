@@ -11,7 +11,7 @@ import { UserService } from 'src/_services/user.service';
 @Component({
   selector: 'app-recharge-cards',
   templateUrl: './recharge-cards.component.html',
-  styleUrls: ['./recharge-cards.component.css']
+  styleUrls: ['./recharge-cards.component.sass']
 })
 export class RechargeCardsComponent implements OnInit {
 

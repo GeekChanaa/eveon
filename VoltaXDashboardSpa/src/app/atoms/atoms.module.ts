@@ -44,6 +44,8 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { ConfirmActionDirective } from 'src/_directives/confirm-action.directive';
 import { CardActionComponent } from './card-action/card-action.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
+import { DashboardFormContainerComponent } from './dashboard-form-container/dashboard-form-container.component';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +88,9 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
     ConfirmActionDirective,
     CamelCaseToSpacePipe,
     CardActionComponent,
-    AppTableCustomButtonDirective
+    AppTableCustomButtonDirective,
+    DashboardFormContainerComponent,
+    ModalComponent
   ],
   imports: [
     CommonModule,
@@ -135,7 +139,9 @@ import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-butt
     SafeUrlPipe,
     CamelCaseToSpacePipe,
     AppTableCustomButtonDirective,
-    CardActionComponent
+    CardActionComponent,
+    DashboardFormContainerComponent,
+    ModalComponent
   ],
   providers: [],
 })

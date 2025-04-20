@@ -75,5 +75,24 @@ namespace VoltaXApi.Services
             return user.ID;
         }
 
+        public async Task<bool> UpdateEmail(UpdateUserEmailDto user)
+        {
+            var userToUpdate = await this._userRepository.GetByIdAsync(user.ID);
+            userToUpdate.Email = user.Email;
+            await this._userRepository.Update(userToUpdate);
+            await this._authService.CreateEmailVerificationToken(user.ID);
+            return true;
+        }
+        public async Task<bool> UpdatePhone(UpdateUserPhoneDto user)
+        {
+            var userToUpdate = await this._userRepository.GetByIdAsync(user.ID);
+            var userDto = new AddPhoneNumberDto{
+                Phone = user.Phone,
+                Email = userToUpdate.Email
+            };
+            await this._authService.CreatePhoneVerificationToken(userDto);
+            return true;
+        }
+
     }
 }

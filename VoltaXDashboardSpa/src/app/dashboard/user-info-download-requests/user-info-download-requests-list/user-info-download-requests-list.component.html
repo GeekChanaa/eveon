@@ -1,0 +1,53 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="user info download request"
+      names="user info download requests"
+      [searchByAttributes]="['User.FullName']"
+      routeName="user-info-download-requests"
+      [fields]="fields" 
+      [filters]="filters"
+      [searchable]="false"
+      [getItemsObservable]="getUserInfoDownloadRequests.bind(this)"
+      [updateItemObservable]="updateSystemReportObservable.bind(this)"
+      [deletable]="false"
+      createLink=""
+      searchByPlaceHolder="Search by User Name"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By Status
+                  <div class="tooltip" title="Status of the request">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.status">
+                      <option value="" selected>None</option>
+                      <option value="Pending">Pending</option>
+                      <option value="InProgress">Processing</option>
+                      <option value="Resolved">Approved</option>
+                      <option value="Closed">Denied</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

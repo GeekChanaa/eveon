@@ -1,0 +1,55 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="transaction"
+      names="transactions"
+      [searchByAttributes]="['uid']"
+      routeName="transactions"
+      createLink=""
+      [fields]="fields" 
+      [filters]="filters"
+      [searchable]="false"
+      [deletable]="false"
+      [getItemsObservable]="getTransactionsObservable.bind(this)"
+      [deleteItemObservable]="deleteTransactionObservable.bind(this)"
+      [updateItemObservable]="updateTransactionObservable.bind(this)"
+      searchByPlaceHolder="Search by Name"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By Status
+                  <div class="tooltip" title="Status of the transaction">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.status">
+                      <option value="" selected>None</option>
+                      <option value="Current">Current</option>
+                      <option value="Ended">Ended</option>
+                      <option value="Forbidden">Forbidden</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      
+    </app-table-list>
+  </div>
+</div>

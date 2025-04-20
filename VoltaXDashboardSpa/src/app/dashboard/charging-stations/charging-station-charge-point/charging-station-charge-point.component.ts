@@ -35,7 +35,7 @@ export class ChargingStationChargePointComponent implements OnInit {
     clientCertThumb: '',
     connectors: [],
     transactions: [],
-    category: ChargePointCategoryEnum.TheTower
+    category: ChargePointCategoryEnum.Single
   }
 
   constructor(

@@ -17,6 +17,7 @@ namespace VoltaXApi.Models
         public double? MeterStop { get; set; }
         public string? StopReason { get; set; }
         public double Amount { get; set; }
+        public TransactionStatusEnum? Status { get; set; } = TransactionStatusEnum.Current;
         public Card? StartCard { get; set; }
         public Card? StopCard { get; set; }
         public ChargingSession? ChargingSession { get; set; }

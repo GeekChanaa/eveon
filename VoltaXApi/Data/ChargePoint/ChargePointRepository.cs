@@ -142,6 +142,21 @@ namespace VoltaXApi.Data
             return chargePoints;
         }
 
+        public async Task<int> GetLatestChargePointNumberAsync()
+        {
+            // Similar approach for charge point IDs
+            var maxNumber = (await dbSet
+                .Where(s => s.ChargePointId != null && s.ChargePointId.StartsWith("VOLTAX-"))
+                .Select(s => s.ChargePointId.Substring(7))
+                .ToListAsync())
+                .Where(numStr => int.TryParse(numStr, out _))
+                .Select(numStr => int.Parse(numStr))
+                .DefaultIfEmpty(0)
+                .Max();
+                
+            return maxNumber;
+        }
+
 
     }
 }

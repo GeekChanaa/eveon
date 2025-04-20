@@ -29,8 +29,9 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-comment" *ngIf="role == 'Admin'" [title]="'app management'" 
-        [active]="isDropdownActive('/dashboard/reports')">
+        [active]="isDropdownActive('/dashboard/reports') || isActive('/dashboard/user-info-download-requests')">
         <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'" [active]="isActive('/dashboard/reports')"></app-sidebar-link>
+        <app-sidebar-link [title]="'user info download requests'" [link]="'/dashboard/user-info-download-requests'" [active]="isActive('/dashboard/user-info-download-requests')"></app-sidebar-link>
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-invoice" *ngIf="role == 'Admin'" [title]="'order management'" 

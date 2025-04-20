@@ -15,6 +15,7 @@ namespace VoltaXApi.Data
         Task<PartnerDisplayDto> GetPartnerByID(int id);
         Task<bool> PartnerEmailExists(string email);
         Task<bool> PartnerPhoneExists(string phone);
+        Task<List<PartnerListForSelectDto>> GetAllPartners();
 
     }
 }

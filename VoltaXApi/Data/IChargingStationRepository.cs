@@ -31,6 +31,7 @@ namespace VoltaXApi.Data
         Task<ChargingStation> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto);
         Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "");
         Task<bool> ChargingStationExistsByName(string Name);
+        Task<int> GetLatestStationNumberAsync();
 
     }
 }
