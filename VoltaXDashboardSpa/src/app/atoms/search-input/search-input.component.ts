@@ -45,12 +45,18 @@ export class SearchInputComponent implements OnInit {
   }
 
   filterOptions() {
-    console.log("here ", this.searchString);
-    this.filteredOptions =  this.options.filter(option => option.name.toLowerCase().includes(this.searchString.toLowerCase()));
+    if (!this.searchString || this.searchString.trim() === '') {
+      this.filteredOptions = [...this.options];
+    } else {
+      this.filteredOptions = this.options.filter(option => 
+        option.name.toLowerCase().includes(this.searchString.toLowerCase())
+      );
+    }
   }
-
+  
   showSelect() {
     this.showList = true;
+    this.filteredOptions = [...this.options];
   }
 
   hideSelect() {

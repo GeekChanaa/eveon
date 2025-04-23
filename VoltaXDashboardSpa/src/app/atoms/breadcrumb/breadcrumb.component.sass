@@ -1,0 +1,25 @@
+.breadcrumb 
+  padding: 0
+  
+  ol 
+    display: flex
+    list-style: none
+    padding: 0
+    margin: 0
+    li 
+      font-size: 14px
+      
+      &:not(:last-child):after 
+        content: '/'
+        margin: 0 8px
+        color: #aaa
+      
+      &.active 
+        color: #777
+
+      a 
+        color: #2d8dec
+        text-decoration: none
+        
+        &:hover 
+          text-decoration: underline

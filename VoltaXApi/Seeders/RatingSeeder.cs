@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 using Bogus;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace VoltaXApi.Data.Seeders
 {
     public static class RatingSeeder
     {
-        public static async Task<List<Rating>> Seed(int count, List<User> users, VoltaXApiDbContext dbContext)
+        public static async Task<List<Rating>> Seed(int count, VoltaXApiDbContext dbContext)
         {
             IRepository<Rating> repo = new Repository<Rating>(dbContext);
+            var users = await dbContext.Users.ToListAsync();
 
             var ratingFaker = new Faker<Rating>()
                 .RuleFor(o => o.Score, f => f.Random.Int(1, 5)) 

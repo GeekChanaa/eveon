@@ -1,12 +1,9 @@
 <div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
-  <div class="field__label">{{title | camelCaseToSpace}}
-    <span class="required-star" *ngIf="control?.validator && hasRequiredValidator()">*</span>
-    <div class="tooltip" *ngIf="description" title="{{description}}">
-      <svg class="icon icon-info">
-        <use xlink:href="#icon-info"></use>
-      </svg>
-    </div>
-  </div>
+  <app-field-label
+  [title]="title"
+  [description]="description"
+  [control]="control"
+    ></app-field-label>
   
   <div class="field__wrap">
     <!-- Text Input -->
@@ -34,7 +31,6 @@
         class="checkbox__input">
       <span class="checkbox__inner">
         <span class="checkbox__tick"></span>
-        <span class="checkbox__text">{{placeholder}}</span>
       </span>
     </label>
     

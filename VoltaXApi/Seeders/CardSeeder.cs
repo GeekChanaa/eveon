@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using Bogus;
+using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Data.Seeders
 {
     public static class CardSeeder
     {
-        public async static Task<List<Card>> Seed(int count, List<User> users, VoltaXApiDbContext dbContext)
+        public async static Task<List<Card>> Seed(int count,  VoltaXApiDbContext dbContext)
         {
             IRepository<Card> repo = new Repository<Card>(dbContext);
+            var users = await dbContext.Users.ToListAsync();
             var cardFaker = new Faker<Card>()
                 .RuleFor(c => c.CardNumber, f => f.Finance.CreditCardNumber())
                 .RuleFor(c => c.CardType, f => f.PickRandom<CardTypeEnum>())

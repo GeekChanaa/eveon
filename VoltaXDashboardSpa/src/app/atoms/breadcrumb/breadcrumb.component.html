@@ -1,0 +1,12 @@
+<nav class="breadcrumb">
+  <ol>
+    <li *ngFor="let item of items; let last = last">
+      <ng-container *ngIf="!last && item.link">
+        <a [routerLink]="item.link">{{ item.label }}</a>
+      </ng-container>
+      <ng-container *ngIf="last || !item.link">
+        <span class="active">{{ item.label }}</span>
+      </ng-container>
+    </li>
+  </ol>
+</nav>

@@ -1,26 +1,23 @@
 <form [formGroup]="form">
-  <div class="field">
-    <div class="field__label">City
-      <div class="tooltip" title="The City where the charging station is.">
-        <svg class="icon icon-info">
-          <use xlink:href="#icon-info"></use>
-        </svg>
-      </div>
-    </div>
-    <app-search-input class="field__wrap"
+
+  <div class="field__group">
+    <app-search-input class="field"
       placeholder="City"
+      title="City"
+      description="The City where the charging station is."
       [control]="getControl('city')"
       [options]="cities"></app-search-input>
+  
+    <app-form-field
+      class="field"
+      title="Zip Code"
+      inputType="text"
+      description="The postal code for the address."
+      placeholder="Enter Zip Code"
+      [control]="getControl('zipCode')"
+    ></app-form-field>
   </div>
   
-  <app-form-field
-    class="field"
-    title="Zip Code"
-    inputType="text"
-    description="The postal code for the address."
-    placeholder="Enter Zip Code"
-    [control]="getControl('zipCode')"
-  ></app-form-field>
 
   <app-form-field
     class="field"

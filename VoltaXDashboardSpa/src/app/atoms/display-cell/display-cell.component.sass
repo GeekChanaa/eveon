@@ -1,25 +1,230 @@
-.field__information
-    font-size: 16px
-    color: #000
+// display-cell.component.scss
 
-.field__label
+.form-field 
+  margin-bottom: 16px
+  transition: all 0.2s ease
+  
+  &--editing 
+    background-color: rgba(45, 141, 236, 0.05)
+    border-radius: 6px
+    padding: 12px
+    box-shadow: 0 0 0 1px rgba(45, 141, 236, 0.2)
+  
+  
+  &__label 
     display: flex
-
-.field__edit
+    align-items: center
+    margin-bottom: 6px
+    font-size: 14px
+    font-weight: 500
+    color: #555
+  
+  
+  &__tooltip 
+    display: inline-flex
+    margin-left: 6px
+    cursor: help
+    
+    .icon 
+      width: 16px
+      height: 16px
+      color: #aaa
+      transition: color 0.2s
+      
+      &:hover 
+        color: #777
+      
+    
+  
+  
+  &__edit-btn 
+    margin-left: auto
+    background: none
+    border: none
+    padding: 4px
     cursor: pointer
-
-.flex
+    opacity: 0
+    transition: opacity 0.2s
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    border-radius: 4px
+    
+    .icon 
+      width: 16px
+      height: 16px
+      color: #777
+    
+    
+    &:hover 
+      background-color: #f0f0f0
+      
+      .icon 
+        color: #2d8dec
+      
+    
+  
+  
+  &:hover &__edit-btn 
+    opacity: 1
+  
+  
+  &__display 
+    min-height: 24px
     display: flex
-
-.inp-btn
-    margin-left: 5px
-    margin-right: 5px
-    padding: 0 10px
-
-
-.link
-    color: var(--primary7)
+    align-items: center
+  
+  
+  &__value 
+    font-size: 15px
+    color: #333
+    word-break: break-word
+    
+    &--multiline 
+      white-space: pre-line
+      line-height: 1.5
+    
+    
+    &--enum 
+      display: inline-flex
+      align-items: center
+      padding: 4px 10px
+      background-color: #f5f5f5
+      border-radius: 16px
+      font-size: 13px
+      font-weight: 500
+    
+  
+  
+  &__link 
+    color: #2d8dec
+    text-decoration: none
+    
+    &:hover 
+      text-decoration: underline
+    
+  
+  
+  &__empty 
+    font-size: 14px
+    color: #999
+    font-style: italic
+  
+  
+  &__edit 
+    display: flex
+    align-items: flex-start
+    gap: 8px
+  
+  
+  &__input,
+  &__select,
+  &__textarea 
+    flex: 1
+    padding: 8px 12px
+    border: 1px solid #ddd
+    border-radius: 4px
+    font-size: 14px
+    color: #333
+    background-color: #fff
+    transition: border-color 0.2s, box-shadow 0.2s
+    width: 100%
+    
+    &:focus 
+      outline: none
+      border-color: #2d8dec
+      box-shadow: 0 0 0 3px rgba(45, 141, 236, 0.15)
+    
+    
+    &::placeholder 
+      color: #aaa
+    
+  
+  
+  &__textarea 
+    min-height: 80px
+    resize: vertical
+  
+  
+  &__select-wrapper 
+    position: relative
+    flex: 1
+    
+    &::after 
+      content: ''
+      position: absolute
+      top: 50%
+      right: 12px
+      width: 0
+      height: 0
+      border-left: 5px solid transparent
+      border-right: 5px solid transparent
+      border-top: 5px solid #777
+      pointer-events: none
+      transform: translateY(-50%)
+    
+  
+  
+  &__select 
+    appearance: none
+    padding-right: 30px
+  
+  
+  &__actions 
+    display: flex
+    gap: 4px
+  
+  
+  &__btn 
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 32px
+    height: 32px
+    border-radius: 4px
+    border: 1px solid transparent
+    background-color: #f5f5f5
     cursor: pointer
-    transition: ease-in-out all .3s
-    &:hover
-        color: var(--primary9)
+    transition: all 0.2s
+    
+    .icon 
+      width: 16px
+      height: 16px
+    
+    
+    &--save 
+      background-color: #2d8dec
+      
+      .icon 
+        color: white
+      
+      
+      &:hover 
+        background-color: darken(#2d8dec, 10%)
+      
+    
+    
+    &--cancel 
+      border-color: #ddd
+      background-color: white
+      
+      .icon 
+        color: #777
+      
+      
+      &:hover 
+        background-color: #f5f5f5
+      
+    
+    
+    &:disabled 
+      opacity: 0.6
+      cursor: not-allowed
+    
+  
+  
+  &__error 
+    margin-top: 6px
+    font-size: 12px
+    color: #e53935
+  

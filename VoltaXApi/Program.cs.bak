@@ -39,6 +39,7 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug(); 
 builder.Logging.SetMinimumLevel(LogLevel.Warning); 
 
+
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
@@ -119,6 +120,7 @@ builder.Services.AddScoped<IChargePointRepository, ChargePointRepository>();
 builder.Services.AddScoped<IChargeTagRepository, ChargeTagRepository>();
 builder.Services.AddScoped<IChargingStationRepository, ChargingStationRepository>();
 builder.Services.AddScoped<ISystemReportCommentRepository, SystemReportCommentRepository>();
+builder.Services.AddScoped<IUserInfoDownloadRequestRepository, UserInfoDownloadRequestRepository>();
 builder.Services.AddScoped<IChargingStationImageRepository, ChargingStationImageRepository>();
 builder.Services.AddScoped<IChargingStationService, ChargingStationService>();
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
@@ -132,6 +134,20 @@ builder.Services.AddScoped<IConnectorService, ConnectorService>();
 builder.Services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
 builder.Services.AddScoped<ISystemReportService, SystemReportService>();
 builder.Services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
+
+
+
+builder.Services.AddSingleton<IHostedService>(serviceProvider =>
+{
+    // Create a scope
+    using var scope = serviceProvider.CreateScope();
+    
+    // Resolve the service from the scope
+    return scope.ServiceProvider.GetRequiredService<CardExpirationWarningService>();
+});
+
+// Register the actual service as scoped
+builder.Services.AddScoped<CardExpirationWarningService>();
 builder.Services.AddScoped<ISystemReportRepository, SystemReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
@@ -148,6 +164,12 @@ builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
 builder.Services.AddScoped<IOCPPConfigurationComponentRepository, OCPPConfigurationComponentRepository>();
 builder.Services.AddScoped<IOCPPConfigurationVariableRepository, OCPPConfigurationVariableRepository>();
+
+builder.Services.AddScoped<ICardExpirationNotificationRepository, CardExpirationNotificationRepository>();
+
+// OCPP Local List 
+builder.Services.AddScoped<IOCPPLocalListItemRepository, OCPPLocalListItemRepository>();
+builder.Services.AddScoped<IOCPPLocalListVersionRepository, OCPPLocalListVersionRepository>();
 
 builder.Services.AddScoped<IOCPPConfigurationItemRepository,OCPPConfigurationItemRepository>();
 
@@ -194,17 +216,18 @@ builder.Services.AddScoped<Func<TransactionEventHandler>>(sp => () => sp.GetServ
 builder.Services.AddScoped<Func<NotifyReportHandler>>(sp => () => sp.GetService<NotifyReportHandler>());
 
 
-
-
-
+builder.Services.Configure<CompanyInformations>(builder.Configuration.GetSection("CompanyInformations"));
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
 builder.Services.AddScoped<WebSocketSubProtocolMatcher>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
 builder.Services.AddScoped<IFileManagementService, FileManagementService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
@@ -245,6 +268,8 @@ builder.Services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
 });
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<CardExpirationSettings>(builder.Configuration.GetSection("CardExpirationSettings"));
+builder.Services.Configure<CardConfigurationSettings>(builder.Configuration.GetSection("CardConfigurationSettings"));
 
 builder.Services.AddSingleton(resolver =>
 {
@@ -269,6 +294,7 @@ builder.Services.AddCors(options =>
         );
     });
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -281,8 +307,7 @@ if (app.Environment.IsDevelopment())
 
 
 
-
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseRequestLocalization();
 app.UseCors("CorsPolicy");
@@ -310,6 +335,7 @@ using (var scope = app.Services.CreateScope())
 
     var mapper = app.Services.GetRequiredService<IMapper>();
     // GlobalSeeder.Seed(dbContext, mapper).Wait();
+    // DatabaseInit.Seed(dbContext,mapper).Wait();
     
     //SeedingNotificationTypes.Initialize(app.Services);
     dbContext.Database.SetCommandTimeout(6000); 

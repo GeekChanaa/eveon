@@ -4,6 +4,7 @@ export interface PartnerListDto{
     id : number,
     name : string,
     description : string,
+    partnerIdentificationNumber : string;
     type: PartnerTypeEnum,
     address: string,
     logoUrl : string,

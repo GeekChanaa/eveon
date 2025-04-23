@@ -4,6 +4,7 @@ export interface Partner {
     id: number;
     name: string;
     description: string;
+    artnerIdentificationNumber : string;
     type: PartnerTypeEnum;
     email: string;
     email2?: string;

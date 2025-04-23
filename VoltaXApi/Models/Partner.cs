@@ -17,6 +17,7 @@ public class Partner : IEntity
     public string? Country { get; set; }
     public string? Address { get; set; }
     public string? TaxIdentificationNumber { get; set; }
+    public string PartnerIdentificationNumber { get; set; }
     public string? RegistrationNumber { get; set; }
     public string? BankAccountNumber { get; set; }
     public int? ImageID { get; set; }

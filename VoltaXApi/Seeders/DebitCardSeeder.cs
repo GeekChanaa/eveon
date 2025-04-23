@@ -2,13 +2,17 @@ using Bogus;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
 using System;
+using System.Data.Entity;
 
 public class DebitCardSeeder
 {
-    public static async Task<List<DebitCard>> Seed(int quantity, List<User> users,VoltaXApiDbContext dbContext)
+    public static async Task<List<DebitCard>> Seed(int quantity, VoltaXApiDbContext dbContext)
     {
 
         IRepository<DebitCard> repo = new Repository<DebitCard>(dbContext);
+
+        var users = await dbContext.Users.ToListAsync();
+
         Randomizer.Seed = new Random(8675309);
 
         var debitCardFaker = new Faker<DebitCard>()

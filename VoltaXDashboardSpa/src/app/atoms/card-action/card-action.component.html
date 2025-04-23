@@ -1,6 +1,22 @@
-<div class="container-action" (click)="action()">
-  <svg class="icon icon-{{icon}}">
-    <use [attr.href]="'#icon-' + icon"></use>
-  </svg>
-  {{ actionName | camelCaseToSpace }}
+<div class="card-action" 
+     [class.disabled]="disabled"
+     [class.card-action--small]="size === 'small'"
+     [class.card-action--standard]="size === 'standard'"
+     [class.card-action--large]="size === 'large'"
+     (click)="handleClick()">
+  <div class="card-action__icon-container">
+    <svg class="card-action__icon icon icon-{{icon}}">
+      <use [attr.href]="'#icon-' + icon"></use>
+    </svg>
+    <div class="card-action__ripple"></div>
+  </div>
+  <div class="card-action__content">
+    <h3 class="card-action__title">{{ actionName | titlecase }}</h3>
+    <p class="card-action__description" *ngIf="description">{{ description }}</p>
+  </div>
+  <div class="card-action__arrow">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </div>
 </div>

@@ -2051,6 +2051,10 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PartnerIdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -2076,6 +2080,9 @@ namespace VoltaXApi.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("ImageID");
+
+                    b.HasIndex("PartnerIdentificationNumber")
+                        .IsUnique();
 
                     b.ToTable("Partners");
                 });

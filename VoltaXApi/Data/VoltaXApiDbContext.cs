@@ -144,6 +144,10 @@ namespace VoltaXApi.Data
                 .HasIndex(u => u.Phone)
                 .IsUnique();
 
+            modelBuilder.Entity<Partner>()
+                .HasIndex(u => u.PartnerIdentificationNumber)
+                .IsUnique();
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 if (typeof(IEntity).IsAssignableFrom(entityType.ClrType))

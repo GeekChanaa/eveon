@@ -5,13 +5,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 public static class PartnerSeeder
 {
     public static async Task<List<Partner>> Seed(int number, VoltaXApiDbContext context)
-    {
+    {   
         // Partner repository
         IRepository<Partner> _partnerRepo = new Repository<Partner>(context);
+
+        // Get the current highest PartnerIdentificationNumber
+        var lastPartner = await context.Partners
+            .OrderByDescending(p => p.PartnerIdentificationNumber)
+            .FirstOrDefaultAsync();
+
+        int nextNumber = 0;
+        if (lastPartner != null && !string.IsNullOrEmpty(lastPartner.PartnerIdentificationNumber))
+        {
+            var numericPart = lastPartner.PartnerIdentificationNumber.Replace("VXP-", "");
+            if (int.TryParse(numericPart, out int parsed))
+            {
+                nextNumber = parsed + 1;
+            }
+        }
 
         var fakePartners = new Faker<Partner>()
             .RuleFor(p => p.Name, f => f.Company.CompanyName())
@@ -29,12 +45,14 @@ public static class PartnerSeeder
             .RuleFor(p => p.TaxIdentificationNumber, f => f.Random.Bool() ? f.Finance.Account() : null)
             .RuleFor(p => p.RegistrationNumber, f => f.Random.Bool() ? f.Random.AlphaNumeric(10).ToUpper() : null)
             .RuleFor(p => p.BankAccountNumber, f => f.Random.Bool() ? f.Finance.Iban() : null)
-            .RuleFor(p => p.IsDeleted, f => false) 
+            .RuleFor(p => p.IsDeleted, f => false)
             .RuleFor(p => p.CreatedAt, f => f.Date.Past(2))
             .RuleFor(p => p.UpdatedAt, (f, p) => f.Date.Between(p.CreatedAt, DateTime.UtcNow))
             .FinishWith((f, p) =>
             {
-                Console.WriteLine($"Partner created. Id={p.ID}, Email={p.Email}, Type={p.Type}");
+                p.PartnerIdentificationNumber = $"VXP-{nextNumber:D4}";
+                nextNumber++;
+                Console.WriteLine($"Partner created. Id={p.ID}, Email={p.Email}, Type={p.Type}, PID={p.PartnerIdentificationNumber}");
             });
 
         var partners = fakePartners.Generate(number).ToList();
@@ -42,4 +60,5 @@ public static class PartnerSeeder
         await _partnerRepo.AddRangeAsync(partners);
         return partners;
     }
+
 }

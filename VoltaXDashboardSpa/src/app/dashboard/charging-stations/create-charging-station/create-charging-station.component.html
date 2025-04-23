@@ -1,4 +1,10 @@
-<app-dashboard-form-container title="New Charging Station">
+<app-dashboard-form-container 
+  title="New Charging Station"
+  [items]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charging Stations', link: '/dashboard/charging-stations' },
+    { label: 'Create' }
+  ]">
   <div form>
     <!-- Charging Station Type Choice -->
     <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.ChargingStationTypeChoice">

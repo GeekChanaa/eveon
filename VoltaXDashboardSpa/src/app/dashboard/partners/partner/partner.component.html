@@ -1,211 +1,260 @@
-<div class="page__inner">
-    <div class="page__container">
-      <div class="page__title h3">Partner : {{partner.name}}</div>
-      <div class="settings">
-        <div class="settings__menu">
-          <button (click)="changeTab('InformationsTab')" class="settings__link"
-            [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
-  
-  
-          <button (click)="changeTab('ChargingStationsTab')" class="settings__link"
-            [ngClass]="{'active' : tabsEnum == 'ChargingStationsTab'}">Charging Stations</button>
-          
-        </div>
-        <div class="settings__wrapper">
-          <select class="select">
-            <option (click)="changeTab('InformationsTab')">Informations</option>
-            <option (click)="changeTab('ChargingStationsTab')">Charging Stations</option>
-          </select>
-          <div class="settings__list">
-            <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
-              <div class="settings__anchor" id="basics" data-value="Basics"></div>
-              <div class="title-green settings__title">Informations</div>
-              <div class="settings__profile">
-  
-              </div>
-              <div class="settings__fieldset">
-                <ng-container *ngIf="partnerLoaded">
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">{{ partner?.name || 'Partner Details' }}</h1>
+    
+    <app-breadcrumb [items]="[
+      { label: 'Dashboard', link: '/dashboard' },
+      { label: 'Partners', link: '/dashboard/partners' },
+      { label: partner?.name || 'Details' }
+    ]"></app-breadcrumb>
+    
+  </div>
 
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="name"
-                        [val]="partner.name"></app-display-cell>
+  <!-- Loading state -->
+  <div *ngIf="!partnerLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
 
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="description"
-                        [val]="partner.description"></app-display-cell>
+  <!-- Content area -->
+  <div *ngIf="partnerLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button 
+          [ngClass]="{'active': tabsEnum === 'InformationsTab'}" 
+          (click)="changeTab('InformationsTab')" 
+          class="tab-button">
+          <i class="icon icon-info"></i>
+          Information
+        </button>
+        <button 
+          [ngClass]="{'active': tabsEnum === 'ChargingStationsTab'}" 
+          (click)="changeTab('ChargingStationsTab')" 
+          class="tab-button">
+          <i class="icon icon-station"></i>
+          Charging Stations
+        </button>
+      </div>
+    </div>
 
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="email"
-                        [val]="partner.email"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="email2"
-                        [val]="partner.email2"></app-display-cell>
-
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="email3"
-                        [val]="partner.email3"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="phone"
-                        [val]="partner.phone"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="phone2"
-                        [val]="partner.phone2"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="phone3"
-                        [val]="partner.phone3"></app-display-cell>
-
-                    
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="country"
-                        [val]="partner.country"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="city"
-                        [val]="partner.city"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="address"
-                        [val]="partner.address"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="taxIdentificationNumber"
-                        [val]="partner.taxIdentificationNumber"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="registrationNumber"
-                        [val]="partner.registrationNumber"></app-display-cell>
-                  
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="text"
-                        title="bankAccountNumber"
-                        [val]="partner.bankAccountNumber"></app-display-cell>
-
-                    <app-display-cell 
-                        [updateObservable]="updatePartnerObservable.bind(this)" 
-                        [object]="partner"
-                        inpType="select_enum"
-                        title="Type"
-                        enumName="PartnerTypeEnum" 
-                        val="{{partner.type}}"></app-display-cell>
-
-                    
-
-                      <div class="field">
-                        <div class="field__label">Partner Logo
-                          <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                            <svg class="icon icon-info">
-                              <use xlink:href="#icon-info"></use>
-                            </svg>
-                          </div>
-                          <div class="field__edit" *ngIf="!editingImage" (click)="editingImage = true">
-                            <svg class="icon icon-edit">
-                              <use xlink:href="#icon-edit"></use>
-                            </svg>
-                          </div>
-                        </div>
-
-                        <div class="field__image" *ngIf="partner.logoUrl && !editingImage">
-                          <img [src]="staticUrl+partner.logoUrl+ '?t=' + timestamp" alt="">
-                        </div>
-                      </div>
-
-                    <div class="create__card card" *ngIf="editingImage">
-                      <div class="file">
-                        <div class="file__wrap">
-                          <input class="upload-input" type="file" (change)="handleUpload($event)" />
-                          <div class="file__box" *ngIf="!displayedLogo">
-                            <svg class="icon icon-upload">
-                              <use xlink:href="#icon-upload"></use>
-                            </svg>Click or drop image
-                          </div>
-                          <div class="files__box">
-                            <div *ngIf="displayedLogo != null" class="image__box">
-                              <div class="image__clear" (click)="clearImage()">X</div>
-                              <img [src]="displayedLogo" alt="">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-actions">
-                    
-                      <ng-container *ngIf="editingImage">
-                        
-                        <button (click)="editingImage = false" class="button button-stroke button-small"> Cancel </button>
-                        
-                        <button 
-                          [disabled]="imageUploading" 
-                          [ngClass]="{'disabled' : imageUploading}" 
-                          class="button add-images-btn button-small"
-                          (click)="changeLogo()">
-                          <ng-container *ngIf="imageUploading"> <app-svg-spinner></app-svg-spinner> </ng-container>
-                          <ng-container *ngIf="!imageUploading"> Upload Image </ng-container>
-                          
-                        </button>
-                      </ng-container>
-                    </div>
-                  
-                </ng-container>
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          <div class="card-header">
+            <h2>Partner Profile</h2>
+          </div>
+          <div class="card-content">
+            <!-- Logo section -->
+            <div class="logo-section">
+              <div class="logo-container" [ngClass]="{'has-image': partner.logoUrl && !editingImage}">
+                <img *ngIf="partner.logoUrl && !editingImage" 
+                     [src]="staticUrl + partner.logoUrl + '?t=' + timestamp" 
+                     alt="Partner logo">
                 
+                <div *ngIf="!partner.logoUrl && !editingImage" class="empty-logo">
+                  <i class="icon icon-company"></i>
+                </div>
+                
+                <button *ngIf="!editingImage" (click)="editingImage = true" class="edit-logo-btn">
+                  <i class="icon icon-edit"></i> Change Logo
+                </button>
+              </div>
+              
+              <!-- Logo upload -->
+              <div *ngIf="editingImage" class="upload-container">
+                <div class="dropzone" 
+                     [ngClass]="{'has-file': displayedLogo}"
+                     (dragover)="$event.preventDefault()" 
+                     (drop)="handleUpload($event)">
+                  
+                  <div *ngIf="!displayedLogo" class="dropzone-prompt">
+                    <i class="icon icon-upload"></i>
+                    <p>Drag and drop an image or click to browse</p>
+                    <input type="file" class="file-input" (change)="handleUpload($event)">
+                  </div>
+                  
+                  <div *ngIf="displayedLogo" class="preview-container">
+                    <button class="remove-btn" (click)="clearImage()">
+                      <i class="icon icon-trash"></i>
+                    </button>
+                    <img [src]="displayedLogo" alt="Logo preview">
+                  </div>
+                </div>
+                
+                <div class="actions">
+                  <button (click)="editingImage = false" class="btn btn-secondary">
+                    Cancel
+                  </button>
+                  <button 
+                    [disabled]="imageUploading || !displayedLogo" 
+                    (click)="changeLogo()" 
+                    class="btn btn-primary">
+                    <span *ngIf="imageUploading">
+                      <app-svg-spinner></app-svg-spinner> Uploading...
+                    </span>
+                    <span *ngIf="!imageUploading">Upload Image</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="settings__item" *ngIf="tabsEnum == 'ChargingStationsTab'">
-              <ng-container *ngIf="partner.id != null && partner.id != undefined">
-                <app-partner-charging-stations [partnerID]="partner.id"></app-partner-charging-stations>
-              </ng-container>
+
+            <!-- Main details -->
+            <div class="form-content">
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Name"
+                  [val]="partner.name"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="textarea"
+                  title="Description"
+                  [val]="partner.description"></app-display-cell>
+                  
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="select_enum"
+                  title="Type"
+                  enumName="PartnerTypeEnum" 
+                  val="{{partner.type}}"></app-display-cell>
+              </div>
               
+              <!-- Contact Information -->
+              <div class="form-section">
+                <h3 class="section-title">Contact Information</h3>
+                
+                <div class="field-group">
+                  <app-display-cell 
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Email"
+                    [val]="partner.email"></app-display-cell>
+                  
+                  <app-display-cell 
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Alternative Email"
+                    [val]="partner.email2"></app-display-cell>
+                    
+                  <app-display-cell 
+                    *ngIf="partner.email3"
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Alternative Email 2"
+                    [val]="partner.email3"></app-display-cell>
+                </div>
+                
+                <div class="field-group">
+                  <app-display-cell 
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Phone"
+                    [val]="partner.phone"></app-display-cell>
+                  
+                  <app-display-cell 
+                    *ngIf="partner.phone2"
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Alternative Phone"
+                    [val]="partner.phone2"></app-display-cell>
+                    
+                  <app-display-cell 
+                    *ngIf="partner.phone3"
+                    [updateObservable]="updatePartnerObservable.bind(this)" 
+                    [object]="partner"
+                    inpType="text"
+                    title="Alternative Phone 2"
+                    [val]="partner.phone3"></app-display-cell>
+                </div>
+              </div>
+              
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Address</h3>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Country"
+                  [val]="partner.country"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="City"
+                  [val]="partner.city"></app-display-cell>
+                  
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Address"
+                  [val]="partner.address"></app-display-cell>
+              </div>
+              
+              <!-- Business Information -->
+              <div class="form-section">
+                <h3 class="section-title">Business Information</h3>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Tax Identification Number"
+                  [val]="partner.taxIdentificationNumber"></app-display-cell>
+                
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Registration Number"
+                  [val]="partner.registrationNumber"></app-display-cell>
+                  
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  inpType="text"
+                  title="Bank Account Number"
+                  [val]="partner.bankAccountNumber"></app-display-cell>
+              </div>
             </div>
-  
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charging Stations Tab -->
+      <div *ngIf="tabsEnum === 'ChargingStationsTab'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-header">
+            <h2>Charging Stations</h2>
+            <button class="btn btn-primary btn-sm">
+              <i class="icon icon-plus"></i> Add Station
+            </button>
+          </div>
+          <div class="card-content">
+            <ng-container *ngIf="partner.id != null && partner.id != undefined">
+              <app-partner-charging-stations [partnerID]="partner.id"></app-partner-charging-stations>
+            </ng-container>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>

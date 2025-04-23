@@ -8,6 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class DashboardFormContainerComponent implements OnInit {
 
   @Input() title : string = "";
+  @Input() items: { label: string, link?: string }[] = [];
 
   constructor() { }
 

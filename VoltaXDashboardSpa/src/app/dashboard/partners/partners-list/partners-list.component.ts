@@ -23,7 +23,8 @@ export class PartnersListComponent implements OnInit {
     description: '',
     type: PartnerTypeEnum.Vendor,
     address: '',
-    logoUrl: ''
+    logoUrl: '',
+    partnerIdentificationNumber: ''
   }
 
   // Constructor

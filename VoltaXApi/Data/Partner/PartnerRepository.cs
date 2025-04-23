@@ -33,6 +33,7 @@ namespace VoltaXApi.Data
         public async Task<int> CreatePartner(CreatePartnerDto partner)
         {
             var partnerToAdd = _mapper.Map<CreatePartnerDto,Partner>(partner);
+            partnerToAdd.PartnerIdentificationNumber = await GeneratePartnerIdentificationNumberAsync();
             await AddAsync(partnerToAdd);
             return partnerToAdd.ID;
         }
@@ -77,6 +78,25 @@ namespace VoltaXApi.Data
                 ID = p.ID,
                 Name = p.Name
             }).ToListAsync();
+        }
+
+        private async Task<string> GeneratePartnerIdentificationNumberAsync()
+        {
+            var lastPartner = await _context.Partners
+                .OrderByDescending(p => p.PartnerIdentificationNumber)
+                .FirstOrDefaultAsync();
+
+            int nextNumber = 0;
+            if (lastPartner != null && !string.IsNullOrEmpty(lastPartner.PartnerIdentificationNumber))
+            {
+                var numericPart = lastPartner.PartnerIdentificationNumber.Replace("VXP-", "");
+                if (int.TryParse(numericPart, out int parsed))
+                {
+                    nextNumber = parsed + 1;
+                }
+            }
+
+            return $"VXP-{nextNumber:D4}";
         }
 
 

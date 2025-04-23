@@ -6,6 +6,7 @@
 <div class="chargePoint-actions">
     <app-card-action
       class="request__action" 
+      size="small"
       *ngFor="let request of requests" 
       [actionName]="request"
       (actionClick)="openRequestHandlerModal(request)"

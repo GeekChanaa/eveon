@@ -48,6 +48,8 @@ import { DashboardFormContainerComponent } from './dashboard-form-container/dash
 import { ModalComponent } from './modal/modal.component';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonComponent } from './button/button.component';
+import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { FieldLabelComponent } from './field-label/field-label.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +95,9 @@ import { ButtonComponent } from './button/button.component';
     AppTableCustomButtonDirective,
     DashboardFormContainerComponent,
     ModalComponent,
-    ButtonComponent
+    ButtonComponent,
+    BreadcrumbComponent,
+    FieldLabelComponent
   ],
   imports: [
     CommonModule,
@@ -145,7 +149,9 @@ import { ButtonComponent } from './button/button.component';
     CardActionComponent,
     DashboardFormContainerComponent,
     ModalComponent,
-    ButtonComponent
+    ButtonComponent,
+    BreadcrumbComponent,
+    FieldLabelComponent
   ],
   providers: [],
 })

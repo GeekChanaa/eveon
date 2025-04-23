@@ -1,72 +1,156 @@
-<div class="field">
-  <div class="field__label">{{title | titlecase}}
-    <div class="tooltip" title="{{tooltip}}">
-      <svg class="icon icon-info">
-        <use xlink:href="#icon-info"></use>
-      </svg>
-    </div>
-    <div class="field__edit" *ngIf="editable" (click)="editing = true">
+<!-- display-cell.component.html -->
+<div class="form-field" [ngClass]="{'form-field--editing': editing, 'form-field--read-only': !editable}">
+  <label class="form-field__label">
+    {{ title | titlecase }}
+    
+    <ng-container *ngIf="tooltip">
+      <div class="form-field__tooltip" [title]="tooltip">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </ng-container>
+    
+    <button *ngIf="editable && !editing" 
+            class="form-field__edit-btn" 
+            (click)="startEditing()">
       <svg class="icon icon-edit">
         <use xlink:href="#icon-edit"></use>
       </svg>
+    </button>
+  </label>
+  
+  <!-- Display Mode -->
+  <div class="form-field__display" *ngIf="!editing">
+    <ng-container [ngSwitch]="inpType">
+      <!-- Text Input -->
+      <ng-container *ngSwitchCase="'text'">
+        <a *ngIf="isLink" [routerLink]="link" class="form-field__link">
+          {{ val | titlecase }}
+        </a>
+        <span *ngIf="!isLink" class="form-field__value">
+          {{ val | titlecase }}
+        </span>
+      </ng-container>
+      
+      <!-- Number Input -->
+      <ng-container *ngSwitchCase="'number'">
+        <a *ngIf="isLink" [routerLink]="link" class="form-field__link">
+          {{ val }}
+        </a>
+        <span *ngIf="!isLink" class="form-field__value">
+          {{ val }}
+        </span>
+      </ng-container>
+      
+      <!-- Textarea Input -->
+      <ng-container *ngSwitchCase="'textarea'">
+        <div class="form-field__value form-field__value--multiline">
+          {{ val }}
+        </div>
+      </ng-container>
+      
+      <!-- Enum Select -->
+      <ng-container *ngSwitchCase="'select_enum'">
+        <span class="form-field__value form-field__value--enum">
+          {{ val | camelCaseToSpace }}
+        </span>
+      </ng-container>
+      
+      <!-- Date Input -->
+      <ng-container *ngSwitchCase="'date'">
+        <span class="form-field__value">
+          {{ val | date:'mediumDate' }}
+        </span>
+      </ng-container>
+      
+      <!-- Default case -->
+      <ng-container *ngSwitchDefault>
+        <span class="form-field__value">
+          {{ val }}
+        </span>
+      </ng-container>
+    </ng-container>
+    
+    <div *ngIf="!val && !editing" class="form-field__empty">
+      Not specified
     </div>
   </div>
-  <div class="field__information" *ngIf="!editing">
-    <ng-container *ngIf="inpType == 'text'">
-      <ng-container *ngIf="isLink">
-        <div class="link" routerLink="{{link}}"> {{val | titlecase}} </div>
-      </ng-container>
-      <ng-container *ngIf="!isLink">
-        {{val | titlecase}}
-      </ng-container>
+  
+  <!-- Edit Mode -->
+  <div class="form-field__edit" *ngIf="editing">
+    <ng-container [ngSwitch]="inpType">
+      <!-- Text Input -->
+      <input *ngSwitchCase="'text'"
+             #inputField
+             type="text"
+             class="form-field__input"
+             [(ngModel)]="updatedValue" 
+             [placeholder]="'Enter ' + title"
+             (keydown.escape)="cancelEditing()">
       
-    </ng-container>
-
-    <ng-container *ngIf="inpType == 'number'">
-      <ng-container *ngIf="isLink">
-        <div class="link" routerLink="{{link}}"> {{val}} </div>
-      </ng-container>
-      <ng-container *ngIf="!isLink">
-        {{val}}
-      </ng-container>
+      <!-- Number Input -->
+      <input *ngSwitchCase="'number'" 
+             #inputField
+             type="number" 
+             class="form-field__input"
+             [(ngModel)]="updatedValue" 
+             [placeholder]="'Enter ' + title"
+             (keydown.escape)="cancelEditing()">
       
+      <!-- Textarea Input -->
+      <textarea *ngSwitchCase="'textarea'"
+                #inputField
+                class="form-field__textarea"
+                [(ngModel)]="updatedValue" 
+                [placeholder]="'Enter ' + title"
+                (keydown.escape)="cancelEditing()">
+      </textarea>
+      
+      <!-- Enum Select -->
+      <div *ngSwitchCase="'select_enum'" class="form-field__select-wrapper">
+        <select class="form-field__select" [(ngModel)]="updatedValue">
+          <option *ngFor="let value of getEnumValues()" [value]="value">
+            {{ value.toString() | camelCaseToSpace }}
+          </option>
+        </select>
+      </div>
+      
+      <!-- Date Input -->
+      <input *ngSwitchCase="'date'"
+             #inputField
+             type="date" 
+             class="form-field__input"
+             [(ngModel)]="updatedValue" 
+             (keydown.escape)="cancelEditing()">
     </ng-container>
-    <ng-container *ngIf="inpType == 'select_enum'">
-      {{val | camelCaseToSpace}}
-    </ng-container>
+    
+    <div class="form-field__actions">
+      <button class="form-field__btn form-field__btn--save" 
+              [disabled]="isLoading"
+              (click)="updateVal()">
+        <ng-container *ngIf="!isLoading">
+          <svg class="icon icon-check">
+            <use xlink:href="#icon-check"></use>
+          </svg>
+        </ng-container>
+        <ng-container *ngIf="isLoading">
+          <app-svg-spinner></app-svg-spinner>
+        </ng-container>
+      </button>
+      
+      <button class="form-field__btn form-field__btn--cancel" 
+              [disabled]="isLoading"
+              (click)="cancelEditing()">
+        <svg class="icon icon-close">
+          <use xlink:href="#icon-close"></use>
+        </svg>
+      </button>
+    </div>
   </div>
-  <div class="field__wrap flex" *ngIf="editing">
-
-    <ng-container *ngIf="inpType == 'text'">
-      <input #inputField [(ngModel)]="updatedValue" class="field__input" type="text" value="{{val}}">
-    </ng-container>
-
-    <ng-container *ngIf="inpType == 'number'">
-      <input #inputField [(ngModel)]="updatedValue" class="field__input" type="number" value="{{val}}">
-    </ng-container>
-
-    <ng-container *ngIf="inpType == 'select_enum'">
-      <select class="select" [(ngModel)]="updatedValue">
-        <option *ngFor="let value of getEnumValues()" [value]="value">{{value.toString() | camelCaseToSpace}}</option>
-    </select>
-    </ng-container>
-
-
-    <button class="button-stroke inp-btn" (click)="updateVal()" >
-      <ng-container *ngIf="!isLoading"> 
-        <svg class="icon icon-check">
-          <use xlink:href="#icon-check"></use>
-        </svg> 
-      </ng-container>
-      <ng-container *ngIf="isLoading"> 
-        <app-svg-spinner></app-svg-spinner> 
-      </ng-container>
-      
-    </button>
-    <button class="button-stroke inp-btn" (click)="editing = false">
-      <svg class="icon icon-close">
-        <use xlink:href="#icon-close"></use>
-      </svg>
-    </button>
+  
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="form-field__error">
+    {{ errorMessage }}
   </div>
 </div>

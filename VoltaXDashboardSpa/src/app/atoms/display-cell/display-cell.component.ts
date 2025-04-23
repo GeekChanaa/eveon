@@ -11,79 +11,139 @@ import { EnumMappingService } from 'src/_services/enum-mapping.service';
 })
 export class DisplayCellComponent implements OnInit, AfterViewInit {
 
-  @Input() title : any = {};
-  @Input() val : any = {};
-  @Input() object : any = {};
-  @Input() inpType : string = "text";
-  @Input() enumName : string = "";
-  @Input() tooltip : string = "";
-  @Input() editable : boolean = true;
-  @Input() isLink : boolean = false;
-  @Input() link : string = "";
-
+  @Input() title: string = '';
+  @Input() val: any = '';
+  @Input() object: any = {};
+  @Input() inpType: string = 'text';
+  @Input() enumName: string = '';
+  @Input() tooltip: string = '';
+  @Input() editable: boolean = true;
+  @Input() isLink: boolean = false;
+  @Input() link: string = '';
+  @Input() updateObservable!: (id: number, object: any) => Observable<any>;
+  
+  @Output() valueChanged = new EventEmitter<any>();
+  
   @ViewChild('inputField', { static: false }) inputField!: ElementRef;
-
-  isLoading : boolean = false;
-
-  @Input() updateObservable! : (id : number, object :any) => Observable<any>;
-
-  enumMappings: { [key: string]: { [id: number]: string } } = {}
-  updatedValue : any = {};
-  editing : boolean = false;
-
+  
+  updatedValue: any = '';
+  editing: boolean = false;
+  isLoading: boolean = false;
+  errorMessage: string = '';
+  originalValue: any = '';
+  enumMappings: { [key: string]: { [id: number]: string } } = {};
+  
   constructor(
-    private _enumService : EnumMappingService,
-    private _modalService : ActionModalService,
+    private _enumService: EnumMappingService,
+    private _modalService: ActionModalService,
     private _elRef: ElementRef
-  ) { }
-
+  ) {}
+  
   ngOnInit() {
-    console.log("this is the value" , this.val);
-    this.updatedValue = this.val;
-    if(this.inpType == 'select_enum'){
+    this.updatedValue = this.val ? this.val : '';
+    this.originalValue = this.val ? this.val : '';
+    
+    if (this.inpType === 'select_enum') {
       this.enumMappings = this._enumService.getEnumMapping(this.enumName);
     }
   }
-
-  onEnterPress(event: KeyboardEvent) {
-    const activeElement = document.activeElement as HTMLElement;
-
-    if (activeElement === this._elRef.nativeElement.querySelector('input')) {
-      this.updateVal()
-    } 
+  
+  ngAfterViewInit() {
+    // Focus input field when editing starts
+    if (this.editing && this.inputField) {
+      setTimeout(() => {
+        this.inputField.nativeElement.focus();
+      }, 0);
+    }
   }
-
+  
+  startEditing() {
+    this.errorMessage = '';
+    this.editing = true;
+    this.updatedValue = this.val;
+    console.log("this.editing : ",this.editing);
+    console.log(this.val);
+    // Set focus on input after view is updated
+    setTimeout(() => {
+      if (this.inputField) {
+        this.inputField.nativeElement.focus();
+        if (this.inpType === 'text' || this.inpType === 'number') {
+          this.inputField.nativeElement.select();
+          console.log("SELECTED");
+        }
+      }
+    }, 0);
+  }
+  
+  cancelEditing() {
+    this.updatedValue = this.originalValue;
+    this.editing = false;
+    this.errorMessage = '';
+  }
+  
   getEnumKeys() {
     return Object.keys(this.enumMappings);
   }
-
+  
   getEnumValues() {
     return Object.values(this.enumMappings);
   }
-
-  ngAfterViewInit(){
-  }
-
-  updateVal(){
+  
+  updateVal() {
+    // Basic validation
+    if (this.inpType === 'text' && this.updatedValue === '') {
+      this.errorMessage = `${this.title} cannot be empty`;
+      return;
+    }
+    
+    // Update the object with new value
     this.object[this.title] = this.updatedValue;
     this.isLoading = true;
-    this.updateObservable(this.object.id, this.object).subscribe((data) => {
-      this.isLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Success,"Succes !", "Updated successfully", 4000);
-      this.editing = false;
-    },(error) => {
-      this.isLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later.", 4000);
-    })
+    
+    // Call API to update
+    this.updateObservable(this.object.id, this.object).subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.originalValue = this.updatedValue;
+        this.val = this.updatedValue;
+        this.editing = false;
+        this.errorMessage = '';
+        
+        // Notify parent component
+        this.valueChanged.emit({
+          field: this.title,
+          value: this.updatedValue,
+          object: this.object
+        });
+        
+        this._modalService.popup(
+          ActionModalStatusEnum.Success,
+          "Success!",
+          `${this.title} updated successfully`,
+          4000
+        );
+      },
+      (error) => {
+        this.isLoading = false;
+        this.errorMessage = error?.message || 'Something went wrong. Please try again later.';
+        
+        this._modalService.popup(
+          ActionModalStatusEnum.Error,
+          "Error!",
+          this.errorMessage,
+          4000
+        );
+      }
+    );
   }
-
   
-
   @HostListener('document:keydown.enter', ['$event'])
   handleEnter(event: KeyboardEvent) {
-    if (this.inputField && document.activeElement === this.inputField.nativeElement) {
+    if (this.editing && this.inputField && document.activeElement === this.inputField.nativeElement) {
       this.updateVal();
     }
   }
+  
+  
 
 }
