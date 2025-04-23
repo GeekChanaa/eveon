@@ -46,8 +46,7 @@ export class EnumMappingService {
     },
     ChargingStationNetworkEnum: {
       0: 'Public',
-      1: 'Private',
-      2: 'Partner'
+      1: 'Private'
     },
     ParkingTypeEnum: {
       0: 'ParallelParking',

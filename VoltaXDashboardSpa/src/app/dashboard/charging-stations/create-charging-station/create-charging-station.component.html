@@ -34,8 +34,23 @@
       </app-create-charging-station-add-charge-points>
     </ng-container>
 
+    <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.Images">
+      <app-create-charging-station-images
+        (previousStepEvent)="currentStep = CreateChargingStationFormStepEnum.AddChargePoints"
+        (nextStep)="savingImages($event)">
+      </app-create-charging-station-images>
+    </ng-container>
+
     <!-- Charging Station Preview -->
     <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.Preview">
+      <app-create-charging-station-preview
+        [chargingStationInformationsForm]="chargingStationInformationsForm"
+        [chargingStationAddressForm]="chargingStationAddressForm"
+        [chargePoints]="chargePoints"
+        [chargingStationImages]="chargingStationImages"
+        (previousStepEvent)="currentStep = CreateChargingStationFormStepEnum.Images"
+        (submitEvent)="submitForm()">
+      </app-create-charging-station-preview>
     </ng-container>
   </div>
 </app-dashboard-form-container>

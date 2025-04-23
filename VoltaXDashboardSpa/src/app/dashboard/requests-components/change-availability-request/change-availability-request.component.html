@@ -16,7 +16,10 @@
     <div class="field__wrap">
       <div class="field__wrap">
         <select (change)="onSelectConnector($event)"  class="select select_small" >
-          <option *ngFor="let connector of connectors" [value]="connector | json"> connectorID : {{connector.connectorID+" evseId :  "+connector.evseID}} </option>
+          <option value="">None</option>
+          <option *ngFor="let connector of connectors" 
+            [value]="connector | json"> 
+            connectorID : {{connector.connectorID+" evseId :  "+connector.evseID}} </option>
         </select>
       </div>
     </div>

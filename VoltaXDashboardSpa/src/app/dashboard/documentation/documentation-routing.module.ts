@@ -6,6 +6,7 @@ import { DocumentationVariablesComponent } from './documentation-variables/docum
 import { DocumentationVariableComponent } from './documentation-variable/documentation-variable.component';
 import { DocumentationComponentComponent } from './documentation-component/documentation-component.component';
 import { DocumentationIconsComponent } from './documentation-icons/documentation-icons.component';
+import { DocumentationButtonsComponent } from './documentation-buttons/documentation-buttons.component';
 const routes: Routes = [
   {
     path: "",
@@ -18,6 +19,10 @@ const routes: Routes = [
   {
     path: "icons",
     component: DocumentationIconsComponent
+  },
+  {
+    path: "buttons",
+    component: DocumentationButtonsComponent
   },
   {
     path: "components/:name",

@@ -19,6 +19,8 @@ import { CreateChargingStationInformationsComponent } from './create-charging-st
 import { CreateChargingStationAddChargePointModalComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-add-charge-point-modal/create-charging-station-add-charge-point-modal.component';
 import { CreateChargingStationAddConnectorModalComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-add-connector-modal/create-charging-station-add-connector-modal.component';
 import { CreateChargingStationPreviewChargePointsComponent } from './create-charging-station/create-charging-station-add-charge-points/create-charging-station-preview-charge-points/create-charging-station-preview-charge-points.component';
+import { CreateChargingStationImagesComponent } from './create-charging-station/create-charging-station-images/create-charging-station-images.component';
+import { CreateChargingStationPreviewComponent } from './create-charging-station/create-charging-station-preview/create-charging-station-preview.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +38,9 @@ import { CreateChargingStationPreviewChargePointsComponent } from './create-char
     CreateChargingStationInformationsComponent,
     CreateChargingStationAddChargePointModalComponent,
     CreateChargingStationAddConnectorModalComponent,
-    CreateChargingStationPreviewChargePointsComponent
+    CreateChargingStationPreviewChargePointsComponent,
+    CreateChargingStationImagesComponent,
+    CreateChargingStationPreviewComponent
   ],
     imports: [
         AtomsModule,

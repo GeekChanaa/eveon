@@ -8,15 +8,15 @@
         <p>Status: <span [ngClass]="'status-' + chargePoint.status.toLowerCase()">{{ chargePoint.status }}</span></p>
       </div>
       <div class="charge-point-actions">
-        <button class="btn btn-small" (click)="openEditChargePointModal(i)">Edit</button>
-        <button class="btn btn-small btn-danger" (click)="deleteChargePointHandler(i)">Delete</button>
+        <button class="btn btn-small" *ngIf="editableChargePoint" (click)="openEditChargePointModal(i)">Edit</button>
+        <button class="btn btn-small btn-danger" *ngIf="deletableChargePoint" (click)="deleteChargePointHandler(i)">Delete</button>
       </div>
     </div>
    
     <div class="connectors-section">
       <div class="connectors-header">
         <h4>Connectors ({{ chargePoint.connectors?.length || 0 }}/{{ chargePoint.category === 'Single' ? 1 : 2 }})</h4>
-        <button class="btn btn-small"
+        <button class="btn btn-small" *ngIf="addableConnector"
                 (click)="openAddConnectorModal(i)"
                 [disabled]="!canAddConnector(chargePoint)">
           Add Connector
@@ -35,8 +35,8 @@
             <p>Flat Fee: {{ connector.flatFee || '-' }}</p>
           </div>
           <div class="connector-actions">
-            <button class="btn btn-small" (click)="openEditConnectorModal(i, j)">Edit</button>
-            <button class="btn btn-small btn-danger" (click)="deleteConnectorHandler(i, j)">Delete</button>
+            <button class="btn btn-small" *ngIf="editableConnector" (click)="openEditConnectorModal(i, j)">Edit</button>
+            <button class="btn btn-small btn-danger" *ngIf="deletableConnector" (click)="deleteConnectorHandler(i, j)">Delete</button>
           </div>
         </div>
       </div>

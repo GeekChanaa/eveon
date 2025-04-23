@@ -1,3 +1,5 @@
+using VoltaXApi.Models;
+
 namespace VoltaXApi.Dtos
 {
     public class DebitCardListingDto
@@ -6,5 +8,6 @@ namespace VoltaXApi.Dtos
         public int UserID { get; set; }
         public string CardNumberHidden { get; set; }
         public string NameHidden { get; set; }
+        public DebitCardTypeEnum Type { get; set; }
     }
 }

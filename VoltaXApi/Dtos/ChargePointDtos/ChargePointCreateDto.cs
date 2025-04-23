@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Dtos
 {
     public class ChargePointCreateDto
     {
-        public string ChargePointId { get; set; }
-        public int ChargingStationID { get; set; }
-        public string Name { get; set; }
         public string SerialNumber { get; set; }
         public string? Make { get; set; }
         public ChargePointStatusEnum Status { get; set; }

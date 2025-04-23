@@ -1,7 +1,41 @@
-<div class="debit_card" [ngClass]="{'small': size=='small'}">
-  <img class="debit_card__logo" [ngClass]="{'small': size=='small'}" src="/assets/img/mastercard.png" alt="">
-  <button mat-button color="warn" (click)="delete(id)"> delete </button>
-  <div class="debit_card__number" [ngClass]="{'small': size=='small'}">{{cardNumber}}</div>
-  <div class="debit_card__name_title" [ngClass]="{'small': size=='small'}">Card Holder</div>
-  <div class="debit_card__name" [ngClass]="{'small': size=='small'}">{{cardHolderName}}</div>
+<div class="debit_card" [ngClass]="{'small': size=='small', 'visa': cardType=='visa', 'mastercard': cardType=='mastercard'}">
+  <div class="debit_card__header">
+    <img class="debit_card__logo" [ngClass]="{'small': size=='small'}" 
+         [src]="cardType === 'mastercard' ? '/assets/img/mastercard.png' : 
+                cardType === 'visa' ? '/assets/img/visa.png' : 
+                '/assets/img/generic-card.png'" 
+         alt="Card Logo">
+    <div class="debit_card__chip"></div>
+  </div>
+  
+  <div class="debit_card__number" [ngClass]="{'small': size=='small'}">{{formatCardNumber(cardNumber)}}</div>
+  
+  <div class="debit_card__details">
+    <div class="debit_card__holder">
+      <div class="debit_card__name_title" [ngClass]="{'small': size=='small'}">Card Holder</div>
+      <div class="debit_card__name" [ngClass]="{'small': size=='small'}">{{cardHolderName}}</div>
+    </div>
+    
+    <div class="debit_card__expiry" *ngIf="expiryDate">
+      <div class="debit_card__expiry_title" [ngClass]="{'small': size=='small'}">Expires</div>
+      <div class="debit_card__expiry_date" [ngClass]="{'small': size=='small'}">{{expiryDate}}</div>
+    </div>
+  </div>
+  
+  <button class="debit_card__delete" color="warn" (click)="showDeleteConfirmModal = true" aria-label="Delete card">
+    <svg class="icon icon-trash">
+      <use xlink:href="#icon-trash"></use>
+    </svg>
+  </button>
+</div>
+
+<div class="modal-overlay" *ngIf="showDeleteConfirmModal">
+  <div class="modal-content">
+    <h3>Confirm Delete</h3>
+    <p>Are you sure you want to delete this item?</p>
+    <div class="modal-actions">
+      <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
+      <button (click)="proceedWithDelete()" class="btn-delete">Delete</button>
+    </div>
+  </div>
 </div>

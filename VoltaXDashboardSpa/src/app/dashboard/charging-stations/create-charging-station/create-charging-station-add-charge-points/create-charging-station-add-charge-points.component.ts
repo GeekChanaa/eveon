@@ -66,6 +66,8 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
       costPerKwh: new FormControl('', [Validators.required]),
       flatFee: new FormControl('', [Validators.required]),
       type: new FormControl('', [Validators.required]),
+      connectorID: new FormControl('', [Validators.required]),
+      evseID: new FormControl('', [Validators.required]),
     });
   }
 
@@ -138,7 +140,9 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
         pricePerMinute: this.configuration?.defaultPricePerMinute,
         costPerKwh: this.configuration?.defaultPricePerKwh,
         flatFee: this.configuration?.defaultPricePerKwh,
-        type: "cType2"
+        type: "cType2",
+        connectorID : 0,
+        evseID : 0
       });
     }else{
       this.connectorForm.reset({
@@ -148,7 +152,9 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
         pricePerMinute: 0,
         costPerKwh: 0,
         flatFee: 0,
-        type : "cType2"
+        type : "cType2",
+        connectorID : 0,
+        evseID : 0
       });
     }
     
@@ -193,6 +199,8 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
       pricePerMinute : formValue.pricePerMinute,
       costPerKwh : formValue.costPerKwh,
       flatFee : formValue.flatFee,
+      connectorID : formValue.connectorID,
+      evseID : formValue.evseID
     };
     
     const chargePoint = this.chargePoints[this.currentChargePointIndex];

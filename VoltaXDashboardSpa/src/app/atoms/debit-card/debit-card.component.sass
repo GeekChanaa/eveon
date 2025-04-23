@@ -1,0 +1,162 @@
+@import '../../../styles/modal'
+
+/* CSS Styles */
+.debit_card 
+  background: linear-gradient(135deg, #0a004f 0%, #1a0080 100%)
+  border-radius: 16px
+  color: white
+  width: 100%
+  padding: 24px
+  position: relative
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2)
+  font-family: 'Roboto', sans-serif
+  transition: all 0.3s ease
+  overflow: hidden
+
+
+.debit_card:before 
+  content: ''
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)
+  pointer-events: none
+
+
+.debit_card:hover 
+  transform: translateY(-5px)
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3)
+
+
+.debit_card.small 
+  padding: 16px
+  border-radius: 12px
+
+
+.debit_card__header 
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+
+.debit_card__logo 
+  width: 64px
+  height: auto
+  transition: all 0.3s ease
+
+
+.debit_card__logo.small 
+  width: 40px
+
+
+.debit_card__chip 
+  width: 40px
+  height: 30px
+  background: linear-gradient(135deg, #c4a838 0%, #f2db7b 50%, #c4a838 100%)
+  border-radius: 6px
+  position: relative
+  overflow: hidden
+
+
+.debit_card__chip.small 
+  width: 24px
+  height: 18px
+  border-radius: 3px
+
+
+.debit_card__chip:before 
+  content: ''
+  position: absolute
+  top: 50%
+  left: 0
+  right: 0
+  height: 1px
+  background: rgba(0, 0, 0, 0.3)
+
+
+.debit_card__chip:after 
+  content: ''
+  position: absolute
+  left: 50%
+  top: 0
+  bottom: 0
+  width: 1px
+  background: rgba(0, 0, 0, 0.3)
+
+
+.debit_card__number 
+  font-size: 1.6em
+  font-weight: 300
+  letter-spacing: 2px
+  margin-top: 48px
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2)
+
+
+.debit_card__number.small 
+  font-size: 0.9em
+  margin-top: 24px
+  letter-spacing: 1px
+
+
+.debit_card__details 
+  display: flex
+  justify-content: space-between
+  margin-top: 24px
+
+
+.debit_card__name_title,
+.debit_card__expiry_title 
+  color: rgba(255, 255, 255, 0.7)
+  font-weight: 300
+  font-size: 0.8em
+  text-transform: uppercase
+  letter-spacing: 1px
+  margin-bottom: 4px
+
+
+.debit_card__name,
+.debit_card__expiry_date 
+  font-weight: 500
+  text-transform: uppercase
+  letter-spacing: 1px
+
+
+.debit_card__name_title.small,
+.debit_card__expiry_title.small 
+  font-size: 0.6em
+  margin-bottom: 2px
+
+
+.debit_card__name.small,
+.debit_card__expiry_date.small 
+  font-size: 0.8em
+
+
+.debit_card__delete 
+  position: absolute
+  top: 8px
+  right: 8px
+  background: rgba(255, 255, 255, 0.1)
+  min-width: 32px
+  width: 32px
+  height: 32px
+  line-height: 32px
+  border-radius: 50%
+  opacity: 0
+  transition: opacity 0.3s ease
+  svg
+    fill: var(--primary1)
+
+
+.debit_card:hover .debit_card__delete 
+  opacity: 1
+
+
+.debit_card.mastercard 
+  background: linear-gradient(135deg, #0a004f 0%, #1a0080 100%)
+
+
+.debit_card.visa 
+  background: linear-gradient(135deg, #022954 0%, #0956a7 100%)

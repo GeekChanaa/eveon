@@ -15,15 +15,18 @@ namespace VoltaXApi.Data
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _transactionRepository;
         private readonly CardExpirationSettings _settings;
+        private readonly CardConfigurationSettings _cardSettings;
         public CardRepository(
             VoltaXApiDbContext context, 
             ITransactionRepository transactionRepository,
             IOptions<CardExpirationSettings> options,
+            IOptions<CardConfigurationSettings> cardOptions,
             IMapper mapper) : base(context)
         {
             _mapper = mapper;
             _transactionRepository = transactionRepository;
             _settings = options.Value;
+            _cardSettings = cardOptions.Value;
         }
 
         // Get all user recharge cards
@@ -90,16 +93,25 @@ namespace VoltaXApi.Data
 
         private async Task<string> GenerateCardNumber()
         {
+            string currentYear = DateTime.Now.Year.ToString();
+            
             string cardNumber;
             bool exists;
-
+            
             do
             {
-                cardNumber = CardHelper.GenerateRandomCardNumber(16);
+                Random random = new Random();
+                string randomPart = "";
+                for (int i = 0; i < 8; i++)
+                {
+                    randomPart += random.Next(0, 10).ToString();
+                }
+                
+                cardNumber = $"{currentYear}-{randomPart}";
+                
                 exists = await _context.Cards.AnyAsync(c => c.CardNumber == cardNumber);
-
-            } while (exists); 
-
+            } while (exists);
+            
             return cardNumber;
         }
 
@@ -114,6 +126,29 @@ namespace VoltaXApi.Data
         public async Task<List<Card>> GetAllCards()
         {
             return await this.dbSet.Include(u => u.User).ToListAsync();
+        }
+
+        public async Task<Card> CreateCardForUser(User user)
+        {
+            // Generate card number
+            string cardNumber = await GenerateCardNumber();
+            
+            // Create new card
+            var card = new Card
+            {
+                CardNumber = cardNumber,
+                CardType = CardTypeEnum.Standard, // Default to Standard as specified
+                ExpirationDate = DateTime.UtcNow.AddYears(_settings.DefaultCardValidityYears),
+                MaxCount = _cardSettings.DefaultMaxCount,
+                Status = CardStatusEnum.Active, // Assuming new cards are active by default
+                Balance = 0, // Starting with zero balance
+                Note = $"Card created for user {user.ID} on {DateTime.UtcNow}",
+                Blocked = false,
+                UserID = user.ID
+            };
+
+            await AddAsync(card);
+            return card;
         }
 
 

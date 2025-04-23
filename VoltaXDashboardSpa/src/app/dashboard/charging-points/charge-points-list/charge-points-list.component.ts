@@ -24,7 +24,6 @@ export class ChargePointsListComponent implements OnInit {
     id: 0,
     chargePointId: '',
     chargingStationID: 0,
-    name: '',
     serialNumber: '',
     make: '',
     category: ChargePointCategoryEnum.Single,

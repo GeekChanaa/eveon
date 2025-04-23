@@ -35,13 +35,6 @@
                   [link]="'/dashboard/charging-stations/'+chargePoint.chargingStationID"
                   [isLink]="true"
                   [val]="chargePoint.chargingStationName" [editable]="false"></app-display-cell>
-
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="name"
-                  [val]="chargePoint.name" [editable]="false"></app-display-cell>
                 
                 <app-display-cell 
                   [updateObservable]="updateChargePointObservable.bind(this)" 

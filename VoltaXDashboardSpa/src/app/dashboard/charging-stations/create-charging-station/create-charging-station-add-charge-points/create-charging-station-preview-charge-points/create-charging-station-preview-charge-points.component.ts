@@ -12,10 +12,15 @@ export class CreateChargingStationPreviewChargePointsComponent implements OnInit
   @Input() chargePoints: any[] = [];
   
   @Output() editChargePoint = new EventEmitter<number>();
+  @Input() editableChargePoint: boolean = true;
   @Output() deleteChargePoint = new EventEmitter<number>();
+  @Input() deletableChargePoint: boolean = true;
   @Output() addConnector = new EventEmitter<number>();
+  @Input() addableConnector: boolean = true;
   @Output() editConnector = new EventEmitter<{chargePointIndex: number, connectorIndex: number}>();
+  @Input() editableConnector: boolean = true;
   @Output() deleteConnector = new EventEmitter<{chargePointIndex: number, connectorIndex: number}>();
+  @Input() deletableConnector: boolean = true;
 
   openEditChargePointModal(index: number): void {
     this.editChargePoint.emit(index);

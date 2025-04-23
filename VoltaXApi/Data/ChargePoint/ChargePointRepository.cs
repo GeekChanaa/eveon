@@ -132,7 +132,6 @@ namespace VoltaXApi.Data
             var chargePoints = GetAllAsync(globalParams).Select(cp => new ChargePointCRListDto{
                 ID = cp.ID,
                 ChargePointId = cp.ChargePointId,
-                Name = cp.Name,
                 ChargingStationName = cp.ChargingStation.Name,
                 SerialNumber = cp.SerialNumber,
                 Category = cp.Category,

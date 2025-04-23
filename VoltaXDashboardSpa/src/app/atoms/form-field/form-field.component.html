@@ -62,6 +62,18 @@
         class="field__input"
         ></textarea>
     </ng-container>
+
+    <ng-container *ngIf="inputType === 'datetime'">
+      <p-calendar 
+        [formControl]="control"
+        [showIcon]="true"
+        [disabled]="disabled"
+        [placeholder]="placeholder"
+        inputStyleClass="field__input"
+        [ngClass]="{'disabled' : disabled}"
+        dateFormat="dd/mm/yy">
+      </p-calendar>
+    </ng-container>
     
     <app-svg-spinner *ngIf="loading"></app-svg-spinner>
   </div>

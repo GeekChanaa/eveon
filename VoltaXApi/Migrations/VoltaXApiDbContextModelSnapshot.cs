@@ -268,10 +268,6 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -980,8 +976,8 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorID")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConnectorType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ConnectorType")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("CostPerKwh")
                         .HasColumnType("decimal(18,2)");

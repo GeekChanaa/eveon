@@ -7,7 +7,6 @@ namespace VoltaXApi.Dtos
         public int ID { get; set; }
         public string ChargePointId { get; set; }
         public int ChargingStationID { get; set; }
-        public string Name { get; set; }
         public string ChargingStationName { get; set; }
         public string SerialNumber { get; set; }
         public string Make { get; set; }

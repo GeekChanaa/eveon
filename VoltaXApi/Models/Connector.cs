@@ -10,7 +10,7 @@ namespace VoltaXApi.Models
         public int? ConnectorID{ get; set; }
         public int EvseID{ get; set; }
         public int? ChargePointID { get; set; }
-        public ConnectorEnumType? ConnectorType { get; set; }
+        public ConnectorEnumType? ConnectorType { get; set; } = ConnectorEnumType.cType2;
         public decimal Power { get; set; } = 0 ;
         public decimal PricePerKWh { get; set; } = 0;
         public decimal PricePerIdleMinute { get; set; } = 0;

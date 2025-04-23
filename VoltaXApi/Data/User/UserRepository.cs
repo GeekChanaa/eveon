@@ -45,16 +45,74 @@ namespace VoltaXApi.Data
 
         public async Task<List<DebitCardListingDto>> GetUserDebitCards(int UserID)
         {
-            var user = await _context.Users.Include(u => u.DebitCards).FirstOrDefaultAsync(u => u.ID == UserID);
+            var user = await _context.Users.Include(u => u.DebitCards)
+                .FirstOrDefaultAsync(u => u.ID == UserID);
+            
+            if (user == null)
+                return new List<DebitCardListingDto>();
+            
+            var result = new List<DebitCardListingDto>();
+            
+            foreach (var card in user.DebitCards.Where(c => !c.IsDeleted))
+            {
+                var dto = new DebitCardListingDto
+                {
+                    ID = card.ID,
+                    UserID = card.UserID ?? 0,
+                    CardNumberHidden = Mask(card.CardNumber),
+                    NameHidden = Mask(card.Name),
+                    Type = DetermineCardType(card.CardNumber)
+                };
+                
+                result.Add(dto);
+            }
+            
+            return result;
+        }
 
-            if (user != null)
+        private DebitCardTypeEnum DetermineCardType(string cardNumber)
+        {
+            if (string.IsNullOrEmpty(cardNumber))
+                return DebitCardTypeEnum.Generic;
+            
+            // Clean the card number (remove spaces)
+            var cleanNumber = cardNumber.Replace(" ", "");
+            
+            // Visa cards start with 4
+            if (cleanNumber.StartsWith("4"))
+                return DebitCardTypeEnum.Visa;
+            
+            // Mastercard starts with 51-55 or ranges 2221-2720
+            if (cleanNumber.StartsWith("5") && cleanNumber.Length > 1)
             {
-                return _mapper.ProjectTo<DebitCardListingDto>(user.DebitCards.AsQueryable()).ToList();
+                var secondDigit = int.Parse(cleanNumber.Substring(1, 1));
+                if (secondDigit >= 1 && secondDigit <= 5)
+                    return DebitCardTypeEnum.Mastercard;
             }
-            else
+            
+            // Check for Mastercard's 2-series range
+            if (cleanNumber.StartsWith("2") && cleanNumber.Length >= 4)
             {
-                throw new Exception("User does not exist");
+                var prefix = int.Parse(cleanNumber.Substring(0, 4));
+                if (prefix >= 2221 && prefix <= 2720)
+                    return DebitCardTypeEnum.Mastercard;
             }
+            
+            // Default to Generic for any other patterns
+            return DebitCardTypeEnum.Generic;
+        }
+
+        private string Mask(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+            
+            // Assuming you want to keep first and last character visible
+            if (value.Length <= 2)
+                return value;
+            
+            // Keep first and last characters visible, mask the rest with asterisks
+            return value[0] + new string('*', value.Length - 2) + value[value.Length - 1];
         }
 
         public async Task<List<UserNameDto>> GetUserNames()

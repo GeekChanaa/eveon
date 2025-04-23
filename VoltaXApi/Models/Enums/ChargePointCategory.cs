@@ -2,7 +2,7 @@ namespace VoltaXApi.Models
 {
     public enum ChargePointCategoryEnum
     {
-        Signle,
+        Single,
         Double
     }
 

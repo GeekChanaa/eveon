@@ -14,6 +14,9 @@
   <app-form-field class="field" title="Category" inputType="select_enum" enumName="ChargingStationCategoryEnum"
     description="The category of the charging station" [control]="getControl('category')"></app-form-field>
 
+    <app-form-field class="field" title="Network" inputType="select_enum" enumName="ChargingStationNetworkEnum"
+    description="The network of the charging station" [control]="getControl('network')"></app-form-field>
+
   <div class="field">
     <div class="field__label">Charger quantity at location
       <div class="tooltip" title="The number of charge points in the location">

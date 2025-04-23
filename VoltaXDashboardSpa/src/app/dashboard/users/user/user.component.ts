@@ -53,7 +53,6 @@ export class UserComponent implements OnInit {
   }
 
   isSuspended(){ 
-    console.log("is suspended : ", this.user.suspendedAt);
     return new Date(this.user.suspendedAt) > new Date();
   }
 

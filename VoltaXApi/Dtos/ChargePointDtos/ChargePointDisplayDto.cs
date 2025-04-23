@@ -9,7 +9,6 @@ namespace VoltaXApi.Dtos
         public string ChargePointId { get; set; }
         public int ChargingStationID { get; set; }
         public string ChargingStationName { get; set; }
-        public string Name { get; set; }
         public string SerialNumber { get; set; }
         public bool? ShowOnMap { get; set; } = true;
         public bool? HasChargeCable { get; set; } = true;

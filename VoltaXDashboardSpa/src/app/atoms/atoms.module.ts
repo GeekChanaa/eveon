@@ -46,6 +46,8 @@ import { CardActionComponent } from './card-action/card-action.component';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { DashboardFormContainerComponent } from './dashboard-form-container/dashboard-form-container.component';
 import { ModalComponent } from './modal/modal.component';
+import { CalendarModule } from 'primeng/calendar';
+import { ButtonComponent } from './button/button.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +92,8 @@ import { ModalComponent } from './modal/modal.component';
     CardActionComponent,
     AppTableCustomButtonDirective,
     DashboardFormContainerComponent,
-    ModalComponent
+    ModalComponent,
+    ButtonComponent
   ],
   imports: [
     CommonModule,
@@ -99,7 +102,7 @@ import { ModalComponent } from './modal/modal.component';
     FormsModule,
     MatRippleModule,
     MatButtonModule,
-    
+    CalendarModule
   ],
   exports: [
     CardComponent,
@@ -141,7 +144,8 @@ import { ModalComponent } from './modal/modal.component';
     AppTableCustomButtonDirective,
     CardActionComponent,
     DashboardFormContainerComponent,
-    ModalComponent
+    ModalComponent,
+    ButtonComponent
   ],
   providers: [],
 })

@@ -15,7 +15,6 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(o => o.ChargePointId, f => f.Random.AlphaNumeric(10))
                 .RuleFor(o => o.ChargePointModelID, f => f.Random.Number(1, 170))
                 .RuleFor(o => o.ChargingStationID, f => f.PickRandom(chargingStations).ID)
-                .RuleFor(o => o.Name, f => f.Company.CompanyName())
                 .RuleFor(o => o.SerialNumber, f => f.Random.AlphaNumeric(10))
                 .RuleFor(o => o.Make, f => f.Vehicle.Manufacturer())
                 .RuleFor(o => o.Status, f => f.PickRandom<ChargePointStatusEnum>())
@@ -26,13 +25,7 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(o => o.ClientCertThumb, f => f.Random.AlphaNumeric(20));
 
             var chargePoints = chargePointFaker.Generate(100);
-            int newNumber = 1;
             
-            foreach(var chargePoint in chargePoints)
-            {
-                chargePoint.Name = $"VXC{newNumber.ToString("D4")}";
-                newNumber++;
-            }
             await dbContext.ChargePoints.AddRangeAsync(chargePoints);
             await dbContext.SaveChangesAsync();
             return chargePoints;

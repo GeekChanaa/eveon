@@ -1,6 +1,5 @@
 export interface ChargePointCRListDto{
     chargePointId : string,
-    name : string,
     chargingStationName : string,
     serialNumber : string,
     category : string,

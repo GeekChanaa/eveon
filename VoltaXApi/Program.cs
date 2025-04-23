@@ -269,6 +269,7 @@ builder.Services.AddDbContext<VoltaXApiDbContext>(options =>
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<CardExpirationSettings>(builder.Configuration.GetSection("CardExpirationSettings"));
+builder.Services.Configure<CardConfigurationSettings>(builder.Configuration.GetSection("CardConfigurationSettings"));
 
 builder.Services.AddSingleton(resolver =>
 {

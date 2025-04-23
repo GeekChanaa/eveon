@@ -1,0 +1,374 @@
+<!-- buttons-documentation.component.html -->
+<div class="documentation-container">
+  <h1>Button Component Documentation</h1>
+  <p class="intro">A showcase of all button variants and capabilities for the design system.</p>
+
+  <!-- Basic Size Variants -->
+  <section class="doc-section">
+    <h2>Size Variants</h2>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button size="small">Small</app-button>
+        <code>size="small"</code>
+      </div>
+      <div class="example-item">
+        <app-button size="standard">Standard</app-button>
+        <code>size="standard"</code>
+      </div>
+      <div class="example-item">
+        <app-button size="large">Large</app-button>
+        <code>size="large"</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Variants - Filled -->
+  <section class="doc-section">
+    <h2>Color Variants - Filled</h2>
+    
+    <h3>Primary</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="primary" size="small">Primary Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="primary">Primary Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="primary" size="large">Primary Large</app-button>
+      </div>
+    </div>
+    
+    <h3>Secondary</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="secondary" size="small">Secondary Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary">Secondary Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" size="large">Secondary Large</app-button>
+      </div>
+    </div>
+    
+    <h3>Professional</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="professional" size="small">Professional Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional">Professional Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" size="large">Professional Large</app-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Variants - Outlined (Stroke) -->
+  <section class="doc-section">
+    <h2>Color Variants - Outlined (Stroke)</h2>
+    
+    <h3>Primary Outlined</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="primary" [outlined]="true" size="small">Primary Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="primary" [outlined]="true">Primary Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="primary" [outlined]="true" size="large">Primary Large</app-button>
+      </div>
+    </div>
+    
+    <h3>Secondary Outlined</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="secondary" [outlined]="true" size="small">Secondary Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" [outlined]="true">Secondary Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" [outlined]="true" size="large">Secondary Large</app-button>
+      </div>
+    </div>
+    
+    <h3>Professional Outlined</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button variant="professional" [outlined]="true" size="small">Professional Small</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" [outlined]="true">Professional Standard</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" [outlined]="true" size="large">Professional Large</app-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Disabled State -->
+  <section class="doc-section">
+    <h2>Disabled State</h2>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button [disabled]="true">Disabled Primary</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" [disabled]="true">Disabled Secondary</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" [disabled]="true">Disabled Professional</app-button>
+      </div>
+    </div>
+    
+    <h3>Disabled Outlined</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button [outlined]="true" [disabled]="true">Disabled Primary Outlined</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" [outlined]="true" [disabled]="true">Disabled Secondary Outlined</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" [outlined]="true" [disabled]="true">Disabled Professional Outlined</app-button>
+      </div>
+    </div>
+
+    <h3>Toggle Disabled State</h3>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button [disabled]="isDisabled">This button is {{ isDisabled ? 'disabled' : 'enabled' }}</app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary" (btnClick)="toggleDisabled()">Toggle Disabled State</app-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Width -->
+  <section class="doc-section">
+    <h2>Full Width Buttons</h2>
+    <div class="full-width-examples">
+      <div class="example-item full-width">
+        <app-button [fullWidth]="true">Full Width Primary</app-button>
+      </div>
+      <div class="example-item full-width">
+        <app-button variant="secondary" [fullWidth]="true">Full Width Secondary</app-button>
+      </div>
+      <div class="example-item full-width">
+        <app-button variant="professional" [fullWidth]="true" [outlined]="true">Full Width Professional Outlined</app-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Event Binding -->
+  <section class="doc-section">
+    <h2>Event Binding</h2>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button 
+          (btnClick)="logEvent('click', $event)"
+          (btnFocus)="logEvent('focus', $event)"
+          (btnBlur)="logEvent('blur', $event)"
+          (btnKeydown)="logEvent('keydown', $event)"
+          (btnKeyup)="logEvent('keyup', $event)"
+          (btnMouseenter)="logEvent('mouseenter', $event)"
+          (btnMouseleave)="logEvent('mouseleave', $event)">
+          Interactive Button
+        </app-button>
+      </div>
+    </div>
+    <div class="event-log">
+      <p><strong>Last Event:</strong> {{ lastEvent }}</p>
+    </div>
+    <div class="code-example">
+      <pre><code>
+&lt;app-button 
+  (btnClick)="handleClick($event)"
+  (btnFocus)="handleFocus($event)"
+  (btnBlur)="handleBlur($event)"
+  (btnKeydown)="handleKeydown($event)"
+  (btnKeyup)="handleKeyup($event)"
+  (btnMouseenter)="handleMouseenter($event)"
+  (btnMouseleave)="handleMouseleave($event)"&gt;
+  Interactive Button
+&lt;/app-button&gt;
+      </code></pre>
+    </div>
+  </section>
+
+  <!-- Form Submission -->
+  <section class="doc-section">
+    <h2>Form Submission</h2>
+    <form (ngSubmit)="onFormSubmit()">
+      <div class="form-example">
+        <div class="form-field">
+          <label for="demo-name">Name</label>
+          <input id="demo-name" type="text" placeholder="Enter your name">
+        </div>
+        <div class="button-group">
+          <app-button type="submit">Submit Form</app-button>
+          <app-button type="reset" [outlined]="true">Reset</app-button>
+        </div>
+        <div *ngIf="formSubmitted" class="form-submission-notice">
+          Form submitted successfully!
+        </div>
+      </div>
+    </form>
+    <div class="code-example">
+      <pre><code>
+&lt;form (ngSubmit)="onSubmit()"&gt;
+  &lt;!-- Form fields --&gt;
+  &lt;app-button type="submit"&gt;Submit Form&lt;/app-button&gt;
+  &lt;app-button type="reset" [outlined]="true"&gt;Reset&lt;/app-button&gt;
+&lt;/form&gt;
+      </code></pre>
+    </div>
+  </section>
+
+  <!-- Button with Content -->
+  <section class="doc-section">
+    <h2>Buttons with Content Projection</h2>
+    <div class="example-row">
+      <div class="example-item">
+        <app-button>
+          <span class="icon">👍</span>
+          <span>With Icon</span>
+        </app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="secondary">
+          <span>Loading</span>
+          <span class="spinner"></span>
+        </app-button>
+      </div>
+      <div class="example-item">
+        <app-button variant="professional" [outlined]="true">
+          <span class="icon">⬇️</span>
+          <span>Download</span>
+        </app-button>
+      </div>
+    </div>
+    <div class="code-example">
+      <pre><code>
+&lt;app-button&gt;
+  &lt;span class="icon"&gt;👍&lt;/span&gt;
+  &lt;span&gt;With Icon&lt;/span&gt;
+&lt;/app-button&gt;
+      </code></pre>
+    </div>
+  </section>
+
+  <!-- API Documentation -->
+  <section class="doc-section api-docs">
+    <h2>API Documentation</h2>
+    
+    <h3>Inputs</h3>
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>Input</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>size</td>
+          <td>'small' | 'standard' | 'large'</td>
+          <td>'standard'</td>
+          <td>Controls the size of the button</td>
+        </tr>
+        <tr>
+          <td>type</td>
+          <td>'button' | 'submit' | 'reset'</td>
+          <td>'button'</td>
+          <td>HTML button type attribute</td>
+        </tr>
+        <tr>
+          <td>variant</td>
+          <td>'primary' | 'secondary' | 'professional'</td>
+          <td>'primary'</td>
+          <td>The color theme of the button</td>
+        </tr>
+        <tr>
+          <td>outlined</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>When true, uses an outlined (stroke) style</td>
+        </tr>
+        <tr>
+          <td>disabled</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>When true, disables the button</td>
+        </tr>
+        <tr>
+          <td>fullWidth</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>When true, button takes full width of container</td>
+        </tr>
+        <tr>
+          <td>ariaLabel</td>
+          <td>string</td>
+          <td>undefined</td>
+          <td>Sets aria-label for accessibility</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Outputs</h3>
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>Output</th>
+          <th>Event Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>btnClick</td>
+          <td>MouseEvent</td>
+          <td>Emitted when button is clicked</td>
+        </tr>
+        <tr>
+          <td>btnFocus</td>
+          <td>FocusEvent</td>
+          <td>Emitted when button receives focus</td>
+        </tr>
+        <tr>
+          <td>btnBlur</td>
+          <td>FocusEvent</td>
+          <td>Emitted when button loses focus</td>
+        </tr>
+        <tr>
+          <td>btnKeydown</td>
+          <td>KeyboardEvent</td>
+          <td>Emitted on keydown event</td>
+        </tr>
+        <tr>
+          <td>btnKeyup</td>
+          <td>KeyboardEvent</td>
+          <td>Emitted on keyup event</td>
+        </tr>
+        <tr>
+          <td>btnMouseenter</td>
+          <td>MouseEvent</td>
+          <td>Emitted when mouse enters button</td>
+        </tr>
+        <tr>
+          <td>btnMouseleave</td>
+          <td>MouseEvent</td>
+          <td>Emitted when mouse leaves button</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

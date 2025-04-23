@@ -46,9 +46,7 @@ export class FormFieldComponent implements OnInit {
 
   getErrorMessage(): string {
     if (!this.control.errors) return '';
-
     for (const errorKey in this.control.errors) {
-      console.log("errorkey : ",errorKey);
       if (this.control.errors.hasOwnProperty(errorKey)) {
         return this._validationMessagesService.getMessage(errorKey, this.control.errors[errorKey]);
       }
@@ -63,7 +61,4 @@ export class FormFieldComponent implements OnInit {
   hasRequiredValidator(): boolean {
     return this.control && this.control.hasValidator(Validators.required);
   }
-
-  
-
 }

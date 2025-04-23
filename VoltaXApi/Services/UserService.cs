@@ -12,18 +12,21 @@ namespace VoltaXApi.Services
         private readonly IFileManagementService _fileManagementService;
         private readonly IRepository<Image> _imageRepo;
         private readonly IUserRepository _userRepository;
+        private readonly ICardRepository _cardRepository;
         private readonly IAuthService _authService;
 
         public UserService(
             IFileManagementService fileManagementService,
             IRepository<Image> imageRepo,
             IUserRepository userRepository,
-            IAuthService authService
+            IAuthService authService,
+            ICardRepository cardRepository
         ){
             _fileManagementService = fileManagementService;
             _imageRepo = imageRepo;
             _userRepository = userRepository;
             _authService = authService;
+            _cardRepository = cardRepository;
         }
         public async Task UploadUserAvatar(IFormFile file, int partnerID)
         {
@@ -72,6 +75,7 @@ namespace VoltaXApi.Services
                 Role = userToCreate.Role,
             };
             await _userRepository.AddAsync(user);
+            await _cardRepository.CreateCardForUser(user);
             return user.ID;
         }
 

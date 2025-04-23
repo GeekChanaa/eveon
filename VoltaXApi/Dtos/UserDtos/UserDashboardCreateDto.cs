@@ -15,7 +15,7 @@ namespace VoltaXApi.Dtos
         public string? Car { get; set; }
         public DateTime? Birthday { get; set; }
         public string Phone { get; set; }
-        public string? Password { get; set; }
+        public string Password { get; set; }
         public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneNumberVerified { get; set; }

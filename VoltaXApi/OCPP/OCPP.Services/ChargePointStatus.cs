@@ -18,12 +18,9 @@ namespace OCPP.Core.Server
         public ChargePointStatus(ChargePoint chargePoint)
         {
             Id = chargePoint.ChargePointId;
-            Name = chargePoint.Name;
         }
 
         public string Id { get; set; }
-
-        public string Name { get; set; }
 
         public string Protocol { get; set; }
 

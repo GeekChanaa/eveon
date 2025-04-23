@@ -16,7 +16,8 @@ enum CreateChargingStationFormStepEnum{
   ChargingStationInformations = 1,
   ChargingStationAddress = 2,
   AddChargePoints = 3,
-  Preview = 4
+  Images = 4,
+  Preview = 5
 }
 
 export enum ChargingStationTypeEnum{
@@ -33,6 +34,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   chargingStationInformationsForm : FormGroup;
   chargingStationAddressForm : FormGroup;
+  chargingStationImages : any = {};
 
   CreateChargingStationFormStepEnum = CreateChargingStationFormStepEnum;
   chargingStationType : ChargingStationTypeEnum = ChargingStationTypeEnum.VoltaXStation;
@@ -50,9 +52,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   constructor(
     private _modalService:  ActionModalService,
+    private _chargingStationService:  ChargingStationService
   ) {
     this.chargingStationInformationsForm = new FormGroup({
       category: new FormControl('Public',[Validators.required]),
+      network: new FormControl('Public',[Validators.required]),
       partnerID: new FormControl('',[Validators.required]),
       chargerQuantity: new FormControl('1',[Validators.required]),
       parkingType: new FormControl('ParallelParking',[Validators.required]),
@@ -72,8 +76,6 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     
   }
 
-
-
   ngOnInit() {
   }
 
@@ -83,10 +85,83 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
 
   savingChargePoints(chargePoints : any[]){
-    console.log("saving charge points");
-    console.log(chargePoints)
     this.chargePoints = chargePoints;
+    this.currentStep = CreateChargingStationFormStepEnum.Images;
+  }
+
+  savingImages(items : any){
+    this.chargingStationImages = items;
     this.currentStep = CreateChargingStationFormStepEnum.Preview;
+  }
+
+  submitForm(){
+    // Create FormData object
+    const formData = new FormData();
+
+    // Add charging station information
+    formData.append('category', this.chargingStationInformationsForm.get('category')?.value);
+    formData.append('network', this.chargingStationInformationsForm.get('network')?.value);
+    formData.append('partnerID', this.chargingStationInformationsForm.get('partnerID')?.value);
+    formData.append('chargerQuantity', this.chargingStationInformationsForm.get('chargerQuantity')?.value);
+    formData.append('parkingType', this.chargingStationInformationsForm.get('parkingType')?.value);
+    formData.append('status', this.chargingStationInformationsForm.get('status')?.value);
+    
+    // Add amenities
+    formData.append('wifiAmenity', this.chargingStationInformationsForm.get('wifi')?.value);
+    formData.append('parkingAmenity', this.chargingStationInformationsForm.get('parking')?.value);
+    formData.append('restaurantsAmenity', this.chargingStationInformationsForm.get('restaurants')?.value);
+    formData.append('washroomAmenity', this.chargingStationInformationsForm.get('washroom')?.value);
+    formData.append('sittingAreaAmenity', this.chargingStationInformationsForm.get('sittingArea')?.value);
+
+    // Add address information
+    formData.append('address', this.chargingStationAddressForm.get('address')?.value);
+    formData.append('city', this.chargingStationAddressForm.get('city')?.value);
+    if (this.chargingStationAddressForm.get('zipCode')?.value) {
+      formData.append('zipCode', this.chargingStationAddressForm.get('zipCode')?.value);
+    }
+    
+    // Add default values for properties not in forms but required by the DTO
+    formData.append('network', 'MainNetwork'); // Default network or get from another form
+    formData.append('country', 'DefaultCountry'); // You might want to add this to your address form
+    
+    // Add charge points
+    if (this.chargePoints && this.chargePoints.length > 0) {
+      // Append each chargePoint individually
+      this.chargePoints.forEach((chargePoint, index) => {
+        // Append the chargePoint's basic properties
+        formData.append(`chargePoints[${index}][serialNumber]`, chargePoint.serialNumber);
+        formData.append(`chargePoints[${index}][status]`, chargePoint.status);
+        formData.append(`chargePoints[${index}][category]`, chargePoint.category);
+        
+        // If the chargePoint has connectors, append each one
+        if (chargePoint.connectors && chargePoint.connectors.length > 0) {
+          chargePoint.connectors.forEach((connector : any, connIdx : number) => {
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][power]`, connector.power);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][pricePerKWh]`, connector.pricePerKWh);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][pricePerIdleMinute]`, connector.pricePerIdleMinute);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][pricePerMinute]`, connector.pricePerMinute);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][costPerKwh]`, connector.costPerKwh);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][flatFee]`, connector.flatFee);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][type]`, connector.type);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][connectorID]`, connector.connectorID);
+            formData.append(`chargePoints[${index}][connectors][${connIdx}][evseID]`, connector.evseID);
+          });
+        }
+      });
+    }
+
+    // Add images - this is handled specifically because FormData needs special handling for files
+    if (this.chargingStationImages && this.chargingStationImages.length > 0) {
+      for (let i = 0; i < this.chargingStationImages.length; i++) {
+        // Use the naming convention expected by your backend (chargingStationImages[0], chargingStationImages[1], etc.)
+        formData.append(`chargingStationImages[${i}]`, this.chargingStationImages[i]);
+      }
+    }
+
+    // Call the API service
+    this._chargingStationService.createChargingStation(formData).subscribe((data) => {
+      console.log("the charging station has been created successfully");
+    })
   }
 
   

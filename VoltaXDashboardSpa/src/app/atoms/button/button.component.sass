@@ -1,0 +1,135 @@
+/* button.component.scss */
+:host 
+  display: inline-block
+
+
+.btn 
+  position: relative
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  font-family: inherit
+  font-weight: 500
+  border: none
+  border-radius: 12px
+  cursor: pointer
+  transition: all 0.2s ease-in-out
+  white-space: nowrap
+  outline: none
+  
+  &:focus-visible 
+    outline: 2px solid var(--secondary2)
+    outline-offset: 2px
+  
+  
+  &:disabled 
+    opacity: 0.6
+    cursor: not-allowed
+    pointer-events: none
+    box-shadow: none
+  
+
+
+/* Size variants */
+.btn-small 
+  height: 32px
+  padding: 0 12px
+  font-size: 14px
+  min-width: 80px
+
+
+.btn-standard 
+  height: 40px
+  padding: 0 16px
+  font-size: 16px
+  min-width: 100px
+
+
+.btn-large 
+  height: 48px
+  padding: 0 24px
+  font-size: 18px
+  min-width: 120px
+
+
+/* Color variants - Primary */
+.btn-primary 
+  background-color: var(--primary1)
+  color: var(--primary9)
+  
+  &:hover 
+    background-color: var(--primary2)
+  
+  
+  &:active 
+    background-color: var(--primary3)
+  
+
+
+/* Color variants - Secondary */
+.btn-secondary 
+  background-color: var(--secondary2)
+  color: var(--primary1)
+  
+  &:hover 
+    background-color: var(--secondary1)
+  
+  
+  &:active 
+    background-color: var(--secondary3)
+  
+
+
+/* Color variants - Professional */
+.btn-professional 
+  background-color: var(--professional2)
+  color: var(--primary1)
+  
+  &:hover 
+    background-color: var(--professional1)
+  
+  
+  &:active 
+    background-color: var(--professional3)
+  
+
+
+/* Outlined variants */
+.btn-outlined 
+  background-color: transparent
+  border: 1px solid
+  
+  &.btn-primary 
+    border-color: var(--primary6)
+    color: var(--primary9)
+    
+    &:hover 
+      background-color: var(--primary3)
+      border-color: var(--primary9)
+    
+  
+  
+  &.btn-secondary 
+    border-color: var(--secondary2)
+    color: var(--secondary1)
+    
+    &:hover 
+      background-color: var(--secondary5)
+      border-color: var(--secondary1)
+    
+  
+  
+  &.btn-professional 
+    border-color: var(--professional3)
+    color: var(--professional2)
+    
+    &:hover 
+      background-color: var(--professional6)
+      border-color: var(--professional2)
+    
+  
+
+
+/* Full width */
+.btn-full-width 
+  width: 100%

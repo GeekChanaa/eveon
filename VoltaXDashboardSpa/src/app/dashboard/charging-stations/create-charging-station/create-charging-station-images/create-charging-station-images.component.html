@@ -1,0 +1,48 @@
+<!-- HTML Template -->
+<div class="create__card card">
+  <div class="file">
+    <div class="file__label">Cover images
+      <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed" data-position="right">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="file__wrap" 
+         (dragover)="onDragOver($event)" 
+         (dragleave)="onDragLeave($event)" 
+         (drop)="onDrop($event)">
+      <input #fileInput class="upload-input" type="file" multiple (change)="handleUpload($event)" style="display: none;" />
+      <div class="file__box" 
+           [class.dragover]="isDragging" 
+           *ngIf="chargingStationImages.length === 0"
+           (click)="fileInput.click()">
+        <svg class="icon icon-upload">
+          <use xlink:href="#icon-upload"></use>
+        </svg>Click or drop image
+      </div>
+      <div class="files__box" *ngIf="chargingStationImages.length > 0">
+        <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index">
+          <div class="image__clear" (click)="clearImage(i)">X</div>
+          <img [src]="imageUrl" alt="Charging station image">
+        </div>
+        <div class="add-more-images" (click)="fileInput.click()">
+          <svg class="icon icon-plus">
+            <use xlink:href="#icon-plus"></use>
+          </svg>
+          Add more
+        </div>
+      </div>
+      
+    </div>
+    <div class="file__errors" *ngIf="fileErrors.length > 0">
+      <div class="error-message" *ngFor="let error of fileErrors">{{ error }}</div>
+    </div>
+
+
+  </div>
+  <div class="form__actions">
+    <button class="button button-stroke" (click)="previousStep()">Previous</button>
+    <button [ngClass]="{'disabled' : form.invalid}" [disabled]="form.invalid" class="button button-primary ml-auto" (click)="saveInformations()">Next</button>
+  </div>
+</div>

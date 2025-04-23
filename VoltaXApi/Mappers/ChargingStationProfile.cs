@@ -9,7 +9,10 @@ namespace VoltaXApi.Mappers
         {
             
             CreateMap<ChargingStationCreateDto, ChargingStation>()
-            .ForMember(dest => dest.ChargePoints, opt => opt.MapFrom(src => src.ChargePoints));
+                .ForMember(dest => dest.ChargingStationImages, opt => opt.MapFrom(src => (object?)null))
+                .ForMember(dest => dest.ChargePoints, opt => opt.MapFrom(src => src.ChargePoints));
+
+            CreateMap<ConnectorCreateDto, Connector>();
 
             CreateMap<ChargePointCreateDto, ChargePoint>()
                 .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors));

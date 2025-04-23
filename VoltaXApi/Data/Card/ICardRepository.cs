@@ -12,6 +12,7 @@ namespace VoltaXApi.Data
         Task<List<OrderDto>> GetCardOrders(int CardID);
         Task<CardWithTransactionsOrdersDto> GetCardByID(int CardID);
         Task<Card> GetCardByNumber(string CardNumber);
+        Task<Card> CreateCardForUser(User user);
         Task CreateCard(CreateCardDto card);
         Task<CardListDto> GetCardForDisplayByID(int cardID);
         Task<List<Card>> GetAllCards();

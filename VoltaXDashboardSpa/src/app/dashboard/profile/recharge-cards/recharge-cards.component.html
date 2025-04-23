@@ -4,77 +4,11 @@
 
 
 
-<ng-container *ngIf="rechargeCards.length > 0 && !showCreateForm">
-    <app-recharge-card class="recharge_card" *ngFor="let rechargeCard of rechargeCards" [card]="rechargeCard" (deleteEvent)="delete(rechargeCard.id)"></app-recharge-card>
+<ng-container *ngIf="rechargeCards.length > 0">
+    <app-recharge-card class="recharge_card" *ngFor="let rechargeCard of rechargeCards" [card]="rechargeCard"></app-recharge-card>
 </ng-container>
 
-<ng-container *ngIf="showCreateForm">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="create">
-            <div class="create__row">
-                <div class="create__col">
-                    <!-- Chargin station informations -->
-                    <div class="create__card card">
-                        
-                        <div class="create__group">
-                            <div class="field">
-                                <div class="field__label">Card Type
-                                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                        <svg class="icon icon-info">
-                                            <use xlink:href="#icon-info"></use>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="field__wrap">
-                                    <div class="field__wrap">
-                                        <select class="select" formControlName="cardType">
-                                            <option *ngFor="let cardType of cardTypes | keyvalue" value="{{cardType.key}}">{{cardType.value}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="field__label">Max Count
-                                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                        <svg class="icon icon-info">
-                                            <use xlink:href="#icon-info"></use>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="field__wrap">
-                                    <div class="field__wrap">
-                                        <input formControlName="maxCount" class="field__input" type="number" required>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="field__label">Note
-                                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                                    <svg class="icon icon-info">
-                                        <use xlink:href="#icon-info"></use>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="field__wrap">
-                                <input formControlName="note" class="field__input" type="text" name="title" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btns_group">
-                        <button class="button" type="submit"> Submit </button>
-                        <button class="button-stroke cancel-btn button" (click)="createFormHide()"> Cancel </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</ng-container>
 
-<ng-container *ngIf="rechargeCards.length<=0 && showCreateForm == false">
+<ng-container *ngIf="rechargeCards.length<=0">
     <app-empty-card></app-empty-card>
-</ng-container>
-
-<ng-container *ngIf="!showCreateForm">
-    <button (click)="createFormShow()" class="button add_button"> Add Recharge Card </button>
 </ng-container>

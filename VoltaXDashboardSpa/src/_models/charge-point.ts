@@ -7,7 +7,6 @@ export interface ChargePoint {
     id: number;
     chargePointId: string;
     chargingStationID : number;
-    name: string;
     serialNumber: string;
     make: string;
     category: ChargePointCategoryEnum;

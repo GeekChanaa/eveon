@@ -6,7 +6,7 @@ namespace VoltaXApi.Data
     {
         public DebitCardRepository(VoltaXApiDbContext context) : base(context)
         {
-            
         }
+
     }
 }
