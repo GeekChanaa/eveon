@@ -4,8 +4,18 @@
     Charge Point : <b>{{ chargePoint.chargePointId }}</b>
   </div>
   <div class="head-actions">
-    <button routerLink="/dashboard/charge-points/{{chargePoint.id}}" class="button-stroke button-small button-edit">Edit</button>
-    <button (click)="deleteChargePoint(chargePoint.id)" class="button-stroke-red button-edit button-small">Delete</button>
+    <app-button 
+      [outlined]="true"
+      variant="professional"
+      size="small"
+      class="edit-btn"
+      routerLink="/dashboard/charge-points/{{chargePoint.id}}">
+        Edit</app-button>
+    <app-button 
+     variant="danger"
+     size="small"
+     (btnClick)="deleteChargePoint(chargePoint.id)">
+      Delete</app-button>
   </div>
 </div>
 

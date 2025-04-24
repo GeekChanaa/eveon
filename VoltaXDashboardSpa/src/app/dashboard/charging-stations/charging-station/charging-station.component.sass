@@ -1,25 +1,301 @@
 
-.button-stroke
-    margin-top: 36px
-    color: white
+.loading-container 
+  display: flex
+  align-items: center
+  justify-content: center
+  min-height: 300px
 
-.mb-8
-    margin-bottom: 8px
 
-.flex
+.content-area 
+  background-color: #fff
+  border-radius: 8px
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
+
+
+.tabs-container 
+  border-bottom: 1px solid #eaeaea
+
+
+.tabs 
+  display: flex
+  margin: 0
+  padding: 0
+  list-style: none
+  
+  .tab-button 
+    padding: 16px 24px
+    border: none
+    background: transparent
+    font-size: 15px
+    font-weight: 500
+    color: #666
+    cursor: pointer
+    position: relative
     display: flex
+    align-items: center
+    
+    i 
+      margin-right: 8px
+      font-size: 18px
+    
+    
+    &:hover 
+      color: #333
+    
+    
+    &.active 
+      color: #2d8dec
+      
+      &:after 
+        content: ''
+        position: absolute
+        bottom: 0
+        left: 0
+        right: 0
+        height: 3px
+        background-color: #2d8dec
+      
+    
+  
 
-.btn-cancel
-    margin-left: auto
-    color: black
 
-.button
-    margin-top: 36px
+.tab-content 
+  padding: 24px
 
 
-.images__title
-    margin-top: 32px
+.card 
+  border-radius: 8px
+  background-color: #fff
+  
+  .card-header 
+    padding: 16px 24px
+    border-bottom: 1px solid #eaeaea
+    display: flex
+    align-items: center
+    justify-content: space-between
+    
+    h2 
+      font-size: 18px
+      font-weight: 600
+      margin: 0
+      color: #333
+    
+  
+  
+  .card-content 
+    padding: 24px
+  
 
 
-.section__title
-    margin-top: 32px
+.profile-section 
+  .logo-section 
+    margin-bottom: 32px
+    display: flex
+    flex-direction: column
+    align-items: center
+    
+    .logo-container 
+      position: relative
+      width: 160px
+      height: 160px
+      border-radius: 8px
+      overflow: hidden
+      background-color: #f5f5f5
+      display: flex
+      align-items: center
+      justify-content: center
+      
+      img 
+        max-width: 100%
+        max-height: 100%
+        object-fit: cover
+      
+      
+      .empty-logo 
+        color: #ccc
+        font-size: 64px
+      
+      
+      .edit-logo-btn 
+        position: absolute
+        bottom: 8px
+        right: 8px
+        background-color: rgba(255, 255, 255, 0.9)
+        border: 1px solid #ddd
+        border-radius: 4px
+        padding: 4px 8px
+        font-size: 12px
+        cursor: pointer
+        display: flex
+        align-items: center
+        
+        i 
+          margin-right: 4px
+        
+        
+        &:hover 
+          background-color: #fff
+        
+      
+    
+  
+  
+  .upload-container 
+    width: 100%
+    max-width: 400px
+    
+    .dropzone 
+      border: 2px dashed #ddd
+      border-radius: 8px
+      padding: 32px
+      cursor: pointer
+      text-align: center
+      min-height: 200px
+      display: flex
+      align-items: center
+      justify-content: center
+      margin-bottom: 16px
+      
+      &:hover 
+        border-color: #2d8dec
+      
+      
+      &.has-file 
+        border-style: solid
+      
+      
+      .dropzone-prompt 
+        i 
+          font-size: 48px
+          color: #aaa
+        
+        
+        p 
+          margin: 8px 0 0
+          color: #777
+        
+        
+        .file-input 
+          display: none
+        
+      
+      
+      .preview-container 
+        position: relative
+        width: 100%
+        
+        img 
+          max-width: 100%
+          max-height: 200px
+          border-radius: 4px
+        
+        
+        .remove-btn 
+          position: absolute
+          top: -10px
+          right: -10px
+          width: 24px
+          height: 24px
+          border-radius: 50%
+          background-color: #ff5252
+          color: white
+          border: none
+          display: flex
+          align-items: center
+          justify-content: center
+          cursor: pointer
+          
+          &:hover 
+            background-color: #ff3232
+          
+        
+      
+    
+    
+    .actions 
+      display: flex
+      gap: 8px
+      justify-content: flex-end
+    
+  
+
+  .form-content 
+    display: grid
+    grid-template-columns: 1fr
+    gap: 32px
+    
+    @media (min-width: 768px) 
+      grid-template-columns: repeat(2, 1fr)
+    
+  
+  
+  .form-section 
+    margin-bottom: 24px
+    
+    .section-title 
+      font-size: 16px
+      font-weight: 500
+      color: #333
+      margin: 0 0 16px
+      padding-bottom: 8px
+      border-bottom: 1px solid #eaeaea
+    
+    
+    .field-group 
+      display: grid
+      grid-template-columns: 1fr
+      gap: 16px
+      margin-bottom: 16px
+      
+      @media (min-width: 768px) 
+        grid-template-columns: repeat(2, 1fr)
+      
+    
+  
+
+
+.btn 
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  padding: 8px 16px
+  font-size: 14px
+  font-weight: 500
+  border-radius: 4px
+  cursor: pointer
+  transition: all 0.2s
+  
+  i 
+    margin-right: 6px
+  
+  
+  &.btn-primary 
+    background-color: #2d8dec
+    color: white
+    border: none
+    
+    &:hover 
+      background-color: darken(#2d8dec, 10%)
+    
+    
+    &:disabled 
+      background-color: #aaa
+      cursor: not-allowed
+    
+  
+  
+  &.btn-secondary 
+    background-color: white
+    color: #666
+    border: 1px solid #ddd
+    
+    &:hover 
+      background-color: #f5f5f5
+    
+  
+  
+  &.btn-sm 
+    padding: 6px 12px
+    font-size: 12px
+  
+

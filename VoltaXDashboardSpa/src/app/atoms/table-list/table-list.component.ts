@@ -25,6 +25,7 @@ export class TableListComponent implements OnInit {
   @Input() displayable: boolean = true;
   @Input() searchable: boolean = true;
   @Input() isLoading: boolean = true;
+  @Input() breadcrumbs: { label: string, link?: string }[] = [];
   @Input() createLink: string = "/create";
   @Input() routeName : string = "";
   @Input() searchByPlaceHolder: string = "Search by name";

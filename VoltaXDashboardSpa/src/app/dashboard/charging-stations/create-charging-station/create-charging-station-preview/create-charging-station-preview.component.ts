@@ -11,6 +11,7 @@ export class CreateChargingStationPreviewComponent implements OnInit {
   @Input() chargingStationAddressForm!: FormGroup;
   @Input() chargingStationImages: File[] = [];
   @Input() chargePoints: any[] = [];
+  @Input() isLoading : boolean = false;
 
   @Output() submitEvent: EventEmitter<any> = new EventEmitter();
   @Output() previousStepEvent: EventEmitter<void> = new EventEmitter();

@@ -1,5 +1,4 @@
 <div class="settings__anchor" id="account" data-value="Account"></div>
-<div class="title-purple settings__title">Charge Points</div>
 <div class="settings__fieldset" *ngIf="!isChargePointVisible">
   <div *ngIf="chargePoints.length > 0 && !cpfShow"> Choose a Charge Point to view it</div>
   <ng-container *ngIf="chargePoints.length > 0 && !cpfShow">
@@ -19,10 +18,8 @@
   </ng-container>
 
   <ng-container *ngIf="!cpfShow">
-    <div>
-      <button (click)="cpfShow = true" class="button">
-        Add Charge Point
-      </button>
+    <div class="actions__container">
+      <app-button  size="small" variant="secondary" (btnClick)="cpfShow = true">Add Charge Point</app-button>
     </div>
   </ng-container>
 </div>

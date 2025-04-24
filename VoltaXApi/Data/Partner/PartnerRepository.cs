@@ -43,6 +43,7 @@ namespace VoltaXApi.Data
             return await _context.Partners.Where(p => p.ID == id).Select(p => new PartnerDisplayDto {
                 ID = p.ID.ToString(),
                 Name = p.Name,
+                PartnerIdentificationNumber = p.PartnerIdentificationNumber,
                 Description = p.Description,
                 Type = p.Type,
                 Email = p.Email,

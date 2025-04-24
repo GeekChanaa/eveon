@@ -58,13 +58,16 @@
   border: 1px solid #ddd
   border-radius: 12px
   font-size: 14px
-  transition: border-color 0.3s
+  transition: ease-in-out all 0.3s
+  &:hover
+    border-color: var(--secondary2)
+    background: var(--primary1)
 
 
 .field__input:focus 
   outline: none
-  border-color: #6366f1
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2)
+  border-color: var(--secondary1)
+  box-shadow: 0 0 0 2px var(--secondary3)
 
 
 .field__input.disabled 

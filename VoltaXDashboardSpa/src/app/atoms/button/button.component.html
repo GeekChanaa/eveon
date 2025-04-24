@@ -10,5 +10,9 @@
   (keyup)="onKeyUp($event)"
   (mouseenter)="onMouseEnter($event)"
   (mouseleave)="onMouseLeave($event)">
-  <ng-content></ng-content>
+  <ng-content *ngIf="!isLoading"></ng-content>
+  <ng-container *ngIf="isLoading">
+    <span>Loading</span>
+    <span class="spinner"></span>
+  </ng-container>
 </button>

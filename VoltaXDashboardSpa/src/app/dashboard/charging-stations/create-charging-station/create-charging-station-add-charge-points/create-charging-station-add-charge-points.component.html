@@ -2,7 +2,12 @@
 <div class="charge-points-container">
   <div class="header-actions">
     <h2>Charge Points</h2>
-    <button class="btn btn-primary" (click)="openAddChargePointModal()">Add Charge Point</button>
+    <app-button
+      (btnClick)="openAddChargePointModal()"
+      [variant]="'secondary'"
+      size="small">
+        Add Charge Point
+    </app-button>
   </div>
   
   <div class="charge-points-list" *ngIf="chargePoints.length > 0">
@@ -68,7 +73,19 @@
   </div>
 </div>
 
+
 <div class="form__actions">
-  <button class="button button-stroke" (click)="previousStep()">Previous</button>
-  <button class="button button-primary ml-auto" (click)="saveInformations()">Next</button>
+  <app-button
+    (btnClick)="previousStep()"
+    [outlined]="true">
+      Previous
+  </app-button>
+
+  <app-button
+    class="ml-auto"
+    (btnClick)="saveInformations()"
+    [variant]="'professional'">
+      Next
+  </app-button>
+
 </div>

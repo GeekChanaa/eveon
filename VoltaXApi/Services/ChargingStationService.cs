@@ -15,6 +15,7 @@ namespace VoltaXApi.Services
     public class ChargingStationService : IChargingStationService
     {
         private readonly IChargingStationRepository _repository;
+        private readonly IChargePointRepository _chargePointRepository;
         private readonly IRepository<Image> _imageRepo;
         private readonly IRepository<ChargingStationImage> _chargingStationImageRepo;
         private readonly IFileManagementService _fileService;
@@ -22,6 +23,7 @@ namespace VoltaXApi.Services
 
         public ChargingStationService(
           IChargingStationRepository repo,
+          IChargePointRepository chargePointRepository,
           IRepository<Image> imageRepository,
           IRepository<ChargingStationImage> chargingStationImageRepo,
           IFileManagementService fileService,
@@ -32,6 +34,7 @@ namespace VoltaXApi.Services
           this._fileService = fileService;
           this._chargingStationImageRepo = chargingStationImageRepo;
           this._mapper = mapper;
+          this._chargePointRepository = chargePointRepository;
         }
         public async Task<ChargingStation> CreateChargingStationWithDetails(ChargingStationCreateDto chargingStationDto)
         {
@@ -88,7 +91,7 @@ namespace VoltaXApi.Services
 
         private async Task<string> GenerateChargePointId()
         {
-            var latestChargePointNumber = await _repository.GetLatestStationNumberAsync();
+            var latestChargePointNumber = await _chargePointRepository.GetLatestChargePointNumberAsync();
             int nextNumber = latestChargePointNumber + 1;
             
             return $"VOLTAX-{nextNumber:D3}"; 

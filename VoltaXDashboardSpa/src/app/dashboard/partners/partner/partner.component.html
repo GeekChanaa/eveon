@@ -1,15 +1,13 @@
-<div class="page">
-  <div class="page-header">
-    <h1 class="page-title">{{ partner?.name || 'Partner Details' }}</h1>
-    
-    <app-breadcrumb [items]="[
+
+
+  <app-dashboard-details-container
+    [title]="partner?.name || 'Partner Details'"
+    [breadcrumbs]="[
       { label: 'Dashboard', link: '/dashboard' },
       { label: 'Partners', link: '/dashboard/partners' },
       { label: partner?.name || 'Details' }
-    ]"></app-breadcrumb>
+    ]">
     
-  </div>
-
   <!-- Loading state -->
   <div *ngIf="!partnerLoaded" class="loading-container">
     <app-svg-spinner></app-svg-spinner>
@@ -112,6 +110,14 @@
                   inpType="text"
                   title="Name"
                   [val]="partner.name"></app-display-cell>
+
+                <app-display-cell 
+                  [updateObservable]="updatePartnerObservable.bind(this)" 
+                  [object]="partner"
+                  [editable]="false"
+                  inpType="text"
+                  title="Partner Identification Number"
+                  [val]="partner.partnerIdentificationNumber"></app-display-cell>
                 
                 <app-display-cell 
                   [updateObservable]="updatePartnerObservable.bind(this)" 
@@ -257,4 +263,4 @@
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

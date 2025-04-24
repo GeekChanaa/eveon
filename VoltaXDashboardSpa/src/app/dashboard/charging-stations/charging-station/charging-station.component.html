@@ -1,63 +1,62 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Charging Station : {{chargingStation.name}}</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button (click)="changeTab('InformationsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+<app-dashboard-details-container [title]="chargingStation?.name || 'Charging Station Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Charging Stations', link: '/dashboard/charging-stations' },
+  { label: chargingStation?.name || 'Details' }
+]">
 
-        <button (click)="changeTab('ImagesTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'ImagesTab'}">Images</button>
+  <!-- Loading state -->
+  <div *ngIf="!chargingStationLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
 
-        <button (click)="changeTab('ChargePointsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'ChargePointsTab'}">Charge Points</button>
-        
+  <!-- Content area -->
+  <div *ngIf="chargingStationLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Information
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'ChargePointsTab'}" (click)="changeTab('ChargePointsTab')"
+          class="tab-button">
+          Charge Points
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'ImagesTab'}" (click)="changeTab('ImagesTab')"
+          class="tab-button">
+          Images
+        </button>
       </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('ImagesTab')">Images</option>
-          <option (click)="changeTab('ChargePointsTab')">Charge Points</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    </div>
 
-            </div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="chargingStationLoaded">
-                
-                <app-display-cell 
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          
+          <div class="card-content">
+
+            <!-- Main details -->
+            <div class="form-content">
+              
+              <div class="form-section">
+                <h3 class="section-title">Configurations</h3>
+                <div class="field-group">
+                  <app-display-cell 
                   [updateObservable]="updateChargingStationObservable.bind(this)" 
                   [object]="chargingStation"
-                  inpType="text"
-                  title="name"
-                  [val]="chargingStation.name" [editable]="false"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargingStationObservable.bind(this)" 
-                  [object]="chargingStation"
-                  inpType="text"
-                  title="address"
-                 
-                  [val]="chargingStation.address"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargingStationObservable.bind(this)" 
-                    [object]="chargingStation"
                   inpType="select_enum"
                   enumName="ChargingStationNetworkEnum"
                   title="network"
-                  val="{{chargingStation.network}}"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargingStationObservable.bind(this)" 
-                    [object]="chargingStation"
+                val="{{chargingStation.network}}"></app-display-cell>
+              
+              <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
                   inpType="select_enum"
                   title="category"
-                   enumName="ChargingStationCategoryEnum" 
+                  enumName="ChargingStationCategoryEnum" 
                   val="{{chargingStation.category}}"></app-display-cell>
                 
                 <app-display-cell 
@@ -67,6 +66,37 @@
                   title="chargerQuantity"
                   
                   val="{{chargingStation.chargerQuantity}}"></app-display-cell>
+
+                  <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                  inpType="select_enum"
+                  enumName="ParkingTypeEnum"
+                  title="parkingType" 
+                  val="{{chargingStation.parkingType}}"></app-display-cell>
+              
+              <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                inpType="select_enum"
+                enumName="ChargingStationStatusEnum"
+                title="status" 
+                val="{{chargingStation.status}}"></app-display-cell>
+                </div>
+                
+              </div>
+              
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Address</h3>
+                <app-display-cell 
+                  [updateObservable]="updateChargingStationObservable.bind(this)" 
+                  [object]="chargingStation"
+                  inpType="text"
+                  title="address"
+                  [val]="chargingStation.address"></app-display-cell>
+
+                
                 
                 <app-display-cell 
                   [updateObservable]="updateChargingStationObservable.bind(this)" 
@@ -75,56 +105,26 @@
                   title="city"
                    
                   val="{{chargingStation.city}}"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargingStationObservable.bind(this)" 
-                    [object]="chargingStation"
-                  inpType="text"
-                  title="organisation"
-                  val="{{chargingStation.organisation}}"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargingStationObservable.bind(this)" 
-                    [object]="chargingStation"
-                    inpType="select_enum"
-                    enumName="ParkingTypeEnum"
-                    title="parkingType" 
-                    val="{{chargingStation.parkingType}}"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargingStationObservable.bind(this)" 
-                    [object]="chargingStation"
-                  inpType="select_enum"
-                  enumName="ChargingStationStatusEnum"
-                  title="status" 
-                  val="{{chargingStation.status}}"></app-display-cell>
-              </ng-container>
+              </div>
+
+              
+
               
             </div>
-
-            <div class="title-green settings__title section__title">Location</div>
-            <div class="settings__profile">
-
-            </div>
-            <div class="settings__fieldset">
-              <app-map-picker *ngIf="chargingStation.latitude != null && chargingStation.latitude != 0" [noEdit]="true" [lat]="chargingStation.latitude" [lng]="chargingStation.longitude"></app-map-picker>
-            </div>
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'ChargePointsTab'">
+        </div>
+      </div>
+
+      <!-- Charging Stations Tab -->
+      <div *ngIf="tabsEnum === 'ChargePointsTab'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
             <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">
               <app-charging-station-charge-points [chargingStationID]="chargingStation.id"></app-charging-station-charge-points>
             </ng-container>
-            
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'ImagesTab'">
-            <ng-container *ngIf="chargingStation.id != null && chargingStation.id != undefined">
-              <app-charging-station-images [chargingStationID]="chargingStation.id"></app-charging-station-images>
-            </ng-container>
-            
-          </div>
-
         </div>
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

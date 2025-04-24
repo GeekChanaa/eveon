@@ -1,8 +1,11 @@
-<div class="page__title h3">{{name | titlecase}}</div>
+<div class="page__title h3">
+  {{name | titlecase}}
+  <app-breadcrumb  class="breadcrumb" [items]="breadcrumbs"></app-breadcrumb>
+</div>
 <div class="row card">
   <app-progress-bar *ngIf="isLoading"></app-progress-bar>
   <div class="card__head">
-    <div class="title-purple card__title">{{names | titlecase}}</div>
+    
     <form class="form" *ngIf="searchable">
       <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
 
@@ -13,14 +16,23 @@
       </button>
     </form>
     <div class="card__nav">
-      <button  *ngIf="createLink != ''" routerLink="{{createLink}}" class="card__link">New</button>
+      <app-button
+        *ngIf="createLink != ''" routerLink="{{createLink}}"
+        variant="secondary"
+        size="small">
+      New</app-button>
     </div>
     <div class="filters" [ngClass]="{'active': isActive}">
-      <button class="button-square-stroke button-small filters__head" (click)="toggleActive($event)">
+      <app-button
+        variant="primary"
+        (btnClick)="toggleActive($event)"
+        size="small">
         <svg class="icon icon-filter">
           <use xlink:href="#icon-filter"></use>
         </svg>
-      </button>
+      </app-button>
+
+      
       <div class="filters__body">
           <div class="filters__top">
             <div class="title-red filters__title">Filtering {{names}}</div>
@@ -39,11 +51,14 @@
       <div class="filters__overlay" (click)="removeActive()"></div>
     </div>
     <div>
-      <button (click)="toggleMenu($event)" class="button-square-stroke button-small ">
+      <app-button
+        variant="primary"
+        (btnClick)="toggleMenu($event)"
+        size="small">
         <svg class="icon icon-eye">
           <use xlink:href="#icon-eye"></use>
         </svg>
-      </button>
+      </app-button>
       <div class="display__columns" *ngIf="displayMenu">
         <div class="display__columns_options">
           <div class="filters__label">Showing</div>

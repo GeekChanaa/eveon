@@ -16,6 +16,7 @@
     <!-- Charging Station Informations -->
     <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.ChargingStationInformations">
       <app-create-charging-station-informations
+        [chargingStationType]="chargingStationType"
         [form]="chargingStationInformationsForm"
         (previousStepEvent)="currentStep = CreateChargingStationFormStepEnum.ChargingStationTypeChoice"
         (nextStep)="nextStep(CreateChargingStationFormStepEnum.ChargingStationAddress)">
@@ -55,6 +56,7 @@
         [chargePoints]="chargePoints"
         [chargingStationImages]="chargingStationImages"
         (previousStepEvent)="currentStep = CreateChargingStationFormStepEnum.Images"
+        [isLoading]="isLoading"
         (submitEvent)="submitForm()">
       </app-create-charging-station-preview>
     </ng-container>

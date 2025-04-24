@@ -71,6 +71,8 @@ export class PartnerComponent implements OnInit {
       this._partnerService.getPartnerByID(id).subscribe((cs) => {
         this.partner = cs;
         this.partnerLoaded = true;
+        console.log("this is the partner");
+        console.log(this.partner);
       })
     }
   

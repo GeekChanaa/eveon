@@ -28,10 +28,20 @@
     [control]="getControl('address')"
   ></app-form-field>
 
-  
-
   <div class="form__actions">
-    <button class="button button-stroke" (click)="previousStep()">Previous</button>
-    <button [ngClass]="{'disabled' : form.invalid}" [disabled]="form.invalid" class="button button-primary ml-auto" (click)="saveInformations()">Next</button>
+    <app-button
+      (btnClick)="previousStep()"
+      [outlined]="true">
+        Previous
+    </app-button>
+
+    <app-button
+      class="ml-auto"
+      (btnClick)="saveInformations()"
+      [disabled]="form.invalid"
+      [variant]="'professional'">
+        Next
+    </app-button>
+
   </div>
 </form>

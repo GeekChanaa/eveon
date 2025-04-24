@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { PartnerService } from 'src/_services/partner.service';
+import { ChargingStationTypeEnum } from '../create-charging-station.component';
 
 @Component({
   selector: 'app-create-charging-station-informations',
@@ -15,6 +16,8 @@ export class CreateChargingStationInformationsComponent implements OnInit {
   @Output() nextStep : EventEmitter<void> =  new EventEmitter();
   @Output() previousStepEvent : EventEmitter<void> =  new EventEmitter();
   ChargingStationCategoryEnum = ChargingStationCategoryEnum;
+  ChargingStationTypeEnum = ChargingStationTypeEnum;
+  @Input() chargingStationType : ChargingStationTypeEnum = ChargingStationTypeEnum.VoltaXStation;
   chargingStationCategories : any[] = []
 
   partners : any[] = [];

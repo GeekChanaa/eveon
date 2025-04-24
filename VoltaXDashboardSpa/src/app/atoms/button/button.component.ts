@@ -9,8 +9,9 @@ export class ButtonComponent{
 
   @Input() size: 'small' | 'standard' | 'large' = 'standard';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
-  @Input() variant: 'primary' | 'secondary' | 'professional' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'professional' | 'danger' = 'primary';
   @Input() outlined = false;
+  @Input() isLoading = false;
   @Input() disabled = false;
   @Input() fullWidth = false;
   @Input() ariaLabel?: string;

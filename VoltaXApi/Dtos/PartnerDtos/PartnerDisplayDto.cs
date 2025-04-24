@@ -8,6 +8,7 @@ public class PartnerDisplayDto
 {
     public string ID { get; set; }
     public string Name { get; set; }
+    public string PartnerIdentificationNumber { get; set; }
     public string Description { get; set; }
     public PartnerTypeEnum Type { get; set; }
     public string Email { get; set; }

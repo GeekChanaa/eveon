@@ -36,6 +36,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   chargingStationAddressForm : FormGroup;
   chargingStationImages : any = {};
 
+  isLoading : boolean = false;
+
   CreateChargingStationFormStepEnum = CreateChargingStationFormStepEnum;
   chargingStationType : ChargingStationTypeEnum = ChargingStationTypeEnum.VoltaXStation;
 
@@ -52,12 +54,13 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
   constructor(
     private _modalService:  ActionModalService,
-    private _chargingStationService:  ChargingStationService
+    private _chargingStationService:  ChargingStationService,
+    private _router : Router
   ) {
     this.chargingStationInformationsForm = new FormGroup({
       category: new FormControl('Public',[Validators.required]),
       network: new FormControl('Public',[Validators.required]),
-      partnerID: new FormControl('',[Validators.required]),
+      partnerID: new FormControl(''),
       chargerQuantity: new FormControl('1',[Validators.required]),
       parkingType: new FormControl('ParallelParking',[Validators.required]),
       status: new FormControl('Available',[Validators.required]),
@@ -68,10 +71,14 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
       sittingArea: new FormControl(false)
     });
 
+    if (this.chargingStationType === ChargingStationTypeEnum.PartnerStation) {
+      this.chargingStationInformationsForm.get('partnerID')?.setValidators([Validators.required]);
+    }
+
     this.chargingStationAddressForm = new FormGroup({
       address: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
-      zipCode: new FormControl(''),
+      zipCode: new FormControl('', [Validators.pattern(/^\d{5}$/)])
     });
     
   }
@@ -95,6 +102,7 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
 
   submitForm(){
+    this.isLoading = true;
     // Create FormData object
     const formData = new FormData();
 
@@ -160,7 +168,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
     // Call the API service
     this._chargingStationService.createChargingStation(formData).subscribe((data) => {
-      console.log("the charging station has been created successfully");
+      this.isLoading = true;
+      this._modalService.popup(ActionModalStatusEnum.Success,"Charging Station Created","The charging station has been created successfully!",4000);
+      this._router.navigateByUrl("/dashboard/charging-stations");
+    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong, please try again later!",4000);
     })
   }
 

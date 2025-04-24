@@ -1,0 +1,110 @@
+<!-- search.component.html -->
+<div class="search" [ngClass]="{'active': isActive, 'visible': isVisible}">
+  <div class="search__head">
+    <button class="search__start" aria-label="Search" (click)="toggleSearch()">
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-search"></use>
+      </svg>
+    </button>
+    <button class="search__direction" aria-label="Go back" (click)="toggleSearch()">
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-arrow-left"></use>
+      </svg>
+    </button>
+    <input 
+      #searchInput
+      class="search__input" 
+      type="text" 
+      [formControl]="searchControl"
+      placeholder="Search pages or type a command"
+      aria-label="Search input"
+    >
+    <button class="search__result" aria-label="Keyboard shortcut" title="Search shortcut">⌘ F</button>
+    <button class="search__close" aria-label="Close search" (click)="toggleSearch()">
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-close-circle"></use>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="search__body">
+    <ng-container *ngIf="(searchResults$ | async)?.length">
+      <!-- Recent searches -->
+      <div class="search__box" *ngIf="recentSearches.length && !searchControl.value">
+        <div class="search__category">Recent searches</div>
+        <div class="search__list">
+          <div class="search__item" *ngFor="let item of recentSearches" (click)="navigateTo(item)">
+            <div class="search__link">
+              <ng-container *ngIf="item.thumbnail; else iconTemplate">
+                <div class="search__preview">
+                  <img [src]="item.thumbnail" [alt]="item.title">
+                </div>
+              </ng-container>
+              <ng-template #iconTemplate>
+                <div class="search__icon">
+                  <svg class="icon" aria-hidden="true">
+                    <use [attr.xlink:href]="'#icon-' + (item.icon || 'link')"></use>
+                  </svg>
+                </div>
+              </ng-template>
+              <div class="search__details">
+                <div class="search__content">{{item.description || 'Recent search'}}</div>
+                <div class="search__title">{{item.title}}</div>
+              </div>
+            </div>
+            <button class="search__remove" (click)="removeFromRecent(item, $event)">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-close"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Search results -->
+      <div class="search__box" *ngIf="searchControl.value">
+        <div class="search__category">Search Results</div>
+        <div class="search__list">
+          <a 
+            class="search__suggestion" 
+            *ngFor="let result of (searchResults$ | async)"
+            (click)="navigateTo(result)"
+          >
+            <div class="search__icon">
+              <svg class="icon" aria-hidden="true">
+                <use [attr.xlink:href]="'#icon-' + (result.icon || 'link')"></use>
+              </svg>
+            </div>
+            <div class="search__details">
+              <div class="search__title">{{result.title}}</div>
+              <div class="search__content">{{result.description || 'Navigate to this page'}}</div>
+            </div>
+            <div class="search__arrow">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-arrow-next"></use>
+              </svg>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      <!-- No results message -->
+      <div class="search__empty" *ngIf="searchControl.value && !(searchResults$ | async)?.length">
+        <div class="search__empty-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-search"></use>
+          </svg>
+        </div>
+        <div class="search__empty-title">No results found</div>
+        <div class="search__empty-text">Try adjusting your search or filter to find what you're looking for.</div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<!-- Trigger button for mobile header -->
+<button class="header__search" (click)="toggleSearch()" aria-label="Open search">
+  <svg class="icon" aria-hidden="true">
+    <use xlink:href="#icon-search"></use>
+  </svg>
+</button>

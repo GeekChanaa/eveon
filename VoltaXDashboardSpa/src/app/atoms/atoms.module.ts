@@ -50,6 +50,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ButtonComponent } from './button/button.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
+import { DashboardDetailsContainerComponent } from './dashboard-details-container/dashboard-details-container.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { FieldLabelComponent } from './field-label/field-label.component';
     ModalComponent,
     ButtonComponent,
     BreadcrumbComponent,
-    FieldLabelComponent
+    FieldLabelComponent,
+    DashboardDetailsContainerComponent
   ],
   imports: [
     CommonModule,
@@ -151,7 +153,8 @@ import { FieldLabelComponent } from './field-label/field-label.component';
     ModalComponent,
     ButtonComponent,
     BreadcrumbComponent,
-    FieldLabelComponent
+    FieldLabelComponent,
+    DashboardDetailsContainerComponent
   ],
   providers: [],
 })

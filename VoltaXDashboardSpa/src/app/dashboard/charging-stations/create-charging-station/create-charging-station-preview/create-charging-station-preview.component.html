@@ -137,7 +137,19 @@
     ></app-create-charging-station-preview-charge-points>
 
   <div class="form__actions">
-    <button class="button button-stroke" (click)="previousStep()">Previous</button>
-    <button class="button button-primary ml-auto" (click)="submit()">Submit</button>
+    <app-button
+      (btnClick)="previousStep()"
+      [outlined]="true">
+        Previous
+    </app-button>
+
+    <app-button
+      [isLoading]="isLoading"
+      class="ml-auto"
+      (btnClick)="submit()"
+      [variant]="'secondary'">
+        Submit
+    </app-button>
+
   </div>
 </div>
