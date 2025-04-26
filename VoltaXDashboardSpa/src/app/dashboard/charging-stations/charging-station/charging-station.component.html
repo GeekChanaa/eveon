@@ -43,13 +43,19 @@
               <div class="form-section">
                 <h3 class="section-title">Configurations</h3>
                 <div class="field-group">
+                  <app-display-cell  
+                    [object]="chargingStation"
+                    [editable]="false"
+                    title="Partner"
+                    val="{{chargingStation.partnerName}}"></app-display-cell>
+
                   <app-display-cell 
-                  [updateObservable]="updateChargingStationObservable.bind(this)" 
-                  [object]="chargingStation"
-                  inpType="select_enum"
-                  enumName="ChargingStationNetworkEnum"
-                  title="network"
-                val="{{chargingStation.network}}"></app-display-cell>
+                    [updateObservable]="updateChargingStationObservable.bind(this)" 
+                    [object]="chargingStation"
+                    inpType="select_enum"
+                    enumName="ChargingStationNetworkEnum"
+                    title="network"
+                  val="{{chargingStation.network}}"></app-display-cell>
               
               <app-display-cell 
                   [updateObservable]="updateChargingStationObservable.bind(this)" 
@@ -63,16 +69,15 @@
                   [updateObservable]="updateChargingStationObservable.bind(this)" 
                   [object]="chargingStation"
                   inpType="text"
-                  title="chargerQuantity"
-                  
+                  title="Charger Quantity"
                   val="{{chargingStation.chargerQuantity}}"></app-display-cell>
 
-                  <app-display-cell 
+                <app-display-cell 
                   [updateObservable]="updateChargingStationObservable.bind(this)" 
                   [object]="chargingStation"
                   inpType="select_enum"
                   enumName="ParkingTypeEnum"
-                  title="parkingType" 
+                  title="Parking Type" 
                   val="{{chargingStation.parkingType}}"></app-display-cell>
               
               <app-display-cell 

@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ChargingStationTypeEnum } from '../../create-charging-station.component';
+import { FormGroup, FormControl } from '@angular/forms';
+import { ChargingStationTypeEnum } from 'src/app/dashboard/charging-stations/create-charging-station/create-charging-station.component';
+
 @Component({
-  selector: 'app-create-charging-station-add-connector-modal',
-  templateUrl: './create-charging-station-add-connector-modal.component.html',
-  styleUrls: ['./create-charging-station-add-connector-modal.component.sass']
+  selector: 'app-create-charge-point-add-connector-modal',
+  templateUrl: './create-charge-point-add-connector-modal.component.html',
+  styleUrls: ['./create-charge-point-add-connector-modal.component.sass']
 })
-export class CreateChargingStationAddConnectorModalComponent implements OnInit {
+export class CreateChargePointAddConnectorModalComponent implements OnInit {
 
   @Input() form : FormGroup = new FormGroup({});
   @Input() chargingStationType : ChargingStationTypeEnum | undefined; 

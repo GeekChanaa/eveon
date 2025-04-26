@@ -59,6 +59,10 @@
         ></textarea>
     </ng-container>
 
+    <ng-container *ngIf="inputType == 'toggle'">
+      <app-toggle [formControl]="control"></app-toggle>
+    </ng-container>
+
     <ng-container *ngIf="inputType === 'datetime'">
       <p-calendar 
         [formControl]="control"

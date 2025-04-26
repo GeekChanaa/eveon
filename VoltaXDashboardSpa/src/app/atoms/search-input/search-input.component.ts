@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 
@@ -7,7 +7,7 @@ import { ValidationMessagesService } from 'src/_services/validation-messages.ser
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.sass']
 })
-export class SearchInputComponent implements OnInit {
+export class SearchInputComponent implements OnInit, OnChanges {
 
   @Input() options: {id : any, name : any}[] = [];
   @Input() control: FormControl = new FormControl('');
@@ -33,15 +33,20 @@ export class SearchInputComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.options);
-    // Initialize filteredOptions with options
     this.filteredOptions = this.options;
-
-    // Subscribe to value changes of control
-    // this.control.valueChanges.subscribe(value => {
-    //   this.filteredOptions = this.filterOptions(value);
-    //   this.ngModelChange.emit(value);
-    // });
+  }
+  
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['options'] && this.options?.length) {
+      this.filteredOptions = this.options;
+  
+      if (this.control?.value) {
+        const selectedOption = this.options.find(option => option.id === this.control.value);
+        if (selectedOption) {
+          this.searchString = selectedOption.id + '-' + selectedOption.name;
+        }
+      }
+    }
   }
 
   filterOptions() {

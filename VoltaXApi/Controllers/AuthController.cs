@@ -28,7 +28,6 @@ namespace VoltaXApi.Controllers
         private readonly IAuthRepository _repo;
         private readonly IAuthService _authService;
         private readonly IConfiguration _config;
-        private readonly VoltaXApiDbContext _context;
         private readonly IUserRepository _userRepo;
         private readonly IMailService _mailService;
         private readonly ILogger<AuthController> _logger;
@@ -39,12 +38,10 @@ namespace VoltaXApi.Controllers
                 IConfiguration config,
                 IMailService mailService,
                 IAuthService authService,
-                VoltaXApiDbContext context,
                 ILogger<AuthController> logger)
         {
             _repo = repo;
             _config = config;
-            _context = context;
             _userRepo = userRepo;
             _authService = authService;
             _mailService = mailService;
@@ -55,39 +52,7 @@ namespace VoltaXApi.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
-            userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
-            string spaLink = _config["SpaLink"];
-
-            if (await _userRepo.UserExists(userForRegisterDto.Email))
-            {
-                throw new ValidationException("Email already exists");
-            }
-
-            // Creating user
-            var userToCreate = new User
-            {
-                Email = userForRegisterDto.Email,
-                FirstName = userForRegisterDto.FirstName,
-                LastName = userForRegisterDto.LastName,
-                Phone = userForRegisterDto.Phone,
-            };
-
-            var createdUser = await _authService.Register(userToCreate, userForRegisterDto.Password);
-
-            MailRequest requ = new MailRequest
-            {
-                Phone = "",
-                Email = "support@voltaxcharging.com",
-                Name = "CHANAA mohammed",
-                ToEmails = new List<string>() { createdUser.Email },
-                Subject = "Email Verification",
-                Body = ""
-            };
-            string verificationLink = spaLink + "auth/verify-email?email=" + createdUser.Email + "&token=" + createdUser.EmailVerificationToken;
-            await this._mailService.SendVerificationEmailAsync(requ, verificationLink);
-
-            await _context.SaveChangesAsync();
-
+            User user = await this._authService.Register(userForRegisterDto);
             var userForLogin = new UserForLoginDto
             {
                 Email = userForRegisterDto.Email,
@@ -208,26 +173,23 @@ namespace VoltaXApi.Controllers
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword(UserPasswordChangeDto userPasswordChangeDto)
         {
-            // Init passwordhash and salt (new ones)
-            byte[] passwordHash, passwordSalt;
-
-            // Getting User
-            var user = await _userRepo.GetUser(userPasswordChangeDto.ID);
-
-            // Checking the password
-            if (_authService.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+            try
             {
-                // Changing The password
-                _authService.CreatePasswordHash(userPasswordChangeDto.NewPassword, out passwordHash, out passwordSalt);
-                user.PasswordSalt = passwordSalt;
-                user.PasswordHash = passwordHash;
-                await _context.SaveChangesAsync();
+                await _authService.ChangePasswordAsync(userPasswordChangeDto);
+                return StatusCode(201);
             }
-            else
+            catch (UserNotFoundException ex)
             {
-                return StatusCode(500, "Password Incorrect");
+                return NotFound(ex.Message);
             }
-            return StatusCode(201);
+            catch (IncorrectPasswordException ex)
+            {
+                return StatusCode(403, ex.Message); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
 
         // Verifying the email

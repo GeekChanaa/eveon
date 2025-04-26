@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChargePointCRListDto } from 'src/_models/_dtos/charge-point-cr-list-dto';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
@@ -20,20 +21,14 @@ export class ChargePointsListComponent implements OnInit {
   };
   
 
-  chargePoint: ChargePoint = {
+  chargePoint: ChargePointCRListDto = {
     id: 0,
     chargePointId: '',
-    chargingStationID: 0,
+    chargingStationName: '',
     serialNumber: '',
-    make: '',
-    category: ChargePointCategoryEnum.Single,
-    status: ChargePointStatusEnum.Available,
-    comment: '',
-    username: '',
-    password: '',
-    clientCertThumb: '',
-    connectors: [],
-    transactions: []
+    category: '',
+    status: '',
+    partnerName: ''
   }
 
   // Constructor
@@ -46,7 +41,7 @@ export class ChargePointsListComponent implements OnInit {
     this._getItemFields();
   }
 
-  getChargePointsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._chargePointService.getAll(currentPage, itemsPerPage, itemParams);
+  getChargePointsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._chargePointService.getAllChargePoints(currentPage, itemsPerPage, itemParams);
   deleteChargePointObservable = (id : number) => this._chargePointService.deleteById(id);
   updateChargePointObservable = (id : number, model : any) => this._chargePointService.edit(id, model);
 

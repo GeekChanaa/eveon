@@ -13,6 +13,10 @@
         [updateItemObservable]="updatePartnerObservable.bind(this)"
         searchByPlaceHolder="Search by Name"
         (resetFiltersEvent)="resetFilters()"
+        [breadcrumbs]="[
+          { label: 'Dashboard', link: '/dashboard' },
+          { label: 'Partners'}
+        ]"
         >
         <!-- filter body -->
         <ng-container filter__body>

@@ -13,6 +13,10 @@
       [updateItemObservable]="updateChargePointObservable.bind(this)"
       searchByPlaceHolder="Search by Name"
       (resetFiltersEvent)="resetFilters()"
+      [breadcrumbs]="[
+        { label: 'Dashboard', link: '/dashboard' },
+        { label: 'Charge Points'}
+      ]"
       >
       <!-- filter body -->
       <ng-container filter__body>

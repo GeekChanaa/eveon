@@ -22,6 +22,7 @@ export class UserComponent implements OnInit {
   // TabsEnum
   tabsEnum : UserTabsEnum = UserTabsEnum.InformationsTab;
   editingSuspension : boolean = false;
+  userLoaded : boolean = false;
 
   //user
   user : any = {};
@@ -41,8 +42,12 @@ export class UserComponent implements OnInit {
   }
 
   getUser(id : number){
+    this.userLoaded = false;
     this._userService.getUserDashboardDisplayInformations(id).subscribe((data)=>{
+      this.userLoaded = true;
       this.user = data;
+      console.log("this.user");
+      console.log(this.user);
     })
   }
 

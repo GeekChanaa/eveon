@@ -3,6 +3,7 @@ using VoltaXApi.Dtos;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Messages;
 using Microsoft.EntityFrameworkCore;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Services
 {
@@ -11,16 +12,19 @@ namespace VoltaXApi.Services
     private readonly IUserRepository _userRepository;
     private readonly IMailService _mailService;
     private readonly VoltaXApiDbContext _context;
+    private readonly IConfiguration _config;
 
     public AuthService(
       IUserRepository userRepository,
       IMailService mailService,
+      IConfiguration config,
       VoltaXApiDbContext context
     )
     {
       _userRepository = userRepository;
       _mailService = mailService;
       _context = context;
+      _config = config;
     }
 
     // Creating phone verification token and updating the user
@@ -46,10 +50,27 @@ namespace VoltaXApi.Services
       await this._context.SaveChangesAsync();
     }
 
-    public async Task<User> Register(User user, string password)
+    public async Task<User> Register(UserForRegisterDto userForRegisterDto)
     {
+      userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
+      string spaLink = _config["SpaLink"];
+
+      if (await _userRepository.UserExists(userForRegisterDto.Email))
+      {
+        throw new ValidationException("Email already exists");
+      }
+
+      // Creating user
+      var user = new User
+      {
+        Email = userForRegisterDto.Email,
+        FirstName = userForRegisterDto.FirstName,
+        LastName = userForRegisterDto.LastName,
+        Phone = userForRegisterDto.Phone,
+      };
+
       byte[] passwordHash, passwordSalt;
-      CreatePasswordHash(password, out passwordHash, out passwordSalt);
+      CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
       user.PasswordHash = passwordHash;
       user.PasswordSalt = passwordSalt;
 
@@ -72,6 +93,21 @@ namespace VoltaXApi.Services
       };
 
       _context.Cards.Add(userCard);
+
+
+      MailRequest requ = new MailRequest
+      {
+        Phone = "",
+        Email = "support@voltaxcharging.com",
+        Name = "CHANAA mohammed",
+        ToEmails = new List<string>() { user.Email },
+        Subject = "Email Verification",
+        Body = ""
+      };
+      string verificationLink = spaLink + "auth/verify-email?email=" + user.Email + "&token=" + user.EmailVerificationToken;
+      await this._mailService.SendVerificationEmailAsync(requ, verificationLink);
+
+      await _context.SaveChangesAsync();
 
       return user;
     }
@@ -187,6 +223,30 @@ namespace VoltaXApi.Services
       }
       return true;
     }
+
+    public async Task ChangePasswordAsync(UserPasswordChangeDto userPasswordChangeDto)
+    {
+      var user = await _userRepository.GetUser(userPasswordChangeDto.ID);
+
+      if (user == null)
+      {
+        throw new UserNotFoundException("User not found.");
+      }
+
+      if (!VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+      {
+        throw new IncorrectPasswordException("The current password is incorrect.");
+      }
+
+      CreatePasswordHash(userPasswordChangeDto.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
+
+      user.PasswordSalt = passwordSalt;
+      user.PasswordHash = passwordHash;
+
+      await _context.SaveChangesAsync();
+    }
+
+
 
 
   }

@@ -52,8 +52,8 @@ namespace VoltaXApi.OCPP.Handlers
 
         if (!context.Request.Path.StartsWithSegments("/OCPP"))
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return;
+          context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+          return;
         }
     
         string chargepointIdentifier = context.Request.Path.Value.Split('/').Last();

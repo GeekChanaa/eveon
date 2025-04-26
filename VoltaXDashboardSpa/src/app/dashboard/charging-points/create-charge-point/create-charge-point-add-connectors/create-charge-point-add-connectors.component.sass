@@ -1,0 +1,291 @@
+/* charge-point-management.component.scss */
+
+.charge-points-container 
+  width: 100%
+  padding: 1rem
+
+
+.header-actions 
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 1.5rem
+  
+  h2 
+    margin: 0
+  
+
+
+.charge-point-card 
+  background-color: #ffffff
+  border-radius: 8px
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+  margin-bottom: 1.5rem
+  overflow: hidden
+
+
+.charge-point-header 
+  padding: 1rem
+  background-color: #f5f5f5
+  display: flex
+  justify-content: space-between
+  align-items: flex-start
+  
+  .charge-point-info 
+    h3 
+      margin-top: 0
+      margin-bottom: 0.5rem
+    
+    
+    p 
+      margin: 0.25rem 0
+    
+  
+  
+  .charge-point-actions 
+    display: flex
+    gap: 0.5rem
+  
+
+
+.status-available 
+  color: green
+  font-weight: 500
+
+
+.status-occupied 
+  color: orange
+  font-weight: 500
+
+
+.status-outofservice,
+.status-maintenance 
+  color: red
+  font-weight: 500
+
+
+.connectors-section 
+  padding: 1rem
+
+
+.connectors-header 
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 1rem
+  
+  h4 
+    margin: 0
+  
+
+
+.connectors-list 
+  display: grid
+  grid-template-columns: 1fr
+  gap: 1rem
+  
+  @media (min-width: 768px) 
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+  
+
+
+.connector-item 
+  border: 1px solid #e0e0e0
+  border-radius: 6px
+  padding: 1rem
+  display: flex
+  justify-content: space-between
+  
+  .connector-info 
+    p 
+      margin: 0.25rem 0
+    
+  
+  
+  .connector-actions 
+    display: flex
+    flex-direction: column
+    gap: 0.5rem
+  
+
+
+.no-connectors 
+  padding: 1rem
+  background-color: #f9f9f9
+  border-radius: 6px
+  text-align: center
+  color: #666
+
+
+.empty-state 
+  padding: 2rem
+  background-color: #f9f9f9
+  border-radius: 8px
+  text-align: center
+  color: #666
+
+
+.btn 
+  padding: 0.5rem 1rem
+  border-radius: 4px
+  border: 1px solid #ddd
+  background-color: #f5f5f5
+  cursor: pointer
+  transition: all 0.2s
+  
+  &:hover 
+    background-color: #e5e5e5
+  
+  
+  &.btn-primary 
+    background-color: #4285f4
+    color: white
+    border-color: #3367d6
+    
+    &:hover 
+      background-color: #3367d6
+    
+  
+  
+  &.btn-danger 
+    background-color: #ea4335
+    color: white
+    border-color: #d33828
+    
+    &:hover 
+      background-color: #d33828
+    
+  
+  
+  &.btn-small 
+    padding: 0.25rem 0.5rem
+    font-size: 0.875rem
+  
+  
+  &:disabled 
+    opacity: 0.5
+    cursor: not-allowed
+    
+    &:hover 
+      background-color: #f5f5f5
+    
+    
+    &.btn-primary:hover 
+      background-color: #4285f4
+    
+  
+
+
+/* Modal Styles */
+.modal-overlay 
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background-color: rgba(0, 0, 0, 0.5)
+  display: flex
+  justify-content: center
+  align-items: center
+  z-index: 1000
+
+
+.modal 
+  background-color: white
+  border-radius: 8px
+  width: 90%
+  max-width: 600px
+  max-height: 90vh
+  overflow-y: auto
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15)
+
+
+.modal-header 
+  padding: 1rem
+  border-bottom: 1px solid #e0e0e0
+  display: flex
+  justify-content: space-between
+  align-items: center
+  
+  h3 
+    margin: 0
+  
+  
+  .close-btn 
+    background: none
+    border: none
+    font-size: 1.5rem
+    cursor: pointer
+    padding: 0
+    line-height: 1
+  
+
+
+.modal-body 
+  padding: 1rem
+  
+  form 
+    display: flex
+    flex-direction: column
+    gap: 1rem
+  
+
+
+.modal-footer 
+  padding: 1rem
+  border-top: 1px solid #e0e0e0
+  display: flex
+  justify-content: flex-end
+  gap: 0.5rem
+
+
+/* Your existing field styles */
+.field__error_container 
+  margin-bottom: 1rem
+  
+  &.error 
+    .field__input, .select 
+      border-color: #ea4335
+    
+  
+
+
+.field__label 
+  display: flex
+  align-items: center
+  margin-bottom: 0.25rem
+  font-weight: 500
+  
+  .tooltip 
+    margin-left: 0.5rem
+    cursor: help
+  
+
+
+.field__wrap 
+  position: relative
+
+
+.field__input, .select 
+  width: 100%
+  padding: 0.5rem
+  border: 1px solid #ddd
+  border-radius: 4px
+  font-size: 1rem
+  
+  &:focus 
+    outline: none
+    border-color: #4285f4
+  
+
+
+.error 
+  color: #ea4335
+  font-size: 0.875rem
+  margin-top: 0.25rem
+
+
+.icon-info 
+  width: 16px
+  height: 16px
+  fill: #666

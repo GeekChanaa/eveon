@@ -1,0 +1,61 @@
+<form [formGroup]="form" *ngIf="isLoaded">
+  <div class="field__group">
+
+    <app-search-input 
+      class="field" 
+      title="Charging Station"
+      description="The Charging Station of the charge points"
+      placeholder="Charging Station" 
+      [control]="getControl('chargingStationID')"
+      [options]="chargingStationsOptions"></app-search-input>
+
+      <app-form-field
+        class="field"
+        title="Serial Number"
+        inputType="text"
+        description="The unique identifier assigned to this charging point by the manufacturer."
+        placeholder="Enter Serial Number"
+        [control]="getControl('serialNumber')"
+      ></app-form-field>
+      
+      <app-form-field
+        class="field"
+        title="Category"
+        inputType="select_enum"
+        enumName="ChargePointCategory"
+        description="The classification of this charging point based on its intended use or features (e.g., AC, DC, Fast Charger)."
+        [control]="getControl('category')"
+      ></app-form-field>
+      
+      <app-form-field
+        class="field"
+        title="Status"
+        inputType="select_enum"
+        enumName="ChargePointStatus"
+        description="The current operational state of the charging point (e.g., Available, Unavailable, Faulted, Charging)."
+        [control]="getControl('status')"
+      ></app-form-field>
+    
+<!-- 
+    <app-form-field class="field" title="Category" inputType="select_enum" enumName="ChargingStationCategoryEnum"
+      description="The category of the charging station" [control]="getControl('category')"></app-form-field>
+
+    <app-form-field class="field" title="Network" inputType="select_enum" enumName="ChargingStationNetworkEnum"
+      description="The network of the charging station" [control]="getControl('network')"></app-form-field> -->
+
+  </div>
+
+
+
+  <div class="form__actions">
+
+    <app-button
+      class="ml-auto"
+      (btnClick)="saveInformations()"
+      [disabled]="form.invalid"
+      [variant]="'professional'">
+        Next
+    </app-button>
+
+  </div>
+</form>

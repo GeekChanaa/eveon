@@ -22,14 +22,12 @@
           [ngClass]="{'active': tabsEnum === 'InformationsTab'}" 
           (click)="changeTab('InformationsTab')" 
           class="tab-button">
-          <i class="icon icon-info"></i>
           Information
         </button>
         <button 
           [ngClass]="{'active': tabsEnum === 'ChargingStationsTab'}" 
           (click)="changeTab('ChargingStationsTab')" 
           class="tab-button">
-          <i class="icon icon-station"></i>
           Charging Stations
         </button>
       </div>
@@ -52,7 +50,6 @@
                      alt="Partner logo">
                 
                 <div *ngIf="!partner.logoUrl && !editingImage" class="empty-logo">
-                  <i class="icon icon-company"></i>
                 </div>
                 
                 <button *ngIf="!editingImage" (click)="editingImage = true" class="edit-logo-btn">
@@ -251,7 +248,7 @@
           <div class="card-header">
             <h2>Charging Stations</h2>
             <button class="btn btn-primary btn-sm">
-              <i class="icon icon-plus"></i> Add Station
+               Add Station
             </button>
           </div>
           <div class="card-content">

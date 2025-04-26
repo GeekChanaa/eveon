@@ -12,6 +12,10 @@
       [getItemsObservable]="getSystemReportsObservable.bind(this)"
       [deleteItemObservable]="deleteSystemReportObservable.bind(this)"
       [updateItemObservable]="updateSystemReportObservable.bind(this)"
+      [breadcrumbs]="[
+        { label: 'Dashboard', link: '/dashboard' },
+        { label: 'System Reports'}
+      ]"
       searchByPlaceHolder="Search by Name"
       (resetFiltersEvent)="resetFilters()"
       >

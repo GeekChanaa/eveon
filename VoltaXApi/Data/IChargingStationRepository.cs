@@ -11,7 +11,7 @@ namespace VoltaXApi.Data
     public interface IChargingStationRepository : IRepository<ChargingStation>
     {
         Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID);
-        Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper helper);
+        Task<ChargingStationDisplayDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper helper);
         Task<List<ChargingStationListDto>> GetPartnerChargingStationsList(int partnerID);
         
         new Task AddAsync(ChargingStation chargingStation);
@@ -32,6 +32,7 @@ namespace VoltaXApi.Data
         Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "");
         Task<bool> ChargingStationExistsByName(string Name);
         Task<int> GetLatestStationNumberAsync();
+        Task<List<ChargingStationForSelectDto>> GetChargingStationsForSelect();
 
     }
 }

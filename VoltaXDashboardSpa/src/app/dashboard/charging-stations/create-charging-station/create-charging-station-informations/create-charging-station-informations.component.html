@@ -4,7 +4,7 @@
     <app-search-input 
       class="field" 
       title="Partner"
-      *ngIf="chargingStationType == ChargingStationTypeEnum.PartnerStation"
+      *ngIf="chargingStationType == ChargingStationTypeEnum.PartnerStation && (partners.length != 0 || partners != null )"
       description="The Partner that owns this charging station"
       placeholder="Partner" 
       [control]="getControl('partnerID')"

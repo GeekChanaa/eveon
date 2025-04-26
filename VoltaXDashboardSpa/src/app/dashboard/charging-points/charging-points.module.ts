@@ -12,6 +12,9 @@ import { ChargingPointComponent } from './charging-point/charging-point.componen
 import { ChargePointConnectorComponent } from './charge-point-connector/charge-point-connector.component';
 import { ChargePointAddConnectorComponent } from './charge-point-add-connector/charge-point-add-connector.component';
 import { ChargePointEditConnectorComponent } from './charge-point-edit-connector/charge-point-edit-connector.component';
+import { CreateChargePointInformationsComponent } from './create-charge-point/create-charge-point-informations/create-charge-point-informations.component';
+import { CreateChargePointAddConnectorsComponent } from './create-charge-point/create-charge-point-add-connectors/create-charge-point-add-connectors.component';
+import { CreateChargePointAddConnectorModalComponent } from './create-charge-point/create-charge-point-add-connectors/create-charge-point-add-connector-modal/create-charge-point-add-connector-modal.component';
 
 @NgModule({
     declarations: [
@@ -22,7 +25,10 @@ import { ChargePointEditConnectorComponent } from './charge-point-edit-connector
       ChargingPointComponent,
       ChargePointConnectorComponent,
       ChargePointAddConnectorComponent,
-      ChargePointEditConnectorComponent
+      ChargePointEditConnectorComponent,
+      CreateChargePointInformationsComponent,
+      CreateChargePointAddConnectorsComponent,
+      CreateChargePointAddConnectorModalComponent
     ],
     imports: [
         AtomsModule,

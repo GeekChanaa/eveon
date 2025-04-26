@@ -11,6 +11,7 @@ using VoltaXApi.Dtos;
 using VoltaXApi.Mappers;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Icao;
 
 namespace VoltaXApi.Data
 {
@@ -24,7 +25,7 @@ namespace VoltaXApi.Data
             _chargePointRepo = new ChargePointRepository(context,mapper);
         }
 
-        public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
+        public async Task<ChargingStationDisplayDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
         {
             var chargingStationQueryable = _context.ChargingStations.AsQueryable();
 
@@ -33,10 +34,33 @@ namespace VoltaXApi.Data
             if(includableHelper.includeImages) 
                 chargingStationQueryable = chargingStationQueryable.Include(s => s.ChargingStationImages).ThenInclude(s => s.Image);
            
-            var chargingStation = await chargingStationQueryable.FirstOrDefaultAsync(s => s.ID == chargingStationID);
+            var chargingStation = await chargingStationQueryable.Select(cs => new ChargingStationDisplayDto{
+                ID = cs.ID,
+                Name = cs.Name,
+                Address = cs.Address,
+                Network = cs.Network,
+                Category = cs.Category,
+                ChargerQuantity = cs.ChargerQuantity,
+                Country = cs.Country,
+                State = cs.State,
+                City = cs.City,
+                Latitude = cs.Latitude,
+                Longitude = cs.Longitude,
+                Organisation = cs.Organisation,
+                ParkingType = cs.ParkingType,
+                Status = cs.Status,
+                PartnerID = cs.PartnerID,
+                PartnerName = cs.Partner.Name,
+                WifiAmenity = cs.WifiAmenity,
+                ParkingAmenity = cs.ParkingAmenity,
+                RestaurantsAmenity = cs.RestaurantsAmenity,
+                WashroomAmenity = cs.WashroomAmenity,
+                SittingAreaAmenity = cs.SittingAreaAmenity,
+            })
+            .FirstOrDefaultAsync(s => s.ID == chargingStationID);
 
-            var chargingStationDto = _mapper.Map<ChargingStation, ChargingStationListDto>(chargingStation);
-            return chargingStationDto;
+            
+            return chargingStation;
         }
 
         public async Task<ChargingStationListDto> GetChargingStationByIdAsync(int chargingStationID)
@@ -263,6 +287,15 @@ namespace VoltaXApi.Data
                 
             return maxNumber;
         }
+
+        public async Task<List<ChargingStationForSelectDto>> GetChargingStationsForSelect()
+        {
+            return await dbSet.Select(cs => new ChargingStationForSelectDto{
+                ID = cs.ID,
+                Name = cs.Name
+            }).ToListAsync();
+        }
+
 
 
         

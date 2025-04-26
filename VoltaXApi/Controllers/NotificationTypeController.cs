@@ -26,20 +26,6 @@ namespace VoltaXApi.Controllers
             _repository = repository;
         }
 
-        // getting notification types for some role
-        [HttpGet("NotificationTypeFor")]
-        public async Task<ActionResult<List<NotificationType>>> GetAllNotificationTypesFor([FromQuery] UserRole role)
-        {
-            if(role == UserRole.Admin)
-            {
-                return await this._repository.FindAsync( u => u.ForAdmins == true);
-            }
-            else
-            {
-                return await this._repository.FindAsync( u => u.ForCustomers == true);
-            }
-        }
-
 
     }
 }

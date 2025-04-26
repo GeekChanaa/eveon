@@ -1,140 +1,133 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">User</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button (click)="changeTab('InformationsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
-        <button (click)="changeTab('RechargeCardsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
-        <button (click)="changeTab('ChargingSessionsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'ChargingSessionsTab'}">Charging Sessions</button>
-        <button (click)="changeTab('OrdersTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'OrdersTab'}">Orders</button>
-          <button (click)="changeTab('ActionsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'ActionsTab'}">Actions</button>
+<app-dashboard-details-container [title]="user?.fullName || 'User Details'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Users', link: '/dashboard/users' },
+    { label: user?.fullName || 'Details' }
+  ]">
+
+  <!-- Loading state -->
+  <div *ngIf="!userLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <!-- Content area -->
+  <div *ngIf="userLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Informations
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'RechargeCardsTab'}" (click)="changeTab('RechargeCardsTab')"
+          class="tab-button">
+          Recharge Cards
+        </button>
+
+        <button [ngClass]="{'active': tabsEnum === 'ChargingSessionsTab'}" (click)="changeTab('ChargingSessionsTab')"
+          class="tab-button">
+          Charging Sessions
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'OrdersTab'}" (click)="changeTab('OrdersTab')" class="tab-button">
+          Orders
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'ActionsTab'}" (click)="changeTab('ActionsTab')" class="tab-button">
+          Actions
+        </button>
       </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
-          <option (click)="changeTab('ChargingSessionsTab')">Charging Sessions</option>
-          <option (click)="changeTab('OrdersTab')">Orders</option>
-          <option (click)="changeTab('ActionsTab')">Actions</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    </div>
 
-            </div>  
-            <div class="settings__fieldset" *ngIf="user.firstName != null">
-              <app-display-cell 
-                  [updateObservable]="updateUserObservable.bind(this)" 
-                  [object]="user"
-                  inpType="text"
-                  title="firstName"
-                  [val]="user.firstName"></app-display-cell>
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          <div class="card-content">
 
-              <app-display-cell 
-                  [updateObservable]="updateUserObservable.bind(this)" 
-                  [object]="user"
-                  inpType="text"
-                  title="lastName"
-                  [val]="user.lastName"></app-display-cell>
+            <!-- Main details -->
+            <div class="form-content">
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h3 class="section-title">Basic Information</h3>
 
-              <app-display-cell 
-                  [updateObservable]="updateUserObservable.bind(this)" 
-                  [object]="user"
-                  inpType="text"
-                  title="email"
-                  [val]="user.email"></app-display-cell>
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                  title="firstName" [val]="user.firstName"></app-display-cell>
 
-              <app-display-cell 
-                  [updateObservable]="updateUserObservable.bind(this)" 
-                  [object]="user"
-                  inpType="text"
-                  title="phone"
-                  [val]="user.phone"></app-display-cell>
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                  title="lastName" [val]="user.lastName"></app-display-cell>
 
 
-              <app-display-cell 
-                  [updateObservable]="updateUserObservable.bind(this)" 
-                  [object]="user"
-                  inpType="select_enum"
-                  title="role"
-                  enumName="UserRole" 
-                  val="{{user.role}}"></app-display-cell>
-              
-
-              <!-- Suspending Account -->
-              <div class="field">
-                <div class="field__label">Suspend Account
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                  <div class="field__edit" (click)="editingSuspension = true">
-                    <svg class="icon icon-edit">
-                      <use xlink:href="#icon-edit"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__information" *ngIf="!editingSuspension">
-                  <ng-container *ngIf="isSuspended()"> Suspended until {{user.suspendedAt | date:'medium' }} </ng-container>
-                  <ng-container *ngIf="!isSuspended()"> Not Suspended </ng-container>
-                </div>
-
-                <div class="field__wrap" *ngIf="editingSuspension">
-                  <div> suspend Account until : </div> 
-                  <p-calendar [(ngModel)]="user.suspendedAt" inputStyleClass="field__input"></p-calendar>
-                  <button class="button button-small" (click)="suspendUser()">save</button>
-                </div>
               </div>
+
+              <!-- Contact Information -->
+              <div class="form-section">
+                <h3 class="section-title">Contact Information</h3>
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                  title="email" [val]="user.email"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                  title="phone" [val]="user.phone"></app-display-cell>
+              </div>
+
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Business Informatiosn</h3>
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
+                  inpType="select_enum" title="role" enumName="UserRole" val="{{user.role}}"></app-display-cell>
+
+
+                <!-- Suspending Account -->
+                <div class="field">
+                  <div class="field__label">Suspend Account
+                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                    <div class="field__edit" (click)="editingSuspension = true">
+                      <svg class="icon icon-edit">
+                        <use xlink:href="#icon-edit"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__information" *ngIf="!editingSuspension">
+                    <ng-container *ngIf="isSuspended()"> Suspended until {{user.suspendedAt | date:'medium' }}
+                    </ng-container>
+                    <ng-container *ngIf="!isSuspended()"> Not Suspended </ng-container>
+                  </div>
+
+                  <div class="field__wrap" *ngIf="editingSuspension">
+                    <div> suspend Account until : </div>
+                    <p-calendar [(ngModel)]="user.suspendedAt" inputStyleClass="field__input"></p-calendar>
+                    <button class="button button-small" (click)="suspendUser()">save</button>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Recharge Cards</div>
-            <div class="settings__fieldset">
-              <app-user-recharge-cards [userID]="user.id"></app-user-recharge-cards>
-            </div>
-
-          </div>
-
-          <div class="settings__item" *ngIf="tabsEnum == 'ChargingSessionsTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">Charging Sessions</div>
-            <div class="settings__fieldset">
-              <app-user-charging-sessions [userID]="user.id"></app-user-charging-sessions>
-            </div>
-
-          </div>
-
-          <div class="settings__item" *ngIf="tabsEnum == 'OrdersTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">User Orders</div>
-            <div class="settings__fieldset">
-              <app-user-orders [userID]="user.id"></app-user-orders>
-            </div>
-
-          </div>
-
-          <div class="settings__item" *ngIf="tabsEnum == 'ActionsTab'">
-            <div class="settings__anchor" id="account" data-value="Account"></div>
-            <div class="title-purple settings__title">User Actions</div>
-            <div class="settings__fieldset">
-              <app-user-actions [userEmail]="user.email" [userID]="user.id"></app-user-actions>
-            </div>
-
-          </div>
-
-
-
         </div>
+      </div>
+
+      <!-- Recharge Cards Tab -->
+      <div *ngIf="tabsEnum === 'RechargeCardsTab'" class="information-tab">
+        <app-user-recharge-cards [userID]="user.id"></app-user-recharge-cards>
+      </div>
+
+      <!-- Charging Serssions Tab -->
+      <div *ngIf="tabsEnum === 'ChargingSessionsTab'" class="information-tab">
+        <app-user-charging-sessions [userID]="user.id"></app-user-charging-sessions>
+      </div>
+
+      <!-- Orders Tab -->
+      <div *ngIf="tabsEnum === 'OrdersTab'" class="information-tab">
+          <app-user-orders [userID]="user.id"></app-user-orders>
+      </div>
+
+      <!-- Actions Tab -->
+      <div *ngIf="tabsEnum === 'ActionsTab'" class="information-tab">
+          <app-user-actions [userEmail]="user.email" [userID]="user.id"></app-user-actions>
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

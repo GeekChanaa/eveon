@@ -45,7 +45,7 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargingStationForDisplay/{id}")]
-        public async Task<IActionResult> GetChargingStationForDisplay(int id)
+        public async Task<ActionResult<ChargingStationDisplayDto>> GetChargingStationForDisplay(int id)
         {
             var helper = new ChargingStationIncludableHelper{};
             var entity = await this._repository.GetChargingStationByIdAsync(id, helper);
@@ -195,6 +195,12 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> ChargingStationExistsByName(string name) 
         {
             return Ok(await _repository.ChargingStationExistsByName(name));
+        }
+
+        [HttpGet("GetChargingStationsForSelect")]
+        public async Task<ActionResult<ChargingStationForSelectDto>> GetChargingStationsForSelect() 
+        {
+            return Ok(await _repository.GetChargingStationsForSelect());
         }
 
         

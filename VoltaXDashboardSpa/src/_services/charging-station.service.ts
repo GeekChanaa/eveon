@@ -8,6 +8,7 @@ import { ChargePoint } from 'src/_models/charge-point';
 
 import { PaginatedResult } from 'src/_models/pagination';
 import { ChargingStationCreateDto } from 'src/_models/_dtos/charging-station-create-dto';
+import { ChargingStationForSelectDto } from 'src/_models/_dtos/charging-station-dtos/charging-station-for-select-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,10 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
 
   getPartnerChargingStationsList(id : number){
     return this._http.get<any[]>(this.baseUrl+"GetPartnerChargingStationsList/"+id);
+  }
+
+  getChargingStationsForSelect(){
+    return this._http.get<ChargingStationForSelectDto[]>(this.baseUrl+"GetChargingStationsForSelect/");
   }
 
 

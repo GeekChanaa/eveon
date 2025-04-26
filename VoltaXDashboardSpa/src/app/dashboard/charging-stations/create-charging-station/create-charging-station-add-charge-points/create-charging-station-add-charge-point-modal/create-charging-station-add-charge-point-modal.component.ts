@@ -13,8 +13,6 @@ export class CreateChargingStationAddChargePointModalComponent implements OnInit
   constructor() { }
 
   ngOnInit() {
-    console.log("this is the chargepoint modal value");
-    console.log(this.form.value);
   }
 
   getControl(name: string): FormControl {

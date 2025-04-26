@@ -1,7 +1,6 @@
 <div class="settings__anchor" id="account" data-value="Account"></div>
-<div class="title-purple settings__title">Charge Points</div>
 <div class="settings__fieldset" *ngIf="!isConnectorVisible">
-  <div *ngIf="!cpfShow"> Choose a Charge Point to view it</div>
+  <div *ngIf="!cpfShow"> Choose a Connector to view it</div>
   <ng-container *ngIf="connectors.length > 0 && !cpfShow">
     <div class="charge-point-links-container" >
       <button *ngFor="let connector of connectors" class="charge-point-link" (click)="showConnector(connector.id)"> {{connector.id}} </button>
@@ -19,10 +18,12 @@
   </ng-container>
 
   <ng-container *ngIf="!cpfShow">
-    <div>
-      <button (click)="cpfShow = true" class="button">
+    <div class="form__actions">
+      <app-button
+        variant="secondary"
+        (btnClick)="cpfShow = true">
         Add Connector
-      </button>
+      </app-button>
     </div>
   </ng-container>
 </div>

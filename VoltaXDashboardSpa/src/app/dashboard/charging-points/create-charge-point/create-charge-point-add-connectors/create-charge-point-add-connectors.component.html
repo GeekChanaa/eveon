@@ -1,0 +1,89 @@
+
+<div class="charge-points-container">
+  <div class="header-actions">
+    <h2>Connectors</h2>
+    <app-button
+      (btnClick)="openAddConnectorModal()"
+      [disabled]="!canAddConnector()"
+      [variant]="'secondary'"
+      size="small">
+        Add Connector
+    </app-button>
+  </div>
+  
+  <div class="charge-points-list" *ngIf="chargePoint.connectors.length > 0">
+    <div class="connectors-section">
+      <div class="connectors-header">
+        <h4>Connectors ({{ chargePoint.connectors?.length || 0 }}/{{ chargePoint.category === 'Single' ? 1 : 2 }})</h4>
+      </div>
+     
+      <div class="connectors-list" *ngIf="chargePoint.connectors?.length > 0">
+        <div class="connector-item" *ngFor="let connector of chargePoint.connectors; let i = index">
+          <div class="connector-info">
+            <p>Power: {{ connector.power }} kW</p>
+            <p>Type: {{ connector.type }}</p>
+            <p>Price per kWh: {{ connector.pricePerKWh || '-' }}</p>
+            <p>Price per Idle Minute: {{ connector.pricePerIdleMinute || '-' }}</p>
+            <p>Cost Per Kwh: {{ connector.costPerKwh || '-' }}</p>
+            <p>Price per Minute: {{ connector.pricePerMinute || '-' }}</p>
+            <p>Flat Fee: {{ connector.flatFee || '-' }}</p>
+          </div>
+          <div class="connector-actions">
+            <button class="btn btn-small"  (click)="openEditConnectorModal(i)">Edit</button>
+            <button class="btn btn-small btn-danger" (click)="deleteConnector(i)">Delete</button>
+          </div>
+        </div>
+      </div>
+     
+      <div class="no-connectors" *ngIf="!chargePoint.connectors?.length">
+        <p>No connectors added yet.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="empty-state" *ngIf="chargePoint.connectors.length === 0">
+    <p>No charge points added yet. Click the button above to add your first charge point.</p>
+  </div>
+</div>
+
+<!-- Connector Modal -->
+<div class="modal-overlay" *ngIf="showConnectorModal" [@overlayAnimation]>
+  <div class="modal" [@modalAnimation]>
+    <div class="modal-header">
+      <h3>{{ currentConnectorIndex !== null ? 'Edit' : 'Add' }} Connector</h3>
+      <button class="close-btn" (click)="closeConnectorModal()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="connectorForm">
+        <app-create-charge-point-add-connector-modal
+          [chargingStationType]="chargingStationType"
+          [form]="connectorForm">
+        </app-create-charge-point-add-connector-modal>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn" (click)="closeConnectorModal()">Cancel</button>
+      <button class="button button-primary" [ngClass]="{'disabled':!connectorForm.valid}" [disabled]="!connectorForm.valid" (click)="saveConnector()">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="form__actions">
+  <app-button
+    (btnClick)="previousStep()"
+    [outlined]="true">
+      Previous
+  </app-button>
+
+  <app-button
+    class="ml-auto"
+    (btnClick)="saveInformations()"
+    [isLoading]="isSaving"
+    [variant]="'secondary'">
+      Submit
+  </app-button>
+
+</div>

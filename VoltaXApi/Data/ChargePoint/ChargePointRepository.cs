@@ -57,13 +57,13 @@ namespace VoltaXApi.Data
         }
 
 
-        public async Task<ChargePointListDto> GetChargePointByIdAsync(int id)
+        public async Task<ChargePointDisplayDto> GetChargePointByIdAsync(int id)
         {
             var chargePoint= await this._context.ChargePoints
                 .Include(u => u.Connectors)
                 .Include(u => u.ChargingStation)
                 .FirstOrDefaultAsync(u => u.ID == id);
-            ChargePointListDto chargePointDto = _mapper.Map<ChargePointListDto>(chargePoint);
+            ChargePointDisplayDto chargePointDto = _mapper.Map<ChargePointDisplayDto>(chargePoint);
             return chargePointDto;
         }
 

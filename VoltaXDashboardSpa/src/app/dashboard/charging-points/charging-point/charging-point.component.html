@@ -1,112 +1,108 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Charge Point : {{chargePoint.name}}</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button (click)="changeTab('InformationsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+<app-dashboard-details-container [title]="chargePoint?.name || 'Charge Point Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Charge Points', link: '/dashboard/charging-points' },
+  { label: chargePoint?.name || 'Details' }
+]">
 
+  <!-- Loading state -->
+  <div *ngIf="!chargePointLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
 
-        <button (click)="changeTab('ConnectorsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'ConnectorsTab'}">Connectors</button>
-        
+  <!-- Content area -->
+  <div *ngIf="chargePointLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Information
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'ConnectorsTab'}" (click)="changeTab('ConnectorsTab')"
+          class="tab-button">
+          Connectors
+        </button>
       </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('ConnectorsTab')">Connectors</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    </div>
 
-            </div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="chargePointLoaded">
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="Charging Station"
-                  [editable]="false"
-                  [link]="'/dashboard/charging-stations/'+chargePoint.chargingStationID"
-                  [isLink]="true"
-                  [val]="chargePoint.chargingStationName" [editable]="false"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="Charge Point ID"
-                  [val]="chargePoint.chargePointId"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="select_enum"
-                  enumName="ChargePointStatus"
-                  title="status"
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+
+          <div class="card-content">
+
+            <!-- Main details -->
+            <div class="form-content">
+
+              <div class="form-section">
+                <h3 class="section-title">Basic Informations</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                    [editable]="false" inpType="text" title="Charge Point ID"
+                    val="{{chargePoint.chargePointId}}"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                    [editable]="false" inpType="text" title="Charging Station Name"
+                    val="{{chargePoint.chargingStationName}}"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                    inpType="text" title="Serial Number" val="{{chargePoint.serialNumber}}"></app-display-cell>
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                    inpType="text" title="Charge Point Make" [editable]="false" val="{{chargePoint.make}}"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                    inpType="text" title="Charge Point Model" [editable]="false" val="{{chargePoint.modelName}}"></app-display-cell>
+
+
+
+                </div>
+
+              </div>
+
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Configuration</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                  inpType="select_enum" title="Charge Point Status" enumName="ChargePointStatus"
                   val="{{chargePoint.status}}"></app-display-cell>
-                
-                <app-display-cell 
-                    [updateObservable]="updateChargePointObservable.bind(this)" 
-                    [object]="chargePoint"
-                    inpType="select_enum"
-                    title="category"
-                    enumName="ChargePointCategory" 
-                    val="{{chargePoint.category}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="make"
-                  val="{{chargePoint.make}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="username"
-                  val="{{chargePoint.username}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="password"
-                  val="{{chargePoint.password}}"></app-display-cell>
-                
-                
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="clientCertThumb"
-                  val="{{chargePoint.clientCertThumb}}"></app-display-cell>
 
-                <app-display-cell 
-                  [updateObservable]="updateChargePointObservable.bind(this)" 
-                  [object]="chargePoint"
-                  inpType="text"
-                  title="comment"
+                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                  inpType="select_enum"  title="Charge Point Category" enumName="ChargePointCategory"
+                  val="{{chargePoint.category}}"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                  inpType="text"  title="Username"
+                  val="{{chargePoint.username}}"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                  inpType="text"  title="Password"
+                  val="{{chargePoint.password}}"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
+                  inpType="text"  title="Comment"
                   val="{{chargePoint.comment}}"></app-display-cell>
-              </ng-container>
-              
+                </div>
+
+
+              </div>
             </div>
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'ConnectorsTab'">
+        </div>
+      </div>
+
+      <!-- Connectors Tab -->
+      <div *ngIf="tabsEnum === 'ConnectorsTab'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
             <ng-container *ngIf="chargePoint.id != null && chargePoint.id != undefined">
               <app-charge-point-connectors [chargePointID]="chargePoint.id"></app-charge-point-connectors>
             </ng-container>
-            
           </div>
-
         </div>
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>
