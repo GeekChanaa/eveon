@@ -1,6 +1,6 @@
 <button
   [type]="type"
-  [disabled]="disabled"
+  [disabled]="disabled || isLoading"
   [attr.aria-label]="ariaLabel"
   [ngClass]="buttonClasses"
   (click)="onClick($event)"

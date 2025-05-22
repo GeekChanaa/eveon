@@ -19,12 +19,12 @@ export class PartnersListComponent implements OnInit {
 
   partner: PartnerListDto = {
     id: 0,
+    partnerIdentificationNumber: '',
     name: '',
     description: '',
     type: PartnerTypeEnum.Vendor,
     address: '',
     logoUrl: '',
-    partnerIdentificationNumber: ''
   }
 
   // Constructor

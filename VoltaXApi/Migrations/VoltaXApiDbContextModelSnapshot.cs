@@ -1287,11 +1287,14 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.LoginAttempt", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FailedAttempts")
                         .HasColumnType("int");
@@ -1299,10 +1302,16 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("IpAddress")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LockoutEndTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
 
                     b.ToTable("LoginAttempts");
                 });
@@ -1355,6 +1364,63 @@ namespace VoltaXApi.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("MessageLogs");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Notice", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmailTemplatePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ForAdmins")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ForPartners")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ForSupports")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ForUsers")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmail")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPushNotification")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSms")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Notices");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Notification", b =>
@@ -2670,7 +2736,7 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneVerificationToken")
                         .HasColumnType("nvarchar(max)");
@@ -2695,9 +2761,6 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("ImageID");
 
                     b.HasIndex("PartnerID");
-
-                    b.HasIndex("Phone")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

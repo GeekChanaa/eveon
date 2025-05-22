@@ -1,44 +1,71 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Settings</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button (click)="changeTab('AccountInformationsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'AccountInformationsTab'}">Account Informations</button>
-        <button (click)="changeTab('SecurityTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'SecurityTab'}">Security</button>
-        <button (click)="changeTab('RechargeCardsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'RechargeCardsTab'}">Recharge Cards</button>
-        <button (click)="changeTab('PaymentCardsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'PaymentCardsTab'}">Payment Cards</button>
-          <button (click)="changeTab('NotificationSettingsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'NotificationSettingsTab'}">Notification Settings</button>
-      </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option (click)="changeTab('AccountInformationsTab')">Account Informations</option>
-          <option (click)="changeTab('SecurityTab')">Security</option>
-          <option (click)="changeTab('RechargeCardsTab')">Recharge Cards</option>
-          <option (click)="changeTab('PaymentCardsTab')">Payment Cards</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item" *ngIf="tabsEnum == 'AccountInformationsTab'">
-            <app-account-informations></app-account-informations>
-          </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'SecurityTab'">
-            <app-profile-security [userID]="user.id"></app-profile-security>
-          </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'RechargeCardsTab'">
-            <app-recharge-cards [userID]="user.id"></app-recharge-cards>
-          </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'PaymentCardsTab'">
-            <app-debit-cards [userID]="user.id"></app-debit-cards>
-          </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'NotificationSettingsTab'">
-            <app-notification-settings></app-notification-settings>
-          </div>
-        </div>
+<app-dashboard-details-container [title]="'Profile Settings'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Profile' }
+]">
+
+  <!-- Loading state -->
+  <div *ngIf="!userLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <!-- Content area -->
+  <div *ngIf="userLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'AccountInformationsTab'}"
+          (click)="changeTab('AccountInformationsTab')" class="tab-button">
+          Account Informations
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'SecurityTab'}" (click)="changeTab('SecurityTab')"
+          class="tab-button">
+          Security
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'RechargeCardsTab'}" (click)="changeTab('RechargeCardsTab')"
+          class="tab-button">
+          Recharge Cards
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'PaymentCardsTab'}" (click)="changeTab('PaymentCardsTab')"
+          class="tab-button">
+          Payment Cards
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'NotificationSettingsTab'}"
+          (click)="changeTab('NotificationSettingsTab')" class="tab-button">
+          Notification Settings
+        </button>
       </div>
     </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Account informations Tab -->
+      <div *ngIf="tabsEnum === 'AccountInformationsTab'" class="information-tab">
+        <app-account-informations></app-account-informations>
+      </div>
+
+      <!-- Account Security Tab -->
+      <div *ngIf="tabsEnum === 'SecurityTab'" class="information-tab">
+        <app-profile-security [userID]="user.id"></app-profile-security>
+      </div>
+
+      <!-- User Recharge Cards Tab -->
+      <div *ngIf="tabsEnum === 'RechargeCardsTab'" class="information-tab">
+        <app-recharge-cards [userID]="user.id"></app-recharge-cards>
+      </div>
+
+      <!-- Payments Card Tab -->
+      <div *ngIf="tabsEnum === 'PaymentCardsTab'" class="information-tab">
+        <app-debit-cards [userID]="user.id"></app-debit-cards>
+
+      </div>
+
+      <!-- Notification Settings Tab -->
+      <div *ngIf="tabsEnum === 'NotificationSettingsTab'" class="information-tab">
+        <app-notification-settings></app-notification-settings>
+
+      </div>
+
+
+    </div>
   </div>
-</div>
+</app-dashboard-details-container>

@@ -31,6 +31,15 @@ export class ConnectorService extends AbstractService<Connector>{
     );
   }
 
+  getChargePointConnectorIds(chargePointID : number){
+    return this._http.get<any[]>(this.baseUrl+"GetChargePointConnectorIds/"+chargePointID).pipe(
+      map(connectors => connectors.map(connector => ({
+        id: connector.id,
+        name: connector.chargePointID + " " + connector.connectorID
+      })))
+    );
+  }
+
   updateConnectorPricing(connectorID : number, updateConnectorPricingDto : any){
     return this._http.post<any>(this.baseUrl+"UpdateConnectorPricing/"+connectorID, updateConnectorPricingDto)
   }

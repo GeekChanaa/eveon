@@ -4,6 +4,8 @@ using VoltaXApi.Data;
 using VoltaXApi.OCPP.Messages;
 using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Exceptions;
+using VoltaXApi.Factories;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Services
 {
@@ -13,18 +15,27 @@ namespace VoltaXApi.Services
     private readonly IMailService _mailService;
     private readonly VoltaXApiDbContext _context;
     private readonly IConfiguration _config;
+    private readonly ILoginAttemptRepository _loginAttemptRepository;
+    private readonly IMailRequestFactory _mailRequestFactory;
+    private readonly ICardRepository _cardRepository;
 
     public AuthService(
       IUserRepository userRepository,
       IMailService mailService,
       IConfiguration config,
-      VoltaXApiDbContext context
+      VoltaXApiDbContext context,
+      ILoginAttemptRepository loginAttemptRepository,
+      IMailRequestFactory mailRequestFactory,
+      ICardRepository cardRepository
     )
     {
       _userRepository = userRepository;
       _mailService = mailService;
       _context = context;
       _config = config;
+      _loginAttemptRepository = loginAttemptRepository;
+      _mailRequestFactory = mailRequestFactory;
+      _cardRepository = cardRepository;
     }
 
     // Creating phone verification token and updating the user
@@ -32,22 +43,45 @@ namespace VoltaXApi.Services
     {
       var user = await _userRepository.GetUserByEmail(addPhoneNumberDto.Email);
       user.Phone = addPhoneNumberDto.Phone;
-      user.PhoneVerificationToken = this.GenerateVerificationToken();
+      user.PhoneVerificationToken = AuthHelper.GenerateVerificationToken();
       user.IsPhoneNumberVerified = false;
 
       this._context.Set<User>().Entry(user).State = EntityState.Modified;
       await this._context.SaveChangesAsync();
     }
 
+    // Reset Password Request
+    public async Task ResetPasswordRequest(string email)
+    {
+      string verificationLink = await GetResetPasswordLinkForUserByEmail(email);
+      string userName = (await this._userRepository.GetUserByEmail(email)).FullName;
+
+      MailRequest requ = _mailRequestFactory.CreateResetPasswordMailRequest(email);
+      
+      await this._mailService.SendVerificationEmailAsync(requ, verificationLink, userName);
+    }
+
+    private async Task<string> GetResetPasswordLinkForUserByEmail(string email)
+    {
+      string spaLink = _config["SpaLink"];
+      string resetToken = await this._userRepository.GenerateResetPasswordTokenForUser(email);
+      string verificationLink = spaLink + "Auth/reset-password?email=" + email + "&token=" + resetToken;
+      return verificationLink;
+    }
+
     // Creating phone verification token and updating the user
     public async Task CreateEmailVerificationToken(int userID)
     {
       var user = await _userRepository.GetByIdAsync(userID);
-      user.EmailVerificationToken = this.GenerateVerificationToken();
+      user.EmailVerificationToken = AuthHelper.GenerateVerificationToken();
       user.IsEmailVerified = false;
-
       this._context.Set<User>().Entry(user).State = EntityState.Modified;
       await this._context.SaveChangesAsync();
+
+      // Sending the verification email
+      MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
+      await this._mailService.SendVerificationCodeEmailAsync(requ, user.EmailVerificationToken, user.FullName);
+      
     }
 
     public async Task<User> Register(UserForRegisterDto userForRegisterDto)
@@ -61,74 +95,19 @@ namespace VoltaXApi.Services
       }
 
       // Creating user
-      var user = new User
-      {
-        Email = userForRegisterDto.Email,
-        FirstName = userForRegisterDto.FirstName,
-        LastName = userForRegisterDto.LastName,
-        Phone = userForRegisterDto.Phone,
-      };
-
       byte[] passwordHash, passwordSalt;
       CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
-      user.PasswordHash = passwordHash;
-      user.PasswordSalt = passwordSalt;
 
-      user.IsEmailVerified = false;
-      user.EmailVerificationToken = GenerateVerificationToken();
+      User user = await _userRepository.CreateUser(userForRegisterDto, passwordHash, passwordSalt); 
 
-      await _context.Users.AddAsync(user);
-      await _context.SaveChangesAsync();
+      await _cardRepository.CreateCardForUser(user);
 
-      Card userCard = new Card
-      {
-        CardNumber = GenerateCardNumber(),
-        CardType = CardTypeEnum.Standard,
-        ExpirationDate = DateTime.Now.AddYears(2),
-        MaxCount = 1,
-        Status = CardStatusEnum.Inactive,
-        Balance = 100,
-        Note = "Initial card",
-        UserID = user.ID
-      };
+      MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
 
-      _context.Cards.Add(userCard);
-
-
-      MailRequest requ = new MailRequest
-      {
-        Phone = "",
-        Email = "support@voltaxcharging.com",
-        Name = "CHANAA mohammed",
-        ToEmails = new List<string>() { user.Email },
-        Subject = "Email Verification",
-        Body = ""
-      };
       string verificationLink = spaLink + "auth/verify-email?email=" + user.Email + "&token=" + user.EmailVerificationToken;
-      await this._mailService.SendVerificationEmailAsync(requ, verificationLink);
-
-      await _context.SaveChangesAsync();
+      await this._mailService.SendVerificationEmailAsync(requ, verificationLink, user.FullName);
 
       return user;
-    }
-
-    private string GenerateCardNumber()
-    {
-      Guid guid = Guid.NewGuid();
-
-      string cardNumber = guid.ToString().Replace("-", "");
-      return cardNumber.Substring(0, 16);
-    }
-
-
-    // Generating a verification token 
-    private string GenerateVerificationToken()
-    {
-      Random random = new Random();
-      const int tokenLength = 6;
-      const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // only digits
-      return new string(Enumerable.Repeat(chars, tokenLength)
-          .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
 
@@ -138,6 +117,8 @@ namespace VoltaXApi.Services
       var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
       if (user == null || user.EmailVerificationToken != token)
         return false;
+
+      
 
       user.IsEmailVerified = true;
       user.EmailVerificationToken = null; // clear the token
@@ -180,35 +161,33 @@ namespace VoltaXApi.Services
 
     public async Task<User> Login(string email, string password, string ipAddress)
     {
-      var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
+      try
+      {
+        var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
 
-      if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
-      {
-        throw new Exception("Too many failed attempts");
-      }
-      var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-      if (user == null)
-      {
-        if (loginAttempt == null)
+        if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
         {
-          loginAttempt = new LoginAttempt { IpAddress = ipAddress, FailedAttempts = 1 };
-          _context.LoginAttempts.Add(loginAttempt);
-          await _context.SaveChangesAsync();
+          throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
         }
-        else
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+        if (user == null ||!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt) )
         {
-          loginAttempt.FailedAttempts++;
-          if (loginAttempt.FailedAttempts >= 5)
-          {
-            loginAttempt.LockoutEndTime = DateTime.UtcNow.AddMinutes(5);
-          }
-          await _context.SaveChangesAsync();
+          await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
+          return null;
         }
-        return null;
+        return user;
       }
-      if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-        return null;
-      return user;
+      catch (LoginAttemptFailedException ex)
+      {
+        MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(email);
+        string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(email);
+
+        await _mailService.SendLoginAttemptFailedEmail(mailRequest, ipAddress, resetPasswordLink);
+
+        throw; // rethrow to be handled by global middleware or return 401/403 here
+      }
+      
     }
 
     public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)

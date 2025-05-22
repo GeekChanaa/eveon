@@ -1,50 +1,39 @@
-<!-- inner-->
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Partner Logo</div>
-    <div class="create">
-      <div class="create__row">
-        <div class="create__col">
-          <div class="create__card card charge_point_form">
-            <div class="create__card card">
-              <div class="file">
-                <div class="file__wrap">
-                  <input class="upload-input" type="file" (change)="handleUpload($event)" />
-                  <div class="file__box" *ngIf="!displayedLogo">
-                    <svg class="icon icon-upload">
-                      <use xlink:href="#icon-upload"></use>
-                    </svg>Click or drop image
-                  </div>
-                  <div class="files__box">
-                    <div *ngIf="displayedLogo != null" class="image__box">
-                      <div class="image__clear" (click)="clearImage()">X</div>
-                      <img [src]="displayedLogo" alt="">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-actions">
-            
-              <ng-container>
-                
-               
-              </ng-container>
+<app-dashboard-form-container title="Add Partner Logo" [items]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Partners', link: '/dashboard/partners' },
+    { label: 'Create' }
+  ]">
+  <div form>
+    <div class="create__card card">
+      <div class="file">
+        <div class="file__wrap">
+          <input class="upload-input" type="file" (change)="handleUpload($event)" />
+          <div class="file__box" *ngIf="!displayedLogo">
+            <svg class="icon icon-upload">
+              <use xlink:href="#icon-upload"></use>
+            </svg>Click or drop image
+          </div>
+          <div class="files__box">
+            <div *ngIf="displayedLogo != null" class="image__box">
+              <div class="image__clear" (click)="clearImage()">X</div>
+              <img [src]="displayedLogo" alt="">
             </div>
           </div>
         </div>
-
       </div>
     </div>
-    <div class="btns_group">
-      <button (click)="changeLogo()"  class="button" type="submit">
-        <app-svg-spinner *ngIf="imageUploading"></app-svg-spinner>
-        <ng-container *ngIf="!imageUploading">
+    <div class="form__actions">
+        <app-button 
+          [outlined]="true"
+          [variant]="'secondary'"
+          (btnClick)="skip()">
+        Skip</app-button>
+        <app-button class="ml-auto" [variant]="'secondary'"
+        (btnClick)="changeLogo()"
+          type="submit">
           Submit
-        </ng-container>
-      </button>
-
-      <button class="button button-stroke">Skip</button>
-    </div>
+        </app-button>
+      </div>
   </div>
+
+</app-dashboard-form-container>

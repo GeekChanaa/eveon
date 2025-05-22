@@ -7,12 +7,16 @@ namespace VoltaXApi.Services
 {
     public interface IMailService
     {
-        Task SendVerificationEmailAsync(MailRequest mailRequest,string verificationLink);
+        Task SendVerificationEmailAsync(MailRequest mailRequest,string verificationLink, string userName);
+        Task SendVerificationCodeEmailAsync(MailRequest mailRequest,string verificationCode, string userName);
         Task SendEmailAsync(MailRequest mailRequest);
         Task SendReportEmailToAdmin(SystemReport report);
         Task SendReportEmailToSupport(int reportID);
+		Task SendNoticeEmail(MailRequest mailRequest, string noticeText);
 		Task SendWarningEmail(MailRequest mailRequest, string userName);
 		Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName);
 		Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
+        Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string ipAddress,string resetPasswordLink);
+        // Task SendLoginAttemptEmail()
     }
 }

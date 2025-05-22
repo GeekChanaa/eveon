@@ -14,6 +14,7 @@ import { ProfileUpdateEmailComponent } from './account-informations/profile-upda
 import { ProfileUpdatePhoneComponent } from './account-informations/profile-update-phone/profile-update-phone.component';
 import { ProfileVerifyEmailComponent } from './account-informations/profile-verify-email/profile-verify-email.component';
 import { ProfileVerifyPhoneComponent } from './account-informations/profile-verify-phone/profile-verify-phone.component';
+import { ProfileSecurityChangePasswordComponent } from './profile-security/profile-security-change-password/profile-security-change-password.component';
 @NgModule({
     declarations: [
         AccountInformationsComponent,
@@ -26,7 +27,8 @@ import { ProfileVerifyPhoneComponent } from './account-informations/profile-veri
         ProfileUpdateEmailComponent, 
         ProfileUpdatePhoneComponent,
         ProfileVerifyEmailComponent,
-        ProfileVerifyPhoneComponent
+        ProfileVerifyPhoneComponent,
+        ProfileSecurityChangePasswordComponent
     ],
     imports: [
         AtomsModule,

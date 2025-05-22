@@ -1,0 +1,101 @@
+<app-dashboard-form-container title="New System Report" [items]="[
+      { label: 'Dashboard', link: '/dashboard' },
+      { label: 'Notices', link: '/dashboard/notices' },
+      { label: 'Create' }
+    ]">
+  <div form>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="field__group">
+        <app-form-field class="field" title="Notice Type" inputType="select_enum" enumName="NoticeTypeEnum"
+          description="Select the type of notice you want to send."
+          [control]="getControl('type')"></app-form-field>
+       
+        <app-form-field class="field" title="Title" inputType="text"
+          description="Title of the notice."
+          placeholder="Title"
+          [control]="getControl('title')"></app-form-field>
+       
+        <app-form-field class="field" title="Send Email?" inputType="toggle"
+          description="Should this notice be sent by email?"
+          [control]="getControl('isEmail')"></app-form-field>
+       
+        <app-form-field class="field" title="Send SMS?" inputType="toggle"
+          description="Should this notice be sent by SMS?"
+          [control]="getControl('isSms')"></app-form-field>
+       
+        <app-form-field class="field" title="Send Push Notification?" inputType="toggle"
+          description="Should this notice be sent by push notification?"
+          [control]="getControl('isPushNotification')"></app-form-field>
+       
+        <app-form-field class="field" title="For Admins?" inputType="toggle"
+          description="Send to Admin users."
+          [control]="getControl('forAdmins')"></app-form-field>
+       
+        <app-form-field class="field" title="For Supports?" inputType="toggle"
+          description="Send to Support users."
+          [control]="getControl('forSupports')"></app-form-field>
+       
+        <app-form-field class="field" title="For Partners?" inputType="toggle"
+          description="Send to Partner users."
+          [control]="getControl('forPartners')"></app-form-field>
+       
+        <app-form-field class="field" title="For Users?" inputType="toggle"
+          description="Send to regular Users."
+          [control]="getControl('forUsers')"></app-form-field>
+       
+        <app-form-field class="field" title="Text" inputType="textarea"
+          description="The main body content of the notice."
+          placeholder="Text of the notice."
+          [control]="getControl('text')"></app-form-field>
+        
+        <!-- File upload section that appears only when isEmail is true -->
+        <div class="field" *ngIf="getControl('isEmail').value">
+          <div class="file-upload-section">
+            <h3 class="field__title">Email HTML Template</h3>
+            <p class="field__description">Upload an HTML template for the email (.html files only)</p>
+            
+            <div class="file-upload-container" 
+                 (dragover)="onDragOver($event)" 
+                 (dragleave)="onDragLeave($event)" 
+                 (drop)="onFileDrop($event)"
+                 [class.drag-over]="isDragging">
+              
+              <div class="upload-content" *ngIf="!selectedFile">
+                <i class="upload-icon"></i>
+                <p>Drag & drop your HTML file here, or</p>
+                <label for="file-upload" class="upload-button">Browse files</label>
+                <input type="file" 
+                       id="file-upload" 
+                       accept=".html" 
+                       (change)="onFileSelected($event)" 
+                       style="display: none;"
+                       formControlName="emailTemplate">
+              </div>
+              
+              <div class="file-preview" *ngIf="selectedFile">
+                <div class="file-info">
+                  <i class="file-icon"></i>
+                  <span class="file-name">{{selectedFile.name}}</span>
+                  <span class="file-size">({{formatFileSize(selectedFile.size)}})</span>
+                </div>
+                <button type="button" class="remove-file" (click)="removeFile()">
+                  <i class="remove-icon"></i>
+                </button>
+              </div>
+            </div>
+            
+            <p class="field__hint" *ngIf="form.get('emailTemplate')?.invalid && form.get('emailTemplate')?.touched">
+              Please upload a valid HTML file for the email template.
+            </p>
+          </div>
+        </div>
+      </div>
+        <div class="form__actions">
+          <app-button class="ml-auto" [disabled]="form.invalid" [isLoading]="isLoading" [variant]="'secondary'"
+            type="submit">
+            Submit
+          </app-button>
+        </div>
+    </form>
+  </div>
+</app-dashboard-form-container>

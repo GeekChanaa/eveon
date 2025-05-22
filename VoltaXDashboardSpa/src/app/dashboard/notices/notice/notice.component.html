@@ -1,0 +1,92 @@
+<app-dashboard-details-container [title]="notice?.name || 'Notice Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Notices', link: '/dashboard/notices' },
+  { label: notice?.name || 'Details' }
+]">
+
+  <!-- Loading state -->
+  <div *ngIf="!noticeLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <!-- Content area -->
+  <div *ngIf="noticeLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-button active">
+          Information
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div class="information-tab">
+        <div class="card profile-section">
+
+          <div class="card-content">
+
+            <!-- Main details -->
+            <div class="form-content">
+
+              <div class="form-section">
+                <h3 class="section-title">Informations</h3>
+                <div class="field-group">
+                  <app-display-cell [object]="notice" [editable]="false" title="Title"
+                    val="{{notice.title}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" [editable]="false" title="Type"
+                    val="{{notice.type}}"></app-display-cell>
+
+
+
+
+
+                </div>
+                <app-display-cell [object]="notice" [editable]="false" title="Text"
+                  val="{{notice.text}}"></app-display-cell>
+
+              </div>
+
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Configurations</h3>
+
+                <div class="field-group">
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="Is Email"
+                    val="{{notice.isEmail}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="Is Sms"
+                    val="{{notice.isSms}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="Is Push Notification"
+                    val="{{notice.isPushNotification}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="For Admins"
+                    val="{{notice.forAdmins}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="For Support"
+                    val="{{notice.forsupports}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="For Partners"
+                    val="{{notice.forPartners}}"></app-display-cell>
+
+                  <app-display-cell [object]="notice" inpType="checkbox" [editable]="false" title="For Users"
+                    val="{{notice.forUsers}}"></app-display-cell>
+                </div>
+                
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</app-dashboard-details-container>

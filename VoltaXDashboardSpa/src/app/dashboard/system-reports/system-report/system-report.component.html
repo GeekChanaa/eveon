@@ -1,131 +1,72 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="settings">
-      <div class="head">
-        <div class="head-name">
-          System Report : <b>#{{ systemReport.id }}</b>
-        </div>
-        <div class="head-actions">
-          <button routerLink="/dashboard/system-reports/edit/{{systemReport.id}}" class="button-stroke-blue button-edit button-small">Edit</button>
-        </div>
-      </div>
-      
-        <div class="system-report-info-container">
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="ID"
-              tooltip="Identifier"  
-              value="{{systemReport.id}}"></app-display-item>
-          </div>
-  
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Assigned To"
-              tooltip="Support person assigned to this system report"  
-              value="{{systemReport.assignedUserName}}"></app-display-item>
-          </div>
-  
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Charge Point"
-              tooltip="Charge Point in relation with this system report"  
-              value="{{systemReport.chargePointName}}"></app-display-item>
-          </div>
+<app-dashboard-details-container [title]="systemReport?.name || 'System Report Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'System Reports', link: '/dashboard/system-reports' },
+  { label: systemReport?.name || 'Details' }
+]">
 
-
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Criticality"
-              tooltip="Criticality of the report"  
-              value="{{systemReport.criticality}}"></app-display-item>
-          </div>
-
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Category"
-              tooltip="Category of the report"  
-              value="{{systemReport.reportCategory}}"></app-display-item>
-          </div>
-
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Issue Description"
-              tooltip="Issue description of the report"  
-              value="{{systemReport.issueDescription}}"></app-display-item>
-          </div>
-
-          <div class="card__display">
-            <app-display-item 
-              class="card__display_item"
-              name="Connector"
-              tooltip="Connector of the report"  
-              value="{{systemReport.connectorID}}"></app-display-item>
-          </div>
-        </div>
-      
-        
-    </div>
-    
-
-    <div class="settings system_report__comments_container">
-      <div class="head">
-        <div class="head-name">
-          System Report <b>Comments</b>
-        </div>
-        <div class="head-actions">
-          <button class="button-stroke-blue button-edit button-small">Refresh Comments</button>
-        </div>
-      </div>
-
-      <div class="comments__container">
-        <div class="comment__container" *ngFor="let comment of systemReportComments">
-          <div class="comment__username"> {{comment.userName}} </div>
-          <div class="comment__content"> {{comment.content}} </div>
-        </div>
-      </div>
-
-
-      <div class="add__comment-container">
-        <div class="images__preview">
-          <div class="image__preview" *ngFor="let image of uploadedImages">
-            <img [src]="image | safeUrl" [alt]="image.name" class="preview__img" />
-            <span>{{ image.name }}</span>
-          </div>
-        </div>
-        <div class="add__comment-fields">
-          <textarea 
-            [(ngModel)]="systemReportComment.content"
-            class="field__input"
-            placeholder="Add your comment in here" 
-            (dragover)="onDragOver($event)"
-            (drop)="onDrop($event)">
-
-          </textarea>
-          <input
-            type="file"
-            multiple
-            style="display: none"
-            #fileInput
-            (change)="onFilesSelected($event)"
-          />
-        </div>
-        <div class="add__comment-actions">
-          <button (click)="resetCommentInput()" class="button button-small button-stroke-red btn-cancel">Clear</button>
-          <button 
-            (click)="saveComment()" 
-            class="button button-small button-primary btn-save">Save</button>
-        </div>
-      </div>
-
-
-    </div>  
+  <!-- Loading state -->
+  <div *ngIf="!systemReportLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
   </div>
-</div>
 
+  <!-- Content area -->
+  <div *ngIf="systemReportLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Information
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'CommentsTab'}" (click)="changeTab('CommentsTab')"
+          class="tab-button">
+          Comments
+        </button>
+      </div>
+    </div>
 
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          
+          <div class="card-content">
+
+            <!-- Main details -->
+            <div class="form-content">
+              
+              <div class="form-section">
+                <h3 class="section-title">Informations</h3>
+                <div class="field-group">
+                  <!-- <app-display-cell  
+                    [object]="chargingStation"
+                    [editable]="false"
+                    title="Partner"
+                    val="{{chargingStation.partnerName}}"></app-display-cell> -->
+                </div>
+                
+              </div>
+              
+
+              
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charging Stations Tab -->
+      <div *ngIf="tabsEnum === 'CommentsTab'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
+            <ng-container *ngIf="systemReport.id != null && systemReport.id != undefined">
+              <app-system-report-comments [systemReportID]="systemReport.id"></app-system-report-comments>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-details-container>

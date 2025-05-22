@@ -137,11 +137,11 @@ namespace VoltaXApi.Data
             var card = new Card
             {
                 CardNumber = cardNumber,
-                CardType = CardTypeEnum.Standard, // Default to Standard as specified
+                CardType = CardTypeEnum.Standard,
                 ExpirationDate = DateTime.UtcNow.AddYears(_settings.DefaultCardValidityYears),
                 MaxCount = _cardSettings.DefaultMaxCount,
-                Status = CardStatusEnum.Active, // Assuming new cards are active by default
-                Balance = 0, // Starting with zero balance
+                Status = CardStatusEnum.Active,
+                Balance = 0,
                 Note = $"Card created for user {user.ID} on {DateTime.UtcNow}",
                 Blocked = false,
                 UserID = user.ID

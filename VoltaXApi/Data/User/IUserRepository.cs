@@ -21,11 +21,15 @@ namespace VoltaXApi.Data
         Task<string> GetUserEmailByID(int userID);
         Task<User?> GetUserByEmail(string email);
         Task<User> GetUser(int id);
+        Task<User> CreateUser(UserForRegisterDto userForRegisterDto, byte[] PasswordHash, byte[] PasswordSalt);
         Task<bool> UserExists(string email);
         IQueryable<UserListDto> GetUsers(GlobalParams globalParams);
         Task<UserDashboardDisplayInformationsDto> GetUserDashboardDisplayInformations(int userID);
         Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto);
         Task<UserListDto> GetUserInformations(int userID);
-
+        IQueryable<User> GetAdminsQueryable();
+        IQueryable<User> GetSupportsQueryable();
+        IQueryable<User> GetCustomersQueryable();
+        IQueryable<User> GetPartnersQueryable();
     }
 }

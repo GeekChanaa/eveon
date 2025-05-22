@@ -13,9 +13,7 @@
       [control]="getControl(verifyEmailForm,'code')"></app-form-field>
     
     <div class="form__actions">
-      <button (click)="verifyEmail()" class="button button-small btn-primary">
-        Verify
-      </button>
+      <app-button (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
     </div>
   </div>
 </ng-container>

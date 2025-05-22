@@ -162,6 +162,7 @@ export class TableListComponent implements OnInit {
       }
     }
     this.getAll();  
+    this.removeActive();
   }
 
   capitalizeFirstLetter(str: string): string {

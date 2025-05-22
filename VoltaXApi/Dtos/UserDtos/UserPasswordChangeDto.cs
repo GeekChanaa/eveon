@@ -1,4 +1,5 @@
 using System;
+using VoltaXApi.Attributes;
 
 namespace VoltaXApi.Dtos
 {
@@ -6,6 +7,7 @@ namespace VoltaXApi.Dtos
     {
         public int ID { get; set; }
         public string CurrentPassword { get; set; }
+        [StrongPassword]
         public string NewPassword { get; set; }
         public string NewPasswordCheck { get; set; }
     }

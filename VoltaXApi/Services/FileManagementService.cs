@@ -43,6 +43,31 @@ namespace VoltaXApi.Services
             }
         }
 
+        public void UploadEmailTemplate(string fileName, string filePath, IFormFile file)
+        {
+            try
+            {
+                string newPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath);
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                }
+                if (file.Length > 0)
+                {
+                    string fullPath = Path.Combine(newPath, fileName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
         private bool IsValidImageFile(IFormFile file)
         {
             if (file == null) return false;

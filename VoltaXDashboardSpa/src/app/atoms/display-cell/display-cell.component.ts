@@ -69,7 +69,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
         this.inputField.nativeElement.focus();
         if (this.inpType === 'text' || this.inpType === 'number') {
           this.inputField.nativeElement.select();
-          console.log("SELECTED");
         }
       }
     }, 0);

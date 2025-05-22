@@ -41,4 +41,9 @@ export class RequestPasswordComponent implements OnInit {
     });
   }
 
+  getControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
+  }
+
+
 }

@@ -27,6 +27,7 @@ import { DocumentationComponent } from './documentation/documentation.component'
 import { PartnersComponent } from './partners/partners.component';
 import { ChargingSessionsComponent } from './charging-sessions/charging-sessions.component';
 import { GoodByeComponent } from '../good-bye/good-bye.component';
+import { NoticesComponent } from './notices/notices.component';
 const routes: Routes = [
   {
     path: "",
@@ -126,6 +127,12 @@ const routes: Routes = [
     component: UsersComponent,
     loadChildren : () => import('./users/users.module')
       .then(m=>m.UsersModule)
+  },
+  {
+    path: "notices",
+    component: NoticesComponent,
+    loadChildren : () => import('./notices/notices.module')
+      .then(m=>m.NoticesModule)
   },
   {
     path: "recharge-orders",

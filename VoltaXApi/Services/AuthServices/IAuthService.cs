@@ -16,6 +16,6 @@ namespace VoltaXApi.Services
       Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
       Task CreateEmailVerificationToken(int userID);
       Task ChangePasswordAsync(UserPasswordChangeDto userPasswordChangeDto);
-
+      Task ResetPasswordRequest(string email);
     }
 }

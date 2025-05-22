@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Collections.Generic;
 using VoltaXApi.Models;
+using VoltaXApi.Attributes;
 
 namespace VoltaXApi.Dtos
 {
@@ -15,6 +16,7 @@ namespace VoltaXApi.Dtos
         public string? Car { get; set; }
         public DateTime? Birthday { get; set; }
         public string Phone { get; set; }
+        [StrongPassword]
         public string Password { get; set; }
         public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; }

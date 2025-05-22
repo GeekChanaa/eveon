@@ -140,10 +140,6 @@ namespace VoltaXApi.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Phone)
-                .IsUnique();
-
             modelBuilder.Entity<Partner>()
                 .HasIndex(u => u.PartnerIdentificationNumber)
                 .IsUnique();
@@ -166,6 +162,7 @@ namespace VoltaXApi.Data
         
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Notice> Notices { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<OcppVariable> OcppVariables { get; set; }
         public DbSet<OcppComponent> OcppComponents { get; set; }

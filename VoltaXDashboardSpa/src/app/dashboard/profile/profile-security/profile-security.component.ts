@@ -23,14 +23,6 @@ export class ProfileSecurityComponent implements OnInit {
 
   lastRequest : any | null = null;
 
-  userPasswordChange : UserPasswordChangeDto = {
-    id: this.userID,
-    currentPassword: '',
-    newPassword: '',
-    newPasswordCheck: ''
-  };
-  
-
   constructor(
     private _authService : AuthService,
     private _userService: UserService,
@@ -40,19 +32,6 @@ export class ProfileSecurityComponent implements OnInit {
 
   ngOnInit() {
     this.getLastUserRequest();
-  }
-
-  changePassword(){
-    this.isLoading = true;
-    this.userPasswordChange.id = this.userID;
-    this._authService.changePassword(this.userPasswordChange).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Password Changed Successfully ! ", 4000);
-      this.isLoading = false
-      this.editingPassword = false;
-    },(error) => {
-      this.isLoading = false;
-      this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something Went wrong please try again later ! ", 4000);
-    })
   }
 
   downloadUserInformations(){

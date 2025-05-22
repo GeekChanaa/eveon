@@ -37,82 +37,36 @@
               description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
               [control]="getControl('isNotification')"></app-form-field>
 
-            
+              <app-search-input class="field"
+                placeholder="Charge Point"
+                title="Charge Point"
+                description="The Charge point concerned with this report"
+                [control]="getControl('chargePointID')"
+                [options]="chargePoints"></app-search-input>
 
-            <div class="field">
-              <div class="field__label">ChargePoint
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <div class="field__wrap">
-                <div class="field__wrap">
-                  <select class="select" formControlName="chargePointID">
-                    <option [value]="null">None</option>
-                    <option *ngFor="let chargePoint of chargePoints" value="{{chargePoint.id}}">{{chargePoint.name}}
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="field__label">Connector
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <div class="field__wrap">
-                <div class="field__wrap">
-                  <select class="select" formControlName="connectorID">
-                    <option [value]="null">None</option>
-                    <option *ngFor="let connector of connectors" value="{{connector.id}}">{{connector.name}}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <app-search-input class="field"
+                placeholder="Connector"
+                title="Connector"
+                [disabled]="!getControl('chargePointID')?.value"
+                description="The Connector concerned with this report"
+                [control]="getControl('connectorID')"
+                [options]="connectors"></app-search-input>
 
 
+            <app-search-input class="field"
+                placeholder="Assigned User"
+                title="Assigned User"
+                description="The Assigned User for this report"
+                [control]="getControl('assignedID')"
+                [options]="supports"></app-search-input>
 
-            <div class="field">
-              <div class="field__label">Assigned User
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <div class="field__wrap">
-                <div class="field__wrap">
-                  <select class="select" formControlName="assignedID">
-                    <option [value]="null">None</option>
-                    <option *ngFor="let support of supports" value="{{support.id}}">{{support.fullName}}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="field__label">Concerned User
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <div class="field__wrap">
-                <div class="field__wrap">
-                  <select class="select" formControlName="userID">
-                    <option [value]="null">None</option>
-                    <option *ngFor="let support of supports" value="{{support.id}}">{{support.fullName}}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <app-search-input class="field"
+                placeholder="Concerned User"
+                title="Concerned User"
+                description="The Concerned User for this report"
+                [control]="getControl('userID')"
+                [options]="users"></app-search-input>
+                
 
             <div class="field">
               <div class="field__label">Card

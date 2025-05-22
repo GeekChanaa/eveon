@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
@@ -36,26 +36,28 @@ export class CreatePartnerComponent implements OnInit {
     private _modalService:  ActionModalService,
     private _router : Router,
     private _partnerService: PartnerService,
-    private _countryService: CountryService,
     private _cityService : CityService
   ) {
     this.form = new FormGroup({
-      name : new FormControl(''),
-      description : new FormControl(''),
-      type : new FormControl('Vendor'),
-      email : new FormControl(''),
+      name : new FormControl('',[Validators.required]),
+      description : new FormControl('',[Validators.required]),
+      type : new FormControl('Vendor',[Validators.required]),
+      email : new FormControl('',[Validators.required, Validators.email]),
       email2 : new FormControl(''),
       email3 : new FormControl(''),
-      phone : new FormControl(''),
+      phone : new FormControl('',[Validators.required]),
       phone2 : new FormControl(''),
       phone3 : new FormControl(''),
-      city : new FormControl('Tangier'),
-      country : new FormControl('Morocco'),
+      city : new FormControl('Tangier',[Validators.required]),
       address : new FormControl(''),
       taxIdentificationNumber : new FormControl(''),
       registrationNumber : new FormControl(''),
       bankAccountNumber : new FormControl(''),
     })
+  }
+
+  getControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
   }
 
   showSelect() {
@@ -91,7 +93,6 @@ export class CreatePartnerComponent implements OnInit {
     this.partner.phone2 = partnerForm.phone2;
     this.partner.phone3 = partnerForm.phone3;
     this.partner.city = partnerForm.city;
-    this.partner.country = partnerForm.country;
     this.partner.address = partnerForm.address;
     this.partner.taxIdentificationNumber = partnerForm.taxIdentificationNumber;
     this.partner.registrationNumber = partnerForm.registrationNumber;

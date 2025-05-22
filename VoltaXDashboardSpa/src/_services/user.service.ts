@@ -81,7 +81,12 @@ export class UserService extends AbstractService<User>{
   }
 
   getSupportUserNames(){
-    return this._http.get<any>(this.baseUrl + "GetSupportUserNames/");
+    return this._http.get<any>(this.baseUrl + "GetSupportUserNames/").pipe(
+      map(users => users.map((user : any) => ({
+        id: user.id,
+        name: user.fullName 
+      })))
+    );;
   }
 
   GetPartnerNames(){

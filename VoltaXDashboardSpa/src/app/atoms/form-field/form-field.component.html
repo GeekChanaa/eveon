@@ -1,31 +1,32 @@
 <div class="field__error_container" [ngClass]="{ 'error': isInvalid || isError }">
   <app-field-label
-  [title]="title"
-  [description]="description"
-  [control]="control"
-    ></app-field-label>
-  
+    [title]="title"
+    [description]="description"
+    [control]="control"
+  ></app-field-label>
+
   <div class="field__wrap">
     <!-- Text Input -->
-    <input *ngIf="inputType === 'text'" 
+    <input *ngIf="inputType === 'text'"
       class="field__input"
       type="text"
       [disabled]="disabled"
       [ngClass]="{'disabled' : disabled}"
       [formControl]="control"
       placeholder="{{placeholder}}"
-      >
-
-      <input *ngIf="inputType === 'password'" 
-        class="field__input"
-        type="password"
-        [formControl]="control"
-        placeholder="{{placeholder}}"
-        >
+    >
+    
+    <!-- Password Input -->
+    <input *ngIf="inputType === 'password'"
+      class="field__input"
+      type="password"
+      [formControl]="control"
+      placeholder="{{placeholder}}"
+    >
     
     <!-- Checkbox Input -->
     <label *ngIf="inputType === 'checkbox'" class="checkbox checkbox_reverse">
-      <input 
+      <input
         type="checkbox"
         [formControl]="control"
         class="checkbox__input">
@@ -35,36 +36,35 @@
     </label>
     
     <!-- Select Input -->
-    <select *ngIf="inputType === 'select'" 
-      class="select" 
+    <select *ngIf="inputType === 'select'"
+      class="select"
       [formControl]="control">
-      <option *ngFor="let option of options" 
+      <option *ngFor="let option of options"
         [value]="option.value">
         {{option.label}}
       </option>
     </select>
-
-
+    
     <select *ngIf="inputType === 'select_enum'"
-      class="select" 
+      class="select"
       [formControl]="control">
       <option *ngFor="let value of getEnumValues()" [value]="value">{{value.toString() | camelCaseToSpace}}</option>
     </select>
-
+    
     <ng-container *ngIf="inputType == 'textarea'">
-      <textarea 
+      <textarea
         [formControl]="control"
         placeholder="{{placeholder}}"
         class="field__input"
-        ></textarea>
+      ></textarea>
     </ng-container>
-
+    
     <ng-container *ngIf="inputType == 'toggle'">
       <app-toggle [formControl]="control"></app-toggle>
     </ng-container>
-
+    
     <ng-container *ngIf="inputType === 'datetime'">
-      <p-calendar 
+      <p-calendar
         [formControl]="control"
         [showIcon]="true"
         [disabled]="disabled"
@@ -75,9 +75,16 @@
       </p-calendar>
     </ng-container>
     
+    <!-- Icon -->
+    <div class="field__icon" *ngIf="icon">
+      <svg class="icon {{icon}}">
+        <use [attr.href]="'#icon-' + icon"></use>
+      </svg>
+    </div>
+    
     <app-svg-spinner *ngIf="loading"></app-svg-spinner>
   </div>
-  
+
   <div class="error" *ngIf="control.invalid && control.touched">
     {{ getErrorMessage() }}
   </div>

@@ -1,105 +1,61 @@
-<div class="settings__anchor" id="account" data-value="Account"></div>
-<div class="title-purple settings__title">Security</div>
-<div class="settings__fieldset" *ngIf="editingPassword">
-  <div class="field">
-    <div class="field__label">
-      Old password
-      <div
-        class="tooltip"
-        title="Maximum 100 characters. No HTML or emoji allowed"
-      >
-        <svg class="icon icon-info">
-          <use xlink:href="#icon-info"></use>
-        </svg>
-      </div>
-    </div>
-    <div class="field__wrap">
-      <input class="field__input" type="password" [(ngModel)]="userPasswordChange.currentPassword" />
-    </div>
+<div class="card profile-section">
+  <div class="card-header">
+    <h2>Security</h2>
   </div>
-  <div class="settings__row">
-    <div class="field">
-      <div class="field__label">
-        New password
-        <div
-          class="tooltip"
-          title="Maximum 100 characters. No HTML or emoji allowed"
-        >
-          <svg class="icon icon-info">
-            <use xlink:href="#icon-info"></use>
-          </svg>
-        </div>
-      </div>
-      <div class="field__wrap">
-        <input class="field__input" type="password" [(ngModel)]="userPasswordChange.newPassword" />
-      </div>
+  <div class="card-content">
+    <div class="settings__fieldset" *ngIf="editingPassword">
+      <app-profile-security-change-password 
+        (cancelEvent)="editingPassword = false"
+        [userID]="userID"></app-profile-security-change-password>
     </div>
-    <div class="field">
-      <div class="field__label">
-        Confirm new password
-        <div class="tooltip"
-          title="Re-enter your password to check if it's the same">
-          <svg class="icon icon-info">
-            <use xlink:href="#icon-info"></use>
-          </svg>
-        </div>
+
+    <div class="form-content" *ngIf="!editingPassword">
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3 class="section-title">Password</h3>
+        <app-card-action class="change__password-card" [actionName]="'Change Password'"
+          (actionClick)="editingPassword = true"></app-card-action>
       </div>
-      <div class="field__wrap">
-        <input class="field__input" type="password" [(ngModel)]="userPasswordChange.newPasswordCheck" />
-      </div>
-    </div>
-  </div>
-  <div class="form__actions">
-    <button class="button btn-primary" (click)="changePassword()">
-      <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
-      <ng-container *ngIf="!isLoading">
-        Save
-      </ng-container>
-    </button>
 
-    <button class="button-stroke settings__button ml-auto" (click)="editingPassword = false">
-      <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
-      <ng-container *ngIf="!isLoading">
-        Cancel
-      </ng-container>
-    </button>
-  </div>
-</div>
-<div class="settings__fieldset" *ngIf="!editingPassword">
-  <app-card-action
-    class="change__password-card" 
-    [actionName]="'Change Password'"
-    (actionClick)="editingPassword = true"
-    ></app-card-action>
+      <div class="form-section">
 
-  <div class="download__container">
-    <ng-container *ngIf="lastRequest.status == 'Pending'">
-      Your request is being processed please stay put !
-    </ng-container>
+        <h3 class="section-title">Personal Informations Request</h3>
+        <div class="download__container">
+          <ng-container *ngIf="lastRequest == null || lastRequest == undefined">
+            Request to download your personal informations
+            <a (click)="showRequestConfirmModal = true"> here</a>
+          </ng-container>
 
-    <ng-container *ngIf="lastRequest == null || lastRequest == undefined">
-      Request to download your personal informations 
-      <a (click)="showRequestConfirmModal = true"> here</a>
-    </ng-container>
+          <ng-container *ngIf="lastRequest != null">
+            <ng-container *ngIf="lastRequest.status == 'Pending'">
+              Your request is being processed please stay put !
+            </ng-container>
 
-    <ng-container *ngIf="lastRequest.status == 'Approved'">
-      Your request has been approved, you can download your informations 
-      <a (click)="downloadUserInformations()"> here</a>
-    </ng-container>
+            <ng-container *ngIf="lastRequest.status == 'Approved'">
+              Your request has been approved, you can download your informations
+              <a (click)="downloadUserInformations()"> here</a>
+            </ng-container>
 
-    <ng-container *ngIf="lastRequest.status == 'Denied'">
-      Your request has been denied, please try again
-      <a (click)="showRequestConfirmModal = true"> here</a>
-    </ng-container>
-    <div class="modal-overlay" *ngIf="showRequestConfirmModal">
-      <div class="modal-content">
-        <h3>Confirm Request</h3>
-        <p>Do you want to request an export of your personal informations?</p>
-        <div class="modal-actions">
-          <button (click)="cancelRequest()" class="btn-cancel">Cancel</button>
-          <button (click)="proceedWithRequest()" class="btn-delete">Request</button>
+            <ng-container *ngIf="lastRequest.status == 'Denied'">
+              Your request has been denied, please try again
+              <a (click)="showRequestConfirmModal = true"> here</a>
+            </ng-container>
+          </ng-container>
+          <div class="modal-overlay" *ngIf="showRequestConfirmModal">
+            <div class="modal-content">
+              <h3>Confirm Request</h3>
+              <p>Do you want to request an export of your personal informations?</p>
+              <div class="modal-actions">
+                <button (click)="cancelRequest()" class="btn-cancel">Cancel</button>
+                <button (click)="proceedWithRequest()" class="btn-delete">Request</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+
   </div>
+
 </div>

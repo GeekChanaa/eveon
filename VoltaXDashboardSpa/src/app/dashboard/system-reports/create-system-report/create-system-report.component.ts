@@ -53,6 +53,16 @@ export class CreateSystemReportComponent implements OnInit {
       status : new FormControl(ReportStatusEnum.Pending),
       criticality : new FormControl(ReportCriticality.Medium),
     });
+
+    this.form.get('chargePointID')?.valueChanges.subscribe(value => {
+      console.log('Charge Point ID changed:', value);
+  
+      if (value) {
+        this.getConnectors(value);
+      } else {
+        
+      }
+    });
   }
 
   getFormControl(name: string): FormControl {
@@ -61,7 +71,6 @@ export class CreateSystemReportComponent implements OnInit {
 
   ngOnInit() {
     this.getUsers();
-    this.getConnectors();
     this.getChargePoints();
     this.getUserSupports();
     this.getCards();
@@ -77,6 +86,7 @@ export class CreateSystemReportComponent implements OnInit {
   getUserSupports(){
     this._userService.getSupportUserNames().subscribe((data )=> {
       this.supports = data;
+      console.log(this.supports);
     })
   }
 
@@ -86,8 +96,8 @@ export class CreateSystemReportComponent implements OnInit {
     })
   }
 
-  getConnectors(){
-    this._connectorService.getConnectorIds().subscribe((data) => {
+  getConnectors(chargePointID : number){
+    this._connectorService.getChargePointConnectorIds(chargePointID).subscribe((data) => {
       this.connectors = data;
     })
   }

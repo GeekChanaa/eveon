@@ -27,6 +27,7 @@ export class FormFieldComponent implements OnInit {
   @Input() errorMessage: string= "";
   @Input() options : SelectOption[] = [];
   @Input() enumName : string = "";
+  @Input() icon: string = ""; 
   enumMappings: { [key: string]: { [id: number]: string } } = {}
   
   constructor(
@@ -44,8 +45,27 @@ export class FormFieldComponent implements OnInit {
     return this.control.touched && this.control.invalid;
   }
 
-  getErrorMessage(): string {
+   getErrorMessage(): string {
     if (!this.control.errors) return '';
+
+    console.log("this is the errors");
+    console.log(this.control.errors);
+    
+    // Special handling for strongPassword errors
+    if (this.control.errors["strongPassword"]) {
+      const errors = this.control.errors["strongPassword"];
+      if (!errors.validLength) return 'Password must be at least 8 characters';
+      if (!errors.hasUpperCase) return 'Password must contain at least one uppercase letter';
+      if (!errors.hasLowerCase) return 'Password must contain at least one lowercase letter';
+      if (!errors.hasNumeric) return 'Password must contain at least one number';
+      if (!errors.hasSpecialChar) return 'Password must contain at least one special character';
+    }
+    
+    // Handle passwordMismatch separately if needed
+    if (this.control.errors["passwordMismatch"]) {
+      return 'Passwords do not match';
+    }
+    
     for (const errorKey in this.control.errors) {
       if (this.control.errors.hasOwnProperty(errorKey)) {
         return this._validationMessagesService.getMessage(errorKey, this.control.errors[errorKey]);
@@ -54,6 +74,7 @@ export class FormFieldComponent implements OnInit {
     return '';
   }
 
+
   getEnumValues() {
     return Object.values(this.enumMappings);
   }
@@ -61,4 +82,6 @@ export class FormFieldComponent implements OnInit {
   hasRequiredValidator(): boolean {
     return this.control && this.control.hasValidator(Validators.required);
   }
+
+  
 }

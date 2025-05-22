@@ -29,7 +29,8 @@
       </app-sidebar-dropdown>
   
       <app-sidebar-dropdown iconID="icon-comment" *ngIf="role == 'Admin'" [title]="'app management'" 
-        [active]="isDropdownActive('/dashboard/reports') || isActive('/dashboard/user-info-download-requests')">
+        [active]="isDropdownActive('/dashboard/reports') || isDropdownActive('/dashboard/notices') || isActive('/dashboard/user-info-download-requests')">
+        <app-sidebar-link [title]="'notices'" [link]="'/dashboard/notices'" [active]="isActive('/dashboard/notices')"></app-sidebar-link>
         <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'" [active]="isActive('/dashboard/reports')"></app-sidebar-link>
         <app-sidebar-link [title]="'user info download requests'" [link]="'/dashboard/user-info-download-requests'" [active]="isActive('/dashboard/user-info-download-requests')"></app-sidebar-link>
       </app-sidebar-dropdown>

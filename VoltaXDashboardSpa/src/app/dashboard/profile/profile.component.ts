@@ -19,9 +19,11 @@ enum ProfilePageTabsEnum {
 export class ProfileComponent implements OnInit {
 
   tabsEnum : ProfilePageTabsEnum = ProfilePageTabsEnum.AccountInformationsTab;
+  ProfilePageTabsEnum = ProfilePageTabsEnum;
   
   user : any = {};
   userID : number = 0;
+  userLoaded : boolean = false;
 
   constructor(
     private _userService : UserService,
@@ -44,6 +46,7 @@ export class ProfileComponent implements OnInit {
     this._userService.getUserInformations(id).subscribe((data) => {
       this.user = data;
       this._userService.setAvatarUrl(this.user.imageUrl);
+      this.userLoaded = true;
     })
   }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VoltaXApi.Migrations
 {
     /// <inheritdoc />
-    public partial class add_partner_identification_number : Migration
+    public partial class recreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -168,15 +168,18 @@ namespace VoltaXApi.Migrations
                 name: "LoginAttempts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FailedAttempts = table.Column<int>(type: "int", nullable: false),
-                    LockoutEndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    LockoutEndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoginAttempts", x => x.Id);
+                    table.PrimaryKey("PK_LoginAttempts", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,6 +203,32 @@ namespace VoltaXApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MessageLogs", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notices",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    EmailTemplatePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsEmail = table.Column<bool>(type: "bit", nullable: false),
+                    IsSms = table.Column<bool>(type: "bit", nullable: false),
+                    IsPushNotification = table.Column<bool>(type: "bit", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ForAdmins = table.Column<bool>(type: "bit", nullable: false),
+                    ForSupports = table.Column<bool>(type: "bit", nullable: false),
+                    ForPartners = table.Column<bool>(type: "bit", nullable: false),
+                    ForUsers = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notices", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -643,7 +672,7 @@ namespace VoltaXApi.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Car = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PartnerID = table.Column<int>(type: "int", nullable: true),
@@ -2158,12 +2187,6 @@ namespace VoltaXApi.Migrations
                 name: "IX_Users_PartnerID",
                 table: "Users",
                 column: "PartnerID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Phone",
-                table: "Users",
-                column: "Phone",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -2222,6 +2245,9 @@ namespace VoltaXApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "MessageLogs");
+
+            migrationBuilder.DropTable(
+                name: "Notices");
 
             migrationBuilder.DropTable(
                 name: "Notifications");

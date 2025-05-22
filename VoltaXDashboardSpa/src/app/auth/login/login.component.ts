@@ -66,6 +66,9 @@ export class LoginComponent implements OnInit {
       if(error.status == 401){
         this.errorMessage = "Email or password incorrect";
       }
+      else if(error.error.error == 'Too many failed attempts'){
+        this.errorMessage = "Too Many Failed attempts, please check your email.";
+      }
       else{
         this.errorMessage = "Server error, please try again later";
       }

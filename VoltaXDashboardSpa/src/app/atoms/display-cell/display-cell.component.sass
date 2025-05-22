@@ -6,6 +6,26 @@
   cursor: pointer
   &.form-field--read-only
     cursor: default
+
+  &__checkbox-wrapper 
+    flex: 1
+  
+
+  &__checkbox-label 
+    display: flex
+    align-items: center
+    gap: 8px
+    cursor: pointer
+  
+
+  &__checkbox 
+    position: absolute
+    opacity: 0
+    
+    &:focus + .checkbox-custom 
+      box-shadow: 0 0 0 3px rgba(45, 141, 236, 0.15)
+    
+  
   
   &--editing 
     background-color: rgba(45, 141, 236, 0.05)
@@ -96,6 +116,11 @@
       border-radius: 16px
       font-size: 13px
       font-weight: 500
+    
+    &--checkbox 
+      display: flex
+      align-items: center
+      gap: 8px
     
   
   
@@ -231,3 +256,53 @@
     font-size: 12px
     color: #e53935
   
+
+
+
+.checkbox-custom 
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 20px
+  height: 20px
+  border: 2px solid #ddd
+  border-radius: 4px
+  background-color: white
+  transition: all 0.2s
+  
+  .icon 
+    width: 14px
+    height: 14px
+    color: white
+  
+  
+  .form-field__checkbox:checked + & 
+    background-color: #2d8dec
+    border-color: #2d8dec
+  
+
+
+.checkbox-display 
+  width: 20px
+  height: 20px
+  border: 2px solid #ddd
+  border-radius: 4px
+  display: flex
+  align-items: center
+  justify-content: center
+  
+  &--checked 
+    background-color: #2d8dec
+    border-color: #2d8dec
+    
+    .icon 
+      width: 14px
+      height: 14px
+      color: white
+    
+  
+
+
+.checkbox-label 
+  font-size: 15px
+  color: #333

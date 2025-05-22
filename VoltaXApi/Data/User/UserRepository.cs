@@ -225,5 +225,44 @@ namespace VoltaXApi.Data
                         .FirstOrDefaultAsync(u => u.ID == userID);
             return user;
         }
+
+        public async Task<User> CreateUser(UserForRegisterDto userForRegisterDto, byte[] passwordHash, byte[] passwordSalt)
+        {
+            var user = new User
+            {
+                Email = userForRegisterDto.Email,
+                FirstName = userForRegisterDto.FirstName,
+                LastName = userForRegisterDto.LastName,
+                Phone = userForRegisterDto.Phone,
+            };
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            user.IsEmailVerified = false;
+            user.EmailVerificationToken = AuthHelper.GenerateVerificationToken();
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return user;
+        }
+
+
+        public IQueryable<User> GetAdminsQueryable()
+        {
+            return _context.Users.Where(u => u.Role == UserRole.Admin);
+        }
+        public IQueryable<User> GetSupportsQueryable()
+        {
+            return _context.Users.Where(u => u.Role == UserRole.Support);
+        }
+        public IQueryable<User> GetCustomersQueryable()
+        {
+            return _context.Users.Where(u => u.Role == UserRole.Customer);
+        }
+        public IQueryable<User> GetPartnersQueryable()
+        {
+            return _context.Users.Where(u => u.PartnerID != null);
+        }
     }
 }

@@ -42,6 +42,15 @@ namespace VoltaXApi.Data
             }).ToListAsync();
         }
 
+        public async Task<List<ConnectorSelectDto>> GetChargePointConnectorIds(int chargePointID)
+        {
+            return await this._context.Connectors.Where(u => u.ChargePointID == chargePointID).Include(u => u.ChargePoint).Select(u => new ConnectorSelectDto {
+                ChargePointID = u.ChargePoint.ChargePointId,
+                ConnectorID = u.ConnectorID,
+                ID = u.ID
+            }).ToListAsync();
+        }
+
         public async Task<bool> UpdateConnectorPricing(int connectorID, UpdateConnectorPricingDto updateConnectorPricingDto)
         {
             var connector = await _context.Connectors.FirstOrDefaultAsync(c => c.ID == connectorID);

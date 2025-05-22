@@ -64,6 +64,17 @@
           {{ val | date:'mediumDate' }}
         </span>
       </ng-container>
+
+      <ng-container *ngSwitchCase="'checkbox'">
+        <div class="form-field__value form-field__value--checkbox">
+          <div class="checkbox-display" [class.checkbox-display--checked]="val">
+            <svg *ngIf="val" class="icon icon-check">
+              <use xlink:href="#icon-check"></use>
+            </svg>
+          </div>
+          <span class="checkbox-label">{{ val ? 'Yes' : 'No' }}</span>
+        </div>
+      </ng-container>
       
       <!-- Default case -->
       <ng-container *ngSwitchDefault>
@@ -73,7 +84,7 @@
       </ng-container>
     </ng-container>
     
-    <div *ngIf="!val && !editing" class="form-field__empty">
+    <div *ngIf="!val && !editing && inpType != 'checkbox'" class="form-field__empty">
       Not specified
     </div>
   </div>
@@ -107,6 +118,20 @@
                 [placeholder]="'Enter ' + title"
                 (keydown.escape)="cancelEditing()">
       </textarea>
+
+      <div *ngSwitchCase="'checkbox'" class="form-field__checkbox-wrapper">
+        <label class="form-field__checkbox-label">
+          <input type="checkbox"
+                 class="form-field__checkbox"
+                 [(ngModel)]="updatedValue">
+          <span class="checkbox-custom">
+            <svg *ngIf="updatedValue" class="icon icon-check">
+              <use xlink:href="#icon-check"></use>
+            </svg>
+          </span>
+          <span>{{ updatedValue ? 'Yes' : 'No' }}</span>
+        </label>
+      </div>
       
       <!-- Enum Select -->
       <div *ngSwitchCase="'select_enum'" class="form-field__select-wrapper">

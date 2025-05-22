@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NoticeTypeEnum } from 'src/_models/_enums/notice-type-enum';
 import { PartnerTypeEnum } from 'src/_models/_enums/partner-enum-type';
 
 @Injectable({
@@ -98,7 +99,12 @@ export class EnumMappingService {
       1: 'InProgress',
       2: 'Resolved',
       3: 'Closed'
-    }
+    },
+    NoticeTypeEnum: {
+      0: 'LegalUpdate',
+      1: 'Marketing',
+      2: 'Maintenance',
+    },
   };
 
   getEnumMapping(modelName: string): { [id: number]: string } {

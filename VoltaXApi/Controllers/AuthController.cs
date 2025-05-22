@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Net;
 using VoltaXApi.Services;
 using VoltaXApi.Exceptions;
+using VoltaXApi.Factories;
 
 namespace VoltaXApi.Controllers
 {
@@ -31,6 +32,7 @@ namespace VoltaXApi.Controllers
         private readonly IUserRepository _userRepo;
         private readonly IMailService _mailService;
         private readonly ILogger<AuthController> _logger;
+        private readonly IMailRequestFactory _mailRequestFactory;
 
         public AuthController(
                 IAuthRepository repo,
@@ -38,7 +40,8 @@ namespace VoltaXApi.Controllers
                 IConfiguration config,
                 IMailService mailService,
                 IAuthService authService,
-                ILogger<AuthController> logger)
+                ILogger<AuthController> logger,
+                IMailRequestFactory mailRequestFactory)
         {
             _repo = repo;
             _config = config;
@@ -46,6 +49,7 @@ namespace VoltaXApi.Controllers
             _authService = authService;
             _mailService = mailService;
             _logger = logger;
+            _mailRequestFactory = mailRequestFactory;
         }
 
         // Registration Method
@@ -152,21 +156,10 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("ResetPassword")]
-        public async Task ResetPasswordRequest([FromQuery] string email)
+        public async Task<IActionResult> ResetPasswordRequest([FromQuery] string email)
         {
-            string spaLink = _config["SpaLink"];
-            string resetToken = await this._userRepo.GenerateResetPasswordTokenForUser(email);
-            MailRequest requ = new MailRequest
-            {
-                Phone = "",
-                Email = "no-reply@voltaxcharging.com",
-                Name = "CHANAA mohammed",
-                ToEmails = new List<string> { email },
-                Subject = "Password Reset",
-                Body = ""
-            };
-            await this._mailService.SendVerificationEmailAsync(requ, spaLink + "Auth/reset-password?email=" + email + "&token=" + resetToken);
-
+            await _authService.ResetPasswordRequest(email);
+            return StatusCode(200);
         }
 
 

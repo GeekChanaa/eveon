@@ -71,14 +71,15 @@ namespace VoltaXApi.Services
 			smtp.Disconnect(true);
 		}
 
-		public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink)
+		public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink,string userName)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 
 			var template = GetEmailTemplate("email-verification");
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{
-							{ "ActivationLink", verificationLink }
+							{ "ActivationLink", verificationLink },
+							{ "UserName", userName }
 					});
 
 			builder.HtmlBody = populatedTemplate;
@@ -86,7 +87,24 @@ namespace VoltaXApi.Services
 			email.Body = builder.ToMessageBody();
 
 			await SendEmailSmtp(email);
+		}
 
+		public async Task SendVerificationCodeEmailAsync(MailRequest mailRequest, string verificationCode,string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("email-verification-code");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName },
+							{ "verificationCode", verificationCode }
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
 		}
 
 
@@ -201,6 +219,17 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("notice");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+						{ "NoticeText", noticeText }
+					});
+		}
+
+
 		public async Task SendDownloadInfoRequested(MailRequest mailRequest, string userName)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
@@ -256,6 +285,27 @@ namespace VoltaXApi.Services
 				}
 			}
 		}
+
+		public async Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string ipAddress,string resetPasswordLink)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("login-attempt-failed");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "ipAddress", ipAddress },
+							{ "resetPasswordLink", resetPasswordLink }
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+
+		}
+		
+
 
 		public async Task SendEmailSmtp(MimeMessage email)
 		{
