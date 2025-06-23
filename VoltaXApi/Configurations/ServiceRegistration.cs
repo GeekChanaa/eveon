@@ -92,6 +92,7 @@ public static class ServiceRegistration
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
         services.Configure<CardExpirationSettings>(configuration.GetSection("CardExpirationSettings"));
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
+        services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -179,6 +180,7 @@ public static class ServiceRegistration
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
         services.AddScoped<IFileManagementService, FileManagementService>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();

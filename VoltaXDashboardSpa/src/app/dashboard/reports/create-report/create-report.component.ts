@@ -37,6 +37,7 @@ export class CreateReportComponent implements OnInit {
   reportTypes : any = {};
   reportStatuses : any = {};
 
+  isLoading : boolean = false;
 
 
   constructor(
@@ -75,11 +76,14 @@ export class CreateReportComponent implements OnInit {
 
   
   onSubmit(){
+    this.isLoading = true;
     this.report = this.form.value;
     this._reportService.createReport(this.report).subscribe((createdReport) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Report Created Successfully",4000);
       this._router.navigateByUrl('/dashboard/reports');
     },(error) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong",4000);
     });
   }

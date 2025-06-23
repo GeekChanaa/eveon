@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
 using VoltaXApi.Factories;
+using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Services
@@ -64,7 +65,7 @@ namespace VoltaXApi.Services
 
         public async Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate)
         {
-            _authService.CreatePasswordHash(userToCreate.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            AuthHelper.CreatePasswordHash(userToCreate.Password, out byte[] passwordHash, out byte[] passwordSalt);
             User user = new User{
                 FirstName = userToCreate.FirstName,
                 LastName = userToCreate.LastName,
@@ -103,7 +104,7 @@ namespace VoltaXApi.Services
                 Phone = user.Phone,
                 Email = userToUpdate.Email
             };
-            await this._authService.CreatePhoneVerificationToken(userDto);
+            await this._authService.SendPhoneVerificationToken(userDto);
             return true;
         }
 

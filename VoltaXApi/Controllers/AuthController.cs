@@ -17,6 +17,7 @@ using System.Net;
 using VoltaXApi.Services;
 using VoltaXApi.Exceptions;
 using VoltaXApi.Factories;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Controllers
 {
@@ -33,6 +34,7 @@ namespace VoltaXApi.Controllers
         private readonly IMailService _mailService;
         private readonly ILogger<AuthController> _logger;
         private readonly IMailRequestFactory _mailRequestFactory;
+        private readonly ISnsService _snsService;
 
         public AuthController(
                 IAuthRepository repo,
@@ -41,7 +43,8 @@ namespace VoltaXApi.Controllers
                 IMailService mailService,
                 IAuthService authService,
                 ILogger<AuthController> logger,
-                IMailRequestFactory mailRequestFactory)
+                IMailRequestFactory mailRequestFactory,
+                ISnsService snsService)
         {
             _repo = repo;
             _config = config;
@@ -50,6 +53,7 @@ namespace VoltaXApi.Controllers
             _mailService = mailService;
             _logger = logger;
             _mailRequestFactory = mailRequestFactory;
+            _snsService = snsService;
         }
 
         // Registration Method
@@ -112,7 +116,7 @@ namespace VoltaXApi.Controllers
             });
         }
 
-    
+
         [HttpPost("CheckToken")]
         public bool ValidateCurrentToken(TokenForValidation token)
         {
@@ -146,7 +150,7 @@ namespace VoltaXApi.Controllers
                 throw new ValidationException("Invalid token");
 
             byte[] passHash, passSalt;
-            _authService.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
+            AuthHelper.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
             user.PasswordHash = passHash;
             user.PasswordSalt = passSalt;
 
@@ -177,7 +181,7 @@ namespace VoltaXApi.Controllers
             }
             catch (IncorrectPasswordException ex)
             {
-                return StatusCode(403, ex.Message); 
+                return StatusCode(403, ex.Message);
             }
             catch (Exception ex)
             {
@@ -218,7 +222,7 @@ namespace VoltaXApi.Controllers
         [HttpPost("SendPhoneVerificationSMS")]
         public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
         {
-            await this._authService.CreatePhoneVerificationToken(addPhoneNumberDto);
+            await this._authService.SendPhoneVerificationToken(addPhoneNumberDto);
 
             return StatusCode(200);
         }
@@ -230,6 +234,15 @@ namespace VoltaXApi.Controllers
 
             return StatusCode(200);
         }
+
+        [HttpGet("SendSmsTest/{phone}")]
+        public async Task<IActionResult> SendSmsTest(string phone)
+        {
+            await this._snsService.SendSmsAsync("+212610614476","testing");
+            return StatusCode(200);
+        }
+        
+        
     }
 
 

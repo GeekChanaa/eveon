@@ -125,6 +125,24 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendPartnerResetPasswordMailRequest(MailRequest mailRequest, string userName, string resetPasswordLink)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("partner-reset-password");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName },
+							{ "ResetPasswordLink", resetPasswordLink }
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+
 
 		public async Task SendWelcomeMessage(MailRequest mailRequest, string userName)
 		{

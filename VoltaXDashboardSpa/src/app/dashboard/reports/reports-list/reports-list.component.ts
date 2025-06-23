@@ -16,8 +16,9 @@ export class ReportsListComponent implements OnInit {
 
   fields: string[] = [];
   filters : any = {
-    category:"",
-    city : ""
+    reportCategory:"",
+    reportType:"",
+    status:"",
   };
   
 
@@ -61,8 +62,9 @@ export class ReportsListComponent implements OnInit {
 
   resetFilters(){
     this.filters = {
-      category:"",
-      city : ""
+      reportCategory:"",
+      reportType:"",
+      status : ""
     }
   }
 }

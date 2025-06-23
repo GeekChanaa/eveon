@@ -26,7 +26,7 @@ export function loadMessagesFactory(service: ValidationMessagesService) {
   return () => service.loadMessages().toPromise().then(messages => service.setMessages(messages));
 }
 @NgModule({
-  declarations: [			
+  declarations: [				
       AppComponent,
       CustomerDashboardComponent,
       GlobalComponent,

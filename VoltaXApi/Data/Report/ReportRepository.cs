@@ -37,7 +37,8 @@ namespace VoltaXApi.Data
         
         public IQueryable<ReportListDto> GetAllReports(GlobalParams globalParams)
         {
-            return GetAllAsync(globalParams).Select(u  => new ReportListDto{
+            return GetAllAsync(globalParams).Select(u => new ReportListDto
+            {
                 ID = u.ID,
                 UserName = u.User.FullName,
                 ChargePointName = u.ChargePoint.ChargePointId,

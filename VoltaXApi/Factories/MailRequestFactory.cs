@@ -20,6 +20,17 @@ public class MailRequestFactory : IMailRequestFactory
         };
     }
 
+    public MailRequest CreatePasswordResetPasswordMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Reset Password Request – VoltaX Charging PRO"
+        };
+    }
+
     public MailRequest CreateVerificationMailRequest(string to)
     {
         return new MailRequest

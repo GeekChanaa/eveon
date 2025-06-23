@@ -1,105 +1,85 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Report : {{report.name}}</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button class="settings__link active">Informations</button>
-        
+<app-dashboard-details-container [title]="report?.name || 'Report Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Reports', link: '/dashboard/reports' },
+  { label: report?.name || 'Details' }
+]">
+
+  <!-- Loading state -->
+  <div *ngIf="!reportLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <!-- Content area -->
+  <div *ngIf="reportLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="active"
+          class="tab-button">
+          Informations
+        </button>
       </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option>Informations</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    </div>
 
-            </div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="reportLoaded">
-                
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="text"
-                  title="User Name"
-                  [editable]="false"
-                  [link]="'/dashboard/users/'+report.userID"
-                  [isLink]="true"
-                  [val]="report.userName" [editable]="false"></app-display-cell>
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div class="information-tab">
+        <div class="card profile-section">
 
-                <app-display-cell 
-                  [object]="report"
-                  inpType="text"
-                  title="Charge Point"
-                  [editable]="false"
-                  [link]="'/dashboard/charging-points/'+report.chargePointID"
-                  [isLink]="true"
-                  [val]="report.chargePointName" [editable]="false"></app-display-cell>
+          <div class="card-content">
 
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="text"
-                  title="Connector"
-                  [editable]="false"
-                  [val]="report.connectorName"></app-display-cell>
+            <!-- Main details -->
+            <div class="form-content">
 
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="text"
-                  title="Issue Description"
-                  [val]="report.issueDescription"></app-display-cell>
+              <div class="form-section">
+                <h3 class="section-title">Basic Informations</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="text" title="Issue Description"
+                    val="{{report.issueDescription}}"></app-display-cell>
 
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="text"
-                  title="Report Date"
-                  [val]="report.reportDate" ></app-display-cell>
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="date" title="Report Date"
+                    val="{{report.reportDate}}"></app-display-cell>
 
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="text"
-                  title="Resolve Date"
-                  [val]="report.resolveDate"></app-display-cell>
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="date" title="Resolve Date"
+                    val="{{report.resolveDate}}"></app-display-cell>
 
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="select_enum"
-                  enumName="ReportType"
-                  title="Report Type"
-                  val="{{report.reportType}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="select_enum"
-                  enumName="ReportCategory"
-                  title="Report Category"
-                  val="{{report.reportCategory}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateReportObservable.bind(this)" 
-                  [object]="report"
-                  inpType="select_enum"
-                  enumName="ReportStatus"
-                  title="status"
-                  val="{{report.status}}"></app-display-cell>
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="select_enum"  title="Report Category" enumName="ReportCategory"
+                    val="{{report.reportCategory}}"></app-display-cell>
 
-                  
-              </ng-container>
-              
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="select_enum"  title="Report Category" enumName="ReportType"
+                    val="{{report.reportType}}"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="select_enum"  title="Report Category" enumName="ReportStatusEnum"
+                    val="{{report.status}}"></app-display-cell>
+
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3 class="section-title">Entities related to the report</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="text" title="User"  [editable]="false"
+                    val="{{report.userName}}"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateReportObservable.bind(this)" [object]="report"
+                    inpType="text" title="Charge Point"  [editable]="false"
+                    val="{{report.chargePointName}}"></app-display-cell>
+                </div>
+
+
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

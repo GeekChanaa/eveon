@@ -1,164 +1,160 @@
-<!-- inner-->
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">New Report</div>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="create">
-        <div class="create__row">
-          <div class="create__col">
-              <div class="create__card card charge_point_form">
-                  <div class="create__group create__group3" 
-                    *ngIf="users != null && users.length > 0">
-                  
-                    <div class="field">
-                      <div class="field__label">User
-                        <div class="tooltip" title="The User in relation with or that created the report">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <app-search-input class="field__wrap"
-                        [control]="getControl('userID')"
-                        placeholder="User"
-                        [options]="users"></app-search-input>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">ChargePoint
-                        <div class="tooltip" title="Charge Point in relation with the report">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <app-search-input class="field__wrap"
-                        [control]="getControl('chargePointID')"
-                        placeholder="Charge Point"
-                        (optionSelected)="getChargePointConnectors($event.id)"
-                        [options]="chargePoints"></app-search-input>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">Connector
-                        <div class="tooltip" title="Connector in relation with the report">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <app-search-input class="field__wrap"
-                        [control]="getControl('connectorID')"
-                        placeholder="Connector"
-                        [disabled]="connectors == null || connectors.length == 0"
-                        [options]="connectors"></app-search-input>
-                    </div>
-
-                    <app-form-field
-                      class="field"
-                      inputType="textarea"
-                      title="Isssue Description"
-                      description="Description of the issue that is mentioned by this report."
-                      [control]="getControl('issueDescription')"
-                    ></app-form-field>
-
-                    <div class="field">
-                      <div class="field__label">Send Email ? 
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <div class="field__wrap">
-                          <app-toggle formControlName="isEmail"></app-toggle>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">Send Notification ?
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <div class="field__wrap">
-                          <app-toggle formControlName="isNotification"></app-toggle>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">Report Type
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <div class="field__wrap">
-                          <select class="select" formControlName="reportType">
-                            <option value="ChargePoint">ChargePoint</option>
-                            <option value="Connector">Connector</option>
-                            <option value="Website">Website</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">Report Status
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <div class="field__wrap">
-                          <select class="select" formControlName="status">
-                            <option value="Pending">Pending</option>
-                            <option value="InProgress">InProgress</option>
-                            <option value="Resolved">Resolved</option>
-                            <option value="Closed">Closed</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="field">
-                      <div class="field__label">Report Category
-                        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                          <svg class="icon icon-info">
-                            <use xlink:href="#icon-info"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="field__wrap">
-                        <div class="field__wrap">
-                          <select class="select" formControlName="reportCategory">
-                            <option value="General">General</option>
-                            <option value="Technical">Technical</option>
-                            <option value="Maintenance">Maintenance</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    
-                  </div>
-                </div>
+<app-dashboard-form-container 
+  title="New Charge Point"
+  [items]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charge Points', link: '/dashboard/charging-points' },
+    { label: 'Create' }
+  ]">
+      <div form [formGroup]="form"
+        *ngIf="users != null && users.length > 0">
+      
+        <div class="field">
+          <div class="field__label">User
+            <div class="tooltip" title="The User in relation with or that created the report">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
             </div>
-            
+          </div>
+          <app-search-input class="field__wrap"
+            [control]="getControl('userID')"
+            placeholder="User"
+            [options]="users"></app-search-input>
+        </div>
+
+        <div class="field">
+          <div class="field__label">ChargePoint
+            <div class="tooltip" title="Charge Point in relation with the report">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <app-search-input class="field__wrap"
+            [control]="getControl('chargePointID')"
+            placeholder="Charge Point"
+            (optionSelected)="getChargePointConnectors($event.id)"
+            [options]="chargePoints"></app-search-input>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Connector
+            <div class="tooltip" title="Connector in relation with the report">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <app-search-input class="field__wrap"
+            [control]="getControl('connectorID')"
+            placeholder="Connector"
+            [disabled]="connectors == null || connectors.length == 0"
+            [options]="connectors"></app-search-input>
+        </div>
+
+        <app-form-field
+          class="field"
+          inputType="textarea"
+          title="Isssue Description"
+          description="Description of the issue that is mentioned by this report."
+          [control]="getControl('issueDescription')"
+        ></app-form-field>
+
+        <div class="field">
+          <div class="field__label">Send Email ? 
+            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <div class="field__wrap">
+            <div class="field__wrap">
+              <app-toggle formControlName="isEmail"></app-toggle>
+            </div>
           </div>
         </div>
-        <div class="btns_group">
-          <button class="button" type="submit"> Submit </button>
+
+        <div class="field">
+          <div class="field__label">Send Notification ?
+            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <div class="field__wrap">
+            <div class="field__wrap">
+              <app-toggle formControlName="isNotification"></app-toggle>
+            </div>
+          </div>
         </div>
-    </form>
-  </div>
+
+        <div class="field">
+          <div class="field__label">Report Type
+            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <div class="field__wrap">
+            <div class="field__wrap">
+              <select class="select" formControlName="reportType">
+                <option value="ChargePoint">ChargePoint</option>
+                <option value="Connector">Connector</option>
+                <option value="Website">Website</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Report Status
+            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <div class="field__wrap">
+            <div class="field__wrap">
+              <select class="select" formControlName="status">
+                <option value="Pending">Pending</option>
+                <option value="InProgress">InProgress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Report Category
+            <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+          </div>
+          <div class="field__wrap">
+            <div class="field__wrap">
+              <select class="select" formControlName="reportCategory">
+                <option value="General">General</option>
+                <option value="Technical">Technical</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form__actions">
+          <app-button class="ml-auto" (btnClick)="onSubmit()" [disabled]="form.invalid" [isLoading]="isLoading" [variant]="'secondary'"
+            type="submit">
+            Submit
+          </app-button>
+        </div>
+        
+      </div>
+    </app-dashboard-form-container> 

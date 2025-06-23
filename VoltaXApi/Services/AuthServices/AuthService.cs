@@ -18,6 +18,7 @@ namespace VoltaXApi.Services
     private readonly ILoginAttemptRepository _loginAttemptRepository;
     private readonly IMailRequestFactory _mailRequestFactory;
     private readonly ICardRepository _cardRepository;
+    private readonly ISnsService _snsService;
 
     public AuthService(
       IUserRepository userRepository,
@@ -26,7 +27,8 @@ namespace VoltaXApi.Services
       VoltaXApiDbContext context,
       ILoginAttemptRepository loginAttemptRepository,
       IMailRequestFactory mailRequestFactory,
-      ICardRepository cardRepository
+      ICardRepository cardRepository,
+      ISnsService snsService
     )
     {
       _userRepository = userRepository;
@@ -36,18 +38,24 @@ namespace VoltaXApi.Services
       _loginAttemptRepository = loginAttemptRepository;
       _mailRequestFactory = mailRequestFactory;
       _cardRepository = cardRepository;
+      _snsService = snsService;
     }
 
     // Creating phone verification token and updating the user
-    public async Task CreatePhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto)
+    public async Task SendPhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto)
     {
       var user = await _userRepository.GetUserByEmail(addPhoneNumberDto.Email);
       user.Phone = addPhoneNumberDto.Phone;
-      user.PhoneVerificationToken = AuthHelper.GenerateVerificationToken();
+      user.PhoneVerificationToken = AuthHelper.GeneratePhoneVerificationToken();
       user.IsPhoneNumberVerified = false;
 
       this._context.Set<User>().Entry(user).State = EntityState.Modified;
       await this._context.SaveChangesAsync();
+
+
+      // Sending the phone verification token: 
+      string smsMessage = "Your VoltaX verification code is "+user.PhoneVerificationToken+". Enter this code in the app to verify your phone number. Do not share this code with anyone.";
+      await this._snsService.SendSmsAsync(user.Phone, smsMessage);
     }
 
     // Reset Password Request
@@ -96,7 +104,7 @@ namespace VoltaXApi.Services
 
       // Creating user
       byte[] passwordHash, passwordSalt;
-      CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
+      AuthHelper.CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
 
       User user = await _userRepository.CreateUser(userForRegisterDto, passwordHash, passwordSalt); 
 
@@ -153,14 +161,7 @@ namespace VoltaXApi.Services
       }
     }
 
-    public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-    {
-      using (var hmac = new System.Security.Cryptography.HMACSHA512())
-      {
-        passwordSalt = hmac.Key;
-        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-      }
-    }
+    
 
     public async Task<User> Login(string email, string password, string ipAddress)
     {
@@ -220,7 +221,7 @@ namespace VoltaXApi.Services
         throw new IncorrectPasswordException("The current password is incorrect.");
       }
 
-      CreatePasswordHash(userPasswordChangeDto.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
+      AuthHelper.CreatePasswordHash(userPasswordChangeDto.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
 
       user.PasswordSalt = passwordSalt;
       user.PasswordHash = passwordHash;

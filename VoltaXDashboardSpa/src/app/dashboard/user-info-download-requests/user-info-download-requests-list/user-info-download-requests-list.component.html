@@ -3,7 +3,6 @@
     <app-table-list 
       name="user info download request"
       names="user info download requests"
-      [searchByAttributes]="['User.FullName']"
       routeName="user-info-download-requests"
       [fields]="fields" 
       [filters]="filters"
@@ -14,6 +13,10 @@
       createLink=""
       searchByPlaceHolder="Search by User Name"
       (resetFiltersEvent)="resetFilters()"
+      [breadcrumbs]="[
+          { label: 'Dashboard', link: '/dashboard' },
+          { label: 'User Info Download Requests'}
+        ]"
       >
       <!-- filter body -->
       <ng-container filter__body>

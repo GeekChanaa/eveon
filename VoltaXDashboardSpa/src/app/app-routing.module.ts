@@ -8,6 +8,7 @@ import { GlobalComponent } from './global/global.component';
 import { NotFoundComponent } from './global/error-pages/not-found/not-found.component';
 import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
 import { GoodByeComponent } from './good-bye/good-bye.component';
+import { PartnerAuthComponent } from './partner-auth/partner-auth.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,12 @@ const routes: Routes = [
     component : AuthComponent,
     loadChildren : () => import('./auth/auth.module')
       .then(m=>m.AuthModule)
+  },
+  {
+    path : "partner-auth",
+    component : PartnerAuthComponent,
+    loadChildren : () => import('./partner-auth/partner-auth.module')
+      .then(m=>m.PartnerAuthModule)
   },
   {
     path : "",

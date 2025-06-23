@@ -22,6 +22,7 @@ namespace VoltaXApi.Services
         Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
         Task SendLoginAttemptFailedEmail(MailRequest mailRequest,string userName, string ipAddress, string resetPasswordLink);
         Task SendResetPasswordMailRequest(MailRequest mailRequest, string userName, string resetPasswordLink);
+        Task SendPartnerResetPasswordMailRequest(MailRequest mailRequest, string userName, string password);
         // Task SendLoginAttemptEmail()
     }
 }

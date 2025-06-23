@@ -1,0 +1,24 @@
+
+.auth-container
+    display: flex
+    width: 100%
+    overflow: hidden
+    padding: 0
+    height: 100vh
+    .auth-left-container, .auth-right-container
+        padding: 16px
+        flex: 0 0 50%
+        background: white
+    .auth-left-container
+        position: relative
+        img
+            position: absolute
+            height: 100%
+            width: 100%
+            top: 0
+            left: 0
+            object-fit: cover
+    .auth-right-container
+        padding: 128px
+        overflow-y: scroll
+        
