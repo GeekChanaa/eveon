@@ -18,8 +18,6 @@ export class DebitCardsComponent implements OnInit {
 
   @Input() userID: number = 0;
   
-  // Forms : 
-  debitCardForm! : FormGroup; 
 
   debitCards : any[] = [];
 
@@ -31,13 +29,6 @@ export class DebitCardsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.debitCardForm = new FormGroup({
-      debitCardName: new FormControl('', [Validators.required]),
-      debitCardNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{16}$/)]),
-      debitCardExpirationDate: new FormControl('', [Validators.required]),
-      debitCardCVV: new FormControl('', [Validators.required, Validators.pattern(/^\d{3}$/)]),
-    });
-
     // Getting User DEbit Cards
     this.getUserDebitCards();
 
@@ -51,34 +42,6 @@ export class DebitCardsComponent implements OnInit {
   // hideAddDebitCardForm
   hideAddDebitCardForm() {
     this.showDCForm = false;
-  }
-
-  // Save Debit Card
-  debitCardSave() {
-    var debitCardValue = this.debitCardForm.value;
-    var debitCard: DebitCard = {
-      id: 0,
-      userID: this.userID,
-      cardNumber: debitCardValue.debitCardNumber,
-      name: debitCardValue.debitCardName,
-      cvv: debitCardValue.debitCardCVV,
-      expirationDate: this.convertToDate(
-        debitCardValue.debitCardExpirationDate
-      ),
-    };
-    this._debitCardService.create(debitCard).subscribe((data) => {
-      this.getUserDebitCards();
-    });
-  }
-
-
-  convertToDate(dateString: string): Date {
-    // Split the string into month and year
-    const parts = dateString.split('/');
-    const month = parseInt(parts[0], 10);
-    const year = parseInt(parts[1], 10);
-
-    return new Date(year, month - 1, 1);
   }
 
   addSpaces(input: string): string {

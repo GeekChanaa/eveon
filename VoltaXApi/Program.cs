@@ -27,25 +27,27 @@ public class Program
         ConfigureApp(app);
         
         // Run database seeding
-        // SeedDatabase(app);
+        SeedDatabase(app);
         
         app.Run();
     }
-    
+
     private static void ConfigureLogging(WebApplicationBuilder builder)
     {
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.AddDebug();
         builder.Logging.SetMinimumLevel(LogLevel.Warning);
-        
+
         // Configure Serilog
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
-        
+
         // Use Serilog as the logging provider
         // builder.Host.UseSerilog();
+        builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+        builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
     }
     
     private static void ConfigureServices(WebApplicationBuilder builder)
@@ -89,7 +91,7 @@ public class Program
         var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
         
         var mapper = app.Services.GetRequiredService<AutoMapper.IMapper>();
-        DatabaseInit.Seed(dbContext, mapper).Wait();
+        // DatabaseInit.Seed(dbContext, mapper).Wait();
         
         dbContext.Database.SetCommandTimeout(6000);
     }

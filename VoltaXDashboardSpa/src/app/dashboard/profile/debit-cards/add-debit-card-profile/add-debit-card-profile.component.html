@@ -1,0 +1,36 @@
+<form [formGroup]="debitCardForm">
+
+    <app-form-field class="field"
+      description="The card holder of the debit card"
+      placeholder="Card Holder Name"
+      title="Card Holder Name"
+      [control]="getControl('debitCardHolderName')"></app-form-field>
+
+    <app-form-field class="field"
+      description="The card number of the debit card"
+      placeholder="Card Number"
+      title="Card Number"
+      [control]="getControl('debitCardNumber')"></app-form-field>
+
+
+    
+
+    <div class="field__group">
+      <app-form-field class="field"
+        description="The expiration date of the debit card"
+        placeholder="Expiration Date"
+        title="Expiration Date"
+        [control]="getControl('debitCardExpirationDate')"></app-form-field>
+
+      <app-form-field class="field"
+        description="CVV Number"
+        placeholder="CVV"
+        title="CVV"
+        [control]="getControl('debitCardCVV')"></app-form-field>
+    </div>
+    
+    <div class="form__actions">
+      <app-button [disabled]="!debitCardForm.valid" [isLoading]="isLoading" variant="secondary" (btnClick)="debitCardSave()"> Save </app-button>
+      <app-button [outlined]="true" variant="secondary" class="ml-auto" (click)="cancel()">Cancel</app-button>
+    </div>
+  </form>

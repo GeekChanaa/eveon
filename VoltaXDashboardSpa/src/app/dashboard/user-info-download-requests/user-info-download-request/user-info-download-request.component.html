@@ -50,8 +50,8 @@
                     Actions
                   </div>
                   <div class="actions">
-                    <button (click)="approveRequest()" class="button-small btn-primary">Approve Request</button>
-                    <button (click)="denyRequest()" class="button-small btn-red button-deny">Deny Request</button>
+                    <app-button [isLoading]="isLoading" variant="secondary" (click)="approveRequest()" >Approve Request</app-button>
+                    <app-button [isLoading]="isLoading" variant="secondary" (click)="denyRequest()" class="deny">Deny Request</app-button>
                   </div>
                 </ng-container>
                 

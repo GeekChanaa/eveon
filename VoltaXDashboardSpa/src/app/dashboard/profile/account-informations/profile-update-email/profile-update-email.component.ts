@@ -23,6 +23,7 @@ export class ProfileUpdateEmailComponent implements OnInit {
 
   updateEmailForm : FormGroup;
   verifyEmailForm : FormGroup;
+  isLoading : boolean = false;
 
   UpdateEmailFormStepEnum = UpdateEmailFormStepEnum;
 
@@ -53,7 +54,9 @@ export class ProfileUpdateEmailComponent implements OnInit {
   }
 
   saveEmail(){
+    this.isLoading = true;
     this._userService.updateEmail({id : this.userID, email: this.updateEmailForm.value.email}).subscribe((data) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success, "Success ! ", "Email Changed Successfully",4000);
       this.formStep = UpdateEmailFormStepEnum.VerificationChoice;
     },(error) =>{
@@ -62,7 +65,9 @@ export class ProfileUpdateEmailComponent implements OnInit {
   }
 
   verifyEmail(){
+    this.isLoading = true;
     this._authService.verifyEmail({email : this.updateEmailForm.value.email, token: this.verifyEmailForm.value.code}).subscribe((data) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success, "Success ! ", "Email Verified Successfully",4000);
       this.formStep = UpdateEmailFormStepEnum.Verified;
     },(error) =>{

@@ -22,5 +22,6 @@ export interface Partner {
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
+    [key: string]: any;
   }
   

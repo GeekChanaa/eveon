@@ -6,6 +6,10 @@
       [searchByAttributes]="['ChargePointId','Address']"
       routeName="charging-points"
       createLink="/dashboard/charging-points/create"
+      [breadcrumbs]="[
+        { label: 'Dashboard', link: '/dashboard' },
+        { label: 'Connector Real-time' }
+      ]"
       [fields]="fields" 
       [filters]="filters"
       [deletable]="false"

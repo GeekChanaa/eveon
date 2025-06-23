@@ -89,3 +89,62 @@ field__icon
 
   input.field__input
     padding-right: 40px
+
+
+
+.password-input-container 
+  position: relative
+  display: flex
+  align-items: center
+
+
+.password-input-container .field__input 
+  padding-right: 40px 
+  width: 100%
+
+
+.password-toggle-btn 
+  position: absolute
+  right: 8px
+  top: 50%
+  transform: translateY(-50%)
+  background: none
+  border: none
+  cursor: pointer
+  padding: 4px
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1
+  transition: opacity 0.2s ease
+
+
+.password-toggle-btn:hover 
+  opacity: 0.7
+
+
+.password-toggle-btn:focus 
+  outline: 2px solid #007bff
+  outline-offset: 2px
+  border-radius: 2px
+
+
+.password-toggle-icon 
+  width: 20px
+  height: 20px
+  color: #666
+  transition: color 0.2s ease
+
+
+.password-toggle-btn:hover .password-toggle-icon 
+  color: #333
+
+
+// /* Icon states */
+// .password-toggle-icon.eye 
+//   /* Styles for visible eye icon */
+
+
+// .password-toggle-icon.eye-off 
+//   /* Styles for hidden eye icon */
+    

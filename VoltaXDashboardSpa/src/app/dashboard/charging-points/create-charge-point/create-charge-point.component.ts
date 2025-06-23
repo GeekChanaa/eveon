@@ -27,9 +27,6 @@ export class CreateChargePointComponent implements OnInit {
 
   constructor(
       private _fb: FormBuilder,
-      private _modalService:  ActionModalService,
-      private _chargingStationService:  ChargingStationService,
-      private _router : Router,
     ) {
       this.chargePointInformationsForm = this._fb.group({
         chargingStationID: new FormControl('', [Validators.required]),

@@ -162,6 +162,9 @@ namespace VoltaXApi.Data
         
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Notice> Notices { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<OcppVariable> OcppVariables { get; set; }

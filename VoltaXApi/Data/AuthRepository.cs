@@ -30,7 +30,7 @@ namespace VoltaXApi.Data
                 PasswordSalt = passSalt,
                 IsEmailVerified = true,
                 IsPhoneNumberVerified = true,
-                Role = UserRole.Customer
+                RoleID = 2
             };
 
             var admin = new User{
@@ -42,7 +42,7 @@ namespace VoltaXApi.Data
                 PasswordSalt = passSalt,
                 IsEmailVerified = true,
                 IsPhoneNumberVerified = true,
-                Role = UserRole.Admin
+                RoleID = 1
             };
 
             var partner = new User{
@@ -55,7 +55,7 @@ namespace VoltaXApi.Data
                 IsEmailVerified = true,
                 IsPhoneNumberVerified = true,
                 PartnerID = null,
-                Role = UserRole.Support
+                RoleID = 2
             };
 
             var listUsers = new List<User>();

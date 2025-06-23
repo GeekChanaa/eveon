@@ -7,16 +7,21 @@ namespace VoltaXApi.Services
 {
     public interface IMailService
     {
-        Task SendVerificationEmailAsync(MailRequest mailRequest,string verificationLink, string userName);
-        Task SendVerificationCodeEmailAsync(MailRequest mailRequest,string verificationCode, string userName);
+        Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink, string userName);
+        Task SendVerificationCodeEmailAsync(MailRequest mailRequest, string verificationCode, string userName);
         Task SendEmailAsync(MailRequest mailRequest);
         Task SendReportEmailToAdmin(SystemReport report);
         Task SendReportEmailToSupport(int reportID);
-		Task SendNoticeEmail(MailRequest mailRequest, string noticeText);
-		Task SendWarningEmail(MailRequest mailRequest, string userName);
-		Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName);
-		Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
-        Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string ipAddress,string resetPasswordLink);
+        Task SendNoticeEmail(MailRequest mailRequest, string noticeText);
+        Task SendWarningEmail(MailRequest mailRequest, string userName);
+        Task SendWelcomeEmail(MailRequest mailRequest, string userName);
+        Task SendDebitCardRemovedEmail(MailRequest mailRequest, string userName);
+        Task SendDebitCardAddedEmail(MailRequest mailRequest, string userName);
+        Task SendPasswordChangedMail(MailRequest mailRequest, string userName);
+        Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName);
+        Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
+        Task SendLoginAttemptFailedEmail(MailRequest mailRequest,string userName, string ipAddress, string resetPasswordLink);
+        Task SendResetPasswordMailRequest(MailRequest mailRequest, string userName, string resetPasswordLink);
         // Task SendLoginAttemptEmail()
     }
 }

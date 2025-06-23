@@ -58,14 +58,14 @@ namespace VoltaXApi.Services
 
       MailRequest requ = _mailRequestFactory.CreateResetPasswordMailRequest(email);
       
-      await this._mailService.SendVerificationEmailAsync(requ, verificationLink, userName);
+      await this._mailService.SendResetPasswordMailRequest(requ, userName, verificationLink);
     }
 
     private async Task<string> GetResetPasswordLinkForUserByEmail(string email)
     {
       string spaLink = _config["SpaLink"];
       string resetToken = await this._userRepository.GenerateResetPasswordTokenForUser(email);
-      string verificationLink = spaLink + "Auth/reset-password?email=" + email + "&token=" + resetToken;
+      string verificationLink = spaLink + "auth/reset-password?email=" + email + "&token=" + resetToken;
       return verificationLink;
     }
 
@@ -105,6 +105,9 @@ namespace VoltaXApi.Services
       MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
 
       string verificationLink = spaLink + "auth/verify-email?email=" + user.Email + "&token=" + user.EmailVerificationToken;
+      // Sending Welcome Message
+      var mailRequest = _mailRequestFactory.CreateWelcomeMailRequest(user.Email);
+      await _mailService.SendWelcomeEmail(mailRequest, user.FirstName);
       await this._mailService.SendVerificationEmailAsync(requ, verificationLink, user.FullName);
 
       return user;
@@ -161,6 +164,7 @@ namespace VoltaXApi.Services
 
     public async Task<User> Login(string email, string password, string ipAddress)
     {
+      var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.Email == email);
       try
       {
         var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
@@ -169,7 +173,6 @@ namespace VoltaXApi.Services
         {
           throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
         }
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
         if (user == null ||!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt) )
         {
@@ -183,9 +186,9 @@ namespace VoltaXApi.Services
         MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(email);
         string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(email);
 
-        await _mailService.SendLoginAttemptFailedEmail(mailRequest, ipAddress, resetPasswordLink);
+        await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
 
-        throw; // rethrow to be handled by global middleware or return 401/403 here
+        throw; 
       }
       
     }
@@ -223,6 +226,10 @@ namespace VoltaXApi.Services
       user.PasswordHash = passwordHash;
 
       await _context.SaveChangesAsync();
+
+      // Sending the email of the changed password
+      MailRequest requ = _mailRequestFactory.CreateChangedPasswordMailRequest(user.Email);
+      await this._mailService.SendPasswordChangedMail(requ, user.FirstName);
     }
 
 

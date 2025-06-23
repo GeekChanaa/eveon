@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
@@ -30,6 +30,7 @@ export class ProfileUpdatePhoneComponent implements OnInit {
     @Input() email : string = "";
   
     @Output() closeEvent : EventEmitter<void> = new EventEmitter();
+    
   
     formStep : UpdatePhoneFormStepEnum = UpdatePhoneFormStepEnum.UpdatePhone;
   
@@ -39,7 +40,7 @@ export class ProfileUpdatePhoneComponent implements OnInit {
       private _modalService : ActionModalService
     ) { 
       this.updatePhoneForm = new FormGroup({
-        phone : new FormControl("")
+        phone : new FormControl("",Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$') )
       });
       this.verifyPhoneForm = new FormGroup({
         code : new FormControl("")

@@ -89,7 +89,7 @@ namespace VoltaXApi.Controllers
                 new Claim(ClaimTypes.Name, userFromRepo.Email),
                 new Claim(ClaimTypes.GivenName, userFromRepo.FirstName),
                 new Claim(ClaimTypes.Surname, userFromRepo.LastName),
-                new Claim(ClaimTypes.Role, userFromRepo.Role.ToString())
+                new Claim(ClaimTypes.Role, userFromRepo.Role.Name)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
@@ -35,7 +35,7 @@ export class ProfileVerifyEmailComponent implements OnInit {
     private _modalService : ActionModalService
   ) { 
     this.verifyEmailForm = new FormGroup({
-      code : new FormControl("")
+      code : new FormControl("",[Validators.required,Validators.minLength(6), Validators.maxLength(6)])
     })
   }
 

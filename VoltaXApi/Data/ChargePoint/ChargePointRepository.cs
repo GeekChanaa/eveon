@@ -53,13 +53,22 @@ namespace VoltaXApi.Data
         override public async Task AddAsync(ChargePoint chargePoint)
         {
             await _context.Set<ChargePoint>().AddAsync(chargePoint);
+            chargePoint.ChargePointId = await this.GenerateChargePointId();
             await _context.SaveChangesAsync();
+        }
+        
+        private async Task<string> GenerateChargePointId()
+        {
+            var latestChargePointNumber = await GetLatestChargePointNumberAsync();
+            int nextNumber = latestChargePointNumber + 1;
+
+            return $"VOLTAX-{nextNumber:D3}";
         }
 
 
         public async Task<ChargePointDisplayDto> GetChargePointByIdAsync(int id)
         {
-            var chargePoint= await this._context.ChargePoints
+            var chargePoint = await this._context.ChargePoints
                 .Include(u => u.Connectors)
                 .Include(u => u.ChargingStation)
                 .FirstOrDefaultAsync(u => u.ID == id);

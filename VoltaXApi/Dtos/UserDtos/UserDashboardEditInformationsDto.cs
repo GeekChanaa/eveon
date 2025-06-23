@@ -9,7 +9,7 @@ namespace VoltaXApi.Dtos
         public string? LastName { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public UserRole Role { get; set; }
+        public int RoleID { get; set; }
         public DateTime? Birthday { get; set; }
         public string? Gender { get; set; }
         public bool IsEmailVerified { get; set; }

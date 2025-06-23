@@ -104,11 +104,11 @@ public static class ServiceRegistration
             return globalConfig;
         });
     }
-    
+
     public static void ConfigureRepositories(IServiceCollection services)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        
+
         // Register all repositories
         services.AddScoped<ILoginAttemptRepository, LoginAttemptRepository>();
         services.AddScoped<IOcppComponentRepository, OcppComponentRepository>();
@@ -150,6 +150,8 @@ public static class ServiceRegistration
         services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IReportReplyRepository, ReportReplyRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IAuthRepository, AuthRepository>();
     }
 

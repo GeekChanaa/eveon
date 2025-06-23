@@ -26,7 +26,8 @@ namespace VoltaXApi.Models
         public string? EmailVerificationToken { get; set; }
         public bool IsPhoneNumberVerified { get; set; } = false;
         public string? PhoneVerificationToken { get; set; }
-        public UserRole Role { get; set; } = UserRole.Customer;
+        public int RoleID { get; set; }
+        public Role Role { get; set; }
         public string? ResetPasswordToken  { get; set; }
         public IEnumerable<Order>? Orders { get; set; }
         public ICollection<DebitCard>? DebitCards { get; set; }

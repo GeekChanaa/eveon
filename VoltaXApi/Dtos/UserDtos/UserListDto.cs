@@ -18,7 +18,7 @@ public class UserListDto
     public string? PartnerName { get; set; }
     public bool IsEmailVerified { get; set; } = false;
     public bool IsPhoneNumberVerified { get; set; } = false;
-    public UserRole Role { get; set; } = UserRole.Customer;
+    public string RoleName { get; set; }
     public string SuspendedAt { get; set; }
     public string? ImageUrl { get; set; }
     

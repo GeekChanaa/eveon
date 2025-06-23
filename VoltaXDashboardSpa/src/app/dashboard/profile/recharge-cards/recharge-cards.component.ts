@@ -52,6 +52,10 @@ export class RechargeCardsComponent implements OnInit {
 
   // Getting all recharge cards of the user
   getUserRechargeCards(){
+    this._cardService.getUserRechargeCards(this.userID,1,20).subscribe((data) => {
+      if(data.result)
+        this.rechargeCards = data.result;
+    })
   }
 
 

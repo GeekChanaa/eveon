@@ -4,7 +4,6 @@
     [description]="description"
     [control]="control"
   ></app-field-label>
-
   <div class="field__wrap">
     <!-- Text Input -->
     <input *ngIf="inputType === 'text'"
@@ -15,15 +14,27 @@
       [formControl]="control"
       placeholder="{{placeholder}}"
     >
-    
-    <!-- Password Input -->
-    <input *ngIf="inputType === 'password'"
-      class="field__input"
-      type="password"
-      [formControl]="control"
-      placeholder="{{placeholder}}"
-    >
-    
+   
+    <!-- Password Input with Toggle -->
+    <div *ngIf="inputType === 'password'" class="password-input-container">
+      <input
+        class="field__input"
+        [type]="showPassword ? 'text' : 'password'"
+        [formControl]="control"
+        placeholder="{{placeholder}}"
+      >
+      <button 
+        type="button"
+        class="password-toggle-btn"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+      >
+        <svg class="password-toggle-icon" [ngClass]="showPassword ? 'eye-off' : 'eye'">
+          <use [attr.href]="showPassword ? '#icon-eye-off' : '#icon-eye'"></use>
+        </svg>
+      </button>
+    </div>
+   
     <!-- Checkbox Input -->
     <label *ngIf="inputType === 'checkbox'" class="checkbox checkbox_reverse">
       <input
@@ -34,7 +45,7 @@
         <span class="checkbox__tick"></span>
       </span>
     </label>
-    
+   
     <!-- Select Input -->
     <select *ngIf="inputType === 'select'"
       class="select"
@@ -44,13 +55,13 @@
         {{option.label}}
       </option>
     </select>
-    
+   
     <select *ngIf="inputType === 'select_enum'"
       class="select"
       [formControl]="control">
       <option *ngFor="let value of getEnumValues()" [value]="value">{{value.toString() | camelCaseToSpace}}</option>
     </select>
-    
+   
     <ng-container *ngIf="inputType == 'textarea'">
       <textarea
         [formControl]="control"
@@ -58,11 +69,11 @@
         class="field__input"
       ></textarea>
     </ng-container>
-    
+   
     <ng-container *ngIf="inputType == 'toggle'">
       <app-toggle [formControl]="control"></app-toggle>
     </ng-container>
-    
+   
     <ng-container *ngIf="inputType === 'datetime'">
       <p-calendar
         [formControl]="control"
@@ -74,17 +85,16 @@
         dateFormat="dd/mm/yy">
       </p-calendar>
     </ng-container>
-    
+   
     <!-- Icon -->
     <div class="field__icon" *ngIf="icon">
-      <svg class="icon {{icon}}">
+      <svg class="icon icon-{{icon}}">
         <use [attr.href]="'#icon-' + icon"></use>
       </svg>
     </div>
-    
+   
     <app-svg-spinner *ngIf="loading"></app-svg-spinner>
   </div>
-
   <div class="error" *ngIf="control.invalid && control.touched">
     {{ getErrorMessage() }}
   </div>

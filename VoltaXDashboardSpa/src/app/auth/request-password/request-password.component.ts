@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
 
 @Component({
@@ -13,9 +16,11 @@ export class RequestPasswordComponent implements OnInit {
   isLoading : boolean = false;
   form: FormGroup;
   errorMessage : string = "";
+  requestMailSent : boolean = false;
 
   constructor(
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _modalService: ActionModalService
   ) { 
     this.form = new FormGroup({
       email: new FormControl('', [
@@ -33,11 +38,12 @@ export class RequestPasswordComponent implements OnInit {
     this.isLoading = true;
     this._authService.resetPasswordRequest(this.form.value.email).subscribe(data => {
       this.isLoading = false;
+      this._modalService.popup(ActionModalStatusEnum.Success,"Mail Sent", "The password request mail has been sent to your email, please check you email", 4000);
+      this.requestMailSent = true;
     },(error) => {
       this.isLoading = false;
-      console.log(error);
-      console.log(error.error);
       this.errorMessage = error.error.error;
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error ! ", "Something went wrong, please try again later", 4000);
     });
   }
 

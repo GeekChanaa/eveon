@@ -58,6 +58,9 @@ export class ProfileSecurityChangePasswordComponent implements OnInit {
    changePassword(){
     this.isLoading = true;
     this.userPasswordChange.id = this.userID;
+    this.userPasswordChange.currentPassword = this.changePasswordForm.value.oldPassword;
+    this.userPasswordChange.newPassword =  this.changePasswordForm.value.password;
+    this.userPasswordChange.newPasswordCheck  = this.changePasswordForm.value.confirmPassword;
     this._authService.changePassword(this.userPasswordChange).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Password Changed Successfully ! ", 4000);
       this.isLoading = false

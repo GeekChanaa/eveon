@@ -21,6 +21,6 @@ namespace VoltaXApi.Dtos
         public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneNumberVerified { get; set; }
-        public UserRole Role { get; set; } = UserRole.Customer;
+        public int RoleID { get; set; }
     }
 }

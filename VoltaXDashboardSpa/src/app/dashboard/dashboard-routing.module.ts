@@ -147,6 +147,18 @@ const routes: Routes = [
       .then(m=>m.UserInfoDownloadRequestsModule)
   },
   {
+    path: "permissions",
+    component: RechargeOrdersComponent,
+    loadChildren : () => import('./permissions/permissions.module')
+      .then(m=>m.PermissionsModule)
+  },
+  {
+    path: "roles",
+    component: RechargeOrdersComponent,
+    loadChildren : () => import('./roles/roles.module')
+      .then(m=>m.RolesModule)
+  },
+  {
     path: "statistics",
     component: StatisticsComponent,
   },

@@ -19,6 +19,7 @@ export class SignUpComponent implements OnInit {
   signUpFormValid : Boolean = false;
   isLoading : boolean = false;
   errorMessage : string = "";
+  emailAlreadyExists : boolean = false;
 
 
     constructor(
@@ -72,6 +73,12 @@ export class SignUpComponent implements OnInit {
       this.isLoading = false;
       this._route.navigate(['/auth/verification-mail-sent']);
     },(error) => {
+      if(error.error.error == "Email already exists")
+      {
+        this.emailAlreadyExists = true;
+        this.isLoading = false;
+        return;
+      }
       this.isLoading = false;
       this.errorMessage = error.error.error;
     })

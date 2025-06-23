@@ -1,0 +1,65 @@
+<div class="page__inner">
+    <div class="page__container">
+      <app-table-list 
+        name="permission"
+        names="permissions"
+        [searchByAttributes]="['Name']"
+        routeName="permissions"
+        createLink="/dashboard/permissions/create"
+        [fields]="fields" 
+        [filters]="filters"
+        [getItemsObservable]="getPermissionsObservable.bind(this)"
+        [deleteItemObservable]="deletePermissionObservable.bind(this)"
+        [updateItemObservable]="updatePermissionObservable.bind(this)"
+        searchByPlaceHolder="Search by Name"
+        [createLink]="''"
+        [deletable]="false"
+        (resetFiltersEvent)="resetFilters()"
+        [breadcrumbs]="[
+          { label: 'Dashboard', link: '/dashboard' },
+          { label: 'Permissions'}
+        ]"
+        >
+        <!-- filter body -->
+        <ng-container filter__body>
+          <div  class="filters__group">
+          
+            <div class="filters__item">
+              <div class="filters__list">
+                
+  
+                <div class="field">
+                  <div class="field__label">By Type
+                    <div class="tooltip" title="The Type of the permission">
+                      <svg class="icon icon-info">
+                        <use xlink:href="#icon-info"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="field__wrap">
+                    <div class="field__wrap">
+                      <select class="select" [(ngModel)]="filters.type">
+                        <option value="" selected>None</option>
+                        <option value="Vendor">Vendor</option>
+                        <option value="ServiceProvider">ServiceProvider</option>
+                        <option value="Reseller">Reseller</option>
+                        <option value="Affiliate">Affiliate</option>
+                        <option value="Investor">Investor</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+  
+                
+              </div>
+            </div>
+            
+          </div>
+        </ng-container>
+  
+        
+      </app-table-list>
+    </div>
+  </div>
+  

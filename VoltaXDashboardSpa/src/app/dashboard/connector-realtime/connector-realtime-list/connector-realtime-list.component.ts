@@ -5,6 +5,7 @@ import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-categor
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargePointService } from 'src/_services/charge-point.service';
+import { CityService } from 'src/_services/city.service';
 
 @Component({
   selector: 'app-connector-realtime-list',
@@ -23,7 +24,6 @@ export class ConnectorRealtimeListComponent implements OnInit {
 
   chargePoint: ChargePointCRListDto = {
     chargePointId: '',
-    name: '',
     chargingStationName: '',
     serialNumber: '',
     category: '',
@@ -34,11 +34,13 @@ export class ConnectorRealtimeListComponent implements OnInit {
   // Constructor
   constructor(
     private _chargePointService: ChargePointService,
-    private _router : Router
+    private _router : Router,
+    private _cityService: CityService
   ) { }
 
   ngOnInit() {
     this._getItemFields();
+    this.getCities();
   }
 
   getChargePointsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._chargePointService.getAllChargePoints(currentPage, itemsPerPage, itemParams);
@@ -62,6 +64,13 @@ export class ConnectorRealtimeListComponent implements OnInit {
       category:"",
       city : ""
     }
+  }
+
+  getCities(){
+    this._cityService.getAllMoroccoCityNames().subscribe((data) => {
+      this.cities = data;
+      console.log(this.cities);
+    })
   }
 
 }

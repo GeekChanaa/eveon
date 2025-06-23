@@ -145,7 +145,7 @@ namespace VoltaXApi.Data
 
         public async Task<List<UserNameDto>> GetSupportUserNames()
         {
-            var users = await _context.Users.Where(u => u.Role == UserRole.Support).ToListAsync();
+            var users = await _context.Users.Where(u => u.Role.Name == "SUPPORT").ToListAsync();
             return _mapper.Map<List<User>,List<UserNameDto>>(users);
         }
 
@@ -194,7 +194,7 @@ namespace VoltaXApi.Data
             user.LastName = userDto.LastName;
             user.Email = userDto.Email;
             user.Phone = userDto.Phone;
-            user.Role = userDto.Role;
+            user.RoleID = userDto.RoleID;
             user.Birthday = userDto.Birthday;
             user.IsEmailVerified = userDto.IsEmailVerified;
             user.IsPhoneNumberVerified = userDto.IsPhoneNumberVerified;
@@ -219,7 +219,7 @@ namespace VoltaXApi.Data
                             PartnerName = u.PartnerID == null ? null : u.Partner.Name,
                             IsEmailVerified = u.IsEmailVerified,
                             IsPhoneNumberVerified = u.IsPhoneNumberVerified,
-                            Role = u.Role,
+                            RoleName = u.Role.Name,
                             ImageUrl = u.Image.Url
                         })
                         .FirstOrDefaultAsync(u => u.ID == userID);
@@ -234,6 +234,7 @@ namespace VoltaXApi.Data
                 FirstName = userForRegisterDto.FirstName,
                 LastName = userForRegisterDto.LastName,
                 Phone = userForRegisterDto.Phone,
+                RoleID = 2
             };
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
@@ -250,15 +251,15 @@ namespace VoltaXApi.Data
 
         public IQueryable<User> GetAdminsQueryable()
         {
-            return _context.Users.Where(u => u.Role == UserRole.Admin);
+            return _context.Users.Where(u => u.Role.Name == "ADMIN");
         }
         public IQueryable<User> GetSupportsQueryable()
         {
-            return _context.Users.Where(u => u.Role == UserRole.Support);
+            return _context.Users.Where(u => u.Role.Name == "SUPPORT");
         }
         public IQueryable<User> GetCustomersQueryable()
         {
-            return _context.Users.Where(u => u.Role == UserRole.Customer);
+            return _context.Users.Where(u => u.Role.Name != "ADMIN" &&  u.Role.Name != "SUPPORT");
         }
         public IQueryable<User> GetPartnersQueryable()
         {

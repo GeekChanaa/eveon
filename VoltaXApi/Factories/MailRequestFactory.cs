@@ -46,4 +46,84 @@ public class MailRequestFactory : IMailRequestFactory
         };
     }
 
+    public MailRequest CreateApprovedDownloadInfoRequest(string to)
+    {
+        return new MailRequest
+        {
+            Phone = "",
+            Email = "support@voltaxcharging.com",
+            Name = "CHANAA mohammed",
+            ToEmails = new List<string>() { to },
+            Subject = "VoltaX Charging - Your Request to Download Personal Information Has Been Approved",
+            Body = ""
+        };
+    }
+
+    public MailRequest CreateDeniedDownloadInfoRequest(string to)
+    {
+        return new MailRequest
+        {
+            Phone = "",
+            Email = "support@voltaxcharging.com",
+            Name = "CHANAA mohammed",
+            ToEmails = new List<string>() { to },
+            Subject = "VoltaX Charging - Your Request to Download Personal Information Was Denied",
+            Body = ""
+        };
+    }
+
+    public MailRequest CreateChangedPasswordMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Password Changed – VoltaX Charging"
+        };
+    }
+
+    public MailRequest CreateChangedEmailMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Email Changed – VoltaX Charging"
+        };
+    }
+
+    public MailRequest CreateWelcomeMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Welcome to VolaX ! – VoltaX Charging"
+        };
+    }
+
+    public MailRequest CreateDebitCardRemovedMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Debit Card Removed  – VoltaX Charging"
+        };
+    }
+
+    public MailRequest CreateDebitCardAddedMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "New Debit Card Added – VoltaX Charging"
+        };
+    }
 }

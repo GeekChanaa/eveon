@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { User } from 'src/_models/user';
@@ -24,6 +24,14 @@ editingImage: boolean = false;
   isSendingPhoneSms : boolean = false;
 
   updateEmailForm : FormGroup;
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent): void {
+    this.editingEmail = false;
+    this.editingPhone = false;
+    this.verifyingEmail = false;
+    this.verifyingPhone = false;
+  }
 
   isChangeAvatarModalOpen : boolean = false;
 

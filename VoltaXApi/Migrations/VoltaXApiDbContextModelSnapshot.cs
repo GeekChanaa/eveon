@@ -1305,7 +1305,7 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LockoutEndTime")
+                    b.Property<DateTime>("LockoutEndTime")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -2153,6 +2153,35 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Partners");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Permission", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Permissions");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Rating", b =>
                 {
                     b.Property<int>("ID")
@@ -2363,6 +2392,68 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("ReportID");
 
                     b.ToTable("ReportReplies");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Role", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.PrimitiveCollection<string>("UserRoles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.RolePermission", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PermissionID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PermissionID");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.State", b =>
@@ -2744,7 +2835,7 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("ResetPasswordToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
+                    b.Property<int>("RoleID")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("SuspendedAt")
@@ -2761,6 +2852,8 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("ImageID");
 
                     b.HasIndex("PartnerID");
+
+                    b.HasIndex("RoleID");
 
                     b.ToTable("Users");
                 });
@@ -3307,6 +3400,25 @@ namespace VoltaXApi.Migrations
                     b.Navigation("Report");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.RolePermission", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.State", b =>
                 {
                     b.HasOne("VoltaXApi.Models.Country", "Country")
@@ -3468,9 +3580,17 @@ namespace VoltaXApi.Migrations
                         .WithMany("Users")
                         .HasForeignKey("PartnerID");
 
+                    b.HasOne("VoltaXApi.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Image");
 
                     b.Navigation("Partner");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.UserInfoDownloadRequest", b =>
@@ -3559,6 +3679,16 @@ namespace VoltaXApi.Migrations
                     b.Navigation("ChargingStations");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.State", b =>

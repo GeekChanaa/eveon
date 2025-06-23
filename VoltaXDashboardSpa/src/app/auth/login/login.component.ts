@@ -35,6 +35,11 @@ export class LoginComponent implements OnInit {
     })
   }
 
+  getControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
+  }
+
+
   ngOnInit() {
   }
 
@@ -50,15 +55,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = false;
       var userID = parseInt(this._authService.getAuthInformation().nameid);
       this._userService.getById(userID).subscribe((u) => {
-        console.log("this is the user");
-        console.log(u);
-        if(u.role == "Admin")
-          this._router.navigate(['/dashboard']);
-        else if(u.role == "Customer")
-          this._router.navigate(['/my-dashboard']);
-        else if(u.role == "Partner")
-          this._router.navigate(['/partner-dashboard']);
-        this._snackBar.open("Welcome Back","dismiss",{duration:2000});
+        this._router.navigateByUrl("/dashboard")
       });
       
     },(error) => {

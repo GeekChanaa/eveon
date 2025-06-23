@@ -14,6 +14,7 @@ import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-numb
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import { AtomsModule } from '../atoms/atoms.module';
 import { AuthComponent } from './auth.component';
+import { RequestPasswordMailSentComponent } from './request-password/request-password-mail-sent/request-password-mail-sent.component';
 
 
 
@@ -28,7 +29,8 @@ import { AuthComponent } from './auth.component';
         VerificationMailSentComponent,
         EnterPhoneNumberComponent,
         CompleteProfileComponent,
-        AuthComponent
+        AuthComponent,
+        RequestPasswordMailSentComponent
   ],
     imports: [
       CommonModule,

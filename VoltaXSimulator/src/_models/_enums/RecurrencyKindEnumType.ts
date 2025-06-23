@@ -1,1 +1,0 @@
-export type RecurrencyKindEnumType = "Daily" | "Weekly";

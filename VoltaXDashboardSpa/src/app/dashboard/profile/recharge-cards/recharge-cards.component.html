@@ -1,14 +1,21 @@
-<div class="card__head">
-    <div class="title-green card__title">Recharge Cards</div>
+<div class="card profile-section">
+    <div class="card-header">
+        <h2>My Recharge Card</h2>
+    </div>
+    <ng-container *ngIf="rechargeCards.length > 0">
+        <app-recharge-card 
+            *ngFor="let rechargeCard of rechargeCards"
+            class="recharge_card" 
+            [cardNumber]="rechargeCard.cardNumber"
+            [cardType]="rechargeCard.cardType"
+            expirationDate="{{rechargeCard.expirationDate | date:'MM/yy' }}"
+            [status]="rechargeCard.status"
+            [balance]="rechargeCard.balance"
+            ></app-recharge-card>
+    </ng-container>
+
+
+    <ng-container *ngIf="rechargeCards.length <= 0">
+        <app-empty-card></app-empty-card>
+    </ng-container>
 </div>
-
-
-
-<ng-container *ngIf="rechargeCards.length > 0">
-    <app-recharge-card class="recharge_card" *ngFor="let rechargeCard of rechargeCards" [card]="rechargeCard"></app-recharge-card>
-</ng-container>
-
-
-<ng-container *ngIf="rechargeCards.length<=0">
-    <app-empty-card></app-empty-card>
-</ng-container>

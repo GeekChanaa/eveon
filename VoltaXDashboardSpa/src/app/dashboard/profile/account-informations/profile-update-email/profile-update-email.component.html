@@ -8,7 +8,7 @@
       [control]="getControl(updateEmailForm,'email')"></app-form-field>
     
     <div class="form__actions">
-      <app-button (btnClick)="saveEmail()" size="small" variant="secondary">Save Email</app-button>
+      <app-button [isLoading]="isLoading" (btnClick)="saveEmail()" size="small" variant="secondary">Save Email</app-button>
 
     </div>
   </div>
@@ -42,7 +42,7 @@
       [control]="getControl(verifyEmailForm,'code')"></app-form-field>
     
     <div class="form__actions">
-      <app-button (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
+      <app-button [isLoading]="isLoading" (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
     </div>
   </div>
 </ng-container>

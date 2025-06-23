@@ -3,6 +3,7 @@
 using System.Net.Http.Headers;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
+using VoltaXApi.Factories;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Services
@@ -14,19 +15,25 @@ namespace VoltaXApi.Services
         private readonly IUserRepository _userRepository;
         private readonly ICardRepository _cardRepository;
         private readonly IAuthService _authService;
+        private readonly IMailService _mailService;
+        private readonly IMailRequestFactory _mailRequestFactory;
 
         public UserService(
             IFileManagementService fileManagementService,
             IRepository<Image> imageRepo,
             IUserRepository userRepository,
             IAuthService authService,
-            ICardRepository cardRepository
-        ){
+            ICardRepository cardRepository,
+            IMailService mailService,
+            IMailRequestFactory mailRequestFactory
+        ) {
             _fileManagementService = fileManagementService;
             _imageRepo = imageRepo;
             _userRepository = userRepository;
             _authService = authService;
             _cardRepository = cardRepository;
+            _mailService = mailService;
+            _mailRequestFactory = mailRequestFactory;
         }
         public async Task UploadUserAvatar(IFormFile file, int partnerID)
         {
@@ -72,7 +79,7 @@ namespace VoltaXApi.Services
                 PartnerID = userToCreate.PartnerID,
                 IsEmailVerified = userToCreate.IsEmailVerified,
                 IsPhoneNumberVerified = userToCreate.IsPhoneNumberVerified,
-                Role = userToCreate.Role,
+                RoleID = userToCreate.RoleID,
             };
             await _userRepository.AddAsync(user);
             await _cardRepository.CreateCardForUser(user);
@@ -85,6 +92,8 @@ namespace VoltaXApi.Services
             userToUpdate.Email = user.Email;
             await this._userRepository.Update(userToUpdate);
             await this._authService.CreateEmailVerificationToken(user.ID);
+            var mailRequest = _mailRequestFactory.CreateChangedEmailMailRequest(userToUpdate.Email);
+            await this._mailService.SendPasswordChangedMail(mailRequest, userToUpdate.FirstName);
             return true;
         }
         public async Task<bool> UpdatePhone(UpdateUserPhoneDto user)

@@ -29,6 +29,7 @@ export class FormFieldComponent implements OnInit {
   @Input() enumName : string = "";
   @Input() icon: string = ""; 
   enumMappings: { [key: string]: { [id: number]: string } } = {}
+  showPassword: boolean = false;
   
   constructor(
     private _validationMessagesService : ValidationMessagesService,
@@ -48,9 +49,6 @@ export class FormFieldComponent implements OnInit {
    getErrorMessage(): string {
     if (!this.control.errors) return '';
 
-    console.log("this is the errors");
-    console.log(this.control.errors);
-    
     // Special handling for strongPassword errors
     if (this.control.errors["strongPassword"]) {
       const errors = this.control.errors["strongPassword"];
@@ -81,6 +79,12 @@ export class FormFieldComponent implements OnInit {
 
   hasRequiredValidator(): boolean {
     return this.control && this.control.hasValidator(Validators.required);
+  }
+
+  
+  
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   

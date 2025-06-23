@@ -2,7 +2,10 @@
 <!-- inner-->
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">Home</div>
+    <div class="page__title h3">
+      Home
+      <app-breadcrumb  class="breadcrumb" [items]="[{label : 'Home'}]"></app-breadcrumb>
+    </div>
 
     <!-- Chargers Overview -->
     <div class="card">

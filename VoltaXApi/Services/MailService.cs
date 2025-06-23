@@ -71,7 +71,7 @@ namespace VoltaXApi.Services
 			smtp.Disconnect(true);
 		}
 
-		public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink,string userName)
+		public async Task SendVerificationEmailAsync(MailRequest mailRequest, string verificationLink, string userName)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 
@@ -89,7 +89,7 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
-		public async Task SendVerificationCodeEmailAsync(MailRequest mailRequest, string verificationCode,string userName)
+		public async Task SendVerificationCodeEmailAsync(MailRequest mailRequest, string verificationCode, string userName)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 
@@ -98,6 +98,24 @@ namespace VoltaXApi.Services
 					{
 							{ "UserName", userName },
 							{ "verificationCode", verificationCode }
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendResetPasswordMailRequest(MailRequest mailRequest, string userName, string resetPasswordLink)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("reset-password");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "UserName", userName },
+							{ "ResetPasswordLink", resetPasswordLink }
 					});
 
 			builder.HtmlBody = populatedTemplate;
@@ -208,7 +226,7 @@ namespace VoltaXApi.Services
 		public async Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
-			var template = GetEmailTemplate("download-request-infos-approved");
+			var template = GetEmailTemplate("download-request-infos-denied");
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{
 							{ "UserName", userName }
@@ -286,7 +304,7 @@ namespace VoltaXApi.Services
 			}
 		}
 
-		public async Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string ipAddress,string resetPasswordLink)
+		public async Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string userName, string ipAddress, string resetPasswordLink)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 
@@ -294,6 +312,7 @@ namespace VoltaXApi.Services
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{
 							{ "ipAddress", ipAddress },
+							{ "userName", userName },
 							{ "resetPasswordLink", resetPasswordLink }
 					});
 
@@ -304,7 +323,7 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 
 		}
-		
+
 
 
 		public async Task SendEmailSmtp(MimeMessage email)
@@ -317,6 +336,72 @@ namespace VoltaXApi.Services
 			smtp.Disconnect(true);
 		}
 
+		public async Task SendPasswordChangedMail(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
 
-	}
+			var template = GetEmailTemplate("email-changed");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "userName", userName },
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendWelcomeEmail(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("welcome-message");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "userName", userName },
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendDebitCardAddedEmail(MailRequest mailRequest, string userName)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("debit-card-added");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "userName", userName },
+					});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+		
+		public async Task SendDebitCardRemovedEmail(MailRequest mailRequest, string userName)
+        {
+            PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			var template = GetEmailTemplate("debit-card-removed");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+			{
+				{ "userName", userName },
+			});
+
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+        }
+    }
 }

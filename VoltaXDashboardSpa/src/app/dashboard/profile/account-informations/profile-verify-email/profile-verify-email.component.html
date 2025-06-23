@@ -5,15 +5,20 @@
 
 <!-- Verification Step -->
 <ng-container *ngIf="formStep == VerifyEmailFormStepEnum.Verification && !isLoading">
+  <div class="info-message">
+    An email has been sent to your email address containing a verification code.
+    Please enter the code below to verify your email.
+  </div>
+
   <div [formGroup]="verifyEmailForm">
     <app-form-field 
-      description="Code"
+      description="Verification code sent to your email"
       placeholder="Code"
       title="Code"
       [control]="getControl(verifyEmailForm,'code')"></app-form-field>
     
     <div class="form__actions">
-      <app-button (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
+      <app-button [disabled]="!verifyEmailForm.valid" (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
     </div>
   </div>
 </ng-container>
