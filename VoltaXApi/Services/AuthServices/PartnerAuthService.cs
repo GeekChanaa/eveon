@@ -53,8 +53,39 @@ namespace VoltaXApi.Services
             user.PasswordSalt = passwordSalt;
             user.PasswordHash = passwordHash;
             await _context.SaveChangesAsync();
-            
+
             await this._mailService.SendPartnerResetPasswordMailRequest(requ, user.FullName, newPassword);
+        }
+        
+        public async Task<User> Login(string email, string password, string ipAddress)
+        {
+            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(x => x.Email == email);
+            try
+            {
+                var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
+
+                if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
+                throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
+                
+                
+
+                if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+                {
+                await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
+                return null;
+                }
+                return user;
+            }
+            catch (LoginAttemptFailedException ex)
+            {
+                MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(email);
+                //string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(email);
+
+                //await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
+
+                throw; 
+            }
+        
         }
 
     }

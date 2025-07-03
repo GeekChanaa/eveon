@@ -1,3 +1,38 @@
-<p>
-  create-role works!
-</p>
+<app-dashboard-form-container 
+  title="New Role"
+  [items]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Roles', link: '/dashboard/roles' },
+    { label: 'Create' }
+  ]">
+      <div form [formGroup]="form"
+        *ngIf="permissions != null && permissions.length > 0">
+      
+        
+        <app-form-field
+          class="field"
+          title="Role Name"
+          description="The Name of the role."
+          [control]="getControl('name')"
+        ></app-form-field>
+
+        <app-form-field
+          class="field"
+          title="Permissions"
+          description="Select the permissions for this role."
+          [control]="getControl('permissions')"
+          inputType="multi_select_checkbox"
+          [options]="permissionOptions"
+        ></app-form-field>
+
+        
+
+        <div class="form__actions">
+          <app-button class="ml-auto" (btnClick)="onSubmit()" [disabled]="form.invalid" [isLoading]="isLoading" [variant]="'secondary'"
+            type="submit">
+            Submit
+          </app-button>
+        </div>
+        
+      </div>
+    </app-dashboard-form-container> 

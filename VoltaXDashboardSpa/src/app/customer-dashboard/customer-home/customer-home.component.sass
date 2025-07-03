@@ -1,0 +1,525 @@
+.dashboard-home 
+  min-height: 100vh
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+
+
+/* Welcome Section */
+.welcome-section 
+  position: relative
+  overflow: hidden
+  padding: 4rem 1.5rem
+  
+  .welcome-background 
+    position: absolute
+    inset: 0
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+    opacity: 0.1
+  
+  
+  .welcome-content 
+    position: relative
+    max-width: 64rem
+    margin: 0 auto
+    text-align: center
+    
+    .user-avatar 
+      width: 5rem
+      height: 5rem
+      margin: 0 auto 2rem
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+      border-radius: 50%
+      display: flex
+      align-items: center
+      justify-content: center
+      animation: pulse 2s infinite
+      
+      .user-icon 
+        width: 2.5rem
+        height: 2.5rem
+        color: white
+      
+    
+    
+    .welcome-title 
+      font-size: 3.5rem
+      font-weight: 700
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+      -webkit-background-clip: text
+      -webkit-text-fill-color: transparent
+      background-clip: text
+      margin-bottom: 1rem
+      
+      @media (max-width: 768px) 
+        font-size: 2.5rem
+      
+    
+    
+    .welcome-subtitle 
+      font-size: 1.25rem
+      color: #6b7280
+      margin-bottom: 3rem
+      max-width: 32rem
+      margin-left: auto
+      margin-right: auto
+      line-height: 1.6
+    
+    
+    .status-badges 
+      display: flex
+      flex-wrap: wrap
+      justify-content: center
+      gap: 1rem
+      margin-bottom: 3rem
+      
+      .status-badge 
+        display: flex
+        align-items: center
+        padding: 0.75rem 1.25rem
+        border-radius: 2rem
+        font-weight: 500
+        font-size: 0.875rem
+        transition: all 0.3s ease
+        
+        .status-icon 
+          width: 1rem
+          height: 1rem
+          margin-right: 0.5rem
+        
+        
+        &.verified 
+          background-color: #d1fae5
+          color: #065f46
+        
+        
+        &.pending 
+          background-color: #fef3c7
+          color: #92400e
+        
+        
+        &.progress 
+          background-color: #dbeafe
+          color: #1e40af
+        
+      
+    
+  
+
+
+/* Stats Section */
+.stats-section 
+  padding: 0 1.5rem
+  margin-top: -2rem
+  position: relative
+  z-index: 10
+  
+  .stats-container 
+    max-width: 72rem
+    margin: 0 auto
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+    gap: 1.5rem
+  
+  
+  .stat-card 
+    background: white
+    border-radius: 1rem
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1)
+    padding: 2rem
+    border: 1px solid #f3f4f6
+    transition: all 0.3s ease
+    
+    &:hover 
+      transform: translateY(-4px)
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15)
+    
+    
+    .stat-header 
+      display: flex
+      align-items: center
+      justify-content: space-between
+      margin-bottom: 1.5rem
+      
+      .stat-icon 
+        width: 3rem
+        height: 3rem
+        border-radius: 0.75rem
+        display: flex
+        align-items: center
+        justify-content: center
+        
+        svg 
+          width: 1.5rem
+          height: 1.5rem
+        
+        
+        &.profile-icon 
+          background-color: #dbeafe
+          color: #2563eb
+        
+        
+        &.security-icon 
+          background-color: #d1fae5
+          color: #059669
+        
+        
+        &.activity-icon 
+          background-color: #ede9fe
+          color: #7c3aed
+        
+      
+      
+      .stat-label 
+        font-size: 0.875rem
+        font-weight: 500
+        color: #6b7280
+      
+    
+    
+    .stat-value 
+      font-size: 2rem
+      font-weight: 700
+      color: #111827
+      margin-bottom: 0.5rem
+    
+    
+    .stat-description 
+      color: #6b7280
+      font-size: 0.875rem
+    
+  
+
+
+/* Popup Styles */
+.popup-overlay 
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background-color: rgba(0, 0, 0, 0.6)
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1000
+  backdrop-filter: blur(4px)
+  
+  .popup-container 
+    background: white
+    border-radius: 1.5rem
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25)
+    max-width: 32rem
+    width: 90%
+    max-height: 90vh
+    overflow-y: auto
+    animation: popupSlide 0.3s ease-out
+    
+    .popup-header 
+      display: flex
+      align-items: center
+      justify-content: space-between
+      padding: 2rem 2rem 1rem
+      border-bottom: 1px solid #f3f4f6
+      
+      .popup-title 
+        font-size: 1.5rem
+        font-weight: 600
+        color: #111827
+        margin: 0
+      
+      
+      .close-btn 
+        background: none
+        border: none
+        cursor: pointer
+        padding: 0.5rem
+        border-radius: 0.5rem
+        color: #6b7280
+        transition: all 0.2s ease
+        
+        &:hover 
+          background-color: #f3f4f6
+          color: #374151
+        
+        
+        svg 
+          width: 1.5rem
+          height: 1.5rem
+        
+      
+    
+    
+    .step-indicator 
+      display: flex
+      align-items: center
+      justify-content: center
+      padding: 2rem
+      
+      .step 
+        display: flex
+        flex-direction: column
+        align-items: center
+        
+        .step-number 
+          width: 2.5rem
+          height: 2.5rem
+          border-radius: 50%
+          display: flex
+          align-items: center
+          justify-content: center
+          font-weight: 600
+          font-size: 0.875rem
+          background-color: #f3f4f6
+          color: #6b7280
+          margin-bottom: 0.5rem
+          transition: all 0.3s ease
+        
+        
+        span 
+          font-size: 0.75rem
+          color: #6b7280
+          font-weight: 500
+        
+        
+        &.active 
+          .step-number 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+            color: white
+          
+          
+          span 
+            color: #667eea
+          
+        
+        
+        &.completed 
+          .step-number 
+            background-color: #10b981
+            color: white
+          
+          
+          span 
+            color: #10b981
+          
+        
+      
+      
+      .step-line 
+        flex: 1
+        height: 2px
+        background-color: #f3f4f6
+        margin: 0 1rem
+        transition: all 0.3s ease
+        
+        &.completed 
+          background-color: #10b981
+        
+      
+    
+    
+    .popup-content 
+      padding: 0 2rem 2rem
+      
+      .step-content 
+        text-align: center
+        
+        .step-icon 
+          width: 4rem
+          height: 4rem
+          margin: 0 auto 1.5rem
+          border-radius: 50%
+          display: flex
+          align-items: center
+          justify-content: center
+          
+          svg 
+            width: 2rem
+            height: 2rem
+          
+          
+          &.email-step 
+            background-color: #dbeafe
+            color: #2563eb
+          
+          
+          &.phone-step 
+            background-color: #d1fae5
+            color: #059669
+          
+          
+          &.profile-step 
+            background-color: #ede9fe
+            color: #7c3aed
+          
+        
+        
+        h3 
+          font-size: 1.5rem
+          font-weight: 600
+          color: #111827
+          margin-bottom: 1rem
+        
+        
+        p 
+          color: #6b7280
+          margin-bottom: 2rem
+          line-height: 1.6
+        
+        
+        .success-message 
+          background-color: #d1fae5
+          color: #065f46
+          padding: 1rem
+          border-radius: 0.5rem
+          margin-bottom: 1.5rem
+          font-weight: 500
+        
+      
+    
+    
+    .verification-form, .profile-form 
+      .form-group 
+        margin-bottom: 1.5rem
+        text-align: left
+        
+        label 
+          display: block
+          font-weight: 500
+          color: #374151
+          margin-bottom: 0.5rem
+        
+        
+        input, select 
+          width: 100%
+          padding: 0.75rem
+          border: 2px solid #e5e7eb
+          border-radius: 0.5rem
+          font-size: 1rem
+          transition: border-color 0.2s ease
+          
+          &:focus 
+            outline: none
+            border-color: #667eea
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1)
+          
+        
+        
+        input[type="text"], input[type="date"] 
+          font-family: inherit
+        
+      
+      
+      .form-row 
+        display: grid
+        grid-template-columns: 1fr 1fr
+        gap: 1rem
+        
+        @media (max-width: 640px) 
+          grid-template-columns: 1fr
+        
+      
+      
+      .form-actions 
+        display: flex
+        gap: 1rem
+        justify-content: center
+        margin-top: 1.5rem
+        
+        @media (max-width: 640px) 
+          flex-direction: column
+        
+      
+    
+    
+    .popup-footer 
+      padding: 1rem 2rem 2rem
+      display: flex
+      gap: 1rem
+      justify-content: flex-end
+      
+      @media (max-width: 640px) 
+        flex-direction: column
+      
+    
+  
+
+
+/* Button Styles */
+.primary-btn, .secondary-btn 
+  padding: 0.75rem 1.5rem
+  border-radius: 0.5rem
+  font-weight: 500
+  font-size: 1rem
+  cursor: pointer
+  transition: all 0.2s ease
+  border: none
+  
+  &:disabled 
+    opacity: 0.6
+    cursor: not-allowed
+  
+
+
+.primary-btn 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+  color: white
+  
+  &:hover:not(:disabled) 
+    transform: translateY(-2px)
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4)
+  
+
+
+.secondary-btn 
+  background-color: #f3f4f6
+  color: #374151
+  
+  &:hover 
+    background-color: #e5e7eb
+  
+
+
+/* Animations */
+@keyframes pulse 
+  0%, 100% 
+    transform: scale(1)
+  
+  50% 
+    transform: scale(1.05)
+  
+
+
+@keyframes popupSlide 
+  0% 
+    opacity: 0
+    transform: scale(0.9) translateY(20px)
+  
+  100% 
+    opacity: 1
+    transform: scale(1) translateY(0)
+  
+
+
+/* Responsive Design */
+@media (max-width: 768px) 
+  .welcome-section 
+    padding: 2rem 1rem
+  
+  
+  .stats-section 
+    margin-top: -1rem
+  
+  
+  .popup-container 
+    margin: 1rem
+    width: calc(100% - 2rem)
+    
+    .popup-header, .popup-content, .popup-footer 
+      padding-left: 1.5rem
+      padding-right: 1.5rem
+    
+    
+    .step-indicator 
+      padding: 1.5rem
+    
+  

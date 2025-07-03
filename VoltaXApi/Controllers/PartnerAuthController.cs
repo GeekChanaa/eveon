@@ -63,6 +63,52 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
 
+        // Login function
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
+        {
+            string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            var userFromRepo = await _authService.Login(userForLoginDto.Email.ToLower(), userForLoginDto.Password, ipAddress);
+
+            if (userFromRepo == null)
+            {
+                return Unauthorized();
+            }
+
+
+
+            var user = await _userRepo.GetUser(userFromRepo.ID);
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, userFromRepo.ID.ToString()),
+                new Claim(ClaimTypes.Name, userFromRepo.Email),
+                new Claim(ClaimTypes.GivenName, userFromRepo.FirstName),
+                new Claim(ClaimTypes.Surname, userFromRepo.LastName),
+                new Claim(ClaimTypes.Role, userFromRepo.Role.Name)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(15),
+                SigningCredentials = creds,
+            };
+
+            var TokenHandler = new JwtSecurityTokenHandler();
+            var token = TokenHandler.CreateToken(tokenDescriptor);
+
+            return Ok(new
+            {
+                token = TokenHandler.WriteToken(token),
+            });
+        }
+
         
         
     }

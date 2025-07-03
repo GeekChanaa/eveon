@@ -17,7 +17,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class PartnerAuthService {
 
-  baseUrl = environment.apiUrl+"/api/auth/";
+  baseUrl = environment.apiUrl+"/api/PartnerAuth/";
   jwtHelper = new JwtHelperService();
   decodedToken : any;
   token : any;
@@ -29,10 +29,10 @@ export class PartnerAuthService {
     ) 
     { }
 
-  
-
   resetPasswordRequest(email : string){
     return this.http.get(this.baseUrl+"ResetPartnerPasswordRequest?email="+email);
   }
+
+
 
 }

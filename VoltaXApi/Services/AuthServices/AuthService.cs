@@ -171,11 +171,11 @@ namespace VoltaXApi.Services
         var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
 
         if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
-        {
           throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
-        }
+        
+        
 
-        if (user == null ||!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt) )
+        if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {
           await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
           return null;
@@ -194,18 +194,7 @@ namespace VoltaXApi.Services
       
     }
 
-    public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-    {
-      using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
-      {
-        var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        for (int i = 0; i < computedHash.Length; i++)
-        {
-          if (computedHash[i] != passwordHash[i]) return false;
-        }
-      }
-      return true;
-    }
+    
 
     public async Task ChangePasswordAsync(UserPasswordChangeDto userPasswordChangeDto)
     {
@@ -216,7 +205,7 @@ namespace VoltaXApi.Services
         throw new UserNotFoundException("User not found.");
       }
 
-      if (!VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+      if (!AuthHelper.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
       {
         throw new IncorrectPasswordException("The current password is incorrect.");
       }

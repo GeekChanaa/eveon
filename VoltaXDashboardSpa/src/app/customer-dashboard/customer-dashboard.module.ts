@@ -6,18 +6,16 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { CustomerDashboardRoutingModule } from './customer-dashboard-routing.module';
 import { CustomerHomeComponent } from './customer-home/customer-home.component';
-import { MyCardsComponent } from './my-cards/my-cards.component';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MatRippleModule } from '@angular/material/core';
-import { MyCardComponent } from './my-card/my-card.component';
 import {MatTabsModule} from '@angular/material/tabs'; 
-import { CompleteProfilePopupComponent } from './complete-profile-popup/complete-profile-popup.component';
+import { CustomerHomeEmailVerificationComponent } from './customer-home/customer-home-email-verification/customer-home-email-verification.component';
+import { CustomerHomePhoneVerificationComponent } from './customer-home/customer-home-phone-verification/customer-home-phone-verification.component';
 @NgModule({
     declarations: [
         CustomerHomeComponent,
-        MyCardsComponent,
-        MyCardComponent,
-        CompleteProfilePopupComponent
+        CustomerHomeEmailVerificationComponent,
+        CustomerHomePhoneVerificationComponent
     ],
     imports: [
         AtomsModule,

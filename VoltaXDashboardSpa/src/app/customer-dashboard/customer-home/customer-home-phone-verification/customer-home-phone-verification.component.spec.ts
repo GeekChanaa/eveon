@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { CompleteProfilePopupComponent } from './complete-profile-popup.component';
+import { CustomerHomePhoneVerificationComponent } from './customer-home-phone-verification.component';
 
-describe('CompleteProfilePopupComponent', () => {
-  let component: CompleteProfilePopupComponent;
-  let fixture: ComponentFixture<CompleteProfilePopupComponent>;
+describe('CustomerHomePhoneVerificationComponent', () => {
+  let component: CustomerHomePhoneVerificationComponent;
+  let fixture: ComponentFixture<CustomerHomePhoneVerificationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CompleteProfilePopupComponent ]
+      declarations: [ CustomerHomePhoneVerificationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CompleteProfilePopupComponent);
+    fixture = TestBed.createComponent(CustomerHomePhoneVerificationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

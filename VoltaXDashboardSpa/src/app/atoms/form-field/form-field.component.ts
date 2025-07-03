@@ -87,5 +87,56 @@ export class FormFieldComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+
+    
+  // Check if an option is selected
+  isOptionSelected(value: any): boolean {
+    const currentValue = this.control.value || [];
+    return currentValue.includes(value);
+  }
+
+  // Handle individual option change
+  onOptionChange(value: any, event: any): void {
+    const currentValue = this.control.value || [];
+    let newValue: any[];
+
+    if (event.target.checked) {
+      // Add the value if checked
+      newValue = [...currentValue, value];
+    } else {
+      // Remove the value if unchecked
+      newValue = currentValue.filter((v: any) => v !== value);
+    }
+
+    this.control.setValue(newValue);
+    this.control.markAsTouched();
+  }
+
+  // Check if all options are selected
+  areAllSelected(): boolean {
+    if (!this.options || this.options.length === 0) return false;
+    const currentValue = this.control.value || [];
+    return this.options.length === currentValue.length;
+  }
+
+  // Check if some (but not all) options are selected
+  isSomeSelected(): boolean {
+    if (!this.options || this.options.length === 0) return false;
+    const currentValue = this.control.value || [];
+    return currentValue.length > 0 && currentValue.length < this.options.length;
+  }
+
+  // Toggle select all/none
+  toggleSelectAll(event: any): void {
+    if (event.target.checked) {
+      // Select all
+      const allValues = this.options?.map(option => option.value) || [];
+      this.control.setValue(allValues);
+    } else {
+      // Deselect all
+      this.control.setValue([]);
+    }
+    this.control.markAsTouched();
+  }
   
 }

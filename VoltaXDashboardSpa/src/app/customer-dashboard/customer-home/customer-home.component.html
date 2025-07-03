@@ -1,80 +1,219 @@
-<div class="overlay"></div>
-<!-- inner-->
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">My Dashboard</div>
-
-    <!-- Welcome Card -->
-    <div class="card welcome__card">
-      <!-- Welcoming message -->
-      <p class="welcome">Hello back {{loggedInUser.firstName}} {{loggedInUser.lastName}} ! </p>
-
-      <!-- Warnings and very important alerts -->
-      <p class="warning">You must complete your profile before you can use our services ! <button>complete profile</button> </p>
-      
-      
-
-      <!-- Email should be verified -->
-      <ng-container *ngIf="!loggedInUser.isEmailVerified">
-        <p class="warning"> 
-          <svg class="icon icon-close-circle">
-            <use xlink:href="#icon-close-circle"></use>
-          </svg> 
-          You must Verify your Email before using our services ! <button>Verify Email</button> 
-        </p>
-      </ng-container>
-
-      <!-- Has no phone number -->
-      <ng-container *ngIf="loggedInUser.phone == null || loggedInUser.phone == ''">
-
-        <p class="warning"> 
-          <svg class="icon icon-close-circle">
-            <use xlink:href="#icon-close-circle"></use>
-          </svg> 
-          You must add a phone number before using our services <button>Add phone number</button> 
-        
-        </p>
-
-        <!-- Phone should be verified -->
-        <ng-container *ngIf="!loggedInUser.isPhoneNumberVerified">
-          <p class="warning"> 
-            <svg class="icon icon-close-circle">
-              <use xlink:href="#icon-close-circle"></use>
-            </svg> 
-            You must Verify your phone number before using our services ! <button>Verify Phone Number</button> 
-          
-          </p>
-        </ng-container>
-      </ng-container>
-    </div>
-    
-    <!-- Chargers Overview -->
-    <div class="card">
-      <div class="card__head">
-        <div class="title-purple card__title">My Recharge Cards</div>
+<div class="dashboard-home">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-background"></div>
+    <div class="welcome-content">
+      <div class="user-avatar">
+        <svg class="user-icon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
       </div>
-      <div>
-        <ngx-slick-carousel class="carousel" 
-        #slickModal="slick-carousel" 
-        [config]="slideConfig" 
-        (init)="slickInit($event)"
-        (breakpoint)="breakpoint($event)"
-        (afterChange)="afterChange($event)"
-        (beforeChange)="beforeChange($event)">
-          <div ngxSlickItem *ngFor="let rechargeCard of rechargeCards" class="slide">
-            <app-recharge-card ></app-recharge-card>
-          </div>
-      </ngx-slick-carousel>
+      
+      <h1 class="welcome-title">{{getGreeting()}}, {{user.name}}!</h1>
+      
+      <p class="welcome-subtitle">
+        Welcome back to your dashboard. We're excited to help you manage your journey with us.
+      </p>
+      
+      <div class="status-badges">
+        <div class="status-badge" [ngClass]="user.isEmailVerified ? 'verified' : 'pending'">
+          <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="user.isEmailVerified">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="!user.isEmailVerified">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+          Email {{user.isEmailVerified ? 'Verified' : 'Pending'}}
+        </div>
         
+        <div class="status-badge" [ngClass]="user.isPhoneVerified ? 'verified' : 'pending'">
+          <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="user.isPhoneVerified">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor" *ngIf="!user.isPhoneVerified">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+          Phone {{user.isPhoneVerified ? 'Verified' : 'Pending'}}
+        </div>
+        
+        <div class="status-badge" [ngClass]="isProfileComplete() ? 'verified' : 'progress'">
+          <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
+          </svg>
+          Profile {{isProfileComplete() ? 'Complete' : 'In Progress'}}
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Quick Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon profile-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+          <span class="stat-label">Profile</span>
+        </div>
+        <h3 class="stat-value">{{isProfileComplete() ? 'Complete' : 'In Progress'}}</h3>
+        <p class="stat-description">Account verification status</p>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon security-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
+            </svg>
+          </div>
+          <span class="stat-label">Security</span>
+        </div>
+        <h3 class="stat-value">Protected</h3>
+        <p class="stat-description">Your account is secure</p>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon activity-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V8H19V19M19,6H5V5H19V6Z"/>
+            </svg>
+          </div>
+          <span class="stat-label">Activity</span>
+        </div>
+        <h3 class="stat-value">Active</h3>
+        <p class="stat-description">Recent account activity</p>
+      </div>
+    </div>
+  </div>
 
-<button (click)="showPopup(elementX)">click</button>
+  <!-- Profile Completion Popup -->
+  <div class="popup-overlay" *ngIf="showProfilePopup" (click)="closePopup()">
+    <div class="popup-container" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2 class="popup-title">Complete Your Profile</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+          </svg>
+        </button>
+      </div>
 
-<div #elementX class="popup popup_product js-popup js-popup-product">
-  <div class="popup__overlay js-popup-overlay"></div>
-  <app-complete-profile-popup class="popup__wrap js-popup-wrap"></app-complete-profile-popup>
+      <div class="step-indicator">
+        <div class="step" [ngClass]="{'active': currentStep === 1, 'completed': user.isEmailVerified}">
+          <div class="step-number">1</div>
+          <span>Email</span>
+        </div>
+        <div class="step-line" [ngClass]="{'completed': currentStep > 1}"></div>
+        <div class="step" [ngClass]="{'active': currentStep === 2, 'completed': user.isPhoneVerified}">
+          <div class="step-number">2</div>
+          <span>Phone</span>
+        </div>
+        <div class="step-line" [ngClass]="{'completed': currentStep > 2}"></div>
+        <div class="step" [ngClass]="{'active': currentStep === 3}">
+          <div class="step-number">3</div>
+          <span>Details</span>
+        </div>
+      </div>
+
+      <div class="popup-content">
+        <!-- Step 1: Email Verification -->
+        <ng-container *ngIf="currentStep === 1 && !user.isEmailVerified">
+          <app-customer-home-email-verification></app-customer-home-email-verification>
+        </ng-container>
+        
+
+        <!-- Step 2: Phone Verification -->
+        <div class="step-content" *ngIf="currentStep === 2 && !user.isPhoneVerified">
+          <div class="step-icon phone-step">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+            </svg>
+          </div>
+          <h3>Verify Your Phone</h3>
+          <p>We need to verify your phone number: <strong>{{user.phone}}</strong></p>
+          
+          <div class="verification-form" *ngIf="!codeSent.phone">
+            <button class="primary-btn" (click)="sendVerificationSMS()">
+              Send Verification SMS
+            </button>
+          </div>
+          
+          <div class="verification-form" *ngIf="codeSent.phone">
+            <p class="success-message">Verification SMS sent! Check your messages.</p>
+            <div class="form-group">
+              <label>Enter verification code:</label>
+              <input type="text" [(ngModel)]="verificationCodes.phone" placeholder="Enter 6-digit code" maxlength="6">
+            </div>
+            <div class="form-actions">
+              <button class="primary-btn" (click)="verifyPhone()" [disabled]="verificationCodes.phone.length !== 6">
+                Verify Phone
+              </button>
+              <button class="secondary-btn" (click)="sendVerificationSMS()">
+                Resend Code
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Additional Profile Information -->
+        <div class="step-content" *ngIf="currentStep === 3">
+          <div class="step-icon profile-step">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+            </svg>
+          </div>
+          <h3>Complete Your Profile</h3>
+          <p>Add some additional information to personalize your experience (optional).</p>
+          
+          <div class="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Gender</label>
+                <select [(ngModel)]="profileData.gender">
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                  <option value="prefer-not-to-say">Prefer not to say</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>City</label>
+                <input type="text" [(ngModel)]="profileData.city" placeholder="Enter your city">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Car Brand</label>
+                <input type="text" [(ngModel)]="profileData.carBrand" placeholder="e.g., Toyota, BMW">
+              </div>
+              
+              <div class="form-group">
+                <label>Birthday</label>
+                <input type="date" [(ngModel)]="profileData.birthday">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="popup-footer">
+        <button class="secondary-btn" (click)="skipStep()" *ngIf="currentStep < 3">
+          Skip
+        </button>
+        <button class="secondary-btn" (click)="completeProfile()" *ngIf="currentStep === 3">
+          Complete Later
+        </button>
+        <button class="primary-btn" (click)="completeProfile()" *ngIf="currentStep === 3">
+          Save & Continue
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

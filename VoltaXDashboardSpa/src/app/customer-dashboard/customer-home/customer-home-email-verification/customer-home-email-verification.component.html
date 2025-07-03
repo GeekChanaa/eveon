@@ -1,0 +1,31 @@
+<div class="step-content">
+  <div class="step-icon email-step">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
+    </svg>
+  </div>
+  <h3>Verify Your Email</h3>
+  <p>We need to verify your email address: <strong>{{email}}</strong></p>
+  
+  <div class="verification-form" *ngIf="!emailCodeSent">
+    <app-button (btnClick)="sendVerificationEmail()" [isLoading]="isSendingVerificationEmail" variant="secondary">Send Verification Email</app-button>
+  </div>
+  
+  <div class="verification-form" *ngIf="emailCodeSent">
+    <p class="success-message">Verification email sent! Check your inbox.</p>
+    <div class="form-group">
+      <label>Enter verification code:</label>
+      <app-form-field
+        class="field"
+        title="Code"
+        description="The verification code you received in your email"
+        placeholder="Enter 6-digit code"
+        [control]="getControl('verificationCode')"
+      ></app-form-field>
+    </div>
+    <div class="form-actions">
+      <app-button variant="secondary" (btnClick)="verifyEmail()">Verify Email</app-button>
+      <app-button variant="secondary" [isLoading]="isSendingVerificationEmail" (btnClick)="sendVerificationEmail()"> Resend Code </app-button>
+    </div>
+  </div>
+</div>

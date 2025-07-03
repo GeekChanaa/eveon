@@ -1,0 +1,6 @@
+<section class="role-list-section">
+  <h2 class="role-list-title">Roles</h2>
+  <div class="role-flex-container">
+    <a *ngFor="let role of roles" href="/roles/{{role.id}}" class="role-card">{{role.name}}</a>
+  </div>
+</section>

@@ -18,5 +18,12 @@ export class RoleService extends AbstractService<Role>{
   // Base URL for the api
   baseUrl = environment.apiUrl+"/api/Role/";
 
+  createRole(role : any){
+    return this._http.post<any>(this.baseUrl+"CreateRole",role);
+  }
+
+  getRolesByPermissionID(permissionID : number){
+    return this._http.get<any>(this.baseUrl+"GetRolesByPermissionID/"+permissionID);
+  }
 
 }

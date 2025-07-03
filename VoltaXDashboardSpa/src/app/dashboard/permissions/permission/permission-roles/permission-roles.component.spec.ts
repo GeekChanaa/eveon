@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { MyCardComponent } from './my-card.component';
+import { PermissionRolesComponent } from './permission-roles.component';
 
-describe('MyCardComponent', () => {
-  let component: MyCardComponent;
-  let fixture: ComponentFixture<MyCardComponent>;
+describe('PermissionRolesComponent', () => {
+  let component: PermissionRolesComponent;
+  let fixture: ComponentFixture<PermissionRolesComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MyCardComponent ]
+      declarations: [ PermissionRolesComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MyCardComponent);
+    fixture = TestBed.createComponent(PermissionRolesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

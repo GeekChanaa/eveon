@@ -7,6 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface IPermissionRepository : IRepository<Permission>
     {
-        
+        Task<List<PermissionListDto>> GetAllPermissions();
+        Task<PermissionDisplayDto> GetPermissionByID(int permissionID);
     }
 }

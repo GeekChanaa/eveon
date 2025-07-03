@@ -7,6 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface IRoleRepository : IRepository<Role>
     {
-        
+        Task CreateRole(CreateRoleDto role);
+        Task<List<RoleListDto>> GetRolesByPermissionID(int permissionID);
     }
 }
