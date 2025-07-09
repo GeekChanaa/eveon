@@ -55,6 +55,12 @@ namespace VoltaXApi.Controllers
             return await this._repository.GetUserDebitCards(UserID);
         }
 
+        [HttpGet("GetUserPhoneNumber/{UserID}")]
+        public async Task<ActionResult<string>> GetUserPhoneNumber( int UserID)
+        {
+            return await this._repository.GetUserPhoneNumber(UserID);
+        }
+
         [HttpGet("GetUserDashboardDisplayInformations/{userID}")]
         public async Task<ActionResult<UserDashboardDisplayInformationsDto>> GetUserDashboardDisplayInformations( int UserID)
         {

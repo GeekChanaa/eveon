@@ -122,84 +122,25 @@
       <div class="popup-content">
         <!-- Step 1: Email Verification -->
         <ng-container *ngIf="currentStep === 1 && !user.isEmailVerified">
-          <app-customer-home-email-verification></app-customer-home-email-verification>
+          <app-customer-home-email-verification
+            (nextStep)="currentStep = 2"></app-customer-home-email-verification>
         </ng-container>
         
 
         <!-- Step 2: Phone Verification -->
         <div class="step-content" *ngIf="currentStep === 2 && !user.isPhoneVerified">
-          <div class="step-icon phone-step">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
-            </svg>
-          </div>
-          <h3>Verify Your Phone</h3>
-          <p>We need to verify your phone number: <strong>{{user.phone}}</strong></p>
-          
-          <div class="verification-form" *ngIf="!codeSent.phone">
-            <button class="primary-btn" (click)="sendVerificationSMS()">
-              Send Verification SMS
-            </button>
-          </div>
-          
-          <div class="verification-form" *ngIf="codeSent.phone">
-            <p class="success-message">Verification SMS sent! Check your messages.</p>
-            <div class="form-group">
-              <label>Enter verification code:</label>
-              <input type="text" [(ngModel)]="verificationCodes.phone" placeholder="Enter 6-digit code" maxlength="6">
-            </div>
-            <div class="form-actions">
-              <button class="primary-btn" (click)="verifyPhone()" [disabled]="verificationCodes.phone.length !== 6">
-                Verify Phone
-              </button>
-              <button class="secondary-btn" (click)="sendVerificationSMS()">
-                Resend Code
-              </button>
-            </div>
-          </div>
+          <app-customer-home-phone-verification
+            *ngIf="userID != undefined || userID != 0"
+            [userID]="userID"
+            [email]="email"
+            (nextStep)="currentStep = 3"></app-customer-home-phone-verification>
         </div>
 
         <!-- Step 3: Additional Profile Information -->
         <div class="step-content" *ngIf="currentStep === 3">
-          <div class="step-icon profile-step">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
-            </svg>
-          </div>
-          <h3>Complete Your Profile</h3>
-          <p>Add some additional information to personalize your experience (optional).</p>
-          
-          <div class="profile-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label>Gender</label>
-                <select [(ngModel)]="profileData.gender">
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                  <option value="prefer-not-to-say">Prefer not to say</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>City</label>
-                <input type="text" [(ngModel)]="profileData.city" placeholder="Enter your city">
-              </div>
-            </div>
-            
-            <div class="form-row">
-              <div class="form-group">
-                <label>Car Brand</label>
-                <input type="text" [(ngModel)]="profileData.carBrand" placeholder="e.g., Toyota, BMW">
-              </div>
-              
-              <div class="form-group">
-                <label>Birthday</label>
-                <input type="date" [(ngModel)]="profileData.birthday">
-              </div>
-            </div>
-          </div>
+          <app-customer-home-additional-informations 
+            *ngIf="userID != undefined || userID != 0"
+            (nextStep)="currentStep = 3"></app-customer-home-additional-informations>
         </div>
       </div>
 

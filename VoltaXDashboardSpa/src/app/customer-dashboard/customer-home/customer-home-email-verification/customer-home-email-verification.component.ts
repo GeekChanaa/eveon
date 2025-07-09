@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
@@ -12,6 +12,7 @@ import { UserService } from 'src/_services/user.service';
 })
 export class CustomerHomeEmailVerificationComponent implements OnInit {
 
+  @Output() nextStep : EventEmitter<void> = new EventEmitter<void>();
   isSendingVerificationEmail : boolean = false;
   userID: number = 0;
   email : string = "";
@@ -53,6 +54,7 @@ export class CustomerHomeEmailVerificationComponent implements OnInit {
     this._authService.verifyEmail({email : this.email, token : this.form.value.verificationCode}).subscribe((data) => {
       this.verifyingEmail = false
       this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Email verified successfully !",4000);
+      this.nextStep.emit();
     },(error) => {
       this.verifyingEmail = false
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong!",4000);

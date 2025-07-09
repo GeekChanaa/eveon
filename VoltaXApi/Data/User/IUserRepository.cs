@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Helpers;
+using Org.BouncyCastle.Bcpg;
 
 namespace VoltaXApi.Data
 {
@@ -31,5 +32,6 @@ namespace VoltaXApi.Data
         IQueryable<User> GetSupportsQueryable();
         IQueryable<User> GetCustomersQueryable();
         IQueryable<User> GetPartnersQueryable();
+        Task<string> GetUserPhoneNumber(int userID);
     }
 }

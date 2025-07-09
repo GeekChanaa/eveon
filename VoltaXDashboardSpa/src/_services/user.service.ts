@@ -154,6 +154,10 @@ export class UserService extends AbstractService<User>{
     return this.http.put<any>(this.baseUrl + 'UpdateUserPhone', user);
   }
 
+  getUserPhoneNumber(userID : number){
+    return this._http.get<any>(this.baseUrl + "GetUserPhoneNumber/"+userID);
+  }
+
 
 
   

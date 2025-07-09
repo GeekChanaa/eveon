@@ -14,9 +14,32 @@ namespace VoltaXApi.Models
         public string? City { get; set; }
         public string? Car { get; set; }
         public DateTime? Birthday { get; set; }
-        public string Phone { get; set; }
+        private string? _phoneNumber;
+        public string? Phone
+        {
+            get => _phoneNumber;
+            set => _phoneNumber = NormalizePhoneNumber(value);
+        }
+
+        private string NormalizePhoneNumber(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return null;
+
+            // Remove spaces and non-digit characters except "+"
+            phone = phone.Trim().Replace(" ", "").Replace("-", "");
+
+            // Remove leading 0 or +212 or 212
+            if (phone.StartsWith("+212"))
+                phone = phone.Substring(4);
+            else if (phone.StartsWith("212"))
+                phone = phone.Substring(3);
+            else if (phone.StartsWith("0"))
+                phone = phone.Substring(1);
+
+            return $"+212{phone}";
+        }
     
-        public  byte[] PasswordHash { get; set; }
+        public byte[] PasswordHash { get; set; }
         public  byte[] PasswordSalt { get; set; }
         [NotMapped]
         public string? Password { get; set; }

@@ -1,0 +1,46 @@
+<div class="step-icon profile-step">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+  </svg>
+</div>
+<h3>Complete Your Profile</h3>
+<p>Add some additional information to personalize your experience (optional).</p>
+
+<div class="profile-form">
+  <div class="form-row">
+    <div class="form-group">
+
+      <app-form-field
+        class="field"
+        title="Gender"
+        inputType="select"
+        description="Gender"
+        placeholder="Select Gender"
+        [options]="genderOptions"
+        [control]="getControl('gender')"
+      ></app-form-field>
+    </div>
+    
+    <div class="form-group">
+      <label>City</label>
+      <app-search-input class="field"
+        placeholder="City"
+        title="City"
+        description="The City where the charging station is."
+        [control]="getControl('city')"
+        [options]="cities"></app-search-input>
+    </div>
+  </div>
+  
+  <div class="form-row">
+    <div class="form-group">
+      <label>Car Brand</label>
+      <!-- <input type="text" [(ngModel)]="profileData.carBrand" placeholder="e.g., Toyota, BMW"> -->
+    </div>
+    
+    <div class="form-group">
+      <label>Birthday</label>
+      <!-- <input type="date" [(ngModel)]="profileData.birthday"> -->
+    </div>
+  </div>
+</div>

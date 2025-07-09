@@ -11,11 +11,13 @@ import { MatRippleModule } from '@angular/material/core';
 import {MatTabsModule} from '@angular/material/tabs'; 
 import { CustomerHomeEmailVerificationComponent } from './customer-home/customer-home-email-verification/customer-home-email-verification.component';
 import { CustomerHomePhoneVerificationComponent } from './customer-home/customer-home-phone-verification/customer-home-phone-verification.component';
+import { CustomerHomeAdditionalInformationsComponent } from './customer-home/customer-home-additional-informations/customer-home-additional-informations.component';
 @NgModule({
     declarations: [
         CustomerHomeComponent,
         CustomerHomeEmailVerificationComponent,
-        CustomerHomePhoneVerificationComponent
+        CustomerHomePhoneVerificationComponent, 
+        CustomerHomeAdditionalInformationsComponent
     ],
     imports: [
         AtomsModule,

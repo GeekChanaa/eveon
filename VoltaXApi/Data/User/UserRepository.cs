@@ -47,12 +47,12 @@ namespace VoltaXApi.Data
         {
             var user = await _context.Users.Include(u => u.DebitCards)
                 .FirstOrDefaultAsync(u => u.ID == UserID);
-            
+
             if (user == null)
                 return new List<DebitCardListingDto>();
-            
+
             var result = new List<DebitCardListingDto>();
-            
+
             foreach (var card in user.DebitCards.Where(c => !c.IsDeleted))
             {
                 var dto = new DebitCardListingDto
@@ -63,10 +63,10 @@ namespace VoltaXApi.Data
                     NameHidden = Mask(card.Name),
                     Type = DetermineCardType(card.CardNumber)
                 };
-                
+
                 result.Add(dto);
             }
-            
+
             return result;
         }
 
@@ -74,14 +74,14 @@ namespace VoltaXApi.Data
         {
             if (string.IsNullOrEmpty(cardNumber))
                 return DebitCardTypeEnum.Generic;
-            
+
             // Clean the card number (remove spaces)
             var cleanNumber = cardNumber.Replace(" ", "");
-            
+
             // Visa cards start with 4
             if (cleanNumber.StartsWith("4"))
                 return DebitCardTypeEnum.Visa;
-            
+
             // Mastercard starts with 51-55 or ranges 2221-2720
             if (cleanNumber.StartsWith("5") && cleanNumber.Length > 1)
             {
@@ -89,7 +89,7 @@ namespace VoltaXApi.Data
                 if (secondDigit >= 1 && secondDigit <= 5)
                     return DebitCardTypeEnum.Mastercard;
             }
-            
+
             // Check for Mastercard's 2-series range
             if (cleanNumber.StartsWith("2") && cleanNumber.Length >= 4)
             {
@@ -97,7 +97,7 @@ namespace VoltaXApi.Data
                 if (prefix >= 2221 && prefix <= 2720)
                     return DebitCardTypeEnum.Mastercard;
             }
-            
+
             // Default to Generic for any other patterns
             return DebitCardTypeEnum.Generic;
         }
@@ -106,11 +106,11 @@ namespace VoltaXApi.Data
         {
             if (string.IsNullOrEmpty(value))
                 return string.Empty;
-            
+
             // Assuming you want to keep first and last character visible
             if (value.Length <= 2)
                 return value;
-            
+
             // Keep first and last characters visible, mask the rest with asterisks
             return value[0] + new string('*', value.Length - 2) + value[value.Length - 1];
         }
@@ -146,7 +146,7 @@ namespace VoltaXApi.Data
         public async Task<List<UserNameDto>> GetSupportUserNames()
         {
             var users = await _context.Users.Where(u => u.Role.Name == "SUPPORT").ToListAsync();
-            return _mapper.Map<List<User>,List<UserNameDto>>(users);
+            return _mapper.Map<List<User>, List<UserNameDto>>(users);
         }
 
         public async Task<string> GetUserEmailByID(int userID)
@@ -184,7 +184,7 @@ namespace VoltaXApi.Data
         public async Task<UserDashboardDisplayInformationsDto> GetUserDashboardDisplayInformations(int userID)
         {
             var user = await GetByIdAsync(userID);
-            return _mapper.Map<User,UserDashboardDisplayInformationsDto>(user);
+            return _mapper.Map<User, UserDashboardDisplayInformationsDto>(user);
         }
 
         public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
@@ -206,7 +206,8 @@ namespace VoltaXApi.Data
         public async Task<UserListDto> GetUserInformations(int userID)
         {
             var user = await _context.Users
-                        .Select(u => new UserListDto{
+                        .Select(u => new UserListDto
+                        {
                             ID = u.ID,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
@@ -259,11 +260,16 @@ namespace VoltaXApi.Data
         }
         public IQueryable<User> GetCustomersQueryable()
         {
-            return _context.Users.Where(u => u.Role.Name != "ADMIN" &&  u.Role.Name != "SUPPORT");
+            return _context.Users.Where(u => u.Role.Name != "ADMIN" && u.Role.Name != "SUPPORT");
         }
         public IQueryable<User> GetPartnersQueryable()
         {
             return _context.Users.Where(u => u.PartnerID != null);
+        }
+
+        public async Task<string> GetUserPhoneNumber(int userID)
+        {
+            return (await _context.Users.FirstOrDefaultAsync(u => u.ID == userID)).Phone;
         }
     }
 }
