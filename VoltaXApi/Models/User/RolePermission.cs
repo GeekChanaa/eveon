@@ -9,6 +9,7 @@ public class RolePermission : IEntity
 
     public int PermissionID { get; set; }
     public Permission Permission { get; set; } = null!;
+    public PermissionScope Scope { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

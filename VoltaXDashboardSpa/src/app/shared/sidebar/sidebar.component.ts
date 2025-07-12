@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
+import { PartnerService } from 'src/_services/partner.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,6 +27,13 @@ export class SidebarComponent implements OnInit, AfterViewInit {
 
   checked : boolean = false;
 
+  partnerID : number = 0;
+
+  partnerImageUrl : string = "";
+  
+  staticUrl : string = environment.apiStaticFilesUrl;
+  
+
   // User Role
   role : UserRole = UserRole.Customer;
 
@@ -33,11 +42,17 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private _authService : AuthService,
+    private _partnerService : PartnerService,
     public _enumMappingService : EnumMappingService
   ) { }
 
   ngOnInit() {
     this.role = this._authService.getRole();
+    let userDecodedToken = this._authService.decodedToken;
+    if(this._authService.decodedToken.partnerID != null && this._authService.decodedToken.partnerID != undefined){
+      this.partnerID = parseInt(this._authService.decodedToken.partnerID);
+      this.getPartnerImage();
+    }
     var mode = localStorage.getItem("darkMode");
     if(mode == "on")
       this.checked = true;
@@ -82,6 +97,12 @@ export class SidebarComponent implements OnInit, AfterViewInit {
 
   isDropdownActive(baseUrl: string): boolean {
     return this.currentUrl.startsWith(baseUrl);
+  }
+
+  getPartnerImage(){
+    this._partnerService.getPartnerLogoUrl(this.partnerID).subscribe((data) => {
+      this.partnerImageUrl = this.staticUrl + data.url;
+    })
   }
 
   

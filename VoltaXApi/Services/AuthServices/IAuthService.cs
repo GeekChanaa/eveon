@@ -8,7 +8,7 @@ namespace VoltaXApi.Services
     public interface IAuthService
     {
       Task<User> Register(UserForRegisterDto userForRegisterDto);
-      Task<User> Login(string email, string login, string ipAddress);
+      Task<LoginResultDto> Login(string email, string login, string ipAddress);
       Task<bool> VerifyEmail(string email, string token);
       Task<bool> VerifyPhoneNumber(string email, string token);
       Task SendPhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);

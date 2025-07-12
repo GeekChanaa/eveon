@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserForLoginDto } from 'src/_models/_dtos/user-for-login-dto';
 import { AuthService } from 'src/_services/auth.service';
+import { PartnerAuthService } from 'src/_services/partner-auth.service';
 import { UserService } from 'src/_services/user.service';
 
 @Component({
@@ -16,9 +17,8 @@ export class PartnerLoginComponent implements OnInit {
   isLoading : boolean = false;
   form: FormGroup;
   constructor(
-    private _authService: AuthService,
     private _router : Router,
-    private _userService : UserService
+    private _partnerAuthService : PartnerAuthService
   ) {
     this.form = new FormGroup({
       email: new FormControl('', [
@@ -41,22 +41,19 @@ export class PartnerLoginComponent implements OnInit {
   }
 
   login(){
-
     this.isLoading = true;
     const formValue = this.form.value;
     var userForLogin : UserForLoginDto = {
       email : formValue.email,
       password : formValue.password
     };
-    this._authService.login(userForLogin).subscribe((data) => {
+    this._partnerAuthService.login(userForLogin).subscribe((data) => {
       this.isLoading = false;
-      var userID = parseInt(this._authService.getAuthInformation().nameid);
-      this._userService.getById(userID).subscribe((u) => {
-        this._router.navigateByUrl("/dashboard")
-      });
-      
+      this._router.navigateByUrl('/partner-dashboard')  
     },(error) => {
       this.isLoading = false;
+      console.log("this is the error : ");
+      console.log(error);
       if(error.status == 401){
         this.errorMessage = "Email or password incorrect";
       }
@@ -64,12 +61,8 @@ export class PartnerLoginComponent implements OnInit {
         this.errorMessage = "Too Many Failed attempts, please check your email.";
       }
       else{
-        this.errorMessage = "Server error, please try again later";
+        this.errorMessage = error.error.error;
       }
     })
-  }
-
-  googleLogin(){
-    this._authService.googleLogin();
   }
 }

@@ -88,6 +88,7 @@
       Not specified
     </div>
   </div>
+
   
   <!-- Edit Mode -->
   <div class="form-field__edit" *ngIf="editing">
@@ -138,6 +139,15 @@
         <select class="form-field__select" [(ngModel)]="updatedValue">
           <option *ngFor="let value of getEnumValues()" [value]="value">
             {{ value.toString() | camelCaseToSpace }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Select -->
+       <div *ngSwitchCase="'select'" class="form-field__select-wrapper">
+        <select class="form-field__select" [(ngModel)]="updatedValue">
+          <option *ngFor="let option of options" [value]="option.value.toString()">
+            {{ option.label.toString() | camelCaseToSpace }}
           </option>
         </select>
       </div>

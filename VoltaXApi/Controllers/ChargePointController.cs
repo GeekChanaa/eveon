@@ -143,13 +143,7 @@ namespace VoltaXApi.Controllers
 
             return Ok("Message sent successfully.");
         }
-
-        [HttpGet("logging")]
-        public async Task<IActionResult> Logging([FromBody] string message)
-        {
-            return StatusCode(200);
-        }
-
+        
         [HttpPut("SetShowOnMap/{chargePointID}")]
         public async Task<IActionResult> SetShowOnMap(int chargePointID, [FromBody] bool val)
         {

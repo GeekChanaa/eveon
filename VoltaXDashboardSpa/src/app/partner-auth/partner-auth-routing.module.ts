@@ -6,6 +6,7 @@ import { PartnerForgotPasswordComponent } from './partner-forgot-password/partne
 
 
 export const AuthRoutes: Routes= [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path : 'login' , component : PartnerLoginComponent },
   { path : 'forgot-password' , component : PartnerForgotPasswordComponent },
 ]

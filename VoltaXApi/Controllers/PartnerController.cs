@@ -35,7 +35,7 @@ namespace VoltaXApi.Controllers
         {
             var partners = this._repository.GetPartners(globalParams);
             var list = await partners.ToListAsync();
-            var partnersList = await PagedList<PartnerListDto>.CreateAsync(partners,globalParams.PageNumber, globalParams.PageSize);
+            var partnersList = await PagedList<PartnerListDto>.CreateAsync(partners, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(partnersList.CurrentPage, partnersList.PageSize, partnersList.TotalCount, partnersList.TotalPages);
             return partnersList;
         }
@@ -65,6 +65,18 @@ namespace VoltaXApi.Controllers
             return await _repository.PartnerEmailExists(email);
         }
 
+        [HttpGet("GetPartnerImageByID/{partnerID}")]
+        public async Task<IActionResult> GetPartnerImageByID(int partnerID)
+        {
+            var imageUrl = await _repository.GetPartnerImageByID(partnerID);
+
+            if (string.IsNullOrEmpty(imageUrl))
+                return NotFound(new { message = "Image not found" });
+
+            return Ok(new { url = imageUrl });
+        }
+
+
         [HttpGet("PartnerPhoneExists")]
         public async Task<bool> PartnerPhoneExists(string phone)
         {
@@ -72,11 +84,11 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("UploadPartnerLogo/{partnerID}")]
-        public async  Task<IActionResult> UploadPartnerLogo(IFormFile imageFile, int partnerID)
+        public async Task<IActionResult> UploadPartnerLogo(IFormFile imageFile, int partnerID)
         {
             try
             {
-                
+
                 if (Request.Form.Files.Count == 1)
                 {
                     var file = Request.Form.Files[0];
@@ -93,5 +105,7 @@ namespace VoltaXApi.Controllers
                 return BadRequest();
             }
         }
+        
+        
     }
 }

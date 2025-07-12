@@ -23,6 +23,10 @@
         icon="icon-info"
       ></app-form-field>
 
+      <div class="error">
+        {{errorMessage}}
+      </div>
+
       <app-button 
         class="entry__button" 
         [disabled]="!form.valid" 

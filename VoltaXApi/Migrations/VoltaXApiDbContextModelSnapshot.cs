@@ -2444,6 +2444,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("RoleID")
                         .HasColumnType("int");
 
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 

@@ -26,4 +26,9 @@ export class RoleService extends AbstractService<Role>{
     return this._http.get<any>(this.baseUrl+"GetRolesByPermissionID/"+permissionID);
   }
 
+  getAllRoles(){
+    return this._http.get<any>(this.baseUrl+"GetAllRoles/");
+  }
+
+
 }

@@ -63,7 +63,7 @@
         <div class="display__columns_options">
           <div class="filters__label">Showing</div>
           <div class="filters__list">
-            <label class="checkbox checkbox_reverse" *ngFor="let field of fields">
+            <label class="checkbox checkbox_reverse checkbox__display" *ngFor="let field of fields">
               <input value="{{fieldShown[field]}}" [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
               <span class="checkbox__inner">
                 <span class="checkbox__tick"></span>

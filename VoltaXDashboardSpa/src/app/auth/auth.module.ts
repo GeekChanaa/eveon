@@ -30,7 +30,7 @@ import { RequestPasswordMailSentComponent } from './request-password/request-pas
         EnterPhoneNumberComponent,
         CompleteProfileComponent,
         AuthComponent,
-        RequestPasswordMailSentComponent
+        RequestPasswordMailSentComponent,
   ],
     imports: [
       CommonModule,

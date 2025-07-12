@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace VoltaXApi.Data
 {
-    public class PartnerRepository : Repository<Partner>,IPartnerRepository
+    public class PartnerRepository : Repository<Partner>, IPartnerRepository
     {
         private readonly IMapper _mapper;
         public PartnerRepository(
@@ -32,7 +32,7 @@ namespace VoltaXApi.Data
 
         public async Task<int> CreatePartner(CreatePartnerDto partner)
         {
-            var partnerToAdd = _mapper.Map<CreatePartnerDto,Partner>(partner);
+            var partnerToAdd = _mapper.Map<CreatePartnerDto, Partner>(partner);
             partnerToAdd.PartnerIdentificationNumber = await GeneratePartnerIdentificationNumberAsync();
             await AddAsync(partnerToAdd);
             return partnerToAdd.ID;
@@ -40,7 +40,8 @@ namespace VoltaXApi.Data
 
         public async Task<PartnerDisplayDto> GetPartnerByID(int id)
         {
-            return await _context.Partners.Where(p => p.ID == id).Select(p => new PartnerDisplayDto {
+            return await _context.Partners.Where(p => p.ID == id).Select(p => new PartnerDisplayDto
+            {
                 ID = p.ID.ToString(),
                 Name = p.Name,
                 PartnerIdentificationNumber = p.PartnerIdentificationNumber,
@@ -75,7 +76,8 @@ namespace VoltaXApi.Data
 
         public async Task<List<PartnerListForSelectDto>> GetAllPartners()
         {
-            return await _context.Partners.Select(p => new PartnerListForSelectDto{
+            return await _context.Partners.Select(p => new PartnerListForSelectDto
+            {
                 ID = p.ID,
                 Name = p.Name
             }).ToListAsync();
@@ -99,6 +101,17 @@ namespace VoltaXApi.Data
 
             return $"VXP-{nextNumber:D4}";
         }
+
+        public async Task<string> GetPartnerImageByID(int partnerID)
+        {
+            Partner partner = await dbSet.FirstOrDefaultAsync(u => u.ID == partnerID);
+            if (partner == null || partner.ImageID == null)
+                return "";
+
+            return (await _context.Images.FirstOrDefaultAsync(u => u.ID == partner.ImageID)).Url;
+        }
+        
+
 
 
     }

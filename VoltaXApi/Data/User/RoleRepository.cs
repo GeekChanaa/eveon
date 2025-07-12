@@ -47,5 +47,19 @@ namespace VoltaXApi.Data
 
             return roles;
         }
+
+        public async Task<List<RoleListDto>> GetAllRoles()
+        {
+            var roles = await _context.Roles
+                .Select(rp => new RoleListDto
+                {
+                    ID = rp.ID,
+                    Name = rp.Name
+                })
+                .ToListAsync();
+
+            return roles;
+        }
+
     }
 }

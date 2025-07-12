@@ -60,6 +60,8 @@ export class LoginComponent implements OnInit {
       
     },(error) => {
       this.isLoading = false;
+      console.log("this is the error my friend");
+      console.log(error);
       if(error.status == 401){
         this.errorMessage = "Email or password incorrect";
       }

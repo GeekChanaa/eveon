@@ -28,6 +28,10 @@ export class PartnerService extends AbstractService<Partner>{
   getPartnerByID(partnerID : number){
     return this._http.get(this.baseUrl+"GetPartnerByID/"+partnerID)
   }
+  
+  getPartnerLogoUrl(partnerID : number){
+    return this._http.get<any>(this.baseUrl+"GetPartnerImageByID/"+partnerID);
+  }
 
   getAllPartnersForSelect(){
     return this._http.get<any[]>(this.baseUrl+"GetAllPartnersForSelect/")

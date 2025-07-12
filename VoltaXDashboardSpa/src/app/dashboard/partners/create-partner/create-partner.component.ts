@@ -74,7 +74,7 @@ export class CreatePartnerComponent implements OnInit {
 
   getMoroccoCities(){
     this._cityService.getAllMoroccoCityNames().subscribe((data) => {
-      this.cities = data;
+      this.cities = data.map((obj) => ({ id: obj.name, name: obj.name }));
     })
   }
   

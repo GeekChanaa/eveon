@@ -25,5 +25,7 @@ namespace VoltaXApi.Controllers
         {
             _repository = repository;
         }
+
+        
     }
 }

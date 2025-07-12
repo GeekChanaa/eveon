@@ -33,6 +33,18 @@ export class PartnerAuthService {
     return this.http.get(this.baseUrl+"ResetPartnerPasswordRequest?email="+email);
   }
 
-
+  login(model:any){
+    return this.http.post(this.baseUrl +'login', model).pipe(
+      map((response:any) => {
+        const user = response;
+        if(user){
+          localStorage.setItem('token',user.token);
+          this.token = user.token;
+          var decode = this.jwtHelper.decodeToken(user.token);
+          this.decodedToken = decode;
+        }
+      })
+    )
+  }
 
 }

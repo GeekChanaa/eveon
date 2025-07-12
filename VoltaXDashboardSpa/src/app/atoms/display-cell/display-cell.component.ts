@@ -4,6 +4,11 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 
+export interface SelectOption<T = string> {
+  value: T;
+  label: string;
+  disabled?: boolean;
+}
 @Component({
   selector: 'app-display-cell',
   templateUrl: './display-cell.component.html',
@@ -20,6 +25,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   @Input() editable: boolean = true;
   @Input() isLink: boolean = false;
   @Input() link: string = '';
+  @Input() options : SelectOption[] = [];
+  
   @Input() updateObservable!: (id: number, object: any) => Observable<any>;
   
   @Output() valueChanged = new EventEmitter<any>();
@@ -61,8 +68,6 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
     this.errorMessage = '';
     this.editing = true;
     this.updatedValue = this.val;
-    console.log("this.editing : ",this.editing);
-    console.log(this.val);
     // Set focus on input after view is updated
     setTimeout(() => {
       if (this.inputField) {

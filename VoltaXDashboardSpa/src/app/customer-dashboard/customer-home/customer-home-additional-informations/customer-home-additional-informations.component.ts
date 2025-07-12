@@ -14,7 +14,7 @@ export class CustomerHomeAdditionalInformationsComponent implements OnInit {
   form : FormGroup;
 
   cities : any[] = [];
-  
+
   genderOptions : any[] = [
     {value:"male", label:"Male"},
     {value:"female", label:"Female"},
@@ -35,7 +35,7 @@ export class CustomerHomeAdditionalInformationsComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.getCities();
   }
 
   getCities(){

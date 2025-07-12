@@ -5,8 +5,10 @@ using System.Runtime.CompilerServices;
 
 namespace VoltaXApi.Services
 {
-    public interface IPartnerAuthService
-    {
-      Task PartnerResetPasswordRequest(string email);
-    }
+  public interface IPartnerAuthService
+  {
+    Task PartnerResetPasswordRequest(string email);
+    Task<LoginResultDto> Login(string email, string password, string ipAddress);
+
+  }
 }
