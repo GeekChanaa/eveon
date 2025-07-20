@@ -25,10 +25,10 @@ namespace VoltaXApi.Services
       await this._systemReportRepo.AddAsync(report);
       if(report.IsEmail)
       {
-        // await this._mailService.SendReportEmailToAdmin(report);
+        await _mailService.SendReportEmailToSupport(report.ID);
+        await this._mailService.SendReportEmailToAdmin(report);
         if(report.AssignedID != null){
           string email = await _userRepository.GetUserEmailByID(report.AssignedID ?? 1);
-          // await _mailService.SendReportEmailToSupport(report, email);
         }
       }
     }

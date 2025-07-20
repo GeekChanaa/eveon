@@ -12,7 +12,7 @@ export class ConnectorStatusesComponent implements OnInit {
   unavailableConnectors : number = 0;
   faultedConnectors : number = 0;
   occupiedConnectors : number = 0;
-  reservedConnectors : number = 0;
+  disconnectedConnectors : number = 0;
   
   constructor(
     private _connectorStatusService : ConnectorStatusService
@@ -28,7 +28,7 @@ export class ConnectorStatusesComponent implements OnInit {
       this.unavailableConnectors = data.nbrUnavailableConnectors;
       this.faultedConnectors = data.nbrFaultedConnectors;
       this.occupiedConnectors = data.nbrOccupiedConnectors;
-      this.reservedConnectors = data.nbrReservedConnectors;	
+      this.disconnectedConnectors = data.nbrDisconnectedConnectors;	
 
       console.log(this.faultedConnectors);
     });

@@ -1,3 +1,7 @@
-<div class="toggle-switch" [class.toggle-switch--on]="isToggled" (click)="toggle()">
+<div
+  class="toggle-switch"
+  [class.toggle-switch--on]="isToggled"
+  [class.toggle-switch--disabled]="!togglable"
+  (click)="toggle()">
   <div class="toggle-switch__handle"></div>
 </div>

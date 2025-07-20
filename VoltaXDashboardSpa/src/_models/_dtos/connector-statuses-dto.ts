@@ -3,5 +3,6 @@ export interface ConnectorStatusesDto{
   nbrOccupiedConnectors : number,
   nbrReservedConnectors : number,
   nbrUnavailableConnectors : number,
-  nbrFaultedConnectors : number
+  nbrFaultedConnectors : number,
+  nbrDisconnectedConnectors : number
 }

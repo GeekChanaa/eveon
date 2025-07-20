@@ -4,7 +4,13 @@
       <use xlink:href="#icon-close"></use>
     </svg>
   </button>
-  <a class="sidebar__logo" routerLink="/dashboard">
+  <a class="sidebar__logo" *ngIf="partnerID == 0" routerLink="/dashboard">
+    <ng-container>
+      <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+    </ng-container>
+  </a>
+
+  <a class="sidebar__logo" *ngIf="partnerID != 0" routerLink="/partner-dashboard">
     <ng-container *ngIf="partnerImageUrl != '' && partnerImageUrl != null ">
       <img src="{{partnerImageUrl}}" alt="Partner Logo">
     </ng-container>

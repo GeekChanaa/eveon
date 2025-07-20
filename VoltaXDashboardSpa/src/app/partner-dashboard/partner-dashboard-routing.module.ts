@@ -6,6 +6,8 @@ const routes: Routes = [
   {
     path: "",
     component: PartnerHomeComponent,
+    loadChildren : () => import('./partner-home/partner-home.module')
+      .then(m=>m.PartnerHomeModule)
   },
   {
     path: "connector-realtime",

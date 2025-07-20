@@ -69,7 +69,6 @@ export class ConnectorRealtimeListComponent implements OnInit {
   getCities(){
     this._cityService.getAllMoroccoCityNames().subscribe((data) => {
       this.cities = data;
-      console.log(this.cities);
     })
   }
 

@@ -46,9 +46,6 @@
   color: #1A1D1F
   background-color: #f2efff
   transition: ease-in-out all .3s
-  &:hover
-    background-color: #c8bdf7 !important
-    cursor: pointer
 
 
 @media only screen and (max-width: 1023px) 
@@ -164,7 +161,12 @@ body.dark .connector__status__indicator
 .connector__status__chart 
   width: 80px
   height: 80px
-  margin-left: auto  
+  margin-left: auto
+
+
+.connector__status__item:hover
+  background-color: #c8bdf7 !important
+  cursor: pointer
 
 
 .connector__status

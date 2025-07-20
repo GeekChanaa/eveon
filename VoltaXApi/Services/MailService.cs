@@ -20,7 +20,7 @@ namespace VoltaXApi.Services
 		private readonly IConfiguration _configuration;
 		private readonly SupportEmails _supportEmails;
 		private readonly IWebHostEnvironment _env;
-		private readonly IReportRepository _reportRepo;
+		private readonly ISystemReportRepository _systemReportRepository;
 
 		public MailService(
 					IOptions<MailSettings> mailSettings,
@@ -28,14 +28,14 @@ namespace VoltaXApi.Services
 					IConfiguration config,
 					IOptions<SupportEmails> supportEmails,
 					IWebHostEnvironment env,
-					IReportRepository reportRepository)
+					ISystemReportRepository SystemReportRepository)
 		{
 			_mailSettings = mailSettings.Value;
 			_emailTemplateService = emailTemplateService;
 			_configuration = config;
 			_supportEmails = supportEmails.Value;
 			_env = env;
-			_reportRepo = reportRepository;
+			_systemReportRepository = SystemReportRepository;
 		}
 
 		public async Task SendEmailAsync(MailRequest mailRequest)
@@ -185,7 +185,7 @@ namespace VoltaXApi.Services
 		public async Task SendReportEmail(MailRequest mailRequest, int reportID)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
-			var report = await _reportRepo.GetByIdAsync(reportID);
+			var report = await _systemReportRepository.GetByIdAsync(reportID);
 			var template = GetEmailTemplate("system-report");
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{

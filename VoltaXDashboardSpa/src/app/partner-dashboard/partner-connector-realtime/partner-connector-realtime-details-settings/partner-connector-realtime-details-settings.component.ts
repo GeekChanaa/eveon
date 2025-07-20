@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-partner-connector-realtime-details-settings',
@@ -6,8 +6,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./partner-connector-realtime-details-settings.component.sass']
 })
 export class PartnerConnectorRealtimeDetailsSettingsComponent implements OnInit {
+  
+  @Input() chargePoint : any = {};
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit() {
   }

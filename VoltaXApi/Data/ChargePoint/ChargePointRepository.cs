@@ -149,6 +149,20 @@ namespace VoltaXApi.Data
             });
             return chargePoints;
         }
+        
+        public IQueryable<ChargePointCRListDto> GetAllPartnerChargePoints(GlobalParams globalParams, int partnerID)
+        {
+            var chargePoints = GetAllAsync(globalParams).Where(u => u.ChargingStation.PartnerID == partnerID).Select(cp => new ChargePointCRListDto{
+                ID = cp.ID,
+                ChargePointId = cp.ChargePointId,
+                ChargingStationName = cp.ChargingStation.Name,
+                SerialNumber = cp.SerialNumber,
+                Category = cp.Category,
+                Status = cp.Status,
+                PartnerName = cp.ChargingStation.Partner.Name,
+            });
+            return chargePoints;
+        }
 
         public async Task<int> GetLatestChargePointNumberAsync()
         {
@@ -161,7 +175,7 @@ namespace VoltaXApi.Data
                 .Select(numStr => int.Parse(numStr))
                 .DefaultIfEmpty(0)
                 .Max();
-                
+
             return maxNumber;
         }
 

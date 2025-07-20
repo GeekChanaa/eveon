@@ -53,7 +53,7 @@ namespace VoltaXApi.OCPP.Handlers
 
                 if (connectorId >= 0)
                 {
-                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus) == false)
+                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus.Id) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }

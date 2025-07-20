@@ -21,6 +21,7 @@ namespace VoltaXApi.Data
         Task SetShowOnMap(int chargepointID, bool val);
         Task SetHasChargeCable(int chargepointID, bool val);
         IQueryable<ChargePointCRListDto> GetAllChargePoints(GlobalParams globalParams);
+        IQueryable<ChargePointCRListDto> GetAllPartnerChargePoints(GlobalParams globalParams, int partnerID);
         Task<int> GetLatestChargePointNumberAsync();
     }
 }

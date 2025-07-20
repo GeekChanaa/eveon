@@ -44,21 +44,54 @@ namespace VoltaXApi.Data
                 .GroupBy(c => c.LastStatus)
                 .Select(g => new
                 {
-                    Status = g.Key,
-                    Count = g.Count()
+                  Status = g.Key,
+                  Count = g.Count()
                 })
                 .ToListAsync();
 
-            var result = new ConnectorStatusesDto
-            {
-                NbrAvailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Available)?.Count ?? 0,
-                NbrOccupiedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Occupied)?.Count ?? 0,
-                NbrReservedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Reserved)?.Count ?? 0,
-                NbrUnavailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Unavailable)?.Count ?? 0,
-                NbrFaultedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Faulted)?.Count ?? 0
-            };
+      var connectorsCount = await _context.Connectors.CountAsync();
 
-            return result;
+      int disconnectedCount = connectorsCount - statusCounts.Count();
+
+      var result = new ConnectorStatusesDto
+      {
+        NbrAvailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Available)?.Count ?? 0,
+        NbrOccupiedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Occupied)?.Count ?? 0,
+        NbrReservedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Reserved)?.Count ?? 0,
+        NbrUnavailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Unavailable)?.Count ?? 0,
+        NbrFaultedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Faulted)?.Count ?? 0,
+        NbrDisconnectedConnectors = disconnectedCount + statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Disconnected)?.Count ?? 0
+      };
+
+      return result;
+    }
+    
+    public async Task<ConnectorStatusesDto?> GetNumberOfPartnerConnectorsByAllStatus(int partnerID)
+    {
+      var statusCounts = await _context.ConnectorStatuses.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
+                .GroupBy(c => c.LastStatus)
+                .Select(g => new
+                {
+                  Status = g.Key,
+                  Count = g.Count()
+                })
+                .ToListAsync();
+
+      var connectorsCount = await _context.Connectors.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).CountAsync();
+
+      int disconnectedCount = connectorsCount - statusCounts.Count() ;
+
+      var result = new ConnectorStatusesDto
+      {
+        NbrAvailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Available)?.Count ?? 0,
+        NbrOccupiedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Occupied)?.Count ?? 0,
+        NbrReservedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Reserved)?.Count ?? 0,
+        NbrUnavailableConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Unavailable)?.Count ?? 0,
+        NbrFaultedConnectors = statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Faulted)?.Count ?? 0,
+        NbrDisconnectedConnectors = disconnectedCount + statusCounts.FirstOrDefault(s => s.Status == ConnectorStatusEnumType.Disconnected)?.Count ?? 0
+      };
+
+      return result;
     }
   }
 }

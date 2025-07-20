@@ -1,3 +1,54 @@
-<p>
-  partner-connector-realtime-main works!
-</p>
+<div class="page__inner">
+  <div class="page__container page__container--large">
+    <div class="page__title h3">
+      Charge Point Realtime
+      <div class="status" 
+      [ngClass]="{'active' : status == 'active'}" 
+      (mouseover)="isHovered = true"
+      (mouseleave)="isHovered = false"> 
+        <span class="status-color">
+          <app-connector-status-dot [status]="status"></app-connector-status-dot>
+          {{status}}
+        </span> 
+        <div class="connector-status-container" [ngClass]="{'show' : isHovered}">
+          <app-connector-status-description></app-connector-status-description>
+        </div>
+      </div>
+    </div>
+    <div class="charger__navbar">
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === PartnerChargerNavbarEnum.Overview}" (click)="selectMenuItem(PartnerChargerNavbarEnum.Overview)" class="charger__navbar-item">Overview</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === PartnerChargerNavbarEnum.DetailsSettings}" (click)="selectMenuItem(PartnerChargerNavbarEnum.DetailsSettings)" class="charger__navbar-item">Details & Settings</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === PartnerChargerNavbarEnum.UptimeReports}" (click)="selectMenuItem(PartnerChargerNavbarEnum.UptimeReports)" class="charger__navbar-item">Uptime Reports</button>
+      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === PartnerChargerNavbarEnum.ChargingSessions}" (click)="selectMenuItem(PartnerChargerNavbarEnum.ChargingSessions)" class="charger__navbar-item">Charging Sessions</button>
+    </div>
+
+    <div class="settings">
+      <ng-container *ngIf="selectedMenuItem == getMenu('Overview')">
+        <app-partner-connector-realtime-overview *ngIf="chargePoint.id != null" [chargePoint]="chargePoint" class="settings__container"></app-partner-connector-realtime-overview>
+      </ng-container>
+
+      <ng-container *ngIf="selectedMenuItem == getMenu('DetailsSettings')">
+        <app-partner-connector-realtime-details-settings *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-partner-connector-realtime-details-settings>
+      </ng-container>
+
+      <!-- <ng-container *ngIf="selectedMenuItem == getMenu('UptimeReports')">
+        <app-partner-connector-realtime-uptime-reports [chargePointID]="chargePoint.id" class="settings__container"></app-partner-connector-realtime-uptime-reports>
+      </ng-container> -->
+      
+      <ng-container *ngIf="selectedMenuItem == getMenu('ChargingSessions')">
+        <app-partner-connector-realtime-charging-sessions *ngIf="chargePoint != null" [chargePoint]="chargePoint" class="settings__container"></app-partner-connector-realtime-charging-sessions>
+      </ng-container>
+    </div>
+
+    <div class="overview" *ngIf="chargePoint">
+      <app-partner-connector-realtime-main-overview [chargePoint]="chargePoint"></app-partner-connector-realtime-main-overview>
+    </div>
+
+    
+  </div>
+</div>
+
+
+
+
+

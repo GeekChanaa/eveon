@@ -7,5 +7,6 @@ namespace VoltaXApi.Dtos
       public int NbrReservedConnectors { get; set; }
       public int NbrUnavailableConnectors { get; set; }
       public int NbrFaultedConnectors { get; set; }
+      public int NbrDisconnectedConnectors { get; set; }
     }
 }

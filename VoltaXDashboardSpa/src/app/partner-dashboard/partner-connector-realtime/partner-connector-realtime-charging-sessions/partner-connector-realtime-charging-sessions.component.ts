@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Pagination } from 'src/_models/pagination';
+import { ChargingSessionService } from 'src/_services/charging-session.service';
 
 @Component({
   selector: 'app-partner-connector-realtime-charging-sessions',
@@ -6,10 +8,46 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./partner-connector-realtime-charging-sessions.component.sass']
 })
 export class PartnerConnectorRealtimeChargingSessionsComponent implements OnInit {
+    @Input() chargePoint : any = {};
+    isHovered : boolean = false;
+    isStatusHovered : boolean = false;
+    chargingSessions : any[] = [];
+    isLoading : boolean = true;
 
-  constructor() { }
+    paginationPages: any[] = [];
 
-  ngOnInit() {
-  }
 
+    pagination: Pagination = {
+      currentPage: 0,
+      itemsPerPage: 0,
+      totalItems: 0,
+      totalPages: 0
+    }
+
+    itemParams : any = {};
+
+    itemsPerPage: number = 20;
+    currentPage: number = 1;
+
+    constructor(
+      private _chargingSessionService : ChargingSessionService
+    ) { }
+
+    ngOnInit() {
+      this.getChargingSessions();
+    }
+
+    getChargingSessions(page : number = 1){
+      this.isLoading = true;
+      this._chargingSessionService.getChargePointChargingSessions(this.chargePoint.id,page, this.itemsPerPage, this.itemParams).subscribe((data) => {
+        this.isLoading = false;
+        if(data.result)
+          this.chargingSessions = data.result;
+        if(data.pagination){
+          this.pagination = data.pagination;
+        }
+      },(error) => {
+        this.isLoading = false;
+      })
+    }
 }

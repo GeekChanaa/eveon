@@ -1,0 +1,84 @@
+// Charger navbar styling
+.page__inner
+  min-height: 0px
+.charger__navbar
+  display: flex
+  flex: 0 0 100%
+  width: 100%
+  margin-bottom: 24px
+  border-bottom: 1px solid var(--primary4)
+  .charger__navbar-item
+    padding: 12px
+    color: var(--primary8)
+    cursor: auto
+    transition: ease-in-out all .2s
+    font-size: 14px
+    font-weight: 600
+    &:not(.disabled)
+      cursor: pointer
+      &:hover
+        color: black
+    &.charger__navbar-item--active
+      border-bottom: 2px solid var(--secondary2)
+      color: black
+    
+  
+.settings__container
+  flex: 0 0 100%
+  width: 100%
+
+  
+.settings
+  flex: 0 0 64%
+  flex-wrap: wrap
+  max-width: 64%
+
+.overview
+  flex: 0 0 35%
+  margin-left: auto
+  background: white
+  padding: 24px
+  border-radius: 8px
+
+.page__container
+  flex-grow: 1
+  flex-wrap: wrap
+  flex-direction: row
+  .page__title
+    flex: 0 0 100%
+.status
+  padding: 6px 12px
+  font-size: 24px
+  text-transform: capitalize
+  font-weight: 500
+  .status-color
+    color: var(--primary6)
+    font-size: 1.2em
+    font-weight: 500
+    svg
+      height: 18px
+    &.active
+      color: green
+      svg
+        animation: blink-animation 1s infinite  
+
+
+.connector-status-container
+  opacity: 0
+  display: none
+  transition: all 0.3s ease-in-out
+
+
+.connector-status-container.show
+  display: block
+  opacity: 1
+
+
+.connector-status-container
+  position: fixed
+  max-width: 700px
+  background: white
+  border-radius: 18px
+  border: 1px solid var(--primary4)
+  margin-top: 20px
+  z-index: 100

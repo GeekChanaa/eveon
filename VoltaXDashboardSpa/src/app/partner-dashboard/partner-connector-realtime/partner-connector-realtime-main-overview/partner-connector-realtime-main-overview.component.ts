@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-partner-connector-realtime-main-overview',
@@ -6,6 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./partner-connector-realtime-main-overview.component.sass']
 })
 export class PartnerConnectorRealtimeMainOverviewComponent implements OnInit {
+
+  
+  @Input() chargePoint : any = {}
 
   constructor() { }
 

@@ -1,0 +1,21 @@
+<div class="overlay"></div>
+<!-- inner-->
+<div class="page__inner">
+  <div class="page__container">
+    <div class="page__title h3">
+      Home
+      <app-breadcrumb  class="breadcrumb" [items]="[{label : 'Home'}]"></app-breadcrumb>
+    </div>
+
+    <!-- Chargers Overview -->
+    <div class="card">
+      <div class="card__head">
+        <div class="title-purple card__title">Charge Points Connectors Overview</div>
+      </div>
+      <div class="connector__status">
+        <app-partner-home-connector-statuses class="connector__status__list"></app-partner-home-connector-statuses>
+      </div>
+    </div>
+    
+  </div>
+</div>

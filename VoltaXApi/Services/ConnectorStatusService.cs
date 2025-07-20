@@ -93,28 +93,41 @@ namespace VoltaXApi.Services
       return true;
     }
 
-    public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus)
+    public async Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, string chargePointID)
     {
       try
       {
-        ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+        ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID);
         Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorId, evseId, chargePoint.ID);
 
         if (connector == null)
         {
-          await this._configurationService.RefreshConnectors(chargePointStatus.Id);
+          await this._configurationService.RefreshConnectors(chargePointID);
           return true;
         }
 
         // refresh the connectors if the connector does not exist
-        ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointStatus.Id);
+        ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointID);
+        if (status == ConnectorStatusEnumType.Faulted)
+        {
+          SystemReport sysReport = new()
+          {
+            ReportCategory = ReportCategoryEnum.Technical,
+            ConnectorID = connector.ID,
+            IssueDescription = "Connector Faulted",
+            IsEmail = true,
+            IsNotification = true,
+            Criticality = ReportCriticality.High
+          };
+          await _systemReportService.HandleReport(sysReport);
+        }
+
         if (connectorStatus == null)
         {
-
           // no matching entry => create connector status
           connectorStatus = new ConnectorStatus
           {
-            ChargePointID = chargePointStatus.Id,
+            ChargePointID = chargePointID,
             ConnectorID = connector.ID,
             LastStatus = status
           };
@@ -124,19 +137,6 @@ namespace VoltaXApi.Services
         }
         else
         {
-          if (status == ConnectorStatusEnumType.Faulted && connectorStatus.LastStatus != status)
-          {
-            SystemReport sysReport = new()
-            {
-              ReportCategory = ReportCategoryEnum.Technical,
-              ConnectorID = connector.ID,
-              IssueDescription = "Connector Faulted",
-              IsEmail = true,
-              IsNotification = true,
-              Criticality = ReportCriticality.High
-            };
-            await _systemReportService.HandleReport(sysReport);
-          }
           connectorStatus.LastStatus = status;
           connectorStatus.LastStatusTime = ((statusTime.HasValue) ? statusTime.Value : DateTimeOffset.UtcNow).DateTime;
           await _connectorStatusRepository.Update(connectorStatus);
@@ -150,7 +150,7 @@ namespace VoltaXApi.Services
       }
       catch (Exception exp)
       {
-        Console.WriteLine("UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", chargePointStatus?.Id, connectorId, exp.Message);
+        Console.WriteLine("UpdateConnectorStatus => Exception writing connector status (ID={0} / Connector={1}): {2}", chargePointID, connectorId, exp.Message);
         Console.WriteLine("INNER EXCEPTION : ");
         Console.WriteLine(exp.StackTrace);
         if (exp.InnerException != null)
@@ -161,4 +161,7 @@ namespace VoltaXApi.Services
       return true;
     }
   }
+  
+
+
 }

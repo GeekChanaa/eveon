@@ -20,8 +20,11 @@ export class ToggleComponent implements OnInit, ControlValueAccessor  {
   private onChange: (value: boolean) => void = () => {};
   @Output() toggled: EventEmitter<boolean> = new EventEmitter<boolean>();
   private onTouched: () => void = () => {};
+    @Input() togglable: boolean = true;
 
   toggle() {
+    if (!this.togglable) return;
+    
     this.isToggled = !this.isToggled;
     this.isToggledChange.emit(this.isToggled);
     this.toggled.emit(this.isToggled);

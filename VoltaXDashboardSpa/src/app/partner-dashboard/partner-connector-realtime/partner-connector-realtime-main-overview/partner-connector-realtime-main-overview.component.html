@@ -1,3 +1,58 @@
-<p>
-  partner-connector-realtime-main-overview works!
-</p>
+<div class="charge_point_info-container">
+  <div class="charge_point_info-image-container">
+    <img src="{{chargePoint.modelImage}}" alt="">
+  </div>
+
+  <div class="charge_point_info-title">
+    {{chargePoint.name}}
+  </div>
+
+  <div class="charge_point_info-informations-container">
+    <div class="charge_point_info-informations-item">
+      <div class="charge_point_info-informations-item-name">
+        Identifier
+      </div>
+      <div class="charge_point_info-informations-item-value">
+        {{chargePoint.id}}
+      </div>
+    </div>
+
+    <div class="charge_point_info-informations-item">
+      <div class="charge_point_info-informations-item-name">
+        Model
+      </div>
+      <div class="charge_point_info-informations-item-value">
+        {{chargePoint.modelName}}
+      </div>
+    </div>
+
+    <div class="charge_point_info-informations-item">
+      <div class="charge_point_info-informations-item-name">
+        Make
+      </div>
+      <div class="charge_point_info-informations-item-value">
+        {{chargePoint.make}}
+      </div>
+    </div>
+
+    <div class="charge_point_info-informations-item">
+      <div class="charge_point_info-informations-item-name">
+        Serial Number
+      </div>
+      <div class="charge_point_info-informations-item-value">
+        {{chargePoint.serialNumber}}
+      </div>
+    </div>
+
+    <div class="charge_point_info-informations-item">
+      <div class="charge_point_info-informations-item-name">
+        Charging Station
+      </div>
+      <div class="charge_point_info-informations-item-value link" routerLink="/dashboard/charging-stations/{{chargePoint.chargingStationID}}">
+        {{chargePoint.chargingStationName}}
+      </div>
+    </div>
+
+    
+  </div>
+</div>

@@ -1,3 +1,82 @@
-<p>
-  partner-connector-realtime-list works!
-</p>
+<div class="page__inner">
+  <div class="page__container">
+    <app-table-list 
+      name="charge point"
+      names="charge points"
+      [searchByAttributes]="['ChargePointId','Address']"
+      routeName="charging-points"
+      createLink="/partner-dashboard/charging-points/create"
+      [breadcrumbs]="[
+        { label: 'Home', link: '/partner-dashboard' },
+        { label: 'Connector Real-time' }
+      ]"
+      [fields]="fields" 
+      [filters]="filters"
+      [deletable]="false"
+      [getItemsObservable]="getChargePointsObservable.bind(this)"
+      searchByPlaceHolder="Search by Name"
+      (resetFiltersEvent)="resetFilters()"
+      >
+      <!-- filter body -->
+      <ng-container filter__body>
+        <div  class="filters__group">
+        
+          <div class="filters__item">
+            <div class="filters__list">
+              <div class="field">
+                <div class="field__label">By City
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.city">
+                      <option value="" selected>None</option>
+                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field__label">By Category
+                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="field__wrap">
+                  <div class="field__wrap">
+                    <select class="select" [(ngModel)]="filters.category">
+                      <option value="" selected>None</option>
+                      <option value="Public">Public</option>
+                      <option value="Private">Private</option>
+                      <option value="Partner">Partner</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+          
+        </div>
+      </ng-container>
+
+      <ng-template appTableCustomButton let-item>
+        <button class="table__action connector__btn" routerLink="/partner-dashboard/connector-realtime/{{item.id}}"> 
+          <svg class="icon icon-charging-station">
+              <use xlink:href="#icon-charging-station"></use>
+          </svg>  
+        </button>
+      </ng-template>
+
+      
+    </app-table-list>
+  </div>
+</div>

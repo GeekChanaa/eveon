@@ -11,5 +11,6 @@ namespace VoltaXApi.Data
         Task<ConnectorStatus?> GetConnectorStatusByConnectorID(int connectorID, string chargePointID);
         Task<ConnectorStatus?> GetLastConnectorStatus(int connectorID);
         Task<ConnectorStatusesDto?> GetNumberOfConnectorsByAllStatus();
+        Task<ConnectorStatusesDto?> GetNumberOfPartnerConnectorsByAllStatus(int partnerID);
     }
 }

@@ -11,5 +11,6 @@ namespace VoltaXApi.Services
     public interface IChargePointService
     {
       Task SetBootNotificationInfo(ChargePointStatus chargePointStatus, BootNotificationRequest bootNotificationRequest);
+      Task HandleChargePointDisconnected(string chargePointID);
     }
 }

@@ -11,6 +11,6 @@ namespace VoltaXApi.Services
     public interface IConnectorStatusService
     {
       Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID);
-      Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, ChargePointStatus chargePointStatus);
+      Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, string chargePointID);
     }
 }

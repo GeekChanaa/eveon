@@ -25,13 +25,15 @@ namespace VoltaXApi.OCPP.Handlers
         private readonly OCPPMessageProcessor _msgProcessor;
         private readonly IHubContext<ChargerHub> _hubContext;
         private readonly IChargePointUptimeRepository _chargePointUTRepository;
+        private readonly IChargePointService _chargePointService;
         public WebSocketHandler(
           WebSocketManagerService webSocketManagerService,
           ILoggerFactory logFactory,
           IConfiguration config,
           OCPPMessageProcessor msgProcessor,
           IHubContext<ChargerHub> hubContext,
-          IChargePointUptimeRepository chargePointUptimeRepository)
+          IChargePointUptimeRepository chargePointUptimeRepository,
+          IChargePointService chargePointService)
         {
             _webSocketManagerService = webSocketManagerService;
             _config = config;
@@ -40,6 +42,7 @@ namespace VoltaXApi.OCPP.Handlers
             _msgProcessor = msgProcessor;
             _hubContext = hubContext;
             _chargePointUTRepository = chargePointUptimeRepository;
+            _chargePointService = chargePointService;
         }
 
         public async Task AcceptWebSocketAsync(HttpContext context, string subProtocol, ChargePointStatus chargePointStatus)
@@ -87,12 +90,12 @@ namespace VoltaXApi.OCPP.Handlers
                 else
                 {
                     Console.WriteLine("OCPPMiddleware.Receive20 => Receive: unexpected result: CloseStatus={0} / MessageType={1}", result?.CloseStatus, result?.MessageType);
-                    await _chargePointUTRepository.StopNormal(chargePointStatus.Id);
+                    await _chargePointService.HandleChargePointDisconnected(chargePointStatus.Id);
                     await chargePointStatus.WebSocket.CloseOutputAsync((WebSocketCloseStatus)3001, string.Empty, CancellationToken.None);
                 }
             }
             Console.WriteLine("OCPPMiddleware.Receive20 => Websocket closed: State={0} / CloseStatus={1}", chargePointStatus.WebSocket.State, chargePointStatus.WebSocket.CloseStatus);
-            await _chargePointUTRepository.StopNormal(chargePointStatus.Id);
+            await _chargePointService.HandleChargePointDisconnected(chargePointStatus.Id);
             _webSocketManagerService.RemoveWebSocket(chargePointStatus.Id);
         }
 
