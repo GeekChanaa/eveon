@@ -168,10 +168,11 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
 
     // Call the API service
     this._chargingStationService.createChargingStation(formData).subscribe((data) => {
-      this.isLoading = true;
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Success,"Charging Station Created","The charging station has been created successfully!",4000);
       this._router.navigateByUrl("/dashboard/charging-stations");
     },(error) => {
+      this.isLoading = false;
       this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something went wrong, please try again later!",4000);
     })
   }

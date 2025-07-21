@@ -17,6 +17,7 @@ export class ChargingStationChargePointComponent implements OnInit {
 
   @Output() refreshEvent : EventEmitter<number> = new EventEmitter<number>();
   @Input() chargePointID : number = 0;
+  showDeleteConfirmModal : boolean = false;
 
   chargePointCategory : string = "";
   chargePointStatus : string = "";
@@ -50,7 +51,7 @@ export class ChargingStationChargePointComponent implements OnInit {
     this.getChargePoint();
   }
 
-  deleteChargePoint(id : number){
+  deleteChargePoint(){
     this._chargePointService.deleteById(this.chargePointID).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success, "Deleted", "The Charge Point : "+ this.chargePoint.chargePointId + " was deleted succesfully", 4000);
       this.refreshEvent.emit();
@@ -64,6 +65,19 @@ export class ChargingStationChargePointComponent implements OnInit {
     this._chargePointService.getById(this.chargePointID).subscribe((data) => {
       this.chargePoint = data;
     })
+  }
+
+  confirmDelete(): void {
+    this.showDeleteConfirmModal = true;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirmModal = false;
+  }
+
+  proceedWithDelete(): void {
+    this.deleteChargePoint();
+    this.showDeleteConfirmModal = false;
   }
 
 }

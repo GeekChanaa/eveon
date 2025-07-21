@@ -190,6 +190,7 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
       return;
     }
     
+    
     const formValue = this.connectorForm.value;
     const connector = {
       type : formValue.type,
@@ -204,6 +205,17 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
     };
     
     const chargePoint = this.chargePoints[this.currentChargePointIndex];
+
+    const isDuplicate = chargePoint.connectors.some((c : any, index : any) =>
+      index !== this.currentConnectorIndex && 
+      c.evseID === connector.evseID &&
+      c.connectorID === connector.connectorID
+    );
+
+    if (isDuplicate) {
+      alert(`A connector with EVSE ID "${connector.evseID}" and Connector ID "${connector.connectorID}" already exists for this charge point.`);
+      return;
+    }
     
     // Initialize connectors array if it doesn't exist
     if (!chargePoint.connectors) {

@@ -36,7 +36,7 @@ namespace VoltaXApi.Models
         public bool SittingAreaAmenity { get; set; }
         public int? PartnerID { get; set; }
         public ICollection<ChargePoint>? ChargePoints { get; set; }
-        public ICollection<ChargingStationImage> ChargingStationImages {get; set;}
+        public ICollection<ChargingStationImage>? ChargingStationImages {get; set;}
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

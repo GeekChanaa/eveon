@@ -17,7 +17,6 @@
     <!-- Charge Point Informations Form -->
     <ng-container *ngIf="currentStep == CreateChargePointFormEnum.ChargePointConnectors">
       <app-create-charge-point-add-connectors
-        (submit)="saveChargePoint()"
         (previousStepEvent)="currentStep = CreateChargePointFormEnum.ChargePointInformations"
         [chargePoint]="chargePointInformationsForm.value"
         ></app-create-charge-point-add-connectors>

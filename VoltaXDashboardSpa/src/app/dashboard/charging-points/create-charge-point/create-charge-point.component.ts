@@ -42,8 +42,4 @@ export class CreateChargePointComponent implements OnInit {
   nextStep(step : CreateChargePointFormEnum){
     this.currentStep = step;
   }
-
-  saveChargePoint(){
-    console.log(this.chargePointInformationsForm.value);
-  }
 }

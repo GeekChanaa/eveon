@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 
 @Component({
@@ -15,11 +16,18 @@ export class CreateChargePointInformationsComponent implements OnInit {
   isLoaded = false;
 
   constructor(
-    private _chargingStationService: ChargingStationService
+    private _chargingStationService: ChargingStationService,
+    private _route : ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.getChargingStations();
+    this._route.queryParams.subscribe(params => {
+      if(params['chargingStationID'] != null){
+        let chargingStationID = parseInt(params['chargingStationID']);
+        this.getControl("chargingStationID").setValue(chargingStationID);
+      }
+    });
   }
 
   getChargingStations(){

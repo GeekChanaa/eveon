@@ -14,6 +14,10 @@
       [updateItemObservable]="updateCardObservable.bind(this)"
       searchByPlaceHolder="Search by Card Number"
       (resetFiltersEvent)="resetFilters()"
+      [breadcrumbs]="[
+        { label: 'Dashboard', link: '/dashboard' },
+        { label: 'Charging Cards'}
+      ]"
       >
       <!-- filter body -->
       <ng-container filter__body>

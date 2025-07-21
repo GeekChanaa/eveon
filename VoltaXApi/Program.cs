@@ -62,7 +62,10 @@ public class Program
         ServiceRegistration.ConfigureApplicationServices(builder.Services);
         ServiceRegistration.ConfigureOCPPServices(builder.Services);
         ServiceRegistration.ConfigureOCPPHandlers(builder.Services);
+
+        // ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
         ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
+        
         ServiceRegistration.ConfigureSwagger(builder.Services);
         ServiceRegistration.ConfigureCors(builder.Services);
         ServiceRegistration.ConfigureAutoMapper(builder.Services);

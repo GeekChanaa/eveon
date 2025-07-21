@@ -52,8 +52,8 @@ namespace VoltaXApi.Data
 
         override public async Task AddAsync(ChargePoint chargePoint)
         {
-            await _context.Set<ChargePoint>().AddAsync(chargePoint);
             chargePoint.ChargePointId = await this.GenerateChargePointId();
+            await _context.Set<ChargePoint>().AddAsync(chargePoint);
             await _context.SaveChangesAsync();
         }
         
@@ -166,9 +166,10 @@ namespace VoltaXApi.Data
 
         public async Task<int> GetLatestChargePointNumberAsync()
         {
-            // Similar approach for charge point IDs
+
             var maxNumber = (await dbSet
                 .Where(s => s.ChargePointId != null && s.ChargePointId.StartsWith("VOLTAX-"))
+                .IgnoreQueryFilters()
                 .Select(s => s.ChargePointId.Substring(7))
                 .ToListAsync())
                 .Where(numStr => int.TryParse(numStr, out _))

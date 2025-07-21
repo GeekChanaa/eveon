@@ -41,7 +41,6 @@ export class CreateChargePointAddConnectorsComponent implements OnInit {
   @Input() chargePoint : any = {};
 
   @Output() previousStepEvent : EventEmitter<void> =  new EventEmitter();
-  @Output() submit : EventEmitter<any[]> = new EventEmitter<any[]>();
     
   showConnectorModal = false;
   currentConnectorIndex: number | null = null;
@@ -206,6 +205,7 @@ export class CreateChargePointAddConnectorsComponent implements OnInit {
         this.isSaving = false;
         this._router.navigateByUrl("/dashboard/charging-points")
       },(error) => {
+        this.isSaving = false;
         this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something went wrong please try again later", 4000);
       })
     }

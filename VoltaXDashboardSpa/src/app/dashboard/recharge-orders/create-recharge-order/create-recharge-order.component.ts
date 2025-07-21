@@ -34,12 +34,15 @@ export class CreateRechargeOrderComponent implements OnInit {
       this.getAllCards();
     }
   
-    cpfOnSubmit(){
+    onSubmit(){
+      this.isLoading = true;
       var order = this.orderForm.value;
       this._orderService.createRechargeOrder(order).subscribe((data) => {
+        this.isLoading = false;
         this._modalService.popup(ActionModalStatusEnum.Success, "Success", "The Connector has been added succesfully", 4000);
         this._router.navigateByUrl("/dashboard/recharge-orders");
       },(error) => {
+        this.isLoading = false;
         this._modalService.popup(ActionModalStatusEnum.Error, "Error", "Something Went Wrong", 4000);
       })
     }
@@ -48,7 +51,7 @@ export class CreateRechargeOrderComponent implements OnInit {
       this._cardService.getAllCards(-1,-1).subscribe((data) => {
         console.log(data.result);
         if(data.result)
-          this.cards = data.result;
+          this.cards = data.result.map((card) => ({id : card.id, name : card.cardNumber}));
       })
     }
   

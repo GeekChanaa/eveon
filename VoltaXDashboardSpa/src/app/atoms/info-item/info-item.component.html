@@ -1,0 +1,13 @@
+<div class="info-item">
+  <span class="item-title">
+    {{ title }}
+    <ng-container *ngIf="tooltip">
+      <div class="tooltip" [title]="tooltip">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </ng-container>
+  </span>
+  <span class="item-text">{{ value || '—' }}</span>
+</div>

@@ -1,114 +1,148 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Recharge Card : {{card.name}}</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button (click)="changeTab('InformationsTab')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'InformationsTab'}">Informations</button>
+<app-dashboard-details-container [title]="card?.name || 'Card Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Charging Cards', link: '/dashboard/charging-cards' },
+  { label: card?.id || 'Details' }
+]">
 
-        <button (click)="changeTab('Transactions')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'Transactions'}">Transactions</button>
+  <!-- Loading state -->
+  <div *ngIf="!cardLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
 
-        <button (click)="changeTab('Orders')" class="settings__link"
-          [ngClass]="{'active' : tabsEnum == 'Orders'}">Orders</button>
-        
+  <!-- Content area -->
+  <div *ngIf="cardLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Information
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'Transactions'}" (click)="changeTab('Transactions')"
+          class="tab-button">
+          Transactions
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'Orders'}" (click)="changeTab('Orders')"
+          class="tab-button">
+          Orders
+        </button>
       </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option (click)="changeTab('InformationsTab')">Informations</option>
-          <option (click)="changeTab('Transactions')">Transactions</option>
-          <option (click)="changeTab('Orders')">Orders</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item" *ngIf="tabsEnum == 'InformationsTab'">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    </div>
 
-            </div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="cardLoaded">
-                
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [object]="card"
-                  inpType="text"
-                  title="Card Owner"
-                  [tooltip]="'This is the name of the owner of the card'"
-                  [editable]="false"
-                  [link]="'/dashboard/users/'+card.userID"
-                  [isLink]="true"
-                  [val]="card.userName" [editable]="false"></app-display-cell>
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          
+          <div class="card-content">
 
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [tooltip]="'The maximum total value that can be loaded onto this card.'"
-                  [object]="card"
-                  inpType="number"
-                  title="maxCount"
-                  [val]="card.maxCount"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [object]="card"
-                  [tooltip]="'The current available funds on your card.'"
-                  inpType="number"
-                  title="balance"
-                  [val]="card.balance"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [object]="card"
-                  [tooltip]="'The category of card, indicating its features and usage.'"
-                  inpType="select_enum"
-                  enumName="CardType"
-                  title="cardType"
-                  val="{{card.cardType}}"></app-display-cell>
-                
-                <app-display-cell 
+            <!-- Main details -->
+            <div class="form-content">
+              
+              <div class="form-section">
+                <h3 class="section-title">Informations</h3>
+                <div class="field-group">
+                  <app-display-cell 
                     [updateObservable]="updateCardObservable.bind(this)" 
                     [object]="card"
+                    inpType="text"
+                    title="Card Owner"
+                    [tooltip]="'This is the name of the owner of the card'"
+                    [editable]="false"
+                    [link]="'/dashboard/users/'+card.userID"
+                    [isLink]="true"
+                    [val]="card.userName" [editable]="false"></app-display-cell>
+
+                  <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [tooltip]="'The maximum total value that can be loaded onto this card.'"
+                    [object]="card"
+                    inpType="number"
+                    title="Max Count"
+                    [val]="card.maxCount"></app-display-cell>
+                  
+                  <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [object]="card"
+                    [tooltip]="'The current available funds on your card.'"
+                    inpType="number"
+                    title="balance"
+                    [val]="card.balance"></app-display-cell>
+
+                  <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [object]="card"
+                    inpType="date"
+                    [tooltip]="'The date of the expiration of the recharge card.'"
+                    title="Expiration Date"
+                    val="{{card.expirationDate}}"></app-display-cell>
+                </div>
+                
+              </div>
+              
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Configurations</h3>
+                <div class="field-group">
+                  <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [object]="card"
+                    [tooltip]="'The category of card, indicating its features and usage.'"
                     inpType="select_enum"
-                    title="status"
-                    [tooltip]="'The current status of the recharge card'"
-                    enumName="CardStatus" 
-                    val="{{card.status}}"></app-display-cell>
+                    enumName="CardType"
+                    title="Card Type"
+                    val="{{card.cardType}}"></app-display-cell>
+                  
+                  <app-display-cell 
+                      [updateObservable]="updateCardObservable.bind(this)" 
+                      [object]="card"
+                      inpType="select_enum"
+                      title="Status"
+                      [tooltip]="'The current status of the recharge card'"
+                      enumName="CardStatus" 
+                      val="{{card.status}}"></app-display-cell>
+
+                  <app-display-cell 
+                    [updateObservable]="updateCardObservable.bind(this)" 
+                    [object]="card"
+                    [tooltip]="'Additional informations about this recharge card.'"
+                    inpType="text"
+                    title="note"
+                    val="{{card.note}}"></app-display-cell>
+                </div>
                 
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [object]="card"
-                  inpType="text"
-                  [tooltip]="'The date of the expiration of the recharge card.'"
-                  title="expirationDate"
-                  val="{{card.expirationDate}}"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updateCardObservable.bind(this)" 
-                  [object]="card"
-                  [tooltip]="'Additional informations about this recharge card.'"
-                  inpType="text"
-                  title="note"
-                  val="{{card.note}}"></app-display-cell>
-              </ng-container>
+              </div>
+
+              
+
               
             </div>
           </div>
-          <div class="settings__item" *ngIf="tabsEnum == 'Transactions'">
-            <ng-container *ngIf="card.id != null && card.id != undefined">
-              <app-charging-card-transactions [cardID]="card.id"></app-charging-card-transactions>
-            </ng-container>
-            
-          </div>
+        </div>
+      </div>
 
-          <div class="settings__item" *ngIf="tabsEnum == 'Orders'">
+      <!-- Transactions Tab -->
+      <div *ngIf="tabsEnum === 'Transactions'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
             <ng-container *ngIf="card.id != null && card.id != undefined">
-              <app-charging-card-orders  [cardID]="card.id"></app-charging-card-orders>
+              <!-- <app-charging-station-charge-points [cardID]="card.id"></app-charging-station-charge-points> -->
             </ng-container>
-            
           </div>
+        </div>
+      </div>
 
+      <!-- Orders Tab -->
+      <div *ngIf="tabsEnum === 'Orders'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
+            <ng-container *ngIf="card.id != null && card.id != undefined">
+              <!-- <app-charging-station-charge-points [cardID]="card.id"></app-charging-station-charge-points> -->
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

@@ -51,6 +51,7 @@ import { ButtonComponent } from './button/button.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { DashboardDetailsContainerComponent } from './dashboard-details-container/dashboard-details-container.component';
+import { InfoItemComponent } from './info-item/info-item.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { DashboardDetailsContainerComponent } from './dashboard-details-containe
     SelectFormFieldComponent,
     DebitCardComponent,
     InvoiceComponent,
+    InfoItemComponent,
     EmptyCardComponent,
     ActionModalComponent,
     SvgSpinnerComponent,
@@ -133,6 +135,7 @@ import { DashboardDetailsContainerComponent } from './dashboard-details-containe
     StoppedReasonDescriptionComponent,
     ToggleComponent,
     RatingComponent,
+    InfoItemComponent,
     PreloaderContainerComponent,
     ConnectorStatusDotComponent,
     PaginationComponent,
