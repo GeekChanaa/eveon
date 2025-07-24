@@ -70,12 +70,12 @@
 
               <!-- Address Information -->
               <div class="form-section">
-                <h3 class="section-title">Business Informatiosn</h3>
+                <h3 class="section-title">Business Informations</h3>
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
                   inpType="select" title="role" [options]="rolesOptions" val="{{user.role}}"></app-display-cell>
 
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
-                  inpType="select" title="partnerID" [options]="partnersOptions" val="{{user.partnerID ?? 'Not Specified'}}"></app-display-cell>
+                  inpType="select" title="Partner" [options]="partnersOptions" val="{{user.partner ?? 'Not Specified'}}"></app-display-cell>
                 <!-- Suspending Account -->
                 <div class="field">
                   <div class="field__label">Suspend Account

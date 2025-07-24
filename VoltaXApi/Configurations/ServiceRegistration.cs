@@ -154,6 +154,10 @@ public static class ServiceRegistration
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
+        services.AddScoped<IChargePointBrandRepository, ChargePointBrandRepository>();
+
+
     }
 
     public static void ConfigureFactories(IServiceCollection services)

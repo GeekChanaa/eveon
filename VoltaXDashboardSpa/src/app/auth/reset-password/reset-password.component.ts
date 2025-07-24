@@ -57,7 +57,7 @@ export class ResetPasswordComponent implements OnInit {
     this.userForReset.password = this.form.value.password;
     this._authService.resetPassword(this.userForReset).subscribe((data) => {
       this.isLoading = false;
-      this._router.navigateByUrl('/auth/login');
+      this._router.navigateByUrl('/auth/reset-password-success');
       this._modalService.popup(ActionModalStatusEnum.Success,"Reset Email Sent","Check your email for the code we've sent you",4000);
     },(error) => {
       this.isLoading = false;

@@ -15,6 +15,7 @@ import { CompleteProfileComponent } from './complete-profile/complete-profile.co
 import { AtomsModule } from '../atoms/atoms.module';
 import { AuthComponent } from './auth.component';
 import { RequestPasswordMailSentComponent } from './request-password/request-password-mail-sent/request-password-mail-sent.component';
+import { ResetPasswordSuccessComponent } from './reset-password-success/reset-password-success.component';
 
 
 
@@ -31,6 +32,7 @@ import { RequestPasswordMailSentComponent } from './request-password/request-pas
         CompleteProfileComponent,
         AuthComponent,
         RequestPasswordMailSentComponent,
+        ResetPasswordSuccessComponent
   ],
     imports: [
       CommonModule,

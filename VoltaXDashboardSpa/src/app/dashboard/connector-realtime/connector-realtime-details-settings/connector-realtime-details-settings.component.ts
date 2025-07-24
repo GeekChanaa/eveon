@@ -18,7 +18,6 @@ export class ConnectorRealtimeDetailsSettingsComponent implements OnInit {
   }
 
   showChargeOnMapToggle(val : boolean){
-    console.log("showing the charge ; " +  val);
     this._chargePointService.setShowOnMap(this.chargePoint.id, val).subscribe((data) => {
       this.chargePoint.showOnMap = val;
     })

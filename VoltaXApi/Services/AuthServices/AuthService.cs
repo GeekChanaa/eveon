@@ -218,6 +218,8 @@ namespace VoltaXApi.Services
             new Claim(ClaimTypes.GivenName, user.FirstName),
             new Claim(ClaimTypes.Surname, user.LastName),
             new Claim(ClaimTypes.Role, user.Role.Name),
+            new Claim("emailVerified", user.IsEmailVerified.ToString()),
+            new Claim("phoneVerified", user.IsPhoneNumberVerified.ToString()),
         };
 
         foreach (var userPermission in user.Role.RolePermissions)

@@ -17,6 +17,15 @@ namespace VoltaXApi.Data
             _mapper = mapper;
         }
 
+        public async Task<List<ChargePointModelSelectDto>> GetAllChargePointModels()
+        {
+            return await _context.ChargePointModels.Select(u => new ChargePointModelSelectDto
+            {
+                Name = u.Name,
+                ID = u.ID
+            }).ToListAsync();
+        }
+
         public async Task<int?> GetChargePointModelIDByIdentifier(string identifier)
         {
             var cpm = await _context.ChargePointModels.FirstOrDefaultAsync(u => u.Identifier == identifier);

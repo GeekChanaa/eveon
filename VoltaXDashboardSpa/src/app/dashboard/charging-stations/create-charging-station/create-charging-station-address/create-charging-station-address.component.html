@@ -28,6 +28,10 @@
     [control]="getControl('address')"
   ></app-form-field>
 
+  <app-map-picker
+    (locationSelected)="onLocationSelected($event)" 
+    [useCurrentLocation]="true"></app-map-picker>
+
   <div class="form__actions">
     <app-button
       (btnClick)="previousStep()"

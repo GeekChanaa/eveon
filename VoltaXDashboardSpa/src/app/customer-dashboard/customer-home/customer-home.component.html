@@ -121,23 +121,23 @@
 
       <div class="popup-content">
         <!-- Step 1: Email Verification -->
-        <ng-container *ngIf="currentStep === 1 && !user.isEmailVerified">
+        <ng-container *ngIf="currentStep === CompleteProfileEnum.EmailVerification">
           <app-customer-home-email-verification
-            (nextStep)="currentStep = 2"></app-customer-home-email-verification>
+            (nextStep)="goNextstep()"></app-customer-home-email-verification>
         </ng-container>
         
 
         <!-- Step 2: Phone Verification -->
-        <div class="step-content" *ngIf="currentStep === 2 && !user.isPhoneVerified">
+        <div class="step-content" *ngIf="currentStep === CompleteProfileEnum.PhoneVerification">
           <app-customer-home-phone-verification
             *ngIf="userID != undefined || userID != 0"
             [userID]="userID"
             [email]="email"
-            (nextStep)="currentStep = 3"></app-customer-home-phone-verification>
+            (nextStep)="goNextstep()"></app-customer-home-phone-verification>
         </div>
 
         <!-- Step 3: Additional Profile Information -->
-        <div class="step-content" *ngIf="currentStep === 3">
+        <div class="step-content" *ngIf="currentStep === CompleteProfileEnum.AdditionalInformations">
           <app-customer-home-additional-informations 
             *ngIf="userID != undefined || userID != 0"
             (nextStep)="currentStep = 3"></app-customer-home-additional-informations>

@@ -53,11 +53,15 @@ export class LoginComponent implements OnInit {
     };
     this._authService.login(userForLogin).subscribe((data) => {
       this.isLoading = false;
-      var userID = parseInt(this._authService.getAuthInformation().nameid);
-      this._userService.getById(userID).subscribe((u) => {
-        this._router.navigateByUrl("/dashboard")
-      });
-      
+      let decodedToken = this._authService.getAuthInformation();
+      var userID = parseInt(decodedToken.nameid);
+      var role = decodedToken.role;
+      if (role && role.toLowerCase().includes("admin")) {
+        this._router.navigateByUrl("/dashboard");
+      }
+      else{
+        this._router.navigateByUrl("/my-dashboard");
+      }
     },(error) => {
       this.isLoading = false;
       console.log("this is the error my friend");

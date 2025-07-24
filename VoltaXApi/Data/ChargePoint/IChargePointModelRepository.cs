@@ -8,5 +8,6 @@ namespace VoltaXApi.Data
     public interface IChargePointModelRepository : IRepository<ChargePointModel>
     {
       Task<int?> GetChargePointModelIDByIdentifier(string identifier);
+      Task<List<ChargePointModelSelectDto>> GetAllChargePointModels();
     }
 }

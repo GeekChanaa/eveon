@@ -78,7 +78,9 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     this.chargingStationAddressForm = new FormGroup({
       address: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
-      zipCode: new FormControl('', [Validators.pattern(/^\d{5}$/)])
+      zipCode: new FormControl('', [Validators.pattern(/^\d{5}$/)]),
+      latitude: new FormControl(null, [Validators.required]),
+      longitude: new FormControl(null, [Validators.required])
     });
     
   }
@@ -124,6 +126,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
     // Add address information
     formData.append('address', this.chargingStationAddressForm.get('address')?.value);
     formData.append('city', this.chargingStationAddressForm.get('city')?.value);
+    formData.append('latitude', this.chargingStationAddressForm.get('latitude')?.value);
+    formData.append('longitude', this.chargingStationAddressForm.get('longitude')?.value);
     if (this.chargingStationAddressForm.get('zipCode')?.value) {
       formData.append('zipCode', this.chargingStationAddressForm.get('zipCode')?.value);
     }

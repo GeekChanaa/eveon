@@ -22,14 +22,16 @@ namespace VoltaXApi.Controllers
     {
         private readonly IOrderRepository _repository;
         private readonly IOrderService _orderService;
-        private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService; 
+        private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
 
         public OrderController(
             IOrderRepository repository,
-            IInvoiceGeneratorService<InvoiceData> invoiceService) : base(repository)
+            IInvoiceGeneratorService<InvoiceData> invoiceService,
+            IOrderService orderService) : base(repository)
         {
             _repository = repository;
-            _invoiceService = invoiceService; 
+            _invoiceService = invoiceService;
+            _orderService = orderService;
         }
 
         // You can override the base methods or add specific methods for this controller
@@ -173,7 +175,7 @@ namespace VoltaXApi.Controllers
         [HttpPost("CreateRechargeOrder")]
         public async Task<IActionResult> RechargeCard(CreateRechargeOrderDto rechargeOrderDto)
         {
-            await this._repository.CreateRechargeOrder(rechargeOrderDto);
+            await this._orderService.CreateOrder(rechargeOrderDto);
             return StatusCode(200);
         }
 

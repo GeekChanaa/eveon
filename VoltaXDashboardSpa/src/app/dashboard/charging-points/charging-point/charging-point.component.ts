@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
 import { ChargePoint } from 'src/_models/charge-point';
+import { ChargePointBrandService } from 'src/_services/charge-point-brand.service';
+import { ChargePointModelService } from 'src/_services/charge-point-model.service';
 import { ChargePointService } from 'src/_services/charge-point.service';
 import { ChargingStationService } from 'src/_services/charging-station.service';
 import { ConnectorService } from 'src/_services/connector.service';
@@ -31,6 +33,9 @@ export class ChargingPointComponent implements OnInit {
   chargingStationCategoryValues : { [key: number]: string; } = {};
   updateChargePointObservable = (id : number, model : any) => this._chargePointService.edit(id, model);
 
+  chargePointModelsOptions : any = {};
+  chargePointBrandsOptions : any = {};
+
   chargePoint: any = {};
 
   staticUrl : string = environment.apiStaticFilesUrl;
@@ -42,7 +47,9 @@ export class ChargingPointComponent implements OnInit {
     private _chargingStationService: ChargingStationService,
     private _chargePointService : ChargePointService,
     private _route: ActivatedRoute,
-    private _enumService : EnumMappingService
+    private _enumService : EnumMappingService,
+    private _chargePointModelService: ChargePointModelService,
+    private _chargePointBrandService : ChargePointBrandService
   ) {
     this.chargePointForm = new FormGroup({
       serialNumber : new FormControl(''),
@@ -60,6 +67,8 @@ export class ChargingPointComponent implements OnInit {
       var id = parseInt(idParam);
       this.getChargePointByID(id);
     }
+    this.getAllChargePointModels();
+    this.getAllChargePointBrands();
   }
 
 
@@ -73,6 +82,18 @@ export class ChargingPointComponent implements OnInit {
 
   changeTab(tab : any){
     this.tabsEnum = tab;
+  }
+
+  getAllChargePointModels(){
+    this._chargePointModelService.getAllChargePointModels().subscribe((data) => {
+      this.chargePointModelsOptions = data.map((item : any) => {return {label: item.name, value: item.id}});
+    })
+  }
+
+  getAllChargePointBrands(){
+    this._chargePointBrandService.getAllChargePointBrands().subscribe((data) => {
+      this.chargePointBrandsOptions = data.map((item : any) => {return {label: item.name, value: item.id}});
+    })
   }
 
 }

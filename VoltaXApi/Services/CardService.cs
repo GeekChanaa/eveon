@@ -60,15 +60,26 @@ namespace VoltaXApi.Services
             }
             return true;
         }
+        
+        public async Task<bool> AddAmountToCard(int cardID, double amount)
+        {
+            Card? card = await _cardRepository.GetByIdAsync(cardID);
+
+            card.Balance = card.Balance + amount;
+            await _cardRepository.Update(card);
+
+            return true;
+        }
 
         public async Task HandleCardNegativeBalance(Card card, int connectorID)
         {
-            SystemReport report = new() {
+            SystemReport report = new()
+            {
                 IsEmail = true,
                 IsNotification = true,
                 CardID = card.ID,
                 ConnectorID = connectorID,
-                IssueDescription = "Negative balance of "+card.Balance+" for the card : #"+card.ID,
+                IssueDescription = "Negative balance of " + card.Balance + " for the card : #" + card.ID,
                 Status = ReportStatusEnum.Pending,
                 Criticality = ReportCriticality.High
             };

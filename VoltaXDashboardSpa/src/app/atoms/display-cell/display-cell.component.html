@@ -1,7 +1,7 @@
 <!-- display-cell.component.html -->
 <div class="form-field" [ngClass]="{'form-field--editing': editing, 'form-field--read-only': !editable}">
   <label class="form-field__label">
-    {{ title | titlecase }}
+    {{ title | camelCaseToSpace }}
     
     <ng-container *ngIf="tooltip">
       <div class="form-field__tooltip" [title]="tooltip">

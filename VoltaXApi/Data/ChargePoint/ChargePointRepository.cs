@@ -69,11 +69,31 @@ namespace VoltaXApi.Data
         public async Task<ChargePointDisplayDto> GetChargePointByIdAsync(int id)
         {
             var chargePoint = await this._context.ChargePoints
-                .Include(u => u.Connectors)
-                .Include(u => u.ChargingStation)
+                .Select(u => new ChargePointDisplayDto
+                {
+                    ID = u.ID,
+                    ChargePointId = u.ChargePointId,
+                    ChargingStationID = u.ChargingStationID,
+                    ChargePointModelID = u.ChargePointModelID,
+                    ChargePointBrandID = u.ChargePointBrandID,
+                    ChargingStationName = u.ChargingStation.Name,
+                    SerialNumber = u.SerialNumber,
+                    ShowOnMap = u.ShowOnMap,
+                    HasChargeCable = u.HasChargeCable,
+                    Make = u.ChargePointBrand.Name,
+                    ModelName = u.ChargePointModel.Name,
+                    ModelImage = u.ChargePointModel.ImageUrl,
+                    Status = u.Status,
+                    Comment = u.Comment,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Latitude = u.ChargingStation.Latitude,
+                    Longitude = u.ChargingStation.Longitude,
+                    ClientCertThumb = u.ClientCertThumb,
+                    Category = u.Category,
+                })
                 .FirstOrDefaultAsync(u => u.ID == id);
-            ChargePointDisplayDto chargePointDto = _mapper.Map<ChargePointDisplayDto>(chargePoint);
-            return chargePointDto;
+            return chargePoint;
         }
 
         
@@ -110,16 +130,36 @@ namespace VoltaXApi.Data
         public async Task<ChargePointDisplayDto> GetChargePointByID(int chargePointID, ChargePointIncludableHelper includableHelper)
         {
             var chargePointQueryable = _context.ChargePoints
-                .Include(u => u.ChargingStation)
-                .Include(u => u.ChargePointModel).AsQueryable();
-
-            if(includableHelper.includeConnectors) 
-                chargePointQueryable = chargePointQueryable.Include(s => s.Connectors);
+                .Select(u => new ChargePointDisplayDto
+                {
+                    ID = u.ID,
+                    ChargePointId = u.ChargePointId,
+                    ChargingStationID = u.ChargingStationID,
+                    ChargePointModelID = u.ChargePointModelID,
+                    ChargePointBrandID = u.ChargePointBrandID,
+                    ChargingStationName = u.ChargingStation.Name,
+                    SerialNumber = u.SerialNumber,
+                    ShowOnMap = u.ShowOnMap,
+                    HasChargeCable = u.HasChargeCable,
+                    Make = u.ChargePointBrand.Name,
+                    ModelName = u.ChargePointModel.Name,
+                    ModelImage = u.ChargePointModel.ImageUrl,
+                    Status = u.Status,
+                    Comment = u.Comment,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Address = u.ChargingStation.Address,
+                    Latitude = u.ChargingStation.Latitude,
+                    Longitude = u.ChargingStation.Longitude,
+                    Country = u.ChargingStation.Country,
+                    City = u.ChargingStation.City,
+                    ClientCertThumb = u.ClientCertThumb,
+                    Category = u.Category,
+                }).AsQueryable();
            
             var chargePoint = await chargePointQueryable.FirstOrDefaultAsync(s => s.ID == chargePointID);
 
-            var chargePointDto = _mapper.Map<ChargePoint, ChargePointDisplayDto>(chargePoint);
-            return chargePointDto;
+            return chargePoint;
         }
 
         public async Task SetShowOnMap(int chargepointID, bool val)

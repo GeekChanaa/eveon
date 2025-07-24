@@ -37,8 +37,7 @@ namespace VoltaXApi.Services
     {
       _logger.LogTrace("Updating Informations for ChargePoint : " + chargePointStatus.Id);
       var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
-      chargePoint.Model = bootNotificationRequest.ChargingStation.Model;
-      int? chargePointModelID = await this._chargePointModelRepository.GetChargePointModelIDByIdentifier(chargePoint.Model);
+      int? chargePointModelID = await this._chargePointModelRepository.GetChargePointModelIDByIdentifier(bootNotificationRequest.ChargingStation.Model);
 
       if (chargePointModelID != null)
         chargePoint.ChargePointModelID = chargePointModelID;

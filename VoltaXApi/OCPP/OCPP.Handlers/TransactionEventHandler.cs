@@ -5,6 +5,7 @@ using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -15,6 +16,7 @@ namespace VoltaXApi.OCPP.Handlers
         private readonly ITransactionService _transactionService;
         private readonly IConnectorRepository _connectorRepository;
         private readonly IChargePointRepository _chargePointRepository;
+        private readonly IConfigurationService _configService;
         private readonly ILogger _logger;
 
         public TransactionEventHandler(
@@ -22,7 +24,8 @@ namespace VoltaXApi.OCPP.Handlers
             IMessageLogRepository messageLogRepository,
             ITransactionService transactionService,
             IConnectorRepository connectorRepository,
-            IChargePointRepository chargePointRepository
+            IChargePointRepository chargePointRepository,
+            IConfigurationService configService
         )
         {
             _logger = loggerFactory.CreateLogger(typeof(TransactionEventHandler));
@@ -30,6 +33,7 @@ namespace VoltaXApi.OCPP.Handlers
             _transactionService = transactionService;
             _connectorRepository = connectorRepository;
             _chargePointRepository = chargePointRepository;
+            _configService = configService;
         }
 
         public async Task<string> Handle(
@@ -64,6 +68,12 @@ namespace VoltaXApi.OCPP.Handlers
                         (int)transactionEventRequest.EVSE.ConnectorId, 
                         (int)transactionEventRequest.EVSE.Id, 
                         chargePoint.ID);
+
+                if (connector == null)
+                {
+                    await _configService.RefreshConnectors(chargePointStatus.Id);
+                }
+                
 
                 //  Extract meter values with correct scale
                 double currentChargeKW = -1;

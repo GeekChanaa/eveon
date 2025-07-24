@@ -177,6 +177,7 @@ namespace VoltaXApi.Services
       catch (Exception exp)
       {
         Console.WriteLine("UpdateTransaction => Exception: {0}", exp.Message);
+        Console.WriteLine("UpdateTransaction => StackTrace: {0}", exp.StackTrace);
         transactionEventResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
       }
     }
@@ -205,7 +206,7 @@ namespace VoltaXApi.Services
                     .Transactions.Where(t =>t.Uid == transactionEventRequest.TransactionInfo.TransactionId)
                                 .OrderByDescending(t => t.ID)
                                 .FirstOrDefault();
-        Console.WriteLine("this is the transactionID : " + transaction.ID);
+
         if (
             transaction == null
             || transaction.ConnectorID != connector.ID
@@ -225,13 +226,13 @@ namespace VoltaXApi.Services
           {
             if (transaction.StopTime.HasValue)
             {
-              Console.WriteLine("EndTransaction => Last transaction (id={0}) is already closed ",transaction.ID);
+              Console.WriteLine("EndTransaction => Last transaction (id={0}) is already closed ", transaction.ID);
               transaction = null;
             }
           }
           else
           {
-            Console.WriteLine("EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'",chargePointStatus.Id,connector.ID);
+            Console.WriteLine("EndTransaction => Found no transaction for charge point '{0}' and connectorID '{1}'", chargePointStatus.Id, connector.ID);
           }
         }
 

@@ -35,6 +35,13 @@ export class CreateChargingStationAddressComponent implements OnInit {
   saveInformations(){
     this.nextStep.emit();
   }
+
+  onLocationSelected(event: { latitude: number; longitude: number }) {
+  this.form.patchValue({
+    latitude: event.latitude,
+    longitude: event.longitude
+  });
+}
   
   previousStep = () => this.previousStepEvent.emit();
 

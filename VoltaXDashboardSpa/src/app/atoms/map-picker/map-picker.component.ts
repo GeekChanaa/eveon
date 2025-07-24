@@ -18,6 +18,8 @@ export class MapPickerComponent implements OnInit, AfterViewInit {
 
   @Output() locationSelected: EventEmitter<any> = new EventEmitter<any>();
 
+  @Input() useCurrentLocation: boolean = false;
+
   coordinates!: google.maps.LatLng;
 
   mapOptions!: google.maps.MapOptions;
@@ -28,6 +30,7 @@ export class MapPickerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.coordinates = new google.maps.LatLng(this.lat, this.lng);
+    
 
     this.mapOptions = {
       center: this.coordinates,
@@ -35,12 +38,44 @@ export class MapPickerComponent implements OnInit, AfterViewInit {
     };
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     if (this.noEdit) {
       this.mapInitializerNoEdit();
-    } else {
+    }
+    else if(this.useCurrentLocation){
+      console.log("this is in here my friends")
+      await this.setCurrentLocation();
+    } 
+    else {
       this.mapInitializer();
     }
+  }
+
+   private setCurrentLocation(): Promise<void> {
+    return new Promise((resolve) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.lat = position.coords.latitude;
+            this.lng = position.coords.longitude;
+            this.coordinates = new google.maps.LatLng(this.lat, this.lng);
+            this.mapOptions = {
+              center: this.coordinates,
+              zoom: 18,
+            };
+            this.mapInitializer();
+            resolve();
+          },
+          () => {
+            console.warn('Geolocation not allowed or available.');
+            resolve();
+          }
+        );
+      } else {
+        console.warn('Geolocation is not supported by this browser.');
+        resolve();
+      }
+    });
   }
 
   mapInitializer() {

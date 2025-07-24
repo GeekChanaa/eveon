@@ -9,6 +9,7 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { VerifyPhoneComponent } from './verify-phone/verify-phone.component';
 import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-number.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
+import { ResetPasswordSuccessComponent } from './reset-password-success/reset-password-success.component';
 
 
 
@@ -17,6 +18,7 @@ export const AuthRoutes: Routes= [
   { path : 'register' , component : SignUpComponent },
   { path : 'request-password' , component : RequestPasswordComponent },
   { path : 'reset-password' , component : ResetPasswordComponent },
+  { path : 'reset-password-success' , component : ResetPasswordSuccessComponent },
   { path : 'verification-mail-sent' , component : VerificationMailSentComponent },
   { path : 'verify-email' , component : VerifyEmailComponent },
   { path : 'verify-phone' , component : VerifyPhoneComponent },

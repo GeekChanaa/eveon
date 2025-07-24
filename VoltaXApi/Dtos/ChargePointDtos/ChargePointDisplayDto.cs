@@ -8,6 +8,8 @@ namespace VoltaXApi.Dtos
         public int ID { get; set; }
         public string ChargePointId { get; set; }
         public int ChargingStationID { get; set; }
+        public int? ChargePointModelID { get; set; }
+        public int? ChargePointBrandID { get; set; }
         public string ChargingStationName { get; set; }
         public string SerialNumber { get; set; }
         public bool? ShowOnMap { get; set; } = true;
@@ -17,6 +19,11 @@ namespace VoltaXApi.Dtos
         public string? ModelImage { get; set; }
         public ChargePointStatusEnum Status { get; set; }
         public string? Comment { get; set; }
+        public string? Address { get; set; }
+        public string? Country { get; set; }
+        public string? City { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
         public string? ClientCertThumb { get; set; }

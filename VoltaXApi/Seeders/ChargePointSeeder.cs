@@ -16,7 +16,6 @@ namespace VoltaXApi.Data.Seeders
                 .RuleFor(o => o.ChargePointModelID, f => f.Random.Number(1, 170))
                 .RuleFor(o => o.ChargingStationID, f => f.PickRandom(chargingStations).ID)
                 .RuleFor(o => o.SerialNumber, f => f.Random.AlphaNumeric(10))
-                .RuleFor(o => o.Make, f => f.Vehicle.Manufacturer())
                 .RuleFor(o => o.Status, f => f.PickRandom<ChargePointStatusEnum>())
                 .RuleFor(o => o.Comment, f => f.Lorem.Sentence())
                 .RuleFor(o => o.Username, f => f.Internet.UserName())

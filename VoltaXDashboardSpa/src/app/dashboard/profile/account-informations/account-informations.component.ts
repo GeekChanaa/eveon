@@ -60,17 +60,7 @@ editingImage: boolean = false;
 
 
   // CurrentUser
-  user : User = {
-    firstName: '',
-    lastName: '',
-    id: 0,
-    email: '',
-    phone: '',
-    role: "Customer",
-    isEmailVerified: false,
-    isPhoneNumberVerified: false,
-    imageUrl: ''
-  };
+  user : any = {}
 
   updateUserObservable = (id : number, model : any) => this._userService.editUserDashboardInformations(id, model);
 
@@ -100,10 +90,8 @@ editingImage: boolean = false;
   
 
   getUserByID(id : number ){
-    this._userService.getUserInformations(id).subscribe((data) => {
+    this._userService.getUserDashboardDisplayInformations(id).subscribe((data) => {
       this.user = data;
-      console.log("this is the user data");
-      console.log(this.user);
       this._userService.setAvatarUrl(this.user.imageUrl);
     })
   }

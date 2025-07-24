@@ -12,12 +12,15 @@ namespace VoltaXApi.Dtos
 
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public UserRole Role { get; set; }
-        public DateTime Birthday { get; set; }
+        public int RoleID { get; set; }
+        public string Role { get; set; }
+        public int? PartnerID { get; set; }
+        public string? Partner { get; set; }
+        public DateTime? Birthday { get; set; }
         public string? Gender { get; set; }
         public bool IsEmailVerified { get; set; } = false;
         public bool IsPhoneNumberVerified { get; set; } = false;
-        public DateTime SuspendedAt { get; set; }
+        public DateTime? SuspendedAt { get; set; }
 
     }
 }

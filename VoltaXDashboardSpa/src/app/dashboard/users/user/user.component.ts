@@ -54,6 +54,8 @@ export class UserComponent implements OnInit {
     this._userService.getUserDashboardDisplayInformations(id).subscribe((data)=>{
       this.userLoaded = true;
       this.user = data;
+      console.log("this is the user");
+      console.log(this.user);
     })
   }
 
@@ -61,19 +63,12 @@ export class UserComponent implements OnInit {
     this._partnerService.getAllPartners().subscribe((data) =>{
       if(data.result)
         this.partnersOptions = data.result.map((obj) =>({label: obj.name, value: obj.id}))
-
-      console.log("partner options");
-      console.log(this.partnersOptions);
-    
     })
   }
 
   getRoles(){
     this._roleService.getAllRoles().subscribe((data) => {
-      console.log("roles");
-      console.log(data);
       this.rolesOptions = data.map((obj : any) =>({label: obj.name, value: obj.id}))
-      console.log(this.rolesOptions);
     })
   }
 

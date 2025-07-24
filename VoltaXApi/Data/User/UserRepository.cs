@@ -4,6 +4,7 @@ using VoltaXApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Bogus.DataSets;
 namespace VoltaXApi.Data
 {
     public class UserRepository : Repository<User>, IUserRepository
@@ -183,8 +184,27 @@ namespace VoltaXApi.Data
 
         public async Task<UserDashboardDisplayInformationsDto> GetUserDashboardDisplayInformations(int userID)
         {
-            var user = await GetByIdAsync(userID);
-            return _mapper.Map<User, UserDashboardDisplayInformationsDto>(user);
+            var user = await _context.Users
+            .Where(u => u.ID == userID)
+            .Select(u => new UserDashboardDisplayInformationsDto
+            {
+                ID = u.ID,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Phone = u.Phone,
+                RoleID = u.RoleID,
+                Role = u.Role.Name,
+                PartnerID = u.PartnerID,
+                Partner = u.Partner.Name,
+                Birthday = u.Birthday,
+                Gender = u.Gender,
+                IsEmailVerified = u.IsEmailVerified,
+                IsPhoneNumberVerified = u.IsPhoneNumberVerified,
+                SuspendedAt = u.SuspendedAt,
+            }).FirstOrDefaultAsync();
+
+            return user;
         }
 
         public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)

@@ -5,9 +5,10 @@ using System.Runtime.CompilerServices;
 
 namespace VoltaXApi.Services
 {
-    public interface ICardService
-    {
-      Task<AuthorizationStatusEnumType> ValidateCard(string idTag);
-      Task<bool> SubstractAmountFromCard(int cardTagID, double kwhCharged, int connectorID);
-    }
+  public interface ICardService
+  {
+    Task<AuthorizationStatusEnumType> ValidateCard(string idTag);
+    Task<bool> SubstractAmountFromCard(int cardTagID, double kwhCharged, int connectorID);
+    Task<bool> AddAmountToCard(int cardID, double amount);
+  }
 }

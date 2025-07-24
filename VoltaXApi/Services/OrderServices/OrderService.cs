@@ -7,14 +7,26 @@ namespace VoltaXApi.Services
     public class OrderService : IOrderService
     {
         private readonly ICardRepository _cardRepository;
+        private readonly ICardService _cardService;
         private readonly IDebitCardRepository _debitCardRepository;
         private readonly IOrderRepository _orderRepository;
 
-        public OrderService(ICardRepository cardRepository, IDebitCardRepository debitCardRepository, IOrderRepository orderRepository)
+        public OrderService(
+            ICardRepository cardRepository,
+            IDebitCardRepository debitCardRepository,
+            IOrderRepository orderRepository,
+            ICardService cardService)
         {
             _cardRepository = cardRepository;
             _debitCardRepository = debitCardRepository;
             _orderRepository = orderRepository;
+            _cardService = cardService;
+        }
+
+        public async Task CreateOrder(CreateRechargeOrderDto orderDto)
+        {
+            await this._cardService.AddAmountToCard(orderDto.CardID, (double)orderDto.Amount);
+            await this._orderRepository.CreateRechargeOrder(orderDto);
         }
 
         public async Task<bool> ProcessPayment(RechargeOrderDto orderDto)

@@ -9,7 +9,7 @@
         Name
       </div>
       <div class="details-informations__item-value">
-        {{chargePoint.name}}
+        {{chargePoint.chargePointId}}
       </div>
     </div>
 
@@ -27,7 +27,7 @@
         Location
       </div>
       <div class="details-informations__item-value">
-        {{chargePoint.country}}, {{chargePoint.state}} {{chargePoint.city}} 
+        {{chargePoint.country}}, {{chargePoint.city}} {{chargePoint.address}} 
       </div>
     </div>
 
@@ -36,12 +36,15 @@
         Comment
       </div>
       <div class="details-informations__item-value">
+        <ng-container *ngIf="chargePoint.comment == '' || chargePoint.comment == undefined">
+          <i>No comment</i>
+        </ng-container>
         {{chargePoint.comment}}
       </div>
     </div>
   </div>
   <div class="details-location__container">
-    <app-map-picker [lat]="chargePoint.latitude" [lng]="chargePoint.longitude"></app-map-picker>
+    <app-map-picker [noEdit]="true" [lat]="chargePoint.latitude" [lng]="chargePoint.longitude"></app-map-picker>
   </div>
 </div>
 
