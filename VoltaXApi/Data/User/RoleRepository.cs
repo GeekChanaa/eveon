@@ -61,5 +61,28 @@ namespace VoltaXApi.Data
             return roles;
         }
 
+        public async Task UpdateRolePermission(int roleId, List<int> permissionIds)
+        {
+            var role = await _context.Roles
+                .Include(r => r.RolePermissions)
+                .FirstOrDefaultAsync(r => r.ID == roleId);
+
+            // Clear existing permissions
+            role.RolePermissions.Clear();
+
+            // Add new permissions
+            foreach (var permissionId in permissionIds)
+            {
+                role.RolePermissions.Add(new RolePermission
+                {
+                    RoleID = roleId,
+                    PermissionID = permissionId
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 }

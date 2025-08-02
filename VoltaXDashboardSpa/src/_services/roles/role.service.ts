@@ -30,5 +30,8 @@ export class RoleService extends AbstractService<Role>{
     return this._http.get<any>(this.baseUrl+"GetAllRoles/");
   }
 
+  updateRolePermissions(roleId: number, permissionIds: number[]): Observable<any> {
+    return this.http.put(this.baseUrl+`UpdateRolePermissions/${roleId}`, permissionIds);
+  }
 
 }

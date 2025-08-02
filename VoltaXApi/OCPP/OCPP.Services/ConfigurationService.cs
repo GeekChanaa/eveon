@@ -111,7 +111,7 @@ namespace VoltaXApi.OCPP.Services
             {
                 RequestId = random.Next(100000, 10000000),
                 ReportBase = ReportBaseEnumType.SummaryInventory,
-                CustomData = new CustomDataType { VendorId = ControllerOCPP20.VendorId }
+                // CustomData = new CustomDataType { VendorId = ControllerOCPP20.VendorId }
             };
             
             var msg = _messageFactory.CreateMessage("GetBaseReport", request);

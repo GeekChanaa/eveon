@@ -247,9 +247,12 @@
         <div class="card">
           <div class="card-header">
             <h2>Charging Stations</h2>
-            <button class="btn btn-primary btn-sm">
-               Add Station
-            </button>
+            <app-button
+              variant="secondary"
+              [routerLink]="['/dashboard/charging-stations/create']"
+              [queryParams]="{ partnerId: partnerID }">
+              Add Station
+            </app-button>
           </div>
           <div class="card-content">
             <ng-container *ngIf="partner.id != null && partner.id != undefined">

@@ -119,9 +119,13 @@ namespace VoltaXApi.Services
               .FindAsync(t => t.Uid == transactionEventRequest.TransactionInfo.TransactionId))
               .OrderByDescending(t => t.ID)
               .FirstOrDefault();
-            
+
+        if (transaction == null && connector == null)
+        {
+          return;
+        }
           
-        if (transaction == null || chargePoint.ChargePointId != chargePointStatus.Id || transaction.StopTime.HasValue )
+        if (transaction == null || chargePoint.ChargePointId != chargePointStatus.Id || transaction.StopTime.HasValue)
         {
           Console.WriteLine("UpdateTransaction => Unknown or closed transaction uid={0}", transactionEventRequest.TransactionInfo?.TransactionId);
 
@@ -133,11 +137,11 @@ namespace VoltaXApi.Services
           if (transaction != null)
           {
             card = (await _cardRepository.FindAsync(c => c.ID == transaction.StartCardID)).First();
-            Console.WriteLine("UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'",transaction.ID,transaction.StartTime.ToString("O"),transaction?.StopTime?.ToString("O"));
+            Console.WriteLine("UpdateTransaction => Last transaction id={0} / Start='{1}' / Stop='{2}'", transaction.ID, transaction.StartTime.ToString("O"), transaction?.StopTime?.ToString("O"));
 
             if (transaction.StopTime.HasValue)
             {
-              Console.WriteLine( "UpdateTransaction => Last transaction (id={0}) is already closed ", transaction.ID );
+              Console.WriteLine("UpdateTransaction => Last transaction (id={0}) is already closed ", transaction.ID);
               transaction = null;
             }
           }

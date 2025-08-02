@@ -33,5 +33,20 @@ namespace VoltaXApi.Data
             };
         }
 
+        public async Task<List<PermissionListDto>> GetRolePermissions(int roleID)
+        {
+            var rolePermissions = await _context.Roles
+            .Where(r => r.ID == roleID)
+            .SelectMany(r => r.RolePermissions)
+            .Select(rp => new PermissionListDto
+            {
+                ID = rp.Permission.ID,
+                Name = rp.Permission.Name
+            })
+            .ToListAsync();
+
+            return rolePermissions;
+        }
+
     }
 }

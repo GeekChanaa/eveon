@@ -31,8 +31,6 @@ export class PartnerChargingStationComponent implements OnInit {
 
   getChargingStationByID(){
     this._chargingStationService.getChargingStationByID(this.chargingStationID).subscribe((data) => {
-      console.log("this is the charging station");
-      console.log(data);
       this.chargingStation = data;
     })
   }

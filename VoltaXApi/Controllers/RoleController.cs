@@ -41,7 +41,7 @@ namespace VoltaXApi.Controllers
             var roles = await this._repository.GetRolesByPermissionID(permissionID);
             return roles;
         }
-        
+
         [HttpGet("GetAllRoles")]
         public async Task<List<RoleListDto>> GetAllRoles(int permissionID)
         {
@@ -49,5 +49,12 @@ namespace VoltaXApi.Controllers
             return roles;
         }
         
+        [HttpPut("UpdateRolePermissions/{roleId}")]
+        public async Task<IActionResult> UpdateRolePermissions(int roleId, [FromBody] List<int> permissionIds)
+        {
+            await this._repository.UpdateRolePermission(roleId, permissionIds);
+
+            return Ok(new { message = "Permissions updated successfully." });
+        }
     }
 }

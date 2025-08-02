@@ -33,5 +33,6 @@ namespace VoltaXApi.Data
         IQueryable<User> GetCustomersQueryable();
         IQueryable<User> GetPartnersQueryable();
         Task<string> GetUserPhoneNumber(int userID);
+        Task<List<UserNameDto>> GetRoleUsers(int roleID);
     }
 }

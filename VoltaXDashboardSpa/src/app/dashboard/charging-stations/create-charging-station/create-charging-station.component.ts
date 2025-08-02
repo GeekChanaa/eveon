@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
@@ -55,7 +55,8 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   constructor(
     private _modalService:  ActionModalService,
     private _chargingStationService:  ChargingStationService,
-    private _router : Router
+    private _router : Router,
+    private _route : ActivatedRoute
   ) {
     this.chargingStationInformationsForm = new FormGroup({
       category: new FormControl('Public',[Validators.required]),
@@ -86,6 +87,15 @@ export class CreateChargingStationComponent implements OnInit, AfterViewInit  {
   }
 
   ngOnInit() {
+    this._route.queryParams.subscribe(params => {
+      const partnerId = params['partnerId'];
+      if (partnerId) {
+        // Convert string to enum
+        this.chargingStationType = ChargingStationTypeEnum.PartnerStation;
+        this.currentStep = CreateChargingStationFormStepEnum.ChargingStationInformations;
+        this.chargingStationInformationsForm.get('partnerID')?.setValue(+partnerId); // Set partner ID in the form
+      }
+    });
   }
 
   chargingStationTypeSelected(choice : ChargingStationTypeEnum){

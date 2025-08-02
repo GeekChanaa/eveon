@@ -1,0 +1,8 @@
+<section class="user-list-section">
+  <h2 class="user-list-title">Users</h2>
+  <div class="user-flex-container">
+    <a *ngFor="let user of users" href="/dashboard/users/{{user.id}}" class="user-card">{{user.fullName}}</a>
+  </div>
+  
+  
+</section>

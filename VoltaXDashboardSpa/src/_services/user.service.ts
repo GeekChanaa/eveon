@@ -158,6 +158,10 @@ export class UserService extends AbstractService<User>{
     return this._http.get<any>(this.baseUrl + "GetUserPhoneNumber/"+userID);
   }
 
+  getRoleUsers(roleID : number){
+    return this._http.get<any>(this.baseUrl + "GetRoleUsers/"+roleID);
+  }
+
 
 
   

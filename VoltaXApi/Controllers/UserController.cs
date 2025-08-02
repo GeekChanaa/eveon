@@ -56,13 +56,13 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetUserPhoneNumber/{UserID}")]
-        public async Task<ActionResult<string>> GetUserPhoneNumber( int UserID)
+        public async Task<ActionResult<string>> GetUserPhoneNumber(int UserID)
         {
             return await this._repository.GetUserPhoneNumber(UserID);
         }
 
         [HttpGet("GetUserDashboardDisplayInformations/{userID}")]
-        public async Task<ActionResult<UserDashboardDisplayInformationsDto>> GetUserDashboardDisplayInformations( int UserID)
+        public async Task<ActionResult<UserDashboardDisplayInformationsDto>> GetUserDashboardDisplayInformations(int UserID)
         {
             return await this._repository.GetUserDashboardDisplayInformations(UserID);
         }
@@ -70,7 +70,7 @@ namespace VoltaXApi.Controllers
         [HttpPut("EditUserDashboardInformations/{userID}")]
         public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
         {
-            await this._repository.EditUserDashboardInformations(userID,userDto);
+            await this._repository.EditUserDashboardInformations(userID, userDto);
         }
 
         [HttpGet("GetUserNames")]
@@ -132,18 +132,18 @@ namespace VoltaXApi.Controllers
         public async Task<List<UserListDto>> GetUsers([FromQuery] GlobalParams globalParams)
         {
             var users = _repository.GetUsers(globalParams);
-            var usersList = await PagedList<UserListDto>.CreateAsync(users,globalParams.PageNumber, globalParams.PageSize);
+            var usersList = await PagedList<UserListDto>.CreateAsync(users, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(usersList.CurrentPage, usersList.PageSize, usersList.TotalCount, usersList.TotalPages);
             return usersList;
         }
 
         [HttpPost("UploadUserAvatar/{userID}")]
-        public async  Task<IActionResult> UploadUserAvatar(IFormFile imageFile, int userID)
+        public async Task<IActionResult> UploadUserAvatar(IFormFile imageFile, int userID)
         {
             Console.WriteLine("this is the userController Function");
             try
             {
-                
+
                 if (Request.Form.Files.Count == 1)
                 {
                     var file = Request.Form.Files[0];
@@ -161,6 +161,12 @@ namespace VoltaXApi.Controllers
                 Console.WriteLine(ex.StackTrace);
                 return BadRequest();
             }
+        }
+        
+        [HttpGet("GetRoleUsers/{roleID}")]
+        public async Task<ActionResult<List<UserNameDto>>> GetRoleUsers(int roleID)
+        {
+            return await this._repository.GetRoleUsers(roleID);
         }
     }
 }

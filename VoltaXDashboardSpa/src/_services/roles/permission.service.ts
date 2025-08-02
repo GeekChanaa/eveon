@@ -28,5 +28,9 @@ export class PermissionService extends AbstractService<Permission>{
     return this._http.get<any>(this.baseUrl+"GetPermissionByID/"+permissionID);
   }
 
+  getRolePermissions(roleID : number){
+    return this._http.get<any>(this.baseUrl+"getRolePermissions/"+roleID);
+  }
+
 
 }

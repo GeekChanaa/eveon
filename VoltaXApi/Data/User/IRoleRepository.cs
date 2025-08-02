@@ -10,5 +10,6 @@ namespace VoltaXApi.Data
         Task CreateRole(CreateRoleDto role);
         Task<List<RoleListDto>> GetRolesByPermissionID(int permissionID);
         Task<List<RoleListDto>> GetAllRoles();
+        Task UpdateRolePermission(int roleId, List<int> permissionIds);
     }
 }

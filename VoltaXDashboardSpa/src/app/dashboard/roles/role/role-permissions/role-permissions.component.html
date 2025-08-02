@@ -1,0 +1,28 @@
+<section class="permission-list-section">
+  <h2 class="permission-list-title">Permissions</h2>
+  <ng-container *ngIf="!updatingPermisions">
+    <div class="permission-flex-container">
+      <a *ngFor="let permission of rolePermissions" href="/dashboard/permissions/{{permission.id}}" class="permission-card">{{permission.name}}</a>
+    </div>
+    <div class="form__actions">
+      <app-button variant="secondary" (btnClick)="updatingPermisions = true">Edit Permissions</app-button>
+    </div>
+  </ng-container>
+  
+  <ng-container *ngIf="updatingPermisions">
+    <app-form-field
+      class="field"
+      title="Permissions"
+      description="Select the permissions for this role."
+      [control]="getControl('permissions')"
+      inputType="multi_select_checkbox"
+      [options]="permissionOptions">
+    </app-form-field>
+
+    <div class="form__actions">
+      <app-button variant="secondary" (btnClick)="updatePermissions()">Update Permissions</app-button>
+      <app-button variant="primary" [outlined]="true" (btnClick)="updatingPermisions = false">Cancel</app-button>
+    </div>
+  </ng-container>
+  
+</section>

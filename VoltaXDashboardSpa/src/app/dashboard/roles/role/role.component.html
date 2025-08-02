@@ -1,3 +1,84 @@
-<p>
-  role works!
-</p>
+<app-dashboard-details-container [title]="role?.name || 'Role Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Roles', link: '/dashboard/roles' },
+  { label: role?.id || 'Details' }
+]">
+
+  <!-- Loading state -->
+  <div *ngIf="!roleLoaded" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <!-- Content area -->
+  <div *ngIf="roleLoaded" class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
+          class="tab-button">
+          Information
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'Permissions'}" (click)="changeTab('Permissions')"
+          class="tab-button">
+          Permissions
+        </button>
+        <button [ngClass]="{'active': tabsEnum === 'Users'}" (click)="changeTab('Users')"
+          class="tab-button">
+          Users
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
+        <div class="card profile-section">
+          
+          <div class="card-content">
+
+            <!-- Main details -->
+            <div class="form-content">
+              
+              <div class="form-section">
+                <h3 class="section-title">Informations</h3>
+                <div class="field-group">
+                  <app-display-cell 
+                    [updateObservable]="updateRoleObservable.bind(this)" 
+                    [object]="role"
+                    inpType="text"
+                    title="Name"
+                    [tooltip]="'This is the name of the role'"
+                    [editable]="false"
+                    [val]="role.name" [editable]="true"></app-display-cell>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div *ngIf="tabsEnum === 'Permissions'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
+            <ng-container *ngIf="roleID != null && roleID != undefined">
+              <app-role-permissions [roleID]="roleID"></app-role-permissions> 
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions Tab -->
+      <div *ngIf="tabsEnum === 'Users'" class="charging-stations-tab">
+        <div class="card">
+          <div class="card-content">
+            <ng-container *ngIf="role.id != null && role.id != undefined">
+              <app-role-users [roleID]="role.id"></app-role-users>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-details-container>

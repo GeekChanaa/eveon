@@ -8,6 +8,8 @@ import { CreateRoleComponent } from './create-role/create-role.component';
 import { RoleComponent } from './role/role.component';
 import { RolesListComponent } from './roles-list/roles-list.component';
 import { RolesComponent } from './roles.component';
+import { RolePermissionsComponent } from './role/role-permissions/role-permissions.component';
+import { RoleUsersComponent } from './role/role-users/role-users.component';
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import { RolesComponent } from './roles.component';
     CreateRoleComponent,
     RoleComponent,
     RolesListComponent,
-    RolesComponent
+    RolesComponent,
+    RolePermissionsComponent,
+    RoleUsersComponent
   ],
   imports: [
       AtomsModule,

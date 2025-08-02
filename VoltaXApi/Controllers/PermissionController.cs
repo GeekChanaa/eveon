@@ -41,6 +41,13 @@ namespace VoltaXApi.Controllers
             return permission;
         }
 
+        [HttpGet("GetRolePermissions/{roleID}")]
+        public async Task<List<PermissionListDto>> GetRolePermissions(int roleID)
+        {
+            var permissions = await this._repository.GetRolePermissions(roleID);
+            return permissions;
+        }
+
         
 
     }
