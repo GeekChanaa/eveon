@@ -13,7 +13,6 @@ namespace VoltaXApi.Data.Seeders
         {
             await SqlScriptExecuter.ExecuteSqlScript(context);
             await ChargePointBrandsSeeder.Seed(context, mapper);
-            await BrandsAutomobilesSeeder.Populate(context);
             await PermissionSeeder.Seed(context);
             await RoleSeeder.Seed(context);
             var users = await UserSeeder.Seed(20, context);

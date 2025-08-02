@@ -3,6 +3,7 @@ export interface UserDashboardEditInformationsDto{
     firstName: string;
     lastName: string;
     email: string;
+    electricVehicleModelID: string;
     phone: string;
     birthday? : string;
     gender? : string;

@@ -177,6 +177,7 @@ namespace VoltaXApi.Data
         public DbSet<Card> Cards { get; set; }
         public DbSet<CardExpirationNotification> CardExpirationNotifications { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
+        public DbSet<ElectricVehicleModel> ElectricVehicleModels { get; set; }
         public DbSet<ChargePoint> ChargePoints { get; set; }
         public DbSet<ChargePointBrand> ChargePointBrands { get; set; }
         public DbSet<ChargePointFeatures> ChargePointFeaturess { get; set; }
@@ -200,8 +201,6 @@ namespace VoltaXApi.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
         public DbSet<NotificationType> NotificationTypes { get; set; }
-        public DbSet<Brand> Brands { get; set; }
-        public DbSet<Automobile> Automobiles { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<ReportReply> ReportReplies { get; set; }
         public DbSet<CommentReply> CommentReplies { get; set; }

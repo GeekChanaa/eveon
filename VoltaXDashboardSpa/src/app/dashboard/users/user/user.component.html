@@ -105,6 +105,18 @@
 
               </div>
 
+              <!-- Additional Information -->
+              <div class="form-section">
+                <h3 class="section-title">Additional Informations</h3>
+
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="date"
+                  title="birthday" [val]="user.birthday"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
+                  inpType="select" title="electricVehicleModelID" [options]="evModels" val="{{user.evModel ?? 'Not Specified'}}"></app-display-cell>
+
+              </div>
+
             </div>
           </div>
         </div>

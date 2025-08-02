@@ -18,6 +18,7 @@ namespace VoltaXApi.Dtos
         public string? Partner { get; set; }
         public DateTime? Birthday { get; set; }
         public string? Gender { get; set; }
+        public string? EvModel { get; set; }
         public bool IsEmailVerified { get; set; } = false;
         public bool IsPhoneNumberVerified { get; set; } = false;
         public DateTime? SuspendedAt { get; set; }

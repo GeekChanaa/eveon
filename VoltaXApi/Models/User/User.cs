@@ -12,7 +12,7 @@ namespace VoltaXApi.Models
         public string Email { get; set; }
         public string? Gender { get; set; }
         public string? City { get; set; }
-        public string? Car { get; set; }
+        public int? ElectricVehicleModelID { get; set; }
         public DateTime? Birthday { get; set; }
         private string? _phoneNumber;
         public string? Phone
@@ -60,6 +60,7 @@ namespace VoltaXApi.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public Image? Image { get; set; }
+        public ElectricVehicleModel? ElectricVehicleModel { get; set; }
         [NotMapped]
         public string FullName { get { return FirstName+ " " + LastName;} }
         public Partner? Partner { get; set; }

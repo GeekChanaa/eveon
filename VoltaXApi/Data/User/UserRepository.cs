@@ -197,6 +197,7 @@ namespace VoltaXApi.Data
                 Role = u.Role.Name,
                 PartnerID = u.PartnerID,
                 Partner = u.Partner.Name,
+                EvModel = u.ElectricVehicleModel == null ? "" : u.ElectricVehicleModel.Make + " " + u.ElectricVehicleModel.Model,
                 Birthday = u.Birthday,
                 Gender = u.Gender,
                 IsEmailVerified = u.IsEmailVerified,
@@ -219,6 +220,7 @@ namespace VoltaXApi.Data
             user.IsEmailVerified = userDto.IsEmailVerified;
             user.IsPhoneNumberVerified = userDto.IsPhoneNumberVerified;
             user.SuspendedAt = userDto.SuspendedAt;
+            user.ElectricVehicleModelID = userDto.ElectricVehicleModelID;
 
             await Update(user);
         }
@@ -234,7 +236,6 @@ namespace VoltaXApi.Data
                             Email = u.Email,
                             Gender = u.Gender,
                             City = u.City,
-                            Car = u.Car,
                             Birthday = u.Birthday,
                             Phone = u.Phone,
                             PartnerName = u.PartnerID == null ? null : u.Partner.Name,

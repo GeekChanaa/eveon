@@ -3,8 +3,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {  Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
+import { ElectricVehicleModelService } from 'src/_services/electric-vehicle-model.service';
 import { PartnerService } from 'src/_services/partner.service';
+import { RoleService } from 'src/_services/roles/role.service';
 import { UserService } from 'src/_services/user.service';
+import { strongPasswordValidator } from 'src/app/validators/strong-password-validator';
 
 @Component({
   selector: 'app-create-user',
@@ -15,7 +18,9 @@ export class CreateUserComponent implements OnInit {
 
   userForm : FormGroup;
   isLoading : boolean = false;
-  partnersOptions : any[] = [];
+  partnersOptions : any[] = [{value : null, label : "None"}];
+  roles : any[] = [];
+  evModels : any[] = [];
   userRoles = [
     { label: "Admin", value: "Admin" },
     { label: "Customer", value: "Customer" },
@@ -33,7 +38,9 @@ export class CreateUserComponent implements OnInit {
     private _userService : UserService,
     private _partnerService : PartnerService,
     private _modalService : ActionModalService,
-    private _router : Router
+    private _roleService : RoleService,
+    private _router : Router,
+    private _evModelService : ElectricVehicleModelService
   ) { 
     this.userForm = new FormGroup({
         firstName : new FormControl('',[Validators.required]),
@@ -41,19 +48,29 @@ export class CreateUserComponent implements OnInit {
         email : new FormControl('',[Validators.required, Validators.email]),
         gender : new FormControl(''),
         city : new FormControl(null),
-        car : new FormControl(null),
         birthday : new FormControl(null),
         phone : new FormControl('',[Validators.required]),
-        password : new FormControl('',[Validators.required]),
-        partnerID : new FormControl('',[Validators.required]),
+        password : new FormControl('',[Validators.required,
+                    Validators.minLength(8),
+                    strongPasswordValidator()]),
+        partnerID : new FormControl(null),
         isEmailVerified : new FormControl(false),
         isPhoneNumberVerified : new FormControl(false),
-        role : new FormControl("Customer"),
+        roleID : new FormControl(2),
+        electricVehicleModelID : new FormControl("")
       })
   }
 
   ngOnInit() {
     this.getPartners();
+    this.getAllRoles();
+    this.getAllEVModels();
+  }
+
+  getAllEVModels(){
+    this._evModelService.getAllElectricVehicleModelsForSelect().subscribe((data) => {
+      this.evModels = data.map(u => ({id: u.id, name: u.make+" "+u.model}))
+    })
   }
 
   onSubmit(){
@@ -73,10 +90,23 @@ export class CreateUserComponent implements OnInit {
     return this.userForm.get(name) as FormControl;
   }
 
-  getPartners(){
-    this._partnerService.getAllPartners(1,-1).subscribe((data) => {
-      if(data.result != null)
-        this.partnersOptions = data.result.map(partner => ({label : partner.name , value : partner.id}))
+  getPartners() {
+    this._partnerService.getAllPartners(1, -1).subscribe((data) => {
+      if (data.result != null) {
+        this.partnersOptions = [
+          { label: 'None', value: null }, // Add "None" option
+          ...data.result.map(partner => ({
+            label: partner.name,
+            value: partner.id
+          }))
+        ];
+      }
+    });
+  }
+
+  getAllRoles(){
+    this._roleService.getAllRoles().subscribe((data) => {
+      this.roles = data.map((role : any) => ({ label : role.name, value : role.id}));
     })
   }
 }

@@ -7,6 +7,7 @@ import { ActionModalService } from 'src/_services/action-modal.service';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { PartnerService } from 'src/_services/partner.service';
 import { RoleService } from 'src/_services/roles/role.service';
+import { ElectricVehicleModelService } from 'src/_services/electric-vehicle-model.service';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
@@ -27,6 +28,7 @@ export class UserComponent implements OnInit {
   userLoaded : boolean = false;
   partnersOptions : any[] = [];
   rolesOptions : any[] = [];
+  evModels : any = {};
 
   //user
   user : any = {};
@@ -37,7 +39,8 @@ export class UserComponent implements OnInit {
     private _route: ActivatedRoute,
     private _modalService: ActionModalService,
     private _partnerService : PartnerService,
-    private _roleService : RoleService
+    private _roleService : RoleService,
+    private _evModelService : ElectricVehicleModelService
     ) { }
 
   ngOnInit() {
@@ -47,6 +50,7 @@ export class UserComponent implements OnInit {
     }
     this.getAllPartners();
     this.getRoles();
+    this.getAllEVModels();
   }
 
   getUser(id : number){
@@ -54,8 +58,6 @@ export class UserComponent implements OnInit {
     this._userService.getUserDashboardDisplayInformations(id).subscribe((data)=>{
       this.userLoaded = true;
       this.user = data;
-      console.log("this is the user");
-      console.log(this.user);
     })
   }
 
@@ -63,6 +65,12 @@ export class UserComponent implements OnInit {
     this._partnerService.getAllPartners().subscribe((data) =>{
       if(data.result)
         this.partnersOptions = data.result.map((obj) =>({label: obj.name, value: obj.id}))
+    })
+  }
+
+  getAllEVModels(){
+    this._evModelService.getAllElectricVehicleModelsForSelect().subscribe((data) => {
+      this.evModels = data.map(u => ({value: u.id, label: u.make+" "+u.model}))
     })
   }
 

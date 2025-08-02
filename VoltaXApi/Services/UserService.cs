@@ -66,13 +66,13 @@ namespace VoltaXApi.Services
         public async Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate)
         {
             AuthHelper.CreatePasswordHash(userToCreate.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            User user = new User{
+            User user = new User
+            {
                 FirstName = userToCreate.FirstName,
                 LastName = userToCreate.LastName,
                 Email = userToCreate.Email,
                 Gender = userToCreate.Gender,
                 City = userToCreate.City,
-                Car = userToCreate.Car,
                 Birthday = userToCreate.Birthday,
                 Phone = userToCreate.Phone,
                 PasswordHash = passwordHash,
@@ -81,6 +81,7 @@ namespace VoltaXApi.Services
                 IsEmailVerified = userToCreate.IsEmailVerified,
                 IsPhoneNumberVerified = userToCreate.IsPhoneNumberVerified,
                 RoleID = userToCreate.RoleID,
+                ElectricVehicleModelID = userToCreate.ElectricVehicleModelID
             };
             await _userRepository.AddAsync(user);
             await _cardRepository.CreateCardForUser(user);

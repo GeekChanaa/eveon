@@ -156,6 +156,7 @@ public static class ServiceRegistration
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
         services.AddScoped<IChargePointBrandRepository, ChargePointBrandRepository>();
+        services.AddScoped<IElectricVehicleModelRepository, ElectricVehicleModelRepository>();
 
 
     }

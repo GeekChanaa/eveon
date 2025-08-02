@@ -13,13 +13,13 @@ namespace VoltaXApi.Dtos
         public string Email { get; set; }
         public string? Gender { get; set; }
         public string? City { get; set; }
-        public string? Car { get; set; }
         public DateTime? Birthday { get; set; }
         public string Phone { get; set; }
         [StrongPassword]
         public string Password { get; set; }
         public int? PartnerID { get; set; }
         public bool IsEmailVerified { get; set; }
+        public int? ElectricVehicleModelID { get; set; }
         public bool IsPhoneNumberVerified { get; set; }
         public int RoleID { get; set; }
     }

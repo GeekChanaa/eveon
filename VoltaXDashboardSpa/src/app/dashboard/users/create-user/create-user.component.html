@@ -1,129 +1,59 @@
 <!-- inner-->
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">New User</div>
-    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <div class="create">
-        <div class="create__row">
-          <div class="create__col">
-            <div class="create__card card charge_point_form">
-              <div class="create__group create__group3">
-                <app-form-field
-                  class="field"
-                  title="First Name"
-                  description="tbd"
-                  [control]="getControl('firstName')"
-                ></app-form-field>
-                
-                <app-form-field
-                  class="field"
-                  title="Last Name"
-                  description="tbd"
-                  [control]="getControl('lastName')"
-                ></app-form-field>
+<app-dashboard-form-container title="New Role" [items]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Users', link: '/dashboard/users' },
+    { label: 'Create' }
+  ]">
+  <form [formGroup]="userForm" form (ngSubmit)="onSubmit()">
+    <app-form-field class="field" title="First Name" description="tbd" placeholder="First Name"
+      [control]="getControl('firstName')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Email"
-                  description="tbd"
-                  [control]="getControl('email')"
-                ></app-form-field>
+    <app-form-field class="field" title="Last Name" description="tbd" placeholder="Last Name"
+      [control]="getControl('lastName')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="gender"
-                  inputType="select"
-                  description="tbd"
-                  [control]="getControl('gender')"
-                  [options]="genders"
-                ></app-form-field>
+    <app-form-field class="field" title="Email" description="tbd" placeholder="Email"
+      [control]="getControl('email')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="City"
-                  description="tbd"
-                  [control]="getControl('city')"
-                ></app-form-field>
+    <app-form-field class="field" title="gender" inputType="select" placeholder="Gender" description="tbd"
+      [control]="getControl('gender')" [options]="genders"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Car"
-                  description="tbd"
-                  [control]="getControl('car')"
-                ></app-form-field>
+    <app-form-field class="field" title="City" description="tbd" placeholder="City"
+      [control]="getControl('city')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Birthday"
-                  inputType="datetime"
-                  description="tbd"
-                  [control]="getControl('birthday')"
-                ></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Phone"
-                  description="tbd"
-                  [control]="getControl('phone')"
-                ></app-form-field>
+    <app-search-input class="field__wrap" class="field" title="Vehicle"
+      description="The make and the brand of the user's electric vehicle" placeholder="Electric Vehicle"
+      [control]="getControl('electricVehicleModelID')" [options]="evModels"></app-search-input>
 
-                <app-form-field
-                  class="field"
-                  title="Password"
-                  inputType="password"
-                  description="tbd"
-                  [control]="getControl('password')"
-                ></app-form-field> 
+    <app-form-field class="field" title="Birthday" inputType="datetime" description="tbd" placeholder="Birthday"
+      [control]="getControl('birthday')"></app-form-field>
 
-                <!-- PartnerID -->
-                <app-form-field
-                  class="field"
-                  title="Partner"
-                  inputType="select"
-                  description="tbd"
-                  [control]="getControl('partnerID')"
-                  [options]="partnersOptions"
-                ></app-form-field>
+    <app-form-field class="field" title="Phone" description="tbd" placeholder="Phone"
+      [control]="getControl('phone')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Verified Email ?"
-                  inputType="checkbox"
-                  description="tbd"
-                  placeholder="verified"
-                  [control]="getControl('isEmailVerified')"
-                ></app-form-field>
+    <app-form-field class="field" title="Password" inputType="password" description="tbd" placeholder="Password"
+      [control]="getControl('password')"></app-form-field>
 
-                <app-form-field
-                  class="field"
-                  title="Verified Phone ?"
-                  inputType="checkbox"
-                  description="tbd"
-                  placeholder="verified"
-                  [control]="getControl('isPhoneNumberVerified')"
-                ></app-form-field>
-                
-                <app-form-field
-                  class="field"
-                  title="role"
-                  inputType="select"
-                  description="tbd"
-                  [control]="getControl('role')"
-                  [options]="userRoles"
-                ></app-form-field>
-              </div>
-            </div>
-          </div>
+    <!-- PartnerID -->
+    <app-form-field class="field" title="Partner" inputType="select" placeholder="Partner" description="tbd"
+      [control]="getControl('partnerID')" [options]="partnersOptions"></app-form-field>
 
-        </div>
-      </div>
-      <div class="btns_group">
-        <button [disabled]="userForm.invalid" [ngClass]="{'disabled': userForm.invalid}" class="button" type="submit">
-          <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
-          <ng-container *ngIf="!isLoading">
-            Submit
-          </ng-container>
-        </button>
-      </div>
-    </form>
-  </div>
+    <app-form-field class="field" title="Verified Email ?" inputType="checkbox" description="tbd" placeholder="verified"
+      [control]="getControl('isEmailVerified')"></app-form-field>
+
+    <app-form-field class="field" title="Verified Phone ?" inputType="checkbox" description="tbd" placeholder="verified"
+      [control]="getControl('isPhoneNumberVerified')"></app-form-field>
+
+    <app-form-field class="field" title="role" inputType="select" [options]="roles" description="tbd"
+      [control]="getControl('roleID')"></app-form-field>
+    <div class="btns_group">
+      <app-button variant="secondary" [disabled]="userForm.invalid" [ngClass]="{'disabled': userForm.invalid}"
+        type="submit">
+        <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
+        <ng-container *ngIf="!isLoading">
+          Submit
+        </ng-container>
+      </app-button>
+    </div>
+  </form>
+</app-dashboard-form-container>
