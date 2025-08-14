@@ -19,6 +19,7 @@ namespace VoltaXApi.Services
     private readonly IChargePointRepository _chargePointRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IChargingSessionRepository _chargingSessionRepository;
+    private readonly IChargingSessionService _chargingSessionService;
     private readonly IConnectorStatusRepository _connectorStatusRepository;
     private readonly IConnectorUptimeRepository _connectorUptimeRepository;
     private readonly IEVDriverService _evDriverService;
@@ -30,6 +31,7 @@ namespace VoltaXApi.Services
       IChargePointRepository chargePointRepository,
       ITransactionRepository transactionRepository,
       IChargingSessionRepository chargingSessionRepository,
+      IChargingSessionService chargingSessionService,
       IConnectorStatusRepository connectorStatusRepository,
       IConnectorUptimeRepository connectorUptimeRepository,
       IEVDriverService eVDriverService,
@@ -45,6 +47,7 @@ namespace VoltaXApi.Services
       _connectorStatusRepository = connectorStatusRepository;
       _connectorUptimeRepository = connectorUptimeRepository;
       _evDriverService = eVDriverService;
+      _chargingSessionService = chargingSessionService;
     }
 
     public async Task StartTransaction(
@@ -65,7 +68,7 @@ namespace VoltaXApi.Services
         int chargePointID = (await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id)).ID;
 
         
-        var chargingSession = await _chargingSessionRepository.StartChargingSession(connector,card);
+        var chargingSession = await _chargingSessionService.StartChargingSession(connector,card,DateTime.Parse(transactionEventRequest.Timestamp));
 
 
         transactionEventResponse.IdTokenInfo.Status = await _cardService.ValidateCard(idTag);
@@ -242,22 +245,21 @@ namespace VoltaXApi.Services
 
         if (transaction != null)
         {
-          
-
           Console.WriteLine("EndTransaction => Meter='{0}' (kWh)", meterKWH);
-
           transaction.StopTime = DateTime.Parse(transactionEventRequest.Timestamp);
           transaction.MeterStop = meterKWH;
           transaction.StopCardID = cardTagID;
           transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
           transaction.Status = TransactionStatusEnum.Ended;
-
-          double kwhCharged = (double)(transaction.MeterStop - transaction.MeterStart);
+          double minutesCharged = 0;
+          if (transaction.StopTime.HasValue)
+          {
+              minutesCharged = (transaction.StopTime.Value - transaction.StartTime).TotalMinutes;
+          }
 
           // Updating the Amount of the card related to the tag id.
-
-          await _cardService.SubstractAmountFromCard(cardTagID, kwhCharged, connector.ID);
-
+          await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID);
+          await _chargingSessionService.EndChargingSession(transaction.ChargingSessionID, minutesCharged, DateTime.Parse(transactionEventRequest.Timestamp));
           _context.SaveChanges();
         }
         else

@@ -60,6 +60,38 @@ namespace VoltaXApi.Services
             }
             return true;
         }
+
+        public async Task<bool> SubstractAmountFromCardByMinutes(int cardTagID, double minutesCharged, int connectorID)
+        {
+            Card? card = await _cardRepository.GetByIdAsync(cardTagID);
+            Connector? connector = await _connectorRepository.GetByIdAsync(connectorID);
+
+            double price = minutesCharged * (double)connector.PricePerMinute;
+            card.Balance = card.Balance - price;
+            await _cardRepository.Update(card);
+
+            if(card.Balance < 0){
+                await HandleCardNegativeBalance(card, connectorID);
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> SubstractAmountFromCardByIdleMinutes(int cardTagID, double idleMinutes, int connectorID)
+        {
+            Card? card = await _cardRepository.GetByIdAsync(cardTagID);
+            Connector? connector = await _connectorRepository.GetByIdAsync(connectorID);
+
+            double price = idleMinutes * (double)connector.PricePerIdleMinute;
+            card.Balance = card.Balance - price;
+            await _cardRepository.Update(card);
+
+            if(card.Balance < 0){
+                await HandleCardNegativeBalance(card, connectorID);
+                return false;
+            }
+            return true;
+        }
         
         public async Task<bool> AddAmountToCard(int cardID, double amount)
         {

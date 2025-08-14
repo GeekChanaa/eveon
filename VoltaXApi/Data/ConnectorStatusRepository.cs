@@ -24,11 +24,11 @@ namespace VoltaXApi.Data
     }
 
 
-    public async Task<ConnectorStatus?> GetConnectorStatusByConnectorID(int connectorID, string chargePointID)
+    public async Task<ConnectorStatus?> GetConnectorStatusByConnectorID(int connectorID)
     {
-      return await _context.ConnectorStatuses
-                      .Where(u => u.ChargePointID == chargePointID
-                                  && connectorID == u.ConnectorID).FirstOrDefaultAsync();
+      var cs = await _context.ConnectorStatuses
+                      .Where(u => connectorID == u.ConnectorID).FirstOrDefaultAsync();
+      return cs;
     }
 
 

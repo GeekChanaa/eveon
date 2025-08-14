@@ -24,6 +24,8 @@ namespace VoltaXApi.Services
     private readonly IChargePointRepository _chargePointRepository;
     private readonly IConnectorUptimeRepository _connectorUptimeRepository;
     private readonly ISystemReportService _systemReportService;
+    private readonly IChargingSessionRepository _chargingSessionRepository;
+    private readonly IChargingSessionService _chargingSessionService;
 
     public ConnectorStatusService(
       IConnectorStatusRepository csrepo,
@@ -32,17 +34,19 @@ namespace VoltaXApi.Services
       IConfigurationService configurationService,
       IChargePointRepository chargePointRepository,
       IConnectorUptimeRepository connectorUptimeRepository,
-      ISystemReportService systemReportService
+      ISystemReportService systemReportService,
+      IChargingSessionService chargingSessionService
     )
     {
-      this._connectorStatusRepository = csrepo;
-      this._connectorStatusRepository = csrepo;
-      this._connectorService = connectorService;
-      this._connectorRepository = connectorRepository;
-      this._configurationService = configurationService;
+      _connectorStatusRepository = csrepo;
+      _connectorStatusRepository = csrepo;
+      _connectorService = connectorService;
+      _connectorRepository = connectorRepository;
+      _configurationService = configurationService;
       _chargePointRepository = chargePointRepository;
       _connectorUptimeRepository = connectorUptimeRepository;
       _systemReportService = systemReportService;
+      _chargingSessionService = chargingSessionService;
     }
 
     public async Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID)
@@ -53,7 +57,7 @@ namespace VoltaXApi.Services
         {
           ChargePoint? chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID);
           Connector? connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(connectorStatusData.Component.Evse.ConnectorId, connectorStatusData.Component.Evse.Id, chargePoint.ID);
-          ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointID);
+          ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID);
           if (connectorStatus == null)
           {
             // no matching entry => create connector status
@@ -64,7 +68,7 @@ namespace VoltaXApi.Services
               LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value),
               LastStatusTime = DateTime.Now
             };
-            Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
+            Console.WriteLine("Refresh Connector Statuses => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
             await _connectorStatusRepository.AddAsync(connectorStatus);
           }
           else
@@ -106,8 +110,7 @@ namespace VoltaXApi.Services
           return true;
         }
 
-        // refresh the connectors if the connector does not exist
-        ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID, chargePointID);
+        ConnectorStatus? connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(connector.ID);
         if (status == ConnectorStatusEnumType.Faulted)
         {
           SystemReport sysReport = new()
@@ -120,6 +123,10 @@ namespace VoltaXApi.Services
             Criticality = ReportCriticality.High
           };
           await _systemReportService.HandleReport(sysReport);
+        }
+        if (status == ConnectorStatusEnumType.Available && connectorStatus.LastStatus == ConnectorStatusEnumType.Occupied)
+        {
+          await _chargingSessionService.HandleIdleMinutes(connector.ID, statusTime);
         }
 
         if (connectorStatus == null)

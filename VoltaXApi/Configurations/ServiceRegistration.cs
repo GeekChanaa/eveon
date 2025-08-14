@@ -196,6 +196,7 @@ public static class ServiceRegistration
         services.AddScoped<OCPPMessageProcessor>();
         services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
         services.AddScoped<INoticeService, NoticeService>();
+        services.AddScoped<IChargingSessionService, ChargingSessionService>();
         services.AddScoped<ChargingSessionInvoiceGeneratorService>();
         services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
         services.AddScoped<WebSocketSubProtocolMatcher>();

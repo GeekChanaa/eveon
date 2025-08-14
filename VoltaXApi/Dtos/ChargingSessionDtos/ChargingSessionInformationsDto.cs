@@ -19,9 +19,10 @@ namespace VoltaXApi.Dtos
     public double? KwhCharged { get; set; }
     public double? TotalPrice { get; set; }
     public double? ChargingTimeInMinutes { get; set; }
-    public decimal? IdleMinutes { get; set; }
-    public decimal? IdleTimePrice { get; set; }
-    public decimal? IdleTimeRatio { get; set; }
+    public double? IdleMinutes { get; set; }
+    public double? IdleTimePrice { get; set; }
+    public double? IdleTimeRatio { get; set; }
+    public double? TimeRatio { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public ReasonEnumType StoppedReason { get; set; }

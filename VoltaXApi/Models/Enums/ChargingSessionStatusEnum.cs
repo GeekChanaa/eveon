@@ -4,6 +4,7 @@ namespace VoltaXApi.Models
   {
     NotStarted,
     Pending,
+    CompletedOccupied,
     Completed
   }
 }

@@ -31,15 +31,16 @@ namespace VoltaXApi.Data
 
     public async Task<ChargingSession> GetLastChargingSession(int connectorID)
     {
-      return await this._context.ChargingSessions
+      var lastCS = await this._context.ChargingSessions
               .Where(c => c.ConnectorID == connectorID && c.EndDate != null)
               .OrderByDescending(c => c.StartDate)
               .FirstOrDefaultAsync();
+      return lastCS;
     }
 
     public async Task<ChargingSessionInformationsDto> GetChargingSessionInformations(int chargingSessionID)
     {
-      _logger.LogInformation("Start VoltaxAPI.Data.GetChargingSessionInformations for chargingSessionID : "+chargingSessionID);
+      _logger.LogInformation("Start VoltaxAPI.Data.GetChargingSessionInformations for chargingSessionID : " + chargingSessionID);
       var result = await _context.ChargingSessions
           .Where(cs => cs.ID == chargingSessionID)
           .Select(cs => new ChargingSessionInformationsDto
@@ -50,10 +51,13 @@ namespace VoltaXApi.Data
             Card = cs.Card,
             ChargePointID = cs.Connector.ChargePoint.ID,
             ChargePointName = cs.Connector.ChargePoint.ChargePointId,
-            TotalPrice = cs.Transactions.Sum(t => t.Amount),
             KwhCharged = cs.Transactions.Sum(t => (t.MeterStop ?? 0) - t.MeterStart),
             StartDate = cs.StartDate,
-            IdleTimeRatio = cs.Connector.PricePerIdleMinute,
+            IdleTimeRatio = (double)cs.Connector.PricePerIdleMinute,
+            TimeRatio = (double)cs.Connector.PricePerMinute,
+            IdleMinutes = cs.IdleMinutes,
+            TotalPrice = 0,
+            ChargingTimeInMinutes = cs.ChargedMinutes,
             EndDate = cs.EndDate,
             ConnectorID = cs.ConnectorID,
             ConnectorRatio = cs.Connector.PricePerKWh,
@@ -62,29 +66,14 @@ namespace VoltaXApi.Data
           })
           .FirstOrDefaultAsync();
 
-    // Calculating Charging Time for charging session : 
+      // Calculating Charging Time for charging session : 
       var transactionsTime = result.Transactions?.Any() == true
-        ? result.Transactions.Sum(t => 
-            ((t.StopTime ?? DateTime.UtcNow) - t.StartTime).TotalMinutes): 0;
-
-      result.ChargingTimeInMinutes = transactionsTime;
-      // Get All connectorUptimes for these transactions
-      var connectorUptimes = _context.ConnectorUptimes
-          .Where(u => u.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
-          .Where(u => result.Transactions.Select(u => u.ID).ToList().Contains(u.TransactionID ?? 0))
-          .ToList();
-
-      var totalConnectedTime = connectorUptimes.Sum(cu => ((cu.EndDate ?? DateTime.UtcNow) - cu.StartDate).TotalMinutes);
-
-      var idleTime = (int)(totalConnectedTime - transactionsTime);
-      if (idleTime < 5)
-        result.IdleMinutes = 0;
-      else
-        result.IdleMinutes = (decimal)idleTime;
+        ? result.Transactions.Sum(t =>
+            ((t.StopTime ?? DateTime.UtcNow) - t.StartTime).TotalMinutes) : 0;
 
       result.IdleTimePrice = result.IdleMinutes * result.IdleTimeRatio;
 
-      result.TotalPrice += (double)result.IdleTimePrice + ((double)result.ConnectorRatio * result.KwhCharged);
+      result.TotalPrice += result.IdleTimePrice +  (result.TimeRatio * result.ChargingTimeInMinutes);
 
       return result;
     }
@@ -104,7 +93,8 @@ namespace VoltaXApi.Data
 
     public IQueryable<ChargingSessionListDto> GetChargingSessions()
     {
-      return _context.ChargingSessions.Select(cs => new ChargingSessionListDto{
+      return _context.ChargingSessions.Select(cs => new ChargingSessionListDto
+      {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
         ConnectorID = cs.ConnectorID,
@@ -117,12 +107,12 @@ namespace VoltaXApi.Data
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
     }
-     
+
 
     public async Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
     {
       var chargingSessions = await _context.ChargingSessions
-          .Where(t =>t.StartDate >= DateTime.Today.AddDays(-30))
+          .Where(t => t.StartDate >= DateTime.Today.AddDays(-30))
           .ToListAsync();
 
       var nbrChargingSessionsByDay = new Dictionary<DateTime, double>();
@@ -145,7 +135,8 @@ namespace VoltaXApi.Data
 
     public IQueryable<ChargingSessionListDto> GetUserChargingSessions(int userID, GlobalParams globalParams)
     {
-      return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(cs => new ChargingSessionListDto{
+      return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(cs => new ChargingSessionListDto
+      {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
         ConnectorID = cs.ConnectorID,
@@ -159,26 +150,24 @@ namespace VoltaXApi.Data
       }).AsQueryable();
     }
 
-    public async Task<ChargingSession> StartChargingSession(Connector connector, Card card)
+    
+    public async Task<ChargingSession> CreateChargingSessionForTransaction(Connector connector, Card card, DateTime startDate)
     {
       ChargingSession chargingSession = new()
       {
         ConnectorID = connector.ID,
         UserID = (int)(card.UserID == null ? 1 : card.UserID),
         CardID = card.ID,
-        StartDate = DateTime.Now,
+        StartDate = startDate,
         StoppedReason = ReasonEnumType.Local,
         ChargingSessionStatus = ChargingSessionStatusEnum.Pending
       };
-        
+
       await this.AddAsync(chargingSession);
 
       return chargingSession;
-
     }
-
-
   }
 
-  
+
 }

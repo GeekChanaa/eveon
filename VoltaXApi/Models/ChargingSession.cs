@@ -12,6 +12,9 @@ namespace VoltaXApi.Models
     public int CardID { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public DateTime? EndIdleDate { get; set; }
+    public double? ChargedMinutes { get; set; }
+    public double? IdleMinutes { get; set; }
     public ReasonEnumType StoppedReason { get; set; }
     public Connector? Connector { get; set; }
     public ChargingSessionStatusEnum ChargingSessionStatus { get; set; }
