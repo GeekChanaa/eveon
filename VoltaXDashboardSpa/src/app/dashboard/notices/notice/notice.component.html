@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="notice?.name || 'Notice Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="notice?.name || 'Notice Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Notices', link: '/dashboard/notices' },
   { label: notice?.name || 'Details' }

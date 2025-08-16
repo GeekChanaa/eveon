@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { RoleService } from 'src/_services/roles/role.service';
 import { environment } from 'src/environments/environment';
@@ -17,6 +18,9 @@ enum RoleTabsEnum {
   styleUrls: ['./role.component.sass']
 })
 export class RoleComponent implements OnInit {
+
+  PageState = PageState;
+  state: PageState = PageState.Loading;
 
   tabsEnum : RoleTabsEnum = RoleTabsEnum.InformationsTab;
   RoleTabsEnum = RoleTabsEnum;
@@ -57,11 +61,11 @@ export class RoleComponent implements OnInit {
 
 
   getRoleByID(id : number){
+    this.state = PageState.Loading;
     this.roleID = id;
     this._roleService.getById(id).subscribe((cs) => {
+      this.state = PageState.Success;
       this.role = cs;
-      console.log("this is the role : ");
-      console.log(this.role);
       this.roleLoaded = true;
     })
   }

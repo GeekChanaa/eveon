@@ -1,8 +1,10 @@
-<div class="page__inner">
-  <div class="page__container page__container--large">
-    <div class="page__title h3">Global Configurations</div>
-    
-    
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="'Global Configurations'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Global Configurations' }
+]">
+
     <div class="settings" *ngIf="configuration">
       <div class="details__container">
         <div class="details-informations__container">
@@ -108,8 +110,70 @@
               </div>
             </div>
           </div>
+
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Default Grace Period (per second)
+                  <div class="tooltip" title="Default Idle Charging Session per second">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.gracePeriod| number:'1.2-2' }}</div>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Default Grace Amount (per DH)
+                  <div class="tooltip" title="Default grace amount for each user before suspending the account">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.graceAmount| number:'1.2-2' }}</div>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="stat__item">
+            <div class="stat__icon" style="background-color: #CABDFF;">
+              <svg class="icon icon-info">
+                <use xlink:href="#icon-info"></use>
+              </svg>
+            </div>
+            <div class="stat__line">
+              <div class="stat__details">
+                <div class="stat__label">Default VAT (percentage)
+                  <div class="tooltip" title="Default vat pricing for charging">
+                    <svg class="icon icon-info">
+                      <use xlink:href="#icon-info"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat__counter">{{configuration.vat * 100| number:'1.2-2' }}%</div>
+                
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </app-dashboard-details-container>

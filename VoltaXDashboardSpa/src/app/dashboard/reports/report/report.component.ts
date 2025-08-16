@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { ReportService } from 'src/_services/report.service';
 import { environment } from 'src/environments/environment';
@@ -11,6 +12,9 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./report.component.sass']
 })
 export class ReportComponent implements OnInit {
+  PageState = PageState;
+  state: PageState = PageState.Loading;
+  
   reportID : number = 0;
   reportLoaded : boolean = false;
   CardTypesValues : any = {};
@@ -39,7 +43,9 @@ export class ReportComponent implements OnInit {
 
   getReportByID(id : number){
     this.reportID = id;
+    this.state = PageState.Loading;
     this._reportService.getReportByID(id).subscribe((cs) => {
+      this.state = PageState.Success;
       this.report = cs;
       this.reportLoaded = true;
     })

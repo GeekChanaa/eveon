@@ -20,8 +20,8 @@ namespace VoltaXApi.Models
         public string? Subregion { get; set; }
         public string? Timezones { get; set; }
         public string? Translations { get; set; }
-        public decimal? Latitude { get; set; }
-        public decimal? Longitude { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public string? Emoji { get; set; }
         public string? EmojiU { get; set; }
         public bool Flag { get; set; }

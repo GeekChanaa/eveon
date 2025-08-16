@@ -3,5 +3,8 @@ export interface GlobalConfigurations{
   defaultCostPerKwh : number,
   defaultFlatFee : number,
   defaultIdleTimePricing : number,
-  defaultPricePerMinute : number
+  defaultPricePerMinute : number,
+  gracePeriod : number,
+  graceAmount : number,
+  vat : number
 }

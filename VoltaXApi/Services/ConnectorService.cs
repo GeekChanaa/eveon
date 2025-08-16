@@ -45,9 +45,9 @@ namespace VoltaXApi.Services
               ChargePointID = chargePoint.ID,
               EvseID = reportData.Component.Evse.Id,
               ConnectorID = reportData.Component.Evse.ConnectorId,
-              PricePerIdleMinute = (decimal) _globalConfig.DefaultIdleTimePricing,
-              PricePerKWh = (decimal) _globalConfig.DefaultPricePerKwh,
-              CostPerKwh = (decimal) _globalConfig.DefaultCostPerKwh
+              PricePerIdleMinute = (double) _globalConfig.DefaultIdleTimePricing,
+              PricePerKWh = (double) _globalConfig.DefaultPricePerKwh,
+              CostPerKwh = (double) _globalConfig.DefaultCostPerKwh
             };
             await _connectorRepository.AddAsync(newConnector);
           }

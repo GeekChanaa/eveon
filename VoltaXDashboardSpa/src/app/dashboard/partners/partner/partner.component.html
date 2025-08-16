@@ -1,13 +1,9 @@
-
-
-  <app-dashboard-details-container
-    [title]="partner?.name || 'Partner Details'"
-    [breadcrumbs]="[
+<app-dashboard-details-container [state]="state" [title]="partner?.name || 'Partner Details'" [breadcrumbs]="[
       { label: 'Dashboard', link: '/dashboard' },
       { label: 'Partners', link: '/dashboard/partners' },
       { label: partner?.name || 'Details' }
     ]">
-    
+
   <!-- Loading state -->
   <div *ngIf="!partnerLoaded" class="loading-container">
     <app-svg-spinner></app-svg-spinner>
@@ -18,15 +14,11 @@
     <!-- Tabs navigation -->
     <div class="tabs-container">
       <div class="tabs">
-        <button 
-          [ngClass]="{'active': tabsEnum === 'InformationsTab'}" 
-          (click)="changeTab('InformationsTab')" 
+        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
           class="tab-button">
           Information
         </button>
-        <button 
-          [ngClass]="{'active': tabsEnum === 'ChargingStationsTab'}" 
-          (click)="changeTab('ChargingStationsTab')" 
+        <button [ngClass]="{'active': tabsEnum === 'ChargingStationsTab'}" (click)="changeTab('ChargingStationsTab')"
           class="tab-button">
           Charging Stations
         </button>
@@ -45,31 +37,28 @@
             <!-- Logo section -->
             <div class="logo-section">
               <div class="logo-container" [ngClass]="{'has-image': partner.logoUrl && !editingImage}">
-                <img *ngIf="partner.logoUrl && !editingImage" 
-                     [src]="staticUrl + partner.logoUrl + '?t=' + timestamp" 
-                     alt="Partner logo">
-                
+                <img *ngIf="partner.logoUrl && !editingImage" [src]="staticUrl + partner.logoUrl + '?t=' + timestamp"
+                  alt="Partner logo">
+
                 <div *ngIf="!partner.logoUrl && !editingImage" class="empty-logo">
                 </div>
-                
+
                 <button *ngIf="!editingImage" (click)="editingImage = true" class="edit-logo-btn">
                   <i class="icon icon-edit"></i> Change Logo
                 </button>
               </div>
-              
+
               <!-- Logo upload -->
               <div *ngIf="editingImage" class="upload-container">
-                <div class="dropzone" 
-                     [ngClass]="{'has-file': displayedLogo}"
-                     (dragover)="$event.preventDefault()" 
-                     (drop)="handleUpload($event)">
-                  
+                <div class="dropzone" [ngClass]="{'has-file': displayedLogo}" (dragover)="$event.preventDefault()"
+                  (drop)="handleUpload($event)">
+
                   <div *ngIf="!displayedLogo" class="dropzone-prompt">
                     <i class="icon icon-upload"></i>
                     <p>Drag and drop an image or click to browse</p>
                     <input type="file" class="file-input" (change)="handleUpload($event)">
                   </div>
-                  
+
                   <div *ngIf="displayedLogo" class="preview-container">
                     <button class="remove-btn" (click)="clearImage()">
                       <i class="icon icon-trash"></i>
@@ -77,15 +66,12 @@
                     <img [src]="displayedLogo" alt="Logo preview">
                   </div>
                 </div>
-                
+
                 <div class="actions">
                   <button (click)="editingImage = false" class="btn btn-secondary">
                     Cancel
                   </button>
-                  <button 
-                    [disabled]="imageUploading || !displayedLogo" 
-                    (click)="changeLogo()" 
-                    class="btn btn-primary">
+                  <button [disabled]="imageUploading || !displayedLogo" (click)="changeLogo()" class="btn btn-primary">
                     <span *ngIf="imageUploading">
                       <app-svg-spinner></app-svg-spinner> Uploading...
                     </span>
@@ -100,156 +86,91 @@
               <!-- Basic Information -->
               <div class="form-section">
                 <h3 class="section-title">Basic Information</h3>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Name"
-                  [val]="partner.name"></app-display-cell>
 
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  [editable]="false"
-                  inpType="text"
-                  title="Partner Identification Number"
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Name" [val]="partner.name"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  [editable]="false" inpType="text" title="Partner Identification Number"
                   [val]="partner.partnerIdentificationNumber"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="textarea"
-                  title="Description"
-                  [val]="partner.description"></app-display-cell>
-                  
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="select_enum"
-                  title="Type"
-                  enumName="PartnerTypeEnum" 
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="textarea" title="Description" [val]="partner.description"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="select_enum" title="Type" enumName="PartnerTypeEnum"
                   val="{{partner.type}}"></app-display-cell>
               </div>
-              
+
               <!-- Contact Information -->
               <div class="form-section">
                 <h3 class="section-title">Contact Information</h3>
-                
+
                 <div class="field-group">
-                  <app-display-cell 
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Email"
-                    [val]="partner.email"></app-display-cell>
-                  
-                  <app-display-cell 
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Alternative Email"
-                    [val]="partner.email2"></app-display-cell>
-                    
-                  <app-display-cell 
-                    *ngIf="partner.email3"
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Alternative Email 2"
+                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                    inpType="text" title="Email" [val]="partner.email"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                    inpType="text" title="Alternative Email" [val]="partner.email2"></app-display-cell>
+
+                  <app-display-cell *ngIf="partner.email3" [updateObservable]="updatePartnerObservable.bind(this)"
+                    [object]="partner" inpType="text" title="Alternative Email 2"
                     [val]="partner.email3"></app-display-cell>
                 </div>
-                
+
                 <div class="field-group">
-                  <app-display-cell 
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Phone"
-                    [val]="partner.phone"></app-display-cell>
-                  
-                  <app-display-cell 
-                    *ngIf="partner.phone2"
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Alternative Phone"
+                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                    inpType="text" title="Phone" [val]="partner.phone"></app-display-cell>
+
+                  <app-display-cell *ngIf="partner.phone2" [updateObservable]="updatePartnerObservable.bind(this)"
+                    [object]="partner" inpType="text" title="Alternative Phone"
                     [val]="partner.phone2"></app-display-cell>
-                    
-                  <app-display-cell 
-                    *ngIf="partner.phone3"
-                    [updateObservable]="updatePartnerObservable.bind(this)" 
-                    [object]="partner"
-                    inpType="text"
-                    title="Alternative Phone 2"
+
+                  <app-display-cell *ngIf="partner.phone3" [updateObservable]="updatePartnerObservable.bind(this)"
+                    [object]="partner" inpType="text" title="Alternative Phone 2"
                     [val]="partner.phone3"></app-display-cell>
                 </div>
               </div>
-              
+
               <!-- Address Information -->
               <div class="form-section">
                 <h3 class="section-title">Address</h3>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Country"
-                  [val]="partner.country"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="City"
-                  [val]="partner.city"></app-display-cell>
-                  
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Address"
-                  [val]="partner.address"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Country" [val]="partner.country"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="City" [val]="partner.city"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Address" [val]="partner.address"></app-display-cell>
               </div>
-              
+
               <!-- Business Information -->
               <div class="form-section">
                 <h3 class="section-title">Business Information</h3>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Tax Identification Number"
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Tax Identification Number"
                   [val]="partner.taxIdentificationNumber"></app-display-cell>
-                
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Registration Number"
-                  [val]="partner.registrationNumber"></app-display-cell>
-                  
-                <app-display-cell 
-                  [updateObservable]="updatePartnerObservable.bind(this)" 
-                  [object]="partner"
-                  inpType="text"
-                  title="Bank Account Number"
-                  [val]="partner.bankAccountNumber"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Registration Number" [val]="partner.registrationNumber"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  inpType="text" title="Bank Account Number" [val]="partner.bankAccountNumber"></app-display-cell>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Charging Stations Tab -->
       <div *ngIf="tabsEnum === 'ChargingStationsTab'" class="charging-stations-tab">
         <div class="card">
           <div class="card-header">
             <h2>Charging Stations</h2>
-            <app-button
-              variant="secondary"
-              [routerLink]="['/dashboard/charging-stations/create']"
+            <app-button variant="secondary" [routerLink]="['/dashboard/charging-stations/create']"
               [queryParams]="{ partnerId: partnerID }">
               Add Station
             </app-button>

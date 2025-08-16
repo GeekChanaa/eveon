@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="chargePoint?.name || 'Charge Point Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="chargePoint?.name || 'Charge Point Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Charge Points', link: '/dashboard/charging-points' },
   { label: chargePoint?.name || 'Details' }

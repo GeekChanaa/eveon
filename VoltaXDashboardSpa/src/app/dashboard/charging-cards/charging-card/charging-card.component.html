@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="card?.name || 'Card Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="card?.name || 'Card Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Charging Cards', link: '/dashboard/charging-cards' },
   { label: card?.id || 'Details' }

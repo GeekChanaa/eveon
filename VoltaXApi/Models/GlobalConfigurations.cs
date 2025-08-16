@@ -10,4 +10,5 @@ public class GlobalConfigurations
     public double DefaultIdleTimePricing { get; set; }
     public double GracePeriod { get; set; }
     public double GraceAmount { get; set; }
+    public double Vat { get; set; }
 }

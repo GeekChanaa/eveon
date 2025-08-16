@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { NoticeService } from 'src/_services/notice.service';
 import { environment } from 'src/environments/environment';
@@ -12,7 +13,9 @@ import { environment } from 'src/environments/environment';
 })
 export class NoticeComponent implements OnInit {
 
-
+  PageState = PageState;
+  state: PageState = PageState.Loading;
+  
   noticeID : number = 0;
   noticeLoaded : boolean = false;
   parkingTypeValues : { [key: number]: string; } = {};
@@ -50,8 +53,10 @@ export class NoticeComponent implements OnInit {
   }
 
   getNoticeByID(id : number){
+    this.state = PageState.Loading;
     this.noticeID = id;
     this._noticeService.getNoticeByID(id).subscribe((cs) => {
+      this.state = PageState.Success;
       this.notice = cs;
       this.noticeLoaded = true;
     })

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { AuthService } from 'src/_services/auth.service';
 import { UserService } from 'src/_services/user.service';
 
@@ -18,6 +19,9 @@ enum ProfilePageTabsEnum {
 })
 export class ProfileComponent implements OnInit {
 
+  PageState = PageState;
+  state: PageState = PageState.Loading;
+  
   tabsEnum : ProfilePageTabsEnum = ProfilePageTabsEnum.AccountInformationsTab;
   ProfilePageTabsEnum = ProfilePageTabsEnum;
   
@@ -37,13 +41,16 @@ export class ProfileComponent implements OnInit {
   }
 
   getAuthUserInfos(){
+
     var decodedToken = this._authService.getAuthInformation();
     this.userID = parseInt(decodedToken.nameid);
     this.getUserByID(this.userID);
   }
   
   getUserByID(id : number ){
+    this.state = PageState.Loading;
     this._userService.getUserInformations(id).subscribe((data) => {
+      this.state = PageState.Success;
       this.user = data;
       this._userService.setAvatarUrl(this.user.imageUrl);
       this.userLoaded = true;

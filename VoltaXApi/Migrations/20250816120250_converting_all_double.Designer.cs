@@ -12,8 +12,8 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20250814124423_endidletime_chargingsession")]
-    partial class endidletime_chargingsession
+    [Migration("20250816120250_converting_all_double")]
+    partial class converting_all_double
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -534,6 +534,12 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<double?>("PricePerIdleMinute")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PricePerMinute")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -706,10 +712,10 @@ namespace VoltaXApi.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<double>("Latitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double>("Longitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -910,7 +916,7 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("CostPerKwh")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -922,7 +928,7 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("FlatFee")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -930,19 +936,19 @@ namespace VoltaXApi.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<double>("MaxPower")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double>("Power")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double>("PricePerIdleMinute")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double>("PricePerKWh")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double>("PricePerMinute")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -983,7 +989,7 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("LastStatus")
+                    b.Property<int>("LastStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastStatusTime")
@@ -1083,10 +1089,10 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -2467,10 +2473,10 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("double(18,2)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

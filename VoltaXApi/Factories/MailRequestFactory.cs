@@ -127,6 +127,17 @@ public class MailRequestFactory : IMailRequestFactory
         };
     }
 
+    public MailRequest CreateChargingSessionQuoteMail(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Charging Session Completed  – VoltaX Charging"
+        };
+    }
+
     public MailRequest CreateDebitCardAddedMailRequest(string to)
     {
         return new MailRequest

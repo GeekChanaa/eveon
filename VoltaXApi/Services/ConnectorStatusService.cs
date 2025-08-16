@@ -63,12 +63,11 @@ namespace VoltaXApi.Services
             // no matching entry => create connector status
             connectorStatus = new ConnectorStatus
             {
-              ChargePointID = chargePointID,
               ConnectorID = connector.ID,
               LastStatus = ConnectorStatusHelper.ConvertToEnum(connectorStatusData.VariableAttribute[0].Value),
               LastStatusTime = DateTime.Now
             };
-            Console.WriteLine("Refresh Connector Statuses => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
+            Console.WriteLine("Refresh Connector Statuses => Creating new DB-ConnectorStatus: Connector={0}", connectorStatus.ConnectorID);
             await _connectorStatusRepository.AddAsync(connectorStatus);
           }
           else
@@ -134,11 +133,10 @@ namespace VoltaXApi.Services
           // no matching entry => create connector status
           connectorStatus = new ConnectorStatus
           {
-            ChargePointID = chargePointID,
             ConnectorID = connector.ID,
             LastStatus = status
           };
-          Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus: ID={0} / Connector={1}", connectorStatus.ChargePointID, connectorStatus.ConnectorID);
+          Console.WriteLine("UpdateConnectorStatus => Creating new DB-ConnectorStatus:  Connector={0}", connectorStatus.ConnectorID);
           await _connectorStatusRepository.AddAsync(connectorStatus);
           await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
         }
@@ -152,7 +150,7 @@ namespace VoltaXApi.Services
           await _connectorUptimeRepository.UpdateConnectorUptime(connector.ID, status);
         }
 
-        Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: ID={0} / Connector={1} / Status={2}", connectorStatus.ChargePointID, connectorId, status);
+        Console.WriteLine("UpdateConnectorStatus => Save ConnectorStatus: Connector={0} / Status={1}", connectorId, status);
 
       }
       catch (Exception exp)

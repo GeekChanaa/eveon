@@ -31,7 +31,7 @@
           class="card__display_item"
           name="Card Used"
           tooltip="info"
-          value="{{ chargingSession.card.cardNumber }}"
+          value="{{ chargingSession.cardNumber }}"
         ></app-display-item>
   
         <app-display-item
@@ -96,11 +96,11 @@
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Idle Ratio</div>
-          <div class="card__price_details_item-value">{{chargingSession.idleTimeRatio | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.pricePerIdleMinute | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item card__price_details_item--footer">
           <div class="card__price_details_item-name">Total Price</div>
-          <div class="card__price_details_item-value">{{chargingSession.idleTimePrice | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.idldePriceWithVAT | number:'1.2-2'}}</div>
         </div>
       </div>
       
@@ -115,11 +115,11 @@
       <div class="card__price_details">
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Minutes Charged</div>
-          <div class="card__price_details_item-value">{{chargingSession.chargingTimeInMinutes | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.chargedMinutes | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Price Per Minute</div>
-          <div class="card__price_details_item-value">{{chargingSession.connectorRatio | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.pricePerMinute | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Idle Minutes</div>
@@ -127,19 +127,19 @@
         </div>
         <div class="card__price_details_item">
           <div class="card__price_details_item-name">Price Per Idle Minute</div>
-          <div class="card__price_details_item-value">{{chargingSession.idleTimeRatio | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.pricePerIdleMinute | number:'1.2-2'}}</div>
         </div>
         <div class="card__price_details_item card__price_details_item--footer">
           <div class="card__price_details_item-name">Total Price</div>
-          <div class="card__price_details_item-value">{{chargingSession.totalPrice | number:'1.2-2'}}</div>
+          <div class="card__price_details_item-value">{{chargingSession.totalPriceWithVAT | number:'1.2-2'}}</div>
         </div>  
       </div>
       <div class="card__price_recharge_card">
         <div class="card__price_recharge_card-number"> 
           <div class="card__price_recharge_card-number--value">Card Number</div>
-          {{chargingSession.card.cardNumber}} </div>
+          {{chargingSession.cardNumber}} </div>
         <div class="card__price_recharge_card-amount"> 
-          Balance : {{chargingSession.card.balance | number:'1.2-2'}} </div>
+          Balance : {{chargingSession.cardBalance | number:'1.2-2'}} </div>
       </div>
     </div>
   </div>
@@ -177,16 +177,16 @@
         </thead>
         <tbody>
           <tr>
-            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} Minutes </td>
-            <td> {{chargingSession.totalPrice | number:'1.2-2'}} </td>
-            <td> Charged {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} minutes at {{chargingSession.totalPrice | number:'1.2-2'}} DH</td>
-            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} </td>
-            <td> {{chargingSession.totalPrice | number:'1.2-2'}} </td>
+            <td> {{chargingSession.chargedMinutes | number:'1.2-2'}} Minutes </td>
+            <td> {{chargingSession.totalPriceWithVAT | number:'1.2-2'}} </td>
+            <td> Charged {{chargingSession.chargedMinutes | number:'1.2-2'}} minutes at {{chargingSession.totalPriceWithVAT | number:'1.2-2'}} DH</td>
+            <td> {{chargingSession.chargedMinutes | number:'1.2-2'}} </td>
+            <td> {{chargingSession.totalPriceWithVAT | number:'1.2-2'}} </td>
           </tr>
           <tr>
             <td colspan="3">Total</td>
-            <td>{{chargingSession.chargingTimeInMinutes | number:'1.2-2'}}</td>
-            <td>{{chargingSession.totalPrice | number:'1.2-2'}}</td>
+            <td>{{chargingSession.chargedMinutes | number:'1.2-2'}}</td>
+            <td>{{chargingSession.totalPriceWithVAT | number:'1.2-2'}}</td>
           </tr>
         </tbody>
       </table>
@@ -203,23 +203,23 @@
         </thead>
         <tbody>
           <tr>
-            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} Minutes </td>
+            <td> {{chargingSession.chargedMinutes | number:'1.2-2'}} Minutes </td>
             <td> {{chargingSession.totalPrice * 0.8 | number:'1.2-2'}} </td>
-            <td> Charged {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} mintues at {{chargingSession.totalPrice | number:'1.2-2'}} DH</td>
-            <td> {{chargingSession.chargingTimeInMinutes | number:'1.2-2'}} </td>
-            <td> {{chargingSession.totalPrice * 0.8 | number:'1.2-2'}} </td>
+            <td> Charged {{chargingSession.chargedMinutes | number:'1.2-2'}} mintues at {{chargingSession.totalPriceWithVAT | number:'1.2-2'}} DH</td>
+            <td> {{chargingSession.chargedMinutes | number:'1.2-2'}} </td>
+            <td> {{chargingSession.totalPriceWithoutVAT  | number:'1.2-2'}} </td>
           </tr>
           <tr>
             <td> </td>
             <td> {{chargingSession.totalPrice * 0.2 | number:'1.2-2'}} </td>
             <td> VAT 20%</td>
             <td>  </td>
-            <td> {{chargingSession.totalPrice * 0.2 | number:'1.2-2'}} </td>
+            <td> {{chargingSession.totalPriceWithVAT - chargingSession.totalPriceWithoutVAT | number:'1.2-2'}} </td>
           </tr>
           <tr>
             <td colspan="3">Total</td>
-            <td>{{chargingSession.chargingTimeInMinutes | number:'1.2-2'}}</td>
-            <td>{{chargingSession.totalPrice | number:'1.2-2'}}</td>
+            <td>{{chargingSession.chargedMinutes | number:'1.2-2'}}</td>
+            <td>{{chargingSession.totalPriceWithVAT | number:'1.2-2'}}</td>
           </tr>
         </tbody>
       </table>

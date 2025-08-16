@@ -13,5 +13,6 @@ public interface IMailRequestFactory
     MailRequest CreateApprovedDownloadInfoRequest(string to);
     MailRequest CreateDeniedDownloadInfoRequest(string to);
     MailRequest CreateWelcomeMailRequest(string to);
+    MailRequest CreateChargingSessionQuoteMail(string to);
     
 }

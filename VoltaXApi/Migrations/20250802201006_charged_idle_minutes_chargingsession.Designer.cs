@@ -702,11 +702,11 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -906,8 +906,8 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorType")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CostPerKwh")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("CostPerKwh")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -918,28 +918,28 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseID")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("FlatFee")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("FlatFee")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal>("MaxPower")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("MaxPower")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal>("Power")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Power")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal>("PricePerIdleMinute")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerIdleMinute")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal>("PricePerKWh")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerKWh")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal>("PricePerMinute")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerMinute")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -1079,11 +1079,11 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Iso3")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -2463,11 +2463,11 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Iso2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double(18,2)");
 
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double(18,2)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

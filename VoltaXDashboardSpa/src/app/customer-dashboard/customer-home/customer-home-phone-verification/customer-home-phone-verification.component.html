@@ -50,8 +50,12 @@
         ></app-form-field>
     </div>
     <div class="form-actions">
-      <app-button variant="secondary" (click)="verifyPhone()" [disabled]="!form.valid">
-        Verify Phone
+      <app-button 
+        variant="secondary" 
+        (click)="verifyPhone()" 
+        [isLoading]="verifyingPhone"
+        [disabled]="!form.valid">
+          Verify Phone
       </app-button>
     </div>
   </div>

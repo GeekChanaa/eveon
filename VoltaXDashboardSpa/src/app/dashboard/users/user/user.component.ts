@@ -8,6 +8,7 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 import { PartnerService } from 'src/_services/partner.service';
 import { RoleService } from 'src/_services/roles/role.service';
 import { ElectricVehicleModelService } from 'src/_services/electric-vehicle-model.service';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
@@ -22,6 +23,8 @@ enum UserTabsEnum {
 })
 export class UserComponent implements OnInit {
 
+  PageState = PageState;
+  state: PageState = PageState.Loading;
   // TabsEnum
   tabsEnum : UserTabsEnum = UserTabsEnum.InformationsTab;
   editingSuspension : boolean = false;
@@ -54,8 +57,10 @@ export class UserComponent implements OnInit {
   }
 
   getUser(id : number){
+    this.state = PageState.Loading;
     this.userLoaded = false;
     this._userService.getUserDashboardDisplayInformations(id).subscribe((data)=>{
+      this.state = PageState.Success;
       this.userLoaded = true;
       this.user = data;
     })

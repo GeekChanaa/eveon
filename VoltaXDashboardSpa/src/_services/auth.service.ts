@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { User } from 'src/_models/user';
 import { UserService } from './user.service';
 import { environment } from 'src/environments/environment';
@@ -106,8 +106,20 @@ export class AuthService {
     return this.http.post(this.baseUrl+"VerifyEmail",verifyEmailDto);
   }
 
-  verifyPhone(verifyPhoneDto : VerifyPhoneDto){
-    return this.http.post(this.baseUrl+"VerifyPhone",verifyPhoneDto);
+  verifyPhone(verifyPhoneDto: VerifyPhoneDto): Observable<any> {
+    return this.http.post<{ token: string }>(this.baseUrl + "VerifyPhone", verifyPhoneDto).pipe(
+        tap(response => {
+          console.log("this is the response");
+          console.log(response);
+          if (response && response.token) {
+            localStorage.setItem('token', response.token);
+          }
+        }),
+        catchError((error) => {
+          console.error("Phone verification failed", error);
+          return throwError(() => error);
+        })
+      );
   }
 
   sendPhoneVerificationSms(AddPhoneNumberDto : AddPhoneNumberDto){

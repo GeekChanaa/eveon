@@ -531,6 +531,12 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<double?>("PricePerIdleMinute")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("PricePerMinute")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -702,11 +708,11 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -906,8 +912,8 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorType")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CostPerKwh")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("CostPerKwh")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -918,28 +924,28 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseID")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("FlatFee")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("FlatFee")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<decimal>("MaxPower")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("MaxPower")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("Power")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Power")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("PricePerIdleMinute")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerIdleMinute")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("PricePerKWh")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerKWh")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("PricePerMinute")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerMinute")
+                        .HasColumnType("float");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -960,27 +966,27 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.ConnectorStatus", b =>
                 {
-                    b.Property<int>("ConnectorID")
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ChargePointID")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("ChargePointID1")
+                    b.Property<int?>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ConnectorID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("LastStatus")
+                    b.Property<int>("LastStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastStatusTime")
@@ -989,9 +995,11 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ConnectorID", "ChargePointID");
+                    b.HasKey("ID");
 
-                    b.HasIndex("ChargePointID1");
+                    b.HasIndex("ChargePointID");
+
+                    b.HasIndex("ConnectorID");
 
                     b.ToTable("ConnectorStatuses");
                 });
@@ -1079,11 +1087,11 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Iso3")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -2463,11 +2471,11 @@ namespace VoltaXApi.Migrations
                     b.Property<string>("Iso2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Latitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -3111,13 +3119,11 @@ namespace VoltaXApi.Migrations
                 {
                     b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
                         .WithMany()
-                        .HasForeignKey("ChargePointID1");
+                        .HasForeignKey("ChargePointID");
 
                     b.HasOne("VoltaXApi.Models.Connector", "Connector")
                         .WithMany()
-                        .HasForeignKey("ConnectorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ConnectorID");
 
                     b.Navigation("ChargePoint");
 

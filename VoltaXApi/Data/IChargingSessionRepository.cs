@@ -10,6 +10,7 @@ namespace VoltaXApi.Data
         IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams);
         Task<ChargingSession> GetLastChargingSession(int connectorID);
         Task<ChargingSessionInformationsDto> GetChargingSessionInformations(int chargingSessionID);
+        Task<ChargingSessionForMailDto> GetChargingSessionForMail(int chargingSessionID);
         Task<List<int>> GetChargePointChargingSessionsIDs(int chargePointID);
         Task<int> GetChargePointNbrChargingSessions(int chargePointID);
         Task<int> GetChargePointNbrChargingSessionsToday(int chargePointID);

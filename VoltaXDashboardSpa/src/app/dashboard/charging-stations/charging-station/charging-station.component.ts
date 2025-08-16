@@ -10,6 +10,7 @@ import { ChargingStationStatusEnum } from 'src/_models/_enums/charging-station-s
 import { ChargingStationCategoryEnum } from 'src/_models/_enums/charging-station-category';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import  {environment} from 'src/environments/environment';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 
 enum ChargingStationTabsEnum {
   InformationsTab = "InformationsTab",
@@ -27,6 +28,9 @@ export class ChargingStationComponent implements OnInit {
   // TabsEnum
   tabsEnum : ChargingStationTabsEnum = ChargingStationTabsEnum.InformationsTab;
 
+  PageState = PageState;
+  state: PageState = PageState.Loading;
+
   chargingStationID : number = 0;
   chargingStationLoaded : boolean = false;
   parkingTypeValues : { [key: number]: string; } = {};
@@ -43,7 +47,6 @@ export class ChargingStationComponent implements OnInit {
 
   constructor(
     private _chargingStationService: ChargingStationService,
-    private _chargePointService : ChargePointService,
     private _route: ActivatedRoute,
     private _enumService : EnumMappingService
   ) {
@@ -71,8 +74,10 @@ export class ChargingStationComponent implements OnInit {
   }
 
   getChargingStationByID(id : number){
+    this.state = PageState.Loading;
     this.chargingStationID = id;
     this._chargingStationService.getChargingStationByID(id).subscribe((cs) => {
+      this.state = PageState.Success;
       this.chargingStation = cs;
       this.chargingStationLoaded = true;
     })

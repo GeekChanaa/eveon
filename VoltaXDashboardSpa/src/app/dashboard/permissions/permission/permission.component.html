@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="permission?.name || 'Permission Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="permission?.name || 'Permission Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Permission', link: '/dashboard/permissions' },
   { label: permission?.name || 'Details' }

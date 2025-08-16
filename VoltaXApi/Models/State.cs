@@ -9,8 +9,8 @@ namespace VoltaXApi.Models
         public string? FipsCode { get; set; }
         public string? Iso2 { get; set; }
         public string? Type { get; set; }
-        public decimal? Latitude { get; set; }
-        public decimal? Longitude { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public bool Flag { get; set; }
         public string? WikiDataId { get; set; }
         public Country? Country { get; set; }

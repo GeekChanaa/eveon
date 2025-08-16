@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
 import { UserService } from 'src/_services/user.service';
 
@@ -18,13 +20,15 @@ export class EnterPhoneNumberComponent implements OnInit {
   phoneTimeout : any = {};
   phoneExists : boolean = false;
 
+  isLoading : boolean = false;
+  errorMessage : string = "";
+  
+
   // Constructor
   constructor(
-    private _snackBar : MatSnackBar,
     private _authService : AuthService,
-    private _route : ActivatedRoute,
     private _router : Router,
-    private _userService : UserService
+    private _modalService : ActionModalService
   ) { 
     this.form = new FormGroup({
       phone: new FormControl('', [
@@ -40,32 +44,25 @@ export class EnterPhoneNumberComponent implements OnInit {
   }
 
   sendPhoneVerification(){
+    this.isLoading = true;
     var addPhoneNumberDto : any = {};
     addPhoneNumberDto.email = this.email;
     addPhoneNumberDto.phone = this.form.value.phone;
     this._authService.sendPhoneVerificationSms(addPhoneNumberDto).subscribe((data) => {
         this._router.navigate(['/auth/verify-phone']);
+    } , (error) => {
+      this.isLoading = false;
+      this.errorMessage = error.error.error;
+      this._modalService.popup(ActionModalStatusEnum.Error,"Error ! ", "Something went wrong, please try again later", 4000);
     })
-  }
-
-  isPhoneUnique(email: string): void {
-    this.checkingPhone = true;
-    clearTimeout(this.phoneTimeout);
-    this.phoneTimeout = setTimeout(() => {
-      this._userService.isPhoneUnique(email).subscribe(
-        (data) => {
-          this.phoneExists = data;
-          this.checkingPhone = false;
-        },
-        (error) => {
-          clearTimeout(this.phoneTimeout);
-        }
-      );
-    }, 800);
   }
 
   isPhoneValid(){
     return this.form.valid && !this.phoneExists && !this.checkingPhone
+  }
+
+  getControl(name: string): FormControl {
+    return this.form.get(name) as FormControl;
   }
 
 }

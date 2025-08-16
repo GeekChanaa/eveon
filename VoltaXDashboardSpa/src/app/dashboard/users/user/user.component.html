@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="user?.fullName || 'User Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="user?.fullName || 'User Details'" [breadcrumbs]="[
     { label: 'Dashboard', link: '/dashboard' },
     { label: 'Users', link: '/dashboard/users' },
     { label: user?.fullName || 'Details' }

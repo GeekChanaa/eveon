@@ -113,9 +113,6 @@ namespace VoltaXApi.Data
                 .Property(nt => nt.IsDeleted)
                 .HasDefaultValue(false);
 
-            modelBuilder.Entity<ConnectorStatus>()
-                .HasKey(cs => new { cs.ConnectorID, cs.ChargePointID });
-
             modelBuilder.Entity<Connector>()
                 .HasIndex(cs => new { cs.EvseID,cs.ConnectorID, cs.ChargePointID })
                 .IsUnique();

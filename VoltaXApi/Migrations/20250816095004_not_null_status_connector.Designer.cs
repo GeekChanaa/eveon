@@ -12,8 +12,8 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20250814124423_endidletime_chargingsession")]
-    partial class endidletime_chargingsession
+    [Migration("20250816095004_not_null_status_connector")]
+    partial class not_null_status_connector
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -983,7 +983,7 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("LastStatus")
+                    b.Property<int>("LastStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("LastStatusTime")

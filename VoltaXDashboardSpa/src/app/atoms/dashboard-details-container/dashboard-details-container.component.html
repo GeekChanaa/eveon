@@ -1,9 +1,24 @@
 <div class="page">
-  <div class="page-header">
+  <div *ngIf="state == PageState.Loading" class="loading-container">
+    <app-svg-spinner></app-svg-spinner>
+  </div>
+
+  <div *ngIf="state === PageState.Error" class="error">
+    Something went wrong. (500)
+  </div>
+
+  <div *ngIf="state === PageState.NotFound" class="not-found">
+    Data not found (404)
+  </div>
+
+  <ng-container *ngIf="state === PageState.Success">
+    <div class="page-header">
     <h1 class="page-title">{{ title }}</h1>
 
-    <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
 
-  </div>
-  <ng-content></ng-content>
+    </div>
+    <ng-content></ng-content>
+  </ng-container>
+  
 </div>

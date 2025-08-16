@@ -10,6 +10,7 @@ using System;
 using MailKit;
 using VoltaxApi.Helpers;
 using VoltaXApi.Data;
+using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Services
 {
@@ -249,6 +250,34 @@ namespace VoltaXApi.Services
 					{
 							{ "UserName", userName }
 					});
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
+		public async Task SendChargingSessionQuoteMailRequest(MailRequest mailRequest, ChargingSessionForMailDto mailDto)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("charging-session-quote");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+						{ "session_id", mailDto.ID.ToString() },
+						{ "session_date", mailDto.StartDate.ToString("yyyy-MM-dd HH:mm") },
+						{ "charger_name", mailDto.ChargePointName ?? "" },
+						{ "connector_number", mailDto.ConnectorID?.ToString() ?? "" },
+						{ "connector_type", mailDto.ConnectorType ?? "" },
+						{ "energy_consumed", mailDto.KwhCharged?.ToString("0.##") ?? "0" },
+						{ "power_output", "" },
+						{ "price_per_hour", (mailDto.PricePerMinute * 60)?.ToString("0.##") ?? "0" },
+						{ "idle_fee", mailDto.IdlePriceWithoutVAT?.ToString("0.##") ?? "0" },
+						{ "charging_cost", mailDto.ChargingPriceWithoutVAT?.ToString("0.##") ?? "0" },
+						{ "fixed_charging_cost", "" },
+						{ "idle_fee_amount", mailDto.IdlePriceWithVAT?.ToString("0.##") ?? "0" },
+						{ "tax", (mailDto.TotalPriceWithVAT - mailDto.TotalPriceWithoutVAT)?.ToString("0.##") ?? "0" },
+						{ "total_amount", mailDto.TotalPriceWithVAT?.ToString("0.##") ?? "0" }
+					});
+					
 			builder.HtmlBody = populatedTemplate;
 
 			email.Body = builder.ToMessageBody();

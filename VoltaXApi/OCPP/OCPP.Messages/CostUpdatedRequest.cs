@@ -4,7 +4,7 @@ namespace VoltaXApi.OCPP.Messages
   {
       public CustomDataType CustomData { get; set; } 
 
-      public decimal TotalCost { get; set; } 
+      public double TotalCost { get; set; } 
 
       public string TransactionId { get; set; } 
   }

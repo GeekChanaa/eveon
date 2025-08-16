@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="role?.name || 'Role Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="role?.name || 'Role Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Roles', link: '/dashboard/roles' },
   { label: role?.id || 'Details' }

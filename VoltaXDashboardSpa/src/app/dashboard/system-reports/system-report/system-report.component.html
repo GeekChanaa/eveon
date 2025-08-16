@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="systemReport?.name || 'System Report Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="systemReport?.name || 'System Report Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'System Reports', link: '/dashboard/system-reports' },
   { label: systemReport?.name || 'Details' }

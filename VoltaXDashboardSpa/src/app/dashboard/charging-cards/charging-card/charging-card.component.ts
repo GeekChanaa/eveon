@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { CardService } from 'src/_services/card.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { environment } from 'src/environments/environment';
@@ -25,6 +26,9 @@ export class ChargingCardComponent implements OnInit {
   CardStatusesValues : any = {};
   updateCardObservable = (id : number, model : any) => this._cardService.edit(id, model);
 
+  PageState = PageState;
+  state: PageState = PageState.Loading;
+  
   card: any = {};
 
   staticUrl : string = environment.apiStaticFilesUrl;
@@ -57,8 +61,10 @@ export class ChargingCardComponent implements OnInit {
 
 
   getChargingCardByID(id : number){
+    this.state = PageState.Loading;
     this.cardID = id;
     this._cardService.getCardByID(id).subscribe((cs) => {
+      this.PageState.Success;
       this.card = cs;
       this.cardLoaded = true;
     })

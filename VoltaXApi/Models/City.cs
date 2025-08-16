@@ -8,8 +8,8 @@ namespace VoltaXApi.Models
         public string? StateCode { get; set; }
         public int? CountryID { get; set; }
         public string? CountryCode { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public bool Flag { get; set; }
         public string? WikiDataId { get; set; }
         public State? State { get; set; }

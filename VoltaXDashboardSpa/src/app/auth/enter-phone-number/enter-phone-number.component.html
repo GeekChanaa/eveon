@@ -1,35 +1,36 @@
-
-<div class="icon">
-  <img src="/assets/images/logos/logo.svg" alt="VoltaX">
-</div>
-<div class="form_title">Add Phone Number</div>
-<div class="form-container">
-  <form [formGroup]="form">
-    <div class="entry__fieldset">
-      <div class="field field_icon" [ngClass]="{'error': form.controls['phone'].invalid && (form.controls['phone'].dirty || form.controls['phone'].touched)}">
-        <div class="field__wrap" >
-          <input (ngModelChange)="isPhoneUnique($event)" class="field__input" type="phone" formControlName="phone" placeholder="Your phone">
-          <app-svg-spinner *ngIf="checkingPhone"></app-svg-spinner>
-          
-          <div class="field__icon">
-            <svg class="icon icon-mail">
-              <use xlink:href="#icon-mail"></use>
-            </svg>
+<!-- page-->
+<div class="page page_simple">
+  <div class="container" >
+      <a class="image__container">
+        <img src="/assets/images/logos/logo.svg" alt="Core">
+      </a>
+      <div class="form_title">Add Phone Number</div>
+      <form [formGroup]="form">
+        <div class="entry__fieldset">
+          <div class="field field_icon">
+            <app-form-field
+              class="field"
+              title="Phone"
+              placeholder="Your Phone"
+              description="Your personal phone number, it will be verified later."
+              [control]="getControl('phone')"
+              icon="phone"
+            ></app-form-field>
+            <div class="field__error" *ngIf="errorMessage != '' ">
+              {{errorMessage }}
+            </div>
           </div>
+
+          <app-button variant="secondary" 
+            [disabled]="!form.valid" 
+            [isLoading]="isLoading"
+            [ngClass]="{'disabled':!form.valid}" 
+            (click)="sendPhoneVerification()" class="entry__button">
+            Send Verification Code
+          </app-button>
         </div>
-        <div class="error" *ngIf="phoneExists">
-          Phone already exists
-        </div>
-      </div>
-      
-      <button 
-        (click)="sendPhoneVerification()" 
-        [disabled]="!isPhoneValid()"
-        [ngClass]="{'disabled':!isPhoneValid()}"
-        class="button entry__button" 
-        href="index.html#header">Send Verification Code</button>
-    </div>
-  </form>
-  <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+      </form>
+      <div class="entry__note">This site is protected by reCAPTCHA and the Google Privacy Policy.</div>
+
+  </div>
 </div>
-  

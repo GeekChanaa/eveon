@@ -13,13 +13,16 @@ namespace VoltaXApi.Data
   {
     private readonly IMapper _mapper;
     private readonly ILogger<ChargingSessionRepository> _logger;
+    private readonly GlobalConfigurations _globalConfigurations;
     public ChargingSessionRepository(
         VoltaXApiDbContext context,
         ILogger<ChargingSessionRepository> logger,
+        GlobalConfigurations globalConfigurations,
         IMapper mapper) : base(context)
     {
       _logger = logger;
       _mapper = mapper;
+      _globalConfigurations = globalConfigurations;
     }
 
     public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams)
@@ -31,51 +34,90 @@ namespace VoltaXApi.Data
 
     public async Task<ChargingSession> GetLastChargingSession(int connectorID)
     {
-      var lastCS = await this._context.ChargingSessions
-              .Where(c => c.ConnectorID == connectorID && c.EndDate != null)
-              .OrderByDescending(c => c.StartDate)
-              .FirstOrDefaultAsync();
+      var lastCS = await _context.ChargingSessions
+          .Where(c => c.ConnectorID == connectorID && c.EndDate != null)
+          .OrderByDescending(c => c.StartDate)
+          .ThenByDescending(c => c.ID) 
+          .FirstOrDefaultAsync();
       return lastCS;
     }
 
     public async Task<ChargingSessionInformationsDto> GetChargingSessionInformations(int chargingSessionID)
     {
       _logger.LogInformation("Start VoltaxAPI.Data.GetChargingSessionInformations for chargingSessionID : " + chargingSessionID);
-      var result = await _context.ChargingSessions
+      var vatRate = _globalConfigurations.Vat;
+      var gracePeriodSeconds = _globalConfigurations.GracePeriod;
+      var chargingSession = await _context.ChargingSessions
           .Where(cs => cs.ID == chargingSessionID)
           .Select(cs => new ChargingSessionInformationsDto
           {
-            UserName = cs.User.FirstName + " " + cs.User.LastName,
-            UserID = cs.User.ID,
+            ID = cs.ID,
+            ChargePointID = cs.Connector != null ? cs.Connector.ChargePointID : null,
+            ChargePointName = cs.Connector != null && cs.Connector.ChargePoint != null
+                ? cs.Connector.ChargePoint.ChargePointId
+                : null,
+            UserName = cs.User != null ? cs.User.FullName : null,
+            UserID = cs.UserID,
             CardID = cs.CardID,
-            Card = cs.Card,
-            ChargePointID = cs.Connector.ChargePoint.ID,
-            ChargePointName = cs.Connector.ChargePoint.ChargePointId,
-            KwhCharged = cs.Transactions.Sum(t => (t.MeterStop ?? 0) - t.MeterStart),
-            StartDate = cs.StartDate,
-            IdleTimeRatio = (double)cs.Connector.PricePerIdleMinute,
-            TimeRatio = (double)cs.Connector.PricePerMinute,
-            IdleMinutes = cs.IdleMinutes,
-            TotalPrice = 0,
-            ChargingTimeInMinutes = cs.ChargedMinutes,
-            EndDate = cs.EndDate,
+            CardNumber = cs.Card.CardNumber,
+            CardBalance = cs.Card.Balance,
             ConnectorID = cs.ConnectorID,
-            ConnectorRatio = cs.Connector.PricePerKWh,
-            Transactions = cs.Transactions.ToList(),
-            ConnectorCostRatio = cs.Connector.CostPerKwh,
+            ChargedMinutes = cs.ChargedMinutes,
+            IdleMinutes = cs.IdleMinutes,
+            PricePerMinute = cs.PricePerMinute,
+            PricePerIdleMinute = cs.PricePerIdleMinute,
+            ChargingPriceWithoutVAT = cs.ChargingPriceWithoutVAT(vatRate),
+            ChargingPriceWithVAT = cs.ChargingPriceWithVAT,
+            IdlePriceWithoutVAT = cs.IdleChargingPriceWithoutVAT(vatRate,(int)gracePeriodSeconds),
+            IdldePriceWithVAT = cs.IdleChargingPriceWithVAT((int) gracePeriodSeconds),
+            TotalPriceWithoutVAT = cs.TotalPriceWithoutVAT(vatRate,(int) gracePeriodSeconds),
+            TotalPriceWithVAT = cs.TotalPriceWithVAT(vatRate,(int) gracePeriodSeconds),
+            KwhCharged = 0,
+            StartDate = cs.StartDate,
+            EndDate = cs.EndDate,
+            StoppedReason = cs.StoppedReason,
+            ChargingSessionStatus = cs.ChargingSessionStatus,
           })
           .FirstOrDefaultAsync();
 
-      // Calculating Charging Time for charging session : 
-      var transactionsTime = result.Transactions?.Any() == true
-        ? result.Transactions.Sum(t =>
-            ((t.StopTime ?? DateTime.UtcNow) - t.StartTime).TotalMinutes) : 0;
+      return chargingSession;
+    }
 
-      result.IdleTimePrice = result.IdleMinutes * result.IdleTimeRatio;
+    public async Task<ChargingSessionForMailDto> GetChargingSessionForMail(int chargingSessionID)
+    {
+      _logger.LogInformation("Start VoltaxAPI.Data.GetChargingSessionInformations for chargingSessionID : " + chargingSessionID);
+      var vatRate = _globalConfigurations.Vat;
+      var gracePeriodSeconds = _globalConfigurations.GracePeriod;
+      var chargingSession = await _context.ChargingSessions
+          .Where(cs => cs.ID == chargingSessionID)
+          .Select(cs => new ChargingSessionForMailDto
+          {
+            ID = cs.ID,
+            ChargePointName = cs.Connector.ChargePoint.ChargePointId,
+            UserName = cs.User.FullName,
+            UserID = cs.UserID,
+            ConnectorID = cs.ConnectorID,
+            ConnectorType = cs.Connector.ConnectorType.ToString(),
+            ConnectorPower = cs.Connector.Power,
+            ChargedMinutes =  cs.ChargedMinutes,
+            IdleMinutes = cs.IdleMinutes, 
+            PricePerMinute = cs.PricePerMinute,
+            PricePerIdleMinute = cs.PricePerIdleMinute,
+            ChargingPriceWithoutVAT = cs.ChargingPriceWithoutVAT(vatRate),
+            ChargingPriceWithVAT = cs.ChargingPriceWithVAT,
+            IdlePriceWithoutVAT = cs.IdleChargingPriceWithoutVAT(vatRate,(int)gracePeriodSeconds),
+            IdlePriceWithVAT = cs.IdleChargingPriceWithVAT((int)gracePeriodSeconds),
+            TotalPriceWithoutVAT = cs.TotalPriceWithoutVAT(vatRate,(int)gracePeriodSeconds),
+            TotalPriceWithVAT = cs.TotalPriceWithVAT(vatRate,(int)gracePeriodSeconds),
+            KwhCharged = 0,
+            StartDate = cs.StartDate,
+            EndDate = cs.EndDate,
+            StoppedReason = cs.StoppedReason,
+            ChargingSessionStatus = cs.ChargingSessionStatus,
+          })
+          .FirstOrDefaultAsync();
 
-      result.TotalPrice += result.IdleTimePrice +  (result.TimeRatio * result.ChargingTimeInMinutes);
-
-      return result;
+      return chargingSession;
     }
 
     public async Task<List<int>> GetChargePointChargingSessionsIDs(int chargePointID) =>
@@ -160,7 +202,9 @@ namespace VoltaXApi.Data
         CardID = card.ID,
         StartDate = startDate,
         StoppedReason = ReasonEnumType.Local,
-        ChargingSessionStatus = ChargingSessionStatusEnum.Pending
+        ChargingSessionStatus = ChargingSessionStatusEnum.Pending,
+        PricePerIdleMinute = connector.PricePerIdleMinute,
+        PricePerMinute = connector.PricePerMinute,
       };
 
       await this.AddAsync(chargingSession);

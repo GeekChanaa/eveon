@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { ChargePoint } from 'src/_models/charge-point';
 import { ChargePointBrandService } from 'src/_services/charge-point-brand.service';
 import { ChargePointModelService } from 'src/_services/charge-point-model.service';
@@ -25,6 +26,9 @@ enum ChargePointTabsEnum {
 export class ChargingPointComponent implements OnInit {
 
   tabsEnum : ChargePointTabsEnum = ChargePointTabsEnum.InformationsTab;
+  
+  PageState = PageState;
+  state: PageState = PageState.Loading;
 
   chargePointID : number = 0;
   chargePointLoaded : boolean = false;
@@ -73,8 +77,10 @@ export class ChargingPointComponent implements OnInit {
 
 
   getChargePointByID(id : number){
+    this.state = PageState.Loading;
     this.chargePointID = id;
     this._chargePointService.getChargePointByID(id).subscribe((cs) => {
+      this.state = PageState.Success;
       this.chargePoint = cs;
       this.chargePointLoaded = true;
     })

@@ -1,105 +1,79 @@
-.details__container
+.details__container 
   width: 100%
   display: flex
+  justify-content: center // center content
+  flex-wrap: wrap
 
-  .details-informations__container
-    flex: 0 0 100%
-    padding: 16px
+  .details-informations__container 
     display: flex
     flex-wrap: wrap
-    .details-informations__item
-      margin-top: 12px
-      .details-informations__item-name
-        font-size: 1.1em
-        font-weight: 600
+    gap: 16px // spacing between items
+    width: 100%
+    padding: 16px
 
-      .details-informations__item-value
-        font-size: 1em
-        font-weight: 400
-        color: var(--primary8)
+    .stat__item 
+      display: flex
+      align-items: center
+      flex: 1 1 250px // responsive width
+      background: #fff
+      border-radius: 8px
+      padding: 12px
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1)
+      transition: transform 0.2s
+      cursor: default
 
+      &:hover 
+        transform: translateY(-2px)
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15)
+      
 
-// Charger navbar styling
-.page__inner
-  min-height: 0px
-.charger__navbar
-  display: flex
-  flex: 0 0 100%
-  width: 100%
-  margin-bottom: 24px
-  border-bottom: 1px solid var(--primary4)
-  .charger__navbar-item
-    padding: 12px
-    color: var(--primary8)
-    cursor: auto
-    transition: ease-in-out all .2s
-    font-size: 14px
-    font-weight: 600
-    &:not(.disabled)
-      cursor: pointer
-      &:hover
-        color: black
-    &.charger__navbar-item--active
-      border-bottom: 2px solid var(--secondary2)
-      color: black
+      .stat__icon 
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 50px
+        height: 50px
+        border-radius: 50%
+        margin-right: 12px
+        svg 
+          width: 24px
+          height: 24px
+        
+      
+
+      .stat__line 
+        display: flex
+        flex-direction: column
+
+        .stat__details 
+          display: flex
+          flex-direction: column
+
+          .stat__label 
+            font-size: 1em
+            font-weight: 600
+            display: flex
+            align-items: center
+            gap: 4px
+
+            .tooltip 
+              cursor: help
+              svg 
+                width: 16px
+                height: 16px
+                fill: var(--primary6)
+              
+            
+          
+
+          .stat__counter 
+            font-size: 1.1em
+            font-weight: 500
+            color: var(--primary8)
+            margin-top: 4px
+          
+        
+      
     
   
-.settings__container
-  flex: 0 0 100%
-  width: 100%
 
-  
-.settings
-  flex: 0 0 95%
-  flex-wrap: wrap
-  max-width: 95%
-
-.overview
-  flex: 0 0 35%
-  margin-left: auto
-  background: white
-  padding: 24px
-  border-radius: 8px
-
-.page__container
-  flex-grow: 1
-  flex-wrap: wrap
-  flex-direction: row
-  .page__title
-    flex: 0 0 100%
-.status
-  padding: 6px 12px
-  font-size: 24px
-  text-transform: capitalize
-  font-weight: 500
-  .status-color
-    color: var(--primary6)
-    font-size: 1.2em
-    font-weight: 500
-    svg
-      height: 18px
-    &.active
-      color: green
-      svg
-        animation: blink-animation 1s infinite  
-
-
-.connector-status-container
-  opacity: 0
-  display: none
-  transition: all 0.3s ease-in-out
-
-
-.connector-status-container.show
-  display: block
-  opacity: 1
-
-
-.connector-status-container
-  position: fixed
-  max-width: 700px
-  background: white
-  border-radius: 18px
-  border: 1px solid var(--primary4)
-  margin-top: 20px
-  z-index: 100

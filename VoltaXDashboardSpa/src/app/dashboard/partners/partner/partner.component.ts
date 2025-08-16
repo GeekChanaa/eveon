@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
+import { PageState } from 'src/_models/_enums/page-state.enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { PartnerService } from 'src/_services/partner.service';
@@ -21,6 +22,9 @@ export class PartnerComponent implements OnInit {
 
     tabsEnum : PartnerTabsEnum = PartnerTabsEnum.InformationsTab;
     staticUrl : string = environment.apiStaticFilesUrl;
+
+    PageState = PageState;
+    state: PageState = PageState.Loading;
   
     partnerID : number = 0;
     partnerLoaded : boolean = false;
@@ -67,12 +71,12 @@ export class PartnerComponent implements OnInit {
   
   
     getPartnerByID(id : number){
+      this.state = PageState.Loading;
       this.partnerID = id;
       this._partnerService.getPartnerByID(id).subscribe((cs) => {
+        this.state = PageState.Success;
         this.partner = cs;
         this.partnerLoaded = true;
-        console.log("this is the partner");
-        console.log(this.partner);
       })
     }
   

@@ -1,4 +1,6 @@
-<app-dashboard-details-container [title]="report?.name || 'Report Details'" [breadcrumbs]="[
+<app-dashboard-details-container 
+  [state]="state"
+  [title]="report?.name || 'Report Details'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Reports', link: '/dashboard/reports' },
   { label: report?.name || 'Details' }

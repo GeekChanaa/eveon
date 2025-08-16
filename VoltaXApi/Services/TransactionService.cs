@@ -166,8 +166,8 @@ namespace VoltaXApi.Services
             transaction.MeterStop = meterKWH;
             _context.SaveChanges();
             var kwhs = transaction.MeterStop - transaction.MeterStart;
-            var amount = (decimal) kwhs * connector.PricePerKWh;
-            if((decimal) card.Balance <= amount+5)
+            var amount = (double) kwhs * connector.PricePerKWh;
+            if((double) card.Balance <= amount+5)
             { 
               RequestStopTransactionRequest request = new(){
                 TransactionId = transaction.Uid

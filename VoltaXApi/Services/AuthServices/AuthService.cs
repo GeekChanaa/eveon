@@ -143,17 +143,29 @@ namespace VoltaXApi.Services
     }
 
     // Verifying the phone number
-    public async Task<bool> VerifyPhoneNumber(string email, string token)
+    public async Task<string?> VerifyPhoneNumber(string email, string token)
     {
-      var user = await _userRepository.GetUserByEmail(email);
+      var user = await _context.Users
+        .Include(u => u.Role)
+        .Include(u => u.Role.RolePermissions)
+        .ThenInclude(up => up.Permission)
+        .FirstOrDefaultAsync(x => x.Email == email);
+        
       if (user == null || user.PhoneVerificationToken != token)
-        return false;
+        return null;
 
       user.IsPhoneNumberVerified = true;
       user.PhoneVerificationToken = null;
       await _context.SaveChangesAsync();
 
-      return true;
+      // Build updated claims
+      var claims = BuildUserClaims(user);
+
+      // Generate new JWT
+      var newToken = _jwtService.GenerateToken(claims);
+
+      return newToken;
+
     }
 
     public static void CreatePasswordHashStatic(string password, out byte[] passwordHash, out byte[] passwordSalt)

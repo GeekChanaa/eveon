@@ -22,7 +22,7 @@ namespace VoltaXApi.Controllers
     public class ChargingSessionController : GenericController<ChargingSession>
     {
         private readonly IChargingSessionRepository _repository;
-        private readonly ChargingSessionInvoiceGeneratorService _invoiceGenerator; 
+        private readonly ChargingSessionInvoiceGeneratorService _invoiceGenerator;
 
         public ChargingSessionController(
             IChargingSessionRepository repository,
@@ -36,7 +36,7 @@ namespace VoltaXApi.Controllers
         public async Task<PagedList<ChargePointChargingSessionListDto>> GetChargePointChargingSessions(int chargePointID, [FromQuery] GlobalParams globalParams)
         {
             var chargingSessions = this._repository.GetChargePointChargingSessions(chargePointID, globalParams);
-            var chargingSessionsList = await PagedList<ChargePointChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
+            var chargingSessionsList = await PagedList<ChargePointChargingSessionListDto>.CreateAsync(chargingSessions, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;
         }
@@ -57,7 +57,7 @@ namespace VoltaXApi.Controllers
                 SessionDate = chargingSession.StartDate,
                 ChargePointName = chargingSession.ChargePointName,
                 TotalKwhCharged = chargingSession.KwhCharged ?? 0,
-                TotalPrice = chargingSession.TotalPrice ?? 0,
+                TotalPrice = chargingSession.TotalPriceWithVAT ?? 0,
                 Transactions = chargingSession.Transactions
                                             .Select(cs => new TransactionItem
                                             {
@@ -99,7 +99,7 @@ namespace VoltaXApi.Controllers
         public async Task<List<ChargingSessionListDto>> GetChargingSessions([FromQuery] GlobalParams globalParams)
         {
             var chargingSessions = this._repository.GetChargingSessions();
-            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
+            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;
         }
@@ -108,11 +108,10 @@ namespace VoltaXApi.Controllers
         public async Task<PagedList<ChargingSessionListDto>> GetUserChargingSessions(int userID, [FromQuery] GlobalParams globalParams)
         {
             var chargingSessions = this._repository.GetUserChargingSessions(userID, globalParams);
-            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions,globalParams.PageNumber, globalParams.PageSize);
+            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;
         }
-
 
 
     }

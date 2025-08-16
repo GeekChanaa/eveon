@@ -26,6 +26,10 @@ namespace VoltaXApi.Data
 
     public async Task<ConnectorStatus?> GetConnectorStatusByConnectorID(int connectorID)
     {
+      var css = await _context.ConnectorStatuses
+        .Where(u => connectorID == u.ConnectorID)
+        .Select(u => new { u.LastStatus, u.ConnectorID })
+        .FirstOrDefaultAsync();
       var cs = await _context.ConnectorStatuses
                       .Where(u => connectorID == u.ConnectorID).FirstOrDefaultAsync();
       return cs;

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+<head>
+<title>Volta X Charging Session Completed</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" type="text/css">
+<style>
+  * { box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+  body { margin: 0; padding: 0; background-color: #ffdb01; }
+  table { border-collapse: collapse; }
+  h3 { margin: 0; }
+</style>
+</head>
+<body style="background-color:#ffdb01; margin:0; padding:0;">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color:#ffdb01;">
+<tr><td>
+
+  <!-- Header Logo -->
+  <table align="center" width="655" style="background-color:#ffffff; margin:0 auto;">
+    <tr><td align="center" style="padding:20px 0;">
+      <img src="https://site.voltaxcharging.com/wp-content/uploads/2024/05/Volta-X@4x.png" width="229" alt="Volta X Logo" style="display:block;">
+    </td></tr>
+  </table>
+
+  <!-- Session Info -->
+  <table align="center" width="655" style="background-color:#151515; color:#ffffff; margin:0 auto;">
+    <tr><td style="padding:20px 40px;">
+      <h1 style="font-size:32px; color:#ffffff;">Charging Completed - Session #{session_id}</h1>
+      <p style="font-size:14px; margin-top:5px;">{session_date}</p>
+      <hr style="border:0; border-top:1px dotted #5D5D5D; margin:15px 0;">
+
+      <h3 style="color:#e8e8e8; font-size:16px;">Connector Details</h3>
+      <table width="100%" style="color:#e8e8e8; font-size:14px; margin-bottom:20px;">
+        <tr><td><strong>Charger Name</strong></td><td>{charger_name}</td><td><strong>Connector Number</strong></td><td>{connector_number}</td></tr>
+        <tr><td><strong>Connector Type</strong></td><td>{connector_type}</td><td><strong>Energy Consumed</strong></td><td>{energy_consumed} kWh</td></tr>
+        <tr><td><strong>Power Output</strong></td><td>{power_output} kW</td><td><strong>Price</strong></td><td>MAD {price_per_hour}/hour</td></tr>
+        <tr><td><strong>Idle Fee</strong></td><td colspan="3">{idle_fee}</td></tr>
+      </table>
+
+      <h3 style="color:#e8e8e8; font-size:16px;">Invoice Details</h3>
+      <table width="100%" style="color:#e8e8e8; font-size:14px;">
+        <tr><td><strong>Charging Cost</strong></td><td>MAD {charging_cost}</td></tr>
+        <tr><td><strong>Fixed Charging Cost</strong></td><td>MAD {fixed_charging_cost}</td></tr>
+        <tr><td><strong>Idle Fee</strong></td><td>MAD {idle_fee_amount}</td></tr>
+        <tr><td><strong>Tax</strong></td><td>MAD {tax}</td></tr>
+        <tr style="font-weight:bold;"><td><strong>Total Amount</strong></td><td>MAD {total_amount}</td></tr>
+      </table>
+    </td></tr>
+  </table>
+
+  <!-- Footer -->
+  <table align="center" width="655" style="background-color:#151515; margin:0 auto; color:#C0C0C0; font-size:12px;">
+    <tr>
+      <td style="padding:20px;">
+        <img src="https://site.voltaxcharging.com/wp-content/uploads/2024/05/Volta-X@4x.png" width="105" alt="Volta X logo" style="display:block; margin-bottom:10px;">
+        <p>At Volta X, we are committed to transforming the electric vehicle (EV) charging experience as a leading Charge Point Operator.</p>
+      </td>
+    </tr>
+  </table>
+
+</td></tr>
+</table>
+</body>
+</html>

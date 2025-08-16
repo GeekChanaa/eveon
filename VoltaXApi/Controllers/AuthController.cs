@@ -176,13 +176,15 @@ namespace VoltaXApi.Controllers
         [HttpPost("VerifyPhone")]
         public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
         {
-            // Checking the password
-            if (await _authService.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token))
+            try
             {
-                return StatusCode(200);
+                var token = await _authService.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token);
+                return Ok(new {token = token});
             }
-            else
+            catch (Exception ex)
             {
+                Console.WriteLine("Message : " + ex.Message);
+                Console.WriteLine("StackTrace : " + ex.StackTrace);
                 return StatusCode(500, "Phone number or token incorrect");
             }
         }

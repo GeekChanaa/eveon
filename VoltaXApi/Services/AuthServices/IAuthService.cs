@@ -10,7 +10,7 @@ namespace VoltaXApi.Services
       Task<User> Register(UserForRegisterDto userForRegisterDto);
       Task<LoginResultDto> Login(string email, string login, string ipAddress);
       Task<bool> VerifyEmail(string email, string token);
-      Task<bool> VerifyPhoneNumber(string email, string token);
+      Task<string?> VerifyPhoneNumber(string email, string token);
       Task SendPhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto);
       Task CreateEmailVerificationToken(int userID);
       Task ChangePasswordAsync(UserPasswordChangeDto userPasswordChangeDto);

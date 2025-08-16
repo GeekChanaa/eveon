@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.Factories;
 
 namespace VoltaXApi.Services
 {
@@ -11,19 +12,27 @@ namespace VoltaXApi.Services
         private readonly ICardService _cardService;
         private readonly IConnectorStatusRepository _connectorStatusRepository;
         private readonly GlobalConfigurations _globalConfigurations;
-
+        private readonly IMailService _mailService;
+        private readonly IMailRequestFactory _mailRequestFactory;
+        private readonly IUserRepository _userRepository;
 
         public ChargingSessionService(
           IChargingSessionRepository chargingSessionRepository,
           IConnectorStatusRepository connectorStatusRepository,
           GlobalConfigurations globalConfigurations,
-          ICardService cardService
+          ICardService cardService,
+          IMailService mailService,
+          IMailRequestFactory mailRequestFactory,
+          IUserRepository userRepository
         )
         {
             _chargingSessionRepository = chargingSessionRepository;
             _connectorStatusRepository = connectorStatusRepository;
             _cardService = cardService;
             _globalConfigurations = globalConfigurations;
+            _mailService = mailService;
+            _mailRequestFactory = mailRequestFactory;
+            _userRepository = userRepository;
         }
 
 
@@ -36,6 +45,7 @@ namespace VoltaXApi.Services
         public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, DateTime endDate)
         {
             ChargingSession chargingSession = await _chargingSessionRepository.GetByIdAsync(chargingSessionID);
+            string userEmail = await _userRepository.GetUserEmailByID(chargingSession.UserID);
             ConnectorStatus connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(chargingSession.ConnectorID);
             chargingSession.ChargedMinutes = minutesCharged;
             chargingSession.EndDate = endDate;
@@ -47,8 +57,15 @@ namespace VoltaXApi.Services
                 chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.Completed;
             }
             await this._chargingSessionRepository.Update(chargingSession);
+
+            // Sending the email
+            MailRequest chargingSessionMailRequest = _mailRequestFactory.CreateChargingSessionQuoteMail(userEmail);
+            ChargingSessionForMailDto chargingSessionForMail = await _chargingSessionRepository.GetChargingSessionForMail(chargingSessionID);
+            await this._mailService.SendChargingSessionQuoteMailRequest(chargingSessionMailRequest, chargingSessionForMail);
+
             return chargingSession;
         }
+        
 
         public async Task<ChargingSession> HandleIdleMinutes(int connectorID, DateTimeOffset? statusTime)
         {
