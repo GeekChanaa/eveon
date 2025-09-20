@@ -16,9 +16,12 @@
         </div>
   
       </div>
-      
-      
     </div>
+    <app-breadcrumb [items]="[
+      { label: 'Dashboard', link: '/dashboard' },
+      { label: 'Connector Real Time', link: '/dashboard/connector-realtime/{{chargePointID}}' },
+      { label: '#'+chargePointID }
+      ]"></app-breadcrumb>
     <div class="charger__navbar">
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>

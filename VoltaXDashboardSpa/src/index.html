@@ -18,14 +18,12 @@
       }
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtI87aeWisbnzdtwPFw-vaHFnv_74ZSnc"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <script>
-    console.log(localStorage.getItem('darkMode'));
     if (localStorage.getItem('darkMode') === "on") {
       document.body.classList.add("dark");
       document.addEventListener("DOMContentLoaded", function() {
@@ -410,5 +408,7 @@
     </symbol>
     </svg>
         </div>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtI87aeWisbnzdtwPFw-vaHFnv_74ZSnc"></script>
+
 </body>
 </html>

@@ -16,8 +16,14 @@
       <app-navbar-notifications></app-navbar-notifications>
     </div>
     <div class="header__item header__item_user" [ngClass]="{'active' : avatarMenuBody}">
-      <button (click)="toggleUserMenu()" class="header__head">
-        <img [src]="imageUrl" alt="Avatar"></button>
+      <button (click)="toggleUserMenu()" class="header__head profile">
+        <ng-container *ngIf="imageUrl; else initials">
+          <img [src]="imageUrl" (error)="onImageError()" alt="Avatar">
+        </ng-container>
+        <ng-template #initials>
+          <span class="avatar-initials">{{ userInitials }}</span>
+        </ng-template>
+      </button>
         <div class="header__body header__item_user_body">
           <div class="header__nav">
             <button class="header__link" (click)="goToProfile()">Profile</button>

@@ -13,9 +13,7 @@ namespace VoltaXApi.Models
         public int? ConnectorID { get; set; }
         public ConnectorStatusEnumType LastStatus { get; set; }
         public DateTime? LastStatusTime { get; set; }
-        [ForeignKey(nameof(ConnectorID))]
         public Connector? Connector { get; set; }
-        public ChargePoint? ChargePoint { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

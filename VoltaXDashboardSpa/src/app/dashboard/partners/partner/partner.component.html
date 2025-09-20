@@ -36,41 +36,56 @@
           <div class="card-content">
             <!-- Logo section -->
             <div class="logo-section">
-              <div class="logo-container" [ngClass]="{'has-image': partner.logoUrl && !editingImage}">
-                <img *ngIf="partner.logoUrl && !editingImage" [src]="staticUrl + partner.logoUrl + '?t=' + timestamp"
-                  alt="Partner logo">
+              <div class="logo-container"
+                *ngIf="!editingImage"
+                [ngClass]="{'has-image': partner.logoUrl && !editingImage && !imageUploading}">
+                <img *ngIf="partner.logoUrl && !editingImage && !imageUploading"
+                  [src]="staticUrl + partner.logoUrl + '?t=' + timestamp" alt="Partner logo">
 
-                <div *ngIf="!partner.logoUrl && !editingImage" class="empty-logo">
-                </div>
+                <div *ngIf="!partner.logoUrl && !editingImage && !imageUploading" class="empty-logo"></div>
 
-                <button *ngIf="!editingImage" (click)="editingImage = true" class="edit-logo-btn">
-                  <i class="icon icon-edit"></i> Change Logo
+                <button *ngIf="!editingImage && !imageUploading" (click)="startEditing()" class="edit-logo-btn">
+                  Change Logo
                 </button>
+
+                <div *ngIf="imageUploading" class="uploading-overlay">
+                  <app-svg-spinner></app-svg-spinner>
+                  <span>Uploading...</span>
+                </div>
               </div>
 
               <!-- Logo upload -->
               <div *ngIf="editingImage" class="upload-container">
-                <div class="dropzone" [ngClass]="{'has-file': displayedLogo}" (dragover)="$event.preventDefault()"
-                  (drop)="handleUpload($event)">
+                <div class="dropzone"
+                  [ngClass]="{'has-file': displayedLogo}"
+                  [class.dragging]="isDragging"
+                  (click)="fileInput.click()"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)">
 
-                  <div *ngIf="!displayedLogo" class="dropzone-prompt">
-                    <i class="icon icon-upload"></i>
-                    <p>Drag and drop an image or click to browse</p>
-                    <input type="file" class="file-input" (change)="handleUpload($event)">
-                  </div>
+                <input #fileInput
+                      type="file"
+                      class="file-input"
+                      accept="image/png, image/jpeg"
+                      (change)="handleUpload($event)"
+                      hidden>
 
-                  <div *ngIf="displayedLogo" class="preview-container">
-                    <button class="remove-btn" (click)="clearImage()">
-                      <i class="icon icon-trash"></i>
-                    </button>
-                    <img [src]="displayedLogo" alt="Logo preview">
-                  </div>
+                <div *ngIf="!displayedLogo" class="dropzone-prompt">
+                  <i class="icon icon-upload"></i>
+                  <p>Drag and drop an image or click to browse</p>
                 </div>
 
-                <div class="actions">
-                  <button (click)="editingImage = false" class="btn btn-secondary">
-                    Cancel
+                <div *ngIf="displayedLogo" class="preview-container">
+                  <button class="remove-btn" (click)="clearImage()">
+                    <i class="icon icon-trash"></i>
                   </button>
+                  <img [src]="displayedLogo" alt="Logo preview">
+                </div>
+              </div>
+
+                <div class="actions">
+                  <button (click)="editingImage = false" class="btn btn-secondary">Cancel</button>
                   <button [disabled]="imageUploading || !displayedLogo" (click)="changeLogo()" class="btn btn-primary">
                     <span *ngIf="imageUploading">
                       <app-svg-spinner></app-svg-spinner> Uploading...
@@ -108,26 +123,26 @@
 
                 <div class="field-group">
                   <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
-                    inpType="text" title="Email" [val]="partner.email"></app-display-cell>
+                    inpType="text" [control]="getControl('email')"  title="Email" [val]="partner.email"></app-display-cell>
 
                   <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
-                    inpType="text" title="Alternative Email" [val]="partner.email2"></app-display-cell>
+                    inpType="text" title="email2" [control]="getControl('email2')" [val]="partner.email2"></app-display-cell>
 
                   <app-display-cell *ngIf="partner.email3" [updateObservable]="updatePartnerObservable.bind(this)"
-                    [object]="partner" inpType="text" title="Alternative Email 2"
+                    [object]="partner" inpType="text" [control]="getControl('email3')" title="email3"
                     [val]="partner.email3"></app-display-cell>
                 </div>
 
                 <div class="field-group">
                   <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
-                    inpType="text" title="Phone" [val]="partner.phone"></app-display-cell>
+                    inpType="text" [control]="getControl('phone')" title="phone" [val]="partner.phone"></app-display-cell>
 
-                  <app-display-cell *ngIf="partner.phone2" [updateObservable]="updatePartnerObservable.bind(this)"
-                    [object]="partner" inpType="text" title="Alternative Phone"
+                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)"
+                    [object]="partner" inpType="text" [control]="getControl('phone2')" title="phone2"
                     [val]="partner.phone2"></app-display-cell>
 
-                  <app-display-cell *ngIf="partner.phone3" [updateObservable]="updatePartnerObservable.bind(this)"
-                    [object]="partner" inpType="text" title="Alternative Phone 2"
+                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)"
+                    [object]="partner" inpType="text" [control]="getControl('phone3')" title="phone3"
                     [val]="partner.phone3"></app-display-cell>
                 </div>
               </div>

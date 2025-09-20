@@ -8,6 +8,7 @@ import {
   ApexXAxis,
   ApexTitleSubtitle
 } from "ng-apexcharts";
+import { StatisticsService } from 'src/_services/statistics.service';
 
 
 @Component({
@@ -52,9 +53,17 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
   totalRechargeAmountToday : number = 0;
   totalRechargeAmountByDay : number[] = [];
 
+  totalRevenue: number = 0;
+  totalRevenueToday: number = 0;
+  totalRevenueByDay: { [date: string]: number } = {};
+  totalRevenueByMonth: { [monthYear: string]: number } = {};
+  revenueChart: any;
+  revenueMonthlyChart: any;
+
   constructor(
     private _transactionService : TransactionService,
-    private _orderService : OrderService
+    private _orderService : OrderService,
+    private _statisticsService : StatisticsService
   ) {
   }
 
@@ -62,7 +71,49 @@ export class TabsStatisticsComponent implements OnInit,AfterViewInit {
     this.getEnergyData();
     this.getOrderCount();
     this.getRechargeAmount();
+    this.getRevenueData();
   }
+
+  getRevenueData() {
+    // Total Revenue
+    this._statisticsService.getTotalRevenue().subscribe(result => this.totalRevenue = result);
+
+    // Total Revenue Today
+    this._statisticsService.getTotalRevenueToday().subscribe(result => this.totalRevenueToday = result);
+
+    // Daily Revenue (Last 30 Days)
+    this._statisticsService.getDailyRevenueLast30Days().subscribe(result => {
+      this.totalRevenueByDay = result;
+
+      // Extract and format dates
+      var categories = Object.keys(this.totalRevenueByDay);
+      categories = categories.map(date => {
+        const d = new Date(date);
+        return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })} ${d.getFullYear()}`;
+      });
+
+      // Extract and format values
+      var values = Object.values(this.totalRevenueByDay);
+      values = values.map(value => parseFloat(value.toFixed(2)));
+
+      // Construct chart
+      this.revenueChart = this.chartOptionsConstructor(values, categories);
+    });
+
+    // Monthly Revenue (Last Year)
+    this._statisticsService.getMonthlyRevenueLastYear().subscribe(result => {
+      this.totalRevenueByMonth = result;
+
+      var categories = Object.keys(this.totalRevenueByMonth);
+      categories = categories.map(monthYear => monthYear); // e.g. "Jan 2025"
+
+      var values = Object.values(this.totalRevenueByMonth);
+      values = values.map(value => parseFloat(value.toFixed(2)));
+
+      this.revenueMonthlyChart = this.chartOptionsConstructor(values, categories);
+    });
+  }
+
 
   // Get energy data
   getEnergyData(){

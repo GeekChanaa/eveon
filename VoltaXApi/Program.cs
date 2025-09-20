@@ -96,7 +96,6 @@ public class Program
         
         var mapper = app.Services.GetRequiredService<AutoMapper.IMapper>();
         // DatabaseInit.Seed(dbContext, mapper).Wait();
-        ElectricVehicleModelSeeder.SeedAsync(dbContext,"sql-scripts/EV-cars.csv").Wait();
         dbContext.Database.SetCommandTimeout(6000);
     }
 }

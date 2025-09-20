@@ -105,6 +105,18 @@ public class MailRequestFactory : IMailRequestFactory
         };
     }
 
+    public MailRequest CreateAccountSuspendedMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Account Suspended – VoltaX Charging",
+        };
+    }
+
+
     public MailRequest CreateWelcomeMailRequest(string to)
     {
         return new MailRequest

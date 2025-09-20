@@ -22,4 +22,32 @@ export class StatisticsService {
     return this._http.get<ChargePointStatisticsSummaryDto>(this.baseUrl+"GetChargePointStatisticsSummary/"+chargePointID,this.httpOptions);
   }
 
+  getTotalRevenue() {
+    return this._http.get<number>(
+      this.baseUrl + "TotalRevenue",
+      this.httpOptions
+    );
+  }
+
+  getTotalRevenueToday() {
+    return this._http.get<number>(
+      this.baseUrl + "TotalRevenueToday",
+      this.httpOptions
+    );
+  }
+
+  getDailyRevenueLast30Days() {
+    return this._http.get<{ [date: string]: number }>(
+      this.baseUrl + "DailyRevenueLast30Days",
+      this.httpOptions
+    );
+  }
+
+  getMonthlyRevenueLastYear() {
+    return this._http.get<{ [monthYear: string]: number }>(
+      this.baseUrl + "MonthlyRevenueLastYear",
+      this.httpOptions
+    );
+  }
+
 }

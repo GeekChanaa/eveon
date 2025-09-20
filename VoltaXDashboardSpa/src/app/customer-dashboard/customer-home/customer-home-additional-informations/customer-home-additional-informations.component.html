@@ -35,12 +35,18 @@
   <div class="form-row">
     <div class="form-group">
       <label>Car Brand</label>
-      <!-- <input type="text" [(ngModel)]="profileData.carBrand" placeholder="e.g., Toyota, BMW"> -->
+      <app-search-input class="field"
+        placeholder="Electric Vehicle Model"
+        title="Electric Vehicle Model"
+        description="Choose the electric vehicle model of you car."
+        [control]="getControl('electricVehicleModel')"
+        [options]="carBrands"></app-search-input>
     </div>
     
     <div class="form-group">
       <label>Birthday</label>
-      <!-- <input type="date" [(ngModel)]="profileData.birthday"> -->
+      <app-form-field class="field" title="Birthday" inputType="datetime" description="Your birthday !" placeholder="Birthday"
+        [control]="getControl('birthday')"></app-form-field>
     </div>
   </div>
 </div>

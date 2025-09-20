@@ -1,1 +1,139 @@
 @import '../../../../styles/display-page'
+
+.logo-container 
+  position: relative
+  width: 150px
+  height: 150px
+  border-radius: 12px
+  overflow: hidden
+  background: var(--primary3)
+  display: flex
+  align-items: center
+  justify-content: center
+  transition: ease-in-out all .3s
+
+  &.has-image img 
+    width: 100%
+    height: 100%
+    object-fit: cover
+  
+
+  .empty-logo 
+    width: 100%
+    height: 100%
+    background: var(--primary5)
+  
+  .edit-logo-btn 
+    position: absolute
+    bottom: 0
+    width: 100%
+    background: var(--secondary1)
+    color: var(--primary1)
+    border: none
+    padding: 6px 0
+    cursor: pointer
+    font-weight: 600
+    border-radius: 8px
+    width: 50%
+    position: absolute
+    top: 50%
+    left: 50%
+    transition: ease-in-out all .3s
+    transform: translate(-50%,-50%)
+    opacity: 0
+
+  &:hover 
+    opacity: 0.8
+    .edit-logo-btn
+        opacity: 1
+
+  .uploading-overlay 
+    position: absolute
+    inset: 0
+    background: rgba(0,0,0,0.3)
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    color: var(--primary1)
+    font-weight: 600
+  
+
+
+.upload-container 
+  margin-top: 12px
+
+  .dropzone 
+    position: relative
+    width: 100%
+    height: 150px
+    border: 2px dashed var(--primary6)
+    border-radius: 12px
+    display: flex
+    align-items: center
+    justify-content: center
+    cursor: pointer
+    overflow: hidden
+
+    &.has-file 
+      border-color: var(--secondary2)
+    
+
+    .dropzone-prompt 
+      text-align: center
+      color: var(--primary7)
+      i  
+        font-size: 24px 
+        margin-bottom: 8px 
+    
+
+    .preview-container 
+      position: relative
+      img 
+        width: 100%
+        height: 100%
+        object-fit: contain
+      
+
+      .remove-btn 
+        position: absolute
+        top: 4px
+        right: 4px
+        background: var(--danger2)
+        color: var(--primary1)
+        border: none
+        border-radius: 50%
+        width: 24px
+        height: 24px
+        display: flex
+        align-items: center
+        justify-content: center
+        cursor: pointer
+      
+    
+  
+
+  .actions 
+    margin-top: 8px
+    display: flex
+    gap: 8px
+
+    .btn-primary 
+      background: var(--secondary1)
+      color: var(--primary1)
+      border: none
+    
+
+    .btn-secondary 
+      background: var(--primary4)
+      color: var(--primary9)
+      border: none
+
+.dropzone.dragging 
+  background: #fff3e0
+  border-color: #ff9800
+  cursor: copy
+
+    
+  
+

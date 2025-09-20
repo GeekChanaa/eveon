@@ -20,7 +20,7 @@
     </app-form-field>
 
     <div class="form__actions">
-      <app-button variant="secondary" (btnClick)="updatePermissions()">Update Permissions</app-button>
+      <app-button [isLoading]="roleFormLoading" variant="secondary" (btnClick)="updatePermissions()">Update Permissions</app-button>
       <app-button variant="primary" [outlined]="true" (btnClick)="updatingPermisions = false">Cancel</app-button>
     </div>
   </ng-container>

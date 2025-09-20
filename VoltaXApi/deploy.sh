@@ -125,6 +125,7 @@ deploy_to_aws() {
         
         # Pull latest image
         docker pull "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
+        #docker pull "jaberfeka/voltax-api:latest"
         
         # Run new container
         docker run -d --name "$PROJECT_NAME" -p 80:5000 "$DOCKER_REGISTRY/$PROJECT_NAME:latest"

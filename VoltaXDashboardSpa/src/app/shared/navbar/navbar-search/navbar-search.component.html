@@ -15,6 +15,7 @@
       #searchInput
       class="search__input" 
       type="text" 
+      (focus)="toggleSearch()"
       [formControl]="searchControl"
       placeholder="Search pages or type a command"
       aria-label="Search input"
@@ -28,9 +29,9 @@
   </div>
   
   <div class="search__body">
-    <ng-container *ngIf="(searchResults$ | async)?.length">
       <!-- Recent searches -->
       <div class="search__box" *ngIf="recentSearches.length && !searchControl.value">
+        IIIN HEEEERE 2
         <div class="search__category">Recent searches</div>
         <div class="search__list">
           <div class="search__item" *ngFor="let item of recentSearches" (click)="navigateTo(item)">
@@ -98,7 +99,6 @@
         <div class="search__empty-title">No results found</div>
         <div class="search__empty-text">Try adjusting your search or filter to find what you're looking for.</div>
       </div>
-    </ng-container>
   </div>
 </div>
 

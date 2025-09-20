@@ -10,5 +10,7 @@ export interface UserDashboardEditInformationsDto{
     isEmailVerified : Boolean;
     isPhoneVerified : Boolean;
     role : string;
+    roleID : number;
+    partnerID : number;
     [key: string]: any;
 }

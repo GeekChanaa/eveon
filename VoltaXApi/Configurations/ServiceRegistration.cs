@@ -171,6 +171,7 @@ public static class ServiceRegistration
         // Register application services
         services.AddScoped<IChargingStationService, ChargingStationService>();
         services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<IPartnerStatisticsService, PartnerStatisticsService>();
         services.AddScoped<IChargingStationImageService, ChargingStationImageService>();
         services.AddScoped<IChargePointService, ChargePointService>();
         services.AddScoped<IPartnerService, PartnerService>();

@@ -58,16 +58,16 @@ namespace VoltaXApi.Controllers
                 ChargePointName = chargingSession.ChargePointName,
                 TotalKwhCharged = chargingSession.KwhCharged ?? 0,
                 TotalPrice = chargingSession.TotalPriceWithVAT ?? 0,
-                Transactions = chargingSession.Transactions
-                                            .Select(cs => new TransactionItem
-                                            {
-                                                StartTime = cs.StartTime,
-                                                StopTime = cs.StopTime,
-                                                MeterStart = cs.MeterStart,
-                                                MeterStop = cs.MeterStop,
-                                                Amount = cs.Amount
-                                            })
-                                            .ToList()
+                TotalPriceWithoutVAT = chargingSession.TotalPriceWithoutVAT ?? 0,
+                TotalPriceWithVAT = chargingSession.TotalPriceWithVAT ?? 0,
+                CardNumber  = chargingSession.CardNumber,
+                ChargedMinutes = chargingSession.ChargedMinutes ?? 0,
+                IdleMinutes = chargingSession.IdleMinutes ?? 0,
+                PricePerIdleMinute = chargingSession.PricePerIdleMinute ?? 0,
+                PricePerMinute = chargingSession.PricePerMinute ?? 0,
+                KwhsCharged = chargingSession.KwhCharged ?? 0,
+                CardBalance = chargingSession.Card?.Balance ?? 0,
+                ChargingSessionID = chargingSessionID
             };
             var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
 

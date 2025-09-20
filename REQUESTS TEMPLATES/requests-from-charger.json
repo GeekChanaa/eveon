@@ -8,12 +8,11 @@
 [2,"1","BootNotification",{"chargingStation":{"model":"NG920-61021","vendorName":"Alfen BV","serialNumber":"ACE0158711","firmwareVersion":"7.0.5-4328"},"reason":"PowerUp"}]  
 
 // Status Notification
-[2,"2","StatusNotification",{"connectorId":0,"errorCode":"NoError","status":"Available"}]
+[2,"2","StatusNotification",{"timestamp":"2025-09-05T15:42:14Z","connectorId":0,"errorCode":"NoError","status":"Available"}]
 
 
 // Transaction Event Start
 [2,"71","TransactionEvent",{"eventType":"Started","timestamp":"2025-01-02T13:51:33Z","triggerReason":"RemoteStart","seqNo":0,"transactionInfo":{"transactionId":"73efaf11-8bbc-4543-b729-6a91e22800b1","chargingState":"SuspendedEVSE","remoteStartId":0},"meterValue":[{"sampledValue":[{"value":0.128,"context":"Transaction.Begin","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T13:51:35Z"}],"evse":{"id":1,"connectorId":1},"idToken":{"idToken":"3528-0383-4543-9902","type":"Central"}}]
-
 
 // Transaction Event Update
 [2,"72","TransactionEvent",{"eventType":"Updated","timestamp":"2025-01-02T13:46:29Z","triggerReason":"MeterValuePeriodic","seqNo":414,"transactionInfo":{"transactionId":"73efaf11-8bbc-4543-b729-6a91e22800b1"},"meterValue":[{"sampledValue":[{"value":0.130,"context":"Sample.Periodic","measurand":"Energy.Active.Import.Register","location":"Outlet","unitOfMeasure":{"unit":"kWh"}}],"timestamp":"2025-01-02T13:46:29Z"}],"evse":{"id":1,"connectorId":1}}]

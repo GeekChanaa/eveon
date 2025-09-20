@@ -34,6 +34,7 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   disabledActions : boolean = true;
   
   chargePoint : any = {};
+  chargePointID : number = 0
 
   selectMenuItem(item: ChargerNavbarEnum): void {
     this.selectedMenuItem = item;
@@ -51,6 +52,7 @@ export class ConnectorRealtimeMainComponent implements OnInit {
     if (idParam != null) {
       var id = parseInt(idParam);
       this.getChargePointByID(id);
+      this.chargePointID = id
     }
     
   }

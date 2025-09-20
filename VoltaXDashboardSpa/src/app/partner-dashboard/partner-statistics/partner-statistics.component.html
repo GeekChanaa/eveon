@@ -1,3 +1,148 @@
-<p>
-  partner-statistics works!
-</p>
+<div class="page__container">
+  <div class="page__title h3">Statistics</div>
+  <div class="card">
+    <div class="stat">
+      <div class="stat__list">
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #B5E4CA;">
+            <svg class="icon icon-activity">
+              <use xlink:href="#icon-activity"></use>
+            </svg>
+          </div>
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Total Revenue (DH)
+                <div class="tooltip" title="Total revenue from all charging sessions">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="stat__counter">{{recharge_orders_total_amount | number:'1.2-2'}}</div>
+              <div class="stat__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{recharge_orders_amount_last_week | number:'1.2-2'}}
+                </div><span>today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #CABDFF;">
+            <svg class="icon icon-pie-chart">
+              <use xlink:href="#icon-pie-chart"></use>
+            </svg>
+          </div>
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Charging Sessions
+                <div class="tooltip" title="Total number of charging sessions">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="stat__counter">{{total_charging_sessions | number:'1.0-0' }}</div>
+              <div class="stat__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{total_charging_sessions_today}}
+                </div><span>today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stat__item">
+          <div class="stat__icon" style="background-color: #B1E5FC;">
+            <svg class="icon icon-shopping-bag">
+              <use xlink:href="#icon-shopping-bag"></use>
+            </svg>
+          </div>
+          <div class="stat__line">
+            <div class="stat__details">
+              <div class="stat__label">Total Energy (Kwh)
+                <div class="tooltip" title="Total energy consumed across all sessions">
+                  <svg class="icon icon-info">
+                    <use xlink:href="#icon-info"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="stat__counter"> {{total_energy_consumed | number:'1.2-2'}} </div>
+              <div class="stat__indicator">
+                <div class="balance positive">
+                  <svg class="icon icon-arrow-top">
+                    <use xlink:href="#icon-arrow-top"></use>
+                  </svg>{{total_energy_consumed_last_week | number:'1.2-2'}}
+                </div><span>today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page__row">
+    <div class="page__col">
+      <div class="card">
+        <div class="card__head">
+          <div class="title-purple card__title">Charging Sessions</div>
+          <select class="select select_small">
+            <option (click)="getRechargeOrdersOf('7days')">Last 30 days</option>
+            <option (click)="getRechargeOrdersOf('30days')">This month</option>
+            <option (click)="getRechargeOrdersOf('12months')">Last year</option>
+          </select>
+        </div>
+        <div class="card__chart card__chart_product-sales">
+          <apx-chart 
+            style="display: block; height: 200px; width: 100%" 
+            [series]="rechargeOrdersChart.series" 
+            [chart]="rechargeOrdersChart.chart" 
+            [xaxis]="rechargeOrdersChart.xaxis" 
+            [stroke]="rechargeOrdersChart.stroke" 
+            [dataLabels]="rechargeOrdersChart.dataLabels" 
+            [colors]="rechargeOrdersChart.colors" 
+            [legend]="rechargeOrdersChart.legend" 
+            [grid]="rechargeOrdersChart.grid">
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+    <div class="page__col">
+      <div class="card">
+        <div class="card__head">
+          <div class="title-blue card__title">Top Charging Stations</div>
+        </div>
+        <div class="countries">
+          <div class="countries__list">
+            <div *ngFor="let item of top10ChargingStationRevenues" class="countries__item">
+              <div class="countries__flag">CS</div>
+              <div class="countries__title">{{item.chargingStationID}}</div>
+              <div class="countries__price">{{item.revenue | number:'1.2-2'}} DH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stats__table">
+      <div class="stats__row">
+        <div class="stats__col">Start</div>
+        <div class="stats__col">End</div>
+        <div class="stats__col">Energy Consumed</div>
+        <div class="stats__col">Amount</div>
+      </div>
+      <div class="stats__row" *ngFor="let item of latestTransactions">
+        <div class="stats__col">{{item.startTime | date:'medium'}}</div>
+        <div class="stats__col">
+          <div class="status-yellow stats__status">{{item.stopTime | date:'medium'}}</div>
+        </div>
+        <div class="stats__col">{{item.meterStop - item.meterStart | number:'1.2-2'}} kWh</div>
+        <div class="stats__col">{{item.amount | number:'1.2-2'}} DH</div>
+      </div>
+    </div>
+  </div>
+</div>

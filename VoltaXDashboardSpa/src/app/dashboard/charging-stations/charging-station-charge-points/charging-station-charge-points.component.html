@@ -1,23 +1,56 @@
+
+
+
 <div class="settings__anchor" id="account" data-value="Account"></div>
-<div class="settings__fieldset" *ngIf="!isChargePointVisible">
-  <div *ngIf="chargePoints.length > 0 "> Choose a Charge Point to view it</div>
-  <ng-container *ngIf="chargePoints.length > 0">
-    <div class="charge-point-links-container" >
-      <button *ngFor="let chargePoint of chargePoints" class="charge-point-link" (click)="showChargePoint(chargePoint.id)"> {{chargePoint.chargePointId}} </button>
-    </div>  
-  </ng-container>
+<div class="connector-management" *ngIf="!isChargePointVisible">
 
-  <ng-container *ngIf="chargePoints.length <= 0">
-    <app-empty-card></app-empty-card>
-  </ng-container>
-
-  <div class="actions__container">
-    <app-button size="small" variant="secondary" [routerLink]="'/dashboard/charging-points/create'" [queryParams]="{ chargingStationID: chargingStationID }">Add Charge Point</app-button>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="chargePoints.length <= 0">
+    <div class="empty-state__icon">
+      <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <h3 class="empty-state__title">No Connectors Available</h3>
+    <p class="empty-state__description">Get started by adding your first connector to this charge point.</p>
   </div>
-</div>
 
-<div class="charge-point-container" *ngIf="isChargePointVisible">
-  <app-charging-station-charge-point
-    [chargePointID]="displayedChargePointID"
-    (refreshEvent)="refresh()"></app-charging-station-charge-point>
+  <!-- Connector Selection -->
+  <div class="connector-selection" *ngIf="chargePoints.length > 0">
+    <div class="section-header">
+      <h3 class="section-title">Available Charge Points</h3>
+      <p class="section-description">Choose a charge point to view and manage its settings</p>
+    </div>
+
+    <div class="connector-grid">
+      <button *ngFor="let chargePoint of chargePoints; let i = index" class="connector-card"
+        [routerLink]="'/dashboard/charging-points/'+chargePoint.id">
+        <div class="connector-card__icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="connector-card__content">
+          <h4 class="connector-card__title">Charge Point {{chargePoint.id}}</h4>
+          <span class="connector-card__status">Available</span>
+        </div>
+        <div class="connector-card__arrow">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  
+  <!-- Action Button -->
+  <div class="action-section">
+    <app-button variant="primary" class="add-connector-btn" [routerLink]="'/dashboard/charging-points/create'" [queryParams]="{ chargingStationID: chargingStationID }">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Add New ChargePoint
+    </app-button>
+  </div> 
 </div>

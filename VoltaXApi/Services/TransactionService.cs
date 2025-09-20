@@ -252,14 +252,19 @@ namespace VoltaXApi.Services
           transaction.StopReason = transactionEventRequest.TriggerReason.ToString();
           transaction.Status = TransactionStatusEnum.Ended;
           double minutesCharged = 0;
+          double chargedKwhs = 0;
           if (transaction.StopTime.HasValue)
           {
-              minutesCharged = (transaction.StopTime.Value - transaction.StartTime).TotalMinutes;
+            minutesCharged = (transaction.StopTime.Value - transaction.StartTime).TotalMinutes;
+          }
+          if (transaction.MeterStop.HasValue)
+          {
+            chargedKwhs = transaction.MeterStop.Value - transaction.MeterStart;
           }
 
           // Updating the Amount of the card related to the tag id.
           await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID);
-          await _chargingSessionService.EndChargingSession(transaction.ChargingSessionID, minutesCharged, DateTime.Parse(transactionEventRequest.Timestamp));
+          await _chargingSessionService.EndChargingSession(transaction.ChargingSessionID, minutesCharged, chargedKwhs, DateTime.Parse(transactionEventRequest.Timestamp));
           _context.SaveChanges();
         }
         else

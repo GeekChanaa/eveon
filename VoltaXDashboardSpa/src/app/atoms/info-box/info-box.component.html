@@ -1,0 +1,16 @@
+<div class="info-box" [ngClass]="type">
+  <span class="icon">
+    <ng-container [ngSwitch]="type">
+      <svg *ngSwitchCase="'error'" class="icon icon-warning">
+        <use xlink:href="#icon-warning"></use>
+      </svg>
+      <svg *ngSwitchCase="'warning'" class="icon icon-warning">
+        <use xlink:href="#icon-warning"></use>
+      </svg>
+      <svg *ngSwitchCase="'primary'" class="icon icon-edit">
+        <use xlink:href="#icon-edit"></use>
+      </svg>
+    </ng-container>
+  </span>
+  <span class="message">{{ message }}</span>
+</div>

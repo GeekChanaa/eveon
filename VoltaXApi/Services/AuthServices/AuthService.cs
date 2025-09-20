@@ -58,7 +58,7 @@ namespace VoltaXApi.Services
 
 
       // Sending the phone verification token: 
-      string smsMessage = "Your VoltaX verification code is "+user.PhoneVerificationToken+". Enter this code in the app to verify your phone number. Do not share this code with anyone.";
+      string smsMessage = "Your VoltaX verification code is " + user.PhoneVerificationToken + ". Enter this code in the app to verify your phone number. Do not share this code with anyone.";
       await this._snsService.SendSmsAsync(user.Phone, smsMessage);
     }
 
@@ -69,7 +69,7 @@ namespace VoltaXApi.Services
       string userName = (await this._userRepository.GetUserByEmail(email)).FullName;
 
       MailRequest requ = _mailRequestFactory.CreateResetPasswordMailRequest(email);
-      
+
       await this._mailService.SendResetPasswordMailRequest(requ, userName, verificationLink);
     }
 
@@ -93,7 +93,7 @@ namespace VoltaXApi.Services
       // Sending the verification email
       MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
       await this._mailService.SendVerificationCodeEmailAsync(requ, user.EmailVerificationToken, user.FullName);
-      
+
     }
 
     public async Task<User> Register(UserForRegisterDto userForRegisterDto)
@@ -110,7 +110,7 @@ namespace VoltaXApi.Services
       byte[] passwordHash, passwordSalt;
       AuthHelper.CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
 
-      User user = await _userRepository.CreateUser(userForRegisterDto, passwordHash, passwordSalt); 
+      User user = await _userRepository.CreateUser(userForRegisterDto, passwordHash, passwordSalt);
 
       await _cardRepository.CreateCardForUser(user);
 
@@ -133,7 +133,7 @@ namespace VoltaXApi.Services
       if (user == null || user.EmailVerificationToken != token)
         return false;
 
-      
+
 
       user.IsEmailVerified = true;
       user.EmailVerificationToken = null; // clear the token
@@ -150,7 +150,7 @@ namespace VoltaXApi.Services
         .Include(u => u.Role.RolePermissions)
         .ThenInclude(up => up.Permission)
         .FirstOrDefaultAsync(x => x.Email == email);
-        
+
       if (user == null || user.PhoneVerificationToken != token)
         return null;
 
@@ -177,7 +177,7 @@ namespace VoltaXApi.Services
       }
     }
 
-    
+
 
     public async Task<LoginResultDto> Login(string email, string password, string ipAddress)
     {
@@ -204,10 +204,10 @@ namespace VoltaXApi.Services
         var token = _jwtService.GenerateToken(claims);
         return new LoginResultDto
         {
-            Token = token,
-            UserId = user.ID,
-            Email = user.Email,
-            FullName = $"{user.FirstName} {user.LastName}"
+          Token = token,
+          UserId = user.ID,
+          Email = user.Email,
+          FullName = $"{user.FirstName} {user.LastName}"
         };
       }
       catch (LoginAttemptFailedException ex)
@@ -217,13 +217,13 @@ namespace VoltaXApi.Services
 
         await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
 
-        throw; 
+        throw;
       }
     }
 
     private List<Claim> BuildUserClaims(User user)
     {
-        var claims = new List<Claim>
+      var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
             new Claim(ClaimTypes.Name, user.Email),
@@ -234,16 +234,16 @@ namespace VoltaXApi.Services
             new Claim("phoneVerified", user.IsPhoneNumberVerified.ToString()),
         };
 
-        foreach (var userPermission in user.Role.RolePermissions)
-        {
-            claims.Add(new Claim("permission", userPermission.Permission.Name));
-            claims.Add(new Claim($"permission_scope:{userPermission.Permission.Name}", userPermission.Scope.ToString()));
-        }
+      foreach (var userPermission in user.Role.RolePermissions)
+      {
+        claims.Add(new Claim("permission", userPermission.Permission.Name));
+        claims.Add(new Claim($"permission_scope:{userPermission.Permission.Name}", userPermission.Scope.ToString()));
+      }
 
-        return claims;
+      return claims;
     }
 
-    
+
 
     public async Task ChangePasswordAsync(UserPasswordChangeDto userPasswordChangeDto)
     {
@@ -270,9 +270,6 @@ namespace VoltaXApi.Services
       MailRequest requ = _mailRequestFactory.CreateChangedPasswordMailRequest(user.Email);
       await this._mailService.SendPasswordChangedMail(requ, user.FirstName);
     }
-
-
-
 
   }
 

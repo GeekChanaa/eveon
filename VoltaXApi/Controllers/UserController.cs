@@ -70,7 +70,7 @@ namespace VoltaXApi.Controllers
         [HttpPut("EditUserDashboardInformations/{userID}")]
         public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
         {
-            await this._repository.EditUserDashboardInformations(userID, userDto);
+            await this._userService.EditUserDashboardInformations(userID, userDto);
         }
 
         [HttpGet("GetUserNames")]

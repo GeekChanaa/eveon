@@ -36,49 +36,49 @@
   
 
 
-.connector__status__item 
+.link__item 
   display: block
   flex: 0 0 calc(20% - 12px)
   width: calc(20% - 12px)
   margin: 0 6px
   padding: 32px
   border-radius: 12px
-  color: #1A1D1F
-  background-color: #f2efff
+  color: var(--primary9)
+  background-color: var(--secondary2)
   transition: ease-in-out all .3s
   &:hover
-    background-color: #c8bdf7 !important
+    background-color: var(--secondary1) !important
     cursor: pointer
 
 
 @media only screen and (max-width: 1023px) 
-  .connector__status__item 
+  .link__item 
     flex: 0 0 295px
     width: 295px
     margin: 0
   
 
-  .connector__status__item:not(:last-child) 
+  .link__item:not(:last-child) 
     margin-right: 12px
   
 
 
 @media only screen and (max-width: 767px) 
-  .connector__status__item 
+  .link__item 
     flex: 0 0 285px
     width: 285px
   
 
 
-body.dark .connector__status__item 
+body.dark .link__item 
   color: #EFEFEF
 
 
-body.dark .connector__status__item:nth-child(2n+1) 
+body.dark .link__item:nth-child(2n+1) 
   background: rgba(167, 170, 247, 0.15) !important
 
 
-body.dark .connector__status__item:nth-child(2n) 
+body.dark .link__item:nth-child(2n) 
   background: rgba(177, 229, 252, 0.1) !important
 
 

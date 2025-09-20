@@ -27,6 +27,7 @@ namespace VoltaXApi.Dtos
     public double? TotalPriceWithoutVAT { get; set; }
     public double? TotalPriceWithVAT { get; set; }
     public double? KwhCharged { get; set; }
+    public double? CostPerKwh { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public ReasonEnumType StoppedReason { get; set; }

@@ -80,12 +80,12 @@
             </svg>
           </div>
         </div>
-        <div class="overview__counter">256k</div>
+        <div class="overview__counter">0</div>
       </div>
       <div class="balance background positive">
         <svg class="icon icon-arrow-top">
           <use xlink:href="#icon-arrow-top"></use>
-        </svg>37.8%
+        </svg>0%
       </div>
     </a>
   </div>
@@ -106,9 +106,19 @@
       </div>
     </div>
     <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart">
-        <div id="oveview-income"></div>
-      </div>
+    <div class="overview__chart" *ngIf="revenueChart">
+      <apx-chart 
+        style="display: block; height: 200px; width: 100%" 
+        [series]="revenueChart.series" 
+        [chart]="revenueChart.chart" 
+        [xaxis]="revenueChart.xaxis" 
+        [stroke]="revenueChart.stroke" 
+        [dataLabels]="revenueChart.dataLabels" 
+        [colors]="revenueChart.colors" 
+        [legend]="revenueChart.legend" 
+        [grid]="revenueChart.grid">
+      </apx-chart>
     </div>
+  </div>
   </div>
 </div>

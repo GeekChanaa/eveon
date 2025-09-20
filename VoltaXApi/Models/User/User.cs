@@ -58,6 +58,7 @@ namespace VoltaXApi.Models
         public bool IsDeleted { get; set; } = false;
         public DateTime? SuspendedAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? SuspensionReason { get; set; }
         public DateTime UpdatedAt { get; set; }
         public Image? Image { get; set; }
         public ElectricVehicleModel? ElectricVehicleModel { get; set; }

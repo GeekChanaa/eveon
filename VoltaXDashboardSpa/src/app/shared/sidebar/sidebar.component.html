@@ -120,28 +120,36 @@
   </div>
 
   <div class="sidebar__foot">
-    <button class="sidebar__help" routerLink="/dashboard/documentation">
-      <svg class="icon icon-help">
-        <use xlink:href="#icon-help"></use>
-      </svg>Help & Documentation
-      <div class="sidebar__counter">8</div>
-    </button>
-    <label class="theme js-theme">
-      <input [(ngModel)]="checked" class="theme__input" type="checkbox" />
-      <span class="theme__inner">
-        <span class="theme__box">
-          <svg class="icon icon-sun">
-            <use xlink:href="#icon-sun"></use>
-          </svg>Light
-        </span>
+  <button class="sidebar__help" routerLink="/dashboard/documentation">
+    <svg class="icon icon-help">
+      <use xlink:href="#icon-help"></use>
+    </svg>
+    Help & Documentation
+    <div class="sidebar__counter">8</div>
+  </button>
 
-        <span class="theme__box">
-          <svg class="icon icon-moon">
-            <use xlink:href="#icon-moon"></use>
-          </svg>Dark</span>
+  <label class="theme js-theme">
+    <input
+      [(ngModel)]="checked"
+      class="theme__input"
+      type="checkbox"
+      (change)="onThemeToggle()" />
+    <span class="theme__inner">
+      <span class="theme__box">
+        <svg class="icon icon-sun">
+          <use xlink:href="#icon-sun"></use>
+        </svg>
+        Light
       </span>
-    </label>
-  </div>
+      <span class="theme__box">
+        <svg class="icon icon-moon">
+          <use xlink:href="#icon-moon"></use>
+        </svg>
+        Dark
+      </span>
+    </span>
+  </label>
+</div>
 
 
   <div #helpOverlay class="overlay"></div>

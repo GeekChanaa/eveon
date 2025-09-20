@@ -70,6 +70,7 @@ export class UserComponent implements OnInit {
     this._partnerService.getAllPartners().subscribe((data) =>{
       if(data.result)
         this.partnersOptions = data.result.map((obj) =>({label: obj.name, value: obj.id}))
+      this.partnersOptions.unshift({ label: 'Select Partner', value: "" });
     })
   }
 

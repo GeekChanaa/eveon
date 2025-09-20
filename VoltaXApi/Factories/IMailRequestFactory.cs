@@ -14,5 +14,6 @@ public interface IMailRequestFactory
     MailRequest CreateDeniedDownloadInfoRequest(string to);
     MailRequest CreateWelcomeMailRequest(string to);
     MailRequest CreateChargingSessionQuoteMail(string to);
+    MailRequest CreateAccountSuspendedMailRequest(string to);
     
 }

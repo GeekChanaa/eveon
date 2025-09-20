@@ -50,7 +50,7 @@ namespace VoltaXApi.Data
                     if (searchPropertyInfo != null)
                     {
                         combinedSearchPredicate = combinedSearchPredicate.Or(entity => EF.Property<string>(entity, searchPropertyInfo.Name).Contains(objectParams.SearchValue));
-                        data = data.Where(combinedSearchPredicate);
+
                     }
                     else if (searchProperty.Contains('.'))
                     {
@@ -59,6 +59,7 @@ namespace VoltaXApi.Data
                         data = data.Where(navigation + "." + navigationProp + ".Contains(\"" + objectParams.SearchValue + "\")");
                     }
                 }
+                data = data.Where(combinedSearchPredicate);
             }
 
             // Filtering

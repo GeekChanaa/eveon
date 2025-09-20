@@ -54,6 +54,10 @@ export class CustomerHomeComponent implements OnInit {
     else this.currentStep = CompleteProfileEnum.AdditionalInformations;
   }
 
+  saveUserAdditionalInformations(informations : any){
+    
+  }
+
  
   verifyPhone(){}
   skipStep(){}

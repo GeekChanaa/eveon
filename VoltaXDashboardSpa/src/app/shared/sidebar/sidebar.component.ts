@@ -105,6 +105,11 @@ export class SidebarComponent implements OnInit, AfterViewInit {
     })
   }
 
+  onThemeToggle(){
+     localStorage.setItem('darkMode', this.checked ? 'on' : 'off');
+     document.body.classList.toggle('dark', this.checked);
+  }
+
   
 
 }

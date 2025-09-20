@@ -20,7 +20,7 @@ namespace VoltaXApi.Data
 
     public async Task<int> GetPartnerNumberOfConnectorsByStatus(int partnerID, string status)
     {
-      return await this._context.ConnectorStatuses.Where(u => u.ChargePoint.ChargingStation.PartnerID == partnerID).Where(u => u.LastStatus.ToString().ToLower() == status.ToLower()).CountAsync();
+      return await this._context.ConnectorStatuses.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).Where(u => u.LastStatus.ToString().ToLower() == status.ToLower()).CountAsync();
     }
 
 

@@ -15,7 +15,7 @@ interface SearchResult {
 @Component({
   selector: 'app-navbar-search',
   templateUrl: './navbar-search.component.html',
-  styleUrls: ['./navbar-search.component.css']
+  styleUrls: ['./navbar-search.component.sass']
 })
 export class NavbarSearchComponent implements OnInit {
 
@@ -36,6 +36,7 @@ export class NavbarSearchComponent implements OnInit {
     { path: "/dashboard/charging-stationsf", title: "Charging Stations", icon: "ev-station" },
     { path: "/dashboard/charging-strategies", title: "Charging Strategies", icon: "strategy" },
     { path: "/dashboard/charging-sessions", title: "Charging Sessions", icon: "history" },
+    { path: "/dashboard/connector-realtime", title: "Connector Realtime", icon: "history" },
     { path: "/dashboard/comments", title: "Comments", icon: "comment" },
     { path: "/dashboard/reports", title: "Reports", icon: "assessment" },
     { path: "/dashboard/statistics", title: "Statistics", icon: "bar-chart" },
@@ -64,7 +65,10 @@ export class NavbarSearchComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((term : any) => this.search(term))
     ).subscribe(results => {
+      console.log("this is a value : "+this.searchControl.value)
+      console.log(this.recentSearches);
       this.searchResultsSubject.next(results);
+      this.searchResults$.subscribe((data) => console.log(data));
     });
   }
 

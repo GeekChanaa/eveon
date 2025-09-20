@@ -13,7 +13,8 @@ import { environment } from 'src/environments/environment';
 export class NavbarComponent implements OnInit {
   staticUrl : string = environment.apiStaticFilesUrl;
   user : any = {};
-  imageUrl : string = "";
+  imageUrl : string | null = null;
+  userInitials: string = "";
 
   constructor(
     private _authService : AuthService,
@@ -38,7 +39,12 @@ export class NavbarComponent implements OnInit {
   getUserByID(id : number ){
     this._userService.getUserInformations(id).subscribe((data) => {
       this.user = data;
-      this._userService.setAvatarUrl(this.user.imageUrl);
+
+      // set avatar URL
+      this.imageUrl = this.user.imageUrl || null;
+
+      // set initials
+      this.setUserInitials();
     })
   }
 
@@ -77,4 +83,20 @@ export class NavbarComponent implements OnInit {
 
     this.avatarMenuBody = false;
   }
+
+  onImageError() {
+    this.imageUrl = null; // fallback to initials
+  }
+
+  setUserInitials() {
+    if (!this.user?.firstName && !this.user?.lastName) {
+      this.userInitials = "?";
+      return;
+    }
+
+    const first = this.user?.firstName?.charAt(0) || "";
+    const last = this.user?.lastName?.charAt(0) || "";
+    this.userInitials = (first + last).toUpperCase();
+  }
+
 }

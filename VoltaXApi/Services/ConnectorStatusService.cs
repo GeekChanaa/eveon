@@ -123,7 +123,7 @@ namespace VoltaXApi.Services
           };
           await _systemReportService.HandleReport(sysReport);
         }
-        if (status == ConnectorStatusEnumType.Available && connectorStatus.LastStatus == ConnectorStatusEnumType.Occupied)
+        if (connectorStatus != null && status == ConnectorStatusEnumType.Available && connectorStatus.LastStatus == ConnectorStatusEnumType.Occupied)
         {
           await _chargingSessionService.HandleIdleMinutes(connector.ID, statusTime);
         }

@@ -16,7 +16,9 @@ namespace VoltaXApi.Models
     public DateTime? EndIdleDate { get; set; }
     public double? ChargedMinutes { get; set; }
     public double? IdleMinutes { get; set; }
+    public double? ChargedKwhs { get; set; }
     public double? PricePerMinute { get; set; }
+    public double? CostPerKwh { get; set; }
     public double? PricePerIdleMinute { get; set; }
     public ReasonEnumType StoppedReason { get; set; }
     public Connector? Connector { get; set; }

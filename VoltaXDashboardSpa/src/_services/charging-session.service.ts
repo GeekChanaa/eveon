@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AbstractService } from './abstract-service';
 import { ChargingSession } from 'src/_models/charging-session';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
+import { PaginatedResult } from 'src/_models/pagination';
 
 
 @Injectable({
@@ -24,6 +25,59 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
   getAllChargingSessions(page?: number, itemsPerPage?: number, itemParams?: any){
     return super.getAll(page,itemsPerPage,itemParams,"GetChargingSessions");
   }
+
+  getAllPartnerChargingSessions(partnerID: number, page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<ChargingSession[]>> {
+      const paginatedResult: PaginatedResult<ChargingSession[]> | null = new PaginatedResult<ChargingSession[]>();
+      let params = new HttpParams();
+      if (page != null && itemsPerPage != null) {
+        params = params.append('pageNumber', page.toString());
+        params = params.append('pageSize', itemsPerPage.toString());
+      }
+  
+      // Other sorting and filtering params
+      let queryString = "";
+      if (itemParams != null) {
+        for (const p in itemParams) {
+          if (itemParams[p] != null)
+          {
+            if(p == "SearchBy"){
+              for(var i =0 ;i < itemParams.SearchBy.length ;i++){
+                queryString += "&" + p + "=" + itemParams.SearchBy[i];
+              }
+            }
+            else if(p == "SearchValue"){
+              queryString += "&" + p + "=" + itemParams.SearchValue;
+            }
+            else if(p == "FilterBy"){
+              for(var i =0 ;i < itemParams.FilterBy.length ;i++){
+                queryString += "&" + p + "=" + itemParams.FilterBy[i];
+              }
+            }
+            else if(p == "FilterValue"){
+              for(var i =0 ;i < itemParams.FilterValue.length ;i++){
+                queryString += "&" + p + "=" + itemParams.FilterValue[i];
+              }
+            }
+            else{
+              params = params.append(p, itemParams[p]);
+            }
+          }
+                
+        }
+      }
+      const url = `${environment.apiUrl}/api/partner/chargingSession/GetChargingSessions/${partnerID}/`;
+      return this._http.get<ChargingSession[]>(url, { observe: 'response' })
+          .pipe(
+              map(response => {
+              const paginationHeader = response.headers.get('Pagination');
+              paginatedResult.result = response.body;
+              if (paginationHeader != null) {
+                  paginatedResult.pagination = JSON.parse(paginationHeader);
+              }
+              return paginatedResult;
+              })
+          )
+    }
 
   getChargePointChargingSessions(chargePointID : number,page : number, itemsPerPage?: number, itemParams?: any){
     return super.getAll(page,itemsPerPage,itemParams,"GetChargePointChargingSessions/"+chargePointID);

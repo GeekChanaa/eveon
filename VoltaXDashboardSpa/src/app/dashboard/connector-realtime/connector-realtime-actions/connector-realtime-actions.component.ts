@@ -34,6 +34,7 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
     "SetNetworkProfileRequest",
     "SetVariableMonitoringRequest",
     "SetVariablesRequest",
+    "UnlockConnectorRequest"
   ];
 
   currentOcppAction : any = {};

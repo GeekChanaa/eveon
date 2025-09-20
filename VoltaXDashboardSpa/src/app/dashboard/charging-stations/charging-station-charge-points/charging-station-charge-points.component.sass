@@ -1,40 +1,247 @@
+// Connector Management Styles
+.connector-management 
+  padding: 1.5rem
+  background: #ffffff
+  border-radius: 1rem
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1)
 
-.button-stroke
-    margin-top: 36px
-    color: white
 
-.mb-8
-    margin-bottom: 8px
-
-.flex
-    display: flex
-
-.btn-cancel
-    margin-left: auto
-    color: black
-
-.button
-    margin-top: 36px
-
-.charge-point-links-container
-  display: flex
-  flex-wrap: wrap
-
-  .charge-point-link
-    background: var(--primary2)
-    transition: ease-in-out all .3s
-    color: black
+// Empty State
+.empty-state 
+  text-align: center
+  padding: 3rem 1.5rem
+  
+  &__icon 
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    width: 4rem
+    height: 4rem
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)
+    border-radius: 50%
+    margin-bottom: 1.5rem
+    color: #6366f1
+  
+  
+  &__title 
+    font-size: 1.25rem
     font-weight: 600
-    letter-spacing: 4px
-    font-size: 18px
-    border-radius: 4px
-    margin-top: 16px
-    flex: 0 0 30%
-    margin-right: 2%
-    padding: 12px 18px
-    &:hover
-      background: var(--primary3)
+    color: #1e293b
+    margin-bottom: 0.5rem
+  
+  
+  &__description 
+    color: #64748b
+    font-size: 0.875rem
+    max-width: 24rem
+    margin: 0 auto
+  
 
 
-.actions__container
-    margin-top: 24px
+// Section Header
+.section-header 
+  margin-bottom: 2rem
+  
+  .section-title 
+    font-size: 1.5rem
+    font-weight: 600
+    color: #1e293b
+    margin-bottom: 0.5rem
+  
+  
+  .section-description 
+    color: #64748b
+    font-size: 0.875rem
+  
+
+
+// Connector Grid
+.connector-grid 
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
+  gap: 1rem
+  margin-bottom: 2rem
+
+
+// Connector Card
+.connector-card 
+  display: flex
+  align-items: center
+  gap: 1rem
+  padding: 1.25rem
+  background: #ffffff
+  border: 2px solid #e2e8f0
+  border-radius: 0.75rem
+  transition: all 0.2s ease-in-out
+  cursor: pointer
+  text-align: left
+  width: 100%
+  
+  &:hover 
+    border-color: #6366f1
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15)
+    transform: translateY(-1px)
+  
+  
+  &:focus 
+    outline: none
+    border-color: #6366f1
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1)
+  
+  
+  &__icon 
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 3rem
+    height: 3rem
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
+    border-radius: 0.5rem
+    color: white
+    flex-shrink: 0
+  
+  
+  &__content 
+    flex: 1
+    min-width: 0
+  
+  
+  &__title 
+    font-size: 1rem
+    font-weight: 600
+    color: #1e293b
+    margin-bottom: 0.25rem
+  
+  
+  &__status 
+    display: inline-flex
+    align-items: center
+    padding: 0.25rem 0.75rem
+    background: #dcfce7
+    color: #166534
+    font-size: 0.75rem
+    font-weight: 500
+    border-radius: 9999px
+  
+  
+  &__arrow 
+    color: #9ca3af
+    flex-shrink: 0
+    transition: transform 0.2s ease-in-out
+  
+  
+  &:hover &__arrow 
+    transform: translateX(2px)
+    color: #6366f1
+  
+
+
+// Add Connector Section
+.add-connector-section 
+  background: #f8fafc
+  border: 2px dashed #cbd5e1
+  border-radius: 0.75rem
+  padding: 2rem
+  margin-bottom: 1.5rem
+
+
+// Action Section
+.action-section 
+  display: flex
+  justify-content: center
+  
+  .add-connector-btn 
+    display: inline-flex
+    align-items: center
+    gap: 0.5rem
+    padding: 0.75rem 1.5rem
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
+    color: white
+    border: none
+    border-radius: 0.5rem
+    font-weight: 500
+    font-size: 0.875rem
+    cursor: pointer
+    transition: all 0.2s ease-in-out
+    
+    &:hover 
+      transform: translateY(-1px)
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3)
+    
+    
+    &:focus 
+      outline: none
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3)
+    
+  
+
+
+// Connector Details
+.connector-details 
+  background: #ffffff
+  border-radius: 1rem
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1)
+  overflow: hidden
+
+
+// Responsive Design
+@media (max-width: 768px) 
+  .connector-management 
+    padding: 1rem
+  
+  
+  .connector-grid 
+    grid-template-columns: 1fr
+    gap: 0.75rem
+  
+  
+  .connector-card 
+    padding: 1rem
+    
+    &__icon 
+      width: 2.5rem
+      height: 2.5rem
+    
+  
+  
+  .section-header 
+    margin-bottom: 1.5rem
+    
+    .section-title 
+      font-size: 1.25rem
+    
+  
+
+
+// Animation keyframes
+@keyframes fadeInUp 
+  from 
+    opacity: 0
+    transform: translateY(10px)
+  
+  to 
+    opacity: 1
+    transform: translateY(0)
+  
+
+
+.connector-card 
+  animation: fadeInUp 0.3s ease-out
+
+
+// Status variants
+.connector-card__status 
+  &.status-active 
+    background: #dcfce7
+    color: #166534
+  
+  
+  &.status-inactive 
+    background: #fef3c7
+    color: #92400e
+  
+  
+  &.status-error 
+    background: #fee2e2
+    color: #991b1b
+  

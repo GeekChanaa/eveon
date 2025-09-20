@@ -27,7 +27,8 @@ namespace VoltaXApi.Services
             ICardRepository cardRepository,
             IMailService mailService,
             IMailRequestFactory mailRequestFactory
-        ) {
+        )
+        {
             _fileManagementService = fileManagementService;
             _imageRepo = imageRepo;
             _userRepository = userRepository;
@@ -40,7 +41,7 @@ namespace VoltaXApi.Services
         {
             string folderName = "ProfilePictures/";
             string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            fileName = partnerID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
+            fileName = partnerID + "" + fileName.Substring(fileName.LastIndexOf("."), fileName.Length - fileName.LastIndexOf("."));
             this._fileManagementService.UploadFile(fileName, folderName, file);
             var fileExtension = Path.GetExtension(file.FileName);
 
@@ -51,7 +52,7 @@ namespace VoltaXApi.Services
                 Format = fileExtension,
                 Priority = ImagePriorityEnum.Principal,
                 IsActive = true,
-                AltText = "User Image "+partnerID,
+                AltText = "User Image " + partnerID,
                 Description = "none"
             };
 
@@ -101,12 +102,39 @@ namespace VoltaXApi.Services
         public async Task<bool> UpdatePhone(UpdateUserPhoneDto user)
         {
             var userToUpdate = await this._userRepository.GetByIdAsync(user.ID);
-            var userDto = new AddPhoneNumberDto{
+            var userDto = new AddPhoneNumberDto
+            {
                 Phone = user.Phone,
                 Email = userToUpdate.Email
             };
             await this._authService.SendPhoneVerificationToken(userDto);
             return true;
+        }
+        
+        public async Task SuspendUser(User user, DateTime? suspendedAt, string suspensionReason = null)
+        {
+            var suspendedAccountDto = new UserSuspendedForMailDto
+            {
+                UserName = user.FullName,
+                SuspensionReason = user.SuspensionReason,
+                SuspendedAt = user.SuspendedAt 
+            };
+
+            // Send suspension email
+            var mailRequest = _mailRequestFactory.CreateAccountSuspendedMailRequest(user.Email);
+            await _mailService.SendSuspendedAccountMail(mailRequest,suspendedAccountDto);
+        }
+        
+        public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
+        {
+            var user = await _userRepository.GetByIdAsync(userID);
+
+            if (user.SuspendedAt != userDto.SuspendedAt && user.SuspendedAt < userDto.SuspendedAt)
+            {
+                await SuspendUser(user, user.SuspendedAt, user.SuspensionReason);
+            }
+
+            await _userRepository.EditUserDashboardInformations(userID, userDto);
         }
 
     }

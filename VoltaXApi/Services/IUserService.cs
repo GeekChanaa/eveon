@@ -1,5 +1,6 @@
 
 using VoltaXApi.Dtos;
+using VoltaXApi.Models;
 
 namespace VoltaXApi.Services
 {
@@ -9,5 +10,8 @@ namespace VoltaXApi.Services
         Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate);
         Task<bool> UpdateEmail(UpdateUserEmailDto user);
         Task<bool> UpdatePhone(UpdateUserPhoneDto user);
+        Task SuspendUser(User user, DateTime? suspendedAt, string suspensionReason = null);
+        Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto);
+
     }
 }

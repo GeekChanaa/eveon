@@ -284,6 +284,23 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendSuspendedAccountMail(MailRequest mailRequest, UserSuspendedForMailDto mailDto)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			var template = GetEmailTemplate("account-suspended");
+			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+					{
+						{ "UserName", mailDto.UserName },
+						{ "SuspensionReason", mailDto.SuspensionReason},
+						{ "SuspendedAt", mailDto.SuspendedAt?.ToString("yyyy-MM-dd HH:mm")  },
+					});
+					
+			builder.HtmlBody = populatedTemplate;
+
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);

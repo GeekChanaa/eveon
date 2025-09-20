@@ -1,0 +1,89 @@
+.overview__link {
+    display: flex;
+    padding: 20px;
+    flex: 0 0 25%;
+    border-radius: 12px;
+    color: #1A1D1F;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    transition: all .2s; 
+  }
+    @media only screen and (max-width: 1419px) {
+      .overview__link {
+        padding: 20px 16px; 
+      } 
+    }
+    @media only screen and (max-width: 767px) {
+      .overview__link {
+        display: block; } }
+    body.dark .overview__link {
+      color: #FCFCFC; }
+    .overview__link.active {
+      background: #FCFCFC;
+      box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25); }
+      body.dark .overview__link.active {
+        background: #272B30;
+        box-shadow: 0px 4px 8px -4px rgba(0, 0, 0, 0.25), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.06); }
+  
+  .overview__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    margin-right: 16px;
+    border-radius: 50%; }
+    @media only screen and (max-width: 767px) {
+      .overview__icon {
+        display: none; } }
+    .overview__icon .icon {
+      width: 24px;
+      height: 24px; }
+  
+  .overview__subtitle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.23077;
+    color: #6F767E; }
+  
+  .overview .tooltip .icon {
+    fill: #9A9FA5; }
+  
+  .overview__counter {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -.03em; }
+    @media only screen and (max-width: 1419px) {
+      .overview__counter {
+        font-size: 40px;
+        line-height: 48px; } }
+  
+  .overview .balance {
+    margin: -12px -12px 0 auto; }
+    @media only screen and (max-width: 767px) {
+      .overview .balance {
+        margin: 4px 0 0; } }
+    body.dark .overview .balance {
+      background: #272B30 !important; }
+  
+  .overview__item {
+    display: none; }
+  
+  .overview__chart {
+    width: auto;
+    height: 238px;
+    margin: 0 0 -10px -10px; }
+    @media only screen and (max-width: 767px) {
+      .overview__chart {
+        height: 206px; } }
+    .overview__chart_snapshot {
+      height: 329px;
+      margin-left: -10px; }
+      @media only screen and (max-width: 1023px) {
+        .overview__chart_snapshot {
+          height: 300px; } }
+  

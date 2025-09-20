@@ -1,32 +1,25 @@
 
-.chargePoint-actions
+.chargePoint-actions 
   flex: 0 0 100%
   flex-wrap: wrap
   display: flex
-  .chargePoint-action
-    flex: 0 0 30%
-    margin-right: auto
-    margin-top: 16px
-    margin-left: auto
-    justify-content: center
-    text-align: center
-    display: flex
-    align-items: center
-    flex-wrap: wrap
-    height: 150px
-    background: var(--secondary5)
-    border-radius: 12px
-    cursor: pointer
-    padding: 16px
-    font-weight: 400
-    transition: ease-in-out all .3s
-    &:hover
-      background: var(--secondary2)
-    .icon
-      height: 64px
-      width: 64px
-      fill: white
-      flex: 0 0 100%
+  gap: 16px
+  margin-top: 30px
+
+
+.request__action 
+  flex: 0 0 calc(33.333% - 16px)
+  min-width: 0 /* Important for flex items containing text overflow */
+  height: auto
+  display: flex
+  
+  @media (max-width: 992px) 
+    flex: 0 0 calc(50% - 16px)
+  
+  
+  @media (max-width: 576px) 
+    flex: 0 0 100%
+  
 
 //Modal Styling
 .request__modal_overlay

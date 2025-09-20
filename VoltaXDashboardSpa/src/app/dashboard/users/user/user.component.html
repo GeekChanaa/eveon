@@ -66,44 +66,34 @@
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="email" [val]="user.email"></app-display-cell>
 
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
+                  title="isEmailVerified" [val]="user.isEmailVerified"></app-display-cell>
+
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="phone" [val]="user.phone"></app-display-cell>
+
+                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
+                  title="isPhoneNumberVerified" [val]="user.isPhoneNumberVerified"></app-display-cell>
               </div>
 
               <!-- Address Information -->
               <div class="form-section">
                 <h3 class="section-title">Business Informations</h3>
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
-                  inpType="select" title="role" [options]="rolesOptions" val="{{user.role}}"></app-display-cell>
+                  inpType="select" title="roleID" [options]="rolesOptions" val="{{user.role}}"></app-display-cell>
 
                 <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
-                  inpType="select" title="Partner" [options]="partnersOptions" val="{{user.partner ?? 'Not Specified'}}"></app-display-cell>
+                  inpType="select" title="partnerID" [options]="partnersOptions" val="{{user.partner}}"></app-display-cell>
+                  
                 <!-- Suspending Account -->
-                <div class="field">
-                  <div class="field__label">Suspend Account
-                    <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                    <div class="field__edit" (click)="editingSuspension = true">
-                      <svg class="icon icon-edit">
-                        <use xlink:href="#icon-edit"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__information" *ngIf="!editingSuspension">
-                    <ng-container *ngIf="isSuspended()"> Suspended until {{user.suspendedAt | date:'medium' }}
-                    </ng-container>
-                    <ng-container *ngIf="!isSuspended()"> Not Suspended </ng-container>
-                  </div>
-
-                  <div class="field__wrap" *ngIf="editingSuspension">
-                    <div> suspend Account until : </div>
-                    <p-calendar [(ngModel)]="user.suspendedAt" inputStyleClass="field__input"></p-calendar>
-                    <button class="button button-small" (click)="suspendUser()">save</button>
-                  </div>
-                </div>
+                <app-display-cell
+                  [updateObservable]="updateUserObservable.bind(this)"
+                  [object]="user"
+                  inpType="date"
+                  title="suspendedAt"
+                  [val]="user.suspendedAt"
+                  placeholder="Select suspension end date">
+                </app-display-cell>
 
               </div>
 

@@ -140,6 +140,7 @@
         <div class="step-content" *ngIf="currentStep === CompleteProfileEnum.AdditionalInformations">
           <app-customer-home-additional-informations 
             *ngIf="userID != undefined || userID != 0"
+            (saveAdditionalInformations)="saveUserAdditionalInformations($event)"
             (nextStep)="currentStep = 3"></app-customer-home-additional-informations>
         </div>
       </div>

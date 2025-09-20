@@ -52,6 +52,7 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { DashboardDetailsContainerComponent } from './dashboard-details-container/dashboard-details-container.component';
 import { InfoItemComponent } from './info-item/info-item.component';
+import { InfoBoxComponent } from './info-box/info-box.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { InfoItemComponent } from './info-item/info-item.component';
     ButtonComponent,
     BreadcrumbComponent,
     FieldLabelComponent,
-    DashboardDetailsContainerComponent
+    DashboardDetailsContainerComponent,
+    InfoBoxComponent
   ],
   imports: [
     CommonModule,
@@ -157,7 +159,8 @@ import { InfoItemComponent } from './info-item/info-item.component';
     ButtonComponent,
     BreadcrumbComponent,
     FieldLabelComponent,
-    DashboardDetailsContainerComponent
+    DashboardDetailsContainerComponent,
+    InfoBoxComponent
   ],
   providers: [],
 })

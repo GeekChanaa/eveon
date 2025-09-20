@@ -12,6 +12,7 @@ namespace VoltaXApi.Dtos
         public double PricePerMinute { get; set; }   
         public double PricePerIdleMinute { get; set; }   
         public double PricePerHour { get; set; }  
+        public double CostPerKwh { get; set; }  
         public double MaxPower { get; set; }  
         public TimeSpan? StartTime { get; set; }    
         public TimeSpan? EndTime { get; set; }      

@@ -26,20 +26,14 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
 
   ngOnInit() {
     this.getChargePointConnectors();
-    this.getChargePointUptimeLogs();
   }
 
   getChargePointConnectors(){
     this._connectorService.getChargePointConnectors(this.chargePointID).subscribe((data) => {
       this.connectors = data;
-    })
-  }
-
-  getChargePointUptimeLogs(){
-    this.isLoading = true;
-    this._chargePointUptimeService.getChargePointUptime(this.chargePointID).subscribe((data) => {
-      if(data.result)
-        this.uptimeLogs = data.result
+      console.log(this.connectors);
+      if(this.connectors != null && this.connectors.length > 0)
+        this.changedReport(this.connectors[0].id)
     })
   }
 
@@ -49,8 +43,6 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
       this.isLoading = false;
       if(data.result != null)
         this.uptimeLogs = data.result;
-
-      console.log(this.uptimeLogs);
     })
   }
 

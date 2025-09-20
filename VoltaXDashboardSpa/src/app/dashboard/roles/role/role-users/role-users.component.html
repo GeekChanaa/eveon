@@ -1,7 +1,11 @@
 <section class="user-list-section">
   <h2 class="user-list-title">Users</h2>
-  <div class="user-flex-container">
+  <div class="user-flex-container" *ngIf="users != null && users.length > 0">
     <a *ngFor="let user of users" href="/dashboard/users/{{user.id}}" class="user-card">{{user.fullName}}</a>
+  </div>
+
+  <div class="user-flex-container" *ngIf="users == null || users.length == 0">
+    <div class="message">No Users Are assigned to this role</div>
   </div>
   
   

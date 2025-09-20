@@ -60,27 +60,27 @@ namespace VoltaXApi.OCPP.Handlers
                 string idTag = "";
                 if (transactionEventRequest.IdToken != null)
                     idTag = CleanChargeTagId(transactionEventRequest.IdToken.IdToken, _logger);
-                
+
                 var chargePoint = await this._chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
-                
+
                 var connector = await this._connectorRepository
                     .GetConnectorByConnectorIdEvseId(
-                        (int)transactionEventRequest.EVSE.ConnectorId, 
-                        (int)transactionEventRequest.EVSE.Id, 
+                        (int)transactionEventRequest.EVSE.ConnectorId,
+                        (int)transactionEventRequest.EVSE.Id,
                         chargePoint.ID);
 
                 if (connector == null)
                 {
                     await _configService.RefreshConnectors(chargePointStatus.Id);
                 }
-                
+
 
                 //  Extract meter values with correct scale
-                double currentChargeKW = -1;
-                double meterKWH = -1;
+                double currentChargeKW = 0;
+                double meterKWH = 0;
                 DateTimeOffset? meterTime = null;
                 double stateOfCharge = -1;
-                if(transactionEventRequest.MeterValue != null)
+                if (transactionEventRequest.MeterValue != null)
                     GetMeterValues(
                         transactionEventRequest.MeterValue,
                         out meterKWH,
@@ -125,13 +125,13 @@ namespace VoltaXApi.OCPP.Handlers
                         meterKWH
                     );
                 }
-                
+
                 var settings = new JsonSerializerSettings
                 {
                     Converters = new List<JsonConverter> { new StringEnumConverter() },
                     NullValueHandling = NullValueHandling.Ignore
                 };
-                msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse,settings);
+                msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, settings);
                 Console.WriteLine("TransactionEvent => Response serialized");
             }
             catch (Exception exp)
@@ -184,149 +184,122 @@ namespace VoltaXApi.OCPP.Handlers
             out DateTimeOffset? meterTime
         )
         {
-            currentChargeKW = -1;
-            meterKWH = -1;
+            meterKWH = 0;
+            currentChargeKW = 0;
+            stateOfCharge = 0;
             meterTime = null;
-            stateOfCharge = -1;
 
-            foreach (MeterValueType meterValue in meterValues)
+            foreach (var meterValue in meterValues)
             {
-                foreach (SampledValueType sampleValue in meterValue.SampledValue)
+                foreach (var sampleValue in meterValue.SampledValue)
                 {
-                    Console.WriteLine("this is the samledValueType : "+ sampleValue.Measurand );
-                    Console.WriteLine("this is the context : "+ sampleValue.Context );
-                    Console.WriteLine("context is transaction : "+ sampleValue.Context );
-                    if(sampleValue.Context == ReadingContextEnumType.Transaction_End)
+                    var unit = sampleValue.UnitOfMeasure?.Unit;
+                    var multiplier = sampleValue.UnitOfMeasure?.Multiplier ?? 0;
+                    var value = sampleValue.Value;
+
+                    switch (sampleValue.Context)
                     {
-                        meterKWH = sampleValue.Value;
-                         if (
-                            sampleValue.UnitOfMeasure?.Unit == "W"
-                            || sampleValue.UnitOfMeasure?.Unit == "VA"
-                            || sampleValue.UnitOfMeasure?.Unit == "var"
-                            || sampleValue.UnitOfMeasure?.Unit == null
-                            || sampleValue.UnitOfMeasure == null
-                        )
-                        {
-                            Console.WriteLine(
-                                "GetMeterValues => Charging '{0:0.0}' W",
-                                currentChargeKW
-                            );
-                            // convert W => kW
-                            currentChargeKW = currentChargeKW / 1000;
-                            meterKWH = meterKWH / 1000;
-                        }
-                        else if (
-                            sampleValue.UnitOfMeasure?.Unit == "KW"
-                            || sampleValue.UnitOfMeasure?.Unit == "kVA"
-                            || sampleValue.UnitOfMeasure?.Unit == "kvar"
-                        )
-                        {
-                            // already kW => OK
-                            Console.WriteLine(
-                                "GetMeterValues => Charging '{0:0.0}' kW",
-                                currentChargeKW
-                            );
-                        }
-                        return;
+                        case ReadingContextEnumType.Transaction_End:
+                            meterKWH = ConvertToKWh(value, unit, multiplier);
+                            meterTime = meterValue.Timestamp;
+                            Console.WriteLine($"GetMeterValues => Transaction_End: {meterKWH:0.000} kWh");
+                            return; // final reading, safe to exit
+
+                        case ReadingContextEnumType.Transaction_Begin:
+                            Console.WriteLine("GetMeterValues => Transaction_Begin context detected.");
+                            meterKWH = ConvertToKWh(value, unit, multiplier);
+                            meterTime = meterValue.Timestamp;
+                            break;
+
+                        case ReadingContextEnumType.Interruption_Begin:
+                            Console.WriteLine("GetMeterValues => Interruption_Begin context detected.");
+                            break;
+
+                        case ReadingContextEnumType.Interruption_End:
+                            Console.WriteLine("GetMeterValues => Interruption_End context detected.");
+                            break;
+
+                        case ReadingContextEnumType.Sample_Clock:
+                            Console.WriteLine("GetMeterValues => Sample_Clock reading.");
+                            break;
+
+                        case ReadingContextEnumType.Sample_Periodic:
+                            Console.WriteLine("GetMeterValues => Sample_Periodic reading.");
+                            break;
+
+                        case ReadingContextEnumType.Trigger:
+                            Console.WriteLine("GetMeterValues => Triggered reading.");
+                            break;
+
+                        case ReadingContextEnumType.Other:
+                        default:
+                            // fall back to measurand-based handling
+                            break;
                     }
+
                     if (sampleValue.Measurand == MeasurandEnumType.Power_Active_Import)
                     {
-                        // current charging power
-                        currentChargeKW = sampleValue.Value;
-                        if (
-                            sampleValue.UnitOfMeasure?.Unit == "W"
-                            || sampleValue.UnitOfMeasure?.Unit == "VA"
-                            || sampleValue.UnitOfMeasure?.Unit == "var"
-                            || sampleValue.UnitOfMeasure?.Unit == null
-                            || sampleValue.UnitOfMeasure == null
-                        )
-                        {
-                            Console.WriteLine(
-                                "GetMeterValues => Charging '{0:0.0}' W",
-                                currentChargeKW
-                            );
-                            // convert W => kW
-                            currentChargeKW = currentChargeKW / 1000;
-                        }
-                        else if (
-                            sampleValue.UnitOfMeasure?.Unit == "KW"
-                            || sampleValue.UnitOfMeasure?.Unit == "kVA"
-                            || sampleValue.UnitOfMeasure?.Unit == "kvar"
-                        )
-                        {
-                            // already kW => OK
-                            Console.WriteLine(
-                                "GetMeterValues => Charging '{0:0.0}' kW",
-                                currentChargeKW
-                            );
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                "GetMeterValues => Charging: unexpected unit: '{0}' (Value={1})",
-                                sampleValue.UnitOfMeasure?.Unit,
-                                sampleValue.Value
-                            );
-                        }
+                        currentChargeKW = ConvertToKW(value, unit, multiplier);
+                        Console.WriteLine($"GetMeterValues => Charging: {currentChargeKW:0.00} kW");
                     }
-                    else if (
-                        sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register
-                    )
+                    else if (sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register)
                     {
-                        Console.WriteLine("okay this is : Energy_Active_Import_Register");
-                        // charged amount of energy
-                        meterKWH = sampleValue.Value;
-                        if (
-                            sampleValue.UnitOfMeasure?.Unit == "Wh"
-                            || sampleValue.UnitOfMeasure?.Unit == "VAh"
-                            || sampleValue.UnitOfMeasure?.Unit == "varh"
-                            || (
-                                sampleValue.UnitOfMeasure == null
-                                || sampleValue.UnitOfMeasure.Unit == null
-                            )
-                        )
-                        {
-                            // Multiplying this by the meter value
-                            Console.WriteLine("GetMeterValues => Value: '{0:0.0}' Wh", meterKWH);
-                            if (
-                                sampleValue.UnitOfMeasure?.Multiplier != null
-                                && sampleValue.UnitOfMeasure?.Multiplier > 0
-                            )
-                                meterKWH =
-                                    meterKWH
-                                    * Math.Pow(10, (double)sampleValue.UnitOfMeasure?.Multiplier);
-
-                            // convert Wh => kWh
-                            meterKWH = meterKWH / 1000;
-                        }
-                        else if (
-                            sampleValue.UnitOfMeasure?.Unit == "kWh"
-                            || sampleValue.UnitOfMeasure?.Unit == "kVAh"
-                            || sampleValue.UnitOfMeasure?.Unit == "kvarh"
-                        )
-                        {
-                            // already kWh => OK
-                            Console.WriteLine("GetMeterValues => Value: '{0:0.0}' kWh", meterKWH);
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                "GetMeterValues => Value: unexpected unit: '{0}' (Value={1})",
-                                sampleValue.UnitOfMeasure?.Unit,
-                                sampleValue.Value
-                            );
-                        }
+                        meterKWH = ConvertToKWh(value, unit, multiplier);
                         meterTime = meterValue.Timestamp;
+                        Console.WriteLine($"GetMeterValues => Energy Imported: {meterKWH:0.000} kWh");
                     }
                     else if (sampleValue.Measurand == MeasurandEnumType.SoC)
                     {
-                        // state of charge (battery status)
-                        stateOfCharge = sampleValue.Value;
-                        Console.WriteLine("GetMeterValues => SoC: '{0:0.0}'%", stateOfCharge);
+                        stateOfCharge = value;
+                        Console.WriteLine($"GetMeterValues => SoC: {stateOfCharge:0.0}%");
                     }
                 }
             }
         }
+
+
+        /// <summary>
+        /// Convert Wh or kWh values into kWh
+        /// </summary>
+        private double ConvertToKWh(double value, string unit, int multiplier)
+        {
+            if (string.IsNullOrEmpty(unit) || unit == "Wh" || unit == "VAh" || unit == "varh")
+            {
+                if (multiplier > 0)
+                    value *= Math.Pow(10, multiplier);
+
+                return value / 1000.0; // Wh → kWh
+            }
+            if (unit == "kWh" || unit == "kVAh" || unit == "kvarh")
+            {
+                return value;
+            }
+
+            Console.WriteLine($"GetMeterValues => Unexpected energy unit: {unit}, Value={value}");
+            return value;
+        }
+
+        /// <summary>
+        /// Convert W or kW values into kW
+        /// </summary>
+        private double ConvertToKW(double value, string unit, int multiplier)
+        {
+            if (string.IsNullOrEmpty(unit) || unit == "W" || unit == "VA" || unit == "var")
+            {
+                if (multiplier > 0)
+                    value *= Math.Pow(10, multiplier);
+
+                return value / 1000.0; // W → kW
+            }
+            if (unit == "kW" || unit == "kVA" || unit == "kvar")
+            {
+                return value; // already in kW
+            }
+
+            Console.WriteLine($"GetMeterValues => Unexpected power unit: {unit}, Value={value}");
+            return value;
+        }
+
 
         protected static string CleanChargeTagId(string rawChargeTagId, ILogger logger)
         {

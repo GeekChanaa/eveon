@@ -7,7 +7,10 @@ export type CardActionSize = 'small' | 'standard' | 'large';
   templateUrl: './card-action.component.html',
   styleUrls: ['./card-action.component.sass']
 })
-export class CardActionComponent  {
+export class CardActionComponent implements OnInit  {
+  ngOnInit(): void {
+    console.log(this.actionName)
+  }
   
   @Input() icon: string = 'info';
   @Input() actionName: string = 'Default Action';

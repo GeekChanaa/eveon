@@ -221,6 +221,7 @@ namespace VoltaXApi.Data
             user.IsPhoneNumberVerified = userDto.IsPhoneNumberVerified;
             user.SuspendedAt = userDto.SuspendedAt;
             user.ElectricVehicleModelID = userDto.ElectricVehicleModelID;
+            user.PartnerID = userDto.PartnerID ?? null;
 
             await Update(user);
         }
