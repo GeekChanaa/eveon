@@ -41,6 +41,8 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   requestHandlerModalVisible : string = "";
   
   ngOnInit() {
+    console.log("this is the chargepoint : ")
+    console.log(this.chargePoint);
   }
 
   OCPPActions : any[] = OCPPActions;

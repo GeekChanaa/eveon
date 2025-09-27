@@ -130,19 +130,25 @@
   <div class="stats">
     <div class="stats__table">
       <div class="stats__row">
-        <div class="stats__col">Start</div>
-        <div class="stats__col">End</div>
+        <div class="stats__col">Charge Point</div>
         <div class="stats__col">Energy Consumed</div>
+        <div class="stats__col">Charged Minutes</div>
         <div class="stats__col">Amount</div>
       </div>
-      <div class="stats__row" *ngFor="let item of latestTransactions">
-        <div class="stats__col">{{item.startTime | date:'medium'}}</div>
+      <div class="stats__row" *ngFor="let item of latestChargingSessions">
+        <div class="stats__col">{{item.chargePointName}}</div>
         <div class="stats__col">
-          <div class="status-yellow stats__status">{{item.stopTime | date:'medium'}}</div>
+          <div class="status-yellow stats__status">{{item.ChargedKwhs | number:'1.2-2'}} kWh</div>
         </div>
-        <div class="stats__col">{{item.meterStop - item.meterStart | number:'1.2-2'}} kWh</div>
-        <div class="stats__col">{{item.amount | number:'1.2-2'}} DH</div>
+        <div class="stats__col">{{item.ChargedMinutes | number:'1.2-2'}} Min</div>
+        <div class="stats__col">{{item.TotalPriceWithVAT | number:'1.2-2'}} DH</div>
       </div>
     </div>
+    <div class="pagination__container">
+        <app-pagination
+          [pagination]="pagination"
+          (refreshEvent)="getPartnerChargingSessions($event)"
+          ></app-pagination>
+      </div>
   </div>
 </div>

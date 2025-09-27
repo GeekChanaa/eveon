@@ -18,7 +18,7 @@ namespace VoltaXApi.Data
         IQueryable<ChargingSessionListDto> GetChargingSessions();
         IQueryable<ChargingSessionListDto> GetUserChargingSessions(int userID, GlobalParams globalParams);
         Task<ChargingSession> CreateChargingSessionForTransaction(Connector connector, Card card, DateTime startDate);
-        IQueryable<ChargingSessionListDto> GetPartnerChargingSessions(int partnerID);
+        IQueryable<PartnerChargingSessionListDto> GetPartnerChargingSessions(int partnerID);
         
 
     }

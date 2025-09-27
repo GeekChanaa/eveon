@@ -26,7 +26,7 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
     return super.getAll(page,itemsPerPage,itemParams,"GetChargingSessions");
   }
 
-  getAllPartnerChargingSessions(partnerID: number, page?: number, itemsPerPage?: number, itemParams?: any, endpoint: string = ""): Observable<PaginatedResult<ChargingSession[]>> {
+  getAllPartnerChargingSessions(partnerID: number, page?: number, itemsPerPage?: number, itemParams?: any): Observable<PaginatedResult<ChargingSession[]>> {
       const paginatedResult: PaginatedResult<ChargingSession[]> | null = new PaginatedResult<ChargingSession[]>();
       let params = new HttpParams();
       if (page != null && itemsPerPage != null) {

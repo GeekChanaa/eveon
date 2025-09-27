@@ -128,8 +128,4 @@ export class PartnerStatisticsService {
       this.baseUrl + "DailyChargingSessionsLast30Days/" + partnerID
     );
   }
-
-
-
-
 }

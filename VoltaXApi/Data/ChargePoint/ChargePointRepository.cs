@@ -12,9 +12,15 @@ namespace VoltaXApi.Data
     public class ChargePointRepository : Repository<ChargePoint>, IChargePointRepository
     {
         private readonly IMapper _mapper;
-        public ChargePointRepository(VoltaXApiDbContext context, IMapper mapper ) : base(context)
+        private readonly GlobalConfigurations _globalConfigurations;
+
+        public ChargePointRepository(
+            VoltaXApiDbContext context,
+            IMapper mapper,
+            GlobalConfigurations globalConfigurations) : base(context)
         {
             _mapper = mapper;
+            _globalConfigurations = globalConfigurations;
         }
 
         public async Task<List<Connector>> GetChargePointConnectors(int chargePointID)
@@ -23,31 +29,34 @@ namespace VoltaXApi.Data
         }
 
         // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<double> GetChargePointRevenue(string chargePointID, DateTime? start = null, DateTime? end = null)
+        public async Task<double> GetChargePointRevenue(string chargePointID, DateTime? startTime = null, DateTime? endTime = null)
         {
-            var chargePoint = await this._context.ChargePoints.Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ChargePointId == chargePointID);
-            var transactions = chargePoint.Transactions.Where(t => (!start.HasValue || t.StartTime >= start.Value) && (!end.HasValue || t.StartTime <= end.Value));
-            double total = 0;
-            foreach (var transaction in transactions)
+            var sessions = await _context.ChargingSessions
+                .Where(s => s.EndDate != null && s.Connector.ChargePoint.ChargePointId == chargePointID
+                        && (s.StartDate >= startTime || startTime == null)
+                        && (s.EndDate <= endTime || endTime == null))
+            .ToListAsync();
+
+            double totalRevenue = 0;
+            foreach (var session in sessions)
             {
-                total += transaction.Amount;
+                totalRevenue += session.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod);
             }
 
-            return total;
+            return totalRevenue;
         }
 
         // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<double> GetPartnerChargePointRevenue(int partnerID ,string chargePointID, DateTime? start = null, DateTime? end = null)
+        public async Task<double> GetPartnerChargePointRevenue(int partnerID, string chargePointID)
         {
-            var chargePoint = await this._context.ChargePoints.Where(u => u.ChargingStation.PartnerID == partnerID).Include(u => u.Transactions).FirstOrDefaultAsync(u => u.ChargePointId == chargePointID);
-            var transactions = chargePoint.Transactions.Where(t => (!start.HasValue || t.StartTime >= start.Value) && (!end.HasValue || t.StartTime <= end.Value));
-            double total = 0;
-            foreach (var transaction in transactions)
-            {
-                total += transaction.Amount;
-            }
+            var revenue = await _context.ChargePoints
+                .Where(cp => cp.ChargingStation.PartnerID == partnerID &&
+                            cp.ChargePointId == chargePointID &&
+                            !cp.IsDeleted)
+                .Select(cp => cp.Connectors.Sum(c => (c.PricePerKWh - c.CostPerKwh) * c.Power))
+                .FirstOrDefaultAsync();
 
-            return total;
+            return revenue;
         }
 
         override public async Task AddAsync(ChargePoint chargePoint)

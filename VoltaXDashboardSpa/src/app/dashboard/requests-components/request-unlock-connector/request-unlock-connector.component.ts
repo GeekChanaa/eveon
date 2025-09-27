@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
+import { ConnectorService } from 'src/_services/connector.service';
 import { OcppEvDriverService } from 'src/_services/ocpp-services/ocpp-ev-driver.service';
 
 @Component({
@@ -10,32 +11,49 @@ import { OcppEvDriverService } from 'src/_services/ocpp-services/ocpp-ev-driver.
 })
 export class RequestUnlockConnectorComponent implements OnInit {
 
-  @Input() chargePointID : string = "";
+  @Input() chargePointID! : string;
   @Output() successEvent : EventEmitter<void> = new EventEmitter();
+  @Input() cpID! : number;
+  request : any = {} ;
+  connectors : any[] = [];
+  isLoading : boolean = false;
 
-  cards : any[] = [];
-  tokenID : number = 0;
-  remoteStartID : number = 0;
   constructor(
-    private _evDriverService : OcppEvDriverService,
+    private _connectorService: ConnectorService,
+    private _evDriverService: OcppEvDriverService,
     private _modalService: ActionModalService
   ) { }
 
   ngOnInit() {
+    this.getChargePointConnectors();
   }
 
-  startTransaction(){
-    let unlockConnectorRequest = {
-      remoteStartID : this.remoteStartID ,
-      idToken : {
-        idToken : this.tokenID
-      }
-    };
-    this._evDriverService.unlockConnector(this.chargePointID, unlockConnectorRequest).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success","Transaction Started Successfully",4000);
-      this.successEvent.emit()
-    },(error)=> {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
+  getChargePointConnectors(){
+    this._connectorService.getChargePointConnectors(this.cpID).subscribe((data) => {
+      this.request.evse = {};
+      this.connectors = data;
+      this.request.evse.id = this.connectors[0].connectorID;
+      this.request.evse.connectorId = this.connectors[0].evseID;
+    })
+  }
+
+  onSelectConnector(event : any){
+    this.request.evse = {};
+    let connector = JSON.parse(event.target.value);
+    this.request.evse.id = connector.connectorID;
+    this.request.evse.connectorId = connector.evseID;
+    console.log(this.request);
+  }
+
+  unlockConnectorRequest(){
+    this.isLoading = true;
+    this._evDriverService.unlockConnector(this.chargePointID, this.request).subscribe((data) => {
+      this.isLoading = false;
+      this._modalService.popup(ActionModalStatusEnum.Success,"Success !", "Request Sent successfully ! ",4000);
+      this.successEvent.emit();
+    },(error) => {
+      this.isLoading = false;
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error !","Something went wrong please contact your system administrator",4000);
     })
   }
 

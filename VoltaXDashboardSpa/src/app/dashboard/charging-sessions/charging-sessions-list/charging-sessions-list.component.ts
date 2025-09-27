@@ -27,7 +27,15 @@ export class ChargingSessionsListComponent implements OnInit {
     startDate: new Date(),
     endDate: new Date(),
     stoppedReason: '',
-    chargingSessionStatus: ''
+    chargingSessionStatus: '',
+    chargePointName: '',
+    chargedMinutes: 0,
+    idleMinutes: 0,
+    chargedKwhs: 0,
+    pricePerMinute: 0,
+    costPerKwh: 0,
+    pricePerIdleMinute: 0,
+    totalPriceWithVAT: 0
   }
 
   // Constructor

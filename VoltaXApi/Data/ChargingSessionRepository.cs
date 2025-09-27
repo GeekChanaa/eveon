@@ -142,28 +142,38 @@ namespace VoltaXApi.Data
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
         ConnectorID = cs.ConnectorID,
         ChargePointID = cs.Connector.ChargePointID,
+        ChargePointName =  cs.Connector.ChargePoint.ChargePointId,
         UserName = cs.User.FullName,
         CardNumber = cs.Card.CardNumber,
         StartDate = cs.StartDate,
         EndDate = cs.EndDate,
         StoppedReason = cs.StoppedReason,
+        ChargedMinutes = cs.ChargedMinutes,
+        IdleMinutes = cs.IdleMinutes,
+        ChargedKwhs = cs.ChargedKwhs,
+        PricePerMinute = cs.PricePerMinute,
+        CostPerKwh = cs.CostPerKwh,
+        PricePerIdleMinute = cs.PricePerIdleMinute,
+        TotalPriceWithVAT = cs.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
     }
 
-    public IQueryable<ChargingSessionListDto> GetPartnerChargingSessions(int partnerID)
+    public IQueryable<PartnerChargingSessionListDto> GetPartnerChargingSessions(int partnerID)
     {
-      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).Select(cs => new ChargingSessionListDto
+      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).Select(cs => new PartnerChargingSessionListDto
       {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
         ConnectorID = cs.ConnectorID,
+        ChargePointName =  cs.Connector.ChargePoint.ChargePointId,
         ChargePointID = cs.Connector.ChargePointID,
-        UserName = cs.User.FullName,
-        CardNumber = cs.Card.CardNumber,
         StartDate = cs.StartDate,
         EndDate = cs.EndDate,
         StoppedReason = cs.StoppedReason,
+        IdleMinutes = cs.IdleMinutes,
+        ChargedKwhs = cs.ChargedKwhs,
+        TotalPriceWithVAT = cs.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
     }
@@ -200,13 +210,22 @@ namespace VoltaXApi.Data
       {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
+        ChargePointName = cs.Connector.ChargePoint.ChargePointId,
         ConnectorID = cs.ConnectorID,
         ChargePointID = cs.Connector.ChargePointID,
         UserName = cs.User.FullName,
         CardNumber = cs.Card.CardNumber,
         StartDate = cs.StartDate,
         EndDate = cs.EndDate,
+        ChargedMinutes = cs.ChargedMinutes,
+        IdleMinutes = cs.IdleMinutes,
+        ChargedKwhs = cs.ChargedKwhs,
+        PricePerMinute = cs.PricePerMinute,
+        CostPerKwh = cs.CostPerKwh,
+        PricePerIdleMinute = cs.PricePerIdleMinute,
+        TotalPriceWithVAT = cs.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
         StoppedReason = cs.StoppedReason,
+        
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
     }

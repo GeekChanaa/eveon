@@ -108,6 +108,7 @@
         *ngIf="requestHandlerModalVisible == 'SetVariablesRequest'"></app-set-variables-request>
       <app-request-unlock-connector
         (successEvent)="closeModal()"
+        [cpID]="chargePoint.id"
         [chargePointID]="chargePoint.chargePointId"
         *ngIf="requestHandlerModalVisible == 'UnlockConnectorRequest'"></app-request-unlock-connector>
 

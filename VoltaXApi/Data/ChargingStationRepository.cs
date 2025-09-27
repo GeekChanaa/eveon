@@ -19,10 +19,13 @@ namespace VoltaXApi.Data
     {
         private readonly IMapper _mapper;
         private readonly IChargePointRepository _chargePointRepo;
-        public ChargingStationRepository(VoltaXApiDbContext context, IMapper mapper) : base(context)
+        public ChargingStationRepository(
+            VoltaXApiDbContext context,
+            IMapper mapper,
+            IChargePointRepository chargePointRepository) : base(context)
         {
             _mapper = mapper;
-            _chargePointRepo = new ChargePointRepository(context,mapper);
+            _chargePointRepo = chargePointRepository;
         }
 
         public async Task<ChargingStationDisplayDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
@@ -125,10 +128,10 @@ namespace VoltaXApi.Data
         }
 
 
-        public async Task<IEnumerable<ChargingStationRevenue>> GetTop10ChargingStationsByRevenue()
+        public async Task<IEnumerable<ChargingStationRevenue>> GetTop10ChargingStationsByRevenue(GlobalParams globalParams)
         {
             // Get all ChargingStations
-            var chargingStations = await this._context.ChargingStations.Include(u => u.ChargePoints).ToListAsync();
+            var chargingStations = await GetAllAsync(globalParams).ToListAsync();
 
             var revenues = new List<ChargingStationRevenue>();
 
@@ -175,7 +178,7 @@ namespace VoltaXApi.Data
             double total = 0;
             foreach (ChargePoint chargePoint in chargePoints)
             {
-                total += await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId, start, end);
+                total += await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId);
             }
 
             return total;
@@ -221,10 +224,10 @@ namespace VoltaXApi.Data
         }
 
 
-        public async Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
+        public async Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID, GlobalParams globalParams)
         {
             // Get all ChargingStations
-            var chargingStations = await this._context.ChargingStations.Where(c => c.PartnerID == partnerID).Include(u => u.ChargePoints).ToListAsync();
+            var chargingStations = await GetAllAsync(globalParams).Where(c => c.PartnerID == partnerID).Include(u => u.ChargePoints).ToListAsync();
 
             var revenues = new List<ChargingStationRevenue>();
 

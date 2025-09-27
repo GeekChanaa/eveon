@@ -42,8 +42,6 @@ export class ConnectorRealtimeChargingSessionsComponent implements OnInit {
     this.isLoading = true;
     
     this._chargingSessionService.getChargePointChargingSessions(this.chargePoint.id,page, this.itemsPerPage, this.itemParams).subscribe((data) => {
-      console.log("this is the result ");
-      console.log(data);  
       this.isLoading = false;
       if(data.result)
         this.chargingSessions = data.result;

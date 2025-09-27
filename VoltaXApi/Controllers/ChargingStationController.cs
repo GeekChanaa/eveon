@@ -90,9 +90,9 @@ namespace VoltaXApi.Controllers
 
 
         [HttpGet("GetTop10ChargingStationsByRevenue")]
-        public async Task<IActionResult> GetTop10ChargingStationsByRevenue()
+        public async Task<IActionResult> GetTop10ChargingStationsByRevenue(GlobalParams globalParams)
         {
-            return Ok(await _repository.GetTop10ChargingStationsByRevenue());
+            return Ok(await _repository.GetTop10ChargingStationsByRevenue(globalParams));
         }
 
         [HttpPost("Add")]
@@ -178,12 +178,6 @@ namespace VoltaXApi.Controllers
             return Ok(entity);
         }
 
-
-        [HttpGet("GetPartnerTop10ChargingStationsByRevenue/{partnerID}")]
-        public async Task<IActionResult> GetPartnerTop10ChargingStationsByRevenue(int partnerID)
-        {
-            return Ok(await _repository.GetPartnerTop10ChargingStationsByRevenue(partnerID));
-        }
 
         [HttpGet("GetChargingStationNames")]
         public async Task<IActionResult> GetChargingStationNames([FromQuery] string? searchTerm = "") 

@@ -10,14 +10,11 @@ import { ChargingSessionService } from 'src/_services/charging-session.service';
   styleUrls: ['./partner-charging-sessions-list.component.sass']
 })
 export class PartnerChargingSessionsListComponent implements OnInit {
-
-  
     fields: string[] = [];
     filters : any = {
       category:"",
       city : ""
     };
-    
   
     chargingSession: ChargingSessionListDto = {
       id: 0,
@@ -29,7 +26,15 @@ export class PartnerChargingSessionsListComponent implements OnInit {
       startDate: new Date(),
       endDate: new Date(),
       stoppedReason: '',
-      chargingSessionStatus: ''
+      chargingSessionStatus: '',
+      chargePointName: '',
+      chargedMinutes: 0,
+      idleMinutes: 0,
+      chargedKwhs: 0,
+      pricePerMinute: 0,
+      costPerKwh: 0,
+      pricePerIdleMinute: 0,
+      totalPriceWithVAT: 0
     }
 
     partnerID: number = 0;

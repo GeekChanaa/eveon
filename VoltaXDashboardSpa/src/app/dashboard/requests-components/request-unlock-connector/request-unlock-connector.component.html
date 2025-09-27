@@ -1,3 +1,38 @@
-<p>
-  request-unlock-connector works!
-</p>
+<div class="title-green request__title">Unlock Connector Request</div>
+<div class="request__subtitle">Description</div>
+<div class="request__description">
+  Request a charging station to Unlock a connector
+</div>
+
+<div class="request__container">
+  <div class="field">
+    <div class="field__label">Connector
+      <div class="tooltip" title="The connector which you want to unlock">
+        <svg class="icon icon-info">
+          <use xlink:href="#icon-info"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="field__wrap">
+      <div class="field__wrap">
+        <select (change)="onSelectConnector($event)" class="select select_small">
+          <option value="">None</option>
+          <option *ngFor="let connector of connectors" [value]="connector | json">
+            connectorID : {{connector.connectorID+" evseId : "+connector.evseID}} </option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="form__actions">
+    <button (click)="unlockConnectorRequest()" class="button button__primary button-small stop__btn">
+      <ng-container *ngIf="isLoading">
+        <app-svg-spinner></app-svg-spinner>
+      </ng-container>
+      <ng-container *ngIf="!isLoading">Send Unlock Connector Request</ng-container>
+
+    </button>
+  </div>
+</div>

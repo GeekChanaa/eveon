@@ -1,13 +1,21 @@
-export interface ChargingSessionListDto{
+export interface ChargingSessionListDto {
     id : number,
     connectorID : number,
     connector : string,
+    chargePointName : string,
     chargePointID : number,
     userName : string,
     cardNumber : string,
     startDate : Date,
     endDate : Date,
     stoppedReason : string,
+    chargedMinutes : number,
+    idleMinutes : number,
+    chargedKwhs : number,
+    pricePerMinute : number,
+    costPerKwh : number,
+    pricePerIdleMinute : number,
+    totalPriceWithVAT : number,
     chargingSessionStatus : string,
     [key: string]: any;
 }

@@ -31,10 +31,10 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("GetChargingSessions/{partnerID}")]
-        public async Task<List<ChargingSessionListDto>> GetChargingSessions(int partnerID, [FromQuery] GlobalParams globalParams)
+        public async Task<List<PartnerChargingSessionListDto>> GetChargingSessions(int partnerID, [FromQuery] GlobalParams globalParams)
         {
             var chargingSessions = this._repository.GetPartnerChargingSessions(partnerID);
-            var chargingSessionsList = await PagedList<ChargingSessionListDto>.CreateAsync(chargingSessions, globalParams.PageNumber, globalParams.PageSize);
+            var chargingSessionsList = await PagedList<PartnerChargingSessionListDto>.CreateAsync(chargingSessions, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(chargingSessionsList.CurrentPage, chargingSessionsList.PageSize, chargingSessionsList.TotalCount, chargingSessionsList.TotalPages);
             return chargingSessionsList;
         }
