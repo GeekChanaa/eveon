@@ -94,6 +94,8 @@ export class PartnerStatisticsComponent implements OnInit {
 
   getTop10ChargingStationsByRevenue() {
     this._partnerChargingStationService.getTop10ChargingStations(this.partnerID).subscribe((data) => {
+      console.log("this is the top 10 charging Stations");
+      console.log(data.result);
       if (data.result != null) {
         this.top10ChargingStationRevenues = data.result
       }
@@ -103,6 +105,8 @@ export class PartnerStatisticsComponent implements OnInit {
 
   getPartnerChargingSessions(page: number = 1) {
     this._chargingSessionService.getAllPartnerChargingSessions(this.partnerID, page, this.itemsPerPage, this.itemParams).subscribe((data) => {
+      console.log("this is the data");
+      console.log(data.result);
       if (data.result)
         this.latestChargingSessions = data.result;
       if (data.pagination)

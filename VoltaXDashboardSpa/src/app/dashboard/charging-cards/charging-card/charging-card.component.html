@@ -6,23 +6,15 @@
   { label: card?.id || 'Details' }
 ]">
 
-  <!-- Loading state -->
-  <div *ngIf="!cardLoaded" class="loading-container">
-    <app-svg-spinner></app-svg-spinner>
-  </div>
 
   <!-- Content area -->
-  <div *ngIf="cardLoaded" class="content-area">
+  <div class="content-area">
     <!-- Tabs navigation -->
     <div class="tabs-container">
       <div class="tabs">
         <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
           class="tab-button">
           Information
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'Transactions'}" (click)="changeTab('Transactions')"
-          class="tab-button">
-          Transactions
         </button>
         <button [ngClass]="{'active': tabsEnum === 'Orders'}" (click)="changeTab('Orders')"
           class="tab-button">
@@ -124,23 +116,12 @@
         </div>
       </div>
 
-      <!-- Transactions Tab -->
-      <div *ngIf="tabsEnum === 'Transactions'" class="charging-stations-tab">
-        <div class="card">
-          <div class="card-content">
-            <ng-container *ngIf="card.id != null && card.id != undefined">
-              <!-- <app-charging-station-charge-points [cardID]="card.id"></app-charging-station-charge-points> -->
-            </ng-container>
-          </div>
-        </div>
-      </div>
-
       <!-- Orders Tab -->
       <div *ngIf="tabsEnum === 'Orders'" class="charging-stations-tab">
         <div class="card">
           <div class="card-content">
             <ng-container *ngIf="card.id != null && card.id != undefined">
-              <!-- <app-charging-station-charge-points [cardID]="card.id"></app-charging-station-charge-points> -->
+              <app-charging-card-orders [cardID]="card.id"></app-charging-card-orders>
             </ng-container>
           </div>
         </div>

@@ -89,7 +89,7 @@
       </ng-container>
     </ng-container>
     
-    <div *ngIf="!val && !editing && inpType != 'checkbox'" class="form-field__empty">
+    <div *ngIf="val != 0 && !val && !editing && inpType != 'checkbox'" class="form-field__empty">
       Not specified
     </div>
   </div>

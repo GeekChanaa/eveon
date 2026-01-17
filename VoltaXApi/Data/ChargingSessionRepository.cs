@@ -172,6 +172,7 @@ namespace VoltaXApi.Data
         EndDate = cs.EndDate,
         StoppedReason = cs.StoppedReason,
         IdleMinutes = cs.IdleMinutes,
+        ChargedMinutes = cs.ChargedMinutes,
         ChargedKwhs = cs.ChargedKwhs,
         TotalPriceWithVAT = cs.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
         ChargingSessionStatus = cs.ChargingSessionStatus,

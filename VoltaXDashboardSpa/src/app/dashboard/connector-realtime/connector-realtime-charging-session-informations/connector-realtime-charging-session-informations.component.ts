@@ -40,7 +40,6 @@ export class ConnectorRealtimeChargingSessionInformationsComponent implements On
     this._chargingSessionService.getChargingSessionInformations(id).subscribe((data) => {
       this.isLoading = false;
       this.chargingSession = data;
-      console.log("charging session" , this.chargingSession)
     })
   }
 

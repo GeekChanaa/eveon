@@ -1496,7 +1496,9 @@ namespace VoltaXApi.Migrations
                     EndIdleDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ChargedMinutes = table.Column<double>(type: "double", nullable: true),
                     IdleMinutes = table.Column<double>(type: "double", nullable: true),
+                    ChargedKwhs = table.Column<double>(type: "double", nullable: true),
                     PricePerMinute = table.Column<double>(type: "double", nullable: true),
+                    CostPerKwh = table.Column<double>(type: "double", nullable: true),
                     PricePerIdleMinute = table.Column<double>(type: "double", nullable: true),
                     StoppedReason = table.Column<int>(type: "int", nullable: false),
                     ChargingSessionStatus = table.Column<int>(type: "int", nullable: false),
@@ -1581,7 +1583,6 @@ namespace VoltaXApi.Migrations
                     ConnectorID = table.Column<int>(type: "int", nullable: true),
                     LastStatus = table.Column<int>(type: "int", nullable: false),
                     LastStatusTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    ChargePointID = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -1589,11 +1590,6 @@ namespace VoltaXApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ConnectorStatuses", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ConnectorStatuses_ChargePoints_ChargePointID",
-                        column: x => x.ChargePointID,
-                        principalTable: "ChargePoints",
-                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ConnectorStatuses_Connectors_ConnectorID",
                         column: x => x.ConnectorID,
@@ -2206,11 +2202,6 @@ namespace VoltaXApi.Migrations
                 table: "Connectors",
                 columns: new[] { "EvseID", "ConnectorID", "ChargePointID" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ConnectorStatuses_ChargePointID",
-                table: "ConnectorStatuses",
-                column: "ChargePointID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConnectorStatuses_ConnectorID",

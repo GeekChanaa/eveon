@@ -6,12 +6,16 @@ import { environment } from 'src/environments/environment';
 
 import { RechargeOrderDto } from 'src/_models/_dtos/recharge-order-dto';
 import { InvoiceDTO } from 'src/_models/_dtos/invoice-dto';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService extends AbstractService<Order>{
+
+
+  private isDownloadingSubject = new BehaviorSubject<boolean>(false);
+  isDownloading$ = this.isDownloadingSubject.asObservable();
 
   constructor(protected http : HttpClient) {
     super(http,environment.apiUrl+"/api/order/");
@@ -90,5 +94,31 @@ export class OrderService extends AbstractService<Order>{
 
   getUserOrders(page : number, itemsPerPage: number, itemParams: any, userID : number){
     return super.getAll(page,itemsPerPage,itemParams,"GetUserOrders/"+userID);
+  }
+
+  getOrderInvoice(orderID: number): void {
+    this.isDownloadingSubject.next(true); // Set to true when the call starts
+
+    this.http
+      .get(`${this.baseUrl}GetOrderInvoice/${orderID}`, { responseType: 'blob' })
+      .subscribe(
+        (data: Blob) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `OrderInvoice_${orderID}.pdf`;
+          link.click();
+
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error downloading invoice:', error);
+        },
+        () => {
+          this.isDownloadingSubject.next(false); // Set to false when the call completes
+        }
+      );
   }
 }

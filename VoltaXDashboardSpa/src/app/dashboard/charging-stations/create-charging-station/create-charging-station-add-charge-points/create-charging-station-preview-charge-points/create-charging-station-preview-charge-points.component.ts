@@ -7,6 +7,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class CreateChargingStationPreviewChargePointsComponent implements OnInit {
   ngOnInit() {
+    console.log("charge points")
+    console.log(this.chargePoints);
   }
 
   @Input() chargePoints: any[] = [];

@@ -11,89 +11,125 @@ import { environment } from 'src/environments/environment';
 })
 export class ChargingStationImagesComponent implements OnInit {
 
-  @Input() chargingStationID : number = 0;
-  images : any[] = [];
-  rootPathUrl : string = environment.apiStaticFilesUrl;
-  addingImages : boolean = false;
+  @Input() chargingStationID: number = 0;
+  images: any[] = [];
+  rootPathUrl: string = environment.apiStaticFilesUrl;
+  addingImages: boolean = false;
 
-  chargingStationImages : File[] = [];
-  displayedImages : string[] = [];
-  fileErrors : string[] = [];
+  chargingStationImages: File[] = [];
+  displayedImages: string[] = [];
+  fileErrors: string[] = [];
 
-  imagesUploading : boolean = false;
+  imagesUploading: boolean = false;
 
   constructor(
-    private _chargingStationImageService : ChargingStationImageService,
-    private _modalService : ActionModalService
+    private _chargingStationImageService: ChargingStationImageService,
+    private _modalService: ActionModalService
   ) { }
 
   ngOnInit() {
     this.getImages();
   }
 
-  getImages(){
+  getImages() {
     this._chargingStationImageService.getChargingStationImages(this.chargingStationID).subscribe((data) => {
       this.images = data;
     })
   }
 
-  deleteImage(id : number){
+  deleteImage(id: number) {
     this._chargingStationImageService.deleteById(id).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Images Uploaded Successfully",4000);
+      this._modalService.popup(ActionModalStatusEnum.Success, "Succcess !", "Images Uploaded Successfully", 4000);
       this.getImages();
-    },(error)=> {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something went wrong please try again later",4000);
+    }, (error) => {
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later", 4000);
       this.getImages();
     })
   }
 
-  
+
   handleUpload(event: any): void {
     this.fileErrors = [];
     if (event.target.files && event.target.files[0]) {
-      for(var i=0; i < event.target.files.length ; i++){
+      for (var i = 0; i < event.target.files.length; i++) {
         const file = event.target.files[i];
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        this.fileErrors.push('Only image files are allowed.');
-        continue;
-      }
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          this.fileErrors.push('Only image files are allowed.');
+          continue;
+        }
 
-      // Validate file size
-      const maxSizeInMB = 2;
-      const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-      if (file.size > maxSizeInBytes) {
-        this.fileErrors.push('File size must be less than 2MB.');
-        continue;
-      }
+        // Validate file size
+        const maxSizeInMB = 2;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+        if (file.size > maxSizeInBytes) {
+          this.fileErrors.push('File size must be less than 2MB.');
+          continue;
+        }
         this.displayedImages.push(URL.createObjectURL(event.target.files[i]))
         this.chargingStationImages.push(event.target.files[i]);
       }
     }
   }
 
-  clearImage(i : number): void {
-    this.chargingStationImages.splice(i,1);
-    this.displayedImages.splice(i,1);
+  clearImage(i: number): void {
+    this.chargingStationImages.splice(i, 1);
+    this.displayedImages.splice(i, 1);
   }
 
-  uploadImages(){
+  uploadImages() {
     this.imagesUploading = true;
     let formData = new FormData();
 
     if (this.chargingStationImages) {
-      this.chargingStationImages.forEach((image : File, index : number) => {
+      this.chargingStationImages.forEach((image: File, index: number) => {
         formData.append(`chargingStationImages[${index}]`, image, image.name);
       });
     }
 
-    this._chargingStationImageService.uploadChargingStationImages(formData,this.chargingStationID).subscribe((data) => {
+    this._chargingStationImageService.uploadChargingStationImages(formData, this.chargingStationID).subscribe((data) => {
       this.imagesUploading = false;
-      this._modalService.popup(ActionModalStatusEnum.Success,"Succcess !","Images Uploaded Successfully",4000);
-    },(error) => {
+      this._modalService.popup(ActionModalStatusEnum.Success, "Succcess !", "Images Uploaded Successfully", 4000);
+    }, (error) => {
       this.imagesUploading = false;
-      this._modalService.popup(ActionModalStatusEnum.Error,"Error !","Something went wrong please try again later",4000);
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later", 4000);
     })
+  }
+
+  trackByImageId(index: number, image: any): any {
+    return image.id || index;
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    // Add drag-over class for visual feedback
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    // Remove drag-over class
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const files = event.dataTransfer?.files;
+    if (files) {
+      this.handleUpload({ target: { files } } as any);
+    }
+  }
+
+  cancelAddingImages(): void {
+    this.addingImages = false;
+    // Clear any selected images
+    this.chargingStationImages = [];
+    this.displayedImages = [];
   }
 
 }

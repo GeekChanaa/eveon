@@ -7,6 +7,7 @@ using VoltaXApi.Exceptions;
 using VoltaXApi.Factories;
 using VoltaXApi.Helpers;
 using System.Security.Claims;
+using VoltaXApi.Exceptions.AuthExceptions;
 
 namespace VoltaXApi.Services
 {
@@ -71,6 +72,26 @@ namespace VoltaXApi.Services
       MailRequest requ = _mailRequestFactory.CreateResetPasswordMailRequest(email);
 
       await this._mailService.SendResetPasswordMailRequest(requ, userName, verificationLink);
+    }
+
+    // Reset Password Request For Mobile Application
+    public async Task ResetPasswordRequestForMobile(string email)
+    {
+      var user = await _userRepository.GetUserByEmail(email);
+
+      var code = new Random().Next(100000, 999999).ToString();
+      var resetToken = await this._userRepository.GenerateResetPasswordTokenForUser(email);
+
+      user.ResetPasswordCode = code;
+      user.ResetPasswordCodeExpiresAt = DateTime.UtcNow.AddMinutes(10);
+      user.ResetPasswordToken = resetToken;
+      await _userRepository.Update(user);
+
+      var userName = (await this._userRepository.GetUserByEmail(email)).FullName;
+
+      MailRequest requ = _mailRequestFactory.CreateResetPasswordForMobileMailRequest(email);
+
+      await this._mailService.SendResetPasswordForMobileMailRequest(requ, userName, code);
     }
 
     private async Task<string> GetResetPasswordLinkForUserByEmail(string email)
@@ -187,6 +208,11 @@ namespace VoltaXApi.Services
         .ThenInclude(up => up.Permission)
         .FirstOrDefaultAsync(x => x.Email == email);
 
+      if (user.PartnerID != null)
+      {
+        throw new UnauthorizedException("A partner account should login from the partner portal");
+      }
+
       try
       {
         var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
@@ -197,7 +223,7 @@ namespace VoltaXApi.Services
         if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {
           await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
-          return null;
+          throw new UnauthorizedException("Email or Password incorrect");
         }
         var claims = BuildUserClaims(user);
 
@@ -269,6 +295,37 @@ namespace VoltaXApi.Services
       // Sending the email of the changed password
       MailRequest requ = _mailRequestFactory.CreateChangedPasswordMailRequest(user.Email);
       await this._mailService.SendPasswordChangedMail(requ, user.FirstName);
+    }
+
+    public async Task<string> VerifyResetPasswordCodeForMobile(UserResetPasswordForMobileDto userResetPasswordForMobileDto)
+    {
+      // Find user by email or phone
+      var user = await _userRepository.GetUserByEmail(userResetPasswordForMobileDto.Email);
+
+      if (user == null)
+      {
+        throw new UserNotFoundException("User not found with the provided email or phone number.");
+      }
+
+      // Check if user has a reset password request
+      if (string.IsNullOrEmpty(user.ResetPasswordCode))
+      {
+        throw new ResetPasswordCodeNotFoundException();
+      }
+
+      // Check if code has expired
+      if (user.ResetPasswordCodeExpiresAt.HasValue && user.ResetPasswordCodeExpiresAt.Value < DateTime.UtcNow)
+      {
+        throw new ExpiredResetPasswordCodeException(user.ResetPasswordCodeExpiresAt.Value);
+      }
+
+      // Verify the code
+      if (user.ResetPasswordCode != userResetPasswordForMobileDto.Code)
+      {
+        throw new InvalidResetPasswordCodeException();
+      }
+
+      return user.ResetPasswordToken;
     }
 
   }

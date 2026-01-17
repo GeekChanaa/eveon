@@ -160,4 +160,15 @@ public class MailRequestFactory : IMailRequestFactory
             Subject = "New Debit Card Added – VoltaX Charging"
         };
     }
+
+    public MailRequest CreateResetPasswordForMobileMailRequest(string to)
+    {
+        return new MailRequest
+        {
+            Email = "no-reply@voltaxcharging.com",
+            Name = "VoltaX Charging",
+            ToEmails = new List<string> { to },
+            Subject = "Password Reset Request – VoltaX Charging"
+        };
+    }
 }

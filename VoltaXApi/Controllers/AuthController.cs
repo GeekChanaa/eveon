@@ -134,6 +134,30 @@ namespace VoltaXApi.Controllers
             return StatusCode(200);
         }
 
+        [HttpGet("ResetPasswordForMobile")]
+        public async Task<IActionResult> ResetPasswordRequestForMobile([FromQuery] string email)
+        {
+            await _authService.ResetPasswordRequestForMobile(email);
+            return StatusCode(200);
+        }
+
+        [HttpPost("VerifyResetPasswordCodeForMobile")]
+        public async Task<IActionResult> VerifyResetPasswordCodeForMobile([FromBody] UserResetPasswordForMobileDto userResetPasswordForMobileDto)
+        {
+            try
+            {
+                var resetPasswordToken = await _authService.VerifyResetPasswordCodeForMobile(userResetPasswordForMobileDto);
+                return Ok(new 
+                { 
+                    email = userResetPasswordForMobileDto.Email, 
+                    resetPasswordToken = resetPasswordToken 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
 
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword(UserPasswordChangeDto userPasswordChangeDto)
@@ -183,8 +207,6 @@ namespace VoltaXApi.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Message : " + ex.Message);
-                Console.WriteLine("StackTrace : " + ex.StackTrace);
                 return StatusCode(500, "Phone number or token incorrect");
             }
         }

@@ -46,6 +46,7 @@ namespace VoltaXApi.Mappers
 
             CreateMap<Connector, ConnectorListDto>();
 
+            CreateMap<ChargingStation, ChargingStationForMapDto>();
 
         }
     }

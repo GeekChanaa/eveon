@@ -74,7 +74,6 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
   getConfigurations(){
     this._configurationService.getGlobalConfigurations().subscribe((data : GlobalConfigurations) => {
       this.configuration = data;
-      console.log(this.configuration);
     })
   }
   
@@ -312,12 +311,9 @@ export class CreateChargingStationAddChargePointsComponent implements OnInit {
         };
       }
 
-      console.log(chargePoint);
       
       // For Single type, must have exactly 1 connector
-      console.log(chargePoint.category)
       if (chargePoint.category == "Single" && chargePoint.connectors.length != 1) {
-        console.log("this is in here");
         return { 
           valid: false, 
           message: `Charge point #${i + 1} with serial number ${chargePoint.serialNumber} is of type Single and must have exactly 1 connector.` 

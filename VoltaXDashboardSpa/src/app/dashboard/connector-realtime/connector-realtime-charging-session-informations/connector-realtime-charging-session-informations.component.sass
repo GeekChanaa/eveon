@@ -1,6 +1,6 @@
 // Main Container
 .charging-session-page 
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)
+  background: var(--primary2)
   min-height: 100vh
   padding: 2rem 0
   
@@ -125,7 +125,7 @@
   .section-title 
     font-size: 1.75rem
     font-weight: 600
-    color: #1e293b
+    color: var(--primary9)
     margin: 0
   
 
@@ -136,12 +136,12 @@
 
 // Info Section
 .info-section 
-  background: white
+  background: var(--primary1)
   border-radius: 1.5rem
   padding: 2.5rem
   margin-bottom: 3rem
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid #f1f5f9
+  border: 1px solid var(--primary2)
 
 
 .info-grid 
@@ -160,7 +160,7 @@
       background: #f1f5f9
       border-color: #cbd5e1
       transform: translateY(-2px)
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+      box-shadow: 0 4px 12px var(--primary2)
     
   
 
@@ -171,14 +171,15 @@
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
   gap: 2rem
   margin-bottom: 3rem
+  background: var(--primary2)
 
 
 .summary-card 
-  background: white
+  background: var(--primary1)
   border-radius: 1.5rem
   padding: 2rem
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid #f1f5f9
+  border: 1px solid var(--primary2)
   transition: all 0.3s ease
 
   &:hover 
@@ -199,7 +200,7 @@
   .summary-title 
     font-size: 1.25rem
     font-weight: 600
-    color: #1e293b
+    color: var(--primary9)
     margin: 0 0 1.5rem 0
   
 
@@ -232,7 +233,7 @@
     justify-content: space-between
     align-items: center
     padding: 0.75rem 0
-    border-bottom: 1px solid #f1f5f9
+    border-bottom: 1px solid var(--primary2)
 
     &:last-child 
       border-bottom: none
@@ -258,7 +259,7 @@
     
 
     .detail-value 
-      color: #1e293b
+      color: var(--primary9)
       font-weight: 600
     
   
@@ -340,11 +341,11 @@
 
 // Breakdown Section
 .breakdown-section 
-  background: white
+  background: var(--primary1)
   border-radius: 1.5rem
   padding: 2.5rem
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid #f1f5f9
+  border: 1px solid var(--primary2)
 
 
 // Enhanced Price Table
@@ -410,7 +411,7 @@
           align-items: center
           gap: 0.75rem
           font-weight: 600
-          color: #1e293b
+          color: var(--primary9)
 
           .service-icon 
             font-size: 1.25rem
@@ -459,8 +460,6 @@
 .vat-toggle 
   background: #f1f5f9
   border-radius: 0.75rem
-  padding: 0.25rem
-  border: 1px solid #e2e8f0
   
   button 
     padding: 0.5rem 1rem

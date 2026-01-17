@@ -12,7 +12,7 @@ using VoltaXApi.Data;
 namespace VoltaXApi.Migrations
 {
     [DbContext(typeof(VoltaXApiDbContext))]
-    [Migration("20250909205123_recreate")]
+    [Migration("20251214163619_recreate")]
     partial class recreate
     {
         /// <inheritdoc />
@@ -509,6 +509,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("CardID")
                         .HasColumnType("int");
 
+                    b.Property<double?>("ChargedKwhs")
+                        .HasColumnType("double");
+
                     b.Property<double?>("ChargedMinutes")
                         .HasColumnType("double");
 
@@ -517,6 +520,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("ConnectorID")
                         .HasColumnType("int");
+
+                    b.Property<double?>("CostPerKwh")
+                        .HasColumnType("double");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -973,9 +979,6 @@ namespace VoltaXApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("ChargePointID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ConnectorID")
                         .HasColumnType("int");
 
@@ -997,8 +1000,6 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("ChargePointID");
 
                     b.HasIndex("ConnectorID");
 
@@ -3121,15 +3122,9 @@ namespace VoltaXApi.Migrations
 
             modelBuilder.Entity("VoltaXApi.Models.ConnectorStatus", b =>
                 {
-                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
-                        .WithMany()
-                        .HasForeignKey("ChargePointID");
-
                     b.HasOne("VoltaXApi.Models.Connector", "Connector")
                         .WithMany()
                         .HasForeignKey("ConnectorID");
-
-                    b.Navigation("ChargePoint");
 
                     b.Navigation("Connector");
                 });

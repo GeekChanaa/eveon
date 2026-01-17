@@ -33,13 +33,12 @@
     </ng-container>
 
     <!-- Charging Station Charge Points -->
-    <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.AddChargePoints">
       <app-create-charging-station-add-charge-points
+        [hidden]="currentStep !== CreateChargingStationFormStepEnum.AddChargePoints"
         [chargingStationType]="chargingStationType"
         (previousStepEvent)="currentStep = CreateChargingStationFormStepEnum.ChargingStationAddress"
         (nextStep)="savingChargePoints($event)">
       </app-create-charging-station-add-charge-points>
-    </ng-container>
 
     <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.Images">
       <app-create-charging-station-images

@@ -2,40 +2,30 @@ using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
-using System.Threading.Tasks;
-using System.Text;
-using Microsoft.Extensions.Configuration;
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
 using VoltaXApi.Helpers;
-using OCPP.Core.Server;
-using VoltaXApi.Services;
 using System.Net.WebSockets;
-using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Services;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using VoltaXApi.Services;
 
 
 namespace VoltaXApi.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class ChargePointController : GenericController<ChargePoint>
     {
         private readonly IChargePointRepository _repository;
         private readonly WebSocketManagerService _wsService;
+        private readonly IQRCodeService _qrCodeService;
 
         public ChargePointController(
             IChargePointRepository repository,
-            WebSocketManagerService wsService) : base(repository)
+            WebSocketManagerService wsService,
+            IQRCodeService qrCodeService) : base(repository)
         {
             _repository = repository;
             _wsService = wsService;
+            _qrCodeService = qrCodeService;
         }
 
         // Get ChargePoint Connectors
@@ -156,6 +146,37 @@ namespace VoltaXApi.Controllers
         {
             await this._repository.SetHasChargeCable(chargePointID, val);
             return StatusCode(200);
+        }
+
+        /// <summary>
+        /// Generates a QR code image for a specific charge point
+        /// </summary>
+        /// <param name="chargePointID">The charge point ID</param>
+        /// <returns>PNG image of the QR code</returns>
+        [HttpGet("GenerateQrCodeForChargePoint/{chargePointID}")]
+        public async Task<IActionResult> GenerateQrCodeForChargePoint(int chargePointID)
+        {
+            var chargePoint = await _repository.GetByIdAsync(chargePointID);
+            
+            if (chargePoint == null)
+            {
+                return NotFound(new { message = "Charge point not found" });
+            }
+
+            if (string.IsNullOrEmpty(chargePoint.QrValue))
+            {
+                return BadRequest(new { message = "Charge point does not have a QR value" });
+            }
+
+            try
+            {
+                var qrCodeBytes = _qrCodeService.GenerateQr(chargePoint.QrValue);
+                return File(qrCodeBytes, "image/png", $"chargepoint_{chargePointID}_qr.png");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to generate QR code", error = ex.Message });
+            }
         }
 
     }

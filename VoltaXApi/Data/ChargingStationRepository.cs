@@ -234,7 +234,7 @@ namespace VoltaXApi.Data
             foreach (var cs in chargingStations)
             {
                 var revenue = await GetPartnerChargingStationRevenue(partnerID,cs.ID);
-                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = revenue });
+                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = revenue, ChargingStationName = cs.Name });
             }
 
             // Order by revenue and take top 10
@@ -245,9 +245,16 @@ namespace VoltaXApi.Data
 
         public async Task<ChargingStation> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto)
         {
-            ChargingStation chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationCreateDto);
+            var chargingStation = _mapper.Map<ChargingStationCreateDto, ChargingStation>(chargingStationCreateDto);
             await this.AddAsync(chargingStation);
             return chargingStation;
+        }
+
+        public async Task<List<ChargingStationForMapDto>> GetChargingStationsForMap()
+        {
+            var chargingStations = await dbSet.Where(cs => cs.ChargePoints.Any(cp => cp.ShowOnMap == true)).ToListAsync();
+            var result = _mapper.Map<List<ChargingStation>,List<ChargingStationForMapDto>>(chargingStations);
+            return result;
         }
 
         public async Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "")

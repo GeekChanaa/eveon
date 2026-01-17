@@ -9,7 +9,8 @@ BLUE='\033[0;34m'
 # Project and Docker configuration
 PROJECT_NAME="voltax-api"
 DOCKER_REGISTRY="jaberfeka"
-AWS_MACHINE_IP="51.20.70.166"
+# AWS_MACHINE_IP="51.20.70.166" ## this is for voltaxcharging
+AWS_MACHINE_IP="56.228.5.143" ## this is for eveon
 AWS_USER="ec2-user"
 
 # Function to handle errors

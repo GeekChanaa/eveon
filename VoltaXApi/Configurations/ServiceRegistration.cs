@@ -186,6 +186,7 @@ public static class ServiceRegistration
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPartnerAuthService, PartnerAuthService>();
+        services.AddScoped<IQRCodeService, QRCodeService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ISnsService, SnsService>();

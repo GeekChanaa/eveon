@@ -33,6 +33,8 @@ namespace VoltaXApi.Data
         Task<bool> ChargingStationExistsByName(string Name);
         Task<int> GetLatestStationNumberAsync();
         Task<List<ChargingStationForSelectDto>> GetChargingStationsForSelect();
+        Task<List<ChargingStationForMapDto>> GetChargingStationsForMap();
+        
 
     }
 }

@@ -1,33 +1,79 @@
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">Recharge Order</div>
-    <div class="settings">
-      <div class="settings__wrapper">
-        <div class="settings__list">
-          <div class="settings__item">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+<app-dashboard-details-container [state]="state" [title]="order?.name || 'Order Details'" [breadcrumbs]="[
+  { label: 'Dashboard', link: '/dashboard' },
+  { label: 'Recharge Orders', link: '/dashboard/recharge-orders' },
+  { label: order?.id || 'Details' }
+]">
 
-            </div>
-            <div class="settings__fieldset" *ngIf="order.id != null">
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="ID"
-                [val]="order.id"></app-display-cell>
 
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Card Number"
-                [val]="order.cardNumber"></app-display-cell>
+  <!-- Content area -->
+  <div class="content-area">
+    <!-- Tabs navigation -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="active" class="tab-button">
+          Information
+        </button>
+      </div>
+    </div>
 
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Amount"
-                [val]="order.amount"></app-display-cell>
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Information Tab -->
+      <div class="information-tab">
+        <div class="order profile-section">
 
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Recharge Date"
-                [val]="order.rechargeDate"></app-display-cell>
+          <div class="order-content">
 
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="User"
-                [val]="order.userName"></app-display-cell>
+            <!-- Main details -->
+            <div class="form-content">
 
-              <app-display-cell [object]="order" [editable]="false" inpType="text" title="Status"
-                [val]="order.status"></app-display-cell>
+              <div class="form-section">
+                <h3 class="section-title">Informations</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)" [object]="order"
+                    inpType="text" title="ID" [tooltip]="'ID of the order'" [editable]="false" [isLink]="true"
+                    [val]="order.id" [editable]="false"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)"
+                    [tooltip]="'The card number of the VoltaX Recharge Card'" [object]="order" inpType="number"
+                    title="CardNumber" [editable]="false" [val]="order.cardNumber"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)" [object]="order"
+                    [tooltip]="'The amount of the recharge order.'" inpType="number" title="amount"
+                    [val]="order.amount" [editable]="false"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)" [object]="order"
+                    inpType="date" [tooltip]="'The date where this order took place'" title="rechargeDate"
+                    val="{{order.rechargeDate}}" [editable]="false"></app-display-cell>
+                </div>
+
+              </div>
+
+              <!-- Address Information -->
+              <div class="form-section">
+                <h3 class="section-title">Additional Informations</h3>
+                <div class="field-group">
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)" [object]="order"
+                    [tooltip]="'The user who did this order.'" inpType="text" title="userName"
+                    val="{{order.userName}}" [editable]="false"></app-display-cell>
+
+                  <app-display-cell [updateObservable]="updateOrderObservable.bind(this)" [object]="order"
+                    inpType="select_enum" title="Status" [tooltip]="'The current status of the recharge order'"
+                    enumName="RechargeOrderStatus" val="{{order.status}}"></app-display-cell>
+                </div>
+
+              </div>
+
+              <!-- Actions -->
+              <div class="form-section">
+                <h3 class="section-title">Other Actions</h3>
+                <div class="other-actions-container">
+                  <app-button size="small" variant="secondary" (btnClick)="downloadQuote(order.id)"> Download The Quote </app-button>
+                  <app-button size="small" variant="secondary"> Send the quote as an email to the user </app-button>
+                </div>
+                
+              </div>
+
 
 
             </div>
@@ -36,4 +82,4 @@
       </div>
     </div>
   </div>
-</div>
+</app-dashboard-details-container>

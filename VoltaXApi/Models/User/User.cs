@@ -49,6 +49,8 @@ namespace VoltaXApi.Models
         public string? EmailVerificationToken { get; set; }
         public bool IsPhoneNumberVerified { get; set; } = false;
         public string? PhoneVerificationToken { get; set; }
+        public string? ResetPasswordCode { get; set; }
+        public DateTime? ResetPasswordCodeExpiresAt { get; set; }
         public int RoleID { get; set; }
         public Role Role { get; set; }
         public string? ResetPasswordToken  { get; set; }

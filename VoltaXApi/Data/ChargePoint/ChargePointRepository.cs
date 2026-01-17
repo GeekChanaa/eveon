@@ -6,6 +6,7 @@ using AutoMapper;
 using VoltaXApi.Helpers;
 using AutoMapper.QueryableExtensions;
 using Bogus.DataSets;
+using VoltaXApi.Services;
 
 namespace VoltaXApi.Data
 {
@@ -62,6 +63,7 @@ namespace VoltaXApi.Data
         override public async Task AddAsync(ChargePoint chargePoint)
         {
             chargePoint.ChargePointId = await this.GenerateChargePointId();
+            chargePoint.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
             await _context.Set<ChargePoint>().AddAsync(chargePoint);
             await _context.SaveChangesAsync();
         }

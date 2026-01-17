@@ -64,9 +64,10 @@ export class LoginComponent implements OnInit {
       }
     },(error) => {
       this.isLoading = false;
-      console.log("this is the error my friend");
-      console.log(error);
-      if(error.status == 401){
+      if(error.error.error == "A partner account should login from the partner portal"){
+        this.errorMessage = "A partner account should login from the partner portal"
+      }
+      else if(error.status == 401){
         this.errorMessage = "Email or password incorrect";
       }
       else if(error.error.error == 'Too many failed attempts'){

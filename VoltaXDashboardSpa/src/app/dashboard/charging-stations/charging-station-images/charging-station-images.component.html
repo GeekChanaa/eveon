@@ -4,42 +4,68 @@
 <ng-container *ngIf="!addingImages">
   <ng-container *ngIf="images != null && images.length > 0">
     <div class="images-container">
-      <div class="image-container" *ngFor="let image of images">
-        <img src="{{rootPathUrl+image.url}}" alt="">
-        <div (click)="deleteImage(image.id)" class="delete-img">X</div>
+      <div class="image-container" *ngFor="let image of images; trackBy: trackByImageId">
+        <img [src]="rootPathUrl + image.url" [alt]="'Charging station image ' + (image.id || '')" loading="lazy">
+        <button type="button" class="delete-img" (click)="deleteImage(image.id)"
+          [attr.aria-label]="'Delete image ' + (image.id || '')" title="Delete image">
+          <svg class="icon icon-close" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+          </svg>
+        </button>
       </div>
     </div>
   </ng-container>
-  
-  
+
   <ng-container *ngIf="images == null || images.length == 0">
-    There are no images assignes to this charging station.
+    <div class="empty-state">
+      <svg class="icon icon-image-placeholder" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+      </svg>
+      <p class="empty-state-text">No images assigned to this charging station</p>
+    </div>
   </ng-container>
 </ng-container>
-
 
 <ng-container *ngIf="addingImages">
   <div class="create__card card">
     <div class="file">
-      <div class="file__label">Cover images
-        <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed"
+      <div class="file__label">
+        Cover images
+        <div class="tooltip" title="Upload multiple images for this charging station. Supported formats: JPG, PNG, WEBP"
           data-position="right">
-          <svg class="icon icon-info">
-            <use xlink:href="#icon-info"></use>
+          <svg class="icon icon-info" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM13,17h-2v-6h2v6zM13,9h-2L11,7h2v2z" />
           </svg>
         </div>
       </div>
-      <div class="file__wrap">
-        <input class="upload-input" type="file" multiple (change)="handleUpload($event)" />
-        <div class="file__box" *ngIf="chargingStationImages == null || chargingStationImages.length == 0">
-          <svg class="icon icon-upload">
-            <use xlink:href="#icon-upload"></use>
-          </svg>Click or drop image
+
+      <div class="file__wrap" [class.has-files]="chargingStationImages && chargingStationImages.length > 0"
+        (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+
+        <input class="upload-input" type="file" multiple accept="image/*" (change)="handleUpload($event)" #fileInput
+          aria-label="Upload images" />
+
+        <div class="file__box" *ngIf="!chargingStationImages || chargingStationImages.length === 0">
+          <svg class="icon icon-upload" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+          <span class="upload-text">Click or drag images here</span>
+          <span class="upload-subtext">JPG, PNG, WEBP up to 10MB each</span>
         </div>
-        <div class="files__box">
-          <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index">
-            <div class="image__clear" (click)="clearImage(i)">X</div>
-            <img src="{{imageUrl}}" alt="">
+
+        <div class="files__box" *ngIf="displayedImages && displayedImages.length > 0">
+          <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index; trackBy: trackByIndex">
+            <button type="button" class="image__clear" (click)="clearImage(i)"
+              [attr.aria-label]="'Remove image ' + (i + 1)" title="Remove image">
+              <svg class="icon icon-close" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
+            </button>
+            <img [src]="imageUrl" [alt]="'Preview image ' + (i + 1)" loading="lazy">
           </div>
         </div>
       </div>
@@ -47,23 +73,31 @@
   </div>
 </ng-container>
 
-
-
 <div class="form-actions">
-  <button *ngIf="!addingImages" (click)="addingImages = true" class="button add-images-btn">Add Images</button>
+  <app-button variant="secondary" *ngIf="!addingImages" type="button" (click)="addingImages = true">
+    Add Images
+  </app-button>
 
   <ng-container *ngIf="addingImages">
-    
-    <button (click)="addingImages = false" class="button button-stroke"> Cancel </button>
-    
-    <button 
-      [disabled]="imagesUploading" 
-      [ngClass]="{'disabled' : imagesUploading}" 
-      class="button add-images-btn"
-      (click)="uploadImages()">
-      <ng-container *ngIf="imagesUploading"> <app-svg-spinner></app-svg-spinner> </ng-container>
-      <ng-container *ngIf="!imagesUploading"> Upload Images </ng-container>
-      
-    </button>
+    <div class="button-group">
+      <button type="button" (click)="cancelAddingImages()" class="button button-stroke" [disabled]="imagesUploading">
+        Cancel
+      </button>
+
+      <button type="button" [disabled]="imagesUploading || !chargingStationImages?.length"
+        [class.disabled]="imagesUploading || !chargingStationImages?.length" class="button add-images-btn"
+        (click)="uploadImages()">
+        <ng-container *ngIf="imagesUploading">
+          <app-svg-spinner class="button-spinner"></app-svg-spinner>
+          Uploading...
+        </ng-container>
+        <ng-container *ngIf="!imagesUploading">
+          <svg class="icon icon-upload" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+          Upload Images
+        </ng-container>
+      </button>
+    </div>
   </ng-container>
 </div>

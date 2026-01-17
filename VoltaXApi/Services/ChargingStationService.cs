@@ -43,6 +43,7 @@ namespace VoltaXApi.Services
           foreach(var chargePoint in chargingStation.ChargePoints)
           {
             chargePoint.ChargePointId = await GenerateChargePointId();
+            chargePoint.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
           }
           await _repository.AddAsync(chargingStation);
 

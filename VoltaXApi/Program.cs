@@ -28,7 +28,7 @@ public class Program
         ConfigureApp(app);
         
         // Run database seeding
-        SeedDatabase(app);
+        //SeedDatabase(app);
         
         app.Run();
     }
@@ -95,7 +95,7 @@ public class Program
         var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
         
         var mapper = app.Services.GetRequiredService<AutoMapper.IMapper>();
-        // DatabaseInit.Seed(dbContext, mapper).Wait();
+        DatabaseInit.Seed(dbContext, mapper).Wait();
         dbContext.Database.SetCommandTimeout(6000);
     }
 }
