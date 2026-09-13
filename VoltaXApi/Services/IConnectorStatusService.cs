@@ -12,5 +12,6 @@ namespace VoltaXApi.Services
     {
       Task<bool> RefreshConnectorStatuses(List<ReportDataType>? ReportData, string chargePointID);
       Task<bool> UpdateConnectorStatus(int connectorId, int evseId, ConnectorStatusEnumType status, DateTimeOffset? statusTime, string chargePointID);
+      Task<bool> IsEVCableConnected(string chargePointID);
     }
 }

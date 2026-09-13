@@ -1,39 +1,69 @@
+@import ./../../../../styles/connector-realtime
+
 .charge_point_info-container
-  min-height: 60vh
+  min-height: 0
+
   .charge_point_info-image-container
     width: 100%
     display: flex
     align-items: center
     justify-content: center
+    padding: 16px
+    border: 1px solid var(--vx-border, #EDEDED)
+    border-radius: 12px
+    background: var(--vx-surface-alt, #FAFAFA)
     img
       max-width: 100%
-      object-fit: cover
-      max-height: 30vh
+      object-fit: contain
+      max-height: 200px
+
   .charge_point_info-title
-    margin-top: 24px  
+    margin-top: 20px
     text-align: center
-    font-size: 2em
-    font-weight: 600
+    font-size: 20px
+    font-weight: 650
+    letter-spacing: -.01em
+    color: var(--vx-text, #0B0B0B)
+
+  // Was a 80%-wide tinted pill; a plain bordered list reads better next to
+  // the tables and lets the values use the full column width.
   .charge_point_info-informations-container
-    padding: 16px
-    margin-top: 18px
-    border: 1px solid var(--secondary6)
-    background: var(--secondary6)
-    border-radius: 24px
-    width: 80%
-    margin-left: auto
-    margin-right: auto
+    width: 100%
+    margin: 20px 0 0
+    padding: 4px 16px
+    border: 1px solid var(--vx-border, #EDEDED)
+    border-radius: 12px
+    background: transparent
+
   .charge_point_info-informations-item
     display: flex
+    align-items: baseline
+    gap: 16px
     width: 100%
-    margin-top: 12px
-    .charge_point_info-informations-item-name
-      font-size: 1.1em
-      font-weight: 600
-      flex: 0 0 50%
-    .charge_point_info-informations-item-value
-      flex: 0 0 50%
-      font-weight: 400
-    
+    margin-top: 0
+    padding: 10px 0
+    border-bottom: 1px solid var(--vx-border, #EDEDED)
 
-      
+    &:last-child
+      border-bottom: 0
+
+    .charge_point_info-informations-item-name
+      flex: 0 0 45%
+      font-size: 13px
+      font-weight: 500
+      color: var(--vx-text-muted, #7A7C80)
+
+    .charge_point_info-informations-item-value
+      flex: 1 1 auto
+      min-width: 0
+      font-size: 13.5px
+      font-weight: 600
+      word-break: break-word
+      color: var(--vx-text, #0B0B0B)
+      font-variant-numeric: tabular-nums
+
+      &.link
+        cursor: pointer
+        transition: color .18s
+        &:hover
+          color: var(--vx-yellow, #E5B223)

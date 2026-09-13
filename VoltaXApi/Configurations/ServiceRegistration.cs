@@ -1,6 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using VoltaXApi.Configurations;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using OCPP.Core.Server;
@@ -34,7 +37,9 @@ public static class ServiceRegistration
     {
         services.AddControllers(options =>
         {
-            options.Filters.Add(new GlobalExceptionFilter());
+            // Registered by type, not as an instance, so the filter can take ILogger and
+            // IHostEnvironment from the container.
+            options.Filters.Add<GlobalExceptionFilter>();
         }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -60,7 +65,7 @@ public static class ServiceRegistration
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                         .GetBytes(configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
@@ -82,6 +87,36 @@ public static class ServiceRegistration
                         return Task.CompletedTask;
                     }
                 };
+            })
+            // Temporary cookie that only lives between the Google redirect and our callback.
+            .AddCookie(ExternalAuthDefaults.ExternalCookieScheme, options =>
+            {
+                options.Cookie.Name = "VoltaX.External";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+            })
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                options.SignInScheme = ExternalAuthDefaults.ExternalCookieScheme;
+
+                // Default is /signin-google, keep it configurable so it can be aligned
+                // with what is declared in the Google Cloud console.
+                var callbackPath = configuration["Authentication:Google:CallbackPath"];
+                if (!string.IsNullOrWhiteSpace(callbackPath))
+                    options.CallbackPath = callbackPath;
+
+                options.SaveTokens = false;
+                options.Scope.Add("email");
+                options.Scope.Add("profile");
+
+                options.ClaimActions.MapJsonKey(GoogleAuthProvider.PictureClaimType, "picture");
+                options.ClaimActions.MapJsonKey(GoogleAuthProvider.EmailVerifiedClaimType, "email_verified");
+
+                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                options.CorrelationCookie.IsEssential = true;
             });
     }
     
@@ -93,6 +128,7 @@ public static class ServiceRegistration
         services.Configure<CardExpirationSettings>(configuration.GetSection("CardExpirationSettings"));
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
         services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
+        services.Configure<AuthTokenSettings>(configuration.GetSection(AuthTokenSettings.SectionName));
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -154,6 +190,7 @@ public static class ServiceRegistration
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IChargePointModelRepository, ChargePointModelRepository>();
         services.AddScoped<IChargePointBrandRepository, ChargePointBrandRepository>();
         services.AddScoped<IElectricVehicleModelRepository, ElectricVehicleModelRepository>();
@@ -164,6 +201,7 @@ public static class ServiceRegistration
     public static void ConfigureFactories(IServiceCollection services)
     {
         services.AddTransient<IMailRequestFactory, MailRequestFactory>();
+        services.AddSingleton<IUserClaimsFactory, UserClaimsFactory>();
     }
     
     public static void ConfigureApplicationServices(IServiceCollection services)
@@ -186,8 +224,11 @@ public static class ServiceRegistration
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPartnerAuthService, PartnerAuthService>();
+        services.AddScoped<IGoogleAuthProvider, GoogleAuthProvider>();
         services.AddScoped<IQRCodeService, QRCodeService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddHostedService<RefreshTokenCleanupService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();

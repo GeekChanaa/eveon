@@ -19,6 +19,12 @@ namespace VoltaXApi.OCPP.Handlers
         private readonly IConfigurationService _configService;
         private readonly ILogger _logger;
 
+        private static readonly JsonSerializerSettings ResponseSerializerSettings = new()
+        {
+            Converters = new List<JsonConverter> { new StringEnumConverter() },
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         public TransactionEventHandler(
             ILoggerFactory loggerFactory,
             IMessageLogRepository messageLogRepository,
@@ -42,285 +48,247 @@ namespace VoltaXApi.OCPP.Handlers
             ChargePointStatus chargePointStatus
         )
         {
-            string? errorCode = null;
-            TransactionEventResponse transactionEventResponse = new TransactionEventResponse();
-            transactionEventResponse.CustomData = new CustomDataType();
-            transactionEventResponse.CustomData.VendorId = OCPPHelper.VendorId;
-            transactionEventResponse.IdTokenInfo = new IdTokenInfoType();
+            string errorCode = null!;
+            var transactionEventResponse = new TransactionEventResponse
+            {
+                CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId },
+                IdTokenInfo = new IdTokenInfoType()
+            };
 
             int connectorId = 0;
 
             try
             {
-                Console.WriteLine("TransactionEvent => Processing transactionEvent request...");
+                _logger.LogInformation("TransactionEvent => Processing request from {ChargePointId}", chargePointStatus.Id);
 
-                TransactionEventRequest transactionEventRequest =
-                    JsonConvert.DeserializeObject<TransactionEventRequest>(msgIn.JsonPayload);
+                var transactionEventRequest = JsonConvert.DeserializeObject<TransactionEventRequest>(msgIn.JsonPayload ?? string.Empty);
+                if (transactionEventRequest == null)
+                {
+                    _logger.LogWarning("TransactionEvent => Failed to deserialize request payload");
+                    errorCode = ErrorCodes.FormationViolation;
+                    return errorCode;
+                }
 
-                string idTag = "";
-                if (transactionEventRequest.IdToken != null)
-                    idTag = CleanChargeTagId(transactionEventRequest.IdToken.IdToken, _logger);
+                string idTag = transactionEventRequest.IdToken != null
+                    ? CleanChargeTagId(transactionEventRequest.IdToken.IdToken)
+                    : string.Empty;
 
-                var chargePoint = await this._chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+                var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
+                if (chargePoint == null)
+                {
+                    _logger.LogWarning("TransactionEvent => Charge point not found: {ChargePointId}", chargePointStatus.Id);
+                    errorCode = ErrorCodes.GenericError;
+                    return errorCode;
+                }
 
-                var connector = await this._connectorRepository
-                    .GetConnectorByConnectorIdEvseId(
+                var connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(
+                    (int)transactionEventRequest.EVSE.ConnectorId,
+                    (int)transactionEventRequest.EVSE.Id,
+                    chargePoint.ID);
+
+                if (connector == null)
+                {
+                    _logger.LogWarning("TransactionEvent => Connector not found, refreshing for {ChargePointId}", chargePointStatus.Id);
+                    await _configService.RefreshConnectors(chargePointStatus.Id);
+
+                    connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(
                         (int)transactionEventRequest.EVSE.ConnectorId,
                         (int)transactionEventRequest.EVSE.Id,
                         chargePoint.ID);
 
-                if (connector == null)
-                {
-                    await _configService.RefreshConnectors(chargePointStatus.Id);
+                    if (connector == null)
+                    {
+                        _logger.LogError("TransactionEvent => Connector still not found after refresh for {ChargePointId}", chargePointStatus.Id);
+                        errorCode = ErrorCodes.GenericError;
+                        return errorCode;
+                    }
                 }
 
+                connectorId = connector.ID;
 
-                //  Extract meter values with correct scale
-                double currentChargeKW = 0;
-                double meterKWH = 0;
-                DateTimeOffset? meterTime = null;
-                double stateOfCharge = -1;
-                if (transactionEventRequest.MeterValue != null)
-                    GetMeterValues(
-                        transactionEventRequest.MeterValue,
-                        out meterKWH,
-                        out currentChargeKW,
-                        out stateOfCharge,
-                        out meterTime
-                    );
+                var meterData = transactionEventRequest.MeterValue != null
+                    ? ExtractMeterValues(transactionEventRequest.MeterValue)
+                    : MeterData.Empty;
 
-                if (transactionEventRequest.EventType == TransactionEventEnumType.Started)
+                switch (transactionEventRequest.EventType)
                 {
-                    await _transactionService.StartTransaction(
-                        transactionEventRequest,
-                        transactionEventResponse,
-                        chargePointStatus,
-                        connector,
-                        idTag,
-                        errorCode,
-                        meterKWH
-                    );
-                }
-                else if (transactionEventRequest.EventType == TransactionEventEnumType.Updated)
-                {
-                    await _transactionService.UpdateTransaction(
-                        transactionEventRequest,
-                        transactionEventResponse,
-                        chargePointStatus,
-                        connector,
-                        idTag,
-                        errorCode,
-                        meterKWH
-                    );
-                }
-                else if (transactionEventRequest.EventType == TransactionEventEnumType.Ended)
-                {
-                    await _transactionService.EndTransaction(
-                        transactionEventRequest,
-                        transactionEventResponse,
-                        chargePointStatus,
-                        connector,
-                        idTag,
-                        errorCode,
-                        meterKWH
-                    );
+                    case TransactionEventEnumType.Started:
+                        await _transactionService.StartTransaction(
+                            transactionEventRequest, transactionEventResponse,
+                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
+                        break;
+
+                    case TransactionEventEnumType.Updated:
+                        await _transactionService.UpdateTransaction(
+                            transactionEventRequest, transactionEventResponse,
+                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
+                        break;
+
+                    case TransactionEventEnumType.Ended:
+                        await _transactionService.EndTransaction(
+                            transactionEventRequest, transactionEventResponse,
+                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
+                        break;
+
+                    default:
+                        _logger.LogWarning("TransactionEvent => Unknown event type: {EventType}", transactionEventRequest.EventType);
+                        break;
                 }
 
-                var settings = new JsonSerializerSettings
-                {
-                    Converters = new List<JsonConverter> { new StringEnumConverter() },
-                    NullValueHandling = NullValueHandling.Ignore
-                };
-                msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, settings);
-                Console.WriteLine("TransactionEvent => Response serialized");
+                msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, ResponseSerializerSettings);
+                _logger.LogInformation("TransactionEvent => Response serialized for {EventType}", transactionEventRequest.EventType);
             }
             catch (Exception exp)
             {
-                Console.WriteLine("TransactionEvent => Exception: {0}", exp.Message);
-                Console.WriteLine(exp.StackTrace);
+                _logger.LogError(exp, "TransactionEvent => Exception processing request from {ChargePointId}", chargePointStatus?.Id);
                 errorCode = ErrorCodes.FormationViolation;
             }
 
             await _msgLogRepo.SaveLogMessage(
-                chargePointStatus?.Id,
+                chargePointStatus?.Id ?? string.Empty,
                 connectorId,
                 msgIn.Action,
-                transactionEventResponse.IdTokenInfo.Status.ToString(),
-                errorCode,
+                transactionEventResponse.IdTokenInfo?.Status.ToString() ?? string.Empty,
+                errorCode ?? string.Empty,
                 msgIn,
                 msgOut
             );
+
             return errorCode;
         }
 
-        /// <summary>
-        /// Extract main meter value from collection
-        /// </summary>
-        private double GetMeterValue(ICollection<MeterValueType> meterValues)
-        {
-            double currentChargeKW = -1;
-            double meterKWH = -1;
-            DateTimeOffset? meterTime = null;
-            double stateOfCharge = -1;
-            GetMeterValues(
-                meterValues,
-                out meterKWH,
-                out currentChargeKW,
-                out stateOfCharge,
-                out meterTime
-            );
+        #region Meter Value Extraction
 
-            return meterKWH;
+        /// <summary>
+        /// Structured result from meter value extraction.
+        /// </summary>
+        private record MeterData(
+            double EnergyKWh,
+            double PowerKW,
+            double StateOfCharge,
+            DateTimeOffset? Timestamp)
+        {
+            public static readonly MeterData Empty = new(0, 0, 0, null);
         }
 
         /// <summary>
-        /// Extract different meter values from collection
+        /// Extract all meter values from the OCPP MeterValue collection.
         /// </summary>
-        private void GetMeterValues(
-            ICollection<MeterValueType> meterValues,
-            out double meterKWH,
-            out double currentChargeKW,
-            out double stateOfCharge,
-            out DateTimeOffset? meterTime
-        )
+        private MeterData ExtractMeterValues(ICollection<MeterValueType> meterValues)
         {
-            meterKWH = 0;
-            currentChargeKW = 0;
-            stateOfCharge = 0;
-            meterTime = null;
+            double meterKWH = 0;
+            double currentChargeKW = 0;
+            double stateOfCharge = 0;
+            DateTimeOffset? meterTime = null;
 
             foreach (var meterValue in meterValues)
             {
-                foreach (var sampleValue in meterValue.SampledValue)
+                foreach (var sample in meterValue.SampledValue)
                 {
-                    var unit = sampleValue.UnitOfMeasure?.Unit;
-                    var multiplier = sampleValue.UnitOfMeasure?.Multiplier ?? 0;
-                    var value = sampleValue.Value;
+                    var unit = sample.UnitOfMeasure?.Unit;
+                    var multiplier = sample.UnitOfMeasure?.Multiplier ?? 0;
+                    var value = sample.Value;
 
-                    switch (sampleValue.Context)
-                    {
-                        case ReadingContextEnumType.Transaction_End:
-                            meterKWH = ConvertToKWh(value, unit, multiplier);
-                            meterTime = meterValue.Timestamp;
-                            Console.WriteLine($"GetMeterValues => Transaction_End: {meterKWH:0.000} kWh");
-                            return; // final reading, safe to exit
-
-                        case ReadingContextEnumType.Transaction_Begin:
-                            Console.WriteLine("GetMeterValues => Transaction_Begin context detected.");
-                            meterKWH = ConvertToKWh(value, unit, multiplier);
-                            meterTime = meterValue.Timestamp;
-                            break;
-
-                        case ReadingContextEnumType.Interruption_Begin:
-                            Console.WriteLine("GetMeterValues => Interruption_Begin context detected.");
-                            break;
-
-                        case ReadingContextEnumType.Interruption_End:
-                            Console.WriteLine("GetMeterValues => Interruption_End context detected.");
-                            break;
-
-                        case ReadingContextEnumType.Sample_Clock:
-                            Console.WriteLine("GetMeterValues => Sample_Clock reading.");
-                            break;
-
-                        case ReadingContextEnumType.Sample_Periodic:
-                            Console.WriteLine("GetMeterValues => Sample_Periodic reading.");
-                            break;
-
-                        case ReadingContextEnumType.Trigger:
-                            Console.WriteLine("GetMeterValues => Triggered reading.");
-                            break;
-
-                        case ReadingContextEnumType.Other:
-                        default:
-                            // fall back to measurand-based handling
-                            break;
-                    }
-
-                    if (sampleValue.Measurand == MeasurandEnumType.Power_Active_Import)
-                    {
-                        currentChargeKW = ConvertToKW(value, unit, multiplier);
-                        Console.WriteLine($"GetMeterValues => Charging: {currentChargeKW:0.00} kW");
-                    }
-                    else if (sampleValue.Measurand == MeasurandEnumType.Energy_Active_Import_Register)
+                    // Context-based: Transaction_End is the final reading
+                    if (sample.Context == ReadingContextEnumType.Transaction_End)
                     {
                         meterKWH = ConvertToKWh(value, unit, multiplier);
                         meterTime = meterValue.Timestamp;
-                        Console.WriteLine($"GetMeterValues => Energy Imported: {meterKWH:0.000} kWh");
+                        _logger.LogDebug("MeterValues => Transaction_End: {Energy:0.000} kWh", meterKWH);
+                        return new MeterData(meterKWH, currentChargeKW, stateOfCharge, meterTime);
                     }
-                    else if (sampleValue.Measurand == MeasurandEnumType.SoC)
+
+                    if (sample.Context == ReadingContextEnumType.Transaction_Begin)
                     {
-                        stateOfCharge = value;
-                        Console.WriteLine($"GetMeterValues => SoC: {stateOfCharge:0.0}%");
+                        meterKWH = ConvertToKWh(value, unit, multiplier);
+                        meterTime = meterValue.Timestamp;
+                        _logger.LogDebug("MeterValues => Transaction_Begin: {Energy:0.000} kWh", meterKWH);
+                    }
+
+                    // Measurand-based handling
+                    switch (sample.Measurand)
+                    {
+                        case MeasurandEnumType.Power_Active_Import:
+                            currentChargeKW = ConvertToKW(value, unit, multiplier);
+                            _logger.LogDebug("MeterValues => Power: {Power:0.00} kW", currentChargeKW);
+                            break;
+
+                        case MeasurandEnumType.Energy_Active_Import_Register:
+                            meterKWH = ConvertToKWh(value, unit, multiplier);
+                            meterTime = meterValue.Timestamp;
+                            _logger.LogDebug("MeterValues => Energy: {Energy:0.000} kWh", meterKWH);
+                            break;
+
+                        case MeasurandEnumType.SoC:
+                            stateOfCharge = value;
+                            _logger.LogDebug("MeterValues => SoC: {SoC:0.0}%", stateOfCharge);
+                            break;
                     }
                 }
             }
+
+            return new MeterData(meterKWH, currentChargeKW, stateOfCharge, meterTime);
         }
 
+        #endregion
+
+        #region Unit Conversion
 
         /// <summary>
-        /// Convert Wh or kWh values into kWh
+        /// Convert energy values (Wh, kWh, etc.) to kWh.
         /// </summary>
-        private double ConvertToKWh(double value, string unit, int multiplier)
+        private double ConvertToKWh(double value, string? unit, int multiplier)
         {
+            if (multiplier > 0)
+                value *= Math.Pow(10, multiplier);
+
             if (string.IsNullOrEmpty(unit) || unit == "Wh" || unit == "VAh" || unit == "varh")
-            {
-                if (multiplier > 0)
-                    value *= Math.Pow(10, multiplier);
+                return value / 1000.0;
 
-                return value / 1000.0; // Wh → kWh
-            }
             if (unit == "kWh" || unit == "kVAh" || unit == "kvarh")
-            {
                 return value;
-            }
 
-            Console.WriteLine($"GetMeterValues => Unexpected energy unit: {unit}, Value={value}");
+            _logger.LogWarning("MeterValues => Unexpected energy unit: {Unit}, Value={Value}", unit, value);
             return value;
         }
 
         /// <summary>
-        /// Convert W or kW values into kW
+        /// Convert power values (W, kW, etc.) to kW.
         /// </summary>
-        private double ConvertToKW(double value, string unit, int multiplier)
+        private double ConvertToKW(double value, string? unit, int multiplier)
         {
+            if (multiplier > 0)
+                value *= Math.Pow(10, multiplier);
+
             if (string.IsNullOrEmpty(unit) || unit == "W" || unit == "VA" || unit == "var")
-            {
-                if (multiplier > 0)
-                    value *= Math.Pow(10, multiplier);
+                return value / 1000.0;
 
-                return value / 1000.0; // W → kW
-            }
             if (unit == "kW" || unit == "kVA" || unit == "kvar")
-            {
-                return value; // already in kW
-            }
+                return value;
 
-            Console.WriteLine($"GetMeterValues => Unexpected power unit: {unit}, Value={value}");
+            _logger.LogWarning("MeterValues => Unexpected power unit: {Unit}, Value={Value}", unit, value);
             return value;
         }
 
+        #endregion
 
-        protected static string CleanChargeTagId(string rawChargeTagId, ILogger logger)
+        /// <summary>
+        /// Clean vendor-specific suffixes from charge tag IDs (e.g., KEBA appends "_serial").
+        /// </summary>
+        private string CleanChargeTagId(string rawChargeTagId)
         {
-            string idTag = rawChargeTagId;
+            if (string.IsNullOrWhiteSpace(rawChargeTagId))
+                return string.Empty;
 
-            // KEBA adds the serial to the idTag ("<idTag>_<serial>") => cut off suffix
-            if (!string.IsNullOrWhiteSpace(rawChargeTagId))
+            int sep = rawChargeTagId.IndexOf('_');
+            if (sep >= 0)
             {
-                int sep = rawChargeTagId.IndexOf('_');
-                if (sep >= 0)
-                {
-                    idTag = rawChargeTagId.Substring(0, sep);
-                    Console.WriteLine(
-                        "CleanChargeTagId => Charge tag '{0}' => '{1}'",
-                        rawChargeTagId,
-                        idTag
-                    );
-                }
+                var cleaned = rawChargeTagId[..sep];
+                _logger.LogDebug("CleanChargeTagId => '{Raw}' => '{Cleaned}'", rawChargeTagId, cleaned);
+                return cleaned;
             }
 
-            return idTag;
+            return rawChargeTagId;
         }
     }
 }

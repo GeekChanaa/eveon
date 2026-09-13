@@ -1,34 +1,135 @@
-import { HttpEvent, HttpInterceptor, HttpRequest, HttpHandler } from "@angular/common/http";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, throwError } from "rxjs";
-import { AuthService } from "src/_services/auth.service";
+import { Router } from "@angular/router";
+import { Observable, throwError } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { TokenRefreshService } from "src/_services/token-refresh.service";
+import { TokenStorageService } from "src/_services/token-storage.service";
+import { environment } from "src/environments/environment";
 
-
-
+/**
+ * Attaches the access token to every call and keeps the session alive.
+ *
+ * Two moments trigger a refresh:
+ *  - before a call, when the access token is already expired (or about to be), so the
+ *    request is not spent on a guaranteed 401;
+ *  - after a call that came back 401, which covers a token revoked server side.
+ *
+ * Endpoints under /api/auth that do not need a token are left alone — refreshing while
+ * refreshing, or while logging in, would loop.
+ */
 @Injectable()
-export class TokenInterceptor implements HttpInterceptor
-{
-    constructor(public _authService : AuthService){}
+export class TokenInterceptor implements HttpInterceptor {
 
-    intercept(request : HttpRequest<any>, next : HttpHandler) : Observable<HttpEvent<any>>
-    {
-        
-        request = request.clone({
-            setHeaders : {
-                Authorization : 'Bearer '+localStorage.getItem("token")+""
-            }
-        });
+    /** Calls that must never carry a token or trigger a refresh. */
+    private static readonly ANONYMOUS_PATHS = [
+        '/api/auth/login',
+        '/api/auth/register',
+        '/api/auth/refresh',
+        '/api/auth/logout',
+        '/api/auth/checktoken',
+        '/api/auth/resetpassword',
+        '/api/auth/google',
+        '/api/auth/google-login',
+        '/api/auth/google-callback',
+        '/api/auth/verifyresetpasswordcodeformobile',
+        '/api/auth/resetpasswordformobile',
+        '/api/partnerauth/login',
+        '/api/partnerauth/google',
+        '/api/partnerauth/google-login',
+        '/api/partnerauth/resetpartnerpasswordrequest'
+    ];
 
-        return next.handle(request);
+    constructor(
+        private _tokenStorage: TokenStorageService,
+        private _tokenRefresh: TokenRefreshService,
+        private _router: Router
+    ) { }
+
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        if (this.isAnonymous(request)) {
+            return next.handle(request);
+        }
+
+        // Only calls to our own API get the header — a token has no business reaching
+        // Google Maps or any other third party.
+        if (!this.isApiRequest(request)) {
+            return next.handle(request);
+        }
+
+        const needsRefreshFirst = this._tokenStorage.hasRefreshToken()
+            && (this._tokenStorage.isAccessTokenExpired() || this._tokenStorage.isAccessTokenAboutToExpire());
+
+        if (needsRefreshFirst) {
+            return this._tokenRefresh.refresh().pipe(
+                catchError((error) => this.refreshFailed(error)),
+                switchMap((token) => next.handle(this.withToken(request, token)))
+            );
+        }
+
+        const sentToken = this._tokenStorage.accessToken;
+        return next.handle(this.withToken(request, sentToken)).pipe(
+            catchError((error: HttpErrorResponse) => {
+                if (error.status !== 401 || !this._tokenStorage.hasRefreshToken()) {
+                    return throwError(() => error);
+                }
+
+                // Another request may have refreshed while this response was in flight.
+                if (sentToken !== this._tokenStorage.accessToken) {
+                    return next.handle(this.withToken(request, this._tokenStorage.accessToken));
+                }
+                return this._tokenRefresh.refresh().pipe(
+                    catchError((refreshError) => this.refreshFailed(refreshError)),
+                    switchMap((token) => next.handle(this.withToken(request, token)))
+                );
+            })
+        );
     }
 
-    // handle your auth error or rethrow
-    private handleAuthError() {
-        // if (this.auth.isTokenExpired()) {
-        // // navigate /delete cookies or whatever
-        // console.log('handled error ' );
-        // // if you've caught / handled the error, you don't want to rethrow it unless you also want downstream consumers to have to handle it as well.
-        // // return Observable.throw(new Error('An error occurred'));
-        // }
+    private withToken(request: HttpRequest<any>, token: string | null): HttpRequest<any> {
+        if (token == null || token === '') {
+            return request;
+        }
+
+        return request.clone({
+            setHeaders: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+    }
+
+    /** The session is gone: clear it and send the user to the right login page. */
+    private giveUp(error: any): Observable<never> {
+        this._tokenStorage.clear();
+
+        const url = this._router.url || '';
+        const loginUrl = url.startsWith('/partner') ? '/partner-auth/login' : '/auth/login';
+
+        if (!url.startsWith('/auth') && !url.startsWith('/partner-auth')) {
+            this._router.navigateByUrl(loginUrl);
+        }
+
+        return throwError(() => error);
+    }
+
+    private refreshFailed(error: any): Observable<never> {
+        return !this._tokenStorage.hasRefreshToken() && error instanceof HttpErrorResponse
+            && (error.status === 401 || error.status === 403)
+            ? this.giveUp(error) : throwError(() => error);
+    }
+
+    private isAnonymous(request: HttpRequest<any>): boolean {
+        const base = new URL(environment.apiUrl, window.location.origin);
+        const url = new URL(request.url, window.location.origin);
+        const prefix = base.pathname.replace(/\/$/, '');
+        const path = url.pathname.slice(prefix.length).replace(/\/$/, '').toLowerCase();
+        return url.origin === base.origin && TokenInterceptor.ANONYMOUS_PATHS.includes(path);
+    }
+
+    private isApiRequest(request: HttpRequest<any>): boolean {
+        const base = new URL(environment.apiUrl, window.location.origin);
+        const url = new URL(request.url, window.location.origin);
+        return url.origin === base.origin
+            && url.pathname.toLowerCase().startsWith(base.pathname.replace(/\/$/, '').toLowerCase() + '/api/');
     }
 }

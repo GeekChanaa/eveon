@@ -28,10 +28,10 @@
 .checkbox__tick 
   position: relative
   flex-shrink: 0
-  width: 24px
-  height: 24px
-  border-radius: 6px
-  border: 2px solid rgba(111, 118, 126, 0.4)
+  width: 18px
+  height: 18px
+  border-radius: 5px
+  border: 1px solid rgba(111, 118, 126, 0.45)
   transition: all .2s 
   &:before 
     content: ""
@@ -40,17 +40,17 @@
     left: 50%
     -webkit-transform: translate(-50%, -50%)
     transform: translate(-50%, -50%)
-    width: 17px
-    height: 12px
+    width: 12px
+    height: 9px
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='12' viewBox='0 0 17 12'%3E%3Cpath d='M16.707.293a1 1 0 0 1 0 1.414l-8.586 8.586a3 3 0 0 1-4.243 0L.293 6.707A1 1 0 0 1 .735 5.02a1 1 0 0 1 .973.273l3.586 3.586a1 1 0 0 0 1.414 0L15.293.293a1 1 0 0 1 1.414 0z' fill='%23fcfcfc' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat 50% 50% / 100% auto
     opacity: 0
     transition: opacity .2s 
 .checkbox__text 
   flex-grow: 1
-  padding-left: 16px
-  font-size: 15px
-  line-height: 1.71429
-  font-weight: 600
+  padding-left: 12px
+  font-size: 14px
+  line-height: 1.6
+  font-weight: 500
   color: #1A1D1F 
   body.dark .checkbox__text 
     color: #FCFCFC 
@@ -67,7 +67,7 @@
   flex-direction: row-reverse 
 
 .checkbox_reverse .checkbox__text 
-  padding: 0 16px 0 0 
+  padding: 0 12px 0 0 
 
 
 field__icon

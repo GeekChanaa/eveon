@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
 using VoltaXApi.Factories;
+using VoltaXApi.Exceptions;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 
@@ -66,6 +67,11 @@ namespace VoltaXApi.Services
 
         public async Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate)
         {
+            if (await _userRepository.PhoneExists(userToCreate.Phone))
+            {
+                throw new ValidationException("This phone number is already used by another account");
+            }
+
             AuthHelper.CreatePasswordHash(userToCreate.Password, out byte[] passwordHash, out byte[] passwordSalt);
             User user = new User
             {

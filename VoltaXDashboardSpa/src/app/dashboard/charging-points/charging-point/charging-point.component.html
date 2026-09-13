@@ -24,6 +24,10 @@
           class="tab-button">
           Connectors
         </button>
+        <button [ngClass]="{'active': tabsEnum === 'QrCodeTab'}" (click)="changeTab('QrCodeTab')"
+          class="tab-button">
+          QrCode
+        </button>
       </div>
     </div>
 
@@ -102,6 +106,21 @@
             <ng-container *ngIf="chargePoint.id != null && chargePoint.id != undefined">
               <app-charge-point-connectors [chargePointID]="chargePoint.id"></app-charge-point-connectors>
             </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- QrCode Tab -->
+      <div *ngIf="tabsEnum === 'QrCodeTab'" class="charging-stations-tab">
+        <div class="card">
+          <img class="qrcode-image" src="{{qrCodeImage}}" alt="">
+          <div class="qrcode-actions">
+            <app-button
+              (btnClick)="downloadQrCode()"
+              [variant]="'secondary'"
+              size="small">
+                Download QR Code
+            </app-button>
           </div>
         </div>
       </div>

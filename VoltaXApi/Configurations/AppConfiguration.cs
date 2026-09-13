@@ -50,6 +50,7 @@ public static class AppConfiguration
                 name: "OCPP",
                 pattern: "ocpp/{controller=OCPP}/{action=Index}/{id?}");
             endpoints.MapHub<ChargerHub>("/chargerHub");
+            endpoints.MapHub<ChargingSessionHub>("/chargingSessionHub");
         });
     }
     

@@ -11,6 +11,9 @@ import { User } from 'src/_models/user';
 import { environment } from 'src/environments/environment';
 import { UserService } from './user.service';
 import { HttpClient } from '@angular/common/http';
+import { GoogleLoginDto } from 'src/_models/_dtos/google-login-dto';
+import { TokenStorageService } from './token-storage.service';
+import { TokenRefreshService } from './token-refresh.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +29,8 @@ export class PartnerAuthService {
     private http: HttpClient, 
     private _userService: UserService, 
     private router: Router,
+    private _tokenStorage: TokenStorageService,
+    private _tokenRefresh: TokenRefreshService,
     ) 
     { }
 
@@ -38,13 +43,60 @@ export class PartnerAuthService {
       map((response:any) => {
         const user = response;
         if(user){
-          localStorage.setItem('token',user.token);
-          this.token = user.token;
-          var decode = this.jwtHelper.decodeToken(user.token);
-          this.decodedToken = decode;
+          this.storeLoginResult(user);
         }
       })
     )
+  }
+
+  /** Partner sessions refresh through the shared /api/auth/refresh endpoint. */
+  refreshSession(){
+    return this._tokenRefresh.refresh();
+  }
+
+  logout(){
+    this._tokenRefresh.revoke().subscribe();
+    this.token = null;
+    this.decodedToken = null;
+    this.router.navigateByUrl('/partner-auth/login');
+  }
+
+  /**
+   * Redirect flow for the partner portal. Comes back on
+   * /partner-auth/google-callback with a VoltaX token.
+   */
+  googleLogin(returnUrl?: string) {
+    let url = this.baseUrl + "google-login";
+    if (returnUrl) {
+      url += "?returnUrl=" + encodeURIComponent(returnUrl);
+    }
+    window.location.href = url;
+  }
+
+  /** Token flow (Google Identity Services button). */
+  googleLoginWithIdToken(idToken: string) {
+    const dto: GoogleLoginDto = { idToken: idToken };
+    return this.http.post(this.baseUrl + "google", dto).pipe(
+      map((response: any) => {
+        if (response && response.token) {
+          this.storeLoginResult(response);
+        }
+        return response;
+      })
+    );
+  }
+
+  /** Stores the tokens handed back by /partner-auth/google-callback. */
+  completeExternalLogin(token: string, refreshToken?: string) {
+    this.storeLoginResult({ token: token, refreshToken: refreshToken });
+    return this.decodedToken;
+  }
+
+  private storeLoginResult(result: any) {
+    this._tokenStorage.clear();
+    this._tokenStorage.store(result);
+    this.token = result.token;
+    this.decodedToken = this.jwtHelper.decodeToken(result.token);
   }
 
 }

@@ -10,6 +10,12 @@ namespace VoltaXApi.Data
     {
         Task<Boolean> UserEmailExists(string Email);
         Task<Boolean> UserPhoneExists(string Phone);
+
+        /// <summary>
+        /// True when the number already belongs to an account other than
+        /// <paramref name="excludeUserID"/>. Accepts any of the shapes PhoneHelper takes.
+        /// </summary>
+        Task<bool> PhoneExists(string phone, int? excludeUserID = null);
         Task<User?> FindUserByEmail(string Email);
         Task<string> GenerateResetPasswordTokenForUser(string Email);
         Task<List<DebitCardListingDto>> GetUserDebitCards(int UserId);

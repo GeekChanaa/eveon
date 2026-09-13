@@ -6,7 +6,7 @@
     <div class="images-container">
       <div class="image-container" *ngFor="let image of images; trackBy: trackByImageId">
         <img [src]="rootPathUrl + image.url" [alt]="'Charging station image ' + (image.id || '')" loading="lazy">
-        <button type="button" class="delete-img" (click)="deleteImage(image.id)"
+        <button type="button" class="delete-img" (click)="deleteImage(image.chargingStationImageID)"
           [attr.aria-label]="'Delete image ' + (image.id || '')" title="Delete image">
           <svg class="icon icon-close" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path
@@ -58,7 +58,7 @@
 
         <div class="files__box" *ngIf="displayedImages && displayedImages.length > 0">
           <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index; trackBy: trackByIndex">
-            <button type="button" class="image__clear" (click)="clearImage(i)"
+            <button type="button" class="image__clear" (click)="clearImage(i, $event)"
               [attr.aria-label]="'Remove image ' + (i + 1)" title="Remove image">
               <svg class="icon icon-close" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -68,6 +68,10 @@
             <img [src]="imageUrl" [alt]="'Preview image ' + (i + 1)" loading="lazy">
           </div>
         </div>
+      </div>
+
+      <div class="form__error" *ngIf="fileErrors && fileErrors.length > 0">
+        <div *ngFor="let error of fileErrors">{{ error }}</div>
       </div>
     </div>
   </div>
@@ -79,25 +83,25 @@
   </app-button>
 
   <ng-container *ngIf="addingImages">
-    <div class="button-group">
-      <button type="button" (click)="cancelAddingImages()" class="button button-stroke" [disabled]="imagesUploading">
-        Cancel
-      </button>
+    <app-button 
+      variant="primary" 
+      type="button" 
+      (click)="cancelAddingImages()" 
+      [outlined]="true"
+      [disabled]="imagesUploading">
+      Cancel
+    </app-button>
 
-      <button type="button" [disabled]="imagesUploading || !chargingStationImages?.length"
-        [class.disabled]="imagesUploading || !chargingStationImages?.length" class="button add-images-btn"
-        (click)="uploadImages()">
-        <ng-container *ngIf="imagesUploading">
-          <app-svg-spinner class="button-spinner"></app-svg-spinner>
-          Uploading...
-        </ng-container>
-        <ng-container *ngIf="!imagesUploading">
-          <svg class="icon icon-upload" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-          </svg>
-          Upload Images
-        </ng-container>
-      </button>
-    </div>
+    <app-button 
+      variant="primary" 
+      type="button" 
+      [disabled]="imagesUploading || !chargingStationImages?.length"
+      [isLoading]="imagesUploading"
+      (click)="uploadImages()">
+      <svg class="icon icon-upload" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+      </svg>
+      Upload Images
+    </app-button>
   </ng-container>
 </div>

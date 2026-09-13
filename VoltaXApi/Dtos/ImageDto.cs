@@ -6,6 +6,7 @@ namespace VoltaXApi.Dtos
     {
       public int ID { get; set; }
       public string? Url { get; set; }
+      public int ChargingStationImageID { get; set; }
     }
 }
 

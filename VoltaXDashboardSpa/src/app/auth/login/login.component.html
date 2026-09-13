@@ -6,10 +6,10 @@
     <div class="entry__fieldset">
       <app-form-field
         class="field"
-        title="Email"
-        placeholder="Enter your Email"
-        description="Your account's Email"
-        [control]="getControl('email')"
+        title="Email or Phone"
+        placeholder="Enter your email or phone number"
+        description="Your account's email address or phone number"
+        [control]="getControl('identifier')"
         icon="icon-info"
       ></app-form-field>
 
@@ -45,7 +45,7 @@
   <div class="entry__top">
     <div class="entry__text">or Sign up with Open account</div>
     <div class="entry__btns">
-      <button (click)="googleLogin()" class="button-stroke entry__button"><img src="assets/img/content/google.svg"
+      <button (click)="googleLogin()" class="button-google entry__button"><img src="assets/img/content/google.svg"
           alt="Google">Google</button>
     </div>
   </div>

@@ -1,33 +1,58 @@
+@import ./../../../../styles/connector-realtime
+
 // Charger navbar styling
 .page__inner
   min-height: 0px
+
+// 12 tabs never fit on one line — scroll them instead of wrapping or clipping.
+// The mask fades the right edge as the only cue that more tabs exist; a mask
+// rather than a gradient overlay so it does not depend on the page background.
 .charger__navbar
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent)
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent)
   display: flex
+  flex-wrap: nowrap
   flex: 0 0 100%
   width: 100%
   margin-bottom: 24px
-  border-bottom: 1px solid var(--primary4)
+  border-bottom: 1px solid var(--vx-border, #EDEDED)
+  overflow-x: auto
+  overflow-y: hidden
+  scrollbar-width: none
+  -ms-overflow-style: none
+  -webkit-overflow-scrolling: touch
+
+  &::-webkit-scrollbar
+    display: none
+
   .charger__navbar-item
-    padding: 12px
-    color: var(--primary8)
+    position: relative
+    flex-shrink: 0
+    padding: 12px 14px
+    margin-bottom: -1px
+    border-bottom: 2px solid transparent
+    white-space: nowrap
+    color: var(--vx-text-muted, #7A7C80)
     cursor: auto
     transition: ease-in-out all .2s
-    font-size: 14px
+    font-size: 13.5px
     font-weight: 600
     &:not(.disabled)
       cursor: pointer
       &:hover
-        color: var(--primary9)
+        color: var(--vx-text, #0B0B0B)
+    &.disabled
+      opacity: .45
     &.charger__navbar-item--active
-      border-bottom: 2px solid var(--secondary2)
-      color: var(--primary9)
-    
-  
+      border-bottom-color: var(--vx-yellow, #E5B223)
+      color: var(--vx-text, #0B0B0B)
+
+
 .settings__container
   flex: 0 0 100%
   width: 100%
 
-  
+
 .settings
   flex: 0 0 64%
   flex-wrap: wrap
@@ -36,9 +61,26 @@
 .overview
   flex: 0 0 35%
   margin-left: auto
-  background: var(--primary1)
+  background: var(--vx-surface, #FFFFFF)
+  border: 1px solid var(--vx-border, #EDEDED)
   padding: 24px
-  border-radius: 8px
+  border-radius: 12px
+  align-self: flex-start
+  position: sticky
+  top: 88px
+
+// Below ~1260px the two columns get too narrow to read; stack them instead.
++d
+  .settings
+    flex: 0 0 100%
+    max-width: 100%
+
+  .overview
+    flex: 0 0 100%
+    width: 100%
+    margin-left: 0
+    margin-top: 24px
+    position: static
 
 .page__container
   flex-grow: 1
@@ -46,21 +88,33 @@
   flex-direction: row
   .page__title
     flex: 0 0 100%
+// Status reads as a chip beside the title, not as a second heading.
 .status
-  padding: 6px 12px
-  font-size: 24px
+  display: inline-flex
+  align-items: center
+  margin-left: 12px
+  padding: 5px 12px
+  border: 1px solid var(--vx-border, #EDEDED)
+  border-radius: 999px
+  background: var(--vx-surface, #FFFFFF)
+  font-size: 13px
   text-transform: capitalize
-  font-weight: 500
+  font-weight: 600
+  vertical-align: middle
+  cursor: default
   .status-color
-    color: var(--primary6)
-    font-size: 1.2em
-    font-weight: 500
+    display: inline-flex
+    align-items: center
+    gap: 8px
+    color: var(--vx-text, #0B0B0B)
+    font-size: 13px
+    font-weight: 600
     svg
       height: 18px
     &.active
       color: green
       svg
-        animation: blink-animation 1s infinite  
+        animation: blink-animation 1s infinite
 
 
 .connector-status-container

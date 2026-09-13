@@ -16,6 +16,7 @@ import { AtomsModule } from '../atoms/atoms.module';
 import { AuthComponent } from './auth.component';
 import { RequestPasswordMailSentComponent } from './request-password/request-password-mail-sent/request-password-mail-sent.component';
 import { ResetPasswordSuccessComponent } from './reset-password-success/reset-password-success.component';
+import { GoogleCallbackComponent } from './google-callback/google-callback.component';
 
 
 
@@ -32,7 +33,8 @@ import { ResetPasswordSuccessComponent } from './reset-password-success/reset-pa
         CompleteProfileComponent,
         AuthComponent,
         RequestPasswordMailSentComponent,
-        ResetPasswordSuccessComponent
+        ResetPasswordSuccessComponent,
+        GoogleCallbackComponent
   ],
     imports: [
       CommonModule,

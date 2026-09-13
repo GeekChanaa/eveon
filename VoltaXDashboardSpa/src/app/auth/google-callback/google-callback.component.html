@@ -1,0 +1,17 @@
+<div class="icon">
+  <img src="assets/images/logos/logo.svg" alt="">
+</div>
+<div class="form-container">
+  <ng-container *ngIf="errorMessage == ''">
+    <div class="title">Signing you in…</div>
+    <div class="subtitle">Finishing your Google sign in, hold on a second.</div>
+  </ng-container>
+
+  <ng-container *ngIf="errorMessage != ''">
+    <div class="title">Google sign in failed</div>
+    <app-info-box message="{{errorMessage}}" [type]="'error'"></app-info-box>
+    <app-button class="entry__button" [variant]="'secondary'" size="large" (btnClick)="backToLogin()">
+      Back to login
+    </app-button>
+  </ng-container>
+</div>

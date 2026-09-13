@@ -89,5 +89,9 @@ export class SignUpComponent implements OnInit {
     return this.form.get(name) as FormControl;
   }
 
+  // Signing up with Google creates the account on the first redirect back
+  googleLogin(){
+    this._authService.googleLogin();
+  }
 
 }

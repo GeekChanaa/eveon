@@ -1,6 +1,7 @@
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
+using VoltaXApi.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -22,7 +23,21 @@ namespace VoltaXApi.Data
 
         public async Task<Boolean> UserPhoneExists(string phone)
         {
-            return await this._context.Users.AnyAsync(u => u.Phone == phone);
+            return await PhoneExists(phone);
+        }
+
+        /// <summary>
+        /// Phone numbers are unique across accounts. The caller may pass any of the shapes
+        /// PhoneHelper accepts; comparison happens on the stored "+212XXXXXXXXX" form.
+        /// </summary>
+        public async Task<bool> PhoneExists(string phone, int? excludeUserID = null)
+        {
+            string normalized = PhoneHelper.Normalize(phone);
+            if (normalized == null)
+                return false;
+
+            return await this._context.Users
+                .AnyAsync(u => u.Phone == normalized && (excludeUserID == null || u.ID != excludeUserID));
         }
 
         public async Task<User?> FindUserByEmail(string email)
@@ -141,7 +156,7 @@ namespace VoltaXApi.Data
 
         public async Task<bool> IsPhoneUnique(string phone)
         {
-            return await _context.Users.AnyAsync(u => u.Phone == phone);
+            return await PhoneExists(phone);
         }
 
         public async Task<List<UserNameDto>> GetSupportUserNames()
@@ -211,6 +226,12 @@ namespace VoltaXApi.Data
         public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
         {
             var user = await GetByIdAsync(userID);
+
+            if (await PhoneExists(userDto.Phone, userID))
+            {
+                throw new ValidationException("This phone number is already used by another account");
+            }
+
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
             user.Email = userDto.Email;

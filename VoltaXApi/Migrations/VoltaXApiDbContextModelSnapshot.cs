@@ -2753,6 +2753,13 @@ namespace VoltaXApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<string>("AuthProvider")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)")
+                        .HasDefaultValue("Local");
+
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime(6)");
 
@@ -2769,6 +2776,10 @@ namespace VoltaXApi.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("ExternalPictureUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)");
+
                     b.Property<string>("EmailVerificationToken")
                         .HasColumnType("longtext");
 
@@ -2778,6 +2789,10 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("GoogleId")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
 
                     b.Property<int?>("ImageID")
                         .HasColumnType("int");
@@ -2801,15 +2816,14 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("longblob");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("PhoneVerificationToken")
                         .HasColumnType("longtext");
@@ -2836,9 +2850,15 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("GoogleId")
+                        .IsUnique();
+
                     b.HasIndex("ImageID");
 
                     b.HasIndex("PartnerID");
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.HasIndex("RoleID");
 
@@ -3704,6 +3724,29 @@ namespace VoltaXApi.Migrations
                     b.Navigation("DebitCards");
 
                     b.Navigation("Orders");
+                });
+            modelBuilder.Entity("VoltaXApi.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("ID").ValueGeneratedOnAdd().HasColumnType("int");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+                    b.Property<string>("TokenHash").IsRequired().HasMaxLength(128).HasColumnType("varchar(128)");
+                    b.Property<int>("UserID").HasColumnType("int");
+                    b.Property<DateTime>("ExpiresAt").HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("RevokedAt").IsConcurrencyToken().HasColumnType("datetime(6)");
+                    b.Property<string>("ReplacedByTokenHash").HasMaxLength(128).HasColumnType("varchar(128)");
+                    b.Property<string>("RevokedReason").HasMaxLength(64).HasColumnType("varchar(64)");
+                    b.Property<string>("CreatedByIp").HasMaxLength(64).HasColumnType("varchar(64)");
+                    b.Property<string>("UserAgent").HasMaxLength(256).HasColumnType("varchar(256)");
+                    b.Property<bool>("IsDeleted").ValueGeneratedOnAdd().HasDefaultValue(false).HasColumnType("tinyint(1)");
+                    b.Property<DateTime>("CreatedAt").HasColumnType("datetime(6)");
+                    b.Property<DateTime>("UpdatedAt").HasColumnType("datetime(6)");
+                    b.HasKey("ID");
+                    b.HasIndex("TokenHash").IsUnique();
+                    b.HasIndex("UserID");
+                    b.ToTable("RefreshTokens");
+                    b.HasOne("VoltaXApi.Models.User", "User").WithMany()
+                        .HasForeignKey("UserID").OnDelete(DeleteBehavior.Cascade).IsRequired();
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

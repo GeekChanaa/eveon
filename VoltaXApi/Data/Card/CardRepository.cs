@@ -17,7 +17,7 @@ namespace VoltaXApi.Data
         private readonly CardExpirationSettings _settings;
         private readonly CardConfigurationSettings _cardSettings;
         public CardRepository(
-            VoltaXApiDbContext context, 
+            VoltaXApiDbContext context,
             ITransactionRepository transactionRepository,
             IOptions<CardExpirationSettings> options,
             IOptions<CardConfigurationSettings> cardOptions,
@@ -32,7 +32,8 @@ namespace VoltaXApi.Data
         // Get all user recharge cards
         public IQueryable<CardListDto> GetUserRechargeCardsAsync(int userID, GlobalParams globalParams)
         {
-            return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(u  => new CardListDto{
+            return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(u => new CardListDto
+            {
                 ID = u.ID,
                 CardNumber = u.CardNumber,
                 CardType = u.CardType,
@@ -76,7 +77,7 @@ namespace VoltaXApi.Data
             var cardTransactions = await _transactionRepository.GetCardTransactions(card.ID).ToListAsync();
             var cardTransactionsDto = _mapper.Map<List<Transaction>, List<CardTransactionDto>>(cardTransactions);
 
-            var cardDto = _mapper.Map<Card,CardWithTransactionsOrdersDto>(card);
+            var cardDto = _mapper.Map<Card, CardWithTransactionsOrdersDto>(card);
             cardDto.Transactions = cardTransactionsDto;
 
             return cardDto;
@@ -94,10 +95,10 @@ namespace VoltaXApi.Data
         private async Task<string> GenerateCardNumber()
         {
             string currentYear = DateTime.Now.Year.ToString();
-            
+
             string cardNumber;
             bool exists;
-            
+
             do
             {
                 Random random = new Random();
@@ -106,12 +107,12 @@ namespace VoltaXApi.Data
                 {
                     randomPart += random.Next(0, 10).ToString();
                 }
-                
+
                 cardNumber = $"{currentYear}-{randomPart}";
-                
+
                 exists = await _context.Cards.AnyAsync(c => c.CardNumber == cardNumber);
             } while (exists);
-            
+
             return cardNumber;
         }
 
@@ -132,7 +133,7 @@ namespace VoltaXApi.Data
         {
             // Generate card number
             string cardNumber = await GenerateCardNumber();
-            
+
             // Create new card
             var card = new Card
             {
@@ -151,8 +152,15 @@ namespace VoltaXApi.Data
             return card;
         }
 
-
-
-
+        public async Task<CardTokenInfoDto> GetCardTokenInfoByUserID(int userID)
+        {
+            var card = await _context.Cards.Where(c => c.UserID == userID)
+            .Select(u => new CardTokenInfoDto { ID = u.ID, CardNumber = u.CardNumber, CardType = u.CardType }).FirstOrDefaultAsync();
+            if (card == null)
+            {
+                return null;
+            }
+            return card;
+        }
     }
 }

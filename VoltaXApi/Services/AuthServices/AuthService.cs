@@ -22,6 +22,8 @@ namespace VoltaXApi.Services
     private readonly ICardRepository _cardRepository;
     private readonly ISnsService _snsService;
     private readonly IJwtService _jwtService;
+    private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IUserClaimsFactory _claimsFactory;
 
     public AuthService(
       IUserRepository userRepository,
@@ -32,7 +34,9 @@ namespace VoltaXApi.Services
       IMailRequestFactory mailRequestFactory,
       ICardRepository cardRepository,
       ISnsService snsService,
-      IJwtService jwtService
+      IJwtService jwtService,
+      IRefreshTokenService refreshTokenService,
+      IUserClaimsFactory claimsFactory
     )
     {
       _userRepository = userRepository;
@@ -44,12 +48,20 @@ namespace VoltaXApi.Services
       _cardRepository = cardRepository;
       _snsService = snsService;
       _jwtService = jwtService;
+      _refreshTokenService = refreshTokenService;
+      _claimsFactory = claimsFactory;
     }
 
     // Creating phone verification token and updating the user
     public async Task SendPhoneVerificationToken(AddPhoneNumberDto addPhoneNumberDto)
     {
       var user = await _userRepository.GetUserByEmail(addPhoneNumberDto.Email);
+
+      if (await _userRepository.PhoneExists(addPhoneNumberDto.Phone, user.ID))
+      {
+        throw new ValidationException("This phone number is already used by another account");
+      }
+
       user.Phone = addPhoneNumberDto.Phone;
       user.PhoneVerificationToken = AuthHelper.GeneratePhoneVerificationToken();
       user.IsPhoneNumberVerified = false;
@@ -127,6 +139,11 @@ namespace VoltaXApi.Services
         throw new ValidationException("Email already exists");
       }
 
+      if (await _userRepository.PhoneExists(userForRegisterDto.Phone))
+      {
+        throw new ValidationException("Phone number already exists");
+      }
+
       // Creating user
       byte[] passwordHash, passwordSalt;
       AuthHelper.CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
@@ -200,13 +217,15 @@ namespace VoltaXApi.Services
 
 
 
-    public async Task<LoginResultDto> Login(string email, string password, string ipAddress)
+    public async Task<LoginResultDto> Login(string identifier, string password, string ipAddress, string? userAgent = null)
     {
-      var user = await _context.Users
-        .Include(u => u.Role)
-        .Include(u => u.Role.RolePermissions)
-        .ThenInclude(up => up.Permission)
-        .FirstOrDefaultAsync(x => x.Email == email);
+      var user = await FindUserForLogin(identifier);
+
+      if (user == null)
+      {
+        await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
+        throw new UnauthorizedException("Email, phone number or password incorrect");
+      }
 
       if (user.PartnerID != null)
       {
@@ -218,28 +237,26 @@ namespace VoltaXApi.Services
         var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
 
         if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
-          throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
+          throw new LoginAttemptFailedException(user.Email, loginAttempt.LockoutEndTime);
 
-        if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+        if (user != null && !user.HasPassword)
+        {
+          throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
+        }
+
+        if (!AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {
           await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
-          throw new UnauthorizedException("Email or Password incorrect");
+          throw new UnauthorizedException("Email, phone number or password incorrect");
         }
         var claims = BuildUserClaims(user);
 
-        var token = _jwtService.GenerateToken(claims);
-        return new LoginResultDto
-        {
-          Token = token,
-          UserId = user.ID,
-          Email = user.Email,
-          FullName = $"{user.FirstName} {user.LastName}"
-        };
+        return await IssueSession(user, claims, ipAddress, userAgent);
       }
       catch (LoginAttemptFailedException ex)
       {
-        MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(email);
-        string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(email);
+        MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(user.Email);
+        string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(user.Email);
 
         await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
 
@@ -247,27 +264,34 @@ namespace VoltaXApi.Services
       }
     }
 
-    private List<Claim> BuildUserClaims(User user)
+    /// <summary>
+    /// The login form takes a single field, so the identifier is either an email address or
+    /// a phone number in any of the shapes <see cref="PhoneHelper"/> accepts.
+    /// </summary>
+    private async Task<User?> FindUserForLogin(string identifier)
     {
-      var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.GivenName, user.FirstName),
-            new Claim(ClaimTypes.Surname, user.LastName),
-            new Claim(ClaimTypes.Role, user.Role.Name),
-            new Claim("emailVerified", user.IsEmailVerified.ToString()),
-            new Claim("phoneVerified", user.IsPhoneNumberVerified.ToString()),
-        };
+      if (string.IsNullOrWhiteSpace(identifier))
+        return null;
 
-      foreach (var userPermission in user.Role.RolePermissions)
+      if (PhoneHelper.LooksLikePhoneNumber(identifier))
       {
-        claims.Add(new Claim("permission", userPermission.Permission.Name));
-        claims.Add(new Claim($"permission_scope:{userPermission.Permission.Name}", userPermission.Scope.ToString()));
+        string phone = PhoneHelper.Normalize(identifier);
+
+        // Phone numbers are not unique in the database, so a verified owner wins over an
+        // account that merely typed the number in without ever confirming it.
+        return await _context.Users
+          .Include(u => u.Role)
+          .ThenInclude(r => r.RolePermissions)
+          .ThenInclude(rp => rp.Permission)
+          .OrderByDescending(u => u.IsPhoneNumberVerified)
+          .FirstOrDefaultAsync(u => u.Phone == phone);
       }
 
-      return claims;
+      string email = identifier.Trim().ToLower();
+      return await GetUserWithClaimsData(u => u.Email == email);
     }
+
+    private List<Claim> BuildUserClaims(User user) => _claimsFactory.BuildUserClaims(user);
 
 
 
@@ -278,6 +302,11 @@ namespace VoltaXApi.Services
       if (user == null)
       {
         throw new UserNotFoundException("User not found.");
+      }
+
+      if (!user.HasPassword)
+      {
+        throw new ValidationException("This account has no password yet. Use the reset password flow to set one.");
       }
 
       if (!AuthHelper.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
@@ -291,6 +320,9 @@ namespace VoltaXApi.Services
       user.PasswordHash = passwordHash;
 
       await _context.SaveChangesAsync();
+
+      // Someone who knew the old password (or a stolen token) must not keep a live session.
+      await _refreshTokenService.RevokeAllForUser(user.ID, "password-change");
 
       // Sending the email of the changed password
       MailRequest requ = _mailRequestFactory.CreateChangedPasswordMailRequest(user.Email);
@@ -326,6 +358,177 @@ namespace VoltaXApi.Services
       }
 
       return user.ResetPasswordToken;
+    }
+
+    // ---------------------------------------------------------------------
+    // External (OAuth) sign in
+    // ---------------------------------------------------------------------
+
+    public async Task<LoginResultDto> ExternalLogin(ExternalUserInfoDto externalUser, AuthProviderEnum provider, string? ipAddress = null, string? userAgent = null)
+    {
+      if (provider != AuthProviderEnum.Google)
+        throw new ValidationException($"Unsupported authentication provider {provider}");
+
+      if (!externalUser.EmailVerified)
+        throw new UnauthorizedException("Your Google email address is not verified");
+
+      string email = externalUser.Email.ToLower();
+
+      var user = await GetUserWithClaimsData(u => u.GoogleId == externalUser.ProviderKey)
+                 ?? await GetUserWithClaimsData(u => u.Email == email);
+
+      if (user == null)
+      {
+        user = await CreateUserFromExternalIdentity(externalUser, provider, email);
+      }
+      else
+      {
+        if (user.PartnerID != null)
+          throw new UnauthorizedException("A partner account should login from the partner portal");
+
+        // First Google sign in on an account that was created with a password: link the two.
+        if (user.GoogleId == null)
+        {
+          user.GoogleId = externalUser.ProviderKey;
+          user.ExternalPictureUrl ??= externalUser.PictureUrl;
+          // Google already proved ownership of the address
+          user.IsEmailVerified = true;
+          user.EmailVerificationToken = null;
+          user.UpdatedAt = DateTime.UtcNow;
+          await _context.SaveChangesAsync();
+        }
+        else if (user.GoogleId != externalUser.ProviderKey)
+        {
+          throw new UnauthorizedException("This email is already linked to a different Google account");
+        }
+      }
+
+      var claims = BuildUserClaims(user);
+
+      return await IssueSession(user, claims, ipAddress, userAgent);
+    }
+
+    public async Task LinkExternalAccount(int userID, ExternalUserInfoDto externalUser, AuthProviderEnum provider)
+    {
+      if (provider != AuthProviderEnum.Google)
+        throw new ValidationException($"Unsupported authentication provider {provider}");
+
+      var user = await _userRepository.GetUser(userID);
+      if (user == null)
+        throw new UserNotFoundException("User not found.");
+
+      if (user.GoogleId != null && user.GoogleId != externalUser.ProviderKey)
+        throw new ValidationException("Another Google account is already linked to this profile");
+
+      var alreadyTaken = await _context.Users
+        .AnyAsync(u => u.GoogleId == externalUser.ProviderKey && u.ID != userID);
+
+      if (alreadyTaken)
+        throw new ValidationException("This Google account is already linked to another user");
+
+      user.GoogleId = externalUser.ProviderKey;
+      user.ExternalPictureUrl ??= externalUser.PictureUrl;
+      user.UpdatedAt = DateTime.UtcNow;
+
+      await _context.SaveChangesAsync();
+    }
+
+    public async Task UnlinkExternalAccount(int userID, AuthProviderEnum provider)
+    {
+      if (provider != AuthProviderEnum.Google)
+        throw new ValidationException($"Unsupported authentication provider {provider}");
+
+      var user = await _userRepository.GetUser(userID);
+      if (user == null)
+        throw new UserNotFoundException("User not found.");
+
+      if (user.GoogleId == null)
+        throw new ValidationException("No Google account is linked to this profile");
+
+      // Removing the only credential would lock the account out for good.
+      if (!user.HasPassword)
+        throw new ValidationException("Set a password before removing Google sign in, otherwise you would lock yourself out.");
+
+      user.GoogleId = null;
+      user.AuthProvider = AuthProviderEnum.Local;
+      user.UpdatedAt = DateTime.UtcNow;
+
+      await _context.SaveChangesAsync();
+    }
+
+    public async Task<LinkedAccountsDto> GetLinkedAccounts(int userID)
+    {
+      var user = await _userRepository.GetUser(userID);
+      if (user == null)
+        throw new UserNotFoundException("User not found.");
+
+      return new LinkedAccountsDto
+      {
+        GoogleLinked = user.GoogleId != null,
+        GoogleEmail = user.GoogleId != null ? user.Email : null,
+        HasPassword = user.HasPassword,
+        AuthProvider = user.AuthProvider.ToString()
+      };
+    }
+
+    private async Task<User> CreateUserFromExternalIdentity(ExternalUserInfoDto externalUser, AuthProviderEnum provider, string email)
+    {
+      var user = new User
+      {
+        Email = email,
+        FirstName = string.IsNullOrWhiteSpace(externalUser.FirstName) ? email.Split('@')[0] : externalUser.FirstName,
+        LastName = externalUser.LastName ?? string.Empty,
+        GoogleId = externalUser.ProviderKey,
+        AuthProvider = provider,
+        ExternalPictureUrl = externalUser.PictureUrl,
+        IsEmailVerified = true,
+        RoleID = 2,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+      };
+
+      await _context.Users.AddAsync(user);
+      await _context.SaveChangesAsync();
+
+      await _cardRepository.CreateCardForUser(user);
+
+      var mailRequest = _mailRequestFactory.CreateWelcomeMailRequest(user.Email);
+      await _mailService.SendWelcomeEmail(mailRequest, user.FirstName);
+
+      // Re-read so Role / RolePermissions are loaded for the claims
+      return await GetUserWithClaimsData(u => u.ID == user.ID);
+    }
+
+    /// <summary>
+    /// Mints the access / refresh pair handed back by every sign in path, so the shape of
+    /// a session never depends on how the user got in.
+    /// </summary>
+    private async Task<LoginResultDto> IssueSession(User user, List<Claim> claims, string? ipAddress, string? userAgent)
+    {
+      if (user.IsDeleted || user.SuspendedAt != null)
+        throw new UnauthorizedException("This account is unavailable or suspended");
+      var accessToken = _jwtService.GenerateAccessToken(claims);
+      var refreshToken = await _refreshTokenService.Issue(user.ID, ipAddress, userAgent);
+
+      return new LoginResultDto
+      {
+        Token = accessToken.Token,
+        AccessTokenExpiresAt = accessToken.ExpiresAt,
+        RefreshToken = refreshToken.Token,
+        RefreshTokenExpiresAt = refreshToken.ExpiresAt,
+        UserId = user.ID,
+        Email = user.Email,
+        FullName = $"{user.FirstName} {user.LastName}"
+      };
+    }
+
+    private Task<User?> GetUserWithClaimsData(System.Linq.Expressions.Expression<Func<User, bool>> predicate)
+    {
+      return _context.Users
+        .Include(u => u.Role)
+        .ThenInclude(r => r.RolePermissions)
+        .ThenInclude(rp => rp.Permission)
+        .FirstOrDefaultAsync(predicate);
     }
 
   }

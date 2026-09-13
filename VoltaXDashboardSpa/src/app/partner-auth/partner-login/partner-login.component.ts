@@ -65,4 +65,8 @@ export class PartnerLoginComponent implements OnInit {
       }
     })
   }
+
+  googleLogin(){
+    this._partnerAuthService.googleLogin();
+  }
 }

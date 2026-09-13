@@ -1,25 +1,87 @@
-.breadcrumb 
+// The theme tokens only exist inside the themed shells (.vx). This component
+// is also used on the customer dashboard, where they are undefined — so the
+// fallbacks have to flip with the mode too, or dark mode there would inherit
+// the light ink at 3.4:1.
+.breadcrumb
+  --bc-ink: var(--vx-yellow-ink, #8A6410)
+  --bc-ink-strong: var(--vx-yellow-ink-strong, #6E4F0C)
+  --bc-fg: var(--vx-text, #0B0B0B)
+
+body.dark .breadcrumb
+  --bc-ink: var(--vx-yellow-ink, #F0BE3C)
+  --bc-ink-strong: var(--vx-yellow-ink-strong, #FFD05C)
+  --bc-fg: var(--vx-text, #FAFAFA)
+
+.breadcrumb
   padding: 0
-  
-  ol 
+
+  ol
     display: flex
+    flex-wrap: wrap
+    align-items: center
     list-style: none
     padding: 0
     margin: 0
-    li 
-      font-size: 14px
-      
-      &:not(:last-child):after 
+
+    li
+      display: inline-flex
+      align-items: center
+      font-size: 13px
+      line-height: 1.5
+
+      &:not(:last-child):after
         content: '/'
         margin: 0 8px
-        color: #aaa
-      
-      .active 
-        color: var(--primary9)
+        // Decorative only, so it stays quiet — but not so quiet it vanishes.
+        color: var(--vx-text-muted, #7A7C80)
+        opacity: .55
 
-      a 
-        color: #2d8dec
+      // Current page: not a link, so it must not look like one. Neutral and
+      // bold reads as "you are here" without competing with the trail.
+      .active
+        font-weight: 600
+        color: var(--bc-fg)
+
+      a
+        position: relative
+        font-weight: 500
+        color: var(--bc-ink)
         text-decoration: none
-        
-        &:hover 
-          text-decoration: underline
+        transition: color .18s
+
+        // Underline wipes in from the left on hover. Drawn as a pseudo-element
+        // rather than text-decoration so it can be animated — you cannot
+        // transition an underline itself. scaleX on a 1px-tall bar stays on the
+        // compositor, so it does not trigger layout on every frame.
+        &:after
+          content: ''
+          position: absolute
+          left: 0
+          right: 0
+          bottom: 1px
+          height: 1.5px
+          border-radius: 1px
+          background: currentColor
+          transform: scaleX(0)
+          transform-origin: left center
+          transition: transform .24s cubic-bezier(.4, 0, .2, 1)
+
+        &:hover,
+        &:focus-visible
+          color: var(--bc-ink-strong)
+
+          &:after
+            transform: scaleX(1)
+
+        // Keyboard users get a visible target — there was no focus style
+        // at all before, so tabbing through was invisible.
+        &:focus-visible
+          outline: 2px solid var(--vx-yellow, #E5B223)
+          outline-offset: 3px
+          border-radius: 3px
+
+// Honour a reduced-motion preference: the underline still appears, it just
+// does not sweep.
+@media (prefers-reduced-motion: reduce)
+  .breadcrumb ol li a:after
+    transition: none

@@ -14,7 +14,6 @@ using VoltaXApi.Services;
 
 namespace VoltaXApi.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class ChargingStationImageController : GenericController<ChargingStationImage>
@@ -35,6 +34,17 @@ namespace VoltaXApi.Controllers
         {
           var images = await this._repository.GetChargingStationImages(chargingStationID);
           return Ok(images);
+        }
+
+        [HttpGet("GetChargingStationDisplayImage/{chargingStationID}")]
+        public async Task<IActionResult> GetChargingStationDisplayImage(int chargingStationID)
+        {
+          var image = await this._repository.GetChargingStationDisplayImage(chargingStationID);
+          if (image == null)
+          {
+            return NotFound();
+          }
+          return Ok(image);
         }
 
         [HttpPost("UploadChargingStationImages/{chargingStationID}")]

@@ -1,24 +1,160 @@
-.table__action
-    position:initial    
+@import ./../../../../styles/helpers/variables
+
+// The table markup lives inside <app-table-list>, so reaching it from here
+// needs ::ng-deep. Everything stays under :host, so only the Connector
+// Real-time list is affected — the other pages using app-table-list are not.
+:host ::ng-deep
+  .card
+    border: 1px solid var(--vx-border, #EDEDED)
+    border-radius: 12px
+    box-shadow: none
+
+  .row .card__head
+    margin-bottom: 24px
+    gap: 8px
+
+  // Was `scroll`, which showed a permanent scrollbar even when it fit.
+  .row__wrapper
+    overflow-x: auto
+
+  // Header row
+  .row__table .row__row:first-child .row__col
+    padding: 0 16px 12px
+    border-bottom: 1px solid var(--vx-border, #EDEDED)
+    font-size: 11px
+    font-weight: 600
+    letter-spacing: .06em
+    text-transform: uppercase
+    white-space: nowrap
+    color: var(--vx-text-muted, #7A7C80)
+
+    &:after
+      display: none
+
+  .row__table .col_header
+    transition: color .18s
+
+    &:hover
+      color: var(--vx-text, #0B0B0B)
+
+    .icon
+      width: 14px
+      height: 14px
+      margin-left: 4px
+      fill: var(--vx-yellow, #E5B223)
+      vertical-align: middle
+
+  // Body cells
+  .row__table .row__col
+    padding: 12px 16px
+    vertical-align: middle
+    font-size: 13.5px
+    font-weight: 500
+    color: var(--vx-text, #0B0B0B)
+    font-variant-numeric: tabular-nums
+
+    // The divider is drawn per cell, so insetting every cell leaves gaps
+    // between columns. Only the outer edges get inset.
+    &:after
+      left: 0
+      right: 0
+      background: var(--vx-border, #EDEDED)
+
+    &:first-child:after
+      left: 16px
+
+    &:last-child:after
+      right: 16px
+
+  // The template reserves a 56px first column for an avatar this table
+  // does not use, which squeezes the first real field.
+  .row__table .row__col:first-child
+    width: auto
+
+  .row__table .row__row:not(:first-child)
+    transition: background .18s
+
+    &:hover .row__col
+      background: var(--vx-hover, #F4F4F4)
+
+  .row__table .row__col.options_col
+    width: 1%
+    white-space: nowrap
+    text-align: right
+
+  .actions__container
+    justify-content: flex-end
+
+  // Action buttons — squares, yellow hover, matching the detail tabs.
+  .table__action
+    height: 32px
+    width: 32px
+    border: 1px solid var(--vx-border, #EDEDED)
+    border-radius: 8px
+
+    svg,
+    .icon
+      height: 16px
+      width: 16px
+      fill: var(--vx-text-muted, #7A7C80)
+
+  .table__action.connector__btn,
+  .table__action.display-btn,
+  .table__action.delete-btn
+    color: var(--vx-text-muted, #7A7C80)
+    border-color: var(--vx-border, #EDEDED)
+
+    svg
+      fill: var(--vx-text-muted, #7A7C80)
+
+  .table__action.connector__btn:hover,
+  .table__action.display-btn:hover
+    background: rgba(229, 178, 35, .12)
+    border-color: var(--vx-yellow, #E5B223)
+    color: var(--vx-yellow, #E5B223)
+
+    svg
+      fill: var(--vx-yellow, #E5B223)
+
+  // Delete stays red — it is the one action you cannot undo.
+  .table__action.delete-btn:hover
+    background: rgba(220, 38, 38, .1)
+    border-color: #DC2626
+    color: #DC2626
+
+    svg
+      fill: #DC2626
+
+  // Pagination
+  .pagination__btn
     height: 34px
     width: 34px
-    margin-left: 8px
-    border: 1px solid var(--primary3)
-    border-radius: 50%
-    .icon
-      height: 18px
-      width: 18px
-    &.connector__btn
-        color: var(--primary7)
-        fill: var(--primary7)
-        border-color: var(--primary7)
-        transition: ease-in-out all .4s
-        svg
-            fill: var(--primary7)
-            transition: ease-in-out all .4s
-        &:hover
-            color: red
-            border-color: red
-            fill: red
-            svg
-                fill: red
+    border-radius: 8px
+    border: 1px solid var(--vx-border, #EDEDED)
+
+    svg
+      fill: var(--vx-text, #0B0B0B)
+
+    &:hover:not(.inactive)
+      border-color: var(--vx-yellow, #E5B223)
+
+      svg
+        fill: var(--vx-yellow, #E5B223)
+
+  .pagination__pages .pagination__link
+    width: 34px
+    height: 34px
+    border-radius: 8px
+    border: 1px solid transparent
+    font-size: 13.5px
+    font-weight: 600
+    color: var(--vx-text-muted, #7A7C80)
+
+    &:hover
+      background: var(--vx-hover, #F4F4F4)
+      color: var(--vx-text, #0B0B0B)
+
+    &.active
+      background: var(--vx-yellow, #E5B223)
+      border-color: var(--vx-yellow, #E5B223)
+      color: #0B0B0B

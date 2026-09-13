@@ -1,0 +1,581 @@
+@import ./helpers/variables
+
+// ---------------------------------------------------------------------------
+// VoltaX dashboard theme — white / black / yellow.
+//
+// Everything here is scoped under `.vx`, the class carried by the admin and
+// partner dashboard shells. The customer dashboard reuses the same navbar and
+// sidebar components but never gets the class, so it keeps its current look.
+// ---------------------------------------------------------------------------
+
+.page.vx
+  // brand
+  --vx-yellow: #E5B223
+  --vx-yellow-hover: #D0A01B
+  --vx-yellow-soft: rgba(229, 178, 35, .14)
+  // Text-safe yellow. The brand yellow is only 1.96:1 on white — fine as a
+  // fill or a 3px rail, unreadable as small text. This one is 5.37:1.
+  --vx-yellow-ink: #8A6410
+  --vx-yellow-ink-strong: #6E4F0C
+
+  // surfaces
+  --vx-surface: #FFFFFF
+  --vx-surface-alt: #FAFAFA
+  --vx-hover: #F4F4F4
+  --vx-border: #EDEDED
+
+  // text
+  --vx-text: #0B0B0B
+  --vx-text-muted: #7A7C80
+
+  --vx-radius: 10px
+
+body.dark .vx
+  --vx-yellow: #F0BE3C
+  --vx-yellow-hover: #FFD05C
+  --vx-yellow-soft: rgba(240, 190, 60, .16)
+  // Inverted on dark: the darkened ink drops to 3.4:1 there, the bright
+  // brand yellow gets 9.3:1.
+  --vx-yellow-ink: #F0BE3C
+  --vx-yellow-ink-strong: #FFD05C
+
+  --vx-surface: #141517
+  --vx-surface-alt: #0D0E0F
+  --vx-hover: #1F2123
+  --vx-border: #262A2E
+
+  --vx-text: #FAFAFA
+  --vx-text-muted: #8B9095
+
+// ---------------------------------------------------------------------------
+// Sidebar
+// ---------------------------------------------------------------------------
+
+.vx .sidebar
+  width: 280px
+  padding: 20px 16px
+  // app.min.css centers items in its 96px rail below 1259px; the rail here is
+  // driven by the toggle instead, so items always stretch.
+  align-items: stretch
+  background: var(--vx-surface)
+  border-right: 1px solid var(--vx-border)
+  box-shadow: none
+  transition: width .22s ease, transform .22s ease
+
+  +x
+    width: 260px
+
+  // Below 768px the rail state is irrelevant — it becomes a full-width drawer.
+  +m
+    padding: 20px 16px
+    align-items: stretch
+
+body.dark .vx .sidebar
+  background: var(--vx-surface)
+
+// Header of the sidebar: logo on the left, toggle on the right.
+.vx .sidebar__logo
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  width: auto
+  height: 36px
+  margin: 0 0 28px
+  padding-left: 6px
+
+  img
+    width: auto
+    max-width: 128px
+    height: 100%
+    object-fit: contain
+
+.vx .sidebar__brand
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 8px
+  margin-bottom: 24px
+
+  .sidebar__logo
+    margin: 0
+    flex: 1
+    min-width: 0
+
+// Toggle button — hidden outside the themed shells so the customer
+// dashboard is unaffected.
+.sidebar__toggle-btn
+  display: none
+
+.vx .sidebar__toggle-btn
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  width: 36px
+  height: 36px
+  border-radius: 8px
+  background: transparent
+  border: 1px solid var(--vx-border)
+  cursor: pointer
+  transition: background .2s, border-color .2s
+
+  .icon
+    width: 18px
+    height: 18px
+    fill: var(--vx-text-muted)
+    transition: fill .2s
+
+  &:hover
+    background: var(--vx-yellow-soft)
+    border-color: var(--vx-yellow)
+
+    .icon
+      fill: var(--vx-yellow)
+
+  +m
+    display: none
+
+// Menu items -----------------------------------------------------------------
+
+.vx .sidebar__menu
+  gap: 2px
+
+.vx .sidebar__item:not(:last-child)
+  margin-bottom: 2px
+
+.page.vx
+  .sidebar__item[href],
+  .sidebar__help,
+  .sidebar__head,
+  .sidebar__link
+    position: relative
+    height: 42px
+    padding: 0 12px
+    border-radius: var(--vx-radius)
+    background: transparent
+    box-shadow: none
+    font-size: 14px
+    font-weight: 500
+    letter-spacing: -.01em
+    color: var(--vx-text-muted)
+    transition: background .18s, color .18s
+
+  .sidebar__item[href] .icon,
+  .sidebar__help .icon,
+  .sidebar__head .icon
+    width: 20px
+    height: 20px
+    fill: var(--vx-text-muted)
+
+  .sidebar__item[href]:hover,
+  .sidebar__help:hover,
+  .sidebar__head:hover
+    background: var(--vx-hover)
+    color: var(--vx-text)
+
+    .icon
+      fill: var(--vx-text)
+
+// Active states: yellow tint + yellow rail + black label.
+.page.vx
+  .sidebar__item[href].active,
+  .sidebar__help.active,
+  .sidebar__top.active .sidebar__head
+    background: var(--vx-yellow-soft)
+    box-shadow: none
+    color: var(--vx-text)
+    font-weight: 600
+
+    .icon
+      fill: var(--vx-yellow)
+
+  .sidebar__item[href].active:before,
+  .sidebar__top.active .sidebar__head:before
+    content: ""
+    position: absolute
+    top: 50%
+    left: 0
+    width: 3px
+    height: 18px
+    border-radius: 0 3px 3px 0
+    background: var(--vx-yellow)
+    transform: translateY(-50%)
+
+body.dark .vx
+  .sidebar__item[href].active,
+  .sidebar__help.active,
+  .sidebar__top.active .sidebar__head
+    background: var(--vx-yellow-soft)
+    box-shadow: none
+    color: var(--vx-text)
+
+// Dropdown body --------------------------------------------------------------
+
+.vx .sidebar__body
+  padding-left: 30px
+
+  &:before
+    left: 20px
+    bottom: 20px
+    width: 1px
+    border-radius: 1px
+    background: var(--vx-border)
+
+body.dark .vx .sidebar__body:before
+  background: var(--vx-border)
+
+.vx .sidebar__link
+  height: 38px
+  font-size: 13.5px
+  font-weight: 500
+
+  &:before
+    background: none
+    top: 50%
+    left: -10px
+    width: 6px
+    height: 6px
+    border-radius: 50%
+    background: var(--vx-border)
+    transform: translateY(-50%)
+    transition: background .18s
+
+  &:hover
+    background: var(--vx-hover)
+    color: var(--vx-text)
+
+  .icon
+    display: none
+
+// The nested link needs to read as selected on its own: the group above it is
+// highlighted too, so a dot alone was too quiet to tell the children apart.
+.vx .sidebar__link.active
+  background: var(--vx-yellow-soft)
+  box-shadow: none
+  color: var(--vx-text)
+  font-weight: 600
+
+  &:before
+    background: var(--vx-yellow)
+    width: 8px
+    height: 8px
+
+body.dark .vx .sidebar__link.active
+  background: var(--vx-yellow-soft)
+  box-shadow: none
+
+// Chevron follows the fold state, which now lives on `.sidebar__item_dropdown.active`.
+.vx .sidebar__head .icon:last-child
+  transition: transform .2s
+
+// Foot -----------------------------------------------------------------------
+
+.vx .sidebar__foot
+  margin-top: 20px
+  padding-top: 16px
+  border-top: 1px solid var(--vx-border)
+
+body.dark .vx .sidebar__foot
+  border-color: var(--vx-border)
+
+.vx .sidebar__counter
+  min-width: 22px
+  border-radius: 999px
+  background: var(--vx-yellow)
+  font-size: 12px
+  font-weight: 700
+  line-height: 22px
+  color: #0B0B0B
+
+.vx .sidebar__help .sidebar__counter
+  background: var(--vx-yellow)
+
+// Theme switch ---------------------------------------------------------------
+
+.vx .theme__inner
+  border-radius: var(--vx-radius)
+  background: var(--vx-surface-alt)
+  border: 1px solid var(--vx-border)
+
+.vx .theme__box
+  font-size: 13px
+  font-weight: 500
+  color: var(--vx-text-muted)
+
+  .icon
+    fill: var(--vx-text-muted)
+
+.vx .theme__input:checked ~ .theme__inner .theme__box:nth-child(2),
+.vx .theme__input:not(:checked) ~ .theme__inner .theme__box:first-child
+  color: var(--vx-text)
+
+// ---------------------------------------------------------------------------
+// Undo the template's built-in 96px rail (it kicks in below 1259px on its own).
+// Collapsing is the toggle's job here, so the sidebar stays expanded at every
+// width until the user says otherwise.
+// ---------------------------------------------------------------------------
+
++d
+  .page.vx
+    .sidebar__item[href],
+    .sidebar__help
+      width: 100%
+      font-size: 14px
+
+    .sidebar__item[href] .icon,
+    .sidebar__help .icon,
+    .sidebar__head .icon:first-child
+      margin-right: 12px
+
+    .sidebar__head
+      font-size: 14px
+
+      .icon:last-child
+        display: inline-block
+
+    .sidebar__item_dropdown.active .sidebar__body
+      display: block
+
+    .sidebar__help .sidebar__counter
+      display: block
+
+    .sidebar__foot
+      margin-top: 20px
+      padding-top: 16px
+
+    // The switch collapses to a single circular box below 1259px — keep both
+    // halves so the control still reads as a light/dark choice.
+    .theme__inner
+      display: flex
+      padding: 4px 2px
+      border-radius: var(--vx-radius)
+
+    .theme__box
+      display: flex
+      height: 32px
+      font-size: 13px
+      border-radius: 8px
+
+      .icon
+        margin-right: 8px
+
+    .theme__box:nth-child(2)
+      display: flex
+
+    .theme__input:checked + .theme__inner .theme__box:first-child
+      display: flex
+
+// ---------------------------------------------------------------------------
+// Collapsed (rail) mode — desktop only, driven by body.sidebar-collapsed
+// ---------------------------------------------------------------------------
+
++rmin(768)
+  body.sidebar-collapsed .page.vx
+    .sidebar
+      width: 88px
+      padding: 20px 12px
+
+    .sidebar__brand
+      flex-direction: column
+      gap: 12px
+
+    .sidebar__logo
+      justify-content: center
+      padding-left: 0
+      // `flex: 1` from the expanded brand row resolves to zero height once the
+      // row turns into a column, which hides the mark entirely.
+      flex: none
+      height: 32px
+
+      img
+        max-width: 48px
+
+    .sidebar__item[href],
+    .sidebar__help,
+    .sidebar__head,
+    .sidebar__link
+      justify-content: center
+      padding: 0
+      font-size: 0
+
+    .sidebar__item[href] .icon,
+    .sidebar__help .icon,
+    .sidebar__head .icon:first-child
+      margin-right: 0
+
+    // Chevron and nested links carry no meaning without labels. These carry an
+    // extra class each to out-specify the +d reset above.
+    .sidebar__head .icon:last-child,
+    .sidebar__item_dropdown.active .sidebar__body,
+    .sidebar__item_dropdown .sidebar__body,
+    .sidebar__help .sidebar__counter,
+    .sidebar__item[href] .sidebar__counter,
+    .sidebar__add
+      display: none
+
+    // The yellow pill alone carries the active state in the rail; the edge bar
+    // would sit out in the sidebar padding with nothing to anchor it.
+    .sidebar__item[href].active:before,
+    .sidebar__top.active .sidebar__head:before
+      display: none
+
+    .theme__box
+      font-size: 0
+      padding: 0
+
+      .icon
+        margin: 0
+        margin-right: 0
+
+    .header
+      left: 88px
+
+  // .vx sits on the .page shell itself, so the gutter is set on it directly.
+  body.sidebar-collapsed .page.vx
+    padding-left: 88px
+
+// ---------------------------------------------------------------------------
+// Mobile drawer
+// ---------------------------------------------------------------------------
+
++m
+  .vx .sidebar
+    transform: translateX(-100%)
+    z-index: 40
+
+  .vx .sidebar.active
+    transform: translateX(0)
+
+  .page.vx
+    padding-left: 0
+
+  .vx .header
+    left: 0
+
+.vx .sidebar__backdrop
+  display: none
+
++m
+  .vx .sidebar__backdrop
+    display: block
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    z-index: 35
+    background: rgba(11, 11, 11, .45)
+    visibility: hidden
+    opacity: 0
+    transition: opacity .2s, visibility .2s
+
+  .vx .sidebar__backdrop.active
+    visibility: visible
+    opacity: 1
+
+// The template pins the close button top-left, where the brand row now sits.
+// Move it opposite the logo instead, into the slot the toggle vacates.
++m
+  .vx .sidebar__close
+    top: 16px
+    right: 12px
+    left: auto
+    width: 36px
+    height: 36px
+    border-radius: 8px
+
+    .icon
+      width: 20px
+      height: 20px
+      fill: var(--vx-text)
+
+  .vx .sidebar__brand
+    padding-right: 44px
+
+// ---------------------------------------------------------------------------
+// Header / navbar
+// ---------------------------------------------------------------------------
+
+.vx .header
+  left: 280px
+  padding: 14px 32px
+  background: var(--vx-surface)
+  border-bottom: 1px solid var(--vx-border)
+  box-shadow: none
+
+  +x
+    left: 260px
+
+  +d
+    padding: 14px 24px
+
+  +m
+    left: 0
+    padding: 12px 16px
+
+body.dark .vx .header
+  background: var(--vx-surface)
+  border-color: var(--vx-border)
+  box-shadow: none
+
+// .vx is the .page shell itself. app.min.css is appended at runtime, so these
+// need to out-specify its bare `.page` rules rather than rely on source order.
+.page.vx
+  padding: 72px 0 0 280px
+  transition: padding-left .22s ease
+
+  +x
+    padding-left: 260px
+
+  +m
+    padding-left: 0
+
+.vx .header__burger
+  border-radius: 8px
+
+  &:before,
+  &:after
+    background: var(--vx-text)
+
+.vx .header__search .icon,
+.vx .header__item_notifications .header__head .icon
+  fill: var(--vx-text-muted)
+
+.vx .header__search:hover .icon,
+.vx .header__item_notifications .header__head:hover .icon
+  fill: var(--vx-text)
+
+// Unread dot — yellow, ringed so it stays visible on both surfaces.
+.vx .header__item_notifications .header__head.active:before
+  width: 10px
+  height: 10px
+  top: 12px
+  right: 12px
+  background: var(--vx-yellow)
+  border: 2px solid var(--vx-surface)
+
+body.dark .vx .header__item_notifications .header__head.active:before
+  border-color: var(--vx-surface)
+
+.vx .header .header__head.profile
+  background: var(--vx-yellow)
+  color: #0B0B0B
+
+.vx .header__body
+  border-radius: 12px
+  border: 1px solid var(--vx-border)
+  background: var(--vx-surface)
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .16)
+
+body.dark .vx .header__body
+  background: var(--vx-surface)
+  border-color: var(--vx-border)
+
+.vx .header__link
+  font-size: 14px
+  font-weight: 500
+  color: var(--vx-text-muted)
+  transition: color .18s
+
+  &:hover
+    color: var(--vx-yellow)

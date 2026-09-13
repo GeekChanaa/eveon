@@ -13,6 +13,8 @@ using System.Net;
 using VoltaXApi.Helpers;
 using VoltaXApi.Services;
 using VoltaxApi.Dtos;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VoltaXApi.Controllers
 {
@@ -113,6 +115,18 @@ namespace VoltaXApi.Controllers
             return chargingSessionsList;
         }
 
+        [Authorize]
+        [HttpGet("GetMyCurrentChargingSession/")]
+        public async Task<IActionResult> GetMyCurrentChargingSession([FromQuery] GlobalParams globalParams)
+        {
+            var userIdClaim = Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var chargingSession = await this._repository.GetUserCurrentChargingSession(int.Parse(userIdClaim), globalParams);
+            if(chargingSession == null)
+            {
+                return NotFound(new { Message = "No active charging session found for the user." });
+            }
+            return Ok(chargingSession);
+        }
 
     }
 }

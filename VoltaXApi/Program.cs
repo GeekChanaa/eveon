@@ -2,55 +2,67 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using VoltaXApi.Data;
 using VoltaXApi.Data.Seeders;
+using VoltaXApi.Middlewares;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Configurations;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         // builder.WebHost.ConfigureKestrel(options =>
         // {
         //     options.ListenAnyIP(5000);
         // });
-        
-        // Configure logging
-        ConfigureLogging(builder);
-        
-        // Configure services
-        ConfigureServices(builder);
-        
-        var app = builder.Build();
-        
-        // Configure the HTTP request pipeline
-        ConfigureApp(app);
-        
-        // Run database seeding
-        //SeedDatabase(app);
-        
-        app.Run();
+
+        // Logging first, so a failure in any of the steps below is on record.
+        LoggingConfiguration.ConfigureLogging(builder);
+
+        try
+        {
+            Log.Information("Starting VoltaX API ({Environment})", builder.Environment.EnvironmentName);
+
+            // Configure services
+            ConfigureServices(builder);
+
+            var app = builder.Build();
+
+            var initializeRefreshTokens = args.Contains("--initialize-refresh-tokens");
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+                if (initializeRefreshTokens || builder.Configuration.GetValue<bool?>("Database:InitializeRefreshTokens")
+                    == true || (app.Environment.IsDevelopment() && builder.Configuration["Database:InitializeRefreshTokens"] == null))
+                    await RefreshTokenSchema.Initialize(db);
+                else
+                    await RefreshTokenSchema.Verify(db);
+            }
+            if (initializeRefreshTokens)
+                return;
+
+            // Configure the HTTP request pipeline
+            ConfigureApp(app);
+
+            // Run database seeding
+            //SeedDatabase(app);
+
+            await app.RunAsync();
+        }
+        catch (Exception ex)
+        {
+            // A crash during start up never reaches a request logger, so it is caught here.
+            Log.Fatal(ex, "VoltaX API terminated unexpectedly");
+            throw;
+        }
+        finally
+        {
+            // Flushes whatever is still buffered in the file sink.
+            Log.CloseAndFlush();
+        }
     }
 
-    private static void ConfigureLogging(WebApplicationBuilder builder)
-    {
-        builder.Logging.ClearProviders();
-        builder.Logging.AddConsole();
-        builder.Logging.AddDebug();
-        builder.Logging.SetMinimumLevel(LogLevel.Warning);
-
-        // Configure Serilog
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .CreateLogger();
-
-        // Use Serilog as the logging provider
-        // builder.Host.UseSerilog();
-        builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
-        builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
-    }
-    
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         // Register all services
@@ -66,14 +78,14 @@ public class Program
 
         // ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
         ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
-        
+
         ServiceRegistration.ConfigureSwagger(builder.Services);
         ServiceRegistration.ConfigureCors(builder.Services);
         ServiceRegistration.ConfigureAutoMapper(builder.Services);
         ServiceRegistration.ConfigureQuestPDF(builder.Services);
         ServiceRegistration.ConfigureSignalR(builder.Services);
     }
-    
+
     private static void ConfigureApp(WebApplication app)
     {
         // Configure middleware
@@ -83,17 +95,23 @@ public class Program
         AppConfiguration.ConfigureCors(app);
         AppConfiguration.ConfigureCookiePolicy(app);
         AppConfiguration.ConfigureAuth(app);
+
+        // After authentication (the log lines carry the caller) and before the endpoints
+        // (so handler logs are correlated too).
+        app.UseRequestContextLogging();
+        LoggingConfiguration.ConfigureRequestLogging(app);
+
         AppConfiguration.ConfigureEndpoints(app);
         AppConfiguration.ConfigureStaticFiles(app);
         AppConfiguration.ConfigureWebSockets(app);
         AppConfiguration.ConfigureOCPPMiddleware(app);
     }
-    
+
     private static void SeedDatabase(WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
-        
+
         var mapper = app.Services.GetRequiredService<AutoMapper.IMapper>();
         DatabaseInit.Seed(dbContext, mapper).Wait();
         dbContext.Database.SetCommandTimeout(6000);

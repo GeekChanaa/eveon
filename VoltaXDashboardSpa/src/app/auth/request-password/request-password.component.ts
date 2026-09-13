@@ -51,5 +51,8 @@ export class RequestPasswordComponent implements OnInit {
     return this.form.get(name) as FormControl;
   }
 
+  googleLogin(){
+    this._authService.googleLogin();
+  }
 
 }

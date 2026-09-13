@@ -5,6 +5,4 @@ namespace VoltaXApi.Models
         Single,
         Double
     }
-
-
 }

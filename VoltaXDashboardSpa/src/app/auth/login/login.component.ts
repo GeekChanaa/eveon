@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserForLoginDto } from 'src/_models/_dtos/user-for-login-dto';
 import { UserRole } from 'src/_models/_enums/user-role';
+import { emailOrPhoneValidator, looksLikePhoneNumber, normalizePhoneNumber } from 'src/app/validators/email-or-phone-validator';
 import { AuthService } from 'src/_services/auth.service';
 import { UserService } from 'src/_services/user.service';
 
@@ -24,14 +25,14 @@ export class LoginComponent implements OnInit {
     private _userService : UserService
   ) {
     this.form = new FormGroup({
-      email: new FormControl('', [
+      identifier: new FormControl('', [
         Validators.required,
-        Validators.email
+        emailOrPhoneValidator()
     ]),
     password: new FormControl('', [
         Validators.required
     ])
-    
+
     })
   }
 
@@ -45,12 +46,21 @@ export class LoginComponent implements OnInit {
 
   login(){
 
+    if(this.form.invalid){
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.isLoading = true;
+    this.errorMessage = "";
     const formValue = this.form.value;
-    var userForLogin : UserForLoginDto = {
-      email : formValue.email,
-      password : formValue.password
-    };
+    const identifier : string = (formValue.identifier || '').trim();
+
+    // The API reads either property, so send the one the user actually typed.
+    var userForLogin : UserForLoginDto = looksLikePhoneNumber(identifier)
+      ? { phone : normalizePhoneNumber(identifier), password : formValue.password }
+      : { email : identifier.toLowerCase(), password : formValue.password };
+
     this._authService.login(userForLogin).subscribe((data) => {
       this.isLoading = false;
       let decodedToken = this._authService.getAuthInformation();
@@ -68,7 +78,7 @@ export class LoginComponent implements OnInit {
         this.errorMessage = "A partner account should login from the partner portal"
       }
       else if(error.status == 401){
-        this.errorMessage = "Email or password incorrect";
+        this.errorMessage = "Email, phone number or password incorrect";
       }
       else if(error.error.error == 'Too many failed attempts'){
         this.errorMessage = "Too Many Failed attempts, please check your email.";

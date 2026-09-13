@@ -42,6 +42,15 @@ namespace VoltaXApi.Services
             return await _chargingSessionRepository.CreateChargingSessionForTransaction(connector, card, startDate);
         }
 
+        public async Task<ChargingSession> UpdateChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs)
+        {
+            ChargingSession chargingSession = await _chargingSessionRepository.GetByIdAsync(chargingSessionID);
+            chargingSession.ChargedMinutes = minutesCharged;
+            chargingSession.ChargedKwhs = chargedKwhs;
+            await _chargingSessionRepository.Update(chargingSession);
+            return chargingSession;
+        }
+
         public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate)
         {
             ChargingSession chargingSession = await _chargingSessionRepository.GetByIdAsync(chargingSessionID);

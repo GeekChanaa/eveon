@@ -7,6 +7,8 @@ using VoltaXApi.Helpers;
 using AutoMapper.QueryableExtensions;
 using Bogus.DataSets;
 using VoltaXApi.Services;
+using VoltaxApi.Dtos;
+using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Data
 {
@@ -231,6 +233,45 @@ namespace VoltaXApi.Data
             return maxNumber;
         }
 
-
+        public async Task<ChargePointDetailsForMobileDto?> GetChargePointByQrCode(string qrCode)
+        {
+            return await _context.ChargePoints
+                .Where(cp => cp.QrValue != null && cp.QrValue.Contains(qrCode))
+                .Select(cp => new ChargePointDetailsForMobileDto
+                {
+                    ID = cp.ID,
+                    ChargePointId = cp.ChargePointId,
+                    ChargingStationID = cp.ChargingStationID,
+                    SerialNumber = cp.SerialNumber,
+                    ShowOnMap = cp.ShowOnMap,
+                    HasChargeCable = cp.HasChargeCable,
+                    Status = cp.Status,
+                    Comment = cp.Comment,
+                    Address = cp.ChargingStation.Address,
+                    Country = cp.ChargingStation.Country,
+                    City = cp.ChargingStation.City,
+                    Latitude = cp.ChargingStation.Latitude,
+                    Longitude = cp.ChargingStation.Longitude,
+                    Category = cp.Category,
+                    ChargingPorts = cp.Connectors.Select(c => c.ConnectorType.ToString()).ToList(),
+                    Connectors = cp.Connectors.Select(c => new ConnectorDto
+                    {
+                        ID = c.ID,
+                        ConnectorID = c.ConnectorID,
+                        EvseID = c.EvseID,
+                        Name = c.ConnectorType.ToString(),
+                        ConnectorType = c.ConnectorType,
+                        PowerKw = c.MaxPower,
+                        // Live status: latest ConnectorStatus row for this connector.
+                        // No row => Disconnected (same convention as the dashboard counts).
+                        Status = _context.ConnectorStatuses
+                            .Where(s => s.ConnectorID == c.ID)
+                            .OrderByDescending(s => s.LastStatusTime)
+                            .Select(s => (ConnectorStatusEnumType?)s.LastStatus)
+                            .FirstOrDefault() ?? ConnectorStatusEnumType.Disconnected
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
     }
 }

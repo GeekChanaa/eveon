@@ -165,6 +165,11 @@ namespace VoltaXApi.Services
 
       return true;
     }
+
+    public async Task<bool> IsEVCableConnected(string chargePointID)
+    {
+      return await _connectorStatusRepository.IsEVCableConnected(chargePointID);
+    }
   }
   
 

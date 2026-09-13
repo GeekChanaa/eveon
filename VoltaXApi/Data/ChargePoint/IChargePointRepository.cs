@@ -1,3 +1,4 @@
+using VoltaxApi.Dtos;
 using VoltaXApi.Dtos;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
@@ -23,5 +24,6 @@ namespace VoltaXApi.Data
         IQueryable<ChargePointCRListDto> GetAllChargePoints(GlobalParams globalParams);
         IQueryable<ChargePointCRListDto> GetAllPartnerChargePoints(GlobalParams globalParams, int partnerID);
         Task<int> GetLatestChargePointNumberAsync();
+        Task<ChargePointDetailsForMobileDto?> GetChargePointByQrCode(string qrCode);
     }
 }

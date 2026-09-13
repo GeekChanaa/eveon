@@ -137,15 +137,58 @@ namespace VoltaXApi.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.AuthProvider)
+                .HasConversion<string>()
+                .HasDefaultValue(AuthProviderEnum.Local);
+
+            // Unique only across the rows that actually carry a Google identity.
+            // SQL Server counts NULLs as duplicates in a unique index, hence the filter;
+            // MySQL / MariaDB already allow several NULLs and reject filtered indexes.
+            var googleIdIndex = modelBuilder.Entity<User>()
+                .HasIndex(u => u.GoogleId)
+                .IsUnique();
+
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                googleIdIndex.HasFilter("[GoogleId] IS NOT NULL");
+
+            // A phone number signs a user in on its own, so it identifies exactly one
+            // account. Always stored in the "+212XXXXXXXXX" shape (see PhoneHelper), which
+            // is what makes comparing them - and this index - meaningful.
+            modelBuilder.Entity<User>()
+                .Property(u => u.Phone)
+                .HasMaxLength(20);
+
+            var phoneIndex = modelBuilder.Entity<User>()
+                .HasIndex(u => u.Phone)
+                .IsUnique();
+
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                phoneIndex.HasFilter("[Phone] IS NOT NULL");
+
             modelBuilder.Entity<Partner>()
                 .HasIndex(u => u.PartnerIdentificationNumber)
                 .IsUnique();
+
+            // Refresh tokens: looked up by hash on every refresh, and wiped with the account.
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.Property(t => t.IsDeleted).HasDefaultValue(false);
+                entity.Property(t => t.RevokedAt).IsConcurrencyToken();
+
+                entity.HasIndex(t => t.TokenHash).IsUnique();
+                entity.HasIndex(t => t.UserID);
+
+                entity.HasOne(t => t.User)
+                    .WithMany()
+                    .HasForeignKey(t => t.UserID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 if (typeof(IEntity).IsAssignableFrom(entityType.ClrType))
                 {
-                    
                     var method = typeof(VoltaXApiDbContext)
                         .GetMethod(nameof(SetSoftDeleteFilter), System.Reflection.BindingFlags.NonPublic 
                             | System.Reflection.BindingFlags.Static)
@@ -159,6 +202,7 @@ namespace VoltaXApi.Data
         
 
         public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }

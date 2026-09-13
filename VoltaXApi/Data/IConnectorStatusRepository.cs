@@ -12,5 +12,6 @@ namespace VoltaXApi.Data
         Task<ConnectorStatus?> GetLastConnectorStatus(int connectorID);
         Task<ConnectorStatusesDto?> GetNumberOfConnectorsByAllStatus();
         Task<ConnectorStatusesDto?> GetNumberOfPartnerConnectorsByAllStatus(int partnerID);
+        Task<bool> IsEVCableConnected(string chargePointID);
     }
 }

@@ -15,7 +15,8 @@ import { environment } from 'src/environments/environment';
 
 enum ChargePointTabsEnum {
   InformationsTab = "InformationsTab",
-  ConnectorsTab = "ConnectorsTab"
+  ConnectorsTab = "ConnectorsTab",
+  QrCodeTab = "QrCodeTab"
 }
 
 @Component({
@@ -43,15 +44,15 @@ export class ChargingPointComponent implements OnInit {
   chargePoint: any = {};
 
   staticUrl : string = environment.apiStaticFilesUrl;
+  apiUrl : string = environment.apiUrl;
 
+  qrCodeImage : string = "";
   // Form group
   chargePointForm : FormGroup;
 
   constructor(
-    private _chargingStationService: ChargingStationService,
     private _chargePointService : ChargePointService,
     private _route: ActivatedRoute,
-    private _enumService : EnumMappingService,
     private _chargePointModelService: ChargePointModelService,
     private _chargePointBrandService : ChargePointBrandService
   ) {
@@ -70,6 +71,7 @@ export class ChargingPointComponent implements OnInit {
     if (idParam != null) {
       var id = parseInt(idParam);
       this.getChargePointByID(id);
+      this.qrCodeImage = this.apiUrl + "/api/chargepoint/GenerateQrCodeForChargePoint/" + id;
     }
     this.getAllChargePointModels();
     this.getAllChargePointBrands();
@@ -100,6 +102,13 @@ export class ChargingPointComponent implements OnInit {
     this._chargePointBrandService.getAllChargePointBrands().subscribe((data) => {
       this.chargePointBrandsOptions = data.map((item : any) => {return {label: item.name, value: item.id}});
     })
+  }
+
+  downloadQrCode() {
+    const link = document.createElement('a');
+    link.href = this.qrCodeImage;
+    link.download = `chargepoint_${this.chargePointID}_qr.png`;
+    link.click();
   }
 
 }

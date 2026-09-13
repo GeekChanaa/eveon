@@ -10,6 +10,7 @@ import { VerifyPhoneComponent } from './verify-phone/verify-phone.component';
 import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-number.component';
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import { ResetPasswordSuccessComponent } from './reset-password-success/reset-password-success.component';
+import { GoogleCallbackComponent } from './google-callback/google-callback.component';
 
 
 
@@ -24,6 +25,7 @@ export const AuthRoutes: Routes= [
   { path : 'verify-phone' , component : VerifyPhoneComponent },
   { path : 'phone-number' , component : EnterPhoneNumberComponent },
   { path : 'complete-profile' , component : CompleteProfileComponent },
+  { path : 'google-callback' , component : GoogleCallbackComponent },
 ]
 
 @NgModule({

@@ -51,4 +51,8 @@ export class PartnerForgotPasswordComponent implements OnInit {
   getControl(name: string): FormControl {
     return this.form.get(name) as FormControl;
   }
+
+  googleLogin(){
+    this._partnerAuthService.googleLogin();
+  }
 }

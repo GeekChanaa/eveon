@@ -12,6 +12,10 @@ import { UserPasswordChangeDto } from 'src/_models/_dtos/user-password-change-dt
 import { VerifyEmailDto } from 'src/_models/_dtos/verify-email-dto';
 import { VerifyPhoneDto } from 'src/_models/_dtos/verify-phone-dto';
 import { AddPhoneNumberDto } from 'src/_models/_dtos/add-phone-number-dto';
+import { GoogleLoginDto } from 'src/_models/_dtos/google-login-dto';
+import { LinkedAccountsDto } from 'src/_models/_dtos/linked-accounts-dto';
+import { TokenStorageService } from './token-storage.service';
+import { TokenRefreshService } from './token-refresh.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +30,8 @@ export class AuthService {
     private http: HttpClient, 
     private _userService: UserService, 
     private router: Router,
+    private _tokenStorage: TokenStorageService,
+    private _tokenRefresh: TokenRefreshService,
     ) 
     { }
 
@@ -34,10 +40,7 @@ export class AuthService {
       map((response:any) => {
         const user = response;
         if(user){
-          localStorage.setItem('token',user.token);
-          this.token = user.token;
-          var decode = this.jwtHelper.decodeToken(user.token);
-          this.decodedToken = decode;
+          this.storeLoginResult(user);
         }
       })
     )
@@ -46,52 +49,82 @@ export class AuthService {
   register(model:UserForRegisterDto) {
     return this.http.post<User>(this.baseUrl + 'register', model).pipe(
       map((response:any) => {
-        console.log("this is the response");
-        console.log(response);
         const user = response;
         if(user){
-          localStorage.setItem('token',user.token);
-          this.token = user.token;
-          const decode = this.jwtHelper.decodeToken(user.token);
-          this.decodedToken = decode;
+          this.storeLoginResult(user);
         }
       })
     );
+  }
+
+  /**
+   * Keeps both tokens of a session. The refresh token is what survives the hour long
+   * access token, so dropping it here would silently end the session.
+   */
+  private storeLoginResult(result: any){
+    this._tokenStorage.clear();
+    this._tokenStorage.store(result);
+    this.token = result.token;
+    this.decodedToken = this.jwtHelper.decodeToken(result.token);
+  }
+
+  /** Swaps the refresh token for a new pair. Shares one in-flight call across callers. */
+  refreshSession(){
+    return this._tokenRefresh.refresh();
   }
 
   checkToken(token :string) : Observable<any>{
     return this.http.post(this.baseUrl+"checktoken", token);
   }
 
+  /**
+   * An expired access token no longer means "signed out": as long as a refresh token is
+   * held, the interceptor will get a new access token on the next call.
+   */
   loggedIn(){
-    const token = localStorage.getItem('token');
-    if(token) return !this.jwtHelper.isTokenExpired(token);
-    else return false;
+    if(!this._tokenStorage.isAccessTokenExpired()) return true;
+    return this._tokenStorage.hasRefreshToken();
   }
 
   logout() {
-    this.router.navigate(['/goodbye']).then(() => {
-      setTimeout(() => {
-        localStorage.removeItem("token");
-      }, 4000);
-    });
+    // Revoke first, while the refresh token is still stored, then clear locally
+    // whatever the API answered.
+    this._tokenRefresh.revoke().subscribe();
+    this.clearSession();
+
+    this.router.navigate(['/goodbye']);
+  }
+
+  /** Ends every session of this account, not only the one in this browser. */
+  logoutEverywhere(){
+    return this.http.post(this.baseUrl + "LogoutEverywhere", {}).pipe(tap(() => {
+      this.clearSession();
+      this.router.navigateByUrl('/auth/login');
+    }));
+  }
+
+  private clearSession(){
+    this._tokenStorage.clear();
+    this.token = null;
+    this.decodedToken = null;
   }
 
   getAuthInformation(){
-    var token = localStorage.getItem('token');
+    var token = this._tokenStorage.accessToken;
+    this.decodedToken = null;
     if(token != null){
-      this.decodedToken = this.jwtHelper.decodeToken(token);
+      try { this.decodedToken = this.jwtHelper.decodeToken(token); } catch { this.decodedToken = null; }
     }
     return this.decodedToken;
   }
 
   getRole(){
     this.getAuthInformation();
-    return this.decodedToken.role;
+    return this.decodedToken?.role;
   }
 
   changePassword(pwd : UserPasswordChangeDto){
-    return this.http.post(this.baseUrl+"ChangePassword",pwd);
+    return this.http.post(this.baseUrl+"ChangePassword",pwd).pipe(tap(() => this.logout()));
   }
 
   resetPasswordRequest(email : string){
@@ -109,10 +142,11 @@ export class AuthService {
   verifyPhone(verifyPhoneDto: VerifyPhoneDto): Observable<any> {
     return this.http.post<{ token: string }>(this.baseUrl + "VerifyPhone", verifyPhoneDto).pipe(
         tap(response => {
-          console.log("this is the response");
-          console.log(response);
           if (response && response.token) {
-            localStorage.setItem('token', response.token);
+            // Only the access token changes here; the refresh token stays valid.
+            this._tokenStorage.storeAccessToken(response.token);
+            this.token = response.token;
+            this.decodedToken = this.jwtHelper.decodeToken(response.token);
           }
         }),
         catchError((error) => {
@@ -202,8 +236,10 @@ export class AuthService {
   getUserInformations() : Promise<any>{
     return new Promise((resolve, reject) => {
       const user = this.getAuthInformation(); // Assuming this method exists in authService
-      if(user == null)
+      if(user == null) {
         resolve(null);
+        return;
+      }
       // Map the token information to your UserInformation model
       let userInformations: any = {
         isEmailVerified: user.IsEmailVerified,
@@ -240,9 +276,88 @@ export class AuthService {
     });
   }
 
-  // GoogleLogin
-  googleLogin() {
-    window.location.href = this.baseUrl + "google-login";
+  // ---------------------------------------------------------------------
+  // Google sign in
+  // ---------------------------------------------------------------------
+
+  /**
+   * Redirect flow: hands the browser over to the API, which bounces it to Google
+   * and finally back to /auth/google-callback with a VoltaX token.
+   */
+  googleLogin(returnUrl?: string) {
+    let url = this.baseUrl + "google-login";
+    if (returnUrl) {
+      url += "?returnUrl=" + encodeURIComponent(returnUrl);
+    }
+    window.location.href = url;
   }
-  
+
+  /**
+   * Redirect flow used to attach a Google account to the signed in profile.
+   * The current JWT travels as a ticket because a top level navigation
+   * cannot carry an Authorization header.
+   */
+  startGoogleLink(returnUrl?: string) {
+    // The ticket is validated as a live JWT, so an expired one has to be renewed
+    // before the browser leaves the app.
+    if (this._tokenStorage.isAccessTokenExpired() && this._tokenStorage.hasRefreshToken()) {
+      this._tokenRefresh.refresh().subscribe({
+        next: () => this.redirectToGoogleLink(returnUrl),
+        error: () => this.router.navigateByUrl('/auth/login')
+      });
+      return;
+    }
+
+    this.redirectToGoogleLink(returnUrl);
+  }
+
+  private redirectToGoogleLink(returnUrl?: string) {
+    const token = this._tokenStorage.accessToken;
+    if (token == null) {
+      this.router.navigateByUrl('/auth/login');
+      return;
+    }
+
+    let url = this.baseUrl + "google-link?ticket=" + encodeURIComponent(token);
+    if (returnUrl) {
+      url += "&returnUrl=" + encodeURIComponent(returnUrl);
+    }
+    window.location.href = url;
+  }
+
+  /**
+   * Token flow: the client already holds a Google ID token
+   * (Google Identity Services button) and swaps it for a VoltaX token.
+   */
+  googleLoginWithIdToken(idToken: string) {
+    const dto: GoogleLoginDto = { idToken: idToken };
+    return this.http.post(this.baseUrl + "google", dto).pipe(
+      map((response: any) => {
+        if (response && response.token) {
+          this.storeLoginResult(response);
+        }
+        return response;
+      })
+    );
+  }
+
+  /** Stores the tokens handed back by /auth/google-callback. */
+  completeExternalLogin(token: string, refreshToken?: string) {
+    this.storeLoginResult({ token: token, refreshToken: refreshToken });
+    return this.getAuthInformation();
+  }
+
+  getLinkedAccounts(): Observable<LinkedAccountsDto> {
+    return this.http.get<LinkedAccountsDto>(this.baseUrl + "linked-accounts");
+  }
+
+  linkGoogleWithIdToken(idToken: string): Observable<LinkedAccountsDto> {
+    const dto: GoogleLoginDto = { idToken: idToken };
+    return this.http.post<LinkedAccountsDto>(this.baseUrl + "google/link", dto);
+  }
+
+  unlinkGoogle(): Observable<LinkedAccountsDto> {
+    return this.http.post<LinkedAccountsDto>(this.baseUrl + "google/unlink", {});
+  }
+
 }

@@ -34,12 +34,13 @@ export class ChargingStationImagesComponent implements OnInit {
   getImages() {
     this._chargingStationImageService.getChargingStationImages(this.chargingStationID).subscribe((data) => {
       this.images = data;
+      console.log("this is the images", this.images);
     })
   }
 
   deleteImage(id: number) {
     this._chargingStationImageService.deleteById(id).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success, "Succcess !", "Images Uploaded Successfully", 4000);
+      this._modalService.popup(ActionModalStatusEnum.Success, "Succcess !", "Image Removed Successfully", 4000);
       this.getImages();
     }, (error) => {
       this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later", 4000);
@@ -72,7 +73,11 @@ export class ChargingStationImagesComponent implements OnInit {
     }
   }
 
-  clearImage(i: number): void {
+  clearImage(i: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.chargingStationImages.splice(i, 1);
     this.displayedImages.splice(i, 1);
   }
@@ -89,10 +94,18 @@ export class ChargingStationImagesComponent implements OnInit {
 
     this._chargingStationImageService.uploadChargingStationImages(formData, this.chargingStationID).subscribe((data) => {
       this.imagesUploading = false;
-      this._modalService.popup(ActionModalStatusEnum.Success, "Succcess !", "Images Uploaded Successfully", 4000);
+      this._modalService.popup(ActionModalStatusEnum.Success, "Success!", "Images Uploaded Successfully", 4000);
+      
+      // Reset state and close adding images view
+      this.chargingStationImages = [];
+      this.displayedImages = [];
+      this.addingImages = false;
+      
+      // Refresh the images list
+      this.getImages();
     }, (error) => {
       this.imagesUploading = false;
-      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong please try again later", 4000);
+      this._modalService.popup(ActionModalStatusEnum.Error, "Error!", "Something went wrong please try again later", 4000);
     })
   }
 
@@ -120,16 +133,39 @@ export class ChargingStationImagesComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     const files = event.dataTransfer?.files;
-    if (files) {
-      this.handleUpload({ target: { files } } as any);
+    if (files && files.length > 0) {
+      console.log("this is the files", files);
+      // Process the dropped files
+      this.fileErrors = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          this.fileErrors.push('Only image files are allowed.');
+          continue;
+        }
+
+        // Validate file size
+        const maxSizeInMB = 2;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+        if (file.size > maxSizeInBytes) {
+          this.fileErrors.push('File size must be less than 2MB.');
+          continue;
+        }
+        
+        this.displayedImages.push(URL.createObjectURL(file));
+        this.chargingStationImages.push(file);
+      }
     }
   }
 
   cancelAddingImages(): void {
     this.addingImages = false;
-    // Clear any selected images
+    // Clear any selected images and errors
     this.chargingStationImages = [];
     this.displayedImages = [];
+    this.fileErrors = [];
   }
 
 }

@@ -11,5 +11,6 @@ namespace VoltaXApi.Data
     public interface IChargingStationImageRepository : IRepository<ChargingStationImage>
     {
         Task<List<ImageDto>> GetChargingStationImages(int chargingStationID);
+        Task<ImageDto?> GetChargingStationDisplayImage(int chargingStationID);
     }
 }

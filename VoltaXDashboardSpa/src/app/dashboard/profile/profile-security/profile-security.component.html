@@ -10,11 +10,56 @@
     </div>
 
     <div class="form-content" *ngIf="!editingPassword">
+      <div class="form-section">
+        <h3 class="section-title">Sessions</h3>
+        <p>End your sessions on all devices, including this browser.</p>
+        <button type="button" class="button-stroke" [disabled]="isSigningOutEverywhere" (click)="signOutEverywhere()">
+          {{ isSigningOutEverywhere ? 'Signing out...' : 'Sign out everywhere' }}
+        </button>
+        <div class="error" *ngIf="signOutError">{{ signOutError }}</div>
+      </div>
       <!-- Basic Information -->
       <div class="form-section">
         <h3 class="section-title">Password</h3>
         <app-card-action class="change__password-card" [actionName]="'Change Password'"
           (actionClick)="editingPassword = true"></app-card-action>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Connected Accounts</h3>
+        <div class="connected__container">
+          <div class="connected__provider">
+            <img src="assets/img/content/google.svg" alt="Google">
+            <div class="connected__details">
+              <div class="connected__name">Google</div>
+              <div class="connected__status" *ngIf="linkedAccounts?.googleLinked">
+                Connected as {{linkedAccounts?.googleEmail}}
+              </div>
+              <div class="connected__status" *ngIf="linkedAccounts && !linkedAccounts.googleLinked">
+                Not connected
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="button-stroke" *ngIf="linkedAccounts && !linkedAccounts.googleLinked"
+            (click)="linkGoogle()">
+            Connect
+          </button>
+
+          <button type="button" class="button-stroke" *ngIf="linkedAccounts?.googleLinked"
+            [disabled]="isUnlinkingGoogle" (click)="unlinkGoogle()">
+            Disconnect
+          </button>
+        </div>
+
+        <div class="error" *ngIf="linkedAccountsError != ''">
+          {{linkedAccountsError}}
+        </div>
+
+        <div class="connected__hint" *ngIf="linkedAccounts?.googleLinked && !linkedAccounts?.hasPassword">
+          This account has no password yet. Set one through "Forgot password?" before disconnecting Google,
+          otherwise you would lock yourself out.
+        </div>
       </div>
 
       <div class="form-section">

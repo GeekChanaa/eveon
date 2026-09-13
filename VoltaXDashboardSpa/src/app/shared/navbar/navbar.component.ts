@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
+import { SidebarService } from 'src/_services/sidebar.service';
 import { UserService } from 'src/_services/user.service';
 import { environment } from 'src/environments/environment';
 
@@ -20,10 +21,16 @@ export class NavbarComponent implements OnInit {
     private _authService : AuthService,
     private _router: Router,
     private _eRef: ElementRef,
-    private _userService : UserService
+    private _userService : UserService,
+    private _sidebarService : SidebarService
   ) { }
 
   avatarMenuBody : boolean = false;
+
+  // Mobile burger — opens the sidebar drawer.
+  toggleSidebar(){
+    this._sidebarService.toggleOpened();
+  }
 
   // On init cycle hook
   ngOnInit() {

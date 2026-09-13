@@ -5,19 +5,11 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Configuration;
-using System;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
-using VoltaXApi.Services;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Messages;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace VoltaXApi.OCPP.Controllers
 {
@@ -36,8 +28,26 @@ namespace VoltaXApi.OCPP.Controllers
         [HttpPost("RequestStartTransaction/{chargePointID}")]
         public async Task<IActionResult> RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request)
         {
+            Console.WriteLine("Received RequestStartTransaction for ChargePointID: {0}", chargePointID);
             var obj = JsonConvert.SerializeObject(request);
             await _EVDriverService.RequestStartTransaction(chargePointID, request);
+            return Ok(new { Message = "Request to start transaction sent successfully." });
+        }
+
+        [Authorize]
+        [HttpPost("RequestStartTransactionMobile/{chargePointID}")]
+        public async Task<IActionResult> RequestStartTransactionMobile(string chargePointID, RequestStartTransactionRequest request)
+        {
+            var userIdClaim = Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized(new { Message = "Invalid or missing user authentication." });
+            }
+
+            Console.WriteLine("Received RequestStartTransactionMobile for ChargePointID: {0}, UserID: {1}", chargePointID, userId);
+            var obj = JsonConvert.SerializeObject(request);
+            await _EVDriverService.RequestStartTransactionMobile(chargePointID, request, userId);
             return Ok(new { Message = "Request to start transaction sent successfully." });
         }
 
@@ -45,6 +55,14 @@ namespace VoltaXApi.OCPP.Controllers
         public async Task<IActionResult> RequestStopTransaction(string chargePointID, RequestStopTransactionRequest request)
         {
             await _EVDriverService.RequestStopTransaction(chargePointID, request);
+            return Ok(new { Message = "Request to stop transaction sent successfully." });
+        }
+
+        [Authorize]
+        [HttpPost("RequestStopTransactionMobile/{chargePointID}")]
+        public async Task<IActionResult> RequestStopTransactionMobile(string chargePointID, RequestStopTransactionRequest request)
+        {
+            await _EVDriverService.RequestStopTransactionMobile(chargePointID, request);
             return Ok(new { Message = "Request to stop transaction sent successfully." });
         }
 

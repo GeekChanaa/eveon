@@ -8,7 +8,9 @@
 
 .field
   display: block
-  margin-bottom: 24px !important 
+  // Tighter than the 24px it was: the fields themselves lost 10px of height, so the
+  // old gap made a form look sparse.
+  margin-bottom: 16px !important 
 
 .field__group
     display: flex

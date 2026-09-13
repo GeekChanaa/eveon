@@ -6,6 +6,7 @@ using VoltaXApi.Helpers;
 using System.Net.WebSockets;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.Services;
+using VoltaxApi.Dtos;
 
 
 namespace VoltaXApi.Controllers
@@ -177,6 +178,18 @@ namespace VoltaXApi.Controllers
             {
                 return StatusCode(500, new { message = "Failed to generate QR code", error = ex.Message });
             }
+        }
+
+        [HttpGet("GetChargePointByQrCode/{qrCode}")]
+        public async Task<ActionResult<ChargePointDetailsForMobileDto>> GetChargePointByQrCode(string qrCode) 
+        {
+            var chargePoint = await this._repository.GetChargePointByQrCode(qrCode);
+            if (chargePoint == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(chargePoint);
         }
 
     }

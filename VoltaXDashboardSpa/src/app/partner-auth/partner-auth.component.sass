@@ -8,7 +8,10 @@
     .auth-left-container, .auth-right-container
         padding: 16px
         flex: 0 0 50%
-        background: white
+        // Follows the app theme: --primary1 is white in light mode and #1e1e1e in dark,
+        // so the panel no longer stays white while the rest of the app goes dark.
+        background: var(--primary1)
+        color: var(--primary9)
     .auth-left-container
         position: relative
         img

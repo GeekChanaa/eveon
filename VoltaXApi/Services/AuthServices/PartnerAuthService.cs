@@ -21,6 +21,8 @@ namespace VoltaXApi.Services
         private readonly ICardRepository _cardRepository;
         private readonly ISnsService _snsService;
         private readonly IJwtService _jwtService;
+        private readonly IRefreshTokenService _refreshTokenService;
+        private readonly IUserClaimsFactory _claimsFactory;
 
         public PartnerAuthService(
           IUserRepository userRepository,
@@ -31,7 +33,9 @@ namespace VoltaXApi.Services
           IMailRequestFactory mailRequestFactory,
           ICardRepository cardRepository,
           ISnsService snsService,
-          IJwtService jwtService
+          IJwtService jwtService,
+          IRefreshTokenService refreshTokenService,
+          IUserClaimsFactory claimsFactory
         )
         {
             _userRepository = userRepository;
@@ -43,6 +47,8 @@ namespace VoltaXApi.Services
             _cardRepository = cardRepository;
             _snsService = snsService;
             _jwtService = jwtService;
+            _refreshTokenService = refreshTokenService;
+            _claimsFactory = claimsFactory;
         }
 
         public async Task PartnerResetPasswordRequest(string email)
@@ -61,7 +67,7 @@ namespace VoltaXApi.Services
             await this._mailService.SendPartnerResetPasswordMailRequest(requ, user.FullName, newPassword);
         }
 
-        public async Task<LoginResultDto> Login(string email, string password, string ipAddress)
+        public async Task<LoginResultDto> Login(string email, string password, string ipAddress, string? userAgent = null)
         {
             var user = await _context.Users
                 .Include(u => u.Role)
@@ -79,6 +85,9 @@ namespace VoltaXApi.Services
                 if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
                     throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
 
+                if (!user.HasPassword)
+                    throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
+
                 if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 {
                     await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
@@ -86,14 +95,7 @@ namespace VoltaXApi.Services
                 }
                 var claims = BuildPartnerClaims(user);
 
-                var token = _jwtService.GenerateToken(claims);
-                return new LoginResultDto
-                {
-                    Token = token,
-                    UserId = user.ID,
-                    Email = user.Email,
-                    FullName = $"{user.FirstName} {user.LastName}"
-                };
+                return await IssueSession(user, claims, ipAddress, userAgent);
             }
             catch (LoginAttemptFailedException ex)
             {
@@ -106,26 +108,69 @@ namespace VoltaXApi.Services
             }
         }
 
-        private List<Claim> BuildPartnerClaims(User user)
+        public async Task<LoginResultDto> ExternalLogin(ExternalUserInfoDto externalUser, AuthProviderEnum provider, string? ipAddress = null, string? userAgent = null)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.GivenName, user.FirstName),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.Role, user.Role.Name),
-                new Claim("partnerID",  user.PartnerID?.ToString() ?? ""),
-            };
+            if (provider != AuthProviderEnum.Google)
+                throw new ValidationException($"Unsupported authentication provider {provider}");
 
-            foreach (var userPermission in user.Role.RolePermissions)
+            if (!externalUser.EmailVerified)
+                throw new UnauthorizedException("Your Google email address is not verified");
+
+            string email = externalUser.Email.ToLower();
+
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .ThenInclude(r => r.RolePermissions)
+                .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(u => u.GoogleId == externalUser.ProviderKey || u.Email == email);
+
+            // Partner accounts are created by an administrator, never by a Google sign in.
+            if (user == null || user.PartnerID == null)
+                throw new NotPartnerException("not a partner account");
+
+            if (user.GoogleId == null)
             {
-                claims.Add(new Claim("permission", userPermission.Permission.Name));
-                claims.Add(new Claim($"permission_scope:{userPermission.Permission.Name}", userPermission.Scope.ToString()));
+                user.GoogleId = externalUser.ProviderKey;
+                user.ExternalPictureUrl ??= externalUser.PictureUrl;
+                user.IsEmailVerified = true;
+                user.EmailVerificationToken = null;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+            else if (user.GoogleId != externalUser.ProviderKey)
+            {
+                throw new UnauthorizedException("This email is already linked to a different Google account");
             }
 
-            return claims;
+            var claims = BuildPartnerClaims(user);
+
+            return await IssueSession(user, claims, ipAddress, userAgent);
         }
+
+        /// <summary>
+        /// Same access / refresh pair as the customer portal — the refresh endpoint rebuilds
+        /// partner claims from the account itself, so both portals share one session model.
+        /// </summary>
+        private async Task<LoginResultDto> IssueSession(User user, List<Claim> claims, string? ipAddress, string? userAgent)
+        {
+            if (user.IsDeleted || user.SuspendedAt != null)
+                throw new UnauthorizedException("This account is unavailable or suspended");
+            var accessToken = _jwtService.GenerateAccessToken(claims);
+            var refreshToken = await _refreshTokenService.Issue(user.ID, ipAddress, userAgent);
+
+            return new LoginResultDto
+            {
+                Token = accessToken.Token,
+                AccessTokenExpiresAt = accessToken.ExpiresAt,
+                RefreshToken = refreshToken.Token,
+                RefreshTokenExpiresAt = refreshToken.ExpiresAt,
+                UserId = user.ID,
+                Email = user.Email,
+                FullName = $"{user.FirstName} {user.LastName}"
+            };
+        }
+
+        private List<Claim> BuildPartnerClaims(User user) => _claimsFactory.BuildPartnerClaims(user);
 
     }
 

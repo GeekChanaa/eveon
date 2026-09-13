@@ -1,31 +1,46 @@
-<div #sidebar class="sidebar">
+<div #sidebar class="sidebar" [class.active]="opened">
   <button #close class="sidebar__close">
     <svg class="icon icon-close">
       <use xlink:href="#icon-close"></use>
     </svg>
   </button>
-  <a class="sidebar__logo" *ngIf="partnerID == 0" routerLink="/dashboard">
-    <ng-container>
-      <img src="/assets/images/logos/logo.svg" alt="VoltaX">
-    </ng-container>
-  </a>
 
-  <a class="sidebar__logo" *ngIf="partnerID != 0" routerLink="/partner-dashboard">
-    <ng-container *ngIf="partnerImageUrl != '' && partnerImageUrl != null ">
-      <img src="{{partnerImageUrl}}" alt="Partner Logo">
-    </ng-container>
-    <ng-container *ngIf="partnerImageUrl == '' && partnerImageUrl == null ">
-      <img src="/assets/images/logos/logo.svg" alt="VoltaX">
-    </ng-container>
-  </a>
+  <div class="sidebar__brand">
+    <a class="sidebar__logo" *ngIf="partnerID == 0" routerLink="/dashboard">
+      <ng-container>
+        <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+      </ng-container>
+    </a>
+
+    <a class="sidebar__logo" *ngIf="partnerID != 0" routerLink="/partner-dashboard">
+      <ng-container *ngIf="partnerImageUrl != '' && partnerImageUrl != null ">
+        <img src="{{partnerImageUrl}}" alt="Partner Logo">
+      </ng-container>
+      <ng-container *ngIf="partnerImageUrl == '' && partnerImageUrl == null ">
+        <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+      </ng-container>
+    </a>
+
+    <button
+      type="button"
+      class="sidebar__toggle-btn"
+      (click)="toggleCollapsed()"
+      [attr.aria-expanded]="!collapsed"
+      [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      [title]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+      <svg class="icon icon-list">
+        <use xlink:href="#icon-list"></use>
+      </svg>
+    </button>
+  </div>
 
   <div class="sidebar__menu">
     <ng-container *ngIf="partnerID == 0">
       <!-- Admin/Operator menu -->
-      <app-sidebar-item [title]="'home'" [link]="'/dashboard'" [active]="isActive('/dashboard')"></app-sidebar-item>
+      <app-sidebar-item [title]="'home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
 
       <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'Operation Monitoring'"
-        [active]="isDropdownActive('/dashboard/connector-realtime') || isDropdownActive('/dashboard/statistics')">
+        [active]="isDropdownActive('/dashboard/connector-realtime', '/dashboard/statistics')">
         <app-sidebar-link [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'"
           [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
         <app-sidebar-link [title]="'statistics'" [link]="'/dashboard/statistics'"
@@ -33,7 +48,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-charging-station" [title]="'Station Management'"
-        [active]="isDropdownActive('/dashboard/charging-stations') || isDropdownActive('/dashboard/charging-points')">
+        [active]="isDropdownActive('/dashboard/charging-stations', '/dashboard/charging-points')">
         <app-sidebar-link [title]="'charging station'" [link]="'/dashboard/charging-stations'"
           [active]="isActive('/dashboard/charging-stations')"></app-sidebar-link>
         <app-sidebar-link [title]="'charge point'" [link]="'/dashboard/charging-points'"
@@ -47,7 +62,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-comment" [title]="'app management'"
-        [active]="isDropdownActive('/dashboard/reports') || isDropdownActive('/dashboard/notices') || isActive('/dashboard/user-info-download-requests')">
+        [active]="isDropdownActive('/dashboard/reports', '/dashboard/notices', '/dashboard/user-info-download-requests')">
         <app-sidebar-link [title]="'notices'" [link]="'/dashboard/notices'"
           [active]="isActive('/dashboard/notices')"></app-sidebar-link>
         <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'"
@@ -57,7 +72,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-invoice" [title]="'order management'"
-        [active]="isDropdownActive('/dashboard/transactions') || isDropdownActive('/dashboard/recharge-orders') || isDropdownActive('/dashboard/charging-sessions')">
+        [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions')">
         <app-sidebar-link [title]="'Charging Sessions'" [link]="'/dashboard/charging-sessions'"
           [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
         <app-sidebar-link [title]="'transactions'" [link]="'/dashboard/transactions'"
@@ -67,7 +82,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-setting" [title]="'maintenance management'"
-        [active]="isDropdownActive('/dashboard/global-configurations') || isDropdownActive('/dashboard/system-reports')">
+        [active]="isDropdownActive('/dashboard/global-configurations', '/dashboard/system-reports')">
         <app-sidebar-link [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'"
           [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
         <app-sidebar-link [title]="'System Reports'" [link]="'/dashboard/system-reports'"
@@ -81,7 +96,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-account-setting" [title]="'Account'"
-        [active]="isDropdownActive('/dashboard/users') || isDropdownActive('/dashboard/partners')">
+        [active]="isDropdownActive('/dashboard/users', '/dashboard/partners')">
         <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'"
           [active]="isActive('/dashboard/users')"></app-sidebar-link>
         <app-sidebar-link [title]="'partners'" [link]="'/dashboard/partners'"
@@ -89,7 +104,7 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown iconID="icon-account-setting" [title]="'Security'"
-        [active]="isDropdownActive('/dashboard/roles') || isDropdownActive('/dashboard/permissions')">
+        [active]="isDropdownActive('/dashboard/roles', '/dashboard/permissions')">
         <app-sidebar-link [title]="'roles'" [link]="'/dashboard/roles'"
           [active]="isActive('/dashboard/roles')"></app-sidebar-link>
         <app-sidebar-link [title]="'permissions'" [link]="'/dashboard/permissions'"
@@ -100,11 +115,11 @@
     <!-- Partner menu -->
     <ng-container *ngIf="partnerID != 0">
       <app-sidebar-item [title]="'home'" [link]="'/partner-dashboard'"
-        [active]="isActive('/partner-dashboard')"></app-sidebar-item>
+        [active]="isExactActive('/partner-dashboard')"></app-sidebar-item>
 
 
       <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'Operation Monitoring'"
-        [active]="isDropdownActive('/partner-dashboard/connector-realtime') || isDropdownActive('/partner-dashboard/statistics')">
+        [active]="isDropdownActive('/partner-dashboard/connector-realtime', '/partner-dashboard/statistics')">
         <app-sidebar-link [title]="'Connector real-time'" [link]="'/partner-dashboard/connector-realtime'"
           [active]="isActive('/partner-dashboard/connector-realtime')"></app-sidebar-link>
         <app-sidebar-link [title]="'statistics'" [link]="'/partner-dashboard/statistics'"
@@ -252,4 +267,6 @@
         </svg>Message center
         <div class="help__counter">8</div>
       </a></div>
-  </div>
+  </div></div>
+
+<div class="sidebar__backdrop" [class.active]="opened" (click)="closeDrawer()"></div>

@@ -252,8 +252,28 @@ namespace VoltaXApi.Data
 
         public async Task<List<ChargingStationForMapDto>> GetChargingStationsForMap()
         {
-            var chargingStations = await dbSet.Where(cs => cs.ChargePoints.Any(cp => cp.ShowOnMap == true)).ToListAsync();
+            var chargingStations = await dbSet
+                .Where(cs => cs.ChargePoints.Any(cp => cp.ShowOnMap == true))
+                .Include(cs => cs.ChargingStationImages)
+                    .ThenInclude(csi => csi.Image)
+                .ToListAsync();
+                
             var result = _mapper.Map<List<ChargingStation>,List<ChargingStationForMapDto>>(chargingStations);
+            
+            // Add the display image URL to each charging station
+            foreach (var station in result)
+            {
+                var chargingStation = chargingStations.FirstOrDefault(cs => cs.ID == station.ID);
+                if (chargingStation != null)
+                {
+                    var displayImage = chargingStation.ChargingStationImages
+                        .Where(csi => csi.Image.Priority == 0)
+                        .Select(csi => csi.Image.Url)
+                        .FirstOrDefault();
+                    station.ImageUrl = displayImage;
+                }
+            }
+            
             return result;
         }
 

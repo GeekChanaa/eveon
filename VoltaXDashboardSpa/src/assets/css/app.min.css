@@ -3312,7 +3312,7 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
     .sidebar__item[href]:hover, .sidebar__help:hover, .sidebar__head:hover {
       color: var(--primary9); }
       .sidebar__item[href]:hover .icon, .sidebar__help:hover .icon, .sidebar__head:hover .icon {
-        fill: var(--primary9); }
+        fill: var(--primary9); } }
   .sidebar__item[href].active, .sidebar__help.active {
     color: var(--primary9) }
     .sidebar__item[href].active .icon, .sidebar__help.active .icon {

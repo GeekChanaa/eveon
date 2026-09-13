@@ -1,228 +1,309 @@
+// ---------------------------------------------------------------------------
+// Inputs
+//
+// One scale for every field in the app, driven by the tokens below. They are
+// plain CSS variables rather than Sass so a page can tune a single control
+// without re-declaring the whole rule (and so the tokens reach the app.min.css
+// classes, which are appended at runtime).
+//
+// Smaller and flatter than the template defaults they replace: 38px tall instead
+// of 48, an 8px radius instead of 12, a 1px hairline instead of a 2px border.
+// ---------------------------------------------------------------------------
 
+:root
+  --input-height: 38px
+  --input-height-small: 32px
+  --input-height-large: 44px
+  --input-radius: 8px
+  --input-padding-x: 12px
+  --input-font-size: 14px
+  --input-font-weight: 500
+  --input-border-width: 1px
+  // Square slot on either side of a field, holding an icon, a currency or a state mark.
+  --input-affix: 34px
+  --input-icon-size: 18px
 
+  --input-bg: #F7F7F8
+  --input-bg-focus: #FFFFFF
+  --input-border: #E4E5E7
+  --input-border-hover: var(--secondary2)
+  --input-border-focus: var(--secondary1)
+  --input-text: #1A1D1F
+  --input-placeholder: #8B9095
 
-.field .tooltip 
+body.dark
+  --input-bg: #232629
+  --input-bg-focus: #191B1D
+  --input-border: #31363B
+  --input-text: #FCFCFC
+  --input-placeholder: #9A9FA5
+
+.field .tooltip
   position: relative
-  top: -1px 
+  top: -1px
 
-.field .tooltip .icon 
-  fill: #9A9FA5 
+.field .tooltip .icon
+  fill: #9A9FA5
 
-.field__wrap 
-  position: relative 
+.field__wrap
+  position: relative
 
-.field__input 
+.field__input
   width: 100%
-  height: 48px
-  padding: 0 10px
-  border-radius: 12px
-  border: 2px solid transparent
-  background: #F4F4F4
-  font-size: 15px
-  font-weight: 600
-  line-height: 1.6
-  color: #1A1D1F
-  transition: all .2s 
+  height: var(--input-height)
+  padding: 0 var(--input-padding-x)
+  border-radius: var(--input-radius)
+  border: var(--input-border-width) solid var(--input-border)
+  background: var(--input-bg)
+  font-size: var(--input-font-size)
+  font-weight: var(--input-font-weight)
+  line-height: 1.4
+  color: var(--input-text)
+  // Listed instead of `all`: animating height and padding makes a field jump when
+  // a validation class lands on it.
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease
   &:hover
-    border-color: var(--secondary2)
-    background: var(--primary1)
+    border-color: var(--input-border-hover)
+    background: var(--input-bg-focus)
   &.disabled
-    background: var(--primary5)
+    background: var(--primary3)
+    border-color: var(--input-border)
+    color: var(--primary8)
     cursor: not-allowed
-body.dark .field__input 
-  border-color: #272B30
-  background: #272B30
-  color: #FCFCFC 
-.field__input::-webkit-input-placeholder 
-  color: #6F767E 
-.field__input::-moz-placeholder 
-  color: #6F767E 
-.field__input:-ms-input-placeholder 
-  color: #6F767E 
-.field__input::-ms-input-placeholder 
-    color: #6F767E 
-.field__input::placeholder 
-  color: #6F767E 
-body.dark .field__input::-webkit-input-placeholder 
-  color: #9A9FA5 
-body.dark .field__input::-moz-placeholder 
-  color: #9A9FA5 
-body.dark .field__input:-ms-input-placeholder 
-  color: #9A9FA5 
-body.dark .field__input::-ms-input-placeholder 
-  color: #9A9FA5 
-body.dark .field__input::placeholder 
-      color: #9A9FA5 
 
-.field__input:focus 
-  border-color: var(--secondary1)
-  background: #FFFFFF
-  
+body.dark .field__input
+  border-color: var(--input-border)
+  background: var(--input-bg)
+  color: var(--input-text)
 
+// A textarea cannot live inside a fixed 38px box.
+textarea.field__input
+  height: auto
+  min-height: 88px
+  padding: 9px var(--input-padding-x)
+  line-height: 1.5
+  resize: vertical
 
-body.dark .field__input:focus 
-  border-color: var(--secondary1)
-  background: #111315 
+.field__input::-webkit-input-placeholder
+  color: var(--input-placeholder)
+.field__input::-moz-placeholder
+  color: var(--input-placeholder)
+.field__input:-ms-input-placeholder
+  color: var(--input-placeholder)
+.field__input::-ms-input-placeholder
+  color: var(--input-placeholder)
+.field__input::placeholder
+  color: var(--input-placeholder)
 
-.field__icon, .field__copy 
+.field__input:focus
+  border-color: var(--input-border-focus)
+  background: var(--input-bg-focus)
+  // Replaces the old 2px border: same emphasis without shifting the text by a pixel.
+  box-shadow: 0 0 0 2px rgba(240, 177, 52, .18)
+  outline: none
+
+body.dark .field__input:focus
+  border-color: var(--input-border-focus)
+  background: var(--input-bg-focus)
+
+// Size modifiers -------------------------------------------------------------
+
+.field_small .field__input,
+.field__input_small
+  height: var(--input-height-small)
+  font-size: 13px
+  padding: 0 10px
+
+.field_large .field__input,
+.field__input_large
+  height: var(--input-height-large)
+
+// Affixes --------------------------------------------------------------------
+
+.field__icon, .field__copy
   position: absolute
   top: 0
   bottom: 0
   display: flex
   justify-content: center
   align-items: center
-  width: 48px 
-.field__icon .icon, .field__copy .icon 
-  width: 24px
-  height: 24px 
+  width: var(--input-affix)
+.field__icon .icon, .field__copy .icon
+  width: var(--input-icon-size)
+  height: var(--input-icon-size)
 
-.field__icon 
+.field__icon
   left: 0
-  pointer-events: none 
-.field__icon .icon 
-  fill: #6F767E 
+  pointer-events: none
+.field__icon .icon
+  fill: var(--input-placeholder)
 
-.field__copy 
-  right: 0 
-.field__copy .icon 
-  fill: #6F767E
-  transition: fill .2s 
-.field__copy:hover .icon 
-  fill: #2A85FF 
+.field__copy
+  right: 0
+.field__copy .icon
+  fill: var(--input-placeholder)
+  transition: fill .2s
+.field__copy:hover .icon
+  fill: var(--secondary1)
 
-.field__currency 
+.field__currency
   position: absolute
-  top: 2px
-  left: 2px
-  bottom: 2px
+  top: var(--input-border-width)
+  left: var(--input-border-width)
+  bottom: var(--input-border-width)
   display: flex
   justify-content: center
   align-items: center
-  width: 46px
-  padding-top: 1px
-  border-radius: 10px 0 0 10px
-  background: #F4F4F4
-  color: #1A1D1F 
-  body.dark .field__currency 
-    background: #272B30
-    color: #6F767E 
+  width: calc(var(--input-affix) - 2px)
+  border-radius: calc(var(--input-radius) - 1px) 0 0 calc(var(--input-radius) - 1px)
+  background: var(--input-bg)
+  font-size: 13px
+  color: var(--input-text)
+  body.dark .field__currency
+    background: var(--input-bg)
+    color: var(--input-placeholder)
 
-.field_icon .field__input 
-  padding-left: 48px 
+.field_icon .field__input
+  padding-left: var(--input-affix)
 
-.field_currency .field__input 
-  padding-left: 58px
+.field_currency .field__input
+  padding-left: calc(var(--input-affix) + 8px)
   background: none
-  border-color: #EFEFEF 
-.field_currency .field__input:focus 
-  border-color: var(--secondary1) 
-body.dark .field_currency .field__input 
-  border-color: var(--secondary1) 
-body.dark .field_currency .field__input:focus 
-  border-color: var(--secondary1) 
+.field_currency .field__input:focus
+  border-color: var(--input-border-focus)
+body.dark .field_currency .field__input
+  border-color: var(--input-border)
+body.dark .field_currency .field__input:focus
+  border-color: var(--input-border-focus)
 
-.field_copy .field__input 
-  padding-right: 48px 
+.field_copy .field__input
+  padding-right: var(--input-affix)
 
-.field__error_container.error .field__icon .icon 
-  fill: #FF6A55 
+// Validation -----------------------------------------------------------------
 
-.field__error_container.error .field__wrap:after 
+.field__error_container.error .field__icon .icon
+  fill: #FF6A55
+
+.field__error_container.error .field__wrap:after
   content: ""
   position: absolute
   top: 0
   right: 0
   bottom: 0
-  width: 48px
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M12 15a1 1 0 0 0 1-1V9a1 1 0 1 0-2 0v5a1 1 0 0 0 1 1zm7.675 2.504L12.87 5.563a1 1 0 0 0-1.738 0L4.327 17.504A1 1 0 0 0 5.196 19h13.61a1 1 0 0 0 .869-1.495zM14.607 4.573c-1.151-2.019-4.062-2.019-5.213 0L2.589 16.514C1.45 18.514 2.894 21 5.196 21h13.61c2.302 0 3.746-2.486 2.606-4.485L14.607 4.573z' fill-rule='evenodd' fill='%23ff6a55'/%3E%3Cpath d='M13 17a1 1 0 1 1-2 0 1 1 0 1 1 2 0z' fill='%23ff6a55'/%3E%3C/svg%3E") no-repeat 50% 50%/24px auto 
+  width: var(--input-affix)
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M12 15a1 1 0 0 0 1-1V9a1 1 0 1 0-2 0v5a1 1 0 0 0 1 1zm7.675 2.504L12.87 5.563a1 1 0 0 0-1.738 0L4.327 17.504A1 1 0 0 0 5.196 19h13.61a1 1 0 0 0 .869-1.495zM14.607 4.573c-1.151-2.019-4.062-2.019-5.213 0L2.589 16.514C1.45 18.514 2.894 21 5.196 21h13.61c2.302 0 3.746-2.486 2.606-4.485L14.607 4.573z' fill-rule='evenodd' fill='%23ff6a55'/%3E%3Cpath d='M13 17a1 1 0 1 1-2 0 1 1 0 1 1 2 0z' fill='%23ff6a55'/%3E%3C/svg%3E") no-repeat 50% 50%/var(--input-icon-size) auto
 
-.field__error_container.error .field__input 
-  padding-right: 48px
-  background: rgba(255, 188, 153, 0.25)
-  border-color: transparent
-  color: #FF6A55 
-body.dark .field__error_container.error .field__input:focus 
+.field__error_container.error .field__input
+  padding-right: var(--input-affix)
+  background: rgba(255, 188, 153, 0.18)
   border-color: #FF6A55
-  color: #FF6A55 
-.field__error_container.error .field__input::-webkit-input-placeholder 
-  color: #FF6A55 
-.field__error_container.error .field__input::-moz-placeholder 
-  color: #FF6A55 
-.field__error_container.error .field__input:-ms-input-placeholder 
-  color: #FF6A55 
-.field__error_container.error .field__input::-ms-input-placeholder 
-  color: #FF6A55 
-.field__error_container.error .field__input::placeholder 
-  color: #FF6A55 
+  color: #FF6A55
+.field__error_container.error .field__input:focus
+  box-shadow: 0 0 0 2px rgba(255, 106, 85, .18)
+body.dark .field__error_container.error .field__input:focus
+  border-color: #FF6A55
+  color: #FF6A55
+.field__error_container.error .field__input::-webkit-input-placeholder
+  color: #FF6A55
+.field__error_container.error .field__input::-moz-placeholder
+  color: #FF6A55
+.field__error_container.error .field__input:-ms-input-placeholder
+  color: #FF6A55
+.field__error_container.error .field__input::-ms-input-placeholder
+  color: #FF6A55
+.field__error_container.error .field__input::placeholder
+  color: #FF6A55
 
-.field.success .field__wrap:after 
+.field.success .field__wrap:after
   content: ""
   position: absolute
   top: 0
   right: 0
   bottom: 0
-  width: 48px
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M20.707 6.293a1 1 0 0 1 0 1.414l-8.586 8.586a3 3 0 0 1-4.243 0l-3.586-3.586a1 1 0 0 1 1.414-1.414l3.586 3.586a1 1 0 0 0 1.414 0l8.586-8.586a1 1 0 0 1 1.414 0z' fill='%2383bf6e'/%3E%3C/svg%3E") no-repeat 50% 50%/24px auto 
+  width: var(--input-affix)
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M20.707 6.293a1 1 0 0 1 0 1.414l-8.586 8.586a3 3 0 0 1-4.243 0l-3.586-3.586a1 1 0 0 1 1.414-1.414l3.586 3.586a1 1 0 0 0 1.414 0l8.586-8.586a1 1 0 0 1 1.414 0z' fill='%2383bf6e'/%3E%3C/svg%3E") no-repeat 50% 50%/var(--input-icon-size) auto
 
-.field.success .field__input 
-  padding-right: 48px
-  background: #FFFFFF
-  border-color: #9A9FA5 
-body.dark .field.success .field__input 
-  background: #111315 
+.field.success .field__input
+  padding-right: var(--input-affix)
+  background: var(--input-bg-focus)
+  border-color: #83BF6E
+body.dark .field.success .field__input
+  background: var(--input-bg-focus)
 
+// Native date / time pickers: keep the browser's own mark inside the shorter box.
+.field__input[type="date"],
+.field__input[type="time"],
+.field__input[type="datetime-local"]
+  padding-right: 8px
 
+// File upload ----------------------------------------------------------------
 
-.file .tooltip 
+.file .tooltip
   position: relative
-  top: -1px 
-.file .tooltip .icon 
-  fill: #9A9FA5 
+  top: -1px
+.file .tooltip .icon
+  fill: #9A9FA5
 
-.file__wrap 
+.file__wrap
   position: relative
   display: flex
   justify-content: center
   align-items: center
-  height: 200px
-  border-radius: 12px
-  background: #F4F4F4
-  overflow: hidden 
-body.dark .file__wrap 
-  background: #272B30 
+  height: 168px
+  border-radius: var(--input-radius)
+  background: var(--input-bg)
+  border: var(--input-border-width) dashed var(--input-border)
+  overflow: hidden
+body.dark .file__wrap
+  background: var(--input-bg)
 
-.file__input 
+.file__input
   position: absolute
   top: 0
   left: 0
   font-size: 340px
-  opacity: 0 
-.file__input:hover + .file__box 
-  border-color: #6F767E 
-body.dark .file__input:hover + .file__box 
-  border-color: #33383F 
+  opacity: 0
+.file__input:hover + .file__box
+  border-color: var(--input-border-hover)
+body.dark .file__input:hover + .file__box
+  border-color: var(--input-border-hover)
 
-.file__box 
+.file__box
   display: flex
   justify-content: center
   align-items: center
-  height: 48px
-  padding: 0 20px
-  border: 2px solid #EFEFEF
-  border-radius: 12px
-  background: #FCFCFC
-  box-shadow: 0px 12px 13px -6px rgba(0, 0, 0, 0.04)
-  font-size: 15px
-  font-weight: 700
-  line-height: 1.6
-  transition: border-color .2s 
-body.dark .file__box 
-  background: #1A1D1F
-  border-color: #272B30
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 12px 13px -6px rgba(0, 0, 0, 0.04), inset 0px 2px 4px #31353B 
-.file__box .icon 
-  width: 24px
-  height: 24px
-  margin-right: 8px 
-body.dark .file__box .icon 
-  fill: #FCFCFC 
+  height: var(--input-height)
+  padding: 0 16px
+  border: var(--input-border-width) solid var(--input-border)
+  border-radius: var(--input-radius)
+  background: var(--input-bg-focus)
+  box-shadow: none
+  font-size: var(--input-font-size)
+  font-weight: 600
+  line-height: 1.4
+  transition: border-color .2s
+body.dark .file__box
+  background: var(--input-bg-focus)
+  border-color: var(--input-border)
+  box-shadow: none
+.file__box .icon
+  width: var(--input-icon-size)
+  height: var(--input-icon-size)
+  margin-right: 8px
+body.dark .file__box .icon
+  fill: #FCFCFC
+
+// PrimeNG --------------------------------------------------------------------
+// The calendar renders its own input. `inputStyleClass="field__input"` gives it
+// the look; these rules size the wrapper it sits in.
+
+.p-calendar
+  width: 100%
+
+  .p-inputtext
+    width: 100%
+
+  .p-datepicker-trigger
+    width: var(--input-affix)
+    height: var(--input-height)
+    border-radius: 0 var(--input-radius) var(--input-radius) 0

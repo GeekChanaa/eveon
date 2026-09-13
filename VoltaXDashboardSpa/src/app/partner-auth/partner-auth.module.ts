@@ -8,6 +8,7 @@ import { PartnerLoginComponent } from './partner-login/partner-login.component';
 import { PartnerForgotPasswordComponent } from './partner-forgot-password/partner-forgot-password.component';
 import { PartnerAuthComponent } from './partner-auth.component';
 import { PartnerRequestPasswordMailSentComponent } from './partner-forgot-password/partner-request-password-mail-sent/partner-request-password-mail-sent.component';
+import { PartnerGoogleCallbackComponent } from './partner-google-callback/partner-google-callback.component';
 
 
 
@@ -16,7 +17,8 @@ import { PartnerRequestPasswordMailSentComponent } from './partner-forgot-passwo
         PartnerLoginComponent,
         PartnerForgotPasswordComponent,
         PartnerAuthComponent,
-        PartnerRequestPasswordMailSentComponent
+        PartnerRequestPasswordMailSentComponent,
+        PartnerGoogleCallbackComponent
   ],
     imports: [
       CommonModule,

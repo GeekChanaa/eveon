@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Collections.Generic;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Models
 {
@@ -18,31 +20,24 @@ namespace VoltaXApi.Models
         public string? Phone
         {
             get => _phoneNumber;
-            set => _phoneNumber = NormalizePhoneNumber(value);
+            set => _phoneNumber = PhoneHelper.Normalize(value);
         }
 
-        private string NormalizePhoneNumber(string phone)
-        {
-            if (string.IsNullOrWhiteSpace(phone)) return null;
 
-            // Remove spaces and non-digit characters except "+"
-            phone = phone.Trim().Replace(" ", "").Replace("-", "");
-
-            // Remove leading 0 or +212 or 212
-            if (phone.StartsWith("+212"))
-                phone = phone.Substring(4);
-            else if (phone.StartsWith("212"))
-                phone = phone.Substring(3);
-            else if (phone.StartsWith("0"))
-                phone = phone.Substring(1);
-
-            return $"+212{phone}";
-        }
-    
-        public byte[] PasswordHash { get; set; }
-        public  byte[] PasswordSalt { get; set; }
+        public byte[]? PasswordHash { get; set; }
+        public  byte[]? PasswordSalt { get; set; }
         [NotMapped]
         public string? Password { get; set; }
+
+        // External (OAuth) identity
+        [MaxLength(256)]
+        public string? GoogleId { get; set; }
+        [MaxLength(32)]
+        public AuthProviderEnum AuthProvider { get; set; } = AuthProviderEnum.Local;
+        [MaxLength(512)]
+        public string? ExternalPictureUrl { get; set; }
+        [NotMapped]
+        public bool HasPassword => PasswordHash != null && PasswordSalt != null;
         public int? PartnerID { get; set; }
         public int? ImageID { get; set; }
         public bool IsEmailVerified { get; set; } = false;

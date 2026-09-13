@@ -250,7 +250,43 @@ namespace VoltaXApi.Data
       await this.AddAsync(chargingSession);
 
       return chargingSession;
+    } 
+    
+    public async Task<ChargingSessionInformationsDto?> GetUserCurrentChargingSession(int userID, GlobalParams globalParams)
+    {
+      var chargingSession = await _context.ChargingSessions
+          .Where(u => u.UserID == userID && u.EndDate == null)
+          .Select(cs => new ChargingSessionInformationsDto
+          {
+              ID = cs.ID,
+              ChargePointID = cs.Connector.ChargePointID,
+              ChargePointName = cs.Connector.ChargePoint.ChargePointId,
+              UserName = cs.User.FullName,
+              UserID = cs.UserID,
+              CardID = cs.CardID,
+              ConnectorID = cs.ConnectorID,
+              ChargedMinutes = cs.ChargedMinutes,
+              IdleMinutes = cs.IdleMinutes,
+              PricePerMinute = cs.PricePerMinute,
+              PricePerIdleMinute = cs.PricePerIdleMinute,
+              ChargingPriceWithoutVAT = cs.ChargingPriceWithoutVAT(_globalConfigurations.Vat),
+              ChargingPriceWithVAT = cs.ChargingPriceWithVAT,
+              IdlePriceWithoutVAT = cs.IdleChargingPriceWithoutVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
+              IdldePriceWithVAT = cs.IdleChargingPriceWithVAT((int)_globalConfigurations.GracePeriod),
+              TotalPriceWithoutVAT = cs.TotalPriceWithoutVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
+              TotalPriceWithVAT = cs.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod),
+              KwhCharged = cs.ChargedKwhs,
+              CostPerKwh = cs.CostPerKwh,
+              StartDate = cs.StartDate,
+              StoppedReason = cs.StoppedReason,
+              ChargingSessionStatus = cs.ChargingSessionStatus,
+          })
+          .FirstOrDefaultAsync();
+
+      return chargingSession;
     }
+
+    
   }
 
 

@@ -1,0 +1,326 @@
+// ---------------------------------------------------------------------------
+// Connector Real-time — shared look for the detail tabs.
+//
+// Imported into each connector-realtime component's own .sass, so it stays
+// scoped to this feature. Import it AFTER `table-stats` where both are used —
+// these rules deliberately replace parts of it.
+//
+// Colours come from the dashboard theme tokens (.vx on the page shell), with
+// literal fallbacks so the partial still renders standalone.
+// ---------------------------------------------------------------------------
+
+@import ./helpers/variables
+
+$crt-yellow: var(--vx-yellow, #E5B223)
+$crt-surface: var(--vx-surface, #FFFFFF)
+$crt-hover: var(--vx-hover, #F4F4F4)
+$crt-border: var(--vx-border, #EDEDED)
+$crt-text: var(--vx-text, #0B0B0B)
+$crt-muted: var(--vx-text-muted, #7A7C80)
+
+// ---------------------------------------------------------------------------
+// Section heading — replaces the template's purple bar with a compact label.
+// ---------------------------------------------------------------------------
+
+.title-purple.card__title,
+.title-red.card__title
+  display: flex
+  align-items: center
+  gap: 10px
+  padding-left: 0
+  margin-bottom: 18px
+  font-size: 16px
+  font-weight: 650
+  letter-spacing: -.01em
+  color: $crt-text
+
+  &:before
+    content: ""
+    position: static
+    display: block
+    flex-shrink: 0
+    width: 3px
+    height: 18px
+    border-radius: 2px
+    background: $crt-yellow
+    transform: none
+
+  .title
+    padding-left: 0
+    font-size: inherit
+    font-weight: inherit
+    color: inherit
+
+    &:before
+      display: none
+
+// ---------------------------------------------------------------------------
+// Data table
+// ---------------------------------------------------------------------------
+
+.stats
+  margin-top: 0
+  padding-bottom: 0
+  background: $crt-surface
+  border: 1px solid $crt-border
+  border-radius: 12px
+  // Wide tables scroll inside the card instead of stretching the page.
+  overflow-x: auto
+  -webkit-overflow-scrolling: touch
+
+  .stats__table
+    display: table
+    width: 100%
+    min-width: 640px
+    border-collapse: collapse
+
+  .stats__row
+    display: table-row
+
+    // Header
+    &:first-child .stats__col
+      position: sticky
+      top: 0
+      z-index: 1
+      padding-top: 12px
+      padding-bottom: 12px
+      background: $crt-surface
+      border-bottom: 1px solid $crt-border
+      font-size: 11px
+      font-weight: 600
+      line-height: 1.4
+      letter-spacing: .06em
+      text-transform: uppercase
+      white-space: nowrap
+      color: $crt-muted
+
+    // Zebra striping fights the row borders — one or the other, not both.
+    &:nth-child(2n) .stats__col
+      background: transparent
+
+    &:not(:first-child):hover .stats__col
+      background: $crt-hover
+
+    &:last-child .stats__col
+      border-bottom: 0
+
+  .stats__col
+    display: table-cell
+    padding: 12px 16px
+    border-bottom: 1px solid $crt-border
+    font-size: 13.5px
+    font-weight: 500
+    line-height: 1.5
+    vertical-align: middle
+    color: $crt-text
+    // Digits line up column-wise: ids, energy, money, timestamps.
+    font-variant-numeric: tabular-nums
+
+    // Body cells wrap on purpose. Forcing nowrap pushes these tables past the
+    // card width, and the columns that fall off the right are the ones that
+    // matter most (amount, actions).
+    &:first-child
+      padding-left: 20px
+
+    &:last-child
+      padding-right: 20px
+      white-space: nowrap
+
+body.dark
+  .stats
+    background: var(--vx-surface, #141517)
+    border-color: var(--vx-border, #262A2E)
+
+  .stats .stats__row:first-child .stats__col
+    background: var(--vx-surface, #141517)
+
+  .stats .stats__col
+    color: var(--vx-text, #FAFAFA)
+
+// Link inside a cell (charging session id, station name, …)
+.stats .btn__link,
+.stats a.link
+  font-weight: 600
+  color: $crt-text
+  text-decoration: none
+  border-bottom: 1px solid transparent
+  transition: color .18s, border-color .18s
+
+  &:hover
+    color: $crt-yellow
+    border-bottom-color: $crt-yellow
+
+// ---------------------------------------------------------------------------
+// Row action buttons — squares rather than circles, yellow instead of the
+// red/blue one-off hovers. Destructive actions keep red on purpose.
+// ---------------------------------------------------------------------------
+
+.table__action
+  position: initial
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  height: 32px
+  width: 32px
+  padding: 0
+  border: 1px solid $crt-border
+  border-radius: 8px
+  background: transparent
+  cursor: pointer
+  transition: border-color .18s, background .18s
+
+  &:not(:first-child)
+    margin-left: 6px
+
+  svg,
+  .icon
+    height: 16px
+    width: 16px
+    fill: $crt-muted
+    transition: fill .18s
+
+  &:hover
+    background: rgba(229, 178, 35, .12)
+    border-color: $crt-yellow
+
+    svg,
+    .icon
+      fill: $crt-yellow
+
+// Stop / destructive stays red — it is the one action you cannot undo.
+.table__action.stop-btn
+  &:hover
+    background: rgba(220, 38, 38, .1)
+    border-color: #DC2626
+
+    .stop__square
+      background: #DC2626
+
+  .stop__square
+    height: 10px
+    width: 10px
+    border-radius: 2px
+    background: $crt-muted
+    transition: background .18s
+
+// ---------------------------------------------------------------------------
+// Pagination
+// ---------------------------------------------------------------------------
+
+// <app-pagination> is a child component, so its internals are out of reach
+// without ::ng-deep. Keep :host in front so this stays inside the importing
+// component and does not leak to the rest of the app.
+:host ::ng-deep .pagination__container
+  display: block
+  margin-top: 16px
+
+  .row__foot
+    margin-top: 0
+
+  .pagination__btn
+    height: 34px
+    width: 34px
+    border-radius: 8px
+    border: 1px solid $crt-border
+
+    svg
+      fill: $crt-text
+
+    &:hover:not(.inactive)
+      border-color: $crt-yellow
+
+      svg
+        fill: $crt-yellow
+
+    &.inactive
+      border-color: $crt-border
+
+      svg
+        fill: $crt-border
+
+  .pagination__pages .pagination__link
+    width: 34px
+    height: 34px
+    margin-left: 3px
+    margin-right: 3px
+    border-radius: 8px
+    border: 1px solid transparent
+    font-size: 13.5px
+    font-weight: 600
+    color: $crt-muted
+
+    &:hover
+      background: $crt-hover
+      color: $crt-text
+
+    &.active
+      background: $crt-yellow
+      border-color: $crt-yellow
+      color: #0B0B0B
+
+// ---------------------------------------------------------------------------
+// Spacing between stacked sections
+// ---------------------------------------------------------------------------
+
+.separator
+  height: 1px
+  margin: 28px 0
+  background: $crt-border
+
+// ---------------------------------------------------------------------------
+// Modals used by the action tabs
+// ---------------------------------------------------------------------------
+
+.request__modal
+  border: 1px solid $crt-border
+  border-radius: 16px
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .28)
+  background: $crt-surface
+
+.request__modal_overlay
+  background: rgba(11, 11, 11, .32)
+  backdrop-filter: blur(6px)
+
+body.dark .request__modal
+  background: var(--vx-surface, #141517)
+  border-color: var(--vx-border, #262A2E)
+
+// ---------------------------------------------------------------------------
+// Key/value spec lists (details & settings, main overview)
+// ---------------------------------------------------------------------------
+
+// (The main-overview panel styles its own copy of this list — its rules are
+// nested one level deeper, so they would win here anyway.)
+.details-informations__container
+  width: 100%
+  margin-top: 20px
+  padding: 4px 16px
+  border: 1px solid $crt-border
+  border-radius: 12px
+  background: transparent
+
+.details-informations__item
+  display: flex
+  align-items: baseline
+  gap: 16px
+  margin-top: 0
+  padding: 10px 0
+  border-bottom: 1px solid $crt-border
+
+  &:last-child
+    border-bottom: 0
+
+.details-informations__item-name
+  flex: 0 0 45%
+  font-size: 13px
+  font-weight: 500
+  color: $crt-muted
+
+.details-informations__item-value
+  flex: 1 1 auto
+  min-width: 0
+  font-size: 13.5px
+  font-weight: 600
+  word-break: break-word
+  color: $crt-text
+  font-variant-numeric: tabular-nums

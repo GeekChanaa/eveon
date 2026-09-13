@@ -197,15 +197,11 @@ namespace VoltaXApi.Controllers
             return Ok(await _repository.GetChargingStationsForSelect());
         }
 
-        // Mobile Specific Functions : 
         [HttpGet("GetChargingStationsForMap")]
         public async Task<ActionResult<ChargingStationForMapDto>> GetChargingStationsForMap() 
         {
             return Ok(await _repository.GetChargingStationsForMap());
         }
-        
-
-
 
     }
 }

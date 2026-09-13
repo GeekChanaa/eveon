@@ -1,6 +1,8 @@
 {
     "required": "This field is required.",
     "email": "Please enter a valid email address.",
+    "invalidEmail": "Please enter a valid email address or phone number.",
+    "invalidPhone": "Please enter a valid phone number, for example 0610610614 or +212610610614.",
     "minlength": "The minimum length is {min} characters.",
     "maxlength": "The maximum length is {max} characters.",
     "pattern": "Invalid format.",
