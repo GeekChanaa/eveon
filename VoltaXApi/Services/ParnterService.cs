@@ -1,7 +1,7 @@
 
 
-using System.Net.Http.Headers;
 using VoltaXApi.Data;
+using VoltaXApi.Exceptions;
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Services;
@@ -23,17 +23,15 @@ public class PartnerService : IPartnerService
 
     public async Task UploadPartnerLogo(IFormFile file, int partnerID)
     {
-        string folderName = "PartnersLogos/";
-        string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-        fileName = partnerID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
-        this._fileManagementService.UploadFile(fileName, folderName, file);
-        var fileExtension = Path.GetExtension(file.FileName);
+        var partner = await _partnerRepository.GetByIdAsync(partnerID)
+            ?? throw new NotFoundException("Partner not found.");
+        var stored = await _fileManagementService.SaveImageAsync(file, "PartnersLogos");
 
         var newImage = new Image
         {
-            Url = $"PartnersLogos/{fileName}",
+            Url = stored.RelativeUrl,
             UploadDate = DateTime.UtcNow,
-            Format = fileExtension,
+            Format = stored.Extension,
             Priority = ImagePriorityEnum.Principal,
             IsActive = true,
             AltText = "Partner Image "+partnerID,
@@ -42,8 +40,6 @@ public class PartnerService : IPartnerService
 
         await _imageRepo.AddAsync(newImage);
 
-        // Getting partner
-        var partner = await _partnerRepository.GetByIdAsync(partnerID);
         partner.ImageID = newImage.ID;
         await _partnerRepository.Update(partner);
     }

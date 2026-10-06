@@ -1,3 +1,5 @@
+<div class="station-section-heading"><h4>Connector specifications</h4></div>
+<div class="station-modal-grid">
 
 <app-form-field
   class="field"
@@ -38,6 +40,9 @@
   [control]="getControl('type')"
 ></app-form-field>
 
+</div>
+<div class="station-section-heading"><h4>Pricing</h4><p>Configure energy, time, and session fees.</p></div>
+<div class="station-modal-grid">
 <app-form-field
   class="field"
   title="Price Per Kwh"
@@ -87,3 +92,4 @@
   [disabled]="chargingStationType == ChargingStationTypeEnum.VoltaXStation"
   [control]="getControl('flatFee')"
 ></app-form-field>
+</div>

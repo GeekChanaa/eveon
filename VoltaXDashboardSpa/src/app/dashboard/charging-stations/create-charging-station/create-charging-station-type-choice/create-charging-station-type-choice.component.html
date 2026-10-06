@@ -1,13 +1,15 @@
 <div class="choice__container">
-    <app-card-action
-    class="choice__action" 
-    [actionName]="'VoltaX Station'"
-    (actionClick)="chooseStation(ChargingStationTypeEnum.VoltaXStation)"
-    ></app-card-action>
+    <button type="button" class="station-choice" (click)="chooseStation(ChargingStationTypeEnum.VoltaXStation)">
+      <span class="station-choice__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6z" /></svg></span>
+      <span class="station-choice__title">VoltaX Station</span>
+      <span class="station-choice__description">A charging station owned by VoltaX.</span>
+      <span class="station-choice__action">Set up VoltaX station <span aria-hidden="true">→</span></span>
+    </button>
 
-    <app-card-action
-      class="choice__action"  
-      [actionName]="'Partner Station'"
-      (actionClick)="chooseStation(ChargingStationTypeEnum.PartnerStation)"
-      ></app-card-action>
+    <button type="button" class="station-choice" (click)="chooseStation(ChargingStationTypeEnum.PartnerStation)">
+      <span class="station-choice__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-5h6v5M8 7h2m4 0h2M8 11h2m4 0h2"/></svg></span>
+      <span class="station-choice__title">Partner Station</span>
+      <span class="station-choice__description">A charging station linked to a partner.</span>
+      <span class="station-choice__action">Set up partner station <span aria-hidden="true">→</span></span>
+    </button>
 </div>

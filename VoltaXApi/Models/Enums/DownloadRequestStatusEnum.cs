@@ -1,5 +1,3 @@
-
-
 namespace VoltaXApi.Models;
 
 public enum DownloadRequestStatusEnum
@@ -8,4 +6,7 @@ public enum DownloadRequestStatusEnum
     Processing,
     Approved,
     Denied,
+    Completed,
+    Expired,
+    Failed,
 }

@@ -1,0 +1,240 @@
+@use '../cfg' as *
+
+.cfg-list
+  display: flex
+  flex-direction: column
+  gap: 20px
+  color: $text
+
+// ---------------------------------------------------------------- stats
+
+.cfg-stats
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 14px
+
+  @media (max-width: 900px)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+.cfg-stat
+  +card
+  +rise
+  display: flex
+  flex-direction: column
+  gap: 6px
+  padding: 16px 18px
+
+.cfg-stat__label
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  font-size: 12.5px
+  font-weight: 600
+  color: $muted
+
+.cfg-stat__value
+  font-size: 28px
+  font-weight: 750
+  line-height: 1
+  font-variant-numeric: tabular-nums
+
+.cfg-stat_setup .cfg-stat__value
+  color: $yellow-ink
+
+.cfg-stat_ok .cfg-stat__value
+  color: $ok
+
+// ---------------------------------------------------------------- toolbar
+
+.cfg-toolbar
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 12px
+
+.cfg-search
+  position: relative
+  flex: 1 1 260px
+  max-width: 420px
+
+  svg
+    position: absolute
+    top: 50%
+    left: 14px
+    width: 17px
+    height: 17px
+    transform: translateY(-50%)
+    stroke: $muted
+    pointer-events: none
+
+  input
+    width: 100%
+    padding-left: 40px
+
+.cfg-segments
+  display: inline-flex
+  flex-wrap: wrap
+  gap: 4px
+  padding: 4px
+  border: 1px solid $border
+  border-radius: 12px
+  background: $surface-alt
+
+.cfg-segment
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  padding: 7px 12px
+  border: 0
+  border-radius: 9px
+  background: transparent
+  color: $muted
+  font: inherit
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+  transition: background .2s, color .2s, box-shadow .2s
+
+  &:hover
+    color: $text
+
+  &.active
+    background: $surface
+    color: $text
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 0 0 1px $border
+
+  &:focus-visible
+    outline: 2px solid $yellow
+    outline-offset: 1px
+
+.cfg-segment__count
+  min-width: 20px
+  padding: 1px 6px
+  border-radius: 999px
+  background: $hover
+  font-size: 11px
+  text-align: center
+  font-variant-numeric: tabular-nums
+
+// ---------------------------------------------------------------- cards
+
+.cfg-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr))
+  gap: 16px
+
+.cfg-card
+  +card
+  +rise
+  position: relative
+  display: flex
+  flex-direction: column
+  padding: 18px
+  overflow: hidden
+  transition: transform .25s $ease, box-shadow .25s, border-color .25s
+
+  &:hover
+    transform: translateY(-3px)
+    border-color: color-mix(in srgb, #{$yellow} 45%, #{$border})
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, .35)
+
+  // Charge points that still need setup get a thin animated accent on top.
+  &.cfg-card_setup::before
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    height: 3px
+    background: linear-gradient(90deg, transparent, #{$yellow}, transparent)
+    background-size: 200% 100%
+    animation: cfg-sheen 2.6s linear infinite
+    +reduced-motion
+      animation: none
+      background: $yellow
+
+@keyframes cfg-sheen
+  from
+    background-position: 100% 0
+  to
+    background-position: -100% 0
+
+.cfg-card__head
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 8px
+
+.cfg-conn
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  font-size: 12px
+  font-weight: 600
+  color: $muted
+
+  &.cfg-conn_on
+    color: $ok
+
+.cfg-card__title
+  margin: 14px 0 2px
+  font-size: 18px
+  font-weight: 750
+  letter-spacing: -.01em
+  word-break: break-all
+
+.cfg-card__station
+  margin: 0
+  font-size: 13px
+  color: $muted
+
+.cfg-card__facts
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 10px 14px
+  margin: 16px 0 18px
+  padding-top: 14px
+  border-top: 1px dashed $border
+
+  dt
+    font-size: 11px
+    font-weight: 600
+    text-transform: uppercase
+    letter-spacing: .04em
+    color: $muted
+
+  dd
+    margin: 2px 0 0
+    font-size: 13px
+    font-weight: 600
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+.cfg-card__actions
+  display: flex
+  gap: 8px
+  margin-top: auto
+
+  .cfg-btn
+    flex: 1
+
+// ---------------------------------------------------------------- empty
+
+.cfg-empty
+  +card
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 10px
+  padding: 48px 16px
+  color: $muted
+  text-align: center
+
+  svg
+    width: 34px
+    height: 34px
+    stroke: $yellow
+
+  p
+    margin: 0

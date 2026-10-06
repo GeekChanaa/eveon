@@ -1,0 +1,52 @@
+<ng-container *ngIf="status?.eligible">
+  <h3 class="section-title">Two factor authentication</h3>
+
+  <div class="tfa__warning" *ngIf="status?.required && !status?.enabled">
+    Your organisation requires two factor authentication for administrator accounts. Please set it up now.
+  </div>
+
+  <ng-container *ngIf="status?.enabled && !disabling">
+    <p>Enabled. Signing in asks for a code from your authenticator app ({{status?.recoveryCodesLeft}} recovery codes left).</p>
+    <button type="button" class="button-stroke" (click)="disabling = true">Disable</button>
+  </ng-container>
+
+  <form *ngIf="status?.enabled && disabling" (ngSubmit)="disable()" class="tfa__form">
+    <input class="tfa__input" type="password" name="password" [(ngModel)]="password" placeholder="Current password" autocomplete="current-password">
+    <input class="tfa__input" name="code" [(ngModel)]="code" placeholder="Authentication or recovery code" autocomplete="one-time-code">
+    <div class="tfa__actions">
+      <button type="submit" class="button-stroke" [disabled]="isLoading || !code">Disable two factor authentication</button>
+      <button type="button" class="button-stroke" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+
+  <ng-container *ngIf="!status?.enabled && !enrollment">
+    <p>Protect your account with a code from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password...).</p>
+    <button type="button" class="button-stroke" [disabled]="isLoading" (click)="startEnrollment()">Set up</button>
+  </ng-container>
+
+  <div *ngIf="enrollment" class="tfa__enroll">
+    <p>Scan this QR code with your authenticator app, then enter the 6 digit code it shows.</p>
+    <img class="tfa__qr" [src]="enrollment.qrCodeDataUri" alt="Authenticator QR code">
+    <p class="tfa__secret">Can't scan? Enter this key manually: <code>{{enrollment.secret}}</code></p>
+    <details>
+      <summary>Setup link</summary>
+      <code class="tfa__uri">{{enrollment.otpAuthUri}}</code>
+    </details>
+    <form (ngSubmit)="confirmEnrollment()" class="tfa__form">
+      <input class="tfa__input" name="code" [(ngModel)]="code" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+      <div class="tfa__actions">
+        <button type="submit" class="button-stroke" [disabled]="isLoading || code.length !== 6">Verify and enable</button>
+        <button type="button" class="button-stroke" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="recoveryCodes.length" class="tfa__codes">
+    <p><strong>Save these recovery codes now.</strong> Each one works once if you lose your device. They will not be shown again.</p>
+    <ul><li *ngFor="let recoveryCode of recoveryCodes"><code>{{recoveryCode}}</code></li></ul>
+    <button type="button" class="button-stroke" (click)="copyRecoveryCodes()">Copy</button>
+    <button type="button" class="button-stroke" (click)="recoveryCodes = []">I saved them</button>
+  </div>
+
+  <div class="error" *ngIf="error">{{error}}</div>
+</ng-container>

@@ -1,7 +1,9 @@
-<div class="settings__anchor" id="basics" data-value="Basics"></div>
-<div class="title-green settings__title">Images</div>
-
-<ng-container *ngIf="!addingImages">
+<header class="images-header"><div><h2>Images</h2><p>Help drivers recognize the station and find its charge points.</p></div>
+  <button class="add-images-btn" type="button" *ngIf="!addingImages" (click)="addingImages = true">+ Add images</button>
+</header>
+<div class="empty-state" *ngIf="loading" role="status"><app-svg-spinner></app-svg-spinner><p>Loading images...</p></div>
+<div class="empty-state" *ngIf="loadError" role="alert"><p>Could not load station images.</p><button type="button" class="retry-button" (click)="getImages()">Retry</button></div>
+<ng-container *ngIf="!addingImages && !loading && !loadError">
   <ng-container *ngIf="images != null && images.length > 0">
     <div class="images-container">
       <div class="image-container" *ngFor="let image of images; trackBy: trackByImageId">
@@ -23,17 +25,17 @@
         <path
           d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
       </svg>
-      <p class="empty-state-text">No images assigned to this charging station</p>
+      <p class="empty-state-text">No station photos yet. Add images to help drivers find this location.</p>
     </div>
   </ng-container>
 </ng-container>
 
 <ng-container *ngIf="addingImages">
-  <div class="create__card card">
+  <div class="upload-card">
     <div class="file">
       <div class="file__label">
-        Cover images
-        <div class="tooltip" title="Upload multiple images for this charging station. Supported formats: JPG, PNG, WEBP"
+        Upload station photos
+        <div class="tooltip" title="Upload multiple images for this charging station. Image files up to 2 MB each"
           data-position="right">
           <svg class="icon icon-info" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path
@@ -42,23 +44,23 @@
         </div>
       </div>
 
-      <div class="file__wrap" [class.has-files]="chargingStationImages && chargingStationImages.length > 0"
+      <div class="file__wrap" [class.has-files]="chargingStationImages && chargingStationImages.length > 0" [class.drag-over]="dragging"
         (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
         <input class="upload-input" type="file" multiple accept="image/*" (change)="handleUpload($event)" #fileInput
-          aria-label="Upload images" />
+          [disabled]="imagesUploading" aria-label="Upload images" />
 
         <div class="file__box" *ngIf="!chargingStationImages || chargingStationImages.length === 0">
           <svg class="icon icon-upload" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
           </svg>
           <span class="upload-text">Click or drag images here</span>
-          <span class="upload-subtext">JPG, PNG, WEBP up to 10MB each</span>
+          <span class="upload-subtext">Image files up to 2 MB each</span>
         </div>
 
         <div class="files__box" *ngIf="displayedImages && displayedImages.length > 0">
           <div class="image__box" *ngFor="let imageUrl of displayedImages; let i = index; trackBy: trackByIndex">
-            <button type="button" class="image__clear" (click)="clearImage(i, $event)"
+            <button type="button" class="image__clear" (click)="clearImage(i, $event)" [disabled]="imagesUploading"
               [attr.aria-label]="'Remove image ' + (i + 1)" title="Remove image">
               <svg class="icon icon-close" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -78,10 +80,6 @@
 </ng-container>
 
 <div class="form-actions">
-  <app-button variant="secondary" *ngIf="!addingImages" type="button" (click)="addingImages = true">
-    Add Images
-  </app-button>
-
   <ng-container *ngIf="addingImages">
     <app-button 
       variant="primary" 
@@ -95,7 +93,7 @@
     <app-button 
       variant="primary" 
       type="button" 
-      [disabled]="imagesUploading || !chargingStationImages?.length"
+      [disabled]="imagesUploading || !chargingStationImages.length"
       [isLoading]="imagesUploading"
       (click)="uploadImages()">
       <svg class="icon icon-upload" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

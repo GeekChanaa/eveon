@@ -14,6 +14,12 @@ import { ChargePointAddConnectorComponent } from './charge-point-add-connector/c
 import { ChargePointEditConnectorComponent } from './charge-point-edit-connector/charge-point-edit-connector.component';
 import { CreateChargePointInformationsComponent } from './create-charge-point/create-charge-point-informations/create-charge-point-informations.component';
 import { CreateChargePointAddConnectorsComponent } from './create-charge-point/create-charge-point-add-connectors/create-charge-point-add-connectors.component';
+import { OcppVersionBadgeComponent } from 'src/app/atoms/ocpp-version-badge/ocpp-version-badge.component';
+import { ChargerEventsComponent } from '../charger-events/charger-events.component';
+import { ChargePointDisplayMessagesComponent } from './charging-point/device-data/charge-point-display-messages.component';
+import { ChargePointCustomerInformationComponent } from './charging-point/device-data/charge-point-customer-information.component';
+import { ChargePointLogsComponent } from './charging-point/device-data/charge-point-logs.component';
+import { ChargePointCertificatesComponent } from './charging-point/charge-point-certificates/charge-point-certificates.component';
 import { CreateChargePointAddConnectorModalComponent } from './create-charge-point/create-charge-point-add-connectors/create-charge-point-add-connector-modal/create-charge-point-add-connector-modal.component';
 
 @NgModule({
@@ -32,6 +38,12 @@ import { CreateChargePointAddConnectorModalComponent } from './create-charge-poi
     ],
     imports: [
         AtomsModule,
+        OcppVersionBadgeComponent,
+        ChargerEventsComponent,
+        ChargePointDisplayMessagesComponent,
+        ChargePointCustomerInformationComponent,
+        ChargePointLogsComponent,
+        ChargePointCertificatesComponent,
         ReactiveFormsModule,
         CommonModule,
         SharedModule,

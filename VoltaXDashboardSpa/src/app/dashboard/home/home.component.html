@@ -1,65 +1,8 @@
-<div class="overlay"></div>
-<!-- inner-->
-<div class="page__inner">
-  <div class="page__container">
-    <div class="page__title h3">
-      Home
-      <app-breadcrumb  class="breadcrumb" [items]="[{label : 'Home'}]"></app-breadcrumb>
-    </div>
-
-    <!-- Chargers Overview -->
-    <div class="card">
-      <div class="card__head">
-        <div class="title-purple card__title">Charge Points Connectors Overview</div>
-      </div>
-      <div class="connector__status">
-        <app-connector-statuses class="connector__status__list"></app-connector-statuses>
-      </div>
-    </div>
-
-    <div class="card">
-      <app-card title="overview">
-        <app-tabs-statistics></app-tabs-statistics>
-      </app-card>
-    </div>
-
-    <div class="card">
-      <div class="card__head">
-        <div class="title-purple card__title">Links</div>
-      </div>
-      <div class="connector__status">
-        <div class="connector__status__list">
-          <app-small-card 
-            [number]="-1" 
-            [icon]="'icon-charging-station'"
-            routerLink="/dashboard/charging-stations" 
-            class="link__item" 
-            title="Charging Stations" description="available"></app-small-card>
-
-          <app-small-card [number]="-1" [icon]="'icon-type2-charger'" routerLink="/dashboard/charging-points" class="link__item"
-            title="Charge points" description="Unavailable"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-charging-cable'" routerLink="/dashboard/connector-realtime" class="link__item"
-            title="Connector Real-time" description="Occupied"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-payment'" routerLink="/dashboard/charging-cards" class="link__item"
-            title="Recharge Cards" description="Faulted"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-profile-circle'" routerLink="/dashboard/users" class="link__item" title="Users"
-            description="Reserved"></app-small-card>
-        </div> 
-      </div>
-      <div class="connector__status">
-        <div class="connector__status__list">
-          <app-small-card [number]="-1" [icon]="'icon-bar-chart'" routerLink="/dashboard/statistics" class="link__item"
-            title="Statistics" description="available"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-basket'" routerLink="/dashboard/recharge-orders" class="link__item"
-            title="Orders" description="Unavailable"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-arrows-up-down'" routerLink="/dashboard/transactions" class="link__item"
-            title="Transactions" description="Occupied"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-warning'" routerLink="/dashboard/system-reports" class="link__item"
-            title="System Reports" description="Faulted"></app-small-card>
-          <app-small-card [number]="-1" [icon]="'icon-warning'" routerLink="/dashboard/reports" class="link__item"
-            title="Reports" description="Reserved"></app-small-card>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="page__inner"><main class="page__container home">
+<header class="home-heading"><div><p class="eyebrow">NETWORK OPERATIONS</p><h1>Dashboard overview</h1><p class="subtitle">Your charging network, at a glance.</p></div>
+<a *ngIf="access.canUrl('/dashboard/connector-realtime')" class="primary-action" routerLink="/dashboard/connector-realtime">Open real-time view <span aria-hidden="true">↗</span></a></header>
+<section class="home-panel" aria-labelledby="network-title"><div class="section-heading"><div><h2 id="network-title">Connector availability</h2><p>Current status across your charging network.</p></div><span class="section-tag">Network snapshot</span></div><app-connector-statuses></app-connector-statuses></section>
+<section class="home-panel" aria-labelledby="performance-title"><div class="section-heading"><div><h2 id="performance-title">Performance</h2><p>All-time totals, today's activity and daily trends.</p></div><a *ngIf="access.canUrl('/dashboard/statistics')" routerLink="/dashboard/statistics" class="text-link">View statistics ↗</a></div><app-tabs-statistics></app-tabs-statistics></section>
+<section class="home-panel" aria-labelledby="quick-title"><div class="section-heading"><div><h2 id="quick-title">Workspace</h2><p>Everything you need to run your network.</p></div></div>
+<nav class="quick-links" aria-label="Dashboard shortcuts"><ng-container *ngFor="let link of quickLinks"><a *ngIf="access.canUrl(link.url)" [routerLink]="link.url" class="quick-link"><span class="quick-icon"><svg aria-hidden="true"><use [attr.href]="'#' + link.icon"></use></svg></span><span class="quick-copy"><strong>{{link.title}}</strong><span>{{link.description}}</span></span><span class="quick-arrow" aria-hidden="true">↗</span></a></ng-container></nav>
+</section></main></div>

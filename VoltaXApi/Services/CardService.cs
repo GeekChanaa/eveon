@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.Exceptions;
 
 namespace VoltaXApi.Services
 {
@@ -31,7 +32,7 @@ namespace VoltaXApi.Services
             {
                 return AuthorizationStatusEnumType.Accepted;
             }
-            var card = (await _cardRepository.FindAsync(c => c.CardNumber == idTag)).FirstOrDefault();
+            var card = await _cardRepository.GetCardByNumber(idTag);
 
             if (card == null)
                 return AuthorizationStatusEnumType.Unknown;
@@ -39,54 +40,34 @@ namespace VoltaXApi.Services
             if (card.Blocked.HasValue && card.Blocked.Value)
                 return AuthorizationStatusEnumType.Blocked;
 
-            if (card.ExpirationDate < DateTime.Now)
+            if (card.ExpirationDate < DateTime.UtcNow)
                 return AuthorizationStatusEnumType.Expired;
 
             return AuthorizationStatusEnumType.Accepted;
         }
 
-        public async Task<bool> SubstractAmountFromCard(int cardTagID, double kwhCharged, int connectorID)
-        {
-            Card? card = await _cardRepository.GetByIdAsync(cardTagID);
-            Connector? connector = await _connectorRepository.GetByIdAsync(connectorID);
+        public Task<bool> SubstractAmountFromCard(int cardTagID, double kwhCharged, int connectorID) =>
+            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.EnergyCost(connector, kwhCharged));
 
-            double price = kwhCharged * (double)connector.PricePerKWh;
-            card.Balance = card.Balance - price;
+        public Task<bool> SubstractAmountFromCardByMinutes(int cardTagID, double minutesCharged, int connectorID) =>
+            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.FinalCost(connector, minutesCharged));
+
+        public Task<bool> SubstractAmountFromCardByIdleMinutes(int cardTagID, double idleMinutes, int connectorID) =>
+            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.IdleCost(connector, idleMinutes));
+
+        /// <summary>Debits the card with the connector-priced amount; false (and a system report) when the balance goes negative.</summary>
+        private async Task<bool> Debit(int cardID, int connectorID, Func<Connector, double> price)
+        {
+            Card card = await _cardRepository.GetByIdAsync(cardID)
+                ?? throw new CardNotFoundException($"There is no card with the id {cardID}");
+            Connector connector = await _connectorRepository.GetByIdAsync(connectorID)
+                ?? throw new NotFoundException($"There is no connector with the id {connectorID}");
+
+            card.Balance -= price(connector);
             await _cardRepository.Update(card);
 
-            if(card.Balance < 0){
-                await HandleCardNegativeBalance(card, connectorID);
-                return false;
-            }
-            return true;
-        }
-
-        public async Task<bool> SubstractAmountFromCardByMinutes(int cardTagID, double minutesCharged, int connectorID)
-        {
-            Card? card = await _cardRepository.GetByIdAsync(cardTagID);
-            Connector? connector = await _connectorRepository.GetByIdAsync(connectorID);
-
-            double price = minutesCharged * (double)connector.PricePerMinute;
-            card.Balance = card.Balance - price;
-            await _cardRepository.Update(card);
-
-            if(card.Balance < 0){
-                await HandleCardNegativeBalance(card, connectorID);
-                return false;
-            }
-            return true;
-        }
-
-        public async Task<bool> SubstractAmountFromCardByIdleMinutes(int cardTagID, double idleMinutes, int connectorID)
-        {
-            Card? card = await _cardRepository.GetByIdAsync(cardTagID);
-            Connector? connector = await _connectorRepository.GetByIdAsync(connectorID);
-
-            double price = idleMinutes * (double)connector.PricePerIdleMinute;
-            card.Balance = card.Balance - price;
-            await _cardRepository.Update(card);
-
-            if(card.Balance < 0){
+            if (card.Balance < 0)
+            {
                 await HandleCardNegativeBalance(card, connectorID);
                 return false;
             }

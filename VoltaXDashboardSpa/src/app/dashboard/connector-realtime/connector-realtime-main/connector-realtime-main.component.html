@@ -2,20 +2,8 @@
   <div class="page__container page__container--large">
     <div class="page__title h3">
       Charge Point Realtime
-      <div class="status" 
-      [ngClass]="{'active' : status == 'active'}" 
-      (mouseover)="isHovered = true"
-      (mouseleave)="isHovered = false"> 
-        <span class="status-color">
-          <app-connector-status-dot [status]="status"></app-connector-status-dot>
-          {{status}}
-        </span> 
-
-        <div class="connector-status-container" [ngClass]="{'show' : isHovered}">
-          <app-connector-status-description></app-connector-status-description>
-        </div>
-  
-      </div>
+      <app-charge-point-status [status]="status"></app-charge-point-status>
+      <app-ocpp-version-badge *ngIf="chargePoint?.chargePointId" class="page__ocpp-badge" [chargePointId]="chargePoint.chargePointId"></app-ocpp-version-badge>
     </div>
     <app-breadcrumb [items]="[
       { label: 'Dashboard', link: '/dashboard' },
@@ -23,18 +11,18 @@
       { label: '#'+chargePointID }
       ]"></app-breadcrumb>
     <div class="charger__navbar">
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</button>
-      <button  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 11}" (click)="selectMenuItem(11)" class="charger__navbar-item">Transactions</button>
-      <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 12}" (click)="selectMenuItem(12)" class="charger__navbar-item">Configurations</button>
+      <button *ngIf="canOpenMenu(1)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
+      <button *ngIf="canOpenMenu(2)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
+      <button *ngIf="canOpenMenu(3)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</button>
+      <button *ngIf="canOpenMenu(4)"  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
+      <button *ngIf="canOpenMenu(5)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</button>
+      <button *ngIf="canOpenMenu(6)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</button>
+      <button *ngIf="canOpenMenu(7)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</button>
+      <button *ngIf="canOpenMenu(8)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 8}" (click)="selectMenuItem(8)" class="charger__navbar-item">Logs</button>
+      <button *ngIf="canOpenMenu(9)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 9}" (click)="selectMenuItem(9)" class="charger__navbar-item">Ratings</button>
+      <button *ngIf="canOpenMenu(10)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 10}" (click)="selectMenuItem(10)" class="charger__navbar-item">Charging Sessions</button>
+      <button *ngIf="canOpenMenu(11)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 11}" (click)="selectMenuItem(11)" class="charger__navbar-item">Transactions</button>
+      <button *ngIf="canOpenMenu(12)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 12}" (click)="selectMenuItem(12)" class="charger__navbar-item">Configurations</button>
     </div>
     <div class="settings">
       
@@ -44,7 +32,7 @@
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('PricingAccess')">
-        <app-connector-realtime-pricing-access *ngIf="chargePoint != null" [ChargePoint]="chargePoint" class="settings__container"></app-connector-realtime-pricing-access>
+        <app-connector-realtime-pricing-access *ngIf="chargePoint.id != null" [ChargePoint]="chargePoint" class="settings__container"></app-connector-realtime-pricing-access>
       </ng-container>
 
       <ng-container *ngIf="selectedMenuItem == getMenu('DetailsSettings')">

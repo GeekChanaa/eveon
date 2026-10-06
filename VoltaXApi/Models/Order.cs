@@ -3,8 +3,11 @@ namespace VoltaXApi.Models
     public class Order : IEntity
     {
         public int ID { get; set; }
+        [NotUpdatable]
         public int CardID { get; set; }
+        [NotUpdatable]
         public double Amount { get; set; }
+        [NotUpdatable]
         public RechargeOrderStatus Status { get; set; }
         public DateTime RechargeDate { get; set; }
         public Card? Card { get; set; }

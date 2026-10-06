@@ -1,0 +1,31 @@
+<app-dashboard-details-container [state]="state" title="Charger PKI"
+  [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Charger PKI' }]">
+  <div class="pki" *ngIf="ca">
+    <section class="pki__card">
+      <h3>Charger certificate authority</h3>
+      <p class="pki__muted">Signs the client certificates chargers use for OCPP security profile 3 (mutual TLS). Only the public certificate is shown or downloaded.</p>
+      <ng-container *ngIf="ca.configured; else notConfigured">
+        <dl>
+          <div><dt>Subject</dt><dd>{{ ca.subject }}</dd></div>
+          <div><dt>Source</dt><dd>{{ ca.source }}</dd></div>
+          <div><dt>Key</dt><dd>{{ ca.keyAlgorithm }}</dd></div>
+          <div><dt>Serial</dt><dd><code>{{ ca.serialNumber }}</code></dd></div>
+          <div><dt>SHA-256</dt><dd><code>{{ ca.thumbprintSha256 }}</code></dd></div>
+          <div><dt>Valid from</dt><dd>{{ ca.notBefore | date:'medium' }}</dd></div>
+          <div><dt>Expires</dt><dd [class.pki__danger]="daysLeft !== null && daysLeft < 90">{{ ca.notAfter | date:'medium' }} ({{ daysLeft }} days)</dd></div>
+        </dl>
+        <p class="pki__warning" *ngIf="ca.source.startsWith('Development')">This is the auto-created development CA. Configure a production CA (Pki:CaCertificatePem / Pki:CaPrivateKeyPem) before using security profile 3 in production.</p>
+        <div class="pki__actions">
+          <button type="button" class="pki__primary" [disabled]="downloading" (click)="download()">{{ downloading ? 'Downloading...' : 'Download CA certificate (PEM)' }}</button>
+        </div>
+        <p class="pki__muted">Use this file as the trust pool of the TLS proxy (client_auth in deploy/Caddyfile.mtls).</p>
+      </ng-container>
+      <ng-template #notConfigured>
+        <p class="pki__warning">No charger CA is configured. SignCertificate requests are rejected and security profile 3 chargers cannot connect.
+          Set Pki:CaCertificatePem and Pki:CaPrivateKeyPem (or Pki:CaCertificatePath / Pki:CaKeyPath); see docs/configuration.md.</p>
+        <p class="pki__danger" *ngIf="ca.error">Last error: {{ ca.error }}</p>
+      </ng-template>
+      <p class="pki__danger" role="alert" *ngIf="error">{{ error }}</p>
+    </section>
+  </div>
+</app-dashboard-details-container>

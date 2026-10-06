@@ -3,17 +3,12 @@
     { label: 'Partners', link: '/dashboard/partners' },
     { label: 'Create' }
   ]">
-  <div form>
+  <div form class="station-wizard people-create">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="create__card card charge_point_form">
-        <div class="create__group create__group3">
-          <app-form-field class="field" title="Name" placeholder="Enter the partner's name"
+<header class="station-intro"><span class="station-eyebrow">Partner onboarding</span><h2>Create a new partner</h2><p>Add the organization?s details. You can upload its logo after creating the partner.</p></header>
+<section class="people-form-section"><div class="station-section-heading"><h3>Organization</h3><p>Identify the partner and describe the relationship.</p></div><div class="field__group">
+<app-form-field class="field" title="Name" placeholder="Enter the partner's name"
             description="Name of the partner" [control]="getControl('name')" icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Description" placeholder="Short description"
-            description="Small description of the partner" [control]="getControl('description')"
-            icon="icon-info"></app-form-field>
-
           <div class="field">
             <div class="field__label">Partner Type
               <div class="tooltip" title="Type of the partner">
@@ -36,56 +31,54 @@
             </div>
           </div>
 
-          <app-form-field class="field" title="Email" placeholder="Email address" description="Primary contact email"
+
+<app-form-field class="field" title="Description" placeholder="Short description"
+            description="Small description of the partner" [control]="getControl('description')"
+            icon="icon-info"></app-form-field>
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Contact information</h3><p>Add the primary contact details and any additional contacts.</p></div><div class="field__group">
+<app-form-field class="field" title="Email" placeholder="Email address" description="Primary contact email"
             [control]="getControl('email')" icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Secondary Email" placeholder="Email address"
+<app-form-field class="field" title="Secondary Email" placeholder="Email address"
             description="Secondary contact email" [control]="getControl('email2')" icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Additional Email" placeholder="Email address"
+<app-form-field class="field" title="Additional Email" placeholder="Email address"
             description="Additional contact email" [control]="getControl('email3')" icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Phone" placeholder="Main phone number"
+<app-form-field class="field" title="Phone" placeholder="Main phone number"
             description="Main Phone number of the partner" [control]="getControl('phone')"
             icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Secondary Phone" placeholder="Secondary phone number"
+<app-form-field class="field" title="Secondary Phone" placeholder="Secondary phone number"
             description="Secondary Phone number of the partner" [control]="getControl('phone2')"
             icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Additional Phone" placeholder="Additional phone number"
+<app-form-field class="field" title="Additional Phone" placeholder="Additional phone number"
             description="Additional Phone number of the partner" [control]="getControl('phone2')"
             icon="icon-info"></app-form-field>
-
-          <app-search-input class="field"
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Location</h3><p>Enter the partner?s business address.</p></div><div class="field__group">
+<app-search-input class="field"
             placeholder="City"
             title="City"
-            description="The City where the charging station is."
+            description="The city where the partner is based."
             [control]="getControl('city')"
             [options]="cities"></app-search-input>
-
-          <app-form-field class="field" title="Tax Identification Number" placeholder="Tax Identification Number"
-            description="Tax Identification Number" [control]="getControl('taxIdentificationNumber')"
-            icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Address" placeholder="Address"
+<app-form-field class="field" title="Address" placeholder="Address"
             description="Address" [control]="getControl('address')"
             icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Registration Number" placeholder="Registration Number"
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Business details</h3><p>Record registration, tax, and payment information.</p></div><div class="field__group">
+<app-form-field class="field" title="Tax Identification Number" placeholder="Tax Identification Number"
+            description="Tax Identification Number" [control]="getControl('taxIdentificationNumber')"
+            icon="icon-info"></app-form-field>
+<app-form-field class="field" title="Registration Number" placeholder="Registration Number"
             description="Registration Number" [control]="getControl('registrationNumber')"
             icon="icon-info"></app-form-field>
-
-          <app-form-field class="field" title="Bank Account Number" placeholder="Bank Account Number"
+<app-form-field class="field" title="Bank Account Number" placeholder="Bank Account Number"
             description="Bank Account Number" [control]="getControl('bankAccountNumber')"
             icon="icon-info"></app-form-field>
-            
-        </div>
-      </div>
+</div></section>
       <div class="form__actions">
         <app-button class="ml-auto" [disabled]="form.invalid" [isLoading]="isLoading" [variant]="'secondary'"
           type="submit">
-          Submit
+          Create partner
         </app-button>
       </div>
 

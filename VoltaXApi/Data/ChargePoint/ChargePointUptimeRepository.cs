@@ -15,7 +15,7 @@ namespace VoltaXApi.Data
         {
             ChargePointUptime chargePointUT = new ChargePointUptime{
                 ChargePointID = (await this._context.ChargePoints.FirstOrDefaultAsync(u => u.ChargePointId == chargePointID)).ID,
-                StartDate = DateTime.Now,
+                StartDate = DateTime.UtcNow,
                 EndDate = null,
                 ChargePointUptimeStatus = ChargePointUptimeStatusEnum.Available
             };
@@ -28,7 +28,7 @@ namespace VoltaXApi.Data
         {
             var cpID = (await this._context.ChargePoints.FirstOrDefaultAsync(u => u.ChargePointId == chargePointID)).ID;
             var chargePointUT = await this._context.ChargePointUptimes.FirstOrDefaultAsync(u => u.ChargePointID == cpID);
-            chargePointUT.EndDate = DateTime.Now;
+            chargePointUT.EndDate = DateTime.UtcNow;
             await this.Update(chargePointUT);
         }
 

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RequestCallerService } from 'src/_services/ocpp-services/request-caller.service';
 import { SchemaService } from 'src/_services/ocpp-services/schema.service';
+import { ActionModalService } from 'src/_services/action-modal.service';
+import { showOcppCommandFeedback } from 'src/_services/ocpp-services/ocpp-command-feedback';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-json';  // Load the language component
 
@@ -20,7 +22,8 @@ export class RequestHandlerComponent implements OnInit {
 
   constructor(
     private _schemaService : SchemaService,
-    private _requestCallerService : RequestCallerService
+    private _requestCallerService : RequestCallerService,
+    private _modalService : ActionModalService
   ) { }
 
   ngOnInit() {
@@ -67,6 +70,9 @@ export class RequestHandlerComponent implements OnInit {
     this._requestCallerService.sendOCPPMessage(this.chargePointID,this.ocppAction.name,this.jsonOverload)?.subscribe((data) => {
       console.log("request sent");
       console.log(data);
+      showOcppCommandFeedback(this._modalService, data);
+    },(error) => {
+      showOcppCommandFeedback(this._modalService, error);
     });
   }
 

@@ -1,55 +1,7 @@
-<!-- Change Email Step -->
-<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.UpdateEmail">
-  <div [formGroup]="updateEmailForm">
-    <app-form-field 
-      description="New Email"
-      placeholder="Email"
-      title="Email"
-      [control]="getControl(updateEmailForm,'email')"></app-form-field>
-    
-    <div class="form__actions">
-      <app-button [isLoading]="isLoading" (btnClick)="saveEmail()" size="small" variant="secondary">Save Email</app-button>
-
-    </div>
-  </div>
-</ng-container>
-  
-
-<!-- Verification choice -->
-<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.VerificationChoice">
-  <div class="choice__container">
-    <app-card-action
-    class="choice__action" 
-    [actionName]="'Verify Later'"
-    (actionClick)="closeModal()"
-    ></app-card-action>
-
-    <app-card-action
-      class="choice__action"  
-      [actionName]="'Verify Now'"
-      (actionClick)="formStep = UpdateEmailFormStepEnum.Verification"
-      ></app-card-action>
+<div class="contact-flow">
+  <ol class="contact-flow__steps" aria-label="Email update progress"><li [class.is-active]="formStep == UpdateEmailFormStepEnum.UpdateEmail" [class.is-complete]="formStep > UpdateEmailFormStepEnum.UpdateEmail"><span>1</span><small>New email</small></li><li [class.is-active]="formStep == UpdateEmailFormStepEnum.VerificationChoice" [class.is-complete]="formStep > UpdateEmailFormStepEnum.VerificationChoice"><span>2</span><small>Confirm</small></li><li [class.is-active]="formStep == UpdateEmailFormStepEnum.Verification" [class.is-complete]="formStep > UpdateEmailFormStepEnum.Verification"><span>3</span><small>Verify</small></li><li [class.is-active]="formStep == UpdateEmailFormStepEnum.Verified"><span><svg class="icon"><use xlink:href="#icon-check"></use></svg></span><small>Done</small></li></ol>
+  <ng-container *ngIf="formStep == UpdateEmailFormStepEnum.UpdateEmail"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-mail"></use></svg></span><div><h4>Choose your new email</h4><p>We’ll use this address for account notifications and verification.</p></div></div><div [formGroup]="updateEmailForm"><app-form-field description="Email address" placeholder="name@example.com" title="New email" [control]="getControl(updateEmailForm,'email')"></app-form-field><div class="contact-flow__actions"><app-button [isLoading]="isLoading" (btnClick)="saveEmail()" size="small" variant="secondary">Continue</app-button></div></div></ng-container>
+  <ng-container *ngIf="formStep == UpdateEmailFormStepEnum.VerificationChoice"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-mail"></use></svg></span><div><h4>Email updated</h4><p>Verify it now to keep your account secure and receive important messages.</p></div></div><div class="contact-flow__choices"><button type="button" class="choice-card" (click)="closeModal()"><strong>Verify later</strong><span>You can return to profile settings anytime.</span></button><button type="button" class="choice-card choice-card--primary" (click)="formStep = UpdateEmailFormStepEnum.Verification"><strong>Verify now</strong><span>Enter the code sent to your new email.</span></button></div></ng-container>
+  <ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verification"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-lock"></use></svg></span><div><h4>Enter your verification code</h4><p>Check the inbox of the email address you just entered.</p></div></div><div [formGroup]="verifyEmailForm"><app-form-field description="Verification code" placeholder="Enter your code" title="Code" [control]="getControl(verifyEmailForm,'code')"></app-form-field><div class="contact-flow__actions"><app-button [isLoading]="isLoading" (btnClick)="verifyEmail()" size="small" variant="secondary">Verify email</app-button></div></div></ng-container>
+  <ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verified"><div class="contact-flow__success"><svg class="icon"><use xlink:href="#icon-check-circle"></use></svg><div><h4>Email verified</h4><p>Your new email address is ready to use.</p></div></div></ng-container>
 </div>
-</ng-container>
-
-<!-- Verification Step -->
-<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verification">
-  <div [formGroup]="verifyEmailForm">
-    <app-form-field 
-      description="Code"
-      placeholder="Code"
-      title="Code"
-      [control]="getControl(verifyEmailForm,'code')"></app-form-field>
-    
-    <div class="form__actions">
-      <app-button [isLoading]="isLoading" (btnClick)="verifyEmail()" size="small" variant="secondary">Verify</app-button>
-    </div>
-  </div>
-</ng-container>
-
-<!-- Verified Step -->
-<ng-container *ngIf="formStep == UpdateEmailFormStepEnum.Verified">
-  <div>
-    Your Email has been verified successfully !
-  </div>
-</ng-container>

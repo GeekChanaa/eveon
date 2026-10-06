@@ -1,3 +1,4 @@
+using VoltaXApi.ScaleOut;
 using Microsoft.Extensions.Options;
 using VoltaXApi.Data;
 using VoltaXApi.Settings;
@@ -18,12 +19,15 @@ namespace VoltaXApi.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly AuthTokenSettings _settings;
         private readonly ILogger<RefreshTokenCleanupService> _logger;
+        private readonly IClusterJobLease _lease;
 
         public RefreshTokenCleanupService(
             IServiceProvider serviceProvider,
             IOptions<AuthTokenSettings> settings,
-            ILogger<RefreshTokenCleanupService> logger)
+            ILogger<RefreshTokenCleanupService> logger,
+            IClusterJobLease lease)
         {
+            _lease = lease;
             _serviceProvider = serviceProvider;
             _settings = settings.Value;
             _logger = logger;
@@ -39,10 +43,14 @@ namespace VoltaXApi.Services
                     using var scope = _serviceProvider.CreateScope();
                     var repository = scope.ServiceProvider.GetRequiredService<IRefreshTokenRepository>();
 
-                    int removed = await repository.DeleteExpired(_settings.CleanupRetention);
+                    // Only one replica runs this job (see ScaleOut/ClusterJobLease.cs).
+                    if (await _lease.TryAcquireAsync("refresh-token-cleanup", Interval + TimeSpan.FromHours(1), stoppingToken))
+                    {
+                        int removed = await repository.DeleteExpired(_settings.CleanupRetention);
 
-                    if (removed > 0)
-                        _logger.LogInformation("Refresh token cleanup removed {Count} stale tokens", removed);
+                        if (removed > 0)
+                            _logger.LogInformation("Refresh token cleanup removed {Count} stale tokens", removed);
+                    }
                 }
                 catch (Exception ex)
                 {

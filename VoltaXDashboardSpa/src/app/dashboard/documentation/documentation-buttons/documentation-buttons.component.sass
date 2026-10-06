@@ -1,19 +1,46 @@
-/* buttons-documentation.component.scss */
+.buttons-page
+  color: var(--primary9)
+.docs-back
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin-bottom: 22px
+  color: var(--professional4)
+  font-size: 14px
+  font-weight: 600
+  text-decoration: none
+  .icon
+    width: 16px
+    height: 16px
+    fill: currentColor
+  &:hover
+    color: var(--secondary1)
+.buttons-header
+  max-width: 750px
+  margin-bottom: 30px
+  h1
+    margin: 5px 0 10px
+    font-size: clamp(30px, 4vw, 40px)
+    color: var(--primary9)
+  p
+    margin: 0
+    color: var(--professional4)
+    line-height: 1.6
+.buttons-header__eyebrow
+  color: var(--secondary1)
+  font-size: 12px
+  font-weight: 700
+  letter-spacing: .1em
+  text-transform: uppercase
 .documentation-container 
   max-width: 1200px
-  margin: 0 auto
-  padding: 40px 20px
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif
-  color: var(--professional1)
-  background-color: var(--primary1)
+  color: var(--primary9)
 
 
 h1 
   font-size: 2.5rem
   margin-bottom: 1rem
-  color: var(--professional1)
-  border-bottom: 3px solid var(--secondary2)
-  padding-bottom: 0.5rem
+  color: var(--primary9)
 
 
 .intro 
@@ -24,17 +51,18 @@ h1
 
 
 .doc-section 
-  margin-bottom: 3rem
-  padding: 2rem
-  border-radius: 8px
-  background-color: var(--primary2)
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05)
+  margin-bottom: 20px
+  padding: 28px
+  border: 1px solid var(--primary3)
+  border-radius: 16px
+  background-color: var(--primary1)
+  box-shadow: 0 8px 24px rgba(26, 29, 31, .05)
 
 
 h2 
-  font-size: 1.8rem
-  margin-bottom: 1.5rem
-  color: var(--professional2)
+  font-size: 1.35rem
+  margin: 0 0 1.5rem
+  color: var(--primary9)
   position: relative
   
   &::after 
@@ -42,8 +70,8 @@ h2
     position: absolute
     bottom: -0.5rem
     left: 0
-    width: 80px
-    height: 3px
+    width: 48px
+    height: 2px
     background-color: var(--secondary3)
   
 
@@ -110,7 +138,7 @@ h3
 
 
 .api-docs 
-  background-color: var(--primary3)
+  background-color: var(--primary1)
 
 
 .api-table 

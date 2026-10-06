@@ -43,7 +43,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
       if (this.control?.value) {
         const selectedOption = this.options.find(option => option.id === this.control.value);
         if (selectedOption) {
-          this.searchString = selectedOption.id + '-' + selectedOption.name;
+          this.searchString = this.getOptionLabel(selectedOption);
         }
       }
     }
@@ -68,11 +68,17 @@ export class SearchInputComponent implements OnInit, OnChanges {
     this.showList = false;
   }
 
-  selectOption(option: any, inputElem: HTMLInputElement) {
-    inputElem.value = option.id + "-" + option.name;
+  selectOption(option: any) {
+    this.searchString = this.getOptionLabel(option);
     this.control.setValue(option.id);
+    this.control.markAsTouched();
     this.showList = false;
     this.optionSelected.emit(option);
+  }
+
+  // Cities use name as id, so avoid showing "Tangier-Tangier"
+  getOptionLabel(option: any): string {
+    return option.id === option.name ? option.name : option.id + '-' + option.name;
   }
 
   getErrorMessage(): string {

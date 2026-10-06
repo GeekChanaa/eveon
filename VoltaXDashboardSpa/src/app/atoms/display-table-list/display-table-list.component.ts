@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, ContentChild, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
@@ -28,8 +28,17 @@ export class DisplayTableListComponent implements OnInit {
   constructor( 
     private _enumMappingService : EnumMappingService,
     private _modalService : ActionModalService,
-    private _router : Router
+    private _router : Router,
+    private _eRef : ElementRef
   ) { }
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: MouseEvent): void {
+    const columnsControl = this._eRef.nativeElement.querySelector('.list-columns-control');
+    if (!columnsControl?.contains(event.target)) {
+      this.displayMenu = false;
+    }
+  }
 
   paginationPages: any[] = [];
   

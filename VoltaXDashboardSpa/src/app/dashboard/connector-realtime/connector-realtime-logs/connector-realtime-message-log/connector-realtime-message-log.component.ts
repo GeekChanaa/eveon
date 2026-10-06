@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-json';  // Load the language component
 
 @Component({
   selector: 'app-connector-realtime-message-log',
@@ -11,18 +10,38 @@ import 'prismjs/components/prism-json';  // Load the language component
 export class ConnectorRealtimeMessageLogComponent implements OnInit {
 
   @Input() messageLog : any = {};
-  
-  highlightedSentContent : any = {};
-  highlightedReceivedContent : any = {};
+  @Output() closed = new EventEmitter<void>();
+
+  highlightedSentContent : string | null = null;
+  highlightedReceivedContent : string | null = null;
 
   constructor() { }
 
   ngOnInit() {
-    const formattedJsonSentContent = JSON.stringify(JSON.parse(this.messageLog.contentSent.trim("")), null, 2); // 2 spaces for indentation
-    this.highlightedSentContent = Prism.highlight(formattedJsonSentContent, Prism.languages['json'], 'json');
-    const formattedJsonReceivedContent = JSON.stringify(JSON.parse(this.messageLog.contentReceived.trim("")), null, 2); // 2 spaces for indentation
-    this.highlightedReceivedContent = Prism.highlight(formattedJsonReceivedContent, Prism.languages['json'], 'json');
+    this.highlightedSentContent = this.highlight(this.messageLog.contentSent);
+    this.highlightedReceivedContent = this.highlight(this.messageLog.contentReceived);
   }
 
+  @HostListener('document:keydown.escape')
+  close(){
+    this.closed.emit();
+  }
+
+  /**
+   * Pretty-prints the payload when it is JSON. Some logs carry no payload, or a raw string
+   * that is not JSON — those are shown as-is instead of throwing and blanking the modal.
+   */
+  private highlight(content : string | null | undefined) : string | null {
+    if(content == null || content.trim() == "")
+      return null;
+
+    let formatted = content.trim();
+    try {
+      formatted = JSON.stringify(JSON.parse(formatted), null, 2);
+    } catch {
+      // not JSON, keep the raw text
+    }
+    return Prism.highlight(formatted, Prism.languages['json'], 'json');
+  }
 
 }

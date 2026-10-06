@@ -1,239 +1,92 @@
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription, catchError, forkJoin, of } from 'rxjs';
 import { OrderService } from 'src/_services/order.service';
 import { TransactionService } from 'src/_services/transaction.service';
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexTitleSubtitle
-} from "ng-apexcharts";
 import { StatisticsService } from 'src/_services/statistics.service';
 
+interface Metric {
+  key: string;
+  label: string;
+  unit: string;
+  icon: string;
+  total: number | null;
+  today: number | null;
+  loading: boolean;
+  error: boolean;
+  chart: any;
+}
 
 @Component({
   selector: 'app-tabs-statistics',
   templateUrl: './tabs-statistics.component.html',
   styleUrls: ['./tabs-statistics.component.css']
 })
-export class TabsStatisticsComponent implements OnInit,AfterViewInit {
-  @ViewChildren('tabsLink') tabsLink!: QueryList<ElementRef>;
-  @ViewChildren('tabsItem') tabsItem!: QueryList<ElementRef>;
+export class TabsStatisticsComponent implements OnInit, OnDestroy {
+  metrics: Metric[] = [
+    { key: 'energy', label: 'Energy delivered', unit: 'kWh', icon: 'icon-energy', total: null, today: null, loading: true, error: false, chart: null },
+    { key: 'orders', label: 'Recharge orders', unit: 'orders', icon: 'icon-basket', total: null, today: null, loading: true, error: false, chart: null },
+    { key: 'recharge', label: 'Recharge amount', unit: 'MAD', icon: 'icon-ticket', total: null, today: null, loading: true, error: false, chart: null },
+    { key: 'revenue', label: 'Revenue', unit: 'MAD', icon: 'icon-bar-chart', total: null, today: null, loading: true, error: false, chart: null }
+  ];
+  selected = this.metrics[0];
+  private requests = new Subscription();
+  constructor(private transactions: TransactionService, private orders: OrderService, private statistics: StatisticsService) {}
+  ngOnInit() { this.metrics.forEach(metric => this.load(metric)); }
+  ngOnDestroy() { this.requests.unsubscribe(); }
 
-  // Chart data
-  energyData : any[] = [];
-  energyCategories : any[] = [];
-  ordersData : any[] = [];
-  ordersCategories : any[] = [];
-  rechargeAmountData : any[] = [];
-  rechargeAmountCategories : any[] = [];
-
-
-  ngAfterViewInit() {
-    this.changeTabs();
+  select(metric: Metric) { this.selected = metric; }
+  moveTab(event: KeyboardEvent, index: number) {
+    let next = index;
+    if (event.key === 'ArrowRight') next = (index + 1) % this.metrics.length;
+    else if (event.key === 'ArrowLeft') next = (index + this.metrics.length - 1) % this.metrics.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = this.metrics.length - 1;
+    else return;
+    event.preventDefault();
+    this.select(this.metrics[next]);
+    const buttons = (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    buttons?.[next].focus();
   }
 
-  // Charts
-  energyChart: any;
-  orderChart : any;
-  rechargeChart : any;
-
-  // energy consumed data:
-  totalEnergy : number = 0;
-  totalEnergyToday : number = 0;
-  totalEnergyByDay : number[] = [];
-
-  // Orders Count
-  totalOrders : number = 0;
-  totalOrdersToday : number = 0;
-  totalOrdersByDay : number[] = [];
-
-  // Recharge Amounts
-  totalRechargeAmount : number = 0;
-  totalRechargeAmountToday : number = 0;
-  totalRechargeAmountByDay : number[] = [];
-
-  totalRevenue: number = 0;
-  totalRevenueToday: number = 0;
-  totalRevenueByDay: { [date: string]: number } = {};
-  totalRevenueByMonth: { [monthYear: string]: number } = {};
-  revenueChart: any;
-  revenueMonthlyChart: any;
-
-  constructor(
-    private _transactionService : TransactionService,
-    private _orderService : OrderService,
-    private _statisticsService : StatisticsService
-  ) {
+  load(metric: Metric) {
+    metric.loading = true;
+    metric.error = false;
+    const sources: Record<string, Observable<any>[]> = {
+      energy: [this.transactions.getTotalEnergyConsumed(), this.transactions.getTotalEnergyConsumedToday(), this.transactions.getDailyEnergyConsumedLast30Days()],
+      orders: [this.orders.count(), this.orders.countOrdersToday(), this.orders.countOrdersByDay()],
+      recharge: [this.orders.countRechargeAmount(), this.orders.countRechargeAmountToday(), this.orders.countRechargeAmountByDay()],
+      revenue: [this.statistics.getTotalRevenue(), this.statistics.getTotalRevenueToday(), this.statistics.getDailyRevenueLast30Days()]
+    };
+    this.requests.add(forkJoin(sources[metric.key].map(source => source.pipe(catchError(() => of(null))))).subscribe(([total, today, daily]) => {
+      metric.total = typeof total === 'number' && Number.isFinite(total) ? total : null;
+      metric.today = typeof today === 'number' && Number.isFinite(today) ? today : null;
+      metric.error = metric.total === null || metric.today === null || daily === null;
+      metric.chart = daily === null ? null : this.chartOptions(metric, daily);
+      metric.loading = false;
+    }));
   }
 
-  ngOnInit() {
-    this.getEnergyData();
-    this.getOrderCount();
-    this.getRechargeAmount();
-    this.getRevenueData();
-  }
-
-  getRevenueData() {
-    // Total Revenue
-    this._statisticsService.getTotalRevenue().subscribe(result => this.totalRevenue = result);
-
-    // Total Revenue Today
-    this._statisticsService.getTotalRevenueToday().subscribe(result => this.totalRevenueToday = result);
-
-    // Daily Revenue (Last 30 Days)
-    this._statisticsService.getDailyRevenueLast30Days().subscribe(result => {
-      this.totalRevenueByDay = result;
-
-      // Extract and format dates
-      var categories = Object.keys(this.totalRevenueByDay);
-      categories = categories.map(date => {
-        const d = new Date(date);
-        return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })} ${d.getFullYear()}`;
-      });
-
-      // Extract and format values
-      var values = Object.values(this.totalRevenueByDay);
-      values = values.map(value => parseFloat(value.toFixed(2)));
-
-      // Construct chart
-      this.revenueChart = this.chartOptionsConstructor(values, categories);
+  private chartOptions(metric: Metric, daily: Record<string, number>) {
+    const entries = Object.entries(daily).filter(([, value]) => typeof value === 'number' && Number.isFinite(value));
+    // Dictionary keys are API dates. Preserve numeric indices if an endpoint returns an array.
+    if (!Array.isArray(daily)) entries.sort(([a], [b]) => a.localeCompare(b));
+    const categories = entries.map(([key]) => {
+      if (/^\d+$/.test(key)) return 'Day ' + String(Number(key) + 1);
+      const date = new Date(key);
+      return Number.isNaN(date.getTime()) ? key : date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
     });
-
-    // Monthly Revenue (Last Year)
-    this._statisticsService.getMonthlyRevenueLastYear().subscribe(result => {
-      this.totalRevenueByMonth = result;
-
-      var categories = Object.keys(this.totalRevenueByMonth);
-      categories = categories.map(monthYear => monthYear); // e.g. "Jan 2025"
-
-      var values = Object.values(this.totalRevenueByMonth);
-      values = values.map(value => parseFloat(value.toFixed(2)));
-
-      this.revenueMonthlyChart = this.chartOptionsConstructor(values, categories);
-    });
-  }
-
-
-  // Get energy data
-  getEnergyData(){
-    // Total Energy
-    this._transactionService.getTotalEnergyConsumed().subscribe(result => this.totalEnergy = result);
-    this._transactionService.getTotalEnergyConsumedToday().subscribe(result => this.totalEnergyToday = result);
-    this._transactionService.getDailyEnergyConsumedLast30Days().subscribe(result =>{ 
-      this.totalEnergyByDay = result;
-      var categories = Object.keys(this.totalEnergyByDay);
-      categories = categories.map(date => {
-        const d = new Date(date);
-        return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })} ${d.getFullYear()}`;
-      });
-      var values = Object.values(this.totalEnergyByDay);
-      values = values.map(value => parseFloat(value.toFixed(2)));
-      this.energyChart = this.chartOptionsConstructor(values,categories);
-    });
-  }
-
-  // count order numbers
-  getOrderCount(){
-    this._orderService.count().subscribe(result => this.totalOrders = result);
-    this._orderService.countOrdersToday().subscribe(result => this.totalOrdersToday = result);
-    this._orderService.countOrdersByDay().subscribe(result => {
-      this.totalOrdersByDay = result;
-      var categories = Object.keys(this.totalOrdersByDay);
-      var values = Object.values(this.totalOrdersByDay);
-      values = values.map(value => parseFloat(value.toFixed(2)));
-      this.orderChart = this.chartOptionsConstructor(values,categories);
-    });
-  }
-
-  // count recharge amount
-  getRechargeAmount(){
-    this._orderService.countRechargeAmount().subscribe(result => this.totalRechargeAmount = result);
-    this._orderService.countRechargeAmountToday().subscribe(result => this.totalRechargeAmountToday = result);
-    this._orderService.countRechargeAmountByDay().subscribe(result => {
-      this.totalRechargeAmountByDay = result;
-      var categories = Object.keys(this.totalRechargeAmountByDay);
-      var values = Object.values(this.totalRechargeAmountByDay);
-      values = values.map(value => parseFloat(value.toFixed(2)));
-      this.rechargeChart = this.chartOptionsConstructor(values,categories);
-    });
-  }
-
-
-  changeTabs() {
-    const tabsLinks = this.tabsLink.toArray();
-    const tabsItems = this.tabsItem.toArray();
-
-    tabsLinks.forEach((tabLink, index) => {
-      tabLink.nativeElement.addEventListener('click', (e : any) => {
-        e.preventDefault();
-
-        // Reset all tabs and content
-        tabsLinks.forEach((tab) => tab.nativeElement.classList.remove('active'));
-        tabsItems.forEach((item) => item.nativeElement.style.display = 'none');
-
-        // Activate clicked tab and its content
-        tabLink.nativeElement.classList.add('active');
-        tabsItems[index].nativeElement.style.display = 'block';
-      });
-    });
-
-    // Activate the first tab
-    if (tabsLinks[0]) {
-      tabsLinks[0].nativeElement.click();
-    }
-  }
-
-
-  chartOptionsConstructor(values :any, categories : any){
     return {
-      series: [
-        {
-          name: 'Earning',
-          data: values
-        }
-      ],
-      chart: {
-        height: '200',
-        type: 'line',
-        toolbar: {
-          show: false
-        },
-        fontFamily: 'Inter, sans-serif'
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: 'smooth',
-        width: 4
-      },
-      xaxis: {
-        type: 'category',
-        categories: categories,
-        axisBorder: {
-          show: false
-        },
-        axisTicks: {
-          show: false
-        },
-        tooltip: {
-          enabled: false
-        }
-      },
-      grid: {
-        strokeDashArray: 0,
-        padding: {
-          top: -20,
-          right: 0,
-          bottom: 0,
-          left: 10
-        }
-      },
-      legend: {
-        show: false
-      },
-      colors: ['#2A85FF']
+      series: [{ name: metric.label + ' (' + metric.unit + ')', data: entries.map(([, value]) => Number(value.toFixed(2))) }],
+      chart: { type: 'area', height: 280, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#858990', parentHeightOffset: 0, animations: { enabled: false } },
+      colors: ['#D4A321'],
+      stroke: { curve: 'straight', width: 2.5 },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.22, opacityTo: 0.01 } },
+      dataLabels: { enabled: false },
+      xaxis: { categories, tickAmount: 6, axisBorder: { show: false }, axisTicks: { show: false }, labels: { hideOverlappingLabels: true, rotate: 0, style: { colors: '#858990', fontSize: '11px' } }, tooltip: { enabled: false } },
+      yaxis: { labels: { formatter: (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: metric.key === 'orders' ? 0 : 1 }), style: { colors: '#858990', fontSize: '11px' } } },
+      grid: { borderColor: 'rgba(128,128,128,.16)', strokeDashArray: 4, padding: { left: 8, right: 12 } },
+      tooltip: { theme: document.body.classList.contains('dark') ? 'dark' : 'light', y: { formatter: (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' ' + metric.unit } },
+      empty: entries.length === 0
     };
   }
 }

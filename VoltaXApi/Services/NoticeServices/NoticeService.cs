@@ -35,14 +35,15 @@ namespace VoltaXApi.Services
 
         public async Task CreateNotice(CreateNoticeDto createNoticeDto)
         {
+            // Store (and so validate) the template before anything is written to the database.
+            var template = createNoticeDto.EmailTemplate != null
+              ? await _fileService.SaveEmailTemplateAsync(createNoticeDto.EmailTemplate, "emailTemplates/notices")
+              : null;
+
             Notice notice = await _noticeRepository.CreateNotice(createNoticeDto);
 
-            if(createNoticeDto.EmailTemplate != null){
-              var emailTemplate = createNoticeDto.EmailTemplate;
-              var newFileName = $"notice-{notice.ID}-{emailTemplate.FileName}";
-              _fileService.UploadEmailTemplate(newFileName, "emailTemplates/notices", emailTemplate);
-              var url = $"images/charging-stations/{newFileName}";
-              notice.EmailTemplatePath = url;
+            if(template != null){
+              notice.EmailTemplatePath = template.RelativeUrl;
               await _noticeRepository.Update(notice);
             }
 

@@ -57,18 +57,23 @@ namespace VoltaXApi.Controllers
             {
                 UserName = chargingSession.UserName,
                 SessionDate = chargingSession.StartDate,
+                StartDate = chargingSession.StartDate,
+                EndDate = chargingSession.EndDate,
+                ConnectorID = chargingSession.ConnectorID,
                 ChargePointName = chargingSession.ChargePointName,
                 TotalKwhCharged = chargingSession.KwhCharged ?? 0,
                 TotalPrice = chargingSession.TotalPriceWithVAT ?? 0,
                 TotalPriceWithoutVAT = chargingSession.TotalPriceWithoutVAT ?? 0,
                 TotalPriceWithVAT = chargingSession.TotalPriceWithVAT ?? 0,
+                ChargingPriceWithVAT = chargingSession.ChargingPriceWithVAT ?? 0,
+                IdlePriceWithVAT = chargingSession.IdldePriceWithVAT ?? 0,
                 CardNumber  = chargingSession.CardNumber,
                 ChargedMinutes = chargingSession.ChargedMinutes ?? 0,
                 IdleMinutes = chargingSession.IdleMinutes ?? 0,
                 PricePerIdleMinute = chargingSession.PricePerIdleMinute ?? 0,
                 PricePerMinute = chargingSession.PricePerMinute ?? 0,
                 KwhsCharged = chargingSession.KwhCharged ?? 0,
-                CardBalance = chargingSession.Card?.Balance ?? 0,
+                CardBalance = chargingSession.CardBalance,
                 ChargingSessionID = chargingSessionID
             };
             var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
@@ -126,6 +131,32 @@ namespace VoltaXApi.Controllers
                 return NotFound(new { Message = "No active charging session found for the user." });
             }
             return Ok(chargingSession);
+        }
+
+        [Authorize]
+        [HttpGet("GetMyChargingSessions")]
+        public async Task<ActionResult<PagedList<MyChargingSessionDto>>> GetMyChargingSessions(
+            [FromQuery] GlobalParams globalParams)
+        {
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userID))
+                return Unauthorized();
+
+            if (globalParams.PageNumber < 1 || globalParams.PageSize < 1 || globalParams.PageSize > 50)
+                return BadRequest(new { Message = "PageNumber must be at least 1 and PageSize must be between 1 and 50." });
+
+            var query = _repository.GetMyChargingSessions(userID);
+            var sessions = await PagedList<MyChargingSessionDto>.CreateAsync(
+                query,
+                globalParams.PageNumber,
+                globalParams.PageSize);
+
+            Response.AddPagination(
+                sessions.CurrentPage,
+                sessions.PageSize,
+                sessions.TotalCount,
+                sessions.TotalPages);
+
+            return Ok(sessions);
         }
 
     }

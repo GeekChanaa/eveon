@@ -26,8 +26,8 @@
             <div class="filters__list">
 
               <div class="field">
-                <div class="field__label">By Status
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
+                <div class="field__label">Role
+                  <div class="tooltip" title="Filter users by their account role">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
                     </svg>
@@ -36,7 +36,7 @@
                 <div class="field__wrap">
                   <div class="field__wrap">
                     <select class="select" [(ngModel)]="filters.role">
-                      <option value="" selected>None</option>
+                      <option value="" selected>All roles</option>
                       <option value="Admin">Admin</option>
                       <option value="Customer">Customer</option>
                       <option value="PremiumCustomer">PremiumCustomer</option>

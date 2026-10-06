@@ -1,3 +1,4 @@
+import { AccessService } from 'src/_services/access.service';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -15,6 +16,7 @@ enum UserTabsEnum {
   ChargingSessionsTab = "ChargingSessionsTab",
   OrdersTab = "OrdersTab",
   ActionsTab = "ActionsTab",
+  AccessTab = "AccessTab",
 }
 @Component({
   selector: 'app-user',
@@ -32,12 +34,21 @@ export class UserComponent implements OnInit {
   partnersOptions : any[] = [];
   rolesOptions : any[] = [];
   evModels : any = {};
+  readonly tabs = [
+    { id: UserTabsEnum.InformationsTab, label: 'Information', description: 'Profile & account details', icon: 'M12 11v6M12 7v1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0' },
+    { id: UserTabsEnum.RechargeCardsTab, label: 'Recharge cards', description: 'Cards assigned to this user', icon: 'M4 6h16v12H4zM4 10h16M7 15h3' },
+    { id: UserTabsEnum.ChargingSessionsTab, label: 'Charging sessions', description: 'Charging activity', icon: 'M8 3v5m8-5v5M6 8h12v4a6 6 0 0 1-12 0V8Zm6 10v4' },
+    { id: UserTabsEnum.OrdersTab, label: 'Orders', description: 'Order history', icon: 'M6 3h12l1 5H5l1-5Zm-1 5h14l-1 13H6L5 8Zm5 4v5m4-5v5' },
+    { id: UserTabsEnum.ActionsTab, label: 'Actions', description: 'Account management', icon: 'M12 3v9m0 0 4-4m-4 4-4-4M5 17v3h14v-3' },
+    { id: UserTabsEnum.AccessTab, label: 'Roles & permissions', description: 'Account access', icon: 'M12 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 7a7 7 0 0 1 14 0' }
+  ];
 
   //user
   user : any = {};
   updateUserObservable = (id : number, model : any) => this._userService.editUserDashboardInformations(id, model);
 
   constructor(
+    public access: AccessService,
     private _userService: UserService,
     private _route: ActivatedRoute,
     private _modalService: ActionModalService,
@@ -52,7 +63,7 @@ export class UserComponent implements OnInit {
       this.getUser(parseInt(idParam));
     }
     this.getAllPartners();
-    this.getRoles();
+    if (this.access.isAdmin) this.getRoles();
     this.getAllEVModels();
   }
 
@@ -89,6 +100,27 @@ export class UserComponent implements OnInit {
   // Changing current tab
   changeTab(tab : any){
     this.tabsEnum = tab;
+  }
+
+  visibleTabs() {
+    return this.tabs.filter(tab =>
+      (tab.id !== UserTabsEnum.AccessTab || this.access.isAdmin) &&
+      (tab.id !== UserTabsEnum.ActionsTab || this.access.can('EditUsers'))
+    );
+  }
+
+  onTabKey(event: KeyboardEvent, index: number): void {
+    const tabs = this.visibleTabs();
+    let next = index;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    this.changeTab(tabs[next].id);
+    const tablist = (event.currentTarget as HTMLElement).parentElement;
+    (tablist?.querySelectorAll('button')[next] as HTMLButtonElement)?.focus();
   }
 
   isSuspended(){ 

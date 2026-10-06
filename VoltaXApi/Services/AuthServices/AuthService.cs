@@ -1,3 +1,4 @@
+using VoltaXApi.Services.Audit;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Data;
@@ -11,7 +12,7 @@ using VoltaXApi.Exceptions.AuthExceptions;
 
 namespace VoltaXApi.Services
 {
-  public class AuthService : IAuthService
+  public partial class AuthService : IAuthService
   {
     private readonly IUserRepository _userRepository;
     private readonly IMailService _mailService;
@@ -24,6 +25,10 @@ namespace VoltaXApi.Services
     private readonly IJwtService _jwtService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IUserClaimsFactory _claimsFactory;
+    private readonly IPasswordResetService _passwordReset;
+    private readonly ITwoFactorService _twoFactor;
+
+    private readonly IAuditLogger _audit;
 
     public AuthService(
       IUserRepository userRepository,
@@ -36,9 +41,15 @@ namespace VoltaXApi.Services
       ISnsService snsService,
       IJwtService jwtService,
       IRefreshTokenService refreshTokenService,
-      IUserClaimsFactory claimsFactory
+      IUserClaimsFactory claimsFactory,
+      IPasswordResetService passwordReset,
+      ITwoFactorService twoFactor,
+      IAuditLogger audit
     )
     {
+      _audit = audit;
+      _passwordReset = passwordReset;
+      _twoFactor = twoFactor;
       _userRepository = userRepository;
       _mailService = mailService;
       _context = context;
@@ -75,44 +86,13 @@ namespace VoltaXApi.Services
       await this._snsService.SendSmsAsync(user.Phone, smsMessage);
     }
 
-    // Reset Password Request
-    public async Task ResetPasswordRequest(string email)
-    {
-      string verificationLink = await GetResetPasswordLinkForUserByEmail(email);
-      string userName = (await this._userRepository.GetUserByEmail(email)).FullName;
-
-      MailRequest requ = _mailRequestFactory.CreateResetPasswordMailRequest(email);
-
-      await this._mailService.SendResetPasswordMailRequest(requ, userName, verificationLink);
-    }
+    // Reset Password Request: always silent about whether the address exists
+    public Task ResetPasswordRequest(string email) => _passwordReset.RequestLinkReset(email, partnerPortal: false);
 
     // Reset Password Request For Mobile Application
-    public async Task ResetPasswordRequestForMobile(string email)
-    {
-      var user = await _userRepository.GetUserByEmail(email);
+    public Task ResetPasswordRequestForMobile(string email) => _passwordReset.RequestMobileCode(email);
 
-      var code = new Random().Next(100000, 999999).ToString();
-      var resetToken = await this._userRepository.GenerateResetPasswordTokenForUser(email);
-
-      user.ResetPasswordCode = code;
-      user.ResetPasswordCodeExpiresAt = DateTime.UtcNow.AddMinutes(10);
-      user.ResetPasswordToken = resetToken;
-      await _userRepository.Update(user);
-
-      var userName = (await this._userRepository.GetUserByEmail(email)).FullName;
-
-      MailRequest requ = _mailRequestFactory.CreateResetPasswordForMobileMailRequest(email);
-
-      await this._mailService.SendResetPasswordForMobileMailRequest(requ, userName, code);
-    }
-
-    private async Task<string> GetResetPasswordLinkForUserByEmail(string email)
-    {
-      string spaLink = _config["SpaLink"];
-      string resetToken = await this._userRepository.GenerateResetPasswordTokenForUser(email);
-      string verificationLink = spaLink + "auth/reset-password?email=" + email + "&token=" + resetToken;
-      return verificationLink;
-    }
+    public Task ResetPassword(string email, string token, string newPassword) => _passwordReset.ResetPassword(email, token, newPassword);
 
     // Creating phone verification token and updating the user
     public async Task CreateEmailVerificationToken(int userID)
@@ -127,6 +107,20 @@ namespace VoltaXApi.Services
       MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
       await this._mailService.SendVerificationCodeEmailAsync(requ, user.EmailVerificationToken, user.FullName);
 
+    }
+
+    public async Task ResendVerificationEmail(int userID)
+    {
+      var user = await _userRepository.GetByIdAsync(userID);
+      if (user == null || user.IsEmailVerified)
+        return;
+
+      user.EmailVerificationToken = AuthHelper.GenerateVerificationToken();
+      await _context.SaveChangesAsync();
+
+      string verificationLink = _config["SpaLink"] + "auth/verify-email?email=" + Uri.EscapeDataString(user.Email) + "&token=" + user.EmailVerificationToken;
+      MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
+      await _mailService.SendVerificationEmailAsync(requ, verificationLink, user.FullName);
     }
 
     public async Task<User> Register(UserForRegisterDto userForRegisterDto)
@@ -168,7 +162,9 @@ namespace VoltaXApi.Services
     public async Task<bool> VerifyEmail(string email, string token)
     {
       var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-      if (user == null || user.EmailVerificationToken != token)
+      if (user == null || user.EmailVerificationToken == null || token == null ||
+          !System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+            System.Text.Encoding.UTF8.GetBytes(user.EmailVerificationToken), System.Text.Encoding.UTF8.GetBytes(token)))
         return false;
 
 
@@ -207,23 +203,24 @@ namespace VoltaXApi.Services
     }
 
     public static void CreatePasswordHashStatic(string password, out byte[] passwordHash, out byte[] passwordSalt)
-    {
-      using (var hmac = new System.Security.Cryptography.HMACSHA512())
-      {
-        passwordSalt = hmac.Key;
-        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-      }
-    }
+      => AuthHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
 
 
     public async Task<LoginResultDto> Login(string identifier, string password, string ipAddress, string? userAgent = null)
     {
+      // Checked before anything else so a locked-out caller learns nothing about the account,
+      // not even whether the password they just typed was right.
+      if (await _loginAttemptRepository.IsLockedOut(ipAddress))
+        throw new LoginAttemptFailedException(identifier);
+
       var user = await FindUserForLogin(identifier);
 
       if (user == null)
       {
-        await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
+        if (await _loginAttemptRepository.LoginAttemptFailed(ipAddress))
+          throw new LoginAttemptFailedException(identifier);
+
         throw new UnauthorizedException("Email, phone number or password incorrect");
       }
 
@@ -232,36 +229,36 @@ namespace VoltaXApi.Services
         throw new UnauthorizedException("A partner account should login from the partner portal");
       }
 
-      try
+      if (!user.HasPassword)
       {
-        var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
+        throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
+      }
 
-        if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
-          throw new LoginAttemptFailedException(user.Email, loginAttempt.LockoutEndTime);
-
-        if (user != null && !user.HasPassword)
+      if (!AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt, out bool needsRehash))
+      {
+        await _audit.LogForUserAsync("LoginFailed", user.ID, user.Email, "User", user.ID.ToString(), new { ipAddress });
+        if (await _loginAttemptRepository.LoginAttemptFailed(ipAddress))
         {
-          throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
+          // Mailed once, on the failure that starts the lockout, not on every blocked retry.
+          MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(user.Email);
+          string resetPasswordLink = await _passwordReset.CreateResetLink(user, partnerPortal: false);
+
+          await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
+
+          throw new LoginAttemptFailedException(user.Email);
         }
 
-        if (!AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-        {
-          await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
-          throw new UnauthorizedException("Email, phone number or password incorrect");
-        }
-        var claims = BuildUserClaims(user);
-
-        return await IssueSession(user, claims, ipAddress, userAgent);
+        throw new UnauthorizedException("Email, phone number or password incorrect");
       }
-      catch (LoginAttemptFailedException ex)
-      {
-        MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(user.Email);
-        string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(user.Email);
 
-        await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
+      if (needsRehash)
+        await RehashPassword(user, password);
 
-        throw;
-      }
+      await _audit.LogForUserAsync("LoginSucceeded", user.ID, user.Email, "User", user.ID.ToString(), new { ipAddress });
+
+      var claims = BuildUserClaims(user);
+
+      return await IssueSession(user, claims, ipAddress, userAgent);
     }
 
     /// <summary>
@@ -329,35 +326,16 @@ namespace VoltaXApi.Services
       await this._mailService.SendPasswordChangedMail(requ, user.FirstName);
     }
 
-    public async Task<string> VerifyResetPasswordCodeForMobile(UserResetPasswordForMobileDto userResetPasswordForMobileDto)
+    public Task<string> VerifyResetPasswordCodeForMobile(UserResetPasswordForMobileDto userResetPasswordForMobileDto)
+      => _passwordReset.VerifyMobileCode(userResetPasswordForMobileDto.Email, userResetPasswordForMobileDto.Code);
+
+    /// <summary>Legacy (HMAC) or outdated hashes are upgraded on the first successful sign in.</summary>
+    private async Task RehashPassword(User user, string password)
     {
-      // Find user by email or phone
-      var user = await _userRepository.GetUserByEmail(userResetPasswordForMobileDto.Email);
-
-      if (user == null)
-      {
-        throw new UserNotFoundException("User not found with the provided email or phone number.");
-      }
-
-      // Check if user has a reset password request
-      if (string.IsNullOrEmpty(user.ResetPasswordCode))
-      {
-        throw new ResetPasswordCodeNotFoundException();
-      }
-
-      // Check if code has expired
-      if (user.ResetPasswordCodeExpiresAt.HasValue && user.ResetPasswordCodeExpiresAt.Value < DateTime.UtcNow)
-      {
-        throw new ExpiredResetPasswordCodeException(user.ResetPasswordCodeExpiresAt.Value);
-      }
-
-      // Verify the code
-      if (user.ResetPasswordCode != userResetPasswordForMobileDto.Code)
-      {
-        throw new InvalidResetPasswordCodeException();
-      }
-
-      return user.ResetPasswordToken;
+      AuthHelper.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+      user.PasswordHash = passwordHash;
+      user.PasswordSalt = passwordSalt;
+      await _context.SaveChangesAsync();
     }
 
     // ---------------------------------------------------------------------
@@ -482,7 +460,7 @@ namespace VoltaXApi.Services
         AuthProvider = provider,
         ExternalPictureUrl = externalUser.PictureUrl,
         IsEmailVerified = true,
-        RoleID = 2,
+        RoleID = await _context.Roles.Where(r => r.Name == "Customer" && !r.IsDeleted).Select(r => r.ID).SingleAsync(),
         CreatedAt = DateTime.UtcNow,
         UpdatedAt = DateTime.UtcNow
       };
@@ -503,10 +481,21 @@ namespace VoltaXApi.Services
     /// Mints the access / refresh pair handed back by every sign in path, so the shape of
     /// a session never depends on how the user got in.
     /// </summary>
-    private async Task<LoginResultDto> IssueSession(User user, List<Claim> claims, string? ipAddress, string? userAgent)
+    private async Task<LoginResultDto> IssueSession(User user, List<Claim> claims, string? ipAddress, string? userAgent, bool secondFactorPassed = false)
     {
-      if (user.IsDeleted || user.SuspendedAt != null)
+      if (user.IsDeleted || user.IsCurrentlySuspended)
         throw new UnauthorizedException("This account is unavailable or suspended");
+
+      // Every sign in path (password, phone, Google) stops here when 2FA is on.
+      if (user.TwoFactorEnabled && !secondFactorPassed)
+        return new LoginResultDto
+        {
+          RequiresTwoFactor = true,
+          TwoFactorToken = _twoFactor.CreateChallengeToken(user),
+          Email = user.Email,
+          FullName = user.FullName
+        };
+
       var accessToken = _jwtService.GenerateAccessToken(claims);
       var refreshToken = await _refreshTokenService.Issue(user.ID, ipAddress, userAgent);
 
@@ -518,8 +507,18 @@ namespace VoltaXApi.Services
         RefreshTokenExpiresAt = refreshToken.ExpiresAt,
         UserId = user.ID,
         Email = user.Email,
-        FullName = $"{user.FirstName} {user.LastName}"
+        FullName = $"{user.FirstName} {user.LastName}",
+        TwoFactorEnrollmentRequired = _twoFactor.IsEnrollmentRequired(user)
       };
+    }
+
+    public async Task<LoginResultDto> CompleteTwoFactorLogin(string twoFactorToken, string code, string? ipAddress, string? userAgent)
+    {
+      var userID = await _twoFactor.VerifyChallenge(twoFactorToken, code);
+      var user = await GetUserWithClaimsData(u => u.ID == userID)
+                 ?? throw new UnauthorizedException("This account is unavailable or suspended");
+
+      return await IssueSession(user, _claimsFactory.BuildClaimsFor(user), ipAddress, userAgent, secondFactorPassed: true);
     }
 
     private Task<User?> GetUserWithClaimsData(System.Linq.Expressions.Expression<Func<User, bool>> predicate)

@@ -1,5 +1,115 @@
-@import '../../../../styles/display-page'
+@import '../../../../styles/equipment-details'
 
+.station-summary a
+  color: var(--vx-yellow-ink, #8a6410)
+  text-decoration: none
+  &:hover
+    text-decoration: underline
 
-.qrcode-image
-    max-height: 400px
+.realtime-link
+  margin-left: auto
+
+.field-value-row
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 12px
+  .field-value
+    flex: 1
+    white-space: pre-wrap
+
+.station-field textarea
+  width: 100%
+  padding: 12px
+  resize: vertical
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 8px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  font: inherit
+  font-size: 13px
+  &:focus
+    outline: 2px solid var(--vx-yellow, #e5b223)
+
+.options-error
+  padding: 12px 16px
+  margin-bottom: 16px
+  background: var(--vx-yellow-soft, #e5b22314)
+  color: var(--vx-text, #171b24)
+  font-size: 13px
+  border-radius: 8px
+  button
+    text-decoration: underline
+    color: inherit
+    cursor: pointer
+
+.qr-card
+  display: grid
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr)
+  align-items: center
+  gap: 40px
+  padding: 32px
+  background: var(--vx-surface, #fff)
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+
+.qr-preview
+  display: grid
+  place-items: center
+  min-height: 250px
+  padding: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: #fff
+  color: #171b24
+  text-align: center
+  img
+    width: 100%
+    max-width: 280px
+    height: auto
+
+.qr-copy
+  h3
+    margin: 16px 0 10px
+    font-size: 20px
+    overflow-wrap: anywhere
+  p
+    margin: 0 0 22px
+    max-width: 420px
+    font-size: 13px
+    line-height: 1.8
+    color: var(--vx-text-muted, #737985)
+  .qr-actions
+    display: flex
+    flex-wrap: wrap
+    gap: 10px
+  .qr-actions + p
+    margin-top: 12px
+
+@media (max-width: 650px)
+  .qr-card
+    grid-template-columns: 1fr
+    padding: 20px
+    gap: 24px
+  .realtime-link
+    margin-left: 0
+
+.password-once
+  margin: 0 0 8px
+  font-size: 13px
+
+.password-output, #custom-charger-password
+  flex: 1
+  min-width: 0
+  padding: 10px 12px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 8px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+  font-size: 13px
+  &:focus
+    outline: 2px solid var(--vx-yellow, #e5b223)
+
+#custom-charger-password
+  width: 100%

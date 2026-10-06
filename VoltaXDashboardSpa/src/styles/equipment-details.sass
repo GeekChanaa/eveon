@@ -1,0 +1,241 @@
+:host
+  display: block
+  color: var(--vx-text, #171b24)
+
+.station-summary
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 10px 20px
+  margin: -8px 0 24px
+  color: var(--vx-text-muted, #737985)
+  font-size: 12px
+
+.station-id
+  padding: 4px 9px
+  background: var(--vx-surface-alt, #fafafa)
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 6px
+  color: var(--vx-text, #171b24)
+
+.station-tabs
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  gap: 8px
+  padding: 6px
+  margin-bottom: 28px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface-alt, #fafafa)
+  button
+    display: flex
+    align-items: center
+    gap: 12px
+    padding: 16px
+    border: 1px solid transparent
+    border-radius: 10px
+    text-align: left
+    color: var(--vx-text-muted, #737985)
+    background: transparent
+    cursor: pointer
+    &:hover
+      background: var(--vx-hover, #f4f4f4)
+      color: var(--vx-text, #171b24)
+    &.is-active
+      background: var(--vx-surface, #fff)
+      border-color: var(--vx-yellow, #e5b223)
+      color: var(--vx-text, #171b24)
+      box-shadow: 0 2px 6px #00000008
+      > svg
+        color: var(--vx-yellow-ink, #8a6410)
+  svg
+    width: 23px
+    height: 23px
+    flex-shrink: 0
+
+.tab-copy
+  display: grid
+  gap: 3px
+  strong
+    font-size: 14px
+    font-weight: 600
+  > span
+    color: var(--vx-text-muted, #737985)
+    font-size: 11px
+    line-height: 1.5
+
+.section-intro
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 12px
+  margin-bottom: 20px
+  h2
+    margin: 0 0 5px
+    font-size: 20px
+    font-weight: 600
+  p
+    margin: 0
+    font-size: 13px
+    color: var(--vx-text-muted, #737985)
+
+.editing-hint
+  font-size: 12px
+  color: var(--vx-yellow-ink, #8a6410)
+
+.information-layout
+  display: grid
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr)
+  gap: 24px
+  align-items: start
+
+.station-section
+  overflow: hidden
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
+  header
+    padding: 22px 24px
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    h3
+      margin: 0 0 6px
+      font-size: 15px
+      font-weight: 600
+    p
+      margin: 0
+      color: var(--vx-text-muted, #737985)
+      font-size: 12px
+      line-height: 1.6
+
+.station-field
+  padding: 18px 24px
+  & + &
+    border-top: 1px solid var(--vx-border, #ededed)
+  &.is-editing
+    background: var(--vx-yellow-soft, #e5b22314)
+  form
+    margin-top: 12px
+  input, select
+    width: 100%
+    min-width: 0
+    height: 44px
+    padding: 10px 12px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 8px
+    background: var(--vx-surface, #fff)
+    color: var(--vx-text, #171b24)
+    font: inherit
+    font-size: 13px
+  input:focus, select:focus
+    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline-offset: 1px
+
+.field-heading
+  display: flex
+  justify-content: space-between
+  align-items: center
+  gap: 12px
+  min-height: 30px
+  label
+    font-size: 12px
+    color: var(--vx-text-muted, #737985)
+    font-weight: 500
+
+.field-value
+  margin: 3px 0 0
+  font-size: 14px
+  font-weight: 500
+  overflow-wrap: anywhere
+
+.edit-button
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  padding: 5px 9px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 6px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  font-size: 12px
+  cursor: pointer
+  svg
+    width: 13px
+    height: 13px
+  &:hover:not(:disabled)
+    background: var(--vx-hover, #f4f4f4)
+    border-color: var(--vx-text-muted, #737985)
+
+.readonly-label
+  font-size: 11px
+  color: var(--vx-text-muted, #737985)
+
+.edit-actions
+  display: flex
+  justify-content: flex-end
+  gap: 8px
+  margin-top: 14px
+
+.primary-action, .secondary-action
+  padding: 9px 14px
+  border-radius: 8px
+  font-size: 12px
+  font-weight: 600
+  cursor: pointer
+
+.primary-action
+  background: var(--vx-yellow, #e5b223)
+  color: #171b24
+  &:hover:not(:disabled)
+    background: var(--vx-yellow-hover, #d0a01b)
+
+.secondary-action
+  background: var(--vx-surface, #fff)
+  border: 1px solid var(--vx-border, #ededed)
+  color: var(--vx-text, #171b24)
+
+button:disabled
+  opacity: .45
+  cursor: not-allowed
+
+button:focus-visible
+  outline: 2px solid var(--vx-yellow, #e5b223)
+  outline-offset: 3px
+
+.field-error
+  margin: 10px 0 0
+  font-size: 12px
+  color: #d64343
+
+.save-feedback
+  padding: 12px 16px
+  margin-bottom: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-left: 3px solid #00b050
+  border-radius: 8px
+  background: var(--vx-surface, #fff)
+  font-size: 13px
+
+@media (max-width: 800px)
+  .information-layout
+    grid-template-columns: 1fr
+    gap: 18px
+  .station-tabs
+    gap: 4px
+    button
+      justify-content: center
+      padding: 12px 6px
+      gap: 7px
+    svg
+      width: 18px
+      height: 18px
+  .tab-copy > span
+    display: none
+  .tab-copy strong
+    font-size: 12px
+
+@media (max-width: 420px)
+  .station-tabs button
+    flex-direction: column
+  .station-field, .station-section header
+    padding: 16px

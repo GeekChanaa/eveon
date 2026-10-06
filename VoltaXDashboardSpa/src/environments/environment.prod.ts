@@ -4,8 +4,12 @@
 
 export const environment = {
   production: true,
-  apiUrl : "http://51.20.70.166",
-  apiStaticFilesUrl : "http://51.20.70.166/StaticFiles/",
+  // HTTPS only: tokens and personal data must never travel in clear text.
+  apiUrl : "https://api.eveon.ma",
+  apiStaticFilesUrl : "https://api.eveon.ma/StaticFiles/",
+  // Browser keys are public by nature: restrict them by HTTP referrer and API in Google Cloud.
+  googleMapsApiKey : "AIzaSyCeZ5OSLki92cef4GtIJ82i2DlIGNOK1cU",
+  googleGeocodingApiKey : "AIzaSyASK_Y37ctDVZfa9P7OqJ2QsFpC_XMgZBQ",
 
 };
 

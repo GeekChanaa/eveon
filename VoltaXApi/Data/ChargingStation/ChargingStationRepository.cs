@@ -8,6 +8,7 @@ using System.Linq.Dynamic.Core;
 using VoltaXApi.Helpers;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
+using VoltaXApi.OCPP.Messages;
 using VoltaXApi.Mappers;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
@@ -19,13 +20,16 @@ namespace VoltaXApi.Data
     {
         private readonly IMapper _mapper;
         private readonly IChargePointRepository _chargePointRepo;
+        private readonly VoltaXApi.Services.IBusinessClock _clock;
         public ChargingStationRepository(
             VoltaXApiDbContext context,
             IMapper mapper,
-            IChargePointRepository chargePointRepository) : base(context)
+            IChargePointRepository chargePointRepository,
+            VoltaXApi.Services.IBusinessClock clock) : base(context)
         {
             _mapper = mapper;
             _chargePointRepo = chargePointRepository;
+            _clock = clock;
         }
 
         public async Task<ChargingStationDisplayDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
@@ -93,8 +97,8 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 7; i++)
             {
-                DateTime start = DateTime.Today.AddDays(-i);
-                DateTime end = start.AddDays(1);
+                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
+                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
                 double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -106,8 +110,8 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 30; i++)
             {
-                DateTime start = DateTime.Today.AddDays(-i);
-                DateTime end = start.AddDays(1);
+                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
+                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
                 double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -119,8 +123,9 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 12; i++)
             {
-                DateTime start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-i);
-                DateTime end = start.AddMonths(1);
+                DateTime month = new DateTime(_clock.Today.Year, _clock.Today.Month, 1).AddMonths(-i);
+                DateTime start = _clock.StartOfMonthUtc(month.Year, month.Month);
+                DateTime end = _clock.StartOfDayUtc(month.AddMonths(1));
                 double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -189,8 +194,8 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 7; i++)
             {
-                DateTime start = DateTime.Today.AddDays(-i);
-                DateTime end = start.AddDays(1);
+                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
+                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
                 double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -202,8 +207,8 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 30; i++)
             {
-                DateTime start = DateTime.Today.AddDays(-i);
-                DateTime end = start.AddDays(1);
+                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
+                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
                 double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -215,8 +220,9 @@ namespace VoltaXApi.Data
             List<double> revenueList = new List<double>();
             for (int i = 0; i < 12; i++)
             {
-                DateTime start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-i);
-                DateTime end = start.AddMonths(1);
+                DateTime month = new DateTime(_clock.Today.Year, _clock.Today.Month, 1).AddMonths(-i);
+                DateTime start = _clock.StartOfMonthUtc(month.Year, month.Month);
+                DateTime end = _clock.StartOfDayUtc(month.AddMonths(1));
                 double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
                 revenueList.Add(revenue);
             }
@@ -275,6 +281,91 @@ namespace VoltaXApi.Data
             }
             
             return result;
+        }
+
+        public async Task<ChargingStationSearchResponseDto> SearchChargingStations(ChargingStationSearchParams searchParams)
+        {
+            var page = Math.Max(1, searchParams.Page);
+            var pageSize = Math.Clamp(searchParams.PageSize, 1, 100);
+            var types = searchParams.ConnectorTypes?.Distinct().ToList() ?? new List<ConnectorEnumType>();
+            var availability = searchParams.Availability?.ToHashSet() ?? new HashSet<StationAvailability>();
+
+            // Same visibility as the map: live stations with charge points shown on the map.
+            var stations = _context.ChargingStations.AsNoTracking()
+                .Where(s => !s.IsDeleted && s.ChargePoints.Any(cp => !cp.IsDeleted && cp.ShowOnMap == true));
+
+            var words = (searchParams.Query ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            foreach (var word in words)
+                stations = stations.Where(s => s.Address.Contains(word) || s.City.Contains(word) || s.Name.Contains(word)
+                    || (s.State != null && s.State.Contains(word)) || (s.Country != null && s.Country.Contains(word)));
+
+            if (types.Count > 0)
+                stations = stations.Where(s => s.ChargePoints.Any(cp => !cp.IsDeleted && cp.ShowOnMap == true
+                    && cp.Connectors.Any(c => !c.IsDeleted && c.ConnectorType != null && types.Contains(c.ConnectorType.Value))));
+
+            var candidates = await stations
+                .OrderBy(s => s.Name).ThenBy(s => s.ID)
+                .Select(s => new
+                {
+                    s.ID, s.Name, s.Address, s.City, s.State, s.Country, s.Latitude, s.Longitude, s.Status,
+                    ChargePoints = s.ChargePoints.Where(cp => !cp.IsDeleted && cp.ShowOnMap == true).Select(cp => new ChargePointSearchResultDto
+                    {
+                        ID = cp.ID,
+                        ChargePointId = cp.ChargePointId,
+                        Connectors = cp.Connectors
+                            .Where(c => !c.IsDeleted && (types.Count == 0 || c.ConnectorType != null && types.Contains(c.ConnectorType.Value)))
+                            .Select(c => new ConnectorSearchResultDto
+                            {
+                                ID = c.ID,
+                                ConnectorID = c.ConnectorID,
+                                EvseID = c.EvseID,
+                                ConnectorType = c.ConnectorType,
+                                PowerKw = c.Power,
+                                // No status row => Disconnected (same convention as the dashboard counts).
+                                Status = _context.ConnectorStatuses
+                                    .Where(st => st.ConnectorID == c.ID && !st.IsDeleted)
+                                    .OrderByDescending(st => st.LastStatusTime).ThenByDescending(st => st.ID)
+                                    .Select(st => (ConnectorStatusEnumType?)st.LastStatus)
+                                    .FirstOrDefault() ?? ConnectorStatusEnumType.Disconnected
+                            }).ToList()
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            // Availability depends on every connector's latest status, so it is filtered after loading.
+            var results = candidates.Select(s =>
+            {
+                var connectors = s.ChargePoints.SelectMany(cp => cp.Connectors).ToList();
+                var available = connectors.Count(c => c.Status == ConnectorStatusEnumType.Available);
+                var occupied = connectors.Count(c => c.Status is ConnectorStatusEnumType.Occupied or ConnectorStatusEnumType.Reserved);
+                // A station under maintenance or offline is unavailable whatever its connectors report.
+                var outOfService = s.Status != ChargingStationStatusEnum.Available;
+                return new ChargingStationSearchResultDto
+                {
+                    ID = s.ID, Name = s.Name, Address = s.Address, City = s.City, State = s.State, Country = s.Country,
+                    Latitude = s.Latitude, Longitude = s.Longitude,
+                    Availability = outOfService ? StationAvailability.Unavailable
+                        : available > 0 ? StationAvailability.Available
+                        : occupied > 0 ? StationAvailability.Occupied
+                        : StationAvailability.Unavailable,
+                    ConnectorTypes = connectors.Where(c => c.ConnectorType != null).Select(c => c.ConnectorType!.Value).Distinct().ToList(),
+                    TotalConnectors = connectors.Count,
+                    AvailableConnectors = outOfService ? 0 : available,
+                    OccupiedConnectors = outOfService ? 0 : occupied,
+                    UnavailableConnectors = outOfService ? connectors.Count : connectors.Count - available - occupied,
+                    ChargePoints = s.ChargePoints
+                };
+            })
+            .Where(s => availability.Count == 0 || availability.Contains(s.Availability))
+            .ToList();
+
+            return new ChargingStationSearchResponseDto
+            {
+                TotalCount = results.Count,
+                Page = page,
+                PageSize = pageSize,
+                Items = results.Skip((page - 1) * pageSize).Take(pageSize).ToList()
+            };
         }
 
         public async Task<List<ChargingStationSelectDto>> GetChargingStationNames(string searchTerm = "")

@@ -7,6 +7,8 @@ namespace VoltaXApi.Services
 {
     public interface IAuthService
     {
+      Task<object> RequestPhoneLogin(string number, string ip);
+      Task<LoginResultDto?> VerifyPhoneLogin(string number, string challengeId, string code, string ip, string? userAgent);
       Task<User> Register(UserForRegisterDto userForRegisterDto);
       /// <summary>
       /// Signs a user in. <paramref name="identifier"/> is either an email address or a
@@ -21,6 +23,11 @@ namespace VoltaXApi.Services
       Task ResetPasswordRequest(string email);
       Task ResetPasswordRequestForMobile(string email);
       Task<string> VerifyResetPasswordCodeForMobile(UserResetPasswordForMobileDto userResetPasswordForMobileDto);
+      Task ResetPassword(string email, string token, string newPassword);
+      Task ResendVerificationEmail(int userID);
+
+      /// <summary>Second step of a 2FA sign in: swaps the challenge token and a TOTP / recovery code for a session.</summary>
+      Task<LoginResultDto> CompleteTwoFactorLogin(string twoFactorToken, string code, string? ipAddress, string? userAgent);
 
       /// <summary>
       /// Signs a user in from an external (Google) identity, creating the local account on first use.

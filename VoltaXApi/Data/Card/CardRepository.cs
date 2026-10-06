@@ -86,15 +86,18 @@ namespace VoltaXApi.Data
         public async Task CreateCard(CreateCardDto card)
         {
             Card cardToCreate = _mapper.Map<CreateCardDto, Card>(card);
-            card.CardNumber = await this.GenerateCardNumber();
-            card.ExpirationDate = DateTime.Now.AddYears(_settings.DefaultCardValidityYears);
+            // A supplied card number / future expiry is kept; otherwise one is generated.
+            if (string.IsNullOrWhiteSpace(cardToCreate.CardNumber))
+                cardToCreate.CardNumber = await this.GenerateCardNumber();
+            if (cardToCreate.ExpirationDate <= DateTime.UtcNow)
+                cardToCreate.ExpirationDate = DateTime.UtcNow.AddYears(_settings.DefaultCardValidityYears);
             await this.AddAsync(cardToCreate);
         }
 
 
         private async Task<string> GenerateCardNumber()
         {
-            string currentYear = DateTime.Now.Year.ToString();
+            string currentYear = DateTime.UtcNow.Year.ToString();
 
             string cardNumber;
             bool exists;
@@ -152,15 +155,26 @@ namespace VoltaXApi.Data
             return card;
         }
 
-        public async Task<CardTokenInfoDto> GetCardTokenInfoByUserID(int userID)
+        public async Task<CardTokenInfoDto?> GetCardTokenInfoByUserID(int userID)
         {
             var card = await _context.Cards.Where(c => c.UserID == userID)
-            .Select(u => new CardTokenInfoDto { ID = u.ID, CardNumber = u.CardNumber, CardType = u.CardType }).FirstOrDefaultAsync();
+            .Select(u => new CardTokenInfoDto
+            {
+                ID = u.ID,
+                CardNumber = u.CardNumber,
+                CardType = u.CardType,
+                Balance = u.Balance
+            }).FirstOrDefaultAsync();
             if (card == null)
             {
                 return null;
             }
             return card;
+        }
+
+        public Task<Card?> FindCardAsNoTrackingAsync(Expression<Func<Card, bool>> predicate)
+        {
+            return _context.Cards.AsNoTracking().FirstOrDefaultAsync(predicate);
         }
     }
 }

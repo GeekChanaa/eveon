@@ -6,5 +6,7 @@ export const environment = {
   production: false,
   apiUrl : "http://localhost:8000",
   apiStaticFilesUrl : "http://localhost:8000/StaticFiles/",
+  googleMapsApiKey : "AIzaSyCeZ5OSLki92cef4GtIJ82i2DlIGNOK1cU",
+  googleGeocodingApiKey : "AIzaSyASK_Y37ctDVZfa9P7OqJ2QsFpC_XMgZBQ",
 };
 

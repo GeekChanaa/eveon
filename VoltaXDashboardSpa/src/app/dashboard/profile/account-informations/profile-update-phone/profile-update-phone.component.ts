@@ -4,6 +4,7 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
 import { UserService } from 'src/_services/user.service';
+import { isValidPhoneNumber } from 'src/app/validators/email-or-phone-validator';
 
 enum UpdatePhoneFormStepEnum{
   UpdatePhone = 0,
@@ -40,10 +41,10 @@ export class ProfileUpdatePhoneComponent implements OnInit {
       private _modalService : ActionModalService
     ) { 
       this.updatePhoneForm = new FormGroup({
-        phone : new FormControl("",Validators.pattern('^((\\+91-?)|0)?[0-9]{10}$') )
+        phone : new FormControl("", [Validators.required, control => isValidPhoneNumber(control.value) ? null : { invalidPhone: true }])
       });
       this.verifyPhoneForm = new FormGroup({
-        code : new FormControl("")
+        code : new FormControl("", Validators.required)
       })
     }
   

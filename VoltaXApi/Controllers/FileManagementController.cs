@@ -1,14 +1,7 @@
 using VoltaXApi.Services;
-using System;
-using System.IO;
-using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using VoltaXApi.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
 
@@ -18,70 +11,33 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class FileManagementController : ControllerBase
     {
-        private Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment;
+        private readonly IUserService _userService;
+        private readonly IChargingStationImageService _chargingStationImageService;
 
-        private readonly IFileManagementService _fileManagementService;
-        public FileManagementController(Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment, IFileManagementService FileManagementService)
+        public FileManagementController(IUserService userService, IChargingStationImageService chargingStationImageService)
         {
-            Environment = _environment;
-            _fileManagementService = FileManagementService;
+            _userService = userService;
+            _chargingStationImageService = chargingStationImageService;
         }
 
+        // Validation failures surface as 400 through the global exception filter.
         [HttpPost("UploadProfilePicture")]
-        public IActionResult UploadProfilePicture(IFormFile imageFile)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile imageFile)
         {
-            var userID = Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            try
-            {
-                if (Request.Form.Files.Count == 1)
-                {
-                    var file = Request.Form.Files[0];
-                    string folderName = "ProfilePictures/";
-                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    fileName = userID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
-                    this._fileManagementService.UploadFile(fileName, folderName, file);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine( ex.Message);
-                return BadRequest();
-            }
-        }
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userID)) return Unauthorized();
+            if (Request.Form.Files.Count != 1) return BadRequest("Upload exactly one image.");
 
+            await _userService.UploadUserAvatar(Request.Form.Files[0], userID);
+            return Ok();
+        }
 
         [HttpPost("UploadChargingStationPicture")]
-        public IActionResult UploadChargingStationPicture(IFormFile imageFile, int chargingStationID)
+        public async Task<IActionResult> UploadChargingStationPicture(IFormFile imageFile, int chargingStationID)
         {
-            try
-            {
-                if (Request.Form.Files.Count == 1)
-                {
-                    var file = Request.Form.Files[0];
-                    string folderName = "ChargingStationPictures/";
-                    string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    fileName = chargingStationID +""+ fileName.Substring(fileName.LastIndexOf("."),fileName.Length - fileName.LastIndexOf("."));
-                    this._fileManagementService.UploadFile(fileName, folderName, file);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine( ex.Message);
-                return BadRequest();
-            }
-        }
+            if (Request.Form.Files.Count != 1) return BadRequest("Upload exactly one image.");
 
-        
+            await _chargingStationImageService.UploadChargingStationImages(new[] { Request.Form.Files[0] }, chargingStationID);
+            return Ok();
+        }
     }
-    
 }

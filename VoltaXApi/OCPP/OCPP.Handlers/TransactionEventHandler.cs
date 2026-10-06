@@ -1,7 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
+using VoltaXApi.Models;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Models;
@@ -16,14 +17,13 @@ namespace VoltaXApi.OCPP.Handlers
         private readonly ITransactionService _transactionService;
         private readonly IConnectorRepository _connectorRepository;
         private readonly IChargePointRepository _chargePointRepository;
-        private readonly IConfigurationService _configService;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly VoltaXApiDbContext _db;
+        private readonly IRoamingTransactionObserver _roamingObserver;
+        private readonly ReservationService _reservations;
         private readonly ILogger _logger;
 
-        private static readonly JsonSerializerSettings ResponseSerializerSettings = new()
-        {
-            Converters = new List<JsonConverter> { new StringEnumConverter() },
-            NullValueHandling = NullValueHandling.Ignore
-        };
+        private readonly VoltaXApi.SmartCharging.ILoadBalancingTrigger _loadBalancing;
 
         public TransactionEventHandler(
             ILoggerFactory loggerFactory,
@@ -31,15 +31,23 @@ namespace VoltaXApi.OCPP.Handlers
             ITransactionService transactionService,
             IConnectorRepository connectorRepository,
             IChargePointRepository chargePointRepository,
-            IConfigurationService configService
+            IServiceScopeFactory scopeFactory,
+            VoltaXApiDbContext db,
+            IRoamingTransactionObserver roamingObserver,
+            ReservationService reservations,
+            VoltaXApi.SmartCharging.ILoadBalancingTrigger loadBalancing
         )
         {
+            _loadBalancing = loadBalancing;
+            _roamingObserver = roamingObserver;
+            _reservations = reservations;
             _logger = loggerFactory.CreateLogger(typeof(TransactionEventHandler));
             _msgLogRepo = messageLogRepository;
             _transactionService = transactionService;
             _connectorRepository = connectorRepository;
             _chargePointRepository = chargePointRepository;
-            _configService = configService;
+            _scopeFactory = scopeFactory;
+            _db = db;
         }
 
         public async Task<string> Handle(
@@ -64,79 +72,48 @@ namespace VoltaXApi.OCPP.Handlers
                 var transactionEventRequest = JsonConvert.DeserializeObject<TransactionEventRequest>(msgIn.JsonPayload ?? string.Empty);
                 if (transactionEventRequest == null)
                 {
-                    _logger.LogWarning("TransactionEvent => Failed to deserialize request payload");
+                    _logger.LogWarning("TransactionEvent => Failed to deserialize request payload from {ChargePointId}", chargePointStatus.Id);
                     errorCode = ErrorCodes.FormationViolation;
-                    return errorCode;
                 }
-
-                string idTag = transactionEventRequest.IdToken != null
-                    ? CleanChargeTagId(transactionEventRequest.IdToken.IdToken)
-                    : string.Empty;
-
-                var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointStatus.Id);
-                if (chargePoint == null)
+                else
                 {
-                    _logger.LogWarning("TransactionEvent => Charge point not found: {ChargePointId}", chargePointStatus.Id);
-                    errorCode = ErrorCodes.GenericError;
-                    return errorCode;
-                }
-
-                var connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(
-                    (int)transactionEventRequest.EVSE.ConnectorId,
-                    (int)transactionEventRequest.EVSE.Id,
-                    chargePoint.ID);
-
-                if (connector == null)
-                {
-                    _logger.LogWarning("TransactionEvent => Connector not found, refreshing for {ChargePointId}", chargePointStatus.Id);
-                    await _configService.RefreshConnectors(chargePointStatus.Id);
-
-                    connector = await _connectorRepository.GetConnectorByConnectorIdEvseId(
-                        (int)transactionEventRequest.EVSE.ConnectorId,
-                        (int)transactionEventRequest.EVSE.Id,
-                        chargePoint.ID);
-
-                    if (connector == null)
+                    var chargePoint = await AcceptedChargePoint(transactionEventRequest, chargePointStatus.Id);
+                    if (chargePoint == null)
                     {
-                        _logger.LogError("TransactionEvent => Connector still not found after refresh for {ChargePointId}", chargePointStatus.Id);
-                        errorCode = ErrorCodes.GenericError;
-                        return errorCode;
+                        Refuse(transactionEventRequest, transactionEventResponse);
                     }
+                    else if (transactionEventRequest.EVSE == null && transactionEventRequest.EventType == TransactionEventEnumType.Started)
+                    {
+                        // Authorization before plug-in: the EVSE arrives with a later event.
+                        await StartPending(transactionEventRequest, transactionEventResponse, chargePointStatus, chargePoint);
+                    }
+                    else
+                    {
+                        var connector = await ResolveConnector(transactionEventRequest, chargePoint);
+                        if (connector == null)
+                        {
+                            await HandleWithoutConnector(transactionEventRequest, transactionEventResponse, chargePoint);
+                        }
+                        else
+                        {
+                            connectorId = connector.ID;
+                            var roaming = await _roamingObserver.OnTransactionEventAsync(chargePointStatus.Id, transactionEventRequest);
+                            if (roaming.HasValue)
+                            {
+                                transactionEventResponse.IdTokenInfo.Status = roaming.Value;
+                            }
+                            else
+                            {
+                                await StartIfPending(transactionEventRequest, chargePointStatus, chargePoint, connector);
+                                await Process(transactionEventRequest, transactionEventResponse, chargePointStatus, connector);
+                            }
+                            await MarkReservationUsed(transactionEventRequest, transactionEventResponse, chargePointStatus.Id);
+                        }
+                    }
+
+                    msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, OCPPMessageFactory.DefaultSettings);
+                    _logger.LogInformation("TransactionEvent => Response serialized for {EventType}", transactionEventRequest.EventType);
                 }
-
-                connectorId = connector.ID;
-
-                var meterData = transactionEventRequest.MeterValue != null
-                    ? ExtractMeterValues(transactionEventRequest.MeterValue)
-                    : MeterData.Empty;
-
-                switch (transactionEventRequest.EventType)
-                {
-                    case TransactionEventEnumType.Started:
-                        await _transactionService.StartTransaction(
-                            transactionEventRequest, transactionEventResponse,
-                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
-                        break;
-
-                    case TransactionEventEnumType.Updated:
-                        await _transactionService.UpdateTransaction(
-                            transactionEventRequest, transactionEventResponse,
-                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
-                        break;
-
-                    case TransactionEventEnumType.Ended:
-                        await _transactionService.EndTransaction(
-                            transactionEventRequest, transactionEventResponse,
-                            chargePointStatus, connector, idTag, errorCode, meterData.EnergyKWh);
-                        break;
-
-                    default:
-                        _logger.LogWarning("TransactionEvent => Unknown event type: {EventType}", transactionEventRequest.EventType);
-                        break;
-                }
-
-                msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, ResponseSerializerSettings);
-                _logger.LogInformation("TransactionEvent => Response serialized for {EventType}", transactionEventRequest.EventType);
             }
             catch (Exception exp)
             {
@@ -154,123 +131,231 @@ namespace VoltaXApi.OCPP.Handlers
                 msgOut
             );
 
-            return errorCode;
+            return errorCode!;
         }
 
-        #region Meter Value Extraction
-
-        /// <summary>
-        /// Structured result from meter value extraction.
-        /// </summary>
-        private record MeterData(
-            double EnergyKWh,
-            double PowerKW,
-            double StateOfCharge,
-            DateTimeOffset? Timestamp)
+        private async Task Process(
+            TransactionEventRequest request,
+            TransactionEventResponse response,
+            ChargePointStatus chargePointStatus,
+            Connector connector)
         {
-            public static readonly MeterData Empty = new(0, 0, 0, null);
-        }
+            string idTag = request.IdToken != null ? CleanChargeTagId(request.IdToken.IdToken) : string.Empty;
 
-        /// <summary>
-        /// Extract all meter values from the OCPP MeterValue collection.
-        /// </summary>
-        private MeterData ExtractMeterValues(ICollection<MeterValueType> meterValues)
-        {
-            double meterKWH = 0;
-            double currentChargeKW = 0;
-            double stateOfCharge = 0;
-            DateTimeOffset? meterTime = null;
+            var meter = MeterValueNormalizer.Extract(request.MeterValue);
+            if (meter.UnexpectedUnits.Count > 0)
+                _logger.LogWarning("TransactionEvent => Unexpected meter units {Units} from {ChargePointId}; values used unconverted",
+                    meter.UnexpectedUnits, chargePointStatus.Id);
+            _logger.LogDebug("TransactionEvent => Meter {Energy} kWh, {Power} kW, SoC {SoC}%", meter.EnergyKWh, meter.PowerKW, meter.StateOfCharge);
 
-            foreach (var meterValue in meterValues)
+            switch (request.EventType)
             {
-                foreach (var sample in meterValue.SampledValue)
-                {
-                    var unit = sample.UnitOfMeasure?.Unit;
-                    var multiplier = sample.UnitOfMeasure?.Multiplier ?? 0;
-                    var value = sample.Value;
+                case TransactionEventEnumType.Started:
+                    await _transactionService.StartTransaction(request, response, chargePointStatus, connector, idTag, null, meter.EnergyKWh);
+                    break;
 
-                    // Context-based: Transaction_End is the final reading
-                    if (sample.Context == ReadingContextEnumType.Transaction_End)
-                    {
-                        meterKWH = ConvertToKWh(value, unit, multiplier);
-                        meterTime = meterValue.Timestamp;
-                        _logger.LogDebug("MeterValues => Transaction_End: {Energy:0.000} kWh", meterKWH);
-                        return new MeterData(meterKWH, currentChargeKW, stateOfCharge, meterTime);
-                    }
+                case TransactionEventEnumType.Updated:
+                    await _transactionService.UpdateTransaction(request, response, chargePointStatus, connector, idTag, null, meter.EnergyKWh);
+                    break;
 
-                    if (sample.Context == ReadingContextEnumType.Transaction_Begin)
-                    {
-                        meterKWH = ConvertToKWh(value, unit, multiplier);
-                        meterTime = meterValue.Timestamp;
-                        _logger.LogDebug("MeterValues => Transaction_Begin: {Energy:0.000} kWh", meterKWH);
-                    }
+                case TransactionEventEnumType.Ended:
+                    await _transactionService.EndTransaction(request, response, chargePointStatus, connector, idTag, null, meter.EnergyKWh);
+                    break;
 
-                    // Measurand-based handling
-                    switch (sample.Measurand)
-                    {
-                        case MeasurandEnumType.Power_Active_Import:
-                            currentChargeKW = ConvertToKW(value, unit, multiplier);
-                            _logger.LogDebug("MeterValues => Power: {Power:0.00} kW", currentChargeKW);
-                            break;
-
-                        case MeasurandEnumType.Energy_Active_Import_Register:
-                            meterKWH = ConvertToKWh(value, unit, multiplier);
-                            meterTime = meterValue.Timestamp;
-                            _logger.LogDebug("MeterValues => Energy: {Energy:0.000} kWh", meterKWH);
-                            break;
-
-                        case MeasurandEnumType.SoC:
-                            stateOfCharge = value;
-                            _logger.LogDebug("MeterValues => SoC: {SoC:0.0}%", stateOfCharge);
-                            break;
-                    }
-                }
+                default:
+                    _logger.LogWarning("TransactionEvent => Unknown event type: {EventType}", request.EventType);
+                    break;
             }
 
-            return new MeterData(meterKWH, currentChargeKW, stateOfCharge, meterTime);
+            // Station load balancing reacts to sessions starting, stopping and drawing power (debounced, never throws).
+            _loadBalancing.RequestRebalanceForChargePoint(chargePointStatus.Id);
         }
 
-        #endregion
-
-        #region Unit Conversion
-
-        /// <summary>
-        /// Convert energy values (Wh, kWh, etc.) to kWh.
-        /// </summary>
-        private double ConvertToKWh(double value, string? unit, int multiplier)
+        /// <summary>The charge point of the event, or null when it is unknown or not Accepted (the event is then refused).</summary>
+        private async Task<ChargePoint?> AcceptedChargePoint(TransactionEventRequest request, string chargePointId)
         {
-            if (multiplier > 0)
-                value *= Math.Pow(10, multiplier);
+            var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointId);
+            if (chargePoint == null)
+            {
+                _logger.LogWarning("TransactionEvent => Charge point not found: {ChargePointId}", chargePointId);
+                return null;
+            }
 
-            if (string.IsNullOrEmpty(unit) || unit == "Wh" || unit == "VAh" || unit == "varh")
-                return value / 1000.0;
-
-            if (unit == "kWh" || unit == "kVAh" || unit == "kvarh")
-                return value;
-
-            _logger.LogWarning("MeterValues => Unexpected energy unit: {Unit}, Value={Value}", unit, value);
-            return value;
+            if (!await ChargePointRegistration.IsAcceptedAsync(_db, chargePointId))
+            {
+                _logger.LogWarning("TransactionEvent => Charge point {ChargePointId} is not accepted (pending provisioning); {EventType} of transaction {TransactionId} ignored",
+                    chargePointId, request.EventType, request.TransactionInfo?.TransactionId);
+                return null;
+            }
+            return chargePoint;
         }
 
         /// <summary>
-        /// Convert power values (W, kW, etc.) to kW.
+        /// Finds the connector of the event from its EVSE or, when the event has none, from the transaction it belongs to.
+        /// Null when it cannot be identified (yet).
         /// </summary>
-        private double ConvertToKW(double value, string? unit, int multiplier)
+        private async Task<Connector?> ResolveConnector(TransactionEventRequest request, ChargePoint chargePoint)
         {
-            if (multiplier > 0)
-                value *= Math.Pow(10, multiplier);
+            var evse = request.EVSE;
+            if (evse == null)
+                return await FindConnectorOfTransaction(request.TransactionInfo?.TransactionId, chargePoint.ID);
 
-            if (string.IsNullOrEmpty(unit) || unit == "W" || unit == "VA" || unit == "var")
-                return value / 1000.0;
+            var connector = await FindConnector(evse, chargePoint.ID);
+            if (connector == null)
+            {
+                // The device model report arrives later through NotifyReport; this event is refused meanwhile.
+                _logger.LogError("TransactionEvent => Connector {EvseId}/{ConnectorId} not found for {ChargePointId}; requesting its device model",
+                    evse.Id, evse.ConnectorId, chargePoint.ChargePointId);
+                var chargePointId = chargePoint.ChargePointId;
+                OcppBackgroundCommand.Run(_scopeFactory, _logger, "RefreshConnectors", chargePointId,
+                    services => services.GetRequiredService<IConfigurationService>().RefreshConnectors(chargePointId));
+            }
 
-            if (unit == "kW" || unit == "kVA" || unit == "kvar")
-                return value;
-
-            _logger.LogWarning("MeterValues => Unexpected power unit: {Unit}, Value={Value}", unit, value);
-            return value;
+            return connector;
         }
 
-        #endregion
+        /// <summary>
+        /// Started event without EVSE: the token is checked like a regular start (same answer and customer
+        /// notifications), and an accepted transaction waits for its connector without being billed.
+        /// </summary>
+        private async Task StartPending(TransactionEventRequest request, TransactionEventResponse response, ChargePointStatus chargePointStatus, ChargePoint chargePoint)
+        {
+            var roaming = await _roamingObserver.OnTransactionEventAsync(chargePointStatus.Id, request);
+            if (roaming.HasValue)
+            {
+                response.IdTokenInfo.Status = roaming.Value;
+                await MarkReservationUsed(request, response, chargePointStatus.Id);
+                return;
+            }
+
+            var idTag = request.IdToken != null ? CleanChargeTagId(request.IdToken.IdToken) : string.Empty;
+            var meter = MeterValueNormalizer.Extract(request.MeterValue);
+            var data = TransactionEventData.FromTransactionEvent(request, chargePointStatus.Id, idTag, meter.EnergyKWh);
+            var status = await _transactionService.StartTransaction(data, null, validateOnly: true) ?? AuthorizationStatusEnumType.Invalid;
+            response.IdTokenInfo = request.IdToken != null ? new IdTokenInfoType { Status = status } : null!;
+            if (status != AuthorizationStatusEnumType.Accepted)
+                return;
+
+            var transactionUid = data.TransactionUid;
+            if (!await _db.OcppPendingTransactions.AnyAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid))
+            {
+                _db.OcppPendingTransactions.Add(new OcppPendingTransaction
+                {
+                    ChargePointID = chargePoint.ID,
+                    TransactionUid = transactionUid,
+                    IdTag = idTag,
+                    Timestamp = request.Timestamp,
+                    MeterStartKWh = meter.EnergyKWh,
+                    TriggerReason = data.TriggerReason,
+                    ReservationId = request.ReservationId,
+                    CreatedAt = DateTime.UtcNow
+                });
+                await _db.SaveChangesAsync();
+            }
+            _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} authorized; waiting for its EVSE",
+                transactionUid, chargePointStatus.Id);
+            await MarkReservationUsed(request, response, chargePointStatus.Id);
+        }
+
+        /// <summary>First event carrying the EVSE of a pending transaction: the session starts with the data of its Started event.</summary>
+        private async Task StartIfPending(TransactionEventRequest request, ChargePointStatus chargePointStatus, ChargePoint chargePoint, Connector connector)
+        {
+            var transactionUid = request.TransactionInfo?.TransactionId;
+            if (request.EventType == TransactionEventEnumType.Started || string.IsNullOrEmpty(transactionUid))
+                return;
+
+            var pending = await _db.OcppPendingTransactions.FirstOrDefaultAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid);
+            if (pending == null)
+                return;
+
+            var status = await _transactionService.StartTransaction(new TransactionEventData
+            {
+                ChargePointId = chargePointStatus.Id,
+                TransactionUid = pending.TransactionUid,
+                EventType = TransactionEventEnumType.Started,
+                Timestamp = pending.Timestamp,
+                IdTag = pending.IdTag,
+                MeterKWh = pending.MeterStartKWh,
+                TriggerReason = pending.TriggerReason
+            }, connector);
+            _db.OcppPendingTransactions.Remove(pending);
+            await _db.SaveChangesAsync();
+            _logger.LogInformation("TransactionEvent => Pending transaction {TransactionId} of {ChargePointId} attached to connector {ConnectorId}: {Status}",
+                transactionUid, chargePointStatus.Id, connector.ID, status);
+        }
+
+        /// <summary>
+        /// Event whose connector is unknown: a transaction still waiting for its EVSE is acknowledged (and dropped
+        /// when it ends, nothing having been billed); anything else is refused.
+        /// </summary>
+        private async Task HandleWithoutConnector(TransactionEventRequest request, TransactionEventResponse response, ChargePoint chargePoint)
+        {
+            var transactionUid = request.TransactionInfo?.TransactionId;
+            var pending = request.EVSE == null && !string.IsNullOrEmpty(transactionUid)
+                ? await _db.OcppPendingTransactions.FirstOrDefaultAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid)
+                : null;
+            if (pending == null)
+            {
+                if (request.EVSE == null)
+                    _logger.LogWarning("TransactionEvent => {EventType} without EVSE for unknown transaction {TransactionId} from {ChargePointId}",
+                        request.EventType, transactionUid, chargePoint.ChargePointId);
+                Refuse(request, response);
+                return;
+            }
+
+            response.IdTokenInfo = request.IdToken != null ? new IdTokenInfoType { Status = AuthorizationStatusEnumType.Accepted } : null!;
+            if (request.EventType == TransactionEventEnumType.Ended)
+            {
+                _db.OcppPendingTransactions.Remove(pending);
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} ended before any EVSE was known; nothing billed",
+                    transactionUid, chargePoint.ChargePointId);
+            }
+        }
+
+        private async Task MarkReservationUsed(TransactionEventRequest request, TransactionEventResponse response, string chargePointId)
+        {
+            if (request.EventType != TransactionEventEnumType.Started || !request.ReservationId.HasValue
+                || response.IdTokenInfo?.Status != AuthorizationStatusEnumType.Accepted)
+                return;
+            await _reservations.MarkUsedAsync(chargePointId, request.ReservationId.Value, request.TransactionInfo?.TransactionId ?? "");
+        }
+
+        private async Task<Connector?> FindConnector(EVSEType evse, int chargePointId)
+        {
+            if (evse.ConnectorId.HasValue)
+                return await _connectorRepository.GetConnectorByConnectorIdEvseId(evse.ConnectorId, evse.Id, chargePointId);
+
+            // EVSE without connector id: the first connector of that EVSE.
+            return (await _connectorRepository.FindAsync(c => c.ChargePointID == chargePointId && c.EvseID == evse.Id))
+                .OrderBy(c => c.ConnectorID)
+                .FirstOrDefault();
+        }
+
+        private async Task<Connector?> FindConnectorOfTransaction(string? transactionUid, int chargePointId)
+        {
+            if (string.IsNullOrWhiteSpace(transactionUid))
+                return null;
+
+            var connectorId = await _db.Transactions.AsNoTracking()
+                .Where(t => t.Uid == transactionUid && t.Connector!.ChargePointID == chargePointId)
+                .OrderByDescending(t => t.ID)
+                .Select(t => t.ConnectorID)
+                .FirstOrDefaultAsync();
+
+            return connectorId.HasValue ? await _connectorRepository.GetByIdAsync(connectorId.Value) : null;
+        }
+
+        /// <summary>
+        /// Answers without touching sessions or cards. The charger still gets a valid response so its
+        /// transaction message queue is not blocked; a presented token is reported Invalid.
+        /// </summary>
+        private static void Refuse(TransactionEventRequest request, TransactionEventResponse response)
+        {
+            response.IdTokenInfo = request.IdToken != null
+                ? new IdTokenInfoType { Status = AuthorizationStatusEnumType.Invalid }
+                : null!;
+        }
 
         /// <summary>
         /// Clean vendor-specific suffixes from charge tag IDs (e.g., KEBA appends "_serial").

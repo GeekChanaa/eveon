@@ -46,6 +46,10 @@
                 </div>
               </div>
             </div>
+            <div class="field">
+              <div class="field__label">Recharge card</div>
+              <div class="field__wrap"><select class="select" formControlName="cardID"><option value="">Select a recharge card</option><option *ngFor="let rechargeCard of rechargeCards" [value]="rechargeCard.id">{{ rechargeCard.cardNumber }}</option></select></div>
+            </div>
           </ng-container>
 
           <!-- Debit card informations step -->
@@ -63,59 +67,22 @@
                 <app-debit-card class="debit_card_div"
                   cardNumber="{{ debitCard.cardNumberHidden }}"
                   cardHolderName="{{ debitCard.nameHidden }}"
+                  type="{{ debitCard.type }}"
                   size="small"
                 ></app-debit-card>
               </div>
             </ng-container>
-            <button *ngIf="!newDebitCard" class="button" (click)="addNewDebitCard()">add new debit card</button>
-            <!-- Debit Card FormGroup -->
-            <ng-container *ngIf="debitCards.length==0 || newDebitCard">
-              <div formGroupName="debitCard">
-                <div class="field">
-                  <label for="holderName">Holder Name</label>
-                  <input
-                    class="field__input"
-                    type="text"
-                    formControlName="holderName"
-                    placeholder="Holder Name"
-                  />
-                </div>
-  
-                <div class="field">
-                  <label for="cardNumber">Card Number</label>
-                  <input
-                    class="field__input"
-                    type="text"
-                    formControlName="cardNumber"
-                    placeholder="Card Number"
-                  />
-                </div>
-  
-                <div class="field">
-                  <label for="cardNumber">Expiry Date</label>
-                  <input
-                    class="field__input"
-                    type="text"
-                    formControlName="expiryDate"
-                    placeholder="Expiry Date"
-                  />
-                </div>
-  
-                <div class="field">
-                  <label for="cardNumber">CVV</label>
-                  <input
-                    class="field__input"
-                    type="text"
-                    formControlName="cvv"
-                    placeholder="cvv"
-                  />
-                </div>
-              </div>
-            </ng-container>
+            <!-- Card numbers and CVVs are never entered here: new cards are added through the payment provider. -->
+            <div class="entry__note">New cards are added from your profile. Card entry via payment provider – coming soon.</div>
           </ng-container>
         </div>
         <!-- Preview component -->
-        <ng-container *ngIf="currentStep === 3"> </ng-container>
+        <ng-container *ngIf="currentStep === 3">
+          <div class="field"><div class="field__label">Mock payment outcome</div><div class="field__wrap"><select class="select" formControlName="mockPaymentStatus"><option *ngFor="let status of paymentStatuses" [value]="status">{{ status }}</option></select></div></div>
+          <div *ngIf="paymentResult" class="entry__note">{{ paymentResult.message }} A quote was sent to your email.</div>
+          <div *ngIf="paymentError" class="entry__note">{{ paymentError }}</div>
+          <button type="button" class="button entry__button" [disabled]="submittingPayment || form.invalid" (click)="submitPayment()">{{ submittingPayment ? 'Processing...' : 'Run mock payment' }}</button>
+        </ng-container>
         <div class="steps_btns">
           <button (click)="previousStep()" *ngIf="currentStep != 1" type="button" class="button-stroke entry__button previous__button" >
             Previous

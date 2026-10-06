@@ -75,47 +75,18 @@ namespace VoltaXApi.Data
                 {
                     ID = card.ID,
                     UserID = card.UserID ?? 0,
-                    CardNumberHidden = Mask(card.CardNumber),
-                    NameHidden = Mask(card.Name),
-                    Type = DetermineCardType(card.CardNumber)
+                    Type = card.Brand,
+                    Last4 = card.Last4,
+                    ExpiryMonth = card.ExpiryMonth,
+                    ExpiryYear = card.ExpiryYear,
+                    CardNumberHidden = "•••• " + card.Last4,
+                    NameHidden = Mask(card.Name ?? "")
                 };
 
                 result.Add(dto);
             }
 
             return result;
-        }
-
-        private DebitCardTypeEnum DetermineCardType(string cardNumber)
-        {
-            if (string.IsNullOrEmpty(cardNumber))
-                return DebitCardTypeEnum.Generic;
-
-            // Clean the card number (remove spaces)
-            var cleanNumber = cardNumber.Replace(" ", "");
-
-            // Visa cards start with 4
-            if (cleanNumber.StartsWith("4"))
-                return DebitCardTypeEnum.Visa;
-
-            // Mastercard starts with 51-55 or ranges 2221-2720
-            if (cleanNumber.StartsWith("5") && cleanNumber.Length > 1)
-            {
-                var secondDigit = int.Parse(cleanNumber.Substring(1, 1));
-                if (secondDigit >= 1 && secondDigit <= 5)
-                    return DebitCardTypeEnum.Mastercard;
-            }
-
-            // Check for Mastercard's 2-series range
-            if (cleanNumber.StartsWith("2") && cleanNumber.Length >= 4)
-            {
-                var prefix = int.Parse(cleanNumber.Substring(0, 4));
-                if (prefix >= 2221 && prefix <= 2720)
-                    return DebitCardTypeEnum.Mastercard;
-            }
-
-            // Default to Generic for any other patterns
-            return DebitCardTypeEnum.Generic;
         }
 
         private string Mask(string value)
@@ -234,12 +205,14 @@ namespace VoltaXApi.Data
 
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
+            var emailChanged = user.Email != userDto.Email;
+            var phoneChanged = user.Phone != userDto.Phone;
             user.Email = userDto.Email;
             user.Phone = userDto.Phone;
             user.RoleID = userDto.RoleID;
             user.Birthday = userDto.Birthday;
-            user.IsEmailVerified = userDto.IsEmailVerified;
-            user.IsPhoneNumberVerified = userDto.IsPhoneNumberVerified;
+            user.IsEmailVerified = !emailChanged && userDto.IsEmailVerified;
+            user.IsPhoneNumberVerified = !phoneChanged && userDto.IsPhoneNumberVerified;
             user.SuspendedAt = userDto.SuspendedAt;
             user.ElectricVehicleModelID = userDto.ElectricVehicleModelID;
             user.PartnerID = userDto.PartnerID ?? null;
@@ -278,7 +251,9 @@ namespace VoltaXApi.Data
                 FirstName = userForRegisterDto.FirstName,
                 LastName = userForRegisterDto.LastName,
                 Phone = userForRegisterDto.Phone,
-                RoleID = 2
+                TermsVersion = userForRegisterDto.TermsVersion,
+                TermsAcceptedAt = DateTime.UtcNow,
+                RoleID = await _context.Roles.Where(r => r.Name == "Customer" && !r.IsDeleted).Select(r => r.ID).SingleAsync()
             };
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;

@@ -19,7 +19,7 @@ namespace VoltaXApi.Services
         Task SendDebitCardRemovedEmail(MailRequest mailRequest, string userName);
         Task SendDebitCardAddedEmail(MailRequest mailRequest, string userName);
         Task SendPasswordChangedMail(MailRequest mailRequest, string userName);
-        Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName);
+        Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName, string downloadLink, DateTime expiresAt);
         Task SendDownloadInfoRequestDenied(MailRequest mailRequest, string userName);
         Task SendLoginAttemptFailedEmail(MailRequest mailRequest, string userName, string ipAddress, string resetPasswordLink);
         Task SendResetPasswordMailRequest(MailRequest mailRequest, string userName, string resetPasswordLink);

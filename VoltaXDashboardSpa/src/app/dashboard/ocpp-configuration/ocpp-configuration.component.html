@@ -1,3 +1,136 @@
-<p>
-  ocpp-configuration works!
-</p>
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'OCPP Default Configuration'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'OCPP Default Configuration' }
+  ]">
+  <div class="profile-page" *ngIf="state === PageState.Success">
+
+    <header class="profile-intro">
+      <span class="profile-intro__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+      </span>
+      <div>
+        <h2>First-connection profile</h2>
+        <p>
+          These OCPP 2.0.1 device-model settings are sent with SetVariables when a new charge point connects and is
+          configured automatically. Settings the charger does not support are skipped. Charge points that are already
+          configured are not affected.
+        </p>
+      </div>
+      <div class="profile-intro__stat">
+        <strong>{{enabledCount}}</strong>
+        <span>of {{rows.length}} sent</span>
+      </div>
+    </header>
+
+    <div class="profile-toolbar">
+      <label class="profile-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke-width="2"/><path d="m16 16 4 4" stroke-width="2" stroke-linecap="round"/></svg>
+        <input class="field__input" type="search" [(ngModel)]="search" placeholder="Search settings, values, descriptions" aria-label="Search settings">
+      </label>
+      <div class="profile-toolbar__actions" *ngIf="canEdit">
+        <button type="button" class="profile-btn profile-btn_ghost" (click)="resetToDefaults()" [disabled]="isSaving">Reset to built-in</button>
+        <button type="button" class="profile-btn" (click)="addRow()" [disabled]="isSaving">+ Add setting</button>
+      </div>
+    </div>
+
+    <p class="profile-readonly" *ngIf="!canEdit">You can view this profile; editing it requires the Edit Charge Point Configuration permission.</p>
+
+    <div class="profile-empty" *ngIf="groups.length === 0">
+      {{search ? 'No setting matches “' + search + '”.' : 'The profile is empty: automatic configuration will send nothing.'}}
+    </div>
+
+    <section class="profile-group" *ngFor="let group of groups; trackBy: trackGroup">
+      <h3 class="profile-group__title">{{group.name}} <span>{{group.rows.length}}</span></h3>
+
+      <div class="profile-list">
+        <div class="profile-row" *ngFor="let row of group.rows; let first = first; let last = last; trackBy: trackRow"
+          [class.profile-row_off]="!row.enabled" [class.profile-row_editing]="editingKey === row.key">
+
+          <div class="profile-row__main">
+            <label class="profile-toggle" [title]="row.enabled ? 'Sent to new charge points' : 'Not sent'">
+              <input type="checkbox" [(ngModel)]="row.enabled" [disabled]="!canEdit" [attr.aria-label]="'Send ' + label(row)">
+              <span class="profile-toggle__track"><span class="profile-toggle__thumb"></span></span>
+            </label>
+
+            <div class="profile-row__info">
+              <div class="profile-row__label">{{row.componentName || row.variableName ? label(row) : 'New setting'}}
+                <span class="profile-attr" *ngIf="row.attributeType !== 'Actual'">{{row.attributeType}}</span>
+              </div>
+              <div class="profile-row__desc" *ngIf="row.description">{{row.description}}</div>
+            </div>
+
+            <div class="profile-row__value">
+              <input class="field__input" [(ngModel)]="row.value" [disabled]="!canEdit" maxlength="1000"
+                [attr.aria-label]="'Value of ' + label(row)">
+            </div>
+
+            <div class="profile-row__actions" *ngIf="canEdit">
+              <button type="button" class="profile-icon" (click)="move(row, -1)" [disabled]="first" aria-label="Move up" title="Move up">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="profile-icon" (click)="move(row, 1)" [disabled]="last" aria-label="Move down" title="Move down">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="profile-icon" (click)="edit(row)" [class.active]="editingKey === row.key" aria-label="Edit details" title="Edit details">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="profile-icon profile-icon_danger" (click)="remove(row)" aria-label="Remove setting" title="Remove">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="profile-editor" *ngIf="editingKey === row.key">
+            <label><span>Group</span>
+              <input class="field__input" [(ngModel)]="row.groupName" [ngModelOptions]="{ updateOn: 'blur' }" [attr.list]="'profile-groups'" maxlength="50">
+            </label>
+            <label><span>Component *</span>
+              <input class="field__input" [(ngModel)]="row.componentName" placeholder="TxCtrlr" maxlength="50">
+            </label>
+            <label><span>Component instance</span>
+              <input class="field__input" [(ngModel)]="row.componentInstance" maxlength="50">
+            </label>
+            <label class="profile-editor__small"><span>EVSE</span>
+              <input class="field__input" type="number" min="1" [(ngModel)]="row.evseId">
+            </label>
+            <label class="profile-editor__small"><span>Connector</span>
+              <input class="field__input" type="number" min="1" [(ngModel)]="row.connectorId" [disabled]="row.evseId == null">
+            </label>
+            <label><span>Variable *</span>
+              <input class="field__input" [(ngModel)]="row.variableName" placeholder="EVConnectionTimeOut" maxlength="50">
+            </label>
+            <label><span>Variable instance</span>
+              <input class="field__input" [(ngModel)]="row.variableInstance" maxlength="50">
+            </label>
+            <label class="profile-editor__small"><span>Attribute</span>
+              <select class="select" [(ngModel)]="row.attributeType">
+                <option *ngFor="let t of attributeTypes" [value]="t">{{t}}</option>
+              </select>
+            </label>
+            <label class="profile-editor__wide"><span>Description</span>
+              <input class="field__input" [(ngModel)]="row.description" maxlength="500" placeholder="What this setting controls">
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <datalist id="profile-groups">
+      <option *ngFor="let g of groupNames" [value]="g"></option>
+    </datalist>
+  </div>
+
+  <!-- Unsaved changes bar -->
+  <div class="profile-savebar" *ngIf="state === PageState.Success && canEdit && (isDirty || errorMessage)" role="region" aria-label="Unsaved changes">
+    <span class="profile-savebar__text">
+      <span class="profile-savebar__error" *ngIf="errorMessage">{{errorMessage}}</span>
+      <span *ngIf="!errorMessage">You have unsaved changes.</span>
+    </span>
+    <button type="button" class="profile-btn profile-btn_ghost" (click)="discard()" [disabled]="isSaving || !isDirty">Discard</button>
+    <button type="button" class="profile-btn profile-btn_primary" (click)="save()" [disabled]="isSaving || !isDirty">
+      {{isSaving ? 'Saving…' : 'Save changes'}}
+    </button>
+  </div>
+</app-dashboard-details-container>

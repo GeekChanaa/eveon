@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
-import { DebitCard } from 'src/_models/debit-card';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
 import { DebitCardService } from 'src/_services/debit-card.service';
@@ -44,8 +43,9 @@ export class DebitCardsComponent implements OnInit {
     this.showDCForm = false;
   }
 
-  addSpaces(input: string): string {
-    return input.replace(/(.{4})/g, '$1 ');
+  formatExpiry(card: { expiryMonth: number, expiryYear: number }): string {
+    if (!card.expiryMonth || !card.expiryYear) return '';
+    return String(card.expiryMonth).padStart(2, '0') + '/' + String(card.expiryYear % 100).padStart(2, '0');
   }
 
   // Get User Debit cards

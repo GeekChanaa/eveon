@@ -1,3 +1,4 @@
+import { AccessService } from 'src/_services/access.service';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -46,6 +47,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
+    public access: AccessService,
     private router: Router,
     private _authService : AuthService,
     private _partnerService : PartnerService,

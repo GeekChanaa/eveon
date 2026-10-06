@@ -1,21 +1,117 @@
-@import ./../../../../styles/table-stats
-
-.stats__table
-  width: 30% !important
-
-  .component__name
-    cursor: pointer
-    transition: ease-in-out all .3s
-    &:hover
-      background: var(--secondary1) !important
-      color: var(--primary1)
-
-.component__description
-  font-size: 1em
-  font-weight: 400
+.documentation-detail
   color: var(--primary9)
-  margin-top: 16px
-.card__title
-  margin-top: 32px
-  &:first-child
-    margin-top: 0
+.docs-back
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin-bottom: 22px
+  color: var(--professional4)
+  font-size: 14px
+  font-weight: 600
+  text-decoration: none
+  .icon
+    width: 16px
+    height: 16px
+    fill: currentColor
+  &:hover
+    color: var(--secondary1)
+.detail-header
+  margin-bottom: 26px
+  h1
+    margin: 5px 0 10px
+    font-size: clamp(30px, 4vw, 40px)
+    overflow-wrap: anywhere
+  p
+    margin: 0
+    color: var(--professional4)
+    line-height: 1.6
+.detail-header__eyebrow
+  color: var(--secondary1)
+  font-size: 12px
+  font-weight: 700
+  letter-spacing: .1em
+  text-transform: uppercase
+.detail-summary
+  margin-bottom: 18px
+  padding: 24px 28px
+  background: var(--secondary5)
+  border-radius: 14px
+  h2
+    margin: 0 0 9px
+    font-size: 15px
+  p
+    margin: 0
+    color: var(--professional3)
+    line-height: 1.65
+.docs-panel
+  overflow: hidden
+  background: var(--primary1)
+  border: 1px solid var(--primary3)
+  border-radius: 16px
+  box-shadow: 0 8px 24px rgba(26, 29, 31, .05)
+.docs-panel__heading
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 23px 28px
+  border-bottom: 1px solid var(--primary3)
+  h2
+    margin: 0
+    font-size: 18px
+  p
+    margin: 5px 0 0
+    color: var(--professional4)
+    font-size: 14px
+.detail-count
+  display: flex
+  align-items: center
+  justify-content: center
+  min-width: 30px
+  height: 30px
+  padding: 0 8px
+  color: var(--secondary1)
+  background: var(--secondary5)
+  border-radius: 99px
+  font-size: 13px
+  font-weight: 700
+.docs-table-wrap
+  overflow-x: auto
+.docs-table
+  width: 100%
+  min-width: 560px
+  border-collapse: collapse
+  th, td
+    padding: 15px 28px
+    border-bottom: 1px solid var(--primary3)
+    text-align: left
+  th
+    color: var(--professional4)
+    font-size: 12px
+    font-weight: 700
+    letter-spacing: .05em
+    text-transform: uppercase
+  tr:last-child td
+    border-bottom: 0
+  tbody tr:hover
+    background: var(--secondary5)
+  td > a:not(.docs-table__action)
+    color: var(--primary9)
+    font-weight: 650
+    text-decoration: none
+    &:hover
+      color: var(--secondary1)
+.docs-table__action
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  color: var(--secondary1)
+  font-size: 13px
+  font-weight: 700
+  text-decoration: none
+  .icon
+    width: 14px
+    height: 14px
+    fill: currentColor
+.docs-empty
+  color: var(--professional4)
+  text-align: center !important

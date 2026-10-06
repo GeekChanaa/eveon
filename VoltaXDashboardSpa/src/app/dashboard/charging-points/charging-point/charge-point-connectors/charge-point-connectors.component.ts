@@ -11,6 +11,8 @@ export class ChargePointConnectorsComponent implements OnInit {
 
   @Input() chargePointID : number = 0;
   connectors : any[] = [];
+  loading = true;
+  loadError = false;
   cpfShow : Boolean = false;
   isConnectorVisible : boolean = false;
   displayedConnectorID : number = 0;
@@ -27,12 +29,12 @@ export class ChargePointConnectorsComponent implements OnInit {
 
   
   getChargePointConnectors(){
-    this._connectorService.getChargePointConnectors(this.chargePointID).subscribe((data) => {
-      console.log("this is the data");
-      console.log(data);
-      this.connectors = data;
-      this.cpfShow = false;
-    })
+    this.loading = true;
+    this.loadError = false;
+    this._connectorService.getChargePointConnectors(this.chargePointID).subscribe({
+      next: data => { this.connectors = data; this.cpfShow = false; this.loading = false; },
+      error: () => { this.loading = false; this.loadError = true; }
+    });
   }
 
   deleteChargePoint(id : number){

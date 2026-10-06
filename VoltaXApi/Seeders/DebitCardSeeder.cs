@@ -18,9 +18,12 @@ public class DebitCardSeeder
         var debitCardFaker = new Faker<DebitCard>()
             .RuleFor(dc => dc.UserID, f => f.PickRandom(users).ID)
             .RuleFor(dc => dc.Name, f => f.Name.FullName())
-            .RuleFor(dc => dc.CardNumber, f => f.Finance.CreditCardNumber())
-            .RuleFor(dc => dc.ExpirationDate, f => f.Date.Future())
-            .RuleFor(dc => dc.CVV, f => f.Finance.CreditCardCvv());
+            .RuleFor(dc => dc.Brand, f => f.PickRandom<DebitCardTypeEnum>())
+            .RuleFor(dc => dc.Last4, f => f.Random.ReplaceNumbers("####"))
+            .RuleFor(dc => dc.ExpiryMonth, f => f.Random.Int(1, 12))
+            .RuleFor(dc => dc.ExpiryYear, f => DateTime.UtcNow.Year + f.Random.Int(1, 5))
+            .RuleFor(dc => dc.Provider, _ => "development-fake")
+            .RuleFor(dc => dc.ProviderToken, f => "devtok_" + f.Random.AlphaNumeric(24));
 
         var debitCards = debitCardFaker.Generate(quantity);
         await dbContext.DebitCards.AddRangeAsync(debitCards);

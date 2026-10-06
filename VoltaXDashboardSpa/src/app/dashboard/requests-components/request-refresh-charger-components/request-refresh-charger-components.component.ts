@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { OcppConfigurationService } from 'src/_services/ocpp-services/ocpp-configuration.service';
+import { showOcppCommandFeedback } from 'src/_services/ocpp-services/ocpp-command-feedback';
 
 @Component({
   selector: 'app-request-refresh-charger-components',
@@ -21,7 +22,9 @@ export class RequestRefreshChargerComponentsComponent implements OnInit {
 
   refreshConnectors(){
     this._configurationService.refreshConnectors(this.chargePointID).subscribe(data => {
-      this._modalService.popup(ActionModalStatusEnum.Success, "Success", "Request To refresh charger settings for connectors successfully sent" , 4000);
+      showOcppCommandFeedback(this._modalService, data);
+    },(error) => {
+      showOcppCommandFeedback(this._modalService, error);
     })
   }
 

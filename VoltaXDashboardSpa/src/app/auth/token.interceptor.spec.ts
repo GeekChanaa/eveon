@@ -15,8 +15,7 @@ describe('TokenInterceptor', () => {
 
   beforeEach(() => {
     storage = new TokenStorageService();
-    storage.clear();
-    storage.store({ token: 'access', refreshToken: 'refresh' });
+    storage.startSession({ token: 'access' });
     spyOn(storage, 'isAccessTokenExpired').and.returnValue(false);
     spyOn(storage, 'isAccessTokenAboutToExpire').and.returnValue(false);
     refresh = jasmine.createSpyObj('TokenRefreshService', ['refresh']);
@@ -26,12 +25,12 @@ describe('TokenInterceptor', () => {
   });
   afterEach(() => storage.clear());
 
-  it('authenticates Google linking but leaves Google login anonymous', () => {
+  it('authenticates the Google link ticket but leaves Google login anonymous', () => {
     const handler: HttpHandler = { handle: request => {
       expect(request.headers.get('Authorization')).toBe('Bearer access');
       return of(new HttpResponse());
     }};
-    interceptor.intercept(new HttpRequest('POST', api + 'auth/google/link', {}), handler).subscribe();
+    interceptor.intercept(new HttpRequest('POST', api + 'auth/google/link-ticket', {}), handler).subscribe();
     interceptor.intercept(new HttpRequest('POST', api + 'auth/google', {}), {
       handle: request => {
         expect(request.headers.has('Authorization')).toBeFalse();
@@ -50,13 +49,41 @@ describe('TokenInterceptor', () => {
     expect(refresh.refresh).not.toHaveBeenCalled();
   });
 
+  it('authenticates OCPP requests to our API origin', () => {
+    const requestUrl = environment.apiUrl + '/ocpp/EVDriver/RequestStartTransaction/VOLTAX-008';
+
+    interceptor.intercept(new HttpRequest('POST', requestUrl, {}), {
+      handle: request => {
+        expect(request.headers.get('Authorization')).toBe('Bearer access');
+        return of(new HttpResponse());
+      }
+    }).subscribe();
+  });
+
   it('preserves the session when a business request fails after proactive refresh', () => {
     (storage.isAccessTokenExpired as jasmine.Spy).and.returnValue(true);
     interceptor.intercept(new HttpRequest('GET', api + 'users'), {
       handle: () => throwError(() => new HttpErrorResponse({ status: 500 }))
     }).subscribe({ error: error => expect(error.status).toBe(500) });
-    expect(storage.refreshToken).toBe('refresh');
+    expect(storage.hasRefreshToken()).toBeTrue();
     expect(router.navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it('sends the refresh cookie on session endpoints only', () => {
+    interceptor.intercept(new HttpRequest('POST', api + 'auth/Refresh', {}), {
+      handle: request => {
+        expect(request.withCredentials).toBeTrue();
+        expect(request.headers.get('X-Token-Transport')).toBe('cookie');
+        expect(request.headers.has('Authorization')).toBeFalse();
+        return of(new HttpResponse());
+      }
+    }).subscribe();
+    interceptor.intercept(new HttpRequest('GET', api + 'users'), {
+      handle: request => {
+        expect(request.withCredentials).toBeFalse();
+        return of(new HttpResponse());
+      }
+    }).subscribe();
   });
 
   it('retries a 401 only once', () => {

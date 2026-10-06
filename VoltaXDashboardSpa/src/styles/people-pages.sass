@@ -1,0 +1,264 @@
+// User and partner forms share the creation-page design tokens.
+body .page :is(app-create-user, app-create-partner, app-add-partner-logo)
+  .station-intro
+    margin-top: 0
+
+  .people-form-section
+    padding: 4px 0 12px
+    border-top: 1px solid var(--station-border)
+
+  .people-create .station-amenities
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .people-submit
+    justify-content: flex-end
+
+  .people-logo .create__card.card
+    padding: 0
+    border: 0
+    box-shadow: none
+
+  .people-logo .file__wrap
+    position: relative
+    min-height: 280px
+
+  .people-logo .upload-input
+    position: absolute
+    inset: 0
+    width: 100%
+    height: 100%
+    opacity: 0
+    z-index: 2
+    cursor: pointer
+
+  .people-logo .file__wrap:focus-within
+    outline: 2px solid var(--secondary1)
+    outline-offset: 3px
+
+  .people-logo .files__box
+    display: flex
+    align-items: center
+    justify-content: center
+
+    .image__box
+      position: relative
+      width: 240px
+      height: 240px
+      max-width: 100%
+      background: var(--station-bg)
+
+    .image__clear
+      z-index: 3
+
+    img
+      object-fit: contain
+      padding: 20px
+
+  @media (max-width: 600px)
+    .people-create .station-amenities
+      grid-template-columns: 1fr
+
+// Detail pages and their existing tab contents.
+body .page :is(app-user, app-partner)
+  --people-bg: var(--vx-surface, var(--primary1))
+  --people-soft: var(--vx-surface-alt, var(--primary2))
+  --people-border: var(--vx-border, var(--primary3))
+  --people-text: var(--vx-text, var(--primary9))
+  --people-muted: var(--professional3)
+  color: var(--people-text)
+
+  .content-area
+    border: 1px solid var(--people-border)
+    border-radius: 16px
+    background: var(--people-bg)
+    box-shadow: 0 4px 24px rgba(0, 0, 0, .03)
+
+  .tabs-container
+    padding: 12px 16px
+    border-color: var(--people-border)
+
+  .tabs
+    gap: 6px
+    overflow-x: auto
+    scrollbar-width: thin
+
+    .tab-button
+      flex-shrink: 0
+      padding: 11px 16px
+      border: 1px solid transparent
+      border-radius: 9px
+      font-size: 13px
+      font-weight: 600
+      color: var(--people-muted)
+
+      &:hover
+        background: var(--people-soft)
+        color: var(--people-text)
+
+      &.active
+        background: var(--vx-yellow-soft)
+        border-color: var(--secondary1)
+        color: var(--people-text)
+
+        &:after
+          display: none
+
+  .tab-content
+    padding: 24px
+
+  .profile-section.card
+    padding: 0
+    background: transparent
+    box-shadow: none
+
+    > .card-content
+      padding: 0
+
+  .card .card-header
+    padding: 0 0 20px
+    margin-bottom: 20px
+    border-color: var(--people-border)
+    gap: 16px
+    flex-wrap: wrap
+
+    h2
+      color: var(--people-text)
+      font-size: 18px
+      font-weight: 700
+
+  .form-content
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 20px
+    width: 100%
+
+    .form-section
+      min-width: 0
+      margin: 0
+      padding: 20px
+      border: 1px solid var(--people-border)
+      border-radius: 12px
+      background: var(--people-bg)
+
+    .section-title
+      margin: 0 0 20px
+      padding: 0 0 12px
+      border-color: var(--people-border)
+      color: var(--people-text)
+      font-size: 15px
+      font-weight: 700
+
+    .field-group
+      display: block
+
+  .form-section .form-field
+    margin-bottom: 16px
+
+    .form-field__label
+      color: var(--people-muted)
+      font-size: 12px
+
+    .form-field__display
+      border-color: var(--people-border)
+      background: var(--people-soft)
+      border-radius: 8px
+
+    .form-field__value
+      color: var(--people-text)
+      font-size: 14px
+      overflow-wrap: anywhere
+
+    .form-field__edit-btn
+      opacity: 1
+      color: var(--people-muted)
+      border-radius: 6px
+
+      .icon
+        fill: currentColor
+
+    .form-field__input, .form-field__select, .form-field__textarea
+      color: var(--input-text)
+      background: var(--input-bg)
+      border-color: var(--input-border)
+
+  .profile-section .logo-section
+    align-items: flex-start
+    padding-bottom: 24px
+    margin-bottom: 24px
+    border-bottom: 1px solid var(--people-border)
+
+    .logo-container
+      width: 160px
+      height: 180px
+      border: 1px solid var(--people-border)
+      border-radius: 12px
+      background: var(--people-soft)
+
+      &:hover
+        opacity: 1
+
+      img
+        object-fit: contain
+        padding: 12px 12px 48px
+
+      .empty-logo
+        background: var(--people-soft)
+
+      .edit-logo-btn
+        top: auto
+        bottom: 8px
+        left: 8px
+        right: 8px
+        width: auto
+        opacity: 1
+        transform: none
+        justify-content: center
+        padding: 8px
+        background: var(--secondary2)
+        color: #171717
+        border: 0
+
+      .uploading-overlay
+        color: #FFFFFF
+
+  .upload-container .dropzone
+    background: var(--people-soft)
+    border-color: var(--people-border)
+
+    .dropzone-prompt, .dropzone-prompt p
+      color: var(--people-muted)
+
+    &.dragging
+      background: var(--vx-yellow-soft)
+      border-color: var(--secondary1)
+
+  .upload-container .actions .btn-primary
+    background: var(--secondary2)
+    color: #171717
+
+  button:focus-visible
+    outline: 2px solid var(--secondary1)
+    outline-offset: 3px
+
+  @media (max-width: 1023px)
+    .form-content
+      grid-template-columns: 1fr
+
+  @media (max-width: 600px)
+    .tab-content
+      padding: 16px
+
+    .form-content .form-section
+      padding: 16px
+
+body .page :is(app-users-list, app-partners-list)
+  .filters__group .filters__list
+    overflow: visible
+
+  .filters__group .field__label
+    color: var(--vx-text, var(--primary9))
+    font-size: 13px
+
+  .filters__group .select
+    color: var(--input-text)
+    background-color: var(--input-bg)

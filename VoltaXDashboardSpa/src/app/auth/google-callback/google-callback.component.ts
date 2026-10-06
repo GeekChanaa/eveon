@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/_services/auth.service';
+import { AccessService } from 'src/_services/access.service';
 
 /**
  * Landing page of the Google redirect flow. The API sends the browser here with
@@ -18,7 +19,8 @@ export class GoogleCallbackComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private access: AccessService
   ) { }
 
   ngOnInit() {
@@ -29,7 +31,7 @@ export class GoogleCallbackComponent implements OnInit {
       window.history.replaceState(window.history.state, '', window.location.pathname);
       const error = params['error'];
       const token = params['token'];
-      const refreshToken = params['refreshToken'];
+      const twoFactorToken = params['twoFactorToken'];
       const linked = params['linked'];
       const returnUrl = params['returnUrl'];
 
@@ -44,24 +46,34 @@ export class GoogleCallbackComponent implements OnInit {
         return;
       }
 
+      // Google proved the identity, the account still asks for its second factor.
+      if (twoFactorToken) {
+        this._router.navigateByUrl('/auth/login', { state: { twoFactorToken } });
+        return;
+      }
+
       if (!token) {
         this.errorMessage = "Google sign in did not return a token, please try again.";
         return;
       }
 
-      const decodedToken = this._authService.completeExternalLogin(token, refreshToken);
+      this._authService.completeExternalLogin(token);
+
+      if (params['enrollTwoFactor'] === 'true') {
+        this._router.navigateByUrl('/dashboard/profile?tab=security');
+        return;
+      }
 
       if (returnUrl) {
         this._router.navigateByUrl(returnUrl);
         return;
       }
 
-      const role = decodedToken?.role;
-      if (role && role.toLowerCase().includes("admin")) {
-        this._router.navigateByUrl("/dashboard");
-      } else {
-        this._router.navigateByUrl("/my-dashboard");
-      }
+      this.access.load().subscribe({
+        next: () => this._router.navigateByUrl(this.access.canUrl('/dashboard') ? '/dashboard' :
+          this.access.can('AccessDashboard') ? '/dashboard/profile' : '/my-dashboard'),
+        error: () => this._router.navigateByUrl('/access-denied')
+      });
     }
   }
 

@@ -1,28 +1,29 @@
 <div class="settings__anchor" id="basics" data-value="Basics"></div>
 
 
-  <div class="card profile-section">
-    <div class="card-header">
-      <h2>My Profile</h2>
+  <div class="account-panel">
+    <div class="account-header">
+      <div><span class="profile-section__eyebrow">Account settings</span><h2>Personal information</h2><p>Keep your personal details and contact methods up to date.</p></div>
     </div>
-    <div class="card-content">
-      <div class="settings__profile">
+    <div class="account-content">
+      <div class="account-photo-row">
 
-        <div class="settings__avatar" (click)="openChangeAvatarModal()">
+        <div class="account-photo">
           <img *ngIf="user.imageUrl == null" src="assets/images/avatar.jpg" alt="Avatar">
-          <img *ngIf="user.imageUrl != null" [src]="staticUrl+user.imageUrl" alt="">
-          <button class="settings__avatar-upload">
+          <img *ngIf="user.imageUrl != null" [src]="resolveAvatar(user.imageUrl)" alt="">
+          <button type="button" aria-label="Change profile photo" (click)="openChangeAvatarModal()" class="account-photo-edit">
             <svg class="icon icon-edit">
               <use xlink:href="#icon-edit"></use>
             </svg>
           </button>
         </div>
 
+        <div class="account-photo-copy"><h3>{{user.firstName}} {{user.lastName}}</h3><p>Your profile photo</p><button type="button" class="account-edit" (click)="openChangeAvatarModal()">Change photo</button></div>
         <ng-container *ngIf="isChangeAvatarModalOpen">
-          <div class="avatar__modal_overlay" (click)="closeModal()"></div>
-          <div class="avatar__modal">
+          <div class="account-photo-overlay" (click)="closeModal()"></div>
+          <div class="account-photo-modal" role="dialog" aria-modal="true" aria-label="Change profile photo">
             <div class="close-button-container">
-              <button class="close-button" (click)="closeModal()">
+              <button class="close-button" type="button" aria-label="Close photo dialog" (click)="closeModal()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" />
@@ -32,18 +33,18 @@
             <div class="create__card card">
               <div class="file">
                 <div class="file__label">User Avatar
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed" data-position="right">
+                  <div class="tooltip" title="Choose an image for your profile photo" data-position="right">
                     <svg class="icon icon-info">
                       <use xlink:href="#icon-info"></use>
                     </svg>
                   </div>
                 </div>
                 <div class="file__wrap">
-                  <input class="upload-input" type="file" (change)="handleUpload($event)" />
+                  <input class="upload-input" type="file" accept="image/*" (change)="handleUpload($event)" />
                   <div class="file__box" *ngIf="!displayedImage">
                     <svg class="icon icon-upload">
                       <use xlink:href="#icon-upload"></use>
-                    </svg>Click or drop image
+                    </svg>Choose a profile image
                   </div>
                   <div class="files__box">
                     <div *ngIf="displayedImage != null" class="image__box">
@@ -56,53 +57,43 @@
             </div>
 
             <div class="form__actions">
-              <button class="button-small button" (click)="changeAvatar()"> Upload </button>
+              <button type="button" class="account-edit" (click)="closeModal()" [disabled]="imageUploading">Cancel</button><button type="button" class="account-save-photo" (click)="changeAvatar()" [disabled]="!selectedFile || imageUploading">{{ imageUploading ? 'Uploading…' : 'Save photo' }}</button>
             </div>
           </div>
         </ng-container>
       </div>
-      <div class="form-content">
+      <div class="account-layout">
         <!-- Basic Information -->
-        <div class="form-section">
-          <h3 class="section-title">Personal Information</h3>
-          <div class="field-group">
-            <app-display-cell inpType="text" title="First Name" [updateObservable]="updateUserObservable.bind(this)"
+        <div class="account-personal">
+          <h3 class="account-section-title">Personal details</h3><p class="account-section-copy">Select Edit beside a field to update your information.</p>
+          <div class="account-fields">
+            <app-display-cell [modern]="true" inpType="text" title="firstName" [updateObservable]="updateUserObservable.bind(this)"
               [val]="user.firstName" [object]="user"></app-display-cell>
 
-            <app-display-cell inpType="text" title="Last Name" [updateObservable]="updateUserObservable.bind(this)"
+            <app-display-cell [modern]="true" inpType="text" title="lastName" [updateObservable]="updateUserObservable.bind(this)"
               [val]="user.lastName" [object]="user"></app-display-cell>
 
-            <app-display-cell inpType="date" title="birthday" [updateObservable]="updateUserObservable.bind(this)"
+            <app-display-cell [modern]="true" inpType="date" title="birthday" [updateObservable]="updateUserObservable.bind(this)"
               [val]="user.birthday" [object]="user"></app-display-cell>
           </div>
 
         </div>
 
-        <div class="form-section">
-          <h3 class="section-title">Contact Information</h3>
-          <div class="field">
-            <div class="field__label">
-              Email
-              <div class="tooltip" title="Your Email Address">
-                <svg class="icon icon-info">
-                  <use xlink:href="#icon-info"></use>
-                </svg>
-              </div>
-              <div class="tooltip" (click)="verifyEmail()"
-                [title]="user.isEmailVerified ? 'Email Verified' : 'Email Not Verified'">
-                <svg class="icon icon-check"
-                  [ngClass]="{'verified': user.isEmailVerified, 'not-verified': !user.isEmailVerified}">
-                  <use xlink:href="#icon-check"></use>
-                </svg>
-              </div>
-              <div class="field__edit" (click)="editingEmail = true">
+        <div class="account-contact">
+          <div class="account-contact-intro"><h3 class="account-section-title">Contact information</h3><p class="account-section-copy">Manage your email address and phone number.</p></div>
+          <div class="account-contact-card">
+            <div class="account-contact-heading">
+              <span class="contact-card__label"><svg class="icon"><use xlink:href="#icon-mail"></use></svg>Email</span>
+              <button type="button" class="verification-badge" [class.verification-badge--verified]="user.isEmailVerified" [class.verification-badge--pending]="!user.isEmailVerified" (click)="verifyEmail()" [attr.aria-label]="user.isEmailVerified ? 'Email verified' : 'Verify email'" [attr.data-tooltip]="user.isEmailVerified ? 'Verified email address' : 'Email not verified — click to verify'">
+                <svg class="icon"><use [attr.xlink:href]="user.isEmailVerified ? '#icon-check-circle' : '#icon-info-stroke'"></use></svg><span>{{user.isEmailVerified ? 'Verified' : 'Verify'}}</span>
+              </button>
+              <button type="button" class="account-edit" (click)="editingEmail = true">Edit email
                 <svg class="icon icon-edit">
                   <use xlink:href="#icon-edit"></use>
-                </svg>
-              </div>
+                </svg></button>
             </div>
-            <div class="field__information" *ngIf="!editingEmail">
-              <ng-container *ngIf="user.email != null && user.email != ''">{{user.email | titlecase}}</ng-container>
+            <div class="account-contact-value" *ngIf="!editingEmail">
+              <ng-container *ngIf="user.email != null && user.email != ''">{{user.email}}</ng-container>
               <ng-container *ngIf="user.email == null || user.email == ''"> not specified </ng-container>
             </div>
             <ng-container *ngIf="editingEmail">
@@ -120,29 +111,19 @@
             </ng-container>
           </div>
 
-          <div class="field">
-            <div class="field__label">
-              Phone
-              <div class="tooltip" title="Your Phone Number">
-                <svg class="icon icon-info">
-                  <use xlink:href="#icon-info"></use>
-                </svg>
-              </div>
-              <div class="tooltip" (click)="verifyPhone()"
-                [title]="user.isPhoneNumberVerified ? 'Phone Verified' : 'Phone Not Verified'">
-                <svg class="icon icon-check"
-                  [ngClass]="{'verified': user.isPhoneNumberVerified, 'not-verified': !user.isPhoneNumberVerified}">
-                  <use xlink:href="#icon-check"></use>
-                </svg>
-              </div>
-              <div class="field__edit" (click)="editingPhone = true">
+          <div class="account-contact-card">
+            <div class="account-contact-heading">
+              <span class="contact-card__label"><svg class="icon"><use xlink:href="#icon-phone"></use></svg>Phone</span>
+              <button type="button" class="verification-badge" [class.verification-badge--verified]="user.isPhoneNumberVerified" [class.verification-badge--pending]="!user.isPhoneNumberVerified" (click)="verifyPhone()" [attr.aria-label]="user.isPhoneNumberVerified ? 'Phone verified' : 'Verify phone'" [attr.data-tooltip]="user.isPhoneNumberVerified ? 'Verified phone number' : 'Phone not verified — click to verify'">
+                <svg class="icon"><use [attr.xlink:href]="user.isPhoneNumberVerified ? '#icon-check-circle' : '#icon-info-stroke'"></use></svg><span>{{user.isPhoneNumberVerified ? 'Verified' : 'Verify'}}</span>
+              </button>
+              <button type="button" class="account-edit" (click)="editingPhone = true">Edit phone
                 <svg class="icon icon-edit">
                   <use xlink:href="#icon-edit"></use>
-                </svg>
-              </div>
+                </svg></button>
             </div>
-            <div class="field__information" *ngIf="!editingPhone">
-              <ng-container *ngIf="user.phone != null && user.phone != ''">{{user.phone | titlecase}}</ng-container>
+            <div class="account-contact-value" *ngIf="!editingPhone">
+              <ng-container *ngIf="user.phone != null && user.phone != ''">{{user.phone}}</ng-container>
               <ng-container *ngIf="user.phone == null || user.phone == ''"> not specified </ng-container>
             </div>
             <ng-container *ngIf="verifyingPhone">

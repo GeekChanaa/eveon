@@ -1,0 +1,53 @@
+# Example: OCPP security profile 3 (mutual TLS) with Caddy terminating TLS (Caddy >= 2.8).
+# Chargers use their own host name so that the client-certificate request never reaches browsers on the
+# dashboard/API host. Profile 2 chargers (no client certificate) can use the same host: verify_if_given only
+# checks a certificate when one is presented, and the API decides per charger (ChargePoint.SecurityProfile).
+#
+# 1. Download the charger CA (dashboard > Account > Charger PKI > Download, or GET /ocpp/Security/Ca/Certificate)
+#    to /etc/caddy/eveon-charger-ca.pem.
+# 2. In /etc/eveon/api.env:
+#      Ocpp__Tls__ClientCertHeader=X-Client-Cert
+#      ReverseProxy__KnownProxies__0=172.17.0.1      (the address Caddy reaches the container from)
+#    The API only reads X-Client-Cert from ReverseProxy:KnownProxies (and loopback) and removes it otherwise.
+# 3. Point the chargers at wss://ocpp.eveon.ma/ocpp/<chargePointId>.
+#
+# Keep the API port (8080) bound to 127.0.0.1 / the docker bridge: anything that can reach it directly from a
+# trusted address could set X-Client-Cert itself.
+
+ocpp.eveon.ma {
+	tls {
+		protocols tls1.2 tls1.3
+		client_auth {
+			mode verify_if_given
+			trust_pool file /etc/caddy/eveon-charger-ca.pem
+		}
+	}
+
+	# Only the OCPP websocket is served on this host.
+	@ocpp path /ocpp/* /OCPP/*
+	handle @ocpp {
+		reverse_proxy 127.0.0.1:8080 {
+			# Overwrites any X-Client-Cert sent by the client; empty when no certificate was presented.
+			header_up X-Client-Cert {http.request.tls.client.certificate_der_base64}
+		}
+	}
+	handle {
+		respond 404
+	}
+
+	header -Server
+}
+
+# The regular API host stays as in deploy/Caddyfile; strip the header there so it can never be forged through it.
+api.eveon.ma {
+	encode gzip
+
+	reverse_proxy 127.0.0.1:8080 {
+		header_up -X-Client-Cert
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}

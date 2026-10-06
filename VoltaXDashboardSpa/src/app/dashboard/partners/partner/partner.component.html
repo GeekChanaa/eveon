@@ -11,29 +11,22 @@
 
   <!-- Content area -->
   <div *ngIf="partnerLoaded" class="content-area">
-    <!-- Tabs navigation -->
-    <div class="tabs-container">
-      <div class="tabs">
-        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
-          class="tab-button">
-          Information
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'ChargingStationsTab'}" (click)="changeTab('ChargingStationsTab')"
-          class="tab-button">
-          Charging Stations
-        </button>
-      </div>
+    <div class="station-tabs" role="tablist" aria-label="Partner sections">
+      <button type="button" *ngFor="let tab of tabs; let i = index" role="tab" [id]="'tab-' + tab.id"
+        [attr.aria-controls]="'panel-' + tab.id" [attr.aria-selected]="tabsEnum === tab.id"
+        [attr.tabindex]="tabsEnum === tab.id ? 0 : -1" [class.is-active]="tabsEnum === tab.id"
+        (click)="changeTab(tab.id)" (keydown)="onTabKey($event, i)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path [attr.d]="tab.icon"/></svg>
+        <span class="tab-copy"><strong>{{ tab.label }}</strong><span>{{ tab.description }}</span></span>
+      </button>
     </div>
 
     <!-- Tab content -->
     <div class="tab-content">
       <!-- Information Tab -->
-      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
-        <div class="card profile-section">
-          <div class="card-header">
-            <h2>Partner Profile</h2>
-          </div>
-          <div class="card-content">
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab" id="panel-InformationsTab" role="tabpanel" aria-labelledby="tab-InformationsTab">
+        <div class="section-intro"><div><h2>Information</h2><p>Review the partner profile and select Edit beside a field to make a change.</p></div></div>
+        <div class="partner-profile">
             <!-- Logo section -->
             <div class="logo-section">
               <div class="logo-container"
@@ -97,91 +90,90 @@
             </div>
 
             <!-- Main details -->
-            <div class="form-content">
+            <div class="information-layout form-content">
               <!-- Basic Information -->
-              <div class="form-section">
-                <h3 class="section-title">Basic Information</h3>
+              <section class="station-section form-section">
+                <header><h3>Basic information</h3><p>Identity and organisation details.</p></header>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Name" [val]="partner.name"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   [editable]="false" inpType="text" title="Partner Identification Number"
                   [val]="partner.partnerIdentificationNumber"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="textarea" title="Description" [val]="partner.description"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="select_enum" title="Type" enumName="PartnerTypeEnum"
                   val="{{partner.type}}"></app-display-cell>
-              </div>
+              </section>
 
               <!-- Contact Information -->
-              <div class="form-section">
-                <h3 class="section-title">Contact Information</h3>
+              <section class="station-section form-section">
+                <header><h3>Contact information</h3><p>Email addresses and phone numbers.</p></header>
 
                 <div class="field-group">
-                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                     inpType="text" [control]="getControl('email')"  title="Email" [val]="partner.email"></app-display-cell>
 
-                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                     inpType="text" title="email2" [control]="getControl('email2')" [val]="partner.email2"></app-display-cell>
 
-                  <app-display-cell *ngIf="partner.email3" [updateObservable]="updatePartnerObservable.bind(this)"
+                  <app-display-cell *ngIf="partner.email3" [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)"
                     [object]="partner" inpType="text" [control]="getControl('email3')" title="email3"
                     [val]="partner.email3"></app-display-cell>
                 </div>
 
                 <div class="field-group">
-                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                  <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                     inpType="text" [control]="getControl('phone')" title="phone" [val]="partner.phone"></app-display-cell>
 
-                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)"
+                  <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)"
                     [object]="partner" inpType="text" [control]="getControl('phone2')" title="phone2"
                     [val]="partner.phone2"></app-display-cell>
 
-                  <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)"
+                  <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)"
                     [object]="partner" inpType="text" [control]="getControl('phone3')" title="phone3"
                     [val]="partner.phone3"></app-display-cell>
                 </div>
-              </div>
+              </section>
 
               <!-- Address Information -->
-              <div class="form-section">
-                <h3 class="section-title">Address</h3>
+              <section class="station-section form-section">
+                <header><h3>Address</h3><p>Location details for this partner.</p></header>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Country" [val]="partner.country"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="City" [val]="partner.city"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Address" [val]="partner.address"></app-display-cell>
-              </div>
+              </section>
 
               <!-- Business Information -->
-              <div class="form-section">
-                <h3 class="section-title">Business Information</h3>
+              <section class="station-section form-section">
+                <header><h3>Business information</h3><p>Tax, registration, and banking details.</p></header>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Tax Identification Number"
                   [val]="partner.taxIdentificationNumber"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Registration Number" [val]="partner.registrationNumber"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
+                <app-display-cell [modern]="true" [updateObservable]="updatePartnerObservable.bind(this)" [object]="partner"
                   inpType="text" title="Bank Account Number" [val]="partner.bankAccountNumber"></app-display-cell>
-              </div>
+              </section>
             </div>
-          </div>
         </div>
       </div>
 
       <!-- Charging Stations Tab -->
-      <div *ngIf="tabsEnum === 'ChargingStationsTab'" class="charging-stations-tab">
+      <div *ngIf="tabsEnum === 'ChargingStationsTab'" class="charging-stations-tab" id="panel-ChargingStationsTab" role="tabpanel" aria-labelledby="tab-ChargingStationsTab">
         <div class="card">
           <div class="card-header">
             <h2>Charging Stations</h2>

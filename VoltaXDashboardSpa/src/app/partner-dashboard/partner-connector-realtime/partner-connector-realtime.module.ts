@@ -1,3 +1,4 @@
+import { ChargePointStatusComponent } from 'src/app/atoms/charge-point-status/charge-point-status.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
@@ -26,6 +27,7 @@ import { PartnerConnectorRealtimeComponent } from './partner-connector-realtime.
         PartnerConnectorRealtimeMainOverviewComponent,
     ],
     imports: [
+        ChargePointStatusComponent,
         AtomsModule,
         ReactiveFormsModule,
         CommonModule,

@@ -1,0 +1,242 @@
+<div class="vx-provisioning" *ngIf="current">
+  <div class="prov__overlay"></div>
+  <div class="prov" role="dialog" aria-modal="true" aria-labelledby="prov-title"
+    [class.prov_wide]="step === 'review' || (step === 'done' && result?.results?.length)">
+
+    <!-- Header -->
+    <header class="prov__header">
+      <div class="prov__heading">
+        <span class="prov__eyebrow">
+          <span class="prov__pulse" aria-hidden="true"></span>
+          New charge point connected
+        </span>
+        <h2 id="prov-title" class="prov__title">{{current.chargePointId}}</h2>
+        <p class="prov__meta">
+          <span *ngIf="current.stationName">{{current.stationName}}</span>
+          <span *ngIf="current.vendorName || current.modelName">{{current.vendorName}} {{current.modelName}}</span>
+          <span *ngIf="current.serialNumber">SN {{current.serialNumber}}</span>
+          <span *ngIf="current.firmwareVersion">FW {{current.firmwareVersion}}</span>
+        </p>
+      </div>
+      <button type="button" class="prov__close" *ngIf="step === 'choose' || step === 'error'" (click)="later()" aria-label="Configure later" title="Configure later">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="prov__body">
+
+      <!-- 1. Choose -->
+      <ng-container *ngIf="step === 'choose'">
+        <p class="prov__lead">
+          This charge point is on hold: it cannot start a charging session until it is configured.
+          How do you want to configure it?
+        </p>
+
+        <div class="prov__choices">
+          <button type="button" class="prov__choice" (click)="start('Automatic')">
+            <span class="prov__choice-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg>
+            </span>
+            <span class="prov__choice-text">
+              <span class="prov__choice-title">Automatically <span class="prov__tag">Recommended</span></span>
+              <span class="prov__choice-desc">Apply the default configuration profile. Settings the charger does not support are skipped.</span>
+            </span>
+          </button>
+
+          <button type="button" class="prov__choice" (click)="start('Manual')">
+            <span class="prov__choice-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+            </span>
+            <span class="prov__choice-text">
+              <span class="prov__choice-title">Manually</span>
+              <span class="prov__choice-desc">Review every setting one by one, starting from the defaults, and add your own.</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="prov__footer prov__footer_split">
+          <div class="prov__links">
+            <button type="button" class="prov__link" (click)="openGuidedSetup()">Open guided setup</button>
+            <button type="button" class="prov__link" (click)="skip()">Accept without configuring</button>
+          </div>
+          <div class="prov__footer-actions">
+            <span class="prov__count" *ngIf="remaining > 0">{{remaining}} more waiting</span>
+            <button type="button" class="prov__btn prov__btn_ghost" (click)="later()">Later</button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- 2. Working -->
+      <div class="prov__working" *ngIf="step === 'discovering' || step === 'applying'" aria-live="polite">
+        <span class="prov__spinner" aria-hidden="true"></span>
+        <ng-container *ngIf="step === 'discovering'">
+          <h3>Reading the charger's device model…</h3>
+          <p>The charger is listing every component and variable it supports. This can take up to a minute.</p>
+        </ng-container>
+        <ng-container *ngIf="step === 'applying'">
+          <h3>Sending the configuration…</h3>
+          <p>Settings are sent in batches with SetVariables; each one comes back accepted or rejected.</p>
+        </ng-container>
+      </div>
+
+      <!-- 3. Manual review -->
+      <ng-container *ngIf="step === 'review' && plan">
+        <div class="prov__notice" *ngIf="plan.discoveryStatus !== 'Completed'" [class.prov__notice_warn]="plan.reportedVariableCount === 0">
+          <strong>Discovery {{plan.discoveryStatus === 'TimedOut' ? 'incomplete' : 'unavailable'}}.</strong>
+          {{plan.discoveryMessage}}
+          <span *ngIf="plan.reportedVariableCount === 0">Support for each setting could not be checked.</span>
+        </div>
+        <p class="prov__lead prov__lead_small" *ngIf="plan.discoveryStatus === 'Completed'">
+          The charger reported {{plan.reportedVariableCount}} variables. Unsupported and read-only settings are unticked.
+        </p>
+
+        <div class="prov__table-wrap">
+          <table class="prov__table">
+            <thead>
+              <tr>
+                <th class="prov__col-check"><span class="sr-only">Send</span></th>
+                <th>Setting</th>
+                <th>On the charger</th>
+                <th>Value to send</th>
+                <th class="prov__col-actions"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let group of groups; trackBy: trackGroup">
+              <tr class="prov__group-row"><th colspan="5">{{group.name}}</th></tr>
+              <tr *ngFor="let row of group.rows; trackBy: trackRow" [class.prov__row_off]="!row.include">
+                <td class="prov__col-check">
+                  <input type="checkbox" [(ngModel)]="row.include" [disabled]="row.variable.support === 'ReadOnly'"
+                    [attr.aria-label]="'Send ' + label(row.variable)">
+                </td>
+                <td>
+                  <div class="prov__var">{{label(row.variable)}}</div>
+                  <div class="prov__desc" *ngIf="row.variable.description">{{row.variable.description}}</div>
+                </td>
+                <td>
+                  <span class="prov__badge" [ngClass]="'prov__badge_' + row.variable.support" [title]="supportHint(row.variable)">{{supportLabel(row.variable)}}</span>
+                  <div class="prov__current" *ngIf="row.variable.currentValue != null" [title]="row.variable.currentValue">{{row.variable.currentValue || '(empty)'}}</div>
+                </td>
+                <td class="prov__col-value">
+                  <select *ngIf="isBoolean(row.variable); else notBool" class="select prov__input" [(ngModel)]="row.variable.value" [disabled]="!row.include">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                  <ng-template #notBool>
+                    <select *ngIf="options(row.variable).length; else freeText" class="select prov__input" [(ngModel)]="row.variable.value" [disabled]="!row.include">
+                      <option *ngFor="let o of options(row.variable)" [value]="o">{{o}}</option>
+                    </select>
+                  </ng-template>
+                  <ng-template #freeText>
+                    <input class="field__input prov__input" [type]="isNumeric(row.variable) ? 'number' : 'text'"
+                      [attr.min]="row.variable.minLimit" [attr.max]="row.variable.maxLimit"
+                      [(ngModel)]="row.variable.value" [disabled]="!row.include" maxlength="1000">
+                  </ng-template>
+                  <div class="prov__hint" *ngIf="row.variable.unit || row.variable.minLimit != null || row.variable.maxLimit != null">
+                    <span *ngIf="row.variable.minLimit != null || row.variable.maxLimit != null">{{row.variable.minLimit ?? '…'}} – {{row.variable.maxLimit ?? '…'}}</span>
+                    {{row.variable.unit}}
+                  </div>
+                </td>
+                <td class="prov__col-actions">
+                  <button type="button" class="prov__icon-btn" *ngIf="row.custom" (click)="removeRow(row)" aria-label="Remove setting">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add a setting that is not in the profile -->
+        <button type="button" class="prov__add-toggle" *ngIf="!showAddRow" (click)="showAddRow = true">+ Add a setting</button>
+        <form class="prov__add" *ngIf="showAddRow" (ngSubmit)="addRow()">
+          <label><span>Component</span><input class="field__input" name="componentName" [(ngModel)]="newRow.componentName" placeholder="TxCtrlr" required maxlength="50"></label>
+          <label><span>Instance</span><input class="field__input" name="componentInstance" [(ngModel)]="newRow.componentInstance" maxlength="50"></label>
+          <label class="prov__add-small"><span>EVSE</span><input class="field__input" type="number" min="1" name="evseId" [(ngModel)]="newRow.evseId"></label>
+          <label class="prov__add-small"><span>Connector</span><input class="field__input" type="number" min="1" name="connectorId" [(ngModel)]="newRow.connectorId" [disabled]="newRow.evseId == null"></label>
+          <label><span>Variable</span><input class="field__input" name="variableName" [(ngModel)]="newRow.variableName" placeholder="EVConnectionTimeOut" required maxlength="50"></label>
+          <label><span>Instance</span><input class="field__input" name="variableInstance" [(ngModel)]="newRow.variableInstance" maxlength="50"></label>
+          <label class="prov__add-small"><span>Attribute</span>
+            <select class="select" name="attributeType" [(ngModel)]="newRow.attributeType">
+              <option *ngFor="let t of attributeTypes" [value]="t">{{t}}</option>
+            </select>
+          </label>
+          <label><span>Value</span><input class="field__input" name="value" [(ngModel)]="newRow.value" maxlength="1000"></label>
+          <div class="prov__add-actions">
+            <button type="button" class="prov__btn prov__btn_ghost" (click)="showAddRow = false">Cancel</button>
+            <button type="submit" class="prov__btn" [disabled]="!newRow.componentName.trim() || !newRow.variableName.trim()">Add</button>
+          </div>
+        </form>
+
+        <div class="prov__error" *ngIf="errorMessage">{{errorMessage}}</div>
+
+        <div class="prov__footer prov__footer_split">
+          <button type="button" class="prov__btn prov__btn_ghost" (click)="step = 'choose'">Back</button>
+          <button type="button" class="prov__btn prov__btn_primary" (click)="apply()" [disabled]="selectedCount === 0">
+            Send {{selectedCount}} setting{{selectedCount === 1 ? '' : 's'}}
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- 4. Result -->
+      <ng-container *ngIf="step === 'done' && result">
+        <div class="prov__outcome" [class.prov__outcome_ok]="result.provisioned" [class.prov__outcome_bad]="!result.provisioned">
+          <span class="prov__outcome-icon" aria-hidden="true">
+            <svg *ngIf="result.provisioned" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg *ngIf="!result.provisioned" viewBox="0 0 24 24" fill="none"><path d="M12 7v6m0 4h.01" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>
+          <div>
+            <h3>{{result.provisioned ? 'Charge point configured' : 'Configuration not applied'}}</h3>
+            <p *ngIf="result.message">{{result.message}}</p>
+            <p *ngIf="result.results.length">
+              {{result.acceptedCount}} accepted<span *ngIf="result.failedCount">, {{result.failedCount}} not applied</span><span *ngIf="skippedBeforeSend && method === 'Automatic'"> · {{skippedBeforeSend}} skipped as unsupported</span>.
+              <span *ngIf="result.rebootRequired">Some settings need a reboot; the charger was asked to restart.</span>
+            </p>
+            <p class="prov__followup" *ngIf="result.followUp">{{result.followUp}}</p>
+          </div>
+        </div>
+
+        <div class="prov__table-wrap prov__table-wrap_short" *ngIf="result.results.length">
+          <table class="prov__table">
+            <thead>
+              <tr><th>Setting</th><th>Value</th><th>Result</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of result.results">
+                <td><div class="prov__var">{{label(r)}}</div></td>
+                <td class="prov__mono">{{r.value}}</td>
+                <td>
+                  <span class="prov__status" [ngClass]="'prov__status_' + statusTone(r.status)">{{r.status}}</span>
+                  <div class="prov__desc" *ngIf="r.statusReason">{{r.statusReason}}</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prov__footer">
+          <button type="button" class="prov__btn prov__btn_ghost" *ngIf="!result.provisioned" (click)="retry()">Try again</button>
+          <button type="button" class="prov__btn prov__btn_primary" (click)="next()">
+            {{remaining > 0 ? 'Next charge point' : 'Done'}}
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Error -->
+      <ng-container *ngIf="step === 'error'">
+        <div class="prov__outcome prov__outcome_bad">
+          <span class="prov__outcome-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 7v6m0 4h.01" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </span>
+          <div>
+            <h3>Could not configure {{current.chargePointId}}</h3>
+            <p>{{errorMessage}}</p>
+          </div>
+        </div>
+        <div class="prov__footer">
+          <button type="button" class="prov__btn prov__btn_ghost" (click)="later()">Later</button>
+          <button type="button" class="prov__btn prov__btn_primary" (click)="retry()">Try again</button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

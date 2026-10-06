@@ -19,6 +19,7 @@ namespace VoltaXApi.Services
         private readonly IAuthService _authService;
         private readonly IMailService _mailService;
         private readonly IMailRequestFactory _mailRequestFactory;
+        private readonly IRefreshTokenService _refreshTokenService;
 
         public UserService(
             IFileManagementService fileManagementService,
@@ -27,9 +28,11 @@ namespace VoltaXApi.Services
             IAuthService authService,
             ICardRepository cardRepository,
             IMailService mailService,
-            IMailRequestFactory mailRequestFactory
+            IMailRequestFactory mailRequestFactory,
+            IRefreshTokenService refreshTokenService
         )
         {
+            _refreshTokenService = refreshTokenService;
             _fileManagementService = fileManagementService;
             _imageRepo = imageRepo;
             _userRepository = userRepository;
@@ -38,31 +41,29 @@ namespace VoltaXApi.Services
             _mailService = mailService;
             _mailRequestFactory = mailRequestFactory;
         }
-        public async Task UploadUserAvatar(IFormFile file, int partnerID)
+        public async Task UploadUserAvatar(IFormFile file, int userID)
         {
-            string folderName = "ProfilePictures/";
-            string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            fileName = partnerID + "" + fileName.Substring(fileName.LastIndexOf("."), fileName.Length - fileName.LastIndexOf("."));
-            this._fileManagementService.UploadFile(fileName, folderName, file);
-            var fileExtension = Path.GetExtension(file.FileName);
+            var user = await _userRepository.GetByIdAsync(userID)
+                ?? throw new NotFoundException("User not found.");
+
+            // Random file name, linked from the user's Image row: avatar URLs cannot be guessed from user ids.
+            var stored = await _fileManagementService.SaveImageAsync(file, "ProfilePictures");
 
             var newImage = new Image
             {
-                Url = $"ProfilePictures/{fileName}",
+                Url = stored.RelativeUrl,
                 UploadDate = DateTime.UtcNow,
-                Format = fileExtension,
+                Format = stored.Extension,
                 Priority = ImagePriorityEnum.Principal,
                 IsActive = true,
-                AltText = "User Image " + partnerID,
+                AltText = "User Image",
                 Description = "none"
             };
 
             await _imageRepo.AddAsync(newImage);
 
-            // Getting partner
-            var partner = await _userRepository.GetByIdAsync(partnerID);
-            partner.ImageID = newImage.ID;
-            await _userRepository.Update(partner);
+            user.ImageID = newImage.ID;
+            await _userRepository.Update(user);
         }
 
         public async Task<int> CreateUserDashboard(UserDashboardCreateDto userToCreate)
@@ -99,6 +100,7 @@ namespace VoltaXApi.Services
         {
             var userToUpdate = await this._userRepository.GetByIdAsync(user.ID);
             userToUpdate.Email = user.Email;
+            userToUpdate.IsEmailVerified = false;
             await this._userRepository.Update(userToUpdate);
             await this._authService.CreateEmailVerificationToken(user.ID);
             var mailRequest = _mailRequestFactory.CreateChangedEmailMailRequest(userToUpdate.Email);
@@ -135,12 +137,18 @@ namespace VoltaXApi.Services
         {
             var user = await _userRepository.GetByIdAsync(userID);
 
-            if (user.SuspendedAt != userDto.SuspendedAt && user.SuspendedAt < userDto.SuspendedAt)
-            {
-                await SuspendUser(user, user.SuspendedAt, user.SuspensionReason);
-            }
+            var now = DateTime.UtcNow;
+            var newlySuspended = userDto.SuspendedAt > now && userDto.SuspendedAt != user.SuspendedAt;
 
             await _userRepository.EditUserDashboardInformations(userID, userDto);
+
+            // Suspension ends every session: refresh tokens are revoked here and the next
+            // request with a still valid access token is refused by AccessService.
+            if (newlySuspended)
+            {
+                await _refreshTokenService.RevokeAllForUser(userID, "suspended");
+                await SuspendUser(user, user.SuspendedAt, user.SuspensionReason);
+            }
         }
 
     }

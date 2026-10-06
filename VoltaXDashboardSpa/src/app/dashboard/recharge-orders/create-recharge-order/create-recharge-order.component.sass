@@ -1,0 +1,116 @@
+:host
+  display: block
+.recharge-order-create
+  max-width: 900px
+.station-intro
+  margin-bottom: 24px
+  h2
+    margin: 0 0 6px
+    font-size: 20px
+  p
+    margin: 0
+    color: var(--vx-text-muted, #737985)
+    font-size: 13px
+form
+  display: grid
+  gap: 20px
+.order-section
+  overflow: hidden
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
+  header
+    padding: 20px 24px
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    h3
+      margin: 0 0 5px
+      font-size: 15px
+    p
+      margin: 0
+      color: var(--vx-text-muted, #737985)
+      font-size: 12px
+.order-fields, .status-options
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  gap: 16px
+  padding: 24px
+  label > span
+    display: block
+    margin-bottom: 7px
+    color: var(--vx-text-muted, #737985)
+    font-size: 12px
+    font-weight: 500
+  select, input
+    box-sizing: border-box
+    width: 100%
+    height: 44px
+    padding: 10px 12px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 8px
+    background: var(--vx-surface, #fff)
+    color: var(--vx-text, #171b24)
+    font: inherit
+    &:focus
+      outline: 2px solid var(--vx-yellow, #e5b223)
+  small
+    display: block
+    margin-top: 7px
+    color: #d64343
+    font-size: 11px
+.amount-input
+  display: flex
+  align-items: center
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 8px
+  input
+    border: 0
+    outline: 0
+  span
+    padding-right: 12px
+    color: var(--vx-text-muted, #737985)
+    font-size: 12px
+.status-options
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  label
+    display: flex
+    align-items: center
+    gap: 8px
+    min-height: 42px
+    padding: 0 12px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 8px
+    cursor: pointer
+    font-size: 13px
+    &.selected
+      border-color: var(--vx-yellow, #e5b223)
+      background: var(--vx-yellow-soft, #e5b22314)
+    input
+      width: auto
+      height: auto
+      padding: 0
+      accent-color: var(--vx-yellow, #e5b223)
+.form-actions
+  display: flex
+  justify-content: flex-end
+  gap: 8px
+.primary-action, .secondary-action
+  min-height: 40px
+  padding: 8px 14px
+  border-radius: 8px
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+.primary-action
+  border: 1px solid var(--vx-yellow, #e5b223)
+  background: var(--vx-yellow, #e5b223)
+  color: #171b24
+.secondary-action
+  border: 1px solid var(--vx-border, #ededed)
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+@media (max-width: 600px)
+  .order-fields, .status-options
+    grid-template-columns: 1fr
+  .order-fields, .status-options, .order-section header
+    padding-left: 16px
+    padding-right: 16px

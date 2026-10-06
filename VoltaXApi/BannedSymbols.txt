@@ -1,0 +1,4 @@
+# Stored and compared instants are UTC; business calendar days come from IBusinessClock.
+P:System.DateTime.Now;Use DateTime.UtcNow, or IBusinessClock.LocalNow for business wall-clock time
+P:System.DateTime.Today;Use IBusinessClock.Today (business date) and IBusinessClock.StartOfDayUtc
+P:System.DateTimeOffset.Now;Use DateTimeOffset.UtcNow

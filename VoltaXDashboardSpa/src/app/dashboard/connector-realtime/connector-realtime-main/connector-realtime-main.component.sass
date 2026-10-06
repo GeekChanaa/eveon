@@ -88,51 +88,6 @@
   flex-direction: row
   .page__title
     flex: 0 0 100%
-// Status reads as a chip beside the title, not as a second heading.
-.status
-  display: inline-flex
-  align-items: center
-  margin-left: 12px
-  padding: 5px 12px
-  border: 1px solid var(--vx-border, #EDEDED)
-  border-radius: 999px
-  background: var(--vx-surface, #FFFFFF)
-  font-size: 13px
-  text-transform: capitalize
-  font-weight: 600
-  vertical-align: middle
-  cursor: default
-  .status-color
-    display: inline-flex
-    align-items: center
-    gap: 8px
-    color: var(--vx-text, #0B0B0B)
-    font-size: 13px
-    font-weight: 600
-    svg
-      height: 18px
-    &.active
-      color: green
-      svg
-        animation: blink-animation 1s infinite
 
-
-.connector-status-container
-  opacity: 0
-  display: none
-  transition: all 0.3s ease-in-out
-
-
-.connector-status-container.show
-  display: block
-  opacity: 1
-
-
-.connector-status-container
-  position: fixed
-  max-width: 700px
-  background: white
-  border-radius: 18px
-  border: 1px solid var(--primary4)
-  margin-top: 20px
-  z-index: 100
+.page__ocpp-badge
+  margin-left: 8px

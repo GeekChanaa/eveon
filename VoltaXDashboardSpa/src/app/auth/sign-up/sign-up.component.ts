@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn,
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {  Router } from '@angular/router';
 import { UserForRegisterDto } from 'src/_models/_dtos/user-for-register-dto';
+import { LEGAL } from 'src/app/global/legal';
 import { AuthService } from 'src/_services/auth.service';
 import { passwordMatchValidator } from 'src/app/validators/password-match-validator';
 import { strongPasswordValidator } from 'src/app/validators/strong-password-validator';
@@ -43,7 +44,8 @@ export class SignUpComponent implements OnInit {
         Validators.minLength(8),
         strongPasswordValidator()
       ]),
-      confirmPassword: new FormControl('', [Validators.required])
+      confirmPassword: new FormControl('', [Validators.required]),
+      acceptTerms: new FormControl(false, [Validators.requiredTrue])
     }, {
       validators: passwordMatchValidator('password', 'confirmPassword')
     });
@@ -66,7 +68,8 @@ export class SignUpComponent implements OnInit {
       lastName: formValue.lastName,
       email: formValue.email,
       phone: '',
-      password: formValue.password
+      password: formValue.password,
+      termsVersion: LEGAL.termsVersion
     }
 
     this._authService.register(userForRegister).subscribe((data) => {

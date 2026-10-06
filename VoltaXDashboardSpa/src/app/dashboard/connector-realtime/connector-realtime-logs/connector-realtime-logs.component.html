@@ -2,89 +2,70 @@
   Logs
 </div>
 
-<div class="table__actions_container">
-  <div class="filters" [ngClass]="{'active': isFiltersActive}">
-    <button class="button-square-stroke button-small filters__head" (click)="toggleActive($event)">
-      <svg class="icon icon-filter">
-        <use xlink:href="#icon-filter"></use>
-      </svg>
-    </button>
-    <div class="filters__body">
-        <div class="filters__top">
-          <div class="title-red filters__title">Filtering Message Logs</div>
-          <button class="filters__close" (click)="removeActive()">
-            <svg class="icon icon-close">
-              <use xlink:href="#icon-close"></use>
-            </svg>
-          </button>
-        </div>
-        <div  class="filters__group">
-          
-          <div class="filters__item">
-            <div class="filters__list">
-              <div class="field">
-                <div class="field__label">By Message
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.message">
-                      <option value="" selected>None</option>
-                      <option value="BootNotification">BootNotification</option>
-                      <option value="Authorize">Authorize</option>
-                      <option value="MeterValues">MeterValues</option>
-                      <option value="SecurityEventNotification">SecurityEventNotification</option>
-                      <option value="StatusNotification">StatusNotification</option>
-                      <option value="TransactionEvent">TransactionEvent</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+<div class="logs__toolbar">
+  <div class="logs__filters">
+    <label class="logs__field">
+      <span class="logs__label">Message</span>
+      <select class="select" [(ngModel)]="filters.message" (ngModelChange)="applyFilters()">
+        <option value="">All messages</option>
+        <option *ngFor="let type of messageTypes" [value]="type">{{type}}</option>
+      </select>
+    </label>
 
-              <div class="field" *ngIf="filters.message == 'TransactionEvent'">
-                <div class="field__label">Event Type
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="eventType">
-                      <option value="" selected>None</option>
-                      <option value="Updated">Updated</option>
-                      <option value="Started">Started</option>
-                      <option value="Ended">Ended</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-  
-              
-            </div>
-          </div>
-          
-        </div>
-        <div class="filters__btns">
-          <button class="button-stroke filters__button" (click)="resetFilters()">Reset</button>
-          <button class="button filters__button" (click)="applyFilters()">Apply</button>
-        </div>
-        
+    <label class="logs__field" *ngIf="filters.message == 'TransactionEvent'">
+      <span class="logs__label">Event type</span>
+      <select class="select" [(ngModel)]="filters.eventType" (ngModelChange)="applyFilters()">
+        <option value="">All events</option>
+        <option value="Started">Started</option>
+        <option value="Updated">Updated</option>
+        <option value="Ended">Ended</option>
+      </select>
+    </label>
+
+    <label class="logs__field">
+      <span class="logs__label">From</span>
+      <input class="field__input logs__date" type="datetime-local"
+        [(ngModel)]="filters.from" (change)="onRangeEdited()"
+        [max]="filters.to || null" [class.logs__date_invalid]="rangeError">
+    </label>
+
+    <label class="logs__field">
+      <span class="logs__label">To</span>
+      <input class="field__input logs__date" type="datetime-local"
+        [(ngModel)]="filters.to" (change)="onRangeEdited()"
+        [min]="filters.from || null" [class.logs__date_invalid]="rangeError">
+    </label>
+
+    <div class="logs__field">
+      <span class="logs__label">Last</span>
+      <div class="logs__segmented" role="group" aria-label="Quick time range">
+        <button type="button" *ngFor="let range of quickRanges"
+          [class.active]="activeQuickRange == range.hours"
+          [attr.aria-pressed]="activeQuickRange == range.hours"
+          (click)="setQuickRange(range.hours)">{{range.label}}</button>
+      </div>
     </div>
-    <div class="filters__overlay" (click)="removeActive()"></div>
+
+    <button type="button" class="logs__clear" *ngIf="hasActiveFilters" (click)="resetFilters()">
+      Clear filters
+    </button>
   </div>
-  <button class="button button__refresh" (click)="getLogs()">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 3V8M3 8H8M3 8L6 5.29168C7.59227 3.86656 9.69494 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.71683 21 4.13247 18.008 3.22302 14" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
-  Realtime : <app-toggle (toggled)="realtimeOnToggle($event)" [isToggled]="realtimeOn"></app-toggle>
+
+  <div class="logs__actions">
+    <button type="button" class="logs__refresh" (click)="refresh()"
+      [class.spinning]="isRefreshing" [disabled]="isLoading || isRefreshing"
+      aria-label="Refresh logs" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 3V8M3 8H8M3 8L6 5.29168C7.59227 3.86656 9.69494 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.71683 21 4.13247 18.008 3.22302 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Refresh</span>
+    </button>
+    <span class="logs__divider"></span>
+    <span class="realtime__label">Realtime</span>
+    <app-toggle (toggled)="realtimeOnToggle($event)" [isToggled]="realtimeOn"></app-toggle>
+  </div>
 </div>
+<div class="logs__error" *ngIf="rangeError">{{rangeError}}</div>
 
 <ng-container *ngIf="isLoading">
   <app-preloader-container></app-preloader-container>
@@ -93,21 +74,35 @@
 <ng-container *ngIf="!isLoading">
   <ng-container *ngIf="messageLogs == null || messageLogs.length == 0 ">
     <app-empty-card></app-empty-card>
+    <p class="logs__empty-hint" *ngIf="hasActiveFilters">No logs match these filters.</p>
   </ng-container>
   <ng-container *ngIf="messageLogs != null && messageLogs.length != 0 ">
   
-    <div class="messages__container" *ngIf="!realtimeOn">
-      <div class="message" *ngFor="let messageLog of messageLogs" (click)="displayMessage(messageLog)">
-        <div class="message__icon">
-          <div class="sent">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 20L12 4M12 4L18 10M12 4L6 10"  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+    <div class="stats" *ngIf="!realtimeOn" [class.stats_refreshing]="isRefreshing">
+      <div class="stats__table">
+        <div class="stats__row">
+          <div class="stats__col">Message</div>
+          <div class="stats__col">Connector</div>
+          <div class="stats__col">Result</div>
+          <div class="stats__col">Time</div>
+          <div class="stats__col"></div>
+        </div>
+        <div class="stats__row log__row" *ngFor="let messageLog of messageLogs"
+          tabindex="0" role="button"
+          (click)="displayMessage(messageLog)"
+          (keydown.enter)="displayMessage(messageLog)">
+          <div class="stats__col">
+            <span class="log__message">{{messageLog.message}}</span>
+          </div>
+          <div class="stats__col log__muted">{{messageLog.connectorId ?? '—'}}</div>
+          <div class="stats__col">
+            <span class="log__result" [title]="messageLog.result">{{messageLog.result || '—'}}</span>
+          </div>
+          <div class="stats__col log__muted">{{messageLog.logTime | date:'medium'}}</div>
+          <div class="stats__col log__chevron">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </div>
-        <div class="message__content">{{messageLog.message}}</div>
-        <div class="message__result">{{messageLog.result}}</div>
-        <div class="message__time">{{messageLog.logTime  | date:'medium' }}</div>
       </div>
     </div>
     <div class="pagination__container">
@@ -124,8 +119,10 @@
 
 
 <ng-container *ngIf="messageLogDisplayed != null">
-  <div class="message__modal">
-    <app-connector-realtime-message-log [messageLog]="messageLogDisplayed"></app-connector-realtime-message-log>
-  </div>
   <div class="message__modal_overlay" (click)="closeDiplayedMessageModal()"></div>
+  <div class="message__modal" role="dialog" aria-modal="true" aria-label="Message log details">
+    <app-connector-realtime-message-log
+      [messageLog]="messageLogDisplayed"
+      (closed)="closeDiplayedMessageModal()"></app-connector-realtime-message-log>
+  </div>
 </ng-container>

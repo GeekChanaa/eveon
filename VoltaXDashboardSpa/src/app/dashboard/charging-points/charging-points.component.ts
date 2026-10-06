@@ -37,7 +37,7 @@ export class ChargingPointsComponent implements OnInit {
     status: ChargePointStatusEnum.Available,
     comment: '',
     username: '',
-    password: '',
+    hasPassword: false,
     clientCertThumb: '',
     connectors: [],
     transactions: [],

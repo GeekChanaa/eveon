@@ -1,54 +1,19 @@
-using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using VoltaXApi.Data;
-using VoltaXApi.Services;
-using VoltaXApi.Dtos;
-using System.Threading.Tasks;
-using System.Text;
-using Microsoft.Extensions.Configuration;
-using System;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
-using VoltaXApi.Helpers;
+using VoltaXApi.Authorization;
+using VoltaXApi.Data;
 
-namespace VoltaXApi.Controllers
+namespace VoltaXApi.Controllers;
+[ApiController]
+[Route("api/[controller]")]
+public sealed class PermissionController(VoltaXApiDbContext db) : ControllerBase
 {
+    [HttpGet("GetAllPermissions")]
+    [HttpGet]
+    public async Task<IActionResult> GetAllPermissions() => Ok(await db.Permissions.Where(p => !p.IsDeleted && AccessService.Catalog.Contains(p.Name))
+        .Select(p => new { id = p.ID, name = p.Name, description = p.Description }).ToListAsync());
 
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PermissionController : GenericController<Permission>
-    {
-        private readonly IPermissionRepository _repository;
-        public PermissionController(
-            IPermissionRepository repository) : base(repository)
-        {
-            _repository = repository;
-        }
-
-        [HttpGet("GetAllPermissions")]
-        public async Task<List<PermissionListDto>> GetAllPermissions()
-        {
-            var permissions = await this._repository.GetAllPermissions();
-            return permissions;
-        }
-
-        [HttpGet("GetPermissionByID/{permissionID}")]
-        public async Task<PermissionDisplayDto> GetPermissionByID(int permissionID)
-        {
-            var permission = await this._repository.GetPermissionByID(permissionID);
-            return permission;
-        }
-
-        [HttpGet("GetRolePermissions/{roleID}")]
-        public async Task<List<PermissionListDto>> GetRolePermissions(int roleID)
-        {
-            var permissions = await this._repository.GetRolePermissions(roleID);
-            return permissions;
-        }
-
-        
-
-    }
+    [HttpGet("GetRolePermissions/{roleID:int}")]
+    public async Task<IActionResult> GetRolePermissions(int roleID) => Ok(await db.RolePermissions.Where(p => p.RoleID == roleID && !p.IsDeleted && !p.Permission.IsDeleted)
+        .Select(p => new { id = p.PermissionID, name = p.Permission.Name, description = p.Permission.Description }).ToListAsync());
 }

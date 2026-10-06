@@ -1,0 +1,50 @@
+<section class="o16" *ngIf="isOcpp16" aria-labelledby="o16-title">
+  <header class="o16-head">
+    <div>
+      <h3 id="o16-title">Configuration <span class="cfg-badge cfg-badge_pending">OCPP 1.6</span></h3>
+      <p>Configuration keys read live from the charger (GetConfiguration). Writable keys can be changed one at a time (ChangeConfiguration).</p>
+    </div>
+    <form class="o16-get" (ngSubmit)="getConfiguration()">
+      <input class="field__input" name="keys" [(ngModel)]="keysInput" placeholder="Keys, comma separated (empty = all)" aria-label="Keys to read, comma separated">
+      <button type="submit" class="cfg-btn cfg-btn_primary" [disabled]="loading">
+        <span class="cfg-spinner" *ngIf="loading"></span>
+        {{loading ? 'Reading…' : 'Get configuration'}}
+      </button>
+    </form>
+  </header>
+
+  <div class="o16-table" role="table" aria-label="OCPP 1.6 configuration keys" *ngIf="loaded">
+    <div class="o16-row o16-row_head" role="row">
+      <span role="columnheader">Key</span>
+      <span role="columnheader">Value</span>
+      <span role="columnheader">Access</span>
+    </div>
+    <div class="o16-row" role="row" *ngFor="let row of keys; trackBy: trackKey" [class.editing]="editingKey === row.key">
+      <div class="o16-key" role="cell">
+        {{row.key}}
+        <span class="cfg-badge" *ngIf="lastStatus[row.key] as s" [ngClass]="statusTone(s)">{{s}}</span>
+      </div>
+      <div class="o16-value" role="cell">
+        <ng-container *ngIf="editingKey !== row.key; else editor">
+          <span class="o16-value__text" [class.o16-value__text_empty]="row.value == null || row.value === ''">{{row.value ?? '(empty)'}}</span>
+          <button type="button" class="cfg-btn cfg-btn_ghost o16-small" *ngIf="!row.readonly && canOperate" (click)="edit(row)" [disabled]="saving">Edit</button>
+        </ng-container>
+        <ng-template #editor>
+          <form class="o16-edit" (ngSubmit)="save(row)" (keydown.escape)="cancelEdit()">
+            <input class="field__input" name="value" [(ngModel)]="draft" maxlength="500" [attr.aria-label]="'New value of ' + row.key">
+            <button type="submit" class="cfg-btn cfg-btn_primary o16-small" [disabled]="saving">
+              <span class="cfg-spinner" *ngIf="saving"></span>Save
+            </button>
+            <button type="button" class="cfg-btn cfg-btn_ghost o16-small" (click)="cancelEdit()" [disabled]="saving">Cancel</button>
+          </form>
+        </ng-template>
+      </div>
+      <div role="cell">
+        <span class="cfg-badge" [ngClass]="row.readonly ? 'cfg-badge_muted' : 'cfg-badge_ok'">{{row.readonly ? 'Read-only' : 'Read/write'}}</span>
+      </div>
+    </div>
+    <div class="o16-none" *ngIf="!keys.length">The charger returned no configuration key.</div>
+  </div>
+
+  <p class="o16-unknown" *ngIf="loaded && unknownKeys.length">Unknown to the charger: {{unknownKeys.join(', ')}}</p>
+</section>

@@ -1,3 +1,183 @@
-<p>
-  charging-strategies works!
-</p>
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'Charging Strategies'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charging Strategies' }
+  ]">
+  <div class="sc-page">
+    <section class="sc-card">
+      <div class="sc-card__head">
+        <h3>Strategies</h3>
+        <button class="button button-small" (click)="newStrategy()">New strategy</button>
+      </div>
+      <p class="sc-hint">Reusable profile templates. Times are business time (the API's time zone); applying a strategy sends a profile to every selected charger and replaces the strategy profile it had for that purpose.</p>
+      <div class="sc-table-wrap">
+        <table class="sc-table">
+          <thead><tr><th>Name</th><th>Schedule</th><th style="min-width: 220px">Day / week</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let s of strategies" [class.is-selected]="applying?.id === s.id || form?.id === s.id">
+              <td>
+                <strong>{{ s.name }}</strong> <span class="sc-badge" *ngIf="s.isPredefined">Predefined</span>
+                <div class="sc-sub">{{ s.description }}</div>
+                <div class="sc-sub">{{ describe(s) }}</div>
+              </td>
+              <td class="sc-periods"><div *ngFor="let p of s.periods" class="sc-sub">{{ periodLabel(s, p) }}</div></td>
+              <td>
+                <ng-container *ngIf="timeline(s) as segments">
+                  <ng-container *ngIf="segments.length > 0">
+                    <div class="sc-timeline">
+                      <div *ngFor="let seg of segments" class="sc-timeline__segment" [style.width.%]="seg.widthPercent" [style.opacity]="seg.opacity" [title]="seg.title"></div>
+                    </div>
+                    <div class="sc-timeline-axis" *ngIf="s.recurrencyKind !== 'Weekly'"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+                    <div class="sc-timeline-axis" *ngIf="s.recurrencyKind === 'Weekly'"><span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span></div>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <td class="sc-cell-actions">
+                <button class="button button-small" (click)="openApply(s)">Apply</button>
+                <button class="button-stroke button-small" (click)="editStrategy(s)">Edit</button>
+                <button class="button-stroke button-small" *ngIf="!s.isPredefined" (click)="deleteStrategy(s)">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="strategies.length === 0"><td colspan="4" class="sc-empty">No strategy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sc-card" *ngIf="form">
+      <div class="sc-card__head">
+        <h3>{{ form.id ? 'Edit strategy' : 'New strategy' }}</h3>
+        <button class="button-stroke button-small" (click)="form = null">Cancel</button>
+      </div>
+      <div class="sc-grid">
+        <label class="sc-field">
+          <span>Name</span>
+          <input type="text" maxlength="100" [(ngModel)]="form.name">
+        </label>
+        <label class="sc-field">
+          <span>Purpose</span>
+          <select [(ngModel)]="form.purpose">
+            <option value="TxDefaultProfile">TxDefaultProfile (each session)</option>
+            <option value="ChargingStationMaxProfile">ChargingStationMaxProfile (whole charger)</option>
+          </select>
+        </label>
+        <label class="sc-field">
+          <span>Kind</span>
+          <select [(ngModel)]="form.kind">
+            <option value="Recurring">Recurring</option>
+            <option value="Absolute">Absolute (from when applied)</option>
+          </select>
+        </label>
+        <label class="sc-field" *ngIf="form.kind === 'Recurring'">
+          <span>Recurrence</span>
+          <select [(ngModel)]="form.recurrencyKind">
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+          </select>
+        </label>
+        <label class="sc-field">
+          <span>Unit</span>
+          <select [(ngModel)]="form.chargingRateUnit">
+            <option value="A">A (per phase)</option>
+            <option value="W">W</option>
+          </select>
+        </label>
+        <label class="sc-field">
+          <span>Stack level</span>
+          <input type="number" min="0" [(ngModel)]="form.stackLevel">
+        </label>
+      </div>
+      <label class="sc-field" style="margin-top: 14px">
+        <span>Description</span>
+        <textarea maxlength="500" [(ngModel)]="form.description"></textarea>
+      </label>
+
+      <h4 class="sc-subtitle">Periods</h4>
+      <p class="sc-hint" *ngIf="form.kind === 'Recurring'">Each period lasts until the next one; the last one continues until the first one of the next {{ form.recurrencyKind === 'Weekly' ? 'week' : 'day' }} (e.g. 22:00 → 06:00).</p>
+      <table class="sc-table sc-table--compact">
+        <thead>
+          <tr>
+            <th *ngIf="form.kind === 'Recurring' && form.recurrencyKind === 'Weekly'">Day</th>
+            <th *ngIf="form.kind === 'Recurring'">Start time</th>
+            <th *ngIf="form.kind !== 'Recurring'">Start offset (min)</th>
+            <th>Limit ({{ form.chargingRateUnit }})</th>
+            <th>Phases</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of form.periods; let i = index">
+            <td *ngIf="form.kind === 'Recurring' && form.recurrencyKind === 'Weekly'">
+              <select [(ngModel)]="p.day">
+                <option *ngFor="let d of days; let di = index" [ngValue]="di">{{ d }}</option>
+              </select>
+            </td>
+            <td *ngIf="form.kind === 'Recurring'"><input type="time" [(ngModel)]="p.time"></td>
+            <td *ngIf="form.kind !== 'Recurring'"><input type="number" min="0" [(ngModel)]="p.offsetMinutes"></td>
+            <td><input type="number" min="0" step="0.1" [(ngModel)]="p.limit"></td>
+            <td>
+              <select [(ngModel)]="p.numberPhases">
+                <option [ngValue]="null">default</option>
+                <option [ngValue]="1">1</option>
+                <option [ngValue]="3">3</option>
+              </select>
+            </td>
+            <td><button class="button-stroke button-small" [disabled]="form.periods.length === 1" (click)="removePeriod(i)">Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="sc-actions sc-actions--end">
+        <button class="button-stroke button-small" (click)="addPeriod()">Add period</button>
+        <button class="button button-small" [disabled]="saving || !form.name" (click)="save()">Save</button>
+      </div>
+    </section>
+
+    <section class="sc-card" *ngIf="applying">
+      <div class="sc-card__head">
+        <h3>Apply "{{ applying.name }}"</h3>
+        <button class="button-stroke button-small" (click)="applying = null">Close</button>
+      </div>
+      <div class="sc-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))">
+        <div>
+          <h4 class="sc-subtitle" style="margin-top: 0">Stations (every charger)</h4>
+          <div class="sc-checklist">
+            <label class="sc-check" *ngFor="let s of stations" style="display: flex; padding: 4px 0">
+              <input type="checkbox" [checked]="selectedStations.has(s.id)" (change)="toggle(selectedStations, s.id)"> {{ s.name }} <span class="sc-sub">({{ s.count }})</span>
+            </label>
+            <p class="sc-empty" *ngIf="stations.length === 0">No station.</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="sc-subtitle" style="margin-top: 0">Charge points</h4>
+          <label class="sc-field" style="margin-bottom: 8px"><input type="search" placeholder="Filter" [(ngModel)]="pointFilter"></label>
+          <div class="sc-checklist">
+            <label class="sc-check" *ngFor="let p of filteredPoints" style="display: flex; padding: 4px 0">
+              <input type="checkbox" [checked]="selectedPoints.has(p.id)" (change)="toggle(selectedPoints, p.id)">
+              {{ p.chargePointId }} <span class="sc-sub">· {{ p.chargingStationName }} · {{ p.protocol || 'offline' }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="sc-actions sc-actions--end">
+        <span class="sc-sub">{{ selectedStations.size }} station(s), {{ selectedPoints.size }} charge point(s) selected</span>
+        <button class="button button-small" [disabled]="applyRunning || (selectedStations.size === 0 && selectedPoints.size === 0)" (click)="apply()">
+          {{ applyRunning ? 'Waiting for the chargers…' : 'Send profiles' }}
+        </button>
+      </div>
+
+      <div class="sc-table-wrap" *ngIf="applyResults" style="margin-top: 16px">
+        <table class="sc-table">
+          <thead><tr><th>Charger</th><th>Result</th><th>Details</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let r of applyResults">
+              <td>{{ r.chargePointIdentity }}</td>
+              <td><span [class]="statusClass(r.status)">{{ r.status }}</span></td>
+              <td class="sc-sub">{{ r.reason || (r.chargingProfileID ? 'Profile #' + r.chargingProfileID : '') }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</app-dashboard-details-container>

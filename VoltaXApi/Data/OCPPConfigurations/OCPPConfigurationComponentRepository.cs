@@ -25,12 +25,18 @@ namespace VoltaXApi.Data
 
         public async Task<OCPPConfigurationComponent> FindOrCreateComponent(ComponentType componentType)
         {
+            // The EVSE is part of a component's identity: EVSE 1 and EVSE 2 "EVSE" components are different rows.
+            int? evseId = componentType.Evse?.Id;
+            int? connectorId = componentType.Evse?.ConnectorId;
             var component = await _context.OCPPConfigurationComponents
                 .Include(c => c.OCPPConfigurationEVSE)
-                .FirstOrDefaultAsync(c => 
-                    c.Name == componentType.Name && 
-                    c.Instance == componentType.Instance);
-            
+                .FirstOrDefaultAsync(c =>
+                    c.Name == componentType.Name &&
+                    c.Instance == componentType.Instance &&
+                    (evseId == null
+                        ? c.OCPPConfigurationEVSEID == null
+                        : c.OCPPConfigurationEVSE != null && c.OCPPConfigurationEVSE.EVSEId == evseId && c.OCPPConfigurationEVSE.ConnectorId == connectorId));
+
             if (component == null)
             {
                 component = new OCPPConfigurationComponent
@@ -38,7 +44,7 @@ namespace VoltaXApi.Data
                     Name = componentType.Name,
                     Instance = componentType.Instance
                 };
-                
+
                 if (componentType.Evse != null)
                 {
                     component.OCPPConfigurationEVSE = new OCPPConfigurationEVSE
@@ -47,30 +53,11 @@ namespace VoltaXApi.Data
                         ConnectorId = componentType.Evse.ConnectorId
                     };
                 }
-                
+
                 _context.OCPPConfigurationComponents.Add(component);
                 await _context.SaveChangesAsync();
             }
-            else if (componentType.Evse != null)
-            {
-                // Update EVSE if needed
-                if (component.OCPPConfigurationEVSE == null)
-                {
-                    component.OCPPConfigurationEVSE = new OCPPConfigurationEVSE
-                    {
-                        EVSEId = componentType.Evse.Id,
-                        ConnectorId = componentType.Evse.ConnectorId
-                    };
-                }
-                else
-                {
-                    component.OCPPConfigurationEVSE.EVSEId = componentType.Evse.Id;
-                    component.OCPPConfigurationEVSE.ConnectorId = componentType.Evse.ConnectorId;
-                }
-                
-                await _context.SaveChangesAsync();
-            }
-            
+
             return component;
         }
 

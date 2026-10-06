@@ -1,4 +1,12 @@
-<form [formGroup]="debitCardForm">
+<div *ngIf="!simulateTokenization" class="info-notice">
+  <p>Card entry via payment provider – coming soon.</p>
+  <div class="form__actions">
+    <app-button [outlined]="true" variant="secondary" class="ml-auto" (click)="cancel()">Close</app-button>
+  </div>
+</div>
+
+<form *ngIf="simulateTokenization" [formGroup]="debitCardForm">
+    <p class="info-notice">Development only: simulated payment-provider tokenization. Card numbers and CVV are never entered here.</p>
 
     <app-form-field class="field"
       description="The card holder of the debit card"
@@ -7,28 +15,26 @@
       [control]="getControl('debitCardHolderName')"></app-form-field>
 
     <app-form-field class="field"
-      description="The card number of the debit card"
-      placeholder="Card Number"
-      title="Card Number"
-      [control]="getControl('debitCardNumber')"></app-form-field>
-
-
-    
+      description="Card network"
+      title="Brand"
+      inputType="select"
+      [options]="brandOptions"
+      [control]="getControl('debitCardBrand')"></app-form-field>
 
     <div class="field__group">
       <app-form-field class="field"
-        description="The expiration date of the debit card"
-        placeholder="Expiration Date"
-        title="Expiration Date"
-        [control]="getControl('debitCardExpirationDate')"></app-form-field>
+        description="Last four digits shown by the payment provider"
+        placeholder="1234"
+        title="Last 4 digits"
+        [control]="getControl('debitCardLast4')"></app-form-field>
 
       <app-form-field class="field"
-        description="CVV Number"
-        placeholder="CVV"
-        title="CVV"
-        [control]="getControl('debitCardCVV')"></app-form-field>
+        description="The expiration date of the debit card (MM/YY)"
+        placeholder="MM/YY"
+        title="Expiration Date"
+        [control]="getControl('debitCardExpirationDate')"></app-form-field>
     </div>
-    
+
     <div class="form__actions">
       <app-button [disabled]="!debitCardForm.valid" [isLoading]="isLoading" variant="secondary" (btnClick)="debitCardSave()"> Save </app-button>
       <app-button [outlined]="true" variant="secondary" class="ml-auto" (click)="cancel()">Cancel</app-button>

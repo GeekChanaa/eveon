@@ -1,124 +1,16 @@
-<div class="overview js-tabs">
-  <div class="overview__nav">
-    <a #tabsLink class="overview__link js-tabs-link active" href="#">
-      <div class="overview__icon" style="background-color: #B1E5FC;">
-        <svg class="icon icon-energy">
-          <use xlink:href="#icon-energy"></use>
-        </svg>
-      </div>
-      <div class="overview__details">
-        <div class="overview__subtitle">Total Energy
-          <div class="tooltip" title="Small description">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="overview__counter">{{totalEnergy | number : '1.0-0' }}</div>
-      </div>
-      <div class="balance background negative">
-        <svg class="icon icon-arrow-bottom">
-          <use xlink:href="#icon-arrow-bottom"></use>
-        </svg>{{totalEnergyToday | number : '1.0-0'}}
-      </div>
-    </a>
-    <a #tabsLink class="overview__link js-tabs-link" href="#">
-      <div class="overview__icon" style="background-color: #CABDFF;">
-        <svg class="icon icon-basket">
-          <use xlink:href="#icon-basket"></use>
-        </svg>
-      </div>
-      <div class="overview__details">
-        <div class="overview__subtitle">Total Orders
-          <div class="tooltip" title="Small description">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="overview__counter">{{totalOrders | number : '1.0-0'}}</div>
-      </div>
-      <div class="balance background positive">
-        <svg class="icon icon-arrow-top">
-          <use xlink:href="#icon-arrow-top"></use>
-        </svg>{{totalOrdersToday | number : '1.0-0'}}
-      </div>
-    </a>
-    <a #tabsLink class="overview__link js-tabs-link" href="#">
-      <div class="overview__icon" style="background-color: #CABDFF;">
-        <svg class="icon icon-ticket">
-          <use xlink:href="#icon-ticket"></use>
-        </svg>
-      </div>
-      <div class="overview__details">
-        <div class="overview__subtitle">Total Recharge (MAD)
-          <div class="tooltip" title="Small description">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="overview__counter">{{totalRechargeAmount | number : '1.0-0'}}</div>
-      </div>
-      <div class="balance background positive">
-        <svg class="icon icon-arrow-top">
-          <use xlink:href="#icon-arrow-top"></use>
-        </svg>{{totalRechargeAmountToday | number : '1.0-0'}}
-      </div>
-    </a>
-    <a #tabsLink class="overview__link js-tabs-link" href="#">
-      <div class="overview__icon" style="background-color: #CABDFF;">
-        <svg class="icon icon-bar-chart">
-          <use xlink:href="#icon-bar-chart"></use>
-        </svg>
-      </div>
-      <div class="overview__details">
-        <div class="overview__subtitle">Total Revenue (MAD)
-          <div class="tooltip" title="Small description">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-        </div>
-        <div class="overview__counter">0</div>
-      </div>
-      <div class="balance background positive">
-        <svg class="icon icon-arrow-top">
-          <use xlink:href="#icon-arrow-top"></use>
-        </svg>0%
-      </div>
-    </a>
-  </div>
-  <div class="overview__container">
-    <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart" *ngIf="energyChart">
-        <apx-chart style="display: block; height: 200px; width: 100%" [series]="energyChart.series" [chart]="energyChart.chart" [xaxis]="energyChart.xaxis" [stroke]="energyChart.stroke" [dataLabels]="energyChart.dataLabels" [colors]="energyChart.colors" [legend]="energyChart.legend" [grid]="energyChart.grid"></apx-chart>
-      </div>
-    </div>
-    <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart" *ngIf="orderChart">
-        <apx-chart style="display: block; height: 200px; width: 100%" [series]="orderChart.series" [chart]="orderChart.chart" [xaxis]="orderChart.xaxis" [stroke]="orderChart.stroke" [dataLabels]="orderChart.dataLabels" [colors]="orderChart.colors" [legend]="orderChart.legend" [grid]="orderChart.grid"></apx-chart>
-      </div>
-    </div>
-    <div #tabsItem class="overview__item js-tabs-item">
-      <div class="overview__chart" *ngIf="rechargeChart">
-        <apx-chart style="display: block; height: 200px; width: 100%" [series]="rechargeChart.series" [chart]="rechargeChart.chart" [xaxis]="rechargeChart.xaxis" [stroke]="rechargeChart.stroke" [dataLabels]="rechargeChart.dataLabels" [colors]="rechargeChart.colors" [legend]="rechargeChart.legend" [grid]="rechargeChart.grid"></apx-chart>
-      </div>
-    </div>
-    <div #tabsItem class="overview__item js-tabs-item">
-    <div class="overview__chart" *ngIf="revenueChart">
-      <apx-chart 
-        style="display: block; height: 200px; width: 100%" 
-        [series]="revenueChart.series" 
-        [chart]="revenueChart.chart" 
-        [xaxis]="revenueChart.xaxis" 
-        [stroke]="revenueChart.stroke" 
-        [dataLabels]="revenueChart.dataLabels" 
-        [colors]="revenueChart.colors" 
-        [legend]="revenueChart.legend" 
-        [grid]="revenueChart.grid">
-      </apx-chart>
-    </div>
-  </div>
-  </div>
+<div class="metric-grid" role="tablist" aria-label="Performance metrics">
+<button *ngFor="let metric of metrics; let i = index" type="button" class="metric" role="tab" [class.selected]="selected === metric" [id]="'metric-' + metric.key" [attr.aria-selected]="selected === metric" aria-controls="metric-chart" [attr.tabindex]="selected === metric ? 0 : -1" (click)="select(metric)" (keydown)="moveTab($event, i)">
+  <span class="metric-label"><svg aria-hidden="true"><use [attr.href]="'#' + metric.icon"></use></svg>{{metric.label}}</span>
+  <span class="metric-value">{{metric.loading ? '…' : metric.total === null ? '—' : (metric.total | number:'1.0-2')}} <small>{{metric.unit}}</small></span>
+  <span class="metric-footer"><span>All time</span><span>Today <b>{{metric.loading ? '…' : metric.today === null ? '—' : (metric.today | number:'1.0-2')}}</b></span></span>
+</button>
+</div>
+<div class="chart-panel" id="metric-chart" role="tabpanel" tabindex="0" [attr.aria-labelledby]="'metric-' + selected.key" [attr.aria-busy]="selected.loading">
+  <div class="chart-heading"><div><h3>{{selected.label}}</h3><p>Daily activity · {{selected.unit}}</p></div><span class="period-label">Last 30 days</span></div>
+  <div class="metric-notice" *ngIf="selected.error" role="status">Some figures could not be loaded.<button type="button" (click)="load(selected)" [disabled]="selected.loading">Try again</button></div>
+  <div *ngIf="selected.loading" class="chart-message" role="status"><span class="loading-mark"></span>Loading {{selected.label.toLowerCase()}}…</div>
+  <ng-container *ngIf="!selected.loading">
+    <div *ngIf="!selected.chart || selected.chart.empty" class="chart-message">{{selected.chart ? 'No activity recorded for this period.' : 'Chart data is currently unavailable.'}}</div>
+    <apx-chart *ngIf="selected.chart && !selected.chart.empty" [series]="selected.chart.series" [chart]="selected.chart.chart" [xaxis]="selected.chart.xaxis" [yaxis]="selected.chart.yaxis" [stroke]="selected.chart.stroke" [fill]="selected.chart.fill" [dataLabels]="selected.chart.dataLabels" [colors]="selected.chart.colors" [grid]="selected.chart.grid" [tooltip]="selected.chart.tooltip"></apx-chart>
+  </ng-container>
 </div>

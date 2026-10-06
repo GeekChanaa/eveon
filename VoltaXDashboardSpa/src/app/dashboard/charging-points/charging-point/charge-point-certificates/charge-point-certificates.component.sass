@@ -1,0 +1,182 @@
+.certs
+  display: grid
+  gap: 16px
+  color: var(--vx-text, #171b24)
+  h2, h3
+    margin: 0
+  p
+    margin: 0
+
+.certs__intro, .certs__card-head
+  display: flex
+  justify-content: space-between
+  align-items: flex-start
+  gap: 16px
+  flex-wrap: wrap
+  p
+    margin-top: 4px
+    font-size: 13px
+    color: var(--vx-text-muted, #737985)
+
+.certs__grid
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+  gap: 16px
+
+.certs__card
+  display: grid
+  gap: 12px
+  align-content: start
+  padding: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  dl
+    display: grid
+    gap: 8px
+    margin: 0
+    div
+      display: grid
+      grid-template-columns: 160px 1fr
+      gap: 8px
+    dt
+      font-size: 12px
+      color: var(--vx-text-muted, #737985)
+    dd
+      margin: 0
+      word-break: break-word
+
+.certs__form
+  display: grid
+  gap: 10px
+  label
+    display: grid
+    gap: 4px
+    font-size: 13px
+  select, textarea
+    padding: 8px 10px
+    border: 1px solid var(--vx-border, #d9dbe0)
+    border-radius: 8px
+    font: inherit
+    background: var(--vx-surface, #fff)
+    color: inherit
+  textarea
+    font-family: monospace
+    font-size: 12px
+
+.certs__root
+  padding: 12px
+  border-radius: 8px
+  background: var(--vx-surface-muted, #f7f8fa)
+
+.certs__check
+  display: flex !important
+  align-items: center
+  gap: 8px
+
+.certs__actions
+  display: flex
+  gap: 8px
+  flex-wrap: wrap
+  justify-content: flex-end
+
+.certs__primary, .certs__secondary, .certs__link
+  padding: 8px 14px
+  border-radius: 8px
+  font: inherit
+  font-size: 13px
+  cursor: pointer
+  &:disabled
+    opacity: .5
+    cursor: not-allowed
+
+.certs__primary
+  border: 1px solid var(--vx-primary, #1f6feb)
+  background: var(--vx-primary, #1f6feb)
+  color: #fff
+
+.certs__secondary
+  border: 1px solid var(--vx-border, #d9dbe0)
+  background: transparent
+  color: inherit
+
+.certs__link
+  border: 0
+  background: transparent
+  padding: 4px 6px
+
+.certs__table
+  overflow-x: auto
+  table
+    width: 100%
+    border-collapse: collapse
+    font-size: 13px
+  th, td
+    padding: 8px
+    text-align: left
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    vertical-align: top
+  th
+    font-size: 12px
+    font-weight: 600
+    color: var(--vx-text-muted, #737985)
+
+.certs__right
+  text-align: right !important
+
+.certs__muted
+  font-size: 12px
+  color: var(--vx-text-muted, #737985)
+
+.certs__danger
+  color: var(--vx-danger, #c62828)
+
+.certs__error, .certs__message, .certs__warning
+  padding: 10px 14px
+  border-radius: 8px
+  font-size: 13px
+
+.certs__error
+  background: rgba(198, 40, 40, .08)
+  color: var(--vx-danger, #c62828)
+
+.certs__message
+  background: rgba(46, 125, 50, .08)
+  color: var(--vx-success, #2e7d32)
+
+.certs__warning
+  background: rgba(237, 108, 2, .1)
+  color: #a04b00
+
+.certs__hints
+  margin: 0
+  padding-left: 20px
+  font-size: 13px
+  color: var(--vx-text-muted, #737985)
+  li + li
+    margin-top: 4px
+
+.certs__badge
+  display: inline-block
+  padding: 2px 8px
+  border-radius: 999px
+  font-size: 11px
+  font-weight: 600
+  background: rgba(115, 121, 133, .12)
+  color: var(--vx-text-muted, #737985)
+
+.certs__badge--active
+  background: rgba(46, 125, 50, .12)
+  color: #2e7d32
+
+.certs__badge--pending
+  background: rgba(31, 111, 235, .12)
+  color: #1f6feb
+
+.certs__badge--revoked, .certs__badge--rejected, .certs__badge--failed
+  background: rgba(198, 40, 40, .1)
+  color: #c62828
+
+@media (max-width: 600px)
+  .certs__card dl div
+    grid-template-columns: 1fr

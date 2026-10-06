@@ -1,7 +1,8 @@
-<!-- buttons-documentation.component.html -->
-<div class="documentation-container">
-  <h1>Button Component Documentation</h1>
-  <p class="intro">A showcase of all button variants and capabilities for the design system.</p>
+<div class="page__inner buttons-page">
+  <div class="page__container">
+    <a class="docs-back" routerLink="/dashboard/documentation"><svg class="icon"><use xlink:href="#icon-arrow-left"></use></svg>Documentation</a>
+    <header class="buttons-header"><span class="buttons-header__eyebrow">Design system</span><h1>Buttons</h1><p>A live reference for the VoltaX button component, including its visual variants, behaviour, and API.</p></header>
+    <div class="documentation-container">
 
   <!-- Basic Size Variants -->
   <section class="doc-section">
@@ -63,6 +64,9 @@
       <div class="example-item">
         <app-button variant="professional" size="large">Professional Large</app-button>
       </div>
+      <div class="example-item">
+        <app-button variant="danger">Danger</app-button>
+      </div>
     </div>
   </section>
 
@@ -122,6 +126,9 @@
       </div>
       <div class="example-item">
         <app-button variant="professional" [disabled]="true">Disabled Professional</app-button>
+      </div>
+      <div class="example-item">
+        <app-button [isLoading]="true">Loading</app-button>
       </div>
     </div>
     
@@ -292,9 +299,15 @@
         </tr>
         <tr>
           <td>variant</td>
-          <td>'primary' | 'secondary' | 'professional'</td>
+          <td>'primary' | 'secondary' | 'professional' | 'danger'</td>
           <td>'primary'</td>
           <td>The color theme of the button</td>
+        </tr>
+        <tr>
+          <td>isLoading</td>
+          <td>boolean</td>
+          <td>false</td>
+          <td>Shows a loading state and prevents interaction</td>
         </tr>
         <tr>
           <td>outlined</td>
@@ -371,4 +384,6 @@
       </tbody>
     </table>
   </section>
+</div>
+  </div>
 </div>

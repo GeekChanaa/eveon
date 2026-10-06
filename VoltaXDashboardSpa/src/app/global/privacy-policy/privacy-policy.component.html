@@ -1,3 +1,114 @@
-<p>
-  privacy-policy works!
-</p>
+<article class="legal">
+  <nav class="legal__nav">
+    <a routerLink="/privacy">Privacy policy</a>
+    <a routerLink="/terms">Terms of use</a>
+    <a routerLink="/cookies">Cookie policy</a>
+  </nav>
+
+  <h1>Privacy policy</h1>
+  <p class="legal__meta">Last updated: {{ legal.lastUpdated }}</p>
+
+  <h2>1. Who we are</h2>
+  <p>
+    {{ legal.legalEntity }} ("{{ legal.company }}", "we") operates the {{ legal.company }} electric vehicle charging
+    network, its mobile application and this dashboard. We are the data controller for the personal data described
+    below. Address: {{ legal.address }}. Contact for any privacy question:
+    <a [href]="'mailto:' + legal.contactEmail">{{ legal.contactEmail }}</a>.
+  </p>
+  <p>
+    We process personal data in accordance with Moroccan Law No. 09-08 on the protection of individuals with regard
+    to the processing of personal data and its implementing decree. Our processing has been declared to the
+    Commission Nationale de contrôle de la protection des Données à caractère Personnel (CNDP) under reference
+    {{ legal.cndpDeclaration }}. Where the EU General Data Protection Regulation applies to you, we also grant you the
+    rights it provides.
+  </p>
+
+  <h2>2. Data we collect</h2>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>Examples</th><th>Why we use it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Account</td>
+        <td>Name, email, phone number, password (stored hashed), city, birthday, vehicle model, profile picture, Google account identifier if you sign in with Google</td>
+        <td>Create and secure your account, contact you about your account (contract performance)</td>
+      </tr>
+      <tr>
+        <td>Charging sessions</td>
+        <td>Charging card (RFID) number, charging station and connector used, start and end time, energy delivered, price</td>
+        <td>Deliver and bill the charging service, handle disputes, keep accounting records (contract, legal obligation)</td>
+      </tr>
+      <tr>
+        <td>Payments</td>
+        <td>Card balance, recharge orders, invoices, payment card holder name and last four digits</td>
+        <td>Take payments, issue invoices, prevent fraud (contract, legal obligation)</td>
+      </tr>
+      <tr>
+        <td>Location</td>
+        <td>Approximate or precise device location when you search for stations in the app, only if you allow it</td>
+        <td>Show nearby stations (consent, which you can withdraw in your device settings)</td>
+      </tr>
+      <tr>
+        <td>Reviews and reports</td>
+        <td>Ratings, comments and problem reports you submit</td>
+        <td>Publish reviews, maintain the network (legitimate interest)</td>
+      </tr>
+      <tr>
+        <td>Security and usage</td>
+        <td>Sign-in history, IP address, device type, audit logs of account changes</td>
+        <td>Protect your account and our systems (legitimate interest, legal obligation)</td>
+      </tr>
+      <tr>
+        <td>Cookies and local storage</td>
+        <td>Strictly necessary items only, see our <a routerLink="/cookies">cookie policy</a></td>
+        <td>Keep you signed in and remember your settings</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Who receives your data</h2>
+  <ul>
+    <li>Charging station partners operating the station you use, limited to what is needed for that session.</li>
+    <li>Service providers acting on our instructions: hosting, email and SMS delivery, payment processing.</li>
+    <li>Authorities, when the law requires it.</li>
+  </ul>
+  <p>
+    Some providers may process data outside Morocco. Such transfers are made only with the authorization of the
+    CNDP or to countries offering an adequate level of protection, with appropriate safeguards.
+  </p>
+
+  <h2>4. How long we keep it</h2>
+  <ul>
+    <li>Account data: as long as your account is active. When you delete your account it is disabled immediately and anonymized after a 14 day grace period.</li>
+    <li>Charging sessions, orders and invoices: kept for the period required by Moroccan accounting and tax law, detached from your identity once your account is deleted.</li>
+    <li>Technical charger logs: 90 days. Read notifications: 180 days.</li>
+    <li>Data export archives: 7 days, then deleted.</li>
+  </ul>
+
+  <h2>5. Your rights</h2>
+  <p>You have the right to:</p>
+  <ul>
+    <li><strong>Access</strong> your data and receive a copy (Profile &gt; Privacy &gt; Request a copy of my data);</li>
+    <li><strong>Rectify</strong> inaccurate data (Profile &gt; Personal information);</li>
+    <li><strong>Erase</strong> your data (Profile &gt; Privacy &gt; Delete my account);</li>
+    <li><strong>Object</strong> to processing based on our legitimate interest, and to direct marketing at any time;</li>
+    <li><strong>Withdraw consent</strong> where processing is based on consent;</li>
+    <li><strong>Data portability</strong>: the export is provided in a machine-readable format (JSON).</li>
+  </ul>
+  <p>
+    You can also write to <a [href]="'mailto:' + legal.contactEmail">{{ legal.contactEmail }}</a>. We answer within
+    30 days. If you are not satisfied with our answer you can lodge a complaint with the CNDP (www.cndp.ma).
+  </p>
+
+  <h2>6. Security</h2>
+  <p>
+    Passwords are stored hashed, traffic is encrypted, access to personal data is limited to staff who need it and
+    every administrative change is recorded in an audit log.
+  </p>
+
+  <h2>7. Changes</h2>
+  <p>
+    We will tell you about material changes to this policy by email or in the application before they take effect.
+  </p>
+</article>

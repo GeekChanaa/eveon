@@ -1,69 +1,40 @@
 <div class="page__inner">
   <div class="page__container">
-    <div class="page__title h3">Request : #{{request.id}}</div>
-    <div class="settings">
-      <div class="settings__menu">
-        <button class="settings__link active">Informations</button>
-        
-      </div>
-      <div class="settings__wrapper">
-        <select class="select">
-          <option>Informations</option>
-        </select>
-        <div class="settings__list">
-          <div class="settings__item">
-            <div class="settings__anchor" id="basics" data-value="Basics"></div>
-            <div class="title-green settings__title">Informations</div>
-            <div class="settings__profile">
+    <div class="page__title h3">Download request <ng-container *ngIf="requestLoaded">#{{ request.id }}</ng-container></div>
+    <app-breadcrumb class="request-breadcrumb" [items]="[
+      { label: 'Dashboard', link: '/dashboard' },
+      { label: 'User Info Download Requests', link: '/dashboard/user-info-download-requests' },
+      { label: 'Request details' }
+    ]"></app-breadcrumb>
 
-            </div>
-            <div class="settings__fieldset">
-              <ng-container *ngIf="requestLoaded">
-                
-                <app-display-cell 
-                  [object]="request"
-                  inpType="text"
-                  title="User Name"
-                  [editable]="false"
-                  [link]="'/dashboard/users/'+request.userID"
-                  [isLink]="true"
-                  [val]="request.userName" [editable]="false"></app-display-cell>
+    <div class="request-loading" *ngIf="!requestLoaded" role="status">
+      <app-svg-spinner></app-svg-spinner><span>Loading request details?</span>
+    </div>
 
-                <app-display-cell 
-                  [object]="request"
-                  inpType="text"
-                  title="Status"
-                  [editable]="false"
-                  [isLink]="true"
-                  [val]="request.status" 
-                  [editable]="false"></app-display-cell>
+    <section class="request-card" *ngIf="requestLoaded" aria-labelledby="request-heading">
+      <header class="request-card__header">
+        <span class="request-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z M14 2v6h6M12 11v7m-3-3 3 3 3-3"/></svg></span>
+        <div><h2 id="request-heading">User information download</h2><p>Review the requester and current status before taking action.</p></div>
+        <span class="request-status" [class.is-approved]="request.status === 'Approved'" [class.is-denied]="request.status === 'Denied'" [class.is-processing]="request.status === 'Processing'">{{ request.status }}</span>
+      </header>
 
-                <app-display-cell 
-                  [object]="request"
-                  inpType="text"
-                  title="Request Time"
-                  [editable]="false"
-                  [val]="request.requestTime | date:'medium' "></app-display-cell>
+      <dl class="request-facts">
+        <div><dt>Requested by</dt><dd><a [routerLink]="'/dashboard/users/' + request.userID">{{ request.userName }} <span aria-hidden="true">?</span></a></dd></div>
+        <div><dt>Request ID</dt><dd>#{{ request.id }}</dd></div>
+        <div><dt>Requested on</dt><dd>{{ request.requestTime | date:'medium' }}</dd></div>
+      </dl>
 
-                <ng-container *ngIf="request.status != 'Approved' && request.status != 'Denied'">
-                  <div class="field__label">
-                    Actions
-                  </div>
-                  <div class="actions">
-                    <app-button [isLoading]="isLoading" variant="secondary" (click)="approveRequest()" >Approve Request</app-button>
-                    <app-button [isLoading]="isLoading" variant="secondary" (click)="denyRequest()" class="deny">Deny Request</app-button>
-                  </div>
-                </ng-container>
-                
-
-                  
-              </ng-container>
-              
-            </div>
-          </div>
-
+      <div class="request-decision" *ngIf="request.status == 'Pending'">
+        <div class="request-decision__heading"><h3>Request decision</h3><p>Approve or deny this user's information download request.</p></div>
+        <div class="request-actions">
+          <app-button [isLoading]="isLoading" variant="secondary" (btnClick)="approveRequest()">
+            <svg class="request-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Approve request
+          </app-button>
+          <app-button [isLoading]="isLoading" variant="danger" [outlined]="true" (btnClick)="denyRequest()" class="deny">
+            <svg class="request-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>Deny request
+          </app-button>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </div>

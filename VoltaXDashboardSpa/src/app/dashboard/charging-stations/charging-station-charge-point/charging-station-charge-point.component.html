@@ -24,7 +24,7 @@
   <app-info-item title="Status" [value]="chargePointStatus"></app-info-item>
   <app-info-item title="Comment" [value]="chargePoint.comment"></app-info-item>
   <app-info-item title="Username" [value]="chargePoint.username"></app-info-item>
-  <app-info-item title="Password" [value]="chargePoint.password"></app-info-item>
+  <app-info-item title="Password" [value]="chargePoint.hasPassword ? 'Configured' : 'Not set'"></app-info-item>
   <app-info-item title="Client Certificate Thumb" [value]="chargePoint.clientCertThumb"></app-info-item>
   <app-info-item title="Category" [value]="chargePointCategory"></app-info-item>
 </div>

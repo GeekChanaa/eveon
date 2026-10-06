@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { OcppEvDriverService } from 'src/_services/ocpp-services/ocpp-ev-driver.service';
+import { showOcppCommandFeedback } from 'src/_services/ocpp-services/ocpp-command-feedback';
 
 @Component({
   selector: 'app-request-stop-transaction',
@@ -24,10 +25,9 @@ export class RequestStopTransactionComponent implements OnInit {
 
   stopTransaction(){
     this._evDriverService.requestStopTransaction(this.chargePointID, {'transactionId' : this.transactionID}).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success","Transaction Stopped Successfully",4000);
-      this.successEvent.emit()
+      if(showOcppCommandFeedback(this._modalService, data)) this.successEvent.emit()
     },(error)=> {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
+      showOcppCommandFeedback(this._modalService, error);
     })
   }
 

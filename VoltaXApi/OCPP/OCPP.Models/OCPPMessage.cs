@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System;
 
 namespace VoltaXApi.OCPP.Models
 {
@@ -18,9 +16,6 @@ namespace VoltaXApi.OCPP.Models
 
         public string ErrorDescription { get; set; }
         public string? RawMessage { get; set; }
-
-        [JsonIgnore]
-        public TaskCompletionSource<string> TaskCompletionSource { get; set; }
 
 
         public OCPPMessage()

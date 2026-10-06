@@ -1,99 +1,271 @@
+@import ./../../../../styles/table-stats
 @import ./../../../../styles/connector-realtime
 
+// ---------------------------------------------------------------------------
+// Log table — rows open the message detail, so the whole row is the target.
+// ---------------------------------------------------------------------------
 
-.messages__container
+.stats
+  margin-top: 20px
+
+.log__row
+  cursor: pointer
+
+  &:focus-visible
+    outline: 2px solid $crt-yellow
+    outline-offset: -2px
+
+  &:hover .log__chevron svg
+    stroke: $crt-yellow
+    transform: translateX(2px)
+
+.log__message
+  font-weight: 600
+  color: $crt-text
+
+.stats .stats__col.log__muted
+  color: $crt-muted
+
+// Results are free text (boot reason, id tag status, data transfer payload…),
+// so they are clipped to one line and shown in full in the detail modal.
+.log__result
+  display: inline-block
+  max-width: 320px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  vertical-align: middle
+
+.stats .stats__col.log__chevron
+  width: 1%
+  text-align: right
+
+  svg
+    display: inline-block
+    height: 16px
+    width: 16px
+    stroke: $crt-muted
+    vertical-align: middle
+    transition: stroke .18s, transform .18s
+
+// ---------------------------------------------------------------------------
+// Toolbar — filters on the left, refresh + realtime on the right.
+// ---------------------------------------------------------------------------
+
+.logs__toolbar
   display: flex
   flex-wrap: wrap
-  margin-top: 32px
-  border-radius: 4px
-  overflow: hidden
-  .message
-    flex: 0 0 100%
-    display: flex
-    font-family: Montserrat
-    font-weight: 400
-    letter-spacing: 1px
-    padding: 12px
-    align-items: center
-    justify-content: center
-    border-bottom: 1px solid var(--primary4)
-    cursor: pointer
-    transition: ease-in-out all .3s
-    &:hover
-      background: var(--primary3)
-    .message__icon
-      flex: 0 0 10%
-      width: 10%
-      text-align: center
-      svg
-        height: 26px
-        fill: white
-        stroke: white
-        background: #00009a
-        width: 28px
-        border-radius: 4px
-        padding: 2px
-    .message__content
-      flex: 0 0 25%
-      width: 25%
-      text-overflow: ellipsis
-      overflow: hidden
-    .message__result
-      flex: 0 0 25%
-      width: 25%
-      text-overflow: ellipsis
-      overflow: hidden
-    .message__time
-      flex: 0 0 47%
-      width: 47%
+  align-items: flex-end
+  justify-content: space-between
+  gap: 14px 20px
+  padding: 14px 16px
+  border: 1px solid $crt-border
+  border-radius: 12px
+  background: $crt-surface
 
+.logs__filters
+  display: flex
+  flex-wrap: wrap
+  align-items: flex-end
+  gap: 12px
+
+.logs__field
+  display: flex
+  flex-direction: column
+  gap: 6px
+  margin: 0
+
+  .select
+    min-width: 190px
+    height: 38px
+    line-height: 36px
+    font-size: 13.5px
+
+.logs__label
+  font-size: 11px
+  font-weight: 600
+  letter-spacing: .06em
+  text-transform: uppercase
+  color: $crt-muted
+
+.logs__date
+  width: 200px
+  font-size: 13.5px
+  font-variant-numeric: tabular-nums
+
+  &:focus
+    outline: none
+    border-color: $crt-yellow
+    box-shadow: 0 0 0 3px rgba(229, 178, 35, .18)
+
+  &.logs__date_invalid
+    border-color: #DC2626
+
+// The native picker icon follows the page theme.
+:host-context(body.dark) .logs__date
+  color-scheme: dark
+
+.logs__segmented
+  display: inline-flex
+  height: 38px
+  padding: 3px
+  border: 1px solid $crt-border
+  border-radius: 9px
+  background: $crt-hover
+
+  button
+    min-width: 42px
+    padding: 0 10px
+    border: 0
+    border-radius: 6px
+    background: transparent
+    font-size: 12.5px
+    font-weight: 600
+    color: $crt-muted
+    cursor: pointer
+    transition: background .16s, color .16s
+
+    &:hover
+      color: $crt-text
+
+    &.active
+      background: $crt-surface
+      color: $crt-text
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .12), inset 0 -2px 0 $crt-yellow
+
+    &:focus-visible
+      outline: 2px solid $crt-yellow
+      outline-offset: 1px
+
+.logs__clear
+  height: 38px
+  padding: 0 6px
+  border: 0
+  background: transparent
+  font-size: 13px
+  font-weight: 600
+  color: $crt-muted
+  text-decoration: underline
+  text-underline-offset: 3px
+  cursor: pointer
+
+  &:hover
+    color: $crt-text
+
+.logs__actions
+  display: flex
+  align-items: center
+  gap: 10px
+  height: 38px
+
+  app-toggle
+    display: inline-flex
+
+.logs__divider
+  width: 1px
+  height: 22px
+  margin: 0 4px
+  background: $crt-border
+
+.realtime__label
+  font-size: 13px
+  font-weight: 600
+  color: $crt-muted
+
+.logs__refresh
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  height: 38px
+  padding: 0 14px
+  border: 1px solid $crt-border
+  border-radius: 9px
+  background: transparent
+  font-size: 13px
+  font-weight: 600
+  color: $crt-text
+  cursor: pointer
+  transition: border-color .18s, background .18s, color .18s
+
+  svg
+    height: 16px
+    width: 16px
+
+  &:hover:not(:disabled)
+    background: rgba(229, 178, 35, .12)
+    border-color: $crt-yellow
+
+  &:focus-visible
+    outline: 2px solid $crt-yellow
+    outline-offset: 2px
+
+  &:disabled
+    cursor: default
+    opacity: .7
+
+  // The icon turns the other way round (counter-clockwise arrow).
+  &.spinning svg
+    animation: logs-spin .8s linear infinite reverse
+
+@keyframes logs-spin
+  to
+    transform: rotate(360deg)
+
+.stats.stats_refreshing
+  opacity: .55
+  pointer-events: none
+  transition: opacity .18s
+
+.logs__error
+  margin-top: 8px
+  font-size: 12.5px
+  font-weight: 600
+  color: #DC2626
+
+.logs__empty-hint
+  margin: 8px 0 0
+  text-align: center
+  font-size: 13px
+  color: $crt-muted
+
+@media (max-width: 767px)
+  .logs__filters,
+  .logs__field
+    width: 100%
+
+  .logs__field .select,
+  .logs__date
+    width: 100%
+    min-width: 0
+
+  .logs__actions
+    width: 100%
+    justify-content: flex-end
+
+// ---------------------------------------------------------------------------
+// Detail modal
+// ---------------------------------------------------------------------------
 
 .message__modal_overlay
   position: fixed
-  top: 0
-  left: 0
-  height: 100vh
-  width: 100vw
-  backdrop-filter: blur(10px)
-  z-index: 2
+  inset: 0
+  z-index: 20
+  background: rgba(11, 11, 11, .4)
+  backdrop-filter: blur(6px)
 
 .message__modal
   position: fixed
   top: 50%
   left: 50%
-  transform: translate(-50%,-50%)
-  background: white
-  border-radius: 12px
-  width: 500px
-  z-index: 3
-  padding: 32px
-  border: 1px solid var(--primary5)
-
-
-.button__refresh
-  border-radius: 50%
-  background: transparent
-  padding: 8px !important
-  height: auto
-  margin-right: 12px
-  &:hover
-    background: var(--primary2)
-
-  svg
-    height: 24px
-    width: 24px
-    margin-left: 0px
-    margin-right: 0px
-
-.table__actions_container
+  z-index: 21
+  transform: translate(-50%, -50%)
+  width: min(720px, calc(100vw - 32px))
+  max-height: calc(100vh - 48px)
   display: flex
-  margin-top: 32px
-  margin-left: auto
-  width: max-content
-  font-weight: 600
-  font-size: 1.2em
-  align-items: center
-  app-toggle
-    margin-left: 16px
-
-
+  flex-direction: column
+  overflow: hidden
+  border: 1px solid $crt-border
+  border-radius: 16px
+  background: $crt-surface
+  color: $crt-text
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .35)

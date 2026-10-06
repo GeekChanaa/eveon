@@ -20,6 +20,11 @@ namespace VoltaXApi.Data
 
         public async Task<UserInfoDownloadRequest> CreateDownloadRequestAsync(int userID)
         {
+            var open = await _context.UserInfoDownloadRequests.AnyAsync(r => r.UserID == userID &&
+                (r.Status == DownloadRequestStatusEnum.Pending || r.Status == DownloadRequestStatusEnum.Approved || r.Status == DownloadRequestStatusEnum.Processing));
+            if (open)
+                throw new ArgumentException("A data export request is already in progress.");
+
             var request = new UserInfoDownloadRequest
             {
                 UserID = userID,
@@ -100,6 +105,9 @@ namespace VoltaXApi.Data
                 Email = u.User.Email,
                 RequestTime = u.RequestTime,
                 Status = u.Status,
+                CompletedAt = u.CompletedAt,
+                ExpiresAt = u.ExpiresAt,
+                Downloaded = u.DownloadedAt != null,
             }).FirstOrDefaultAsync(u => u.ID == requestId);
         }
 
@@ -112,6 +120,9 @@ namespace VoltaXApi.Data
                 Email = u.User.Email,
                 RequestTime = u.RequestTime,
                 Status = u.Status,
+                CompletedAt = u.CompletedAt,
+                ExpiresAt = u.ExpiresAt,
+                Downloaded = u.DownloadedAt != null,
             }).FirstOrDefaultAsync();
         }
 

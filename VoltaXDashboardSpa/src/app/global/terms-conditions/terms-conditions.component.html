@@ -1,3 +1,60 @@
-<p>
-  terms-conditions works!
-</p>
+<article class="legal">
+  <nav class="legal__nav">
+    <a routerLink="/privacy">Privacy policy</a>
+    <a routerLink="/terms">Terms of use</a>
+    <a routerLink="/cookies">Cookie policy</a>
+  </nav>
+
+  <h1>Terms of use</h1>
+  <p class="legal__meta">Version {{ legal.termsVersion }} &middot; Last updated: {{ legal.lastUpdated }}</p>
+
+  <h2>1. Purpose</h2>
+  <p>
+    These terms govern the use of the {{ legal.company }} charging network, mobile application, charging cards and
+    dashboard, provided by {{ legal.legalEntity }}, {{ legal.address }}. Creating an account means you accept them.
+  </p>
+
+  <h2>2. Account</h2>
+  <ul>
+    <li>You must provide accurate information and keep your password confidential.</li>
+    <li>You are responsible for charging sessions started with your account or your charging cards. Report a lost card immediately so it can be blocked.</li>
+    <li>You may delete your account at any time from your profile. Remaining card balances are refunded on request.</li>
+  </ul>
+
+  <h2>3. Charging service</h2>
+  <ul>
+    <li>Prices (per kWh, per minute, idle fees) are shown in the application before you start a session and may differ between stations.</li>
+    <li>Idle fees may apply when a vehicle stays connected after charging ends, after the displayed grace period.</li>
+    <li>Stations may be temporarily unavailable. We do not guarantee the availability of a specific station.</li>
+    <li>Follow the safety instructions displayed on each station. Do not use damaged equipment; report it through the application.</li>
+  </ul>
+
+  <h2>4. Payments and charging cards</h2>
+  <ul>
+    <li>Sessions are paid from your charging card balance. Recharges are final once credited, except where the law provides otherwise.</li>
+    <li>Invoices are available in your account.</li>
+    <li>Charging cards remain our property and may be blocked in case of fraud or misuse.</li>
+  </ul>
+
+  <h2>5. Reviews and content</h2>
+  <p>
+    Reviews and comments must be truthful and respectful. We may remove content that is unlawful, abusive or
+    unrelated to the service.
+  </p>
+
+  <h2>6. Liability</h2>
+  <p>
+    We are liable for damage caused by our fault in providing the service, within the limits allowed by Moroccan
+    law, in particular Law No. 31-08 on consumer protection. We are not liable for damage caused by misuse of the
+    equipment or by a vehicle that is not compatible with the station.
+  </p>
+
+  <h2>7. Personal data</h2>
+  <p>Your data is processed as described in our <a routerLink="/privacy">privacy policy</a>.</p>
+
+  <h2>8. Changes and governing law</h2>
+  <p>
+    We may update these terms; you will be asked to accept the new version before continuing to use the service.
+    These terms are governed by Moroccan law. Contact: <a [href]="'mailto:' + legal.contactEmail">{{ legal.contactEmail }}</a>.
+  </p>
+</article>

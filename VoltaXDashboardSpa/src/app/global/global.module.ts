@@ -16,6 +16,7 @@ import { ServerErrorComponent } from './error-pages/server-error/server-error.co
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 import { IndexComponent } from './index/index.component';
+import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { IndexComponent } from './index/index.component';
       ServerErrorComponent,
       PrivacyPolicyComponent,
       TermsConditionsComponent,
-      IndexComponent
+      IndexComponent,
+      CookiesPolicyComponent
     ],
     imports: [
         GlobalRoutingModule,

@@ -14,8 +14,9 @@
         (cancelEvent)="showDCForm = false"></app-add-debit-card-profile>
     </div>
     <div *ngIf="debitCards.length > 0 && showDCForm == false">
-      <app-debit-card *ngFor="let debitCard of debitCards" [cardNumber]="addSpaces(debitCard.cardNumberHidden)"
-        [cardHolderName]="debitCard.nameHidden" [cardType]="debitCard.type" [id]="debitCard.id"
+      <app-debit-card *ngFor="let debitCard of debitCards" [cardNumber]="'•••• ' + debitCard.last4"
+        [cardHolderName]="debitCard.nameHidden" [type]="debitCard.type" [id]="debitCard.id"
+        [expiryDate]="formatExpiry(debitCard)"
         (deleteCard)="deleteDebitCardByID($event)" class="debit__card_container">
       </app-debit-card>
     </div>

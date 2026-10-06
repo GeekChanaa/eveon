@@ -1,0 +1,65 @@
+<article class="legal">
+  <nav class="legal__nav">
+    <a routerLink="/privacy">Privacy policy</a>
+    <a routerLink="/terms">Terms of use</a>
+    <a routerLink="/cookies">Cookie policy</a>
+  </nav>
+
+  <h1>Cookie policy</h1>
+  <p class="legal__meta">Last updated: {{ legal.lastUpdated }}</p>
+
+  <p>
+    {{ legal.company }} only uses cookies and browser storage that are strictly necessary for the service to work.
+    We do not use advertising or third-party analytics cookies. Because these items are essential, they do not
+    require your consent; we inform you about them here and in the notice shown on your first visit.
+  </p>
+
+  <h2>What we store</h2>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Type</th><th>Purpose</th><th>Duration</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sign-in tokens</td>
+        <td>Browser storage</td>
+        <td>Keep you signed in and renew your session securely</td>
+        <td>Until you sign out or the session expires</td>
+      </tr>
+      <tr>
+        <td>VoltaX.External</td>
+        <td>Cookie</td>
+        <td>Completes "Sign in with Google" securely</td>
+        <td>10 minutes</td>
+      </tr>
+      <tr>
+        <td>Google sign-in correlation cookies</td>
+        <td>Cookie</td>
+        <td>Protect the Google sign-in flow against forgery</td>
+        <td>A few minutes</td>
+      </tr>
+      <tr>
+        <td>sidebarCollapsed</td>
+        <td>Browser storage</td>
+        <td>Remembers the dashboard menu layout</td>
+        <td>Until cleared</td>
+      </tr>
+      <tr>
+        <td>cookieNoticeAck</td>
+        <td>Browser storage</td>
+        <td>Remembers that you have seen the cookie notice</td>
+        <td>Until cleared</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Managing cookies</h2>
+  <p>
+    You can delete cookies and site data from your browser settings at any time. Blocking them will sign you out
+    and some features will not work.
+  </p>
+  <p>
+    If we ever add optional cookies (for example analytics) we will ask for your consent first and update this page.
+    Questions: <a [href]="'mailto:' + legal.contactEmail">{{ legal.contactEmail }}</a>.
+  </p>
+</article>

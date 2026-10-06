@@ -52,16 +52,12 @@ namespace VoltaXApi.Services
               for (int i = 0; i < chargingStationDto.ChargingStationImages.Count(); i++)
               {
                   var image = chargingStationDto.ChargingStationImages.ToList()[i];
-                  var fileExtension = Path.GetExtension(image.FileName);
-                  var newFileName = $"charging-station-{chargingStation.ID}-{image.FileName}";
-
-                  _fileService.UploadImage(newFileName, "images/charging-stations", image);
-                  // Save to database
+                  var stored = await _fileService.SaveImageAsync(image, "images/charging-stations");
                   var newImage = new Image
                   {
-                      Url = $"images/charging-stations/{newFileName}",
+                      Url = stored.RelativeUrl,
                       UploadDate = DateTime.UtcNow,
-                      Format = fileExtension,
+                      Format = stored.Extension,
                       Priority = ImagePriorityEnum.Principal,
                       IsActive = true,
                       AltText = "Charging Station Image "+chargingStation.ID,

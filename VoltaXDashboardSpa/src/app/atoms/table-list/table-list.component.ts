@@ -1,3 +1,4 @@
+import { AccessService, DASHBOARD_RESOURCES } from 'src/_services/access.service';
 import { formatDate } from '@angular/common';
 import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
@@ -29,7 +30,7 @@ export class TableListComponent implements OnInit {
   @Input() createLink: string = "/create";
   @Input() routeName : string = "";
   @Input() searchByPlaceHolder: string = "Search by name";
-  @Input() getItemsObservable! : (page?: number, itemsPerPage?: number, itemParams?: any, endpoint?: string) => Observable<PaginatedResult<any[]>> 
+  @Input() getItemsObservable! : (page?: number, itemsPerPage?: number, itemParams?: any, endpoint?: string) => Observable<PaginatedResult<any[]>>
   @Input() deleteItemObservable! : (id : number) => Observable<any>;
   @Input() updateItemObservable! : (id : number, model : any) => Observable<any>;
   @Output() applyFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
@@ -43,11 +44,13 @@ export class TableListComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   clickOutside(event: MouseEvent) {
-    if (!this._eRef.nativeElement.contains(event.target)) {
-      this.displayMenu = false; // Close the menu if clicked outside
+    const columnsControl = this._eRef.nativeElement.querySelector('.list-columns-control');
+    if (!columnsControl?.contains(event.target)) {
+      this.displayMenu = false;
     }
   }
-  constructor( 
+  constructor(
+    public access: AccessService,
     private _enumMappingService : EnumMappingService,
     private _modalService : ActionModalService,
     private _router : Router,
@@ -55,11 +58,16 @@ export class TableListComponent implements OnInit {
   ) { }
 
   toggleMenu(event: MouseEvent) {
-    event.stopPropagation(); 
+    event.stopPropagation();
+    this.isActive = false;
     this.displayMenu = !this.displayMenu;
   }
 
+  get canDelete(): boolean {
+    return this.access.isAdmin || this.access.can('Delete' + (DASHBOARD_RESOURCES[this.routeName] || '__denied'));
+  }
   delete(id : number){
+    if (!this.canDelete) return;
     this.deleteItemObservable(id).subscribe((data) => {
       this.getAll();
       this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Item deleted successfully ",4000);
@@ -67,7 +75,7 @@ export class TableListComponent implements OnInit {
   }
 
   paginationPages: any[] = [];
-  
+
   sortedColumn : string= "";
   sortedDirection : string = "ASC";
 
@@ -85,7 +93,7 @@ export class TableListComponent implements OnInit {
 
   searchValue: string = "";
   private searchSubject = new Subject<string>();
-  
+
   isActive: boolean = false;
 
   fieldShown: { [key: string]: Boolean } = {};
@@ -145,23 +153,23 @@ export class TableListComponent implements OnInit {
       this.itemParams.SearchValue = [];
     }
     else{
-      this.itemParams.SearchBy = this.searchByAttributes; 
+      this.itemParams.SearchBy = this.searchByAttributes;
       this.itemParams.SearchValue = this.searchValue;
     }
-    this.getAll(); 
+    this.getAll();
   }
 
   applyFilters() {
     this.itemParams.FilterValue = [];
     this.itemParams.FilterBy = [];
-  
+
     for (const key in this.filters) {
-      if (this.filters[key]) {  
-        this.itemParams.FilterValue.push(this.filters[key]);  
-        this.itemParams.FilterBy.push(this.capitalizeFirstLetter(key));  
+      if (this.filters[key]) {
+        this.itemParams.FilterValue.push(this.filters[key]);
+        this.itemParams.FilterBy.push(this.capitalizeFirstLetter(key));
       }
     }
-    this.getAll();  
+    this.getAll();
     this.removeActive();
   }
 
@@ -173,7 +181,7 @@ export class TableListComponent implements OnInit {
 
   update = (id: number) =>  this.updateEvent.emit(id);
 
-  display(item: any){ 
+  display(item: any){
     if(this.name == 'charging session'){
       this._router.navigateByUrl("dashboard/connector-realtime/"+item.chargePointID+"/charging-session/"+item.id);
       return;
@@ -207,6 +215,7 @@ export class TableListComponent implements OnInit {
 
   toggleActive(event: Event): void {
       event.stopPropagation();
+      this.displayMenu = false;
       this.isActive = !this.isActive;
   }
 
@@ -252,21 +261,21 @@ export class TableListComponent implements OnInit {
         return num.toFixed(2);
       }
     }
-    
+
     else {
       return value;
     }
   }
-  
+
   isDateString(value: any): boolean {
     const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+$/;
     return typeof value === 'string' && regex.test(value);
   }
-  
+
   isNumericString(value: any): boolean {
     return typeof value === 'string' && !isNaN(Number(value)) && value.includes(".");
   }
-  
+
   generatePaginationLinks() {
     const currentPage = this.pagination.currentPage;
     const totalPages = this.pagination.totalPages;
@@ -280,7 +289,7 @@ export class TableListComponent implements OnInit {
       this.paginationPages = [currentPage - 1, currentPage, '...', totalPages];
     }
   }
-  
+
   resetFilters(){
     this.resetFiltersEvent.emit();
   }

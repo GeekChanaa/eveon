@@ -1,0 +1,639 @@
+// Shared by the station and charge-point wizards, including their dialogs.
+// Theme variables inherit from the dashboard shell when body.dark changes.
+body .page :is(app-create-charging-station, app-create-charge-point, app-create-user, app-create-partner, app-add-partner-logo)
+  --station-bg: var(--vx-surface, var(--primary1))
+  --station-soft: var(--vx-surface-alt, var(--primary2))
+  --station-border: var(--vx-border, var(--primary3))
+  --station-text: var(--vx-text, var(--primary9))
+  --station-muted: var(--professional3)
+  --station-accent: var(--vx-yellow-ink, var(--secondary1))
+  --input-height: 44px
+  --input-radius: 10px
+  color: var(--station-text)
+
+  .create .create__row
+    display: block
+    margin: 0
+
+  .create .create__col:first-child
+    width: 100%
+    max-width: 1120px
+    margin: 0 auto
+    padding: 0
+
+  .create .create__card.card
+    padding: 32px
+    background: var(--station-bg)
+    border: 1px solid var(--station-border)
+    border-radius: 18px
+    box-shadow: 0 4px 24px rgba(0, 0, 0, .03)
+
+  .station-steps ol
+    display: grid
+    grid-template-columns: repeat(6, minmax(0, 1fr))
+    gap: 8px
+    margin: 0
+    padding: 0 0 28px
+    border-bottom: 1px solid var(--station-border)
+    list-style: none
+
+  .station-steps li
+    display: flex
+    align-items: center
+    gap: 8px
+    font-size: 12px
+    line-height: 1.4
+    font-weight: 600
+    color: var(--station-muted)
+
+  .station-steps__number
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    width: 28px
+    height: 28px
+    flex-shrink: 0
+    border: 1px solid var(--station-border)
+    border-radius: 50%
+    background: var(--station-soft)
+    font-variant-numeric: tabular-nums
+
+  .station-steps .is-current
+    color: var(--station-text)
+
+    .station-steps__number
+      background: var(--secondary2)
+      border-color: var(--secondary2)
+      color: #171717
+
+  .station-steps .is-complete .station-steps__number
+    color: var(--station-accent)
+    background: var(--vx-yellow-soft)
+    border-color: var(--secondary1)
+
+  .station-intro
+    margin: 28px 0 32px
+
+    h2
+      margin: 8px 0
+      font-size: clamp(22px, 2.4vw, 28px)
+      line-height: 1.3
+      font-weight: 700
+      letter-spacing: -.025em
+      color: var(--station-text)
+
+    p
+      max-width: 680px
+      color: var(--station-muted)
+      font-size: 14px
+      line-height: 1.7
+
+  .station-eyebrow
+    font-size: 11px
+    font-weight: 700
+    letter-spacing: .08em
+    text-transform: uppercase
+    color: var(--station-accent)
+
+  .station-section-heading
+    margin: 24px 0 18px
+
+    h3, h4
+      margin: 0 0 5px
+      font-size: 16px
+      font-weight: 700
+      color: var(--station-text)
+
+    p
+      font-size: 13px
+      line-height: 1.6
+      color: var(--station-muted)
+
+  .choice__container
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 20px
+    padding: 0
+    margin: 0
+    width: 100%
+
+  .station-choice
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 12px
+    padding: 28px
+    text-align: left
+    color: var(--station-text)
+    background: var(--station-soft)
+    border: 1px solid var(--station-border)
+    border-radius: 14px
+    cursor: pointer
+    transition: border-color .18s, box-shadow .18s
+
+    &:hover
+      border-color: var(--secondary1)
+      box-shadow: 0 0 0 3px var(--vx-yellow-soft)
+
+  .station-choice__icon
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 48px
+    height: 48px
+    margin-bottom: 12px
+    border-radius: 12px
+    background: var(--vx-yellow-soft)
+    color: var(--station-accent)
+
+    svg
+      width: 24px
+      height: 24px
+      fill: none
+      stroke: currentColor
+      stroke-width: 1.6
+      stroke-linecap: round
+      stroke-linejoin: round
+
+  .station-choice__title
+    font-size: 20px
+    font-weight: 700
+
+  .station-choice__description
+    font-size: 14px
+    line-height: 1.6
+    color: var(--station-muted)
+
+  .station-choice__action
+    display: flex
+    justify-content: space-between
+    gap: 16px
+    width: 100%
+    margin-top: 20px
+    font-size: 13px
+    font-weight: 700
+    color: var(--station-accent)
+
+  .station-wizard .field__group,
+  .station-modal-grid
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 8px 24px
+    margin: 0
+
+    > .field
+      width: 100%
+      min-width: 0
+      margin-right: 0
+
+  .station-wizard .field__label
+    color: var(--station-text)
+    font-size: 13px
+    font-weight: 600
+    letter-spacing: normal
+
+    .tooltip .icon
+      fill: var(--station-muted)
+
+  .station-wizard .field__input,
+  .station-wizard .select
+    color: var(--input-text)
+    background-color: var(--input-bg)
+    border-color: var(--input-border)
+
+    &:focus
+      border-color: var(--input-border-focus)
+
+  .station-wizard .field__input.disabled
+    color: var(--station-muted)
+    opacity: .7
+
+  .station-wizard .list-search-input
+    color: var(--station-text)
+
+    .option-search-input:hover
+      background: var(--station-soft)
+
+    .select-option
+      border-color: var(--station-border)
+
+  .station-amenities
+    display: grid
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    gap: 12px
+
+    > .field
+      padding: 16px
+      border: 1px solid var(--station-border)
+      border-radius: 12px
+      background: var(--station-soft)
+
+      &:has(input:checked)
+        border-color: var(--secondary1)
+        background: var(--vx-yellow-soft)
+
+    .field__error_container
+      display: flex
+      align-items: center
+      justify-content: space-between
+      gap: 12px
+
+    .field__label
+      margin: 0
+
+    .checkbox
+      display: flex
+
+    .checkbox__input:focus-visible + .checkbox__inner .checkbox__tick
+      outline: 2px solid var(--secondary1)
+      outline-offset: 3px
+
+    .checkbox__input:checked + .checkbox__inner .checkbox__tick
+      background-color: var(--secondary1)
+      border-color: var(--secondary1)
+
+  .station-map
+    padding: 8px
+    border: 1px solid var(--station-border)
+    border-radius: 14px
+    background: var(--station-soft)
+
+    app-map-picker > div:first-child
+      border-radius: 9px
+
+    .map-error
+      margin: 12px
+      color: var(--danger1)
+      font-size: 13px
+
+  .station-wizard .form__actions
+    display: flex
+    gap: 12px
+    justify-content: space-between
+    margin-top: 32px
+    padding-top: 24px
+    border-top: 1px solid var(--station-border)
+
+    .btn
+      min-height: 42px
+      border-radius: 10px
+
+    .ml-auto .btn:not(:disabled)
+      background: var(--secondary2)
+      color: #171717
+      border-color: var(--secondary2)
+
+  .station-wizard .charge-points-container,
+  .station-wizard .preview-container
+    display: block
+    max-width: none
+    width: 100%
+    margin: 0
+    padding: 0
+    font-family: inherit
+
+  .header-actions, .connectors-header, .charge-point-header
+    gap: 16px
+    flex-wrap: wrap
+
+    h3, h4
+      color: var(--station-text)
+      font-size: 15px
+      font-weight: 700
+
+  .station-count, .station-optional
+    display: inline-block
+    margin-left: 8px
+    padding: 3px 8px
+    border-radius: 6px
+    background: var(--station-soft)
+    color: var(--station-muted)
+    font-size: 12px
+    font-weight: 500
+
+  .station-wizard .empty-state,
+  .station-wizard .no-connectors
+    padding: 32px 24px
+    border: 1px dashed var(--station-border)
+    border-radius: 12px
+    background: var(--station-soft)
+    color: var(--station-muted)
+    font-size: 13px
+    line-height: 1.7
+
+    h3
+      margin: 12px 0 6px
+      color: var(--station-text)
+      font-size: 17px
+
+  .station-empty-icon
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    width: 48px
+    height: 48px
+    border-radius: 12px
+    background: var(--vx-yellow-soft)
+    color: var(--station-accent)
+    font-size: 28px
+
+  .station-wizard .charge-point-card,
+  .station-wizard .preview-card
+    border: 1px solid var(--station-border)
+    border-radius: 14px
+    background: var(--station-bg)
+    box-shadow: none
+
+  .station-wizard .charge-point-header
+    padding: 20px
+    border-bottom: 1px solid var(--station-border)
+    background: var(--station-soft)
+
+  .charge-point-info
+    display: flex
+    flex-wrap: wrap
+    gap: 16px 32px
+    min-width: 0
+
+  .equipment-label
+    display: block
+    margin-bottom: 4px
+    font-size: 11px
+    font-weight: 500
+    color: var(--station-muted)
+
+  .equipment-value
+    font-size: 13px
+    font-weight: 600
+    color: var(--station-text)
+    overflow-wrap: anywhere
+    font-variant-numeric: tabular-nums
+
+  .station-wizard .connectors-section
+    padding: 20px
+
+  .station-wizard .connectors-list
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr))
+
+  .station-wizard .connector-item
+    display: flex
+    flex-direction: column
+    gap: 16px
+    padding: 18px
+    border: 1px solid var(--station-border)
+    border-radius: 10px
+    background: var(--station-soft)
+
+  .connector-item .connector-info
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 12px
+
+  .connector-item .connector-actions
+    flex-direction: row
+    justify-content: flex-end
+    padding-top: 12px
+    border-top: 1px solid var(--station-border)
+
+  .charge-point-card .btn,
+  .connector-item .btn,
+  .modal-footer .btn
+    min-height: 36px
+    padding: 8px 12px
+    border-radius: 8px
+    background: var(--station-bg)
+    border: 1px solid var(--station-border)
+    color: var(--station-text)
+    font-size: 12px
+    font-weight: 600
+
+    &:hover:not(:disabled)
+      border-color: var(--secondary1)
+      background: var(--vx-yellow-soft)
+
+    &.btn-danger
+      color: var(--danger1)
+
+    &:disabled, &:disabled:hover
+      background: var(--station-soft)
+      color: var(--station-muted)
+      border-color: var(--station-border)
+      opacity: .5
+      cursor: not-allowed
+
+  .station-wizard .modal-overlay
+    padding: 24px
+    background: rgba(0, 0, 0, .55)
+
+  .station-wizard .modal
+    width: 100%
+    max-width: 720px
+    max-height: 88vh
+    border: 1px solid var(--station-border)
+    border-radius: 18px
+    background: var(--station-bg)
+    color: var(--station-text)
+
+    .modal-header, .modal-footer
+      padding: 20px 24px
+      border-color: var(--station-border)
+      background: var(--station-soft)
+
+    .modal-header h3
+      font-size: 18px
+      font-weight: 700
+
+    .close-btn
+      width: 34px
+      height: 34px
+      border: 1px solid var(--station-border)
+      border-radius: 8px
+      color: var(--station-text)
+
+    .modal-body
+      padding: 24px
+
+    .station-section-heading:first-child
+      margin-top: 0
+
+    .modal-footer .btn-primary,
+    .modal-footer .button-primary
+      background: var(--secondary2)
+      border-color: var(--secondary2)
+      color: #171717
+      border-radius: 8px
+
+  .station-wizard app-create-charging-station-images .create__card.card
+    padding: 0
+    border: 0
+    border-radius: 0
+    box-shadow: none
+
+  .station-upload-hint
+    margin: 8px 0 20px
+    font-size: 13px
+    color: var(--station-muted)
+
+  .station-wizard .file__wrap
+    height: auto
+    padding: 16px
+    border: 1px dashed var(--input-border)
+    border-radius: 14px
+    background: var(--station-soft)
+
+  .station-wizard .file__box
+    position: static
+    width: 100%
+    min-height: 240px
+    padding: 24px
+    border-radius: 10px
+    background: transparent
+    color: var(--station-text)
+    gap: 10px
+    cursor: pointer
+
+    .icon
+      fill: var(--station-accent)
+
+    span
+      color: var(--station-muted)
+      font-size: 13px
+      line-height: 1.6
+
+    &:hover, &.dragover
+      background: var(--vx-yellow-soft)
+
+  .station-wizard .files__box
+    position: static
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+    gap: 16px
+    height: auto
+    margin: 0
+
+    .image__box, .add-more-images
+      width: 100%
+      height: 160px
+      margin: 0
+      border: 1px solid var(--station-border)
+      border-radius: 10px
+
+    .image__clear
+      width: 32px
+      height: 32px
+      font-size: 22px
+
+    .add-more-images
+      border-style: dashed
+      background: var(--station-bg)
+      color: var(--station-text)
+
+      .icon
+        fill: var(--station-accent)
+
+  .station-wizard .error-message
+    color: var(--danger1)
+
+  .preview-container .station-details
+    padding: 24px
+
+  .preview-container .details-row h3,
+  .preview-container .preview-subsection-title
+    color: var(--station-text)
+    border-color: var(--station-border)
+    font-size: 16px
+    font-weight: 700
+    text-align: left
+
+  .preview-container .detail-item
+    margin: 0 24px 16px 0
+    padding: 12px 16px
+    border-radius: 8px
+    background: var(--station-soft)
+
+    .detail-label
+      color: var(--station-muted)
+      font-size: 12px
+
+    .detail-value
+      color: var(--station-text)
+      font-size: 14px
+      font-weight: 600
+
+  .preview-container .address-container .address-line
+    color: var(--station-text)
+    overflow-wrap: anywhere
+
+  .preview-container .address-icon,
+  .preview-container .amenities-container .amenity svg
+    color: var(--station-accent)
+
+  .preview-container .amenities-container .amenity
+    background: var(--station-soft)
+    border: 1px solid var(--station-border)
+    color: var(--station-text)
+
+  .station-wizard .status-available
+    color: #237A48
+
+  .station-wizard .status-occupied,
+  .station-wizard .status-maintenance
+    color: #926510
+
+  .station-wizard .status-outofservice
+    color: var(--danger1)
+
+  button:focus-visible
+    outline: 2px solid var(--secondary1)
+    outline-offset: 3px
+
+  @media (max-width: 1023px)
+    .station-steps ol
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+      gap: 16px
+
+  @media (max-width: 600px)
+    .create .create__card.card
+      padding: 20px 16px
+
+    .choice__container,
+    .station-wizard .field__group,
+    .station-amenities,
+    .station-modal-grid
+      grid-template-columns: 1fr
+
+    .station-steps li
+      flex-direction: column
+      text-align: center
+      font-size: 11px
+
+    .station-choice
+      padding: 20px
+
+    .station-wizard .modal-overlay
+      padding: 12px
+
+    .station-wizard .modal .modal-body,
+    .preview-container .station-details
+      padding: 16px
+
+    .preview-container .detail-item
+      margin-right: 0
+
+body.dark .page :is(app-create-charging-station, app-create-charge-point, app-create-user, app-create-partner, app-add-partner-logo) .station-wizard
+  .status-available
+    color: #82D8A3
+
+  .status-occupied, .status-maintenance
+    color: #F0BE3C
+
+  .status-unavailable
+    color: var(--danger1)
+
+  .status-badge
+    background: var(--station-soft)
+    border: 1px solid currentColor
+
+@media (prefers-reduced-motion: reduce)
+  body .page :is(app-create-charging-station, app-create-charge-point, app-create-user, app-create-partner, app-add-partner-logo) .station-choice
+    transition: none

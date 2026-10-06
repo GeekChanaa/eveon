@@ -30,6 +30,9 @@ namespace VoltaXApi.OCPP.Messages
         public List<MeterValueType> MeterValue { get; set; }
 
         public TransactionType TransactionInfo { get; set; }
+
+        /// <summary>Id of the reservation this transaction consumes (optional).</summary>
+        public int? ReservationId { get; set; }
     }
 
     public enum ChargingStateEnumType

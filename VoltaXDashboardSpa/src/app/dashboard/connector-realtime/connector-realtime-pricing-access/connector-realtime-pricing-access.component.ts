@@ -86,9 +86,9 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
     this.connectors.forEach((connector, index) => {
       this.isLoadingFFUpdate[connector.id] = false;
       const group = this._fb.group({
-        pricePerKwh: [connector.pricePerKWh || '', Validators.required],
-        pricePerIdleMinute: [connector.pricePerIdleMinute || '', Validators.required],
-        costPerKwh: [connector.costPerKwh || '', Validators.required]
+        pricePerKwh: [connector.pricePerKWh ?? '', [Validators.required, Validators.min(0)]],
+        pricePerIdleMinute: [connector.pricePerIdleMinute ?? '', [Validators.required, Validators.min(0)]],
+        costPerKwh: [connector.costPerKwh ?? '', [Validators.required, Validators.min(0)]]
       });
       this.formArray.push(group);
       this.pricingInitialValues[index] = group.value;
@@ -100,7 +100,7 @@ export class ConnectorRealtimePricingAccessComponent implements OnInit {
       this.connectors.forEach((connector,index) => {
       this.isLoadingUpdate[connector.id] = false;
       const group = this._fb.group({
-        flatFee: [connector.flatFee || '', Validators.required]
+        flatFee: [connector.flatFee ?? '', [Validators.required, Validators.min(0)]]
       });
       this.flatFeeFormArray.push(group);
       this.flatFeeInitialValues[index] = group.value; 

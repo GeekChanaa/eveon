@@ -1,171 +1,132 @@
-.connector__status__list 
-  display: flex
-  margin: 0 -6px
-
-
-@media only screen and (max-width: 1023px) 
-  .connector__status__list 
-    margin: 0 -24px
-    overflow: auto
-    -webkit-overflow-scrolling: touch
-    -ms-overflow-style: none
-    scrollbar-width: none
-  
-
-  .connector__status__list::-webkit-scrollbar 
-    display: none
-  
-
-  .connector__status__list:before,
-  .connector__status__list:after 
-    content: ""
-    flex-shrink: 0
-    width: 24px
-    height: 1px
-  
-
-
-@media only screen and (max-width: 767px) 
-  .connector__status__list 
-    margin: 0 -16px
-  
-
-  .connector__status__list:before,
-  .connector__status__list:after 
-    width: 16px
-  
-
-
-.link__item 
+:host
   display: block
-  flex: 0 0 calc(20% - 12px)
-  width: calc(20% - 12px)
-  margin: 0 6px
-  padding: 32px
-  border-radius: 12px
-  color: var(--primary9)
-  background-color: var(--secondary2)
-  transition: ease-in-out all .3s
-  &:hover
-    background-color: var(--secondary1) !important
-    cursor: pointer
-
-
-@media only screen and (max-width: 1023px) 
-  .link__item 
-    flex: 0 0 295px
-    width: 295px
-    margin: 0
-  
-
-  .link__item:not(:last-child) 
-    margin-right: 12px
-  
-
-
-@media only screen and (max-width: 767px) 
-  .link__item 
-    flex: 0 0 285px
-    width: 285px
-  
-
-
-body.dark .link__item 
-  color: #EFEFEF
-
-
-body.dark .link__item:nth-child(2n+1) 
-  background: rgba(167, 170, 247, 0.15) !important
-
-
-body.dark .link__item:nth-child(2n) 
-  background: rgba(177, 229, 252, 0.1) !important
-
-
-.connector__status__icon 
-  display: flex
-  justify-content: center
-  align-items: center
-  width: 48px
-  height: 48px
-  margin-bottom: 12px
-  border-radius: 50%
-  background: #1A1D1F
-
-
-.connector__status__icon .icon 
-  width: 24px
-  height: 24px
-  fill: #FCFCFC
-
-
-body.dark .connector__status__icon 
-  background: #FCFCFC
-
-
-body.dark .connector__status__icon .icon 
-  fill: #1A1D1F
-
-
-.connector__status__line 
-  display: flex
-
-
-.connector__status__category 
+  color: var(--vx-text)
+.home
+  min-width: 0
+.home-heading
   display: flex
   align-items: center
-  margin-bottom: 4px
+  justify-content: space-between
+  gap: 24px
+  margin-bottom: 28px
+  h1
+    font-size: clamp(24px, 3vw, 32px)
+    font-weight: 650
+    line-height: 1.25
+    letter-spacing: -.035em
+    margin: 5px 0 8px
+.eyebrow
+  font-size: 10px
+  font-weight: 700
+  letter-spacing: .14em
+  color: var(--vx-yellow-ink)
+.subtitle, .section-heading p
+  color: var(--vx-text-muted)
   font-size: 13px
-  font-weight: 600
-  line-height: 1.23077
-  color: #33383F
-
-
-body.dark .connector__status__category 
-  color: #EFEFEF
-
-
-.connector__status .tooltip .icon 
-  fill: #33383F
-
-
-body.dark .connector__status .tooltip .icon 
-  fill: #EFEFEF
-
-
-.connector__status__counter 
-  margin-bottom: 4px
-  font-size: 48px
-  font-weight: 600
-  line-height: 1
-  letter-spacing: -.03em
-
-
-.connector__status__indicator 
+  line-height: 1.6
+.primary-action
   display: inline-flex
   align-items: center
-  border-radius: 8px
-  padding: 4px
-  background: #FCFCFC
-  color: #6F767E
-
-
-body.dark .connector__status__indicator 
-  background: #1A1D1F
-
-
-.connector__status__indicator span 
-  margin-left: 4px
-  font-size: 12px
+  justify-content: center
+  gap: 12px
+  flex-shrink: 0
+  padding: 13px 18px
+  background: var(--vx-yellow)
+  color: #171717
+  border-radius: 10px
+  font-size: 13px
   font-weight: 700
-  line-height: 1.33333
-
-
-.connector__status__chart 
-  width: 80px
-  height: 80px
-  margin-left: auto  
-
-
-.connector__status
-  margin-top: 20px
+  &:hover
+    background: var(--vx-yellow-hover)
+svg
+  width: 21px
+  height: 21px
+  fill: currentColor
+.home-panel
+  padding: 24px
+  margin-bottom: 22px
+  border: 1px solid var(--vx-border)
+  border-radius: 16px
+  background: var(--vx-surface)
+.section-heading
+  display: flex
+  justify-content: space-between
+  align-items: center
+  gap: 16px
+  margin-bottom: 22px
+  h2
+    font-size: 17px
+    font-weight: 650
+    letter-spacing: -.02em
+    margin-bottom: 4px
+.section-tag
+  padding: 6px 10px
+  border: 1px solid var(--vx-border)
+  border-radius: 6px
+  color: var(--vx-text-muted)
+  font-size: 11px
+  white-space: nowrap
+.text-link
+  color: var(--vx-text)
+  font-size: 12px
+  font-weight: 650
+  white-space: nowrap
+  &:hover
+    color: var(--vx-yellow-ink)
+.quick-links
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  gap: 12px
+.quick-link
+  display: flex
+  align-items: flex-start
+  gap: 12px
+  padding: 18px
+  color: var(--vx-text)
+  border: 1px solid var(--vx-border)
+  border-radius: 10px
+  transition: background .15s, border-color .15s
+  &:hover
+    background: var(--vx-surface-alt)
+    border-color: var(--vx-yellow)
+.quick-icon
+  display: grid
+  place-items: center
+  flex: 0 0 38px
+  height: 38px
+  background: var(--vx-yellow-soft)
+  color: var(--vx-yellow-ink)
+  border-radius: 9px
+.quick-copy
+  display: grid
+  gap: 5px
+  strong
+    font-size: 13px
+    font-weight: 650
+  > span
+    font-size: 12px
+    line-height: 1.55
+    color: var(--vx-text-muted)
+.quick-arrow
+  color: var(--vx-text-muted)
+  margin-left: auto
+a:focus-visible
+  outline: 3px solid var(--vx-yellow)
+  outline-offset: 3px
+@media (max-width: 1200px)
+  .quick-links
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+@media (max-width: 767px)
+  .home-heading
+    align-items: flex-start
+    flex-direction: column
+    gap: 16px
+  .home-panel
+    padding: 18px
+    border-radius: 12px
+  .section-heading
+    align-items: flex-start
+  .section-tag
+    display: none
+  .quick-links
+    grid-template-columns: 1fr

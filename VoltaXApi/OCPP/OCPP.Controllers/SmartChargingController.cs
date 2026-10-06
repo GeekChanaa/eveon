@@ -1,54 +1,53 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using VoltaXApi.Authorization;
+using VoltaXApi.Models;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Services;
+using VoltaXApi.SmartCharging;
 
 namespace VoltaXApi.OCPP.Controllers
 {
+    /// <summary>
+    /// Smart charging commands for 2.0.1 and 1.6 chargers. Every action waits for the charger's answer
+    /// (see <see cref="OcppCommandResult"/>); invalid input answers 400, an unknown charger or profile 404.
+    /// The raw 2.0.1 actions (SetChargingProfile, ClearChargingProfile, GetChargingProfiles) serve the generic OCPP request tool.
+    /// </summary>
     [Route("ocpp/[controller]")]
     [ApiController]
     public class SmartChargingController : Controller
     {
         private readonly ISmartChargingService _smartChargingService;
 
-        public SmartChargingController(ISmartChargingService smartChargingService)
+        public SmartChargingController(ISmartChargingService service)
         {
-            _smartChargingService = smartChargingService;
+            _smartChargingService = service;
         }
 
-        [HttpPost("ClearChargingProfile/{chargePointID}")]
-        public async Task<IActionResult> ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request)
-        {
-            await _smartChargingService.ClearChargingProfile(chargePointID, request);
-            return Ok(new { Message = "ClearChargingProfile request sent successfully." });
-        }
+        private int? UserId => (HttpContext.Items[typeof(AccessSnapshot)] as AccessSnapshot)?.User.ID;
 
-        [HttpPost("GetChargingProfiles/{chargePointID}")]
-        public async Task<IActionResult> GetChargingProfiles(string chargePointID, GetChargingProfilesRequest request)
-        {
-            await _smartChargingService.GetChargingProfiles(chargePointID, request);
-            return Ok(new { Message = "GetChargingProfiles request sent successfully." });
-        }
+        [HttpPost("SendChargingProfile/{chargePointID}")]
+        public Task<IActionResult> SendChargingProfile(string chargePointID, ChargingProfileInputDto request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetChargingProfile", () => _smartChargingService.SendChargingProfileAsync(
+                chargePointID, request, ChargingProfileSourceEnum.Csms, UserId, null, cancellationToken));
 
         [HttpPost("SetChargingProfile/{chargePointID}")]
-        public async Task<IActionResult> SetChargingProfile(string chargePointID, SetChargingProfileRequest request)
-        {
-            await _smartChargingService.SetChargingProfile(chargePointID, request);
-            return Ok(new { Message = "SetChargingProfile request sent successfully." });
-        }
+        public Task<IActionResult> SetChargingProfile(string chargePointID, SetChargingProfileRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetChargingProfile", () => _smartChargingService.SetChargingProfileAsync(chargePointID, request, UserId, cancellationToken));
 
-        [HttpPost("ClearedChargingLimit/{chargePointID}")]
-        public async Task<IActionResult> ClearedChargingLimit(string chargePointID, ClearedChargingLimitRequest request)
-        {
-            await _smartChargingService.ClearedChargingLimit(chargePointID, request);
-            return Ok(new { Message = "ClearedChargingLimit request sent successfully." });
-        }
+        [HttpPost("ClearStoredChargingProfile/{chargePointID}")]
+        public Task<IActionResult> ClearStoredChargingProfile(string chargePointID, ClearStoredChargingProfileDto request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("ClearChargingProfile", () => _smartChargingService.ClearStoredChargingProfileAsync(chargePointID, request.ChargingProfileID, cancellationToken));
+
+        [HttpPost("ClearChargingProfile/{chargePointID}")]
+        public Task<IActionResult> ClearChargingProfile(string chargePointID, ClearChargingProfileRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("ClearChargingProfile", () => _smartChargingService.ClearChargingProfileAsync(chargePointID, request, cancellationToken));
+
+        [HttpPost("GetChargingProfiles/{chargePointID}")]
+        public Task<IActionResult> GetChargingProfiles(string chargePointID, GetChargingProfilesRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("GetChargingProfiles", () => _smartChargingService.GetChargingProfilesAsync(chargePointID, request, cancellationToken));
 
         [HttpPost("GetCompositeSchedule/{chargePointID}")]
-        public async Task<IActionResult> GetCompositeSchedule(string chargePointID, GetCompositeScheduleRequest request)
-        {
-            await _smartChargingService.GetCompositeSchedule(chargePointID, request);
-            return Ok(new { Message = "GetCompositeSchedule request sent successfully." });
-        }
+        public Task<IActionResult> GetCompositeSchedule(string chargePointID, CompositeScheduleRequestDto request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("GetCompositeSchedule", () => _smartChargingService.GetCompositeScheduleAsync(chargePointID, request, cancellationToken));
     }
 }

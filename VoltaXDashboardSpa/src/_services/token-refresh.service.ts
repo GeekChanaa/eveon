@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { defer, firstValueFrom, Observable, of, throwError } from 'rxjs';
 import { catchError, finalize, map, shareReplay, tap } from 'rxjs/operators';
@@ -10,16 +10,19 @@ export const REFRESH_LOCKS = new InjectionToken<LockManager | null>('Refresh loc
   factory: () => typeof navigator !== 'undefined' ? navigator.locks ?? null : null
 });
 
+/** Tells the API to keep the refresh token in its HttpOnly cookie and out of the JSON body. */
+export const COOKIE_TRANSPORT_HEADERS = new HttpHeaders({ 'X-Token-Transport': 'cookie' });
+
 /**
- * Exchanges the refresh token for a fresh pair.
+ * Exchanges the refresh cookie for a new access token.
  *
  * Deliberately free of any dependency on AuthService: the HTTP interceptor calls
  * this, and going through AuthService would close a DI cycle
  * (interceptor -> AuthService -> HttpClient -> interceptor).
  *
- * Concurrent callers share one in-flight request. That matters because the API spends
- * the refresh token it is handed: two parallel refreshes would make the second one look
- * like a replay and kill the whole session.
+ * Concurrent callers share one in-flight request, and tabs are serialized with a Web
+ * Lock: every tab sends the same cookie and the API spends it on use, so two parallel
+ * refreshes would make the second one look like a replay and kill the whole session.
  */
 @Injectable({
   providedIn: 'root'
@@ -42,26 +45,23 @@ export class TokenRefreshService {
   }
 
   /**
-   * Resolves with the new access token. Fails when there is no refresh token to spend
-   * or the API rejects it — the caller is then expected to send the user to the login page.
+   * Resolves with the new access token. Fails when no session is known or the API
+   * rejects the cookie — the caller is then expected to send the user to the login page.
    */
   refresh(): Observable<string> {
     if (this.inFlight != null) {
       return this.inFlight;
     }
 
-    const refreshToken = this._tokenStorage.refreshToken;
-    if (refreshToken == null || refreshToken === '') {
-      return throwError(() => new Error('No refresh token available'));
+    if (!this._tokenStorage.hasRefreshToken()) {
+      return throwError(() => new Error('No session to refresh'));
     }
 
-    const exchange = () => this.exchange(refreshToken);
-    // Tabs share localStorage, so serialize rotations across tabs where Web Locks exist.
+    const generation = this._tokenStorage.generation;
+    const exchange = () => this.exchange(generation);
     const request = this.locks
       ? defer(() => this.locks!.request('voltax-refresh', () => {
-          if (this._tokenStorage.refreshToken !== refreshToken) {
-            const token = this._tokenStorage.accessToken;
-            if (token && this._tokenStorage.hasRefreshToken()) return Promise.resolve(token);
+          if (!this._tokenStorage.hasRefreshToken()) {
             return Promise.reject(new Error('Session ended while waiting to refresh'));
           }
           return firstValueFrom(exchange());
@@ -75,25 +75,24 @@ export class TokenRefreshService {
     return this.inFlight;
   }
 
-  private exchange(refreshToken: string): Observable<string> {
-    return this._http.post<any>(this.baseUrl + "Refresh", { refreshToken }).pipe(
+  private exchange(generation: number): Observable<string> {
+    return this._http.post<any>(this.baseUrl + "Refresh", {}, { withCredentials: true, headers: COOKIE_TRANSPORT_HEADERS }).pipe(
       tap((result) => {
-        if (!result?.token || !result?.refreshToken) {
+        if (!result?.token) {
           throw new Error('Invalid refresh response');
         }
         // A response from an old session must never resurrect it after logout/login.
-        if (this._tokenStorage.refreshToken !== refreshToken) {
-          this._http.post(this.baseUrl + 'Logout', { refreshToken: result.refreshToken }).subscribe({ error: () => {} });
+        if (this._tokenStorage.generation !== generation) {
           throw new Error('Session changed during refresh');
         }
         this._tokenStorage.store(result);
       }),
       map((result) => result.token as string),
       catchError((error) => {
-        // A refused refresh token is unusable from here on: drop it so the app stops
+        // A refused cookie is unusable from here on: forget the session so the app stops
         // retrying and asks for a real login instead.
         if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)
-            && this._tokenStorage.refreshToken === refreshToken) {
+            && this._tokenStorage.generation === generation) {
           this._tokenStorage.clear();
         }
         return throwError(() => error);
@@ -103,13 +102,8 @@ export class TokenRefreshService {
 
   /** Ends the session server side. Errors are swallowed: a sign out must always succeed locally. */
   revoke(): Observable<any> {
-    const refreshToken = this._tokenStorage.refreshToken;
     this._tokenStorage.clear();
-    if (refreshToken == null || refreshToken === '') {
-      return of(null);
-    }
-
-    return this._http.post(this.baseUrl + "Logout", { refreshToken: refreshToken }).pipe(
+    return this._http.post(this.baseUrl + "Logout", {}, { withCredentials: true, headers: COOKIE_TRANSPORT_HEADERS }).pipe(
       catchError(() => of(null))
     );
   }

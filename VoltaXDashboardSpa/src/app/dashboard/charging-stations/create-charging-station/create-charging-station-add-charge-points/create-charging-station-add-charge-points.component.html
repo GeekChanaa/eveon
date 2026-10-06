@@ -1,12 +1,12 @@
 
 <div class="charge-points-container">
   <div class="header-actions">
-    <h2>Charge Points</h2>
+    <h3>Charge points <span class="station-count">{{ chargePoints.length }}</span></h3>
     <app-button
       (btnClick)="openAddChargePointModal()"
       [variant]="'secondary'"
       size="small">
-        Add Charge Point
+        + Add charge point
     </app-button>
   </div>
   
@@ -22,7 +22,7 @@
   </div>
   
   <div class="empty-state" *ngIf="chargePoints.length === 0">
-    <p>No charge points added yet. Click the button above to add your first charge point.</p>
+    <span class="station-empty-icon" aria-hidden="true">+</span><h3>No charge points yet</h3><p>Add your first charge point, then configure its connectors and pricing.</p>
   </div>
 </div>
 
@@ -31,7 +31,7 @@
   <div class="modal" [@modalAnimation]>
     <div class="modal-header">
       <h3>{{ currentChargePointIndex !== null ? 'Edit' : 'Add' }} Charge Point</h3>
-      <button class="close-btn" (click)="closeChargePointModal()">&times;</button>
+      <button type="button" class="close-btn" aria-label="Close charge point dialog" (click)="closeChargePointModal()">&times;</button>
     </div>
     
     <div class="modal-body">
@@ -54,7 +54,7 @@
   <div class="modal" [@modalAnimation]>
     <div class="modal-header">
       <h3>{{ currentConnectorIndex !== null ? 'Edit' : 'Add' }} Connector</h3>
-      <button class="close-btn" (click)="closeConnectorModal()">&times;</button>
+      <button type="button" class="close-btn" aria-label="Close connector dialog" (click)="closeConnectorModal()">&times;</button>
     </div>
     
     <div class="modal-body">

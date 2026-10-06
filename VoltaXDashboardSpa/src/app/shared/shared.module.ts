@@ -1,3 +1,4 @@
+import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,6 +25,7 @@ import { NavbarSearchComponent } from './navbar/navbar-search/navbar-search.comp
       NavbarSearchComponent
    ],
   imports: [
+      MatMenuModule,
     CommonModule,
     RouterModule,
     FormsModule,

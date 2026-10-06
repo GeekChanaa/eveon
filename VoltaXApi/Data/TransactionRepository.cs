@@ -18,11 +18,13 @@ namespace VoltaXApi.Data
     public class TransactionRepository : Repository<Transaction>, ITransactionRepository
     {
         private readonly IMapper _mapper;
+        private readonly VoltaXApi.Services.IBusinessClock _clock;
 
-        public TransactionRepository(VoltaXApiDbContext context, IMapper mapper)
+        public TransactionRepository(VoltaXApiDbContext context, IMapper mapper, VoltaXApi.Services.IBusinessClock clock)
             : base(context)
         {
             _mapper = mapper;
+            _clock = clock;
         }
 
         public Task<double> CountEnergy(Expression<Func<Transaction, bool>> predicate)
@@ -32,121 +34,21 @@ namespace VoltaXApi.Data
             return energySumTask;
         }
 
-        public async Task<double> GetTotalEnergyConsumedAsync()
-        {
-            // Get all transactions where both MeterStart and MeterStop are not null
-            var transactions = await _context
-                .Transactions.Where(t => t.MeterStart != null && t.MeterStop != null)
-                .ToListAsync();
+        public Task<double> GetTotalEnergyConsumedAsync() =>
+            SumEnergy(Completed());
 
-            // Calculate the total energy consumed
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
-
-            return totalEnergy;
-        }
-
-        public async Task<double> GetTotalEnergyConsumedTodayAsync()
-        {
-            var today = DateTime.Today;
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today
-                )
-                .ToListAsync();
-
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
-
-            return totalEnergy;
-        }
+        public Task<double> GetTotalEnergyConsumedTodayAsync() =>
+            SumEnergy(Today(Completed()));
 
         // Get Energy consumed between 2 dates
-        public async Task<double> GetTotalEnergyConsumedBetween(
-            DateTime dateStart,
-            DateTime dateEnd
-        )
-        {
-            var today = DateTime.Today;
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null
-                    && t.MeterStop != null
-                    && t.StartTime >= dateStart
-                    && t.StartTime <= dateEnd
-                )
-                .ToListAsync();
+        public Task<double> GetTotalEnergyConsumedBetween(DateTime dateStart, DateTime dateEnd) =>
+            SumEnergy(Completed().Where(t => t.StartTime >= dateStart && t.StartTime <= dateEnd));
 
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
+        public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync() =>
+            EnergyByDay(await LoadEnergy(Last30Days(Completed())));
 
-            return totalEnergy;
-        }
-
-        public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync()
-        {
-            var startDate = DateTime.Today.AddDays(-30);
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate
-                )
-                .ToListAsync();
-
-            var energyByDay = new Dictionary<DateTime, double>();
-            foreach (var transaction in transactions)
-            {
-                var date = transaction.StartTime.Date;
-                var energy = (double)(transaction.MeterStop - transaction.MeterStart);
-
-                if (energyByDay.ContainsKey(date))
-                {
-                    energyByDay[date] += energy;
-                }
-                else
-                {
-                    energyByDay[date] = energy;
-                }
-            }
-
-            return energyByDay;
-        }
-
-        public async Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync()
-        {
-            var startDate = DateTime.Today.AddYears(-1);
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate
-                )
-                .ToListAsync();
-
-            var energyByMonth = new Dictionary<string, double>();
-            foreach (var transaction in transactions)
-            {
-                var monthYearKey = $"{transaction.StartTime.Month}-{transaction.StartTime.Year}";
-                var energy = (double)(transaction.MeterStop - transaction.MeterStart);
-
-                if (energyByMonth.ContainsKey(monthYearKey))
-                {
-                    energyByMonth[monthYearKey] += energy;
-                }
-                else
-                {
-                    energyByMonth[monthYearKey] = energy;
-                }
-            }
-
-            return energyByMonth;
-        }
+        public async Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync() =>
+            EnergyByMonth(await LoadEnergy(LastYear(Completed())));
 
         // Getting latest Transactions
         public async Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20)
@@ -170,131 +72,70 @@ namespace VoltaXApi.Data
             return energySumTask;
         }
 
-        public async Task<double> GetPartnerTotalEnergyConsumedAsync(int partnerID)
-        {
-            // Get all transactions where both MeterStart and MeterStop are not null
-            var transactions = await _context
-                .Transactions.Where(t => t.MeterStart != null && t.MeterStop != null)
-                .Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
-                .ToListAsync();
+        public Task<double> GetPartnerTotalEnergyConsumedAsync(int partnerID) =>
+            SumEnergy(Partner(Completed(), partnerID));
 
-            // Calculate the total energy consumed
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
-
-            return totalEnergy;
-        }
-
-        public async Task<double> GetPartnerTotalEnergyConsumedTodayAsync(int partnerID)
-        {
-            var today = DateTime.Today;
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date == today
-                )
-                .Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
-                .ToListAsync();
-
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
-
-            return totalEnergy;
-        }
+        public Task<double> GetPartnerTotalEnergyConsumedTodayAsync(int partnerID) =>
+            SumEnergy(Today(Partner(Completed(), partnerID)));
 
         // Get Energy consumed between 2 dates
-        public async Task<double> GetPartnerTotalEnergyConsumedBetween(
-            int partnerID,
-            DateTime dateStart,
-            DateTime dateEnd
-        )
+        public Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID, DateTime dateStart, DateTime dateEnd) =>
+            SumEnergy(Partner(Completed(), partnerID).Where(t => t.StartTime >= dateStart && t.StartTime <= dateEnd));
+
+        public async Task<Dictionary<DateTime, double>> GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID) =>
+            EnergyByDay(await LoadEnergy(Last30Days(Partner(Completed(), partnerID))));
+
+        public async Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(int partnerID) =>
+            EnergyByMonth(await LoadEnergy(LastYear(Partner(Completed(), partnerID))));
+
+        #region Energy statistics
+
+        // Transactions with a stop meter value; "today", daily and monthly use business-time-zone days.
+        private IQueryable<Transaction> Completed() =>
+            _context.Transactions.AsNoTracking().Where(t => t.MeterStop != null);
+
+        private static IQueryable<Transaction> Partner(IQueryable<Transaction> query, int partnerID) =>
+            query.Where(t => t.Connector!.ChargePoint!.ChargingStation!.PartnerID == partnerID);
+
+        private IQueryable<Transaction> Today(IQueryable<Transaction> query)
         {
-            var today = DateTime.Today;
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null
-                    && t.MeterStop != null
-                    && t.StartTime >= dateStart
-                    && t.StartTime <= dateEnd
-                )
-                .Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
-                .ToListAsync();
-
-            double totalEnergy = 0;
-            foreach (var transaction in transactions)
-            {
-                totalEnergy += (double)(transaction.MeterStop - transaction.MeterStart);
-            }
-
-            return totalEnergy;
+            var from = _clock.StartOfDayUtc(_clock.Today);
+            var to = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
+            return query.Where(t => t.StartTime >= from && t.StartTime < to);
         }
 
-        public async Task<
-            Dictionary<DateTime, double>
-        > GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID)
+        private IQueryable<Transaction> Last30Days(IQueryable<Transaction> query)
         {
-            var startDate = DateTime.Today.AddDays(-30);
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime.Date >= startDate
-                )
-                .Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
-                .ToListAsync();
-
-            var energyByDay = new Dictionary<DateTime, double>();
-            foreach (var transaction in transactions)
-            {
-                var date = transaction.StartTime.Date;
-                var energy = (double)(transaction.MeterStop - transaction.MeterStart);
-
-                if (energyByDay.ContainsKey(date))
-                {
-                    energyByDay[date] += energy;
-                }
-                else
-                {
-                    energyByDay[date] = energy;
-                }
-            }
-
-            return energyByDay;
+            var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
+            return query.Where(t => t.StartTime >= from);
         }
 
-        public async Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(
-            int partnerID
-        )
+        private IQueryable<Transaction> LastYear(IQueryable<Transaction> query)
         {
-            var startDate = DateTime.Today.AddYears(-1);
-            var transactions = await _context
-                .Transactions.Where(t =>
-                    t.MeterStart != null && t.MeterStop != null && t.StartTime >= startDate
-                )
-                .Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID)
-                .ToListAsync();
-
-            var energyByMonth = new Dictionary<string, double>();
-            foreach (var transaction in transactions)
-            {
-                var monthYearKey = $"{transaction.StartTime.Month}-{transaction.StartTime.Year}";
-                var energy = (double)(transaction.MeterStop - transaction.MeterStart);
-
-                if (energyByMonth.ContainsKey(monthYearKey))
-                {
-                    energyByMonth[monthYearKey] += energy;
-                }
-                else
-                {
-                    energyByMonth[monthYearKey] = energy;
-                }
-            }
-
-            return energyByMonth;
+            var from = _clock.StartOfDayUtc(_clock.Today.AddYears(-1));
+            return query.Where(t => t.StartTime >= from);
         }
+
+        private static async Task<double> SumEnergy(IQueryable<Transaction> query) =>
+            await query.SumAsync(t => t.MeterStop - t.MeterStart) ?? 0;
+
+        private static async Task<List<(DateTime StartTime, double Energy)>> LoadEnergy(IQueryable<Transaction> query)
+        {
+            var rows = await query.Select(t => new { t.StartTime, Energy = t.MeterStop!.Value - t.MeterStart }).ToListAsync();
+            return rows.Select(r => (r.StartTime, r.Energy)).ToList();
+        }
+
+        private Dictionary<DateTime, double> EnergyByDay(IEnumerable<(DateTime StartTime, double Energy)> rows) =>
+            rows.GroupBy(r => _clock.ToLocal(r.StartTime).Date).ToDictionary(g => g.Key, g => g.Sum(r => r.Energy));
+
+        private Dictionary<string, double> EnergyByMonth(IEnumerable<(DateTime StartTime, double Energy)> rows) =>
+            rows.GroupBy(r =>
+            {
+                var local = _clock.ToLocal(r.StartTime);
+                return $"{local.Month}-{local.Year}";
+            }).ToDictionary(g => g.Key, g => g.Sum(r => r.Energy));
+
+        #endregion
 
         // Getting latest Transactions
         public async Task<List<Transaction>> GetPartnerLatestTransactions(

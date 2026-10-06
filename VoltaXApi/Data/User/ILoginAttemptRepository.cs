@@ -7,6 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface ILoginAttemptRepository : IRepository<LoginAttempt>
     {
-        Task LoginAttemptFailed(string ipAddress);
+        Task<bool> IsLockedOut(string ipAddress);
+        Task<bool> LoginAttemptFailed(string ipAddress);
     }
 }

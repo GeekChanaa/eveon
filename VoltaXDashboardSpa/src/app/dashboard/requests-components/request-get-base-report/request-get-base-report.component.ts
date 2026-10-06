@@ -3,6 +3,7 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { OcppReportingService } from 'src/_services/ocpp-services/ocpp-reporting.service';
 import { UtilsService } from 'src/_services/utils.service';
+import { showOcppCommandFeedback } from 'src/_services/ocpp-services/ocpp-command-feedback';
 
 @Component({
   selector: 'app-request-get-base-report',
@@ -41,12 +42,13 @@ export class RequestGetBaseReportComponent implements OnInit {
     this._OCPPreportService.getBaseReport(this.chargePointID, getBaseReportRequest).subscribe((data) => {
       this.isLoading = true;
       this.requestId = data.requestID;
-      this.isRequested = true;
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success","Base Report Generated successfully",4000);
-      this.successEvent.emit();
+      if(showOcppCommandFeedback(this._modalService, data)){
+        this.isRequested = true;
+        this.successEvent.emit();
+      }
     },(error)=> {
       this.isLoading = true;
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
+      showOcppCommandFeedback(this._modalService, error);
     })
   }
 

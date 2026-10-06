@@ -26,6 +26,22 @@
       </div>
 
       <div class="form-section">
+        <app-two-factor-settings></app-two-factor-settings>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Location</h3>
+        <ng-container *ngIf="locationConsent; else noLocationConsent">
+          <p>Your location is remembered on this device (since {{ locationConsent.at | date:'medium' }}) to show nearby stations.</p>
+          <button type="button" class="button-stroke" (click)="revokeLocationConsent()">Forget my location</button>
+        </ng-container>
+        <ng-template #noLocationConsent>
+          <p>Location is only requested when you ask for it and is not stored on this device.</p>
+          <button type="button" class="button-stroke" (click)="grantLocationConsent()">Remember my location on this device</button>
+        </ng-template>
+      </div>
+
+      <div class="form-section">
         <h3 class="section-title">Connected Accounts</h3>
         <div class="connected__container">
           <div class="connected__provider">
@@ -63,40 +79,9 @@
       </div>
 
       <div class="form-section">
-
-        <h3 class="section-title">Personal Informations Request</h3>
-        <div class="download__container">
-          <ng-container *ngIf="lastRequest == null || lastRequest == undefined">
-            Request to download your personal informations
-            <a (click)="showRequestConfirmModal = true"> here</a>
-          </ng-container>
-
-          <ng-container *ngIf="lastRequest != null">
-            <ng-container *ngIf="lastRequest.status == 'Pending'">
-              Your request is being processed please stay put !
-            </ng-container>
-
-            <ng-container *ngIf="lastRequest.status == 'Approved'">
-              Your request has been approved, you can download your informations
-              <a (click)="downloadUserInformations()"> here</a>
-            </ng-container>
-
-            <ng-container *ngIf="lastRequest.status == 'Denied'">
-              Your request has been denied, please try again
-              <a (click)="showRequestConfirmModal = true"> here</a>
-            </ng-container>
-          </ng-container>
-          <div class="modal-overlay" *ngIf="showRequestConfirmModal">
-            <div class="modal-content">
-              <h3>Confirm Request</h3>
-              <p>Do you want to request an export of your personal informations?</p>
-              <div class="modal-actions">
-                <button (click)="cancelRequest()" class="btn-cancel">Cancel</button>
-                <button (click)="proceedWithRequest()" class="btn-delete">Request</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h3 class="section-title">Your data</h3>
+        <p>Download a copy of your personal data or delete your account from the
+          <a routerLink="." [queryParams]="{ tab: 'privacy' }">Privacy</a> tab.</p>
       </div>
     </div>
 

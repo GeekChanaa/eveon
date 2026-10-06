@@ -1,129 +1,110 @@
-<app-dashboard-details-container 
-  [state]="state"
-  [title]="chargePoint?.name || 'Charge Point Details'" [breadcrumbs]="[
-  { label: 'Dashboard', link: '/dashboard' },
-  { label: 'Charge Points', link: '/dashboard/charging-points' },
-  { label: chargePoint?.name || 'Details' }
-]">
-
-  <!-- Loading state -->
-  <div *ngIf="!chargePointLoaded" class="loading-container">
-    <app-svg-spinner></app-svg-spinner>
-  </div>
-
-  <!-- Content area -->
-  <div *ngIf="chargePointLoaded" class="content-area">
-    <!-- Tabs navigation -->
-    <div class="tabs-container">
-      <div class="tabs">
-        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
-          class="tab-button">
-          Information
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'ConnectorsTab'}" (click)="changeTab('ConnectorsTab')"
-          class="tab-button">
-          Connectors
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'QrCodeTab'}" (click)="changeTab('QrCodeTab')"
-          class="tab-button">
-          QrCode
-        </button>
-      </div>
+<app-dashboard-details-container [state]="state" [title]="chargePoint?.chargePointId || 'Charge point'"
+  [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Charge points', link: '/dashboard/charging-points' }, { label: chargePoint?.chargePointId || 'Details' }]">
+  <div class="station-page" *ngIf="state === PageState.Success">
+    <div class="station-summary">
+      <span class="station-id">Charge point #{{ chargePointID }}</span>
+      <app-ocpp-version-badge *ngIf="chargePoint?.chargePointId" [chargePointId]="chargePoint.chargePointId"></app-ocpp-version-badge>
+      <a *ngIf="chargePoint.chargingStationID" [routerLink]="['/dashboard/charging-stations', chargePoint.chargingStationID]">{{ chargePoint.chargingStationName || 'View charging station' }}</a>
+      <a class="realtime-link" [routerLink]="['/dashboard/connector-realtime', chargePointID]">Open realtime view <span aria-hidden="true">&rarr;</span></a>
+    </div>
+    <div class="station-tabs" role="tablist" aria-label="Charge point sections">
+      <button type="button" *ngFor="let tab of tabs; let i = index" role="tab" [id]="'tab-' + tab.id"
+        [attr.aria-controls]="'panel-' + tab.id" [attr.aria-selected]="selectedTab === tab.id"
+        [attr.tabindex]="selectedTab === tab.id ? 0 : -1" [class.is-active]="selectedTab === tab.id"
+        (click)="changeTab(tab.id)" (keydown)="onTabKey($event, i)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path [attr.d]="tab.icon"/></svg>
+        <span class="tab-copy"><strong>{{ tab.label }}</strong><span>{{ tab.description }}</span></span>
+      </button>
     </div>
 
-    <!-- Tab content -->
-    <div class="tab-content">
-      <!-- Information Tab -->
-      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
-        <div class="card profile-section">
-
-          <div class="card-content">
-
-            <!-- Main details -->
-            <div class="form-content">
-
-              <div class="form-section">
-                <h3 class="section-title">Basic Informations</h3>
-                <div class="field-group">
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                    [editable]="false" inpType="text" title="Charge Point ID"
-                    val="{{chargePoint.chargePointId}}"></app-display-cell>
-
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                    [editable]="false" inpType="text" title="Charging Station Name"
-                    val="{{chargePoint.chargingStationName}}"></app-display-cell>
-
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                    inpType="text" title="Serial Number" val="{{chargePoint.serialNumber}}"></app-display-cell>
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                    inpType="select" title="chargePointBrandID" [options]="chargePointBrandsOptions" val="{{chargePoint.make}}"></app-display-cell>
-
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                    inpType="select" title="chargePointModelID" [options]="chargePointModelsOptions" val="{{chargePoint.modelName}}"></app-display-cell>
-
-
-
-                </div>
-
-              </div>
-
-              <!-- Address Information -->
-              <div class="form-section">
-                <h3 class="section-title">Configuration</h3>
-                <div class="field-group">
-                  <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                  inpType="select_enum" title="Charge Point Status" enumName="ChargePointStatus"
-                  val="{{chargePoint.status}}"></app-display-cell>
-
-                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                  inpType="select_enum"  title="Charge Point Category" enumName="ChargePointCategory"
-                  val="{{chargePoint.category}}"></app-display-cell>
-
-                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                  inpType="text"  title="Username"
-                  val="{{chargePoint.username}}"></app-display-cell>
-
-                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                  inpType="text"  title="Password"
-                  val="{{chargePoint.password}}"></app-display-cell>
-
-                <app-display-cell [updateObservable]="updateChargePointObservable.bind(this)" [object]="chargePoint"
-                  inpType="text"  title="Comment"
-                  val="{{chargePoint.comment}}"></app-display-cell>
-                </div>
-
-
-              </div>
+    <div id="panel-information" role="tabpanel" aria-labelledby="tab-information" [hidden]="selectedTab !== 'information'">
+      <div class="section-intro"><div><h2>Information</h2><p>Review hardware and configuration. Select Edit beside a field to make a change.</p></div><span class="editing-hint" *ngIf="editingField">Editing {{ editingField.label }}</span></div>
+      <p class="options-error" role="alert" *ngIf="optionsError">Brand or model options could not load. <button type="button" (click)="loadOptions()">Retry</button></p>
+      <p class="save-feedback" role="status" *ngIf="feedback">{{ feedback }}</p>
+      <div class="information-layout">
+        <section class="station-section" *ngFor="let section of sections">
+          <header><h3>{{ section.title }}</h3><p>{{ section.description }}</p></header>
+          <div class="station-field" *ngFor="let field of section.fields" [class.is-editing]="editingField?.key === field.key">
+            <div class="field-heading"><label [attr.for]="editingField?.key === field.key ? 'station-field-input' : null">{{ field.label }}</label>
+              <button type="button" class="edit-button" [id]="'edit-' + field.key" *ngIf="!field.readonly && editingField?.key !== field.key"
+                [disabled]="!!editingField || (!!field.optionsKey && !options(field).length)" [attr.aria-label]="'Edit ' + field.label" (click)="editField(field)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>Edit
+              </button><span class="readonly-label" *ngIf="field.readonly">Read only</span>
             </div>
+            <div class="field-value-row" *ngIf="editingField?.key !== field.key"><p class="field-value">{{ displayValue(field) }}</p></div>
+            <form *ngIf="editingField?.key === field.key" (ngSubmit)="saveField()" (keydown.escape)="cancelEdit()" [attr.aria-busy]="saving">
+              <select *ngIf="field.type === 'select'; else textInput" #fieldInput id="station-field-input" [formControl]="draft" [attr.aria-invalid]="draft.touched && draft.invalid">
+                <option *ngFor="let option of options(field)" [ngValue]="option.value">{{ option.label }}</option>
+              </select>
+              <ng-template #textInput><textarea *ngIf="field.type === 'textarea'; else singleInput" #fieldInput id="station-field-input" [formControl]="draft" rows="4"></textarea><ng-template #singleInput><input #fieldInput id="station-field-input" [type]="field.type || 'text'" autocomplete="off" [formControl]="draft" [attr.min]="field.type === 'number' ? 0 : null" [attr.step]="field.type === 'number' ? 1 : null" [attr.aria-invalid]="draft.touched && draft.invalid"></ng-template></ng-template>
+              <p class="field-error" role="alert" *ngIf="draft.touched && draft.invalid">{{ field.type === 'number' ? 'Enter a whole number of zero or more.' : field.label + ' is required.' }}</p>
+              <p class="field-error" role="alert" *ngIf="saveError">{{ saveError }}</p>
+              <div class="edit-actions"><button type="button" class="secondary-action" [disabled]="saving" (click)="cancelEdit()">Cancel</button><button type="submit" class="primary-action" [disabled]="saving || draft.invalid">{{ saving ? 'Saving...' : 'Save changes' }}</button></div>
+            </form>
           </div>
-        </div>
-      </div>
-
-      <!-- Connectors Tab -->
-      <div *ngIf="tabsEnum === 'ConnectorsTab'" class="charging-stations-tab">
-        <div class="card">
-          <div class="card-content">
-            <ng-container *ngIf="chargePoint.id != null && chargePoint.id != undefined">
-              <app-charge-point-connectors [chargePointID]="chargePoint.id"></app-charge-point-connectors>
-            </ng-container>
+        </section>
+        <section class="station-section">
+          <header><h3>Charger password</h3><p>Used by the charger for OCPP Basic authentication; the username is the charge point ID. The password is stored hashed and is only shown once, right after it is set.</p></header>
+          <div class="station-field">
+            <div class="field-heading"><label>Status</label></div>
+            <p class="field-value">{{ chargePoint.hasPassword ? 'Configured' : 'Not set: connections from this charger are refused' }}</p>
           </div>
-        </div>
-      </div>
-
-      <!-- QrCode Tab -->
-      <div *ngIf="tabsEnum === 'QrCodeTab'" class="charging-stations-tab">
-        <div class="card">
-          <img class="qrcode-image" src="{{qrCodeImage}}" alt="">
-          <div class="qrcode-actions">
-            <app-button
-              (btnClick)="downloadQrCode()"
-              [variant]="'secondary'"
-              size="small">
-                Download QR Code
-            </app-button>
+          <div class="station-field" *ngIf="newPassword">
+            <div class="field-heading"><label for="new-charger-password">New password</label></div>
+            <p class="password-once" role="status">Copy it now and configure it on the charger. It will not be shown again.</p>
+            <div class="field-value-row"><input id="new-charger-password" class="password-output" readonly [value]="newPassword" (focus)="$any($event.target).select()"><button type="button" class="edit-button" (click)="copyPassword()">{{ passwordCopied ? 'Copied' : 'Copy' }}</button></div>
           </div>
-        </div>
+          <form class="station-field" *ngIf="settingCustomPassword" (ngSubmit)="saveCustomPassword()" (keydown.escape)="settingCustomPassword = false" [attr.aria-busy]="passwordSaving">
+            <div class="field-heading"><label for="custom-charger-password">Custom password</label></div>
+            <input id="custom-charger-password" type="password" autocomplete="new-password" maxlength="40" [formControl]="customPassword" [attr.aria-invalid]="customPassword.touched && customPassword.invalid">
+            <p class="field-error" role="alert" *ngIf="customPassword.touched && customPassword.invalid">Use 16 to 40 printable ASCII characters.</p>
+            <div class="edit-actions"><button type="button" class="secondary-action" [disabled]="passwordSaving" (click)="settingCustomPassword = false">Cancel</button><button type="submit" class="primary-action" [disabled]="passwordSaving">{{ passwordSaving ? 'Saving...' : 'Save password' }}</button></div>
+          </form>
+          <p class="field-error" role="alert" *ngIf="passwordError">{{ passwordError }}</p>
+          <div class="edit-actions" *ngIf="access.can('EditChargePoints') && !settingCustomPassword">
+            <button type="button" class="secondary-action" [disabled]="passwordSaving" (click)="startCustomPassword()">Set custom password</button>
+            <button type="button" class="primary-action" [disabled]="passwordSaving" (click)="requestGeneratePassword()">{{ passwordSaving ? 'Saving...' : chargePoint.hasPassword ? 'Regenerate password' : 'Generate password' }}</button>
+          </div>
+        </section>
       </div>
+    </div>
+    <div id="panel-connectors" role="tabpanel" aria-labelledby="tab-connectors" [hidden]="selectedTab !== 'connectors'">
+      <app-charge-point-connectors *ngIf="visitedTabs.has('connectors')" [chargePointID]="chargePointID"></app-charge-point-connectors>
+    </div>
+    <div id="panel-qr-code" role="tabpanel" aria-labelledby="tab-qr-code" [hidden]="selectedTab !== 'qr-code'">
+      <div class="section-intro"><div><h2>QR code</h2><p>Download this charge point's QR code for your station signage.</p></div></div>
+      <section class="qr-card" *ngIf="visitedTabs.has('qr-code')">
+        <div class="qr-preview">
+          <p *ngIf="!qrLoaded && !qrError" role="status">Loading QR code...</p>
+          <img *ngIf="qrCodeImage" [src]="qrCodeImage" [hidden]="!qrLoaded || qrError" (load)="qrLoaded = true" (error)="qrError = true" [alt]="'QR code for charge point ' + chargePoint.chargePointId">
+          <div *ngIf="qrError" role="alert"><p>Could not load the QR code.</p><button class="secondary-action" type="button" (click)="retryQrCode()">Retry</button></div>
+        </div>
+        <div class="qr-copy"><span class="station-id">Charge point #{{ chargePointID }}</span><h3>{{ chargePoint.chargePointId }}</h3><p>Place the code where drivers can easily see and scan it. Keep the white border and check that the printed code scans correctly.</p>
+          <div class="qr-actions">
+            <button class="primary-action" type="button" [disabled]="!qrLoaded || qrError || downloading" (click)="downloadQrCode()">{{ downloading ? 'Downloading...' : 'Download QR code' }}</button>
+            <button *ngIf="access.can('EditChargePoints')" class="secondary-action" type="button" [disabled]="regenerating" (click)="requestRegenerateQrCode()">{{ regenerating ? 'Regenerating...' : 'Regenerate QR code' }}</button>
+          </div>
+          <p class="field-error" role="alert" *ngIf="downloadError">{{ downloadError }}</p>
+          <p role="status" *ngIf="regenerateFeedback">{{ regenerateFeedback }}</p>
+          <p class="field-error" role="alert" *ngIf="regenerateError">{{ regenerateError }}</p>
+        </div>
+      </section>
+    </div>
+    <div id="panel-events" role="tabpanel" aria-labelledby="tab-events" [hidden]="selectedTab !== 'events'">
+      <div class="section-intro"><div><h2>Events</h2><p>Events and alarms reported by the charger (OCPP 2.0.1 NotifyEvent). New alarms appear automatically.</p></div></div>
+      <app-charger-events *ngIf="visitedTabs.has('events')" [chargePointId]="chargePoint.chargePointId"></app-charger-events>
+    </div>
+    <div id="panel-display-messages" role="tabpanel" aria-labelledby="tab-display-messages" [hidden]="selectedTab !== 'display-messages'">
+      <app-charge-point-display-messages *ngIf="visitedTabs.has('display-messages')" [chargePointId]="chargePoint.chargePointId"></app-charge-point-display-messages>
+    </div>
+    <div id="panel-customer-information" role="tabpanel" aria-labelledby="tab-customer-information" [hidden]="selectedTab !== 'customer-information'">
+      <app-charge-point-customer-information *ngIf="visitedTabs.has('customer-information')" [chargePointId]="chargePoint.chargePointId"></app-charge-point-customer-information>
+    </div>
+    <div id="panel-logs" role="tabpanel" aria-labelledby="tab-logs" [hidden]="selectedTab !== 'logs'">
+      <app-charge-point-logs *ngIf="visitedTabs.has('logs')" [chargePointId]="chargePoint.chargePointId"></app-charge-point-logs>
+    </div>
+    <div id="panel-certificates" role="tabpanel" aria-labelledby="tab-certificates" [hidden]="selectedTab !== 'certificates'">
+      <app-charge-point-certificates *ngIf="visitedTabs.has('certificates')" [chargePointId]="chargePoint.chargePointId"></app-charge-point-certificates>
     </div>
   </div>
 </app-dashboard-details-container>

@@ -37,79 +37,87 @@
   <div class="sidebar__menu">
     <ng-container *ngIf="partnerID == 0">
       <!-- Admin/Operator menu -->
-      <app-sidebar-item [title]="'home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
+      <app-sidebar-item *ngIf="access.canUrl('/dashboard')" [title]="'home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
 
-      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'Operation Monitoring'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/connector-realtime') || access.canUrl('/dashboard/statistics')" iconID="icon-type2-charger" [title]="'Operation Monitoring'"
         [active]="isDropdownActive('/dashboard/connector-realtime', '/dashboard/statistics')">
-        <app-sidebar-link [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/connector-realtime')" [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'"
           [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
-        <app-sidebar-link [title]="'statistics'" [link]="'/dashboard/statistics'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/statistics')" [title]="'statistics'" [link]="'/dashboard/statistics'"
           [active]="isActive('/dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-charging-station" [title]="'Station Management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-stations') || access.canUrl('/dashboard/charging-points')" iconID="icon-charging-station" [title]="'Station Management'"
         [active]="isDropdownActive('/dashboard/charging-stations', '/dashboard/charging-points')">
-        <app-sidebar-link [title]="'charging station'" [link]="'/dashboard/charging-stations'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-stations')" [title]="'charging station'" [link]="'/dashboard/charging-stations'"
           [active]="isActive('/dashboard/charging-stations')"></app-sidebar-link>
-        <app-sidebar-link [title]="'charge point'" [link]="'/dashboard/charging-points'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-points')" [title]="'charge point'" [link]="'/dashboard/charging-points'"
           [active]="isActive('/dashboard/charging-points')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-money-bill" [title]="'business management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-cards')" iconID="icon-money-bill" [title]="'business management'"
         [active]="isDropdownActive('/dashboard/charging-cards')">
-        <app-sidebar-link [title]="'charging cards'" [link]="'/dashboard/charging-cards'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-cards')" [title]="'charging cards'" [link]="'/dashboard/charging-cards'"
           [active]="isActive('/dashboard/charging-cards')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-comment" [title]="'app management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/notices') || access.canUrl('/dashboard/reports') || access.canUrl('/dashboard/user-info-download-requests')" iconID="icon-comment" [title]="'app management'"
         [active]="isDropdownActive('/dashboard/reports', '/dashboard/notices', '/dashboard/user-info-download-requests')">
-        <app-sidebar-link [title]="'notices'" [link]="'/dashboard/notices'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/notices')" [title]="'notices'" [link]="'/dashboard/notices'"
           [active]="isActive('/dashboard/notices')"></app-sidebar-link>
-        <app-sidebar-link [title]="'reports management'" [link]="'/dashboard/reports'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/reports')" [title]="'reports management'" [link]="'/dashboard/reports'"
           [active]="isActive('/dashboard/reports')"></app-sidebar-link>
-        <app-sidebar-link [title]="'user info download requests'" [link]="'/dashboard/user-info-download-requests'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/user-info-download-requests')" [title]="'user info download requests'" [link]="'/dashboard/user-info-download-requests'"
           [active]="isActive('/dashboard/user-info-download-requests')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-invoice" [title]="'order management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders')" iconID="icon-invoice" [title]="'order management'"
         [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions')">
-        <app-sidebar-link [title]="'Charging Sessions'" [link]="'/dashboard/charging-sessions'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-sessions')" [title]="'Charging Sessions'" [link]="'/dashboard/charging-sessions'"
           [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
-        <app-sidebar-link [title]="'transactions'" [link]="'/dashboard/transactions'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/transactions')" [title]="'transactions'" [link]="'/dashboard/transactions'"
           [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
-        <app-sidebar-link [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/recharge-orders')" [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'"
           [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-setting" [title]="'maintenance management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/global-configurations') || access.canUrl('/dashboard/system-reports')" iconID="icon-setting" [title]="'maintenance management'"
         [active]="isDropdownActive('/dashboard/global-configurations', '/dashboard/system-reports')">
-        <app-sidebar-link [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/global-configurations')" [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'"
           [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
-        <app-sidebar-link [title]="'System Reports'" [link]="'/dashboard/system-reports'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/system-reports')" [title]="'System Reports'" [link]="'/dashboard/system-reports'"
           [active]="isActive('/dashboard/system-reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-maintenance" [title]="'ocpp operation'"
-        [icon]="'/assets/images/icons/updated/bolt.svg'" [active]="isDropdownActive('/dashboard/ocpp-local-list')">
-        <app-sidebar-link [title]="'local list'" [link]="'/dashboard/ocpp-local-list'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/ocpp-local-list') || access.canUrl('/dashboard/ocpp-configuration') || access.canUrl('/dashboard/charge-point-configurations') || access.canUrl('/dashboard/charger-events')" iconID="icon-maintenance" [title]="'ocpp operation'"
+        [icon]="'/assets/images/icons/updated/bolt.svg'" [active]="isDropdownActive('/dashboard/ocpp-local-list', '/dashboard/ocpp-configuration', '/dashboard/charge-point-configurations', '/dashboard/charger-events')">
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charger-events')" [title]="'charger events'" [link]="'/dashboard/charger-events'"
+          [active]="isActive('/dashboard/charger-events')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charge-point-configurations')" [title]="'charge points configurations'" [link]="'/dashboard/charge-point-configurations'"
+          [active]="isActive('/dashboard/charge-point-configurations')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-configuration')" [title]="'default configuration'" [link]="'/dashboard/ocpp-configuration'"
+          [active]="isActive('/dashboard/ocpp-configuration')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-local-list')" [title]="'local list'" [link]="'/dashboard/ocpp-local-list'"
           [active]="isActive('/dashboard/ocpp-local-list')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-account-setting" [title]="'Account'"
-        [active]="isDropdownActive('/dashboard/users', '/dashboard/partners')">
-        <app-sidebar-link [title]="'users'" [link]="'/dashboard/users'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/users') || access.canUrl('/dashboard/partners')" iconID="icon-account-setting" [title]="'Account'"
+        [active]="isDropdownActive('/dashboard/users', '/dashboard/partners', '/dashboard/roles', '/dashboard/audit-logs', '/dashboard/ocpi', '/dashboard/pki')">
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/users')" [title]="'users'" [link]="'/dashboard/users'"
           [active]="isActive('/dashboard/users')"></app-sidebar-link>
-        <app-sidebar-link [title]="'partners'" [link]="'/dashboard/partners'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/partners')" [title]="'partners'" [link]="'/dashboard/partners'"
           [active]="isActive('/dashboard/partners')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Roles & permissions'" [link]="'/dashboard/roles'"
+          [active]="isActive('/dashboard/roles')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Audit log'" [link]="'/dashboard/audit-logs'"
+          [active]="isActive('/dashboard/audit-logs')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Roaming (OCPI)'" [link]="'/dashboard/ocpi'"
+          [active]="isActive('/dashboard/ocpi')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Charger PKI'" [link]="'/dashboard/pki'"
+          [active]="isActive('/dashboard/pki')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-account-setting" [title]="'Security'"
-        [active]="isDropdownActive('/dashboard/roles', '/dashboard/permissions')">
-        <app-sidebar-link [title]="'roles'" [link]="'/dashboard/roles'"
-          [active]="isActive('/dashboard/roles')"></app-sidebar-link>
-        <app-sidebar-link [title]="'permissions'" [link]="'/dashboard/permissions'"
-          [active]="isActive('/dashboard/permissions')"></app-sidebar-link>
-      </app-sidebar-dropdown>
+
     </ng-container>
 
     <!-- Partner menu -->
@@ -131,11 +139,14 @@
         <app-sidebar-link [title]="'Charging Sessions'" [link]="'/partner-dashboard/charging-sessions'"
           [active]="isActive('/partner-dashboard/charging-sessions')"></app-sidebar-link>
       </app-sidebar-dropdown>
+
+      <app-sidebar-item [title]="'security'" [link]="'/partner-dashboard/security'"
+        [active]="isExactActive('/partner-dashboard/security')"></app-sidebar-item>
     </ng-container>
   </div>
 
   <div class="sidebar__foot">
-  <button class="sidebar__help" routerLink="/dashboard/documentation">
+  <button *ngIf="access.canUrl('/dashboard/documentation')" class="sidebar__help" routerLink="/dashboard/documentation">
     <svg class="icon icon-help">
       <use xlink:href="#icon-help"></use>
     </svg>

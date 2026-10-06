@@ -1,14 +1,10 @@
-using System.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -17,85 +13,50 @@ namespace VoltaXApi.OCPP.Handlers
   {
     private readonly ILogger _logger;
     private readonly IMessageLogRepository _msgLogRepo;
-    private readonly ICardRepository _cardRepository;
+    private readonly IdTokenAuthorizationService _authorization;
 
     public AuthorizeHandler(
       ILoggerFactory loggerFactory,
-      ICardRepository cardRepository,
-      IMessageLogRepository messageLogRepository
+      IMessageLogRepository messageLogRepository,
+      IdTokenAuthorizationService authorization
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(AuthorizeHandler));
-      _cardRepository = cardRepository;
       _msgLogRepo = messageLogRepository;
+      _authorization = authorization;
     }
 
-      public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
+    public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
+    {
+      string? errorCode = null;
+      var authorizeResponse = new AuthorizeResponse
       {
-          string? errorCode = null;
-          AuthorizeResponse authorizeResponse = new AuthorizeResponse();
+        CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId },
+        IdTokenInfo = new IdTokenInfoType
+        {
+          CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId }
+        }
+      };
 
-          string? idTag = null;
-          try
-          {
-              _logger.LogTrace("Processing authorize request...");
-              AuthorizeRequest authorizeRequest = JsonConvert.DeserializeObject<AuthorizeRequest>(msgIn.JsonPayload);
-              _logger.LogTrace("Authorize => Message deserialized");
-              idTag = authorizeRequest?.IdToken?.IdToken;
+      string? idTag = null;
+      try
+      {
+        var authorizeRequest = JsonConvert.DeserializeObject<AuthorizeRequest>(msgIn.JsonPayload ?? string.Empty);
+        idTag = authorizeRequest?.IdToken?.IdToken;
 
-              authorizeResponse.CustomData = new CustomDataType();
-              authorizeResponse.CustomData.VendorId = OCPPHelper.VendorId;
+        authorizeResponse.IdTokenInfo.Status = await _authorization.AuthorizeAsync(idTag, chargePointStatus.Id);
 
-              authorizeResponse.IdTokenInfo = new IdTokenInfoType();
-              authorizeResponse.IdTokenInfo.CustomData = new CustomDataType();
-              authorizeResponse.IdTokenInfo.CustomData.VendorId = OCPPHelper.VendorId;
-
-              try
-              {
-                  var optionsBuilder = new DbContextOptionsBuilder<VoltaXApiDbContext>();
-                  Card ct = await _cardRepository.GetCardByNumber(idTag);
-                  if (ct != null)
-                  {
-                      if (ct.Blocked.HasValue && ct.Blocked.Value)
-                      {
-                          authorizeResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Blocked;
-                      }
-                      else if (ct.ExpirationDate < DateTime.Now)
-                      {
-                          authorizeResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Expired;
-                      }
-                      else
-                      {
-                          authorizeResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Accepted;
-                      }
-                  }
-                  else
-                  {
-                      authorizeResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
-                  }
-                  _logger.LogInformation("Authorize => Status: {0}", authorizeResponse.IdTokenInfo.Status);
-              }
-              catch (Exception exp)
-              {
-                  _logger.LogError(exp, "Authorize => Exception reading charge tag ({0}): {1}", idTag, exp.Message);
-                  authorizeResponse.IdTokenInfo.Status = AuthorizationStatusEnumType.Invalid;
-              }
-                            
-              var settings = new JsonSerializerSettings
-              {
-                  Converters = new List<JsonConverter> { new StringEnumConverter() }
-              };
-              msgOut.JsonPayload = JsonConvert.SerializeObject(authorizeResponse, settings);
-              _logger.LogTrace("Authorize => Response serialized");
-          }
-          catch (Exception exp)
-          {
-              _logger.LogError(exp, "Authorize => Exception: {0}", exp.Message);
-              errorCode = ErrorCodes.FormationViolation;
-          }
-
-          await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgIn.Action, $"'{idTag}'=>{authorizeResponse.IdTokenInfo?.Status}", errorCode, msgIn, msgOut);
-          return errorCode;
+        _logger.LogInformation("Authorize => {ChargePointId} token status {Status}", chargePointStatus.Id, authorizeResponse.IdTokenInfo.Status);
+        msgOut.JsonPayload = JsonConvert.SerializeObject(authorizeResponse, OCPPMessageFactory.DefaultSettings);
       }
+      catch (Exception exp)
+      {
+        _logger.LogError(exp, "Authorize => Exception processing request from {ChargePointId}", chargePointStatus.Id);
+        errorCode = ErrorCodes.FormationViolation;
+      }
+
+      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, $"'{idTag}'=>{authorizeResponse.IdTokenInfo?.Status}", errorCode!, msgIn, msgOut);
+      return errorCode!;
+    }
   }
 }

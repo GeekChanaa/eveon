@@ -86,24 +86,10 @@ namespace VoltaXApi.Controllers
         [HttpPost("UploadPartnerLogo/{partnerID}")]
         public async Task<IActionResult> UploadPartnerLogo(IFormFile imageFile, int partnerID)
         {
-            try
-            {
-
-                if (Request.Form.Files.Count == 1)
-                {
-                    var file = Request.Form.Files[0];
-                    await _partnerService.UploadPartnerLogo(file, partnerID);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
+            if (Request.Form.Files.Count != 1) return BadRequest("Upload exactly one image.");
+            var file = Request.Form.Files[0];
+            await _partnerService.UploadPartnerLogo(file, partnerID);
+            return Ok();
         }
         
         

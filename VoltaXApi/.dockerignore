@@ -1,0 +1,16 @@
+bin/
+obj/
+publish/
+logs/
+*.tar.gz
+*.pdf
+*.bak
+.vs/
+.vscode/
+.idea/
+
+# Never send local secrets or environment files to the build context.
+*.env
+.env*
+secrets.json
+appsettings.Development.json

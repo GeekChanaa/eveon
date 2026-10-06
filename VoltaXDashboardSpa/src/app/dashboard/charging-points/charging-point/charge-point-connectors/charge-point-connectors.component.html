@@ -1,65 +1,20 @@
-<div class="settings__anchor" id="account" data-value="Account"></div>
-<div class="connector-management" *ngIf="!isConnectorVisible">
+<section class="connector-management" *ngIf="!isConnectorVisible">
+  <header class="section-header">
+    <div><h2>Connectors <span *ngIf="!loading && !loadError" class="count">{{ connectors.length }}</span></h2><p>Select a connector to view its configuration and pricing.</p></div>
 
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="!cpfShow && connectors.length <= 0">
-    <div class="empty-state__icon">
-      <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    </div>
-    <h3 class="empty-state__title">No Connectors Available</h3>
-    <p class="empty-state__description">Get started by adding your first connector to this charge point.</p>
+  </header>
+  <div class="empty-state" *ngIf="loading" role="status"><app-svg-spinner></app-svg-spinner><p>Loading connectors...</p></div>
+  <div class="empty-state" *ngIf="loadError" role="alert"><h3>Could not load connectors</h3><p>Please try again.</p><button type="button" (click)="getChargePointConnectors()">Retry</button></div>
+  <div class="empty-state" *ngIf="!loading && !loadError && !connectors.length">
+    <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.5" d="M13 3 4 14h7v7l9-11h-7V3Z"/></svg>
+    <h3>No connectors yet</h3><p>Connectors will appear here when they are configured for this charge point.</p>
   </div>
-
-  <!-- Connector Selection -->
-  <div class="connector-selection" *ngIf="connectors.length > 0 && !cpfShow">
-    <div class="section-header">
-      <h3 class="section-title">Available Connectors</h3>
-      <p class="section-description">Choose a connector to view and manage its settings</p>
-    </div>
-
-    <div class="connector-grid">
-      <button *ngFor="let connector of connectors; let i = index" class="connector-card"
-        (click)="showConnector(connector.id)">
-        <div class="connector-card__icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-        <div class="connector-card__content">
-          <h4 class="connector-card__title">Connector {{connector.id}}</h4>
-          <span class="connector-card__status">Available</span>
-        </div>
-        <div class="connector-card__arrow">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </button>
-    </div>
+  <div class="connector-grid" *ngIf="!loading && !loadError && connectors.length">
+    <button type="button" *ngFor="let point of connectors" class="connector-card" (click)="showConnector(point.id)">
+      <span class="connector-icon"><svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="M13 3 4 14h7v7l9-11h-7V3Z"/></svg></span>
+      <span class="connector-copy"><strong>Connector {{ point.connectorID ?? point.id }}</strong><span>View configuration &amp; pricing</span></span>
+      <svg class="card-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="1.6" d="m9 5 7 7-7 7"/></svg>
+    </button>
   </div>
-
-  <!-- Add Connector Form -->
-  <div class="add-connector-section" *ngIf="cpfShow && chargePointID != null && chargePointID != undefined">
-    <app-charge-point-add-connector [chargePointID]="chargePointID" (successEvent)="refresh()"
-      (cancelEvent)="cpfShow = false">
-    </app-charge-point-add-connector>
-  </div>
-
-  <!-- Action Button -->
-  <!-- <div class="action-section" *ngIf="!cpfShow">
-    <app-button variant="primary" class="add-connector-btn" (btnClick)="cpfShow = true">
-      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
-      Add New Connector
-    </app-button>
-  </div> -->
-</div>
-
-<!-- Connector Details View -->
-<div class="connector-details" *ngIf="isConnectorVisible">
-  <app-charge-point-connector [connectorID]="displayedConnectorID" (refreshEvent)="refresh()">
-  </app-charge-point-connector>
-</div>
+</section>
+<div *ngIf="isConnectorVisible"><button type="button" class="back-button" (click)="isConnectorVisible = false">&larr; All connectors</button><app-charge-point-connector [connectorID]="displayedConnectorID" (refreshEvent)="refresh()"></app-charge-point-connector></div>

@@ -1,8 +1,11 @@
-<div class="modal-backdrop" [ngClass]="{'active':isVisible}" *ngIf="isVisible">
-  <div class="modal">
-    <h2>{{ title }}</h2>
-    <p>{{ message }}</p>
-    <button class="button button-small" (click)="confirm()">Confirm</button>
-    <button class="button button-small button-stroke" (click)="cancel()">Cancel</button>
+<div class="modal-backdrop" *ngIf="isVisible" (click)="onBackdropClick($event)" (keydown.escape)="cancel()">
+  <div class="modal" [class.modal--danger]="tone === 'danger'" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-message">
+    <div class="modal__icon" aria-hidden="true">!</div>
+    <h2 id="confirm-modal-title">{{ title }}</h2>
+    <p id="confirm-modal-message">{{ message }}</p>
+    <div class="modal__actions">
+      <button class="modal__button modal__button--cancel" type="button" autofocus (click)="cancel()">Cancel</button>
+      <button class="modal__button modal__button--confirm" type="button" (click)="confirm()">{{ confirmLabel }}</button>
+    </div>
   </div>
 </div>

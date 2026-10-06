@@ -16,6 +16,10 @@ import { GoogleLoginDto } from 'src/_models/_dtos/google-login-dto';
 import { LinkedAccountsDto } from 'src/_models/_dtos/linked-accounts-dto';
 import { TokenStorageService } from './token-storage.service';
 import { TokenRefreshService } from './token-refresh.service';
+import { GeolocationService } from './geolocation.service';
+
+export interface TwoFactorStatus { eligible: boolean; enabled: boolean; required: boolean; recoveryCodesLeft: number; }
+export interface TwoFactorEnrollment { secret: string; otpAuthUri: string; qrCodeDataUri: string; }
 
 @Injectable({
   providedIn: 'root'
@@ -32,18 +36,35 @@ export class AuthService {
     private router: Router,
     private _tokenStorage: TokenStorageService,
     private _tokenRefresh: TokenRefreshService,
+    private _geolocation: GeolocationService,
     ) 
     { }
 
+  /**
+   * Resolves with the API response. When it carries requiresTwoFactor no session exists
+   * yet: the caller asks for the code and calls {@link verifyTwoFactor}.
+   */
   login(model:any){
     return this.http.post(this.baseUrl +'login', model).pipe(
       map((response:any) => {
-        const user = response;
-        if(user){
-          this.storeLoginResult(user);
+        if(response?.token){
+          this.storeLoginResult(response);
         }
+        return response;
       })
     )
+  }
+
+  /** Second sign in step: the challenge token from the login response plus a TOTP or recovery code. */
+  verifyTwoFactor(twoFactorToken: string, code: string){
+    return this.http.post(this.baseUrl + 'verify-2fa', { twoFactorToken, code }).pipe(
+      map((response:any) => {
+        if(response?.token){
+          this.storeLoginResult(response);
+        }
+        return response;
+      })
+    );
   }
 
   register(model:UserForRegisterDto) {
@@ -57,13 +78,9 @@ export class AuthService {
     );
   }
 
-  /**
-   * Keeps both tokens of a session. The refresh token is what survives the hour long
-   * access token, so dropping it here would silently end the session.
-   */
+  /** The access token stays in memory; the refresh token was set by the API as an HttpOnly cookie. */
   private storeLoginResult(result: any){
-    this._tokenStorage.clear();
-    this._tokenStorage.store(result);
+    this._tokenStorage.startSession(result);
     this.token = result.token;
     this.decodedToken = this.jwtHelper.decodeToken(result.token);
   }
@@ -87,8 +104,7 @@ export class AuthService {
   }
 
   logout() {
-    // Revoke first, while the refresh token is still stored, then clear locally
-    // whatever the API answered.
+    // Revoke the refresh cookie server side, then clear locally whatever the API answered.
     this._tokenRefresh.revoke().subscribe();
     this.clearSession();
 
@@ -128,7 +144,7 @@ export class AuthService {
   }
 
   resetPasswordRequest(email : string){
-    return this.http.get(this.baseUrl+"resetpassword?email="+email);
+    return this.http.post(this.baseUrl+"request-password-reset", { email });
   }
 
   resetPassword(user : UserForResetPasswordDto){
@@ -164,116 +180,50 @@ export class AuthService {
     return this.http.post(this.baseUrl+"SendEmailVerificationCode",userID);
   }
 
-  getUserLocation(): Promise<{latitude: number, longitude: number, city : string, country : string}> {
-    return new Promise((resolve, reject) => {
-      const lastRetrievedStr = localStorage.getItem("lastRetrieved");
-      let lastRetrieved = null;  
-      if(lastRetrievedStr != null && lastRetrievedStr != "")
-        lastRetrieved = Date.parse(lastRetrievedStr);
-
-      // Get the current timestamp
-      const now = new Date().getTime();
-      const sixHoursInMilliseconds = 6 * 60 * 60 * 1000;
-      if(localStorage.getItem("userLatitude") != '' && lastRetrieved && now - lastRetrieved < sixHoursInMilliseconds){
-        resolve({ 
-          latitude: parseFloat(localStorage.getItem("userLongitude") ?? "0"),
-          longitude: parseFloat(localStorage.getItem("userLatitude") ?? "0"),
-          city : localStorage.getItem("userLocationCity") ?? "World",
-          country : localStorage.getItem("userLocationCountry") ?? "World"
-        });
-      }
-      else if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          this.getLocationDetails(position.coords.latitude, position.coords.longitude).then((locationDetails : any) => {
-            localStorage.setItem("userLongitude",position.coords.longitude.toString());
-            localStorage.setItem("userLatitude",position.coords.latitude.toString());
-            localStorage.setItem("userLocationCity",locationDetails.city);
-            localStorage.setItem("userLocationCountry",locationDetails.country);
-            localStorage.setItem("lastRetrieved", now.toString());
-            resolve({ 
-                latitude: position.coords.latitude, 
-                longitude: position.coords.longitude,
-                city : locationDetails.city,
-                country : locationDetails.country
-              });
-          })
-        }, err => {
-          reject(err);
-        });
-      } else {
-        reject('Geolocation is not supported by this browser.');
-      }
-    });
+  /** Sends a new verification link to the signed in user's address. */
+  resendVerificationEmail(){
+    return this.http.post(this.baseUrl+"resend-verification", {});
   }
 
+  // ---------------------------------------------------------------------
+  // Two factor authentication (admin and partner accounts)
+  // ---------------------------------------------------------------------
 
-  getLocationDetails(latitude : number, longitude : number) {
-    // Construct the API request URL
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyASK_Y37ctDVZfa9P7OqJ2QsFpC_XMgZBQ`;
-  
-    return fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'OK') {
-          // Extract the country and city from the API response
-          const results = data.results[0].address_components;
-          const country = results.find((component : any) => component.types.includes('country'));
-          const city = results.find((component : any) => component.types.includes('locality'));
-  
-          return {
-            country: country ? country.long_name : '',
-            city: city ? city.long_name : ''
-          };
-        } else {
-          throw new Error('Unable to retrieve location details');
-        }
-      })
-      .catch(error => {
-        console.error('Error in fetching location details:', error);
-      });
+  getTwoFactorStatus(): Observable<TwoFactorStatus> {
+    return this.http.get<TwoFactorStatus>(this.baseUrl + "2fa");
   }
 
+  enrollTwoFactor(): Observable<TwoFactorEnrollment> {
+    return this.http.post<TwoFactorEnrollment>(this.baseUrl + "2fa/enroll", {});
+  }
+
+  confirmTwoFactor(code: string): Observable<{ recoveryCodes: string[] }> {
+    return this.http.post<{ recoveryCodes: string[] }>(this.baseUrl + "2fa/confirm", { code });
+  }
+
+  disableTwoFactor(password: string, code: string) {
+    return this.http.post(this.baseUrl + "2fa/disable", { password, code });
+  }
+
+  /** Token based user information, plus the location only if the user already shared it. */
   getUserInformations() : Promise<any>{
-    return new Promise((resolve, reject) => {
-      const user = this.getAuthInformation(); // Assuming this method exists in authService
-      if(user == null) {
-        resolve(null);
-        return;
-      }
-      // Map the token information to your UserInformation model
-      let userInformations: any = {
-        isEmailVerified: user.IsEmailVerified,
-        isPhoneNumberVerified: user.IsPhoneNumberVerified,
-        lastName: user.family_name,
-        firstName: user.given_name,
-        userID: parseInt(user.nameid),
-        role: user.role,
-        email: user.unique_name,
-      };
-      if(localStorage.getItem("userLongitude") != null && localStorage.getItem("userLongitude") != ''){
-        userInformations.latitude =  localStorage.getItem("userLatitude");
-        userInformations.longitude =  localStorage.getItem("userLongitude");
-        userInformations.country =  localStorage.getItem("userLocationCountry");
-        userInformations.city =  localStorage.getItem("userLocationCity");
-        resolve(userInformations);
-      }
-      else{
-        this.getUserLocation().then(location => {
-          // setting localStorage Location
-          userInformations.country = location.country;
-          userInformations.city = location.city;
-          localStorage.setItem("userLocationCountry", location.country);
-          localStorage.setItem("userLocationCity", location.city);
-          localStorage.setItem("userLatitude",location.latitude.toString());
-          localStorage.setItem("userLongitude",location.longitude.toString());
-          resolve(userInformations);
-          // Resolve with complete user information
-        }).catch(error => {
-          reject(error);
-        });
-      }
-      
-    });
+    const user = this.getAuthInformation();
+    if(user == null) return Promise.resolve(null);
+
+    let userInformations: any = {
+      isEmailVerified: user.IsEmailVerified,
+      isPhoneNumberVerified: user.IsPhoneNumberVerified,
+      lastName: user.family_name,
+      firstName: user.given_name,
+      userID: parseInt(user.nameid),
+      role: user.role,
+      email: user.unique_name,
+    };
+    const location = this._geolocation.cachedLocation();
+    if(location){
+      userInformations = { ...userInformations, ...location };
+    }
+    return Promise.resolve(userInformations);
   }
 
   // ---------------------------------------------------------------------
@@ -293,36 +243,21 @@ export class AuthService {
   }
 
   /**
-   * Redirect flow used to attach a Google account to the signed in profile.
-   * The current JWT travels as a ticket because a top level navigation
-   * cannot carry an Authorization header.
+   * Redirect flow used to attach a Google account to the signed in profile. The API
+   * hands out a one time, 60 second ticket; only that ticket travels in the URL, never
+   * the access token.
    */
   startGoogleLink(returnUrl?: string) {
-    // The ticket is validated as a live JWT, so an expired one has to be renewed
-    // before the browser leaves the app.
-    if (this._tokenStorage.isAccessTokenExpired() && this._tokenStorage.hasRefreshToken()) {
-      this._tokenRefresh.refresh().subscribe({
-        next: () => this.redirectToGoogleLink(returnUrl),
-        error: () => this.router.navigateByUrl('/auth/login')
-      });
-      return;
-    }
-
-    this.redirectToGoogleLink(returnUrl);
-  }
-
-  private redirectToGoogleLink(returnUrl?: string) {
-    const token = this._tokenStorage.accessToken;
-    if (token == null) {
-      this.router.navigateByUrl('/auth/login');
-      return;
-    }
-
-    let url = this.baseUrl + "google-link?ticket=" + encodeURIComponent(token);
-    if (returnUrl) {
-      url += "&returnUrl=" + encodeURIComponent(returnUrl);
-    }
-    window.location.href = url;
+    this.http.post<{ ticket: string }>(this.baseUrl + "google/link-ticket", {}).subscribe({
+      next: ({ ticket }) => {
+        let url = this.baseUrl + "google-link?ticket=" + encodeURIComponent(ticket);
+        if (returnUrl) {
+          url += "&returnUrl=" + encodeURIComponent(returnUrl);
+        }
+        window.location.href = url;
+      },
+      error: () => this.router.navigateByUrl('/auth/login')
+    });
   }
 
   /**
@@ -341,9 +276,9 @@ export class AuthService {
     );
   }
 
-  /** Stores the tokens handed back by /auth/google-callback. */
-  completeExternalLogin(token: string, refreshToken?: string) {
-    this.storeLoginResult({ token: token, refreshToken: refreshToken });
+  /** Stores the access token handed back by /auth/google-callback (the refresh token is in the cookie). */
+  completeExternalLogin(token: string) {
+    this.storeLoginResult({ token: token });
     return this.getAuthInformation();
   }
 

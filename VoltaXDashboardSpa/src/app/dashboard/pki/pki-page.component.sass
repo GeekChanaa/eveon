@@ -1,0 +1,62 @@
+.pki
+  display: grid
+  gap: 20px
+  color: var(--vx-text, #171b24)
+
+.pki__card
+  display: grid
+  gap: 12px
+  padding: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  h3, p
+    margin: 0
+  dl
+    display: grid
+    gap: 8px
+    margin: 0
+    div
+      display: grid
+      grid-template-columns: 140px 1fr
+      gap: 8px
+    dt
+      font-size: 12px
+      color: var(--vx-text-muted, #737985)
+    dd
+      margin: 0
+      word-break: break-all
+
+.pki__muted
+  font-size: 13px
+  color: var(--vx-text-muted, #737985)
+
+.pki__warning
+  padding: 10px 14px
+  border-radius: 8px
+  font-size: 13px
+  background: rgba(237, 108, 2, .1)
+  color: #a04b00
+
+.pki__danger
+  color: var(--vx-danger, #c62828)
+
+.pki__actions
+  display: flex
+  gap: 8px
+
+.pki__primary
+  padding: 8px 14px
+  border: 1px solid var(--vx-primary, #1f6feb)
+  border-radius: 8px
+  background: var(--vx-primary, #1f6feb)
+  color: #fff
+  font: inherit
+  font-size: 13px
+  cursor: pointer
+  &:disabled
+    opacity: .5
+
+@media (max-width: 600px)
+  .pki__card dl div
+    grid-template-columns: 1fr

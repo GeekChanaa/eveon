@@ -37,9 +37,12 @@ public class GlobalExceptionFilter : IExceptionFilter
             ChargePointNotFoundException => StatusCodes.Status404NotFound,
             TransactionNotFoundException => StatusCodes.Status404NotFound,
             CardNotFoundException => StatusCodes.Status404NotFound,
+            PriceExceedsCardBalance => StatusCodes.Status402PaymentRequired,
             ConnectorUnavailableException => StatusCodes.Status409Conflict,
             AuthorizationFailedException => StatusCodes.Status401Unauthorized,
             RateLimitExceededException => StatusCodes.Status429TooManyRequests,
+            LoginAttemptFailedException => StatusCodes.Status429TooManyRequests,
+            EmailNotVerifiedException => StatusCodes.Status403Forbidden,
             OcppServerException => StatusCodes.Status500InternalServerError,
 
             _ => StatusCodes.Status500InternalServerError
@@ -47,12 +50,35 @@ public class GlobalExceptionFilter : IExceptionFilter
 
         LogException(context, statusCode);
 
-        context.Result = new ObjectResult(new
+        if (context.Exception is EmailNotVerifiedException)
         {
-            error = context.Exception.Message,
-            // Only ever handed out on a developer machine.
-            stackTrace = _environment.IsDevelopment() ? context.Exception.StackTrace : null
-        })
+            context.Result = new ObjectResult(new { error = context.Exception.Message, code = EmailNotVerifiedException.Code }) { StatusCode = statusCode };
+            context.ExceptionHandled = true;
+            return;
+        }
+
+        object response = context.Exception is PriceExceedsCardBalance balanceError
+            ? new
+            {
+                error = balanceError.Message,
+                code = "insufficient_balance",
+                currentBalance = balanceError.CurrentBalance,
+                minimumRequiredBalance = balanceError.MinimumRequiredBalance
+            }
+            : new
+            {
+                // A 5xx message can carry SQL, paths or library internals, so outside
+                // development the caller only gets a generic text and the id to quote.
+                error = statusCode >= StatusCodes.Status500InternalServerError && !_environment.IsDevelopment()
+                    ? "An unexpected error occurred."
+                    : context.Exception.Message,
+                correlationId = context.HttpContext.Response.Headers["X-Correlation-ID"].FirstOrDefault()
+                    ?? context.HttpContext.TraceIdentifier,
+                // Only ever handed out on a developer machine.
+                stackTrace = _environment.IsDevelopment() ? context.Exception.StackTrace : null
+            };
+
+        context.Result = new ObjectResult(response)
         {
             StatusCode = statusCode
         };

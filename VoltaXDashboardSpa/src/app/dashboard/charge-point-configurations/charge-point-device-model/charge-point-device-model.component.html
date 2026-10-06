@@ -1,0 +1,204 @@
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'Charge Point Configuration'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charge Point Configurations', link: '/dashboard/charge-point-configurations' },
+    { label: chargePointId }
+  ]">
+  <div class="dm" *ngIf="state === PageState.Success && status">
+
+    <!-- Header -->
+    <header class="dm-head">
+      <div class="dm-head__main">
+        <div class="dm-head__line">
+          <h2>{{chargePointId}}</h2>
+          <app-ocpp-version-badge [chargePointId]="chargePointId"></app-ocpp-version-badge>
+          <span class="dm-conn" [class.on]="online"><span class="cfg-dot" [class.cfg-dot_on]="online"></span>{{online ? 'Connected' : 'Not connected'}}</span>
+          <span class="cfg-badge" [ngClass]="status.isConfigured ? 'cfg-badge_ok' : 'cfg-badge_pending'">
+            {{status.isConfigured ? 'Configured' : (status.configurationMethod === 'Skipped' ? 'Accepted as-is' : 'Not configured')}}
+          </span>
+        </div>
+        <p class="dm-head__meta">
+          <span *ngIf="status.stationName">{{status.stationName}}</span>
+          <span *ngIf="status.vendorName || status.modelName">{{status.vendorName}} {{status.modelName}}</span>
+          <span *ngIf="status.firmwareVersion">FW {{status.firmwareVersion}}</span>
+          <span>{{status.reportedVariableCount}} variables</span>
+          <span *ngIf="status.lastReportAt">Reported {{status.lastReportAt | date: 'dd MMM yyyy, HH:mm'}}</span>
+          <span *ngIf="status.isConfigured && status.configuredAt">Configured {{status.configuredAt | date: 'dd MMM yyyy'}}<ng-container *ngIf="status.configuredBy"> by {{status.configuredBy}}</ng-container></span>
+        </p>
+      </div>
+
+      <div class="dm-head__actions" *ngIf="canOperate">
+        <a *ngIf="!status.isConfigured" class="cfg-btn cfg-btn_primary" [routerLink]="['setup']">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6z" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Run setup
+        </a>
+        <div class="dm-menu">
+          <button type="button" class="cfg-btn" (click)="toggleReportMenu($event)" [disabled]="!online || !!reporting" [attr.aria-expanded]="reportMenuOpen">
+            <span class="cfg-spinner" *ngIf="reporting"></span>
+            <svg *ngIf="!reporting" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{reporting ? 'Reading report…' : 'Refresh from charger'}}
+          </button>
+          <div class="dm-menu__list" *ngIf="reportMenuOpen" role="menu" (click)="$event.stopPropagation()">
+            <button type="button" role="menuitem" *ngFor="let b of reportBases" (click)="requestReport(b.key, $event)">
+              <strong>{{b.label}}</strong>
+              <span>{{b.hint}}</span>
+            </button>
+          </div>
+        </div>
+        <button type="button" class="cfg-btn" (click)="readLive()" [disabled]="!online || reading || !visibleRows.length" title="GetVariables for the rows on screen">
+          <span class="cfg-spinner" *ngIf="reading"></span>
+          <svg *ngIf="!reading" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke-width="1.8"/></svg>
+          Read live values
+        </button>
+        <button type="button" class="cfg-btn cfg-btn_danger" [class.pulse]="rebootNeeded" (click)="reboot()" [disabled]="!online || rebooting">
+          <span class="cfg-spinner" *ngIf="rebooting"></span>
+          <svg *ngIf="!rebooting" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v8M6.3 6.3a8 8 0 1 0 11.4 0" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Reboot
+        </button>
+      </div>
+    </header>
+
+    <div class="dm-banner dm-banner_warn" *ngIf="!online">
+      <strong>{{chargePointId}} is not connected.</strong>
+      Values below come from its last report. Changes can only be sent while it is connected.
+    </div>
+    <div class="dm-banner dm-banner_pending" *ngIf="online && !status.isAccepted">
+      <strong>Waiting for its first configuration.</strong>
+      Until it is configured, the charge point stays Pending and cannot start charging sessions.
+      <a [routerLink]="['setup']">Start the guided setup →</a>
+    </div>
+    <div class="dm-banner dm-banner_warn" *ngIf="rebootNeeded">
+      <strong>Reboot required.</strong> Some accepted settings only take effect after the charger restarts.
+    </div>
+
+    <!-- OCPP 1.6 configuration keys (shown only for chargers connected with OCPP 1.6) -->
+    <app-charge-point-ocpp16-configuration [chargePointId]="chargePointId" [canOperate]="canOperate"></app-charge-point-ocpp16-configuration>
+
+    <!-- Empty device model -->
+    <div class="dm-empty" *ngIf="!components.length">
+      <div class="dm-empty__art" aria-hidden="true">
+        <span *ngFor="let c of [0,1,2,3,4,5,6,7,8]" [style.--c]="c"></span>
+      </div>
+      <h3>No device model yet</h3>
+      <p>{{chargePointId}} has not reported its components and variables. Ask it for a full inventory (GetBaseReport) to see and edit every setting.</p>
+      <button type="button" class="cfg-btn cfg-btn_primary" (click)="requestReport('FullInventory')" [disabled]="!online || !!reporting || !canOperate">
+        <span class="cfg-spinner" *ngIf="reporting"></span>
+        {{reporting ? 'Reading the device model…' : online ? 'Read device model' : 'Connect the charger first'}}
+      </button>
+    </div>
+
+    <!-- Browser -->
+    <div class="dm-body" *ngIf="components.length">
+      <aside class="dm-side">
+        <label class="dm-search">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke-width="2"/><path d="m16 16 4 4" stroke-width="2" stroke-linecap="round"/></svg>
+          <input class="field__input" type="search" [(ngModel)]="search" (ngModelChange)="refresh()" placeholder="Search every variable" aria-label="Search variables">
+        </label>
+        <label class="dm-switch">
+          <input type="checkbox" [(ngModel)]="writableOnly" (ngModelChange)="refresh()">
+          <span class="dm-switch__track"><span class="dm-switch__thumb"></span></span>
+          Writable only
+        </label>
+        <nav class="dm-components" aria-label="Components">
+          <button type="button" *ngFor="let c of visibleComponents; trackBy: trackComponent" class="dm-component"
+            [class.active]="!search && c.key === selectedKey" (click)="select(c)">
+            <span class="dm-component__text">
+              <span class="dm-component__name">{{c.name}}</span>
+              <span class="dm-component__detail" *ngIf="c.detail">{{c.detail}}</span>
+            </span>
+            <span class="dm-component__count" [title]="c.writableCount + ' writable'">{{c.rows.length}}</span>
+          </button>
+          <p class="dm-components__none" *ngIf="!visibleComponents.length">No component matches.</p>
+        </nav>
+      </aside>
+
+      <section class="dm-main">
+        <header class="dm-main__head">
+          <div>
+            <h3 *ngIf="!search">{{selected?.name}} <small *ngIf="selected?.detail">{{selected?.detail}}</small></h3>
+            <h3 *ngIf="search">Results for “{{search}}”</h3>
+            <p>
+              {{totalMatches}} attribute{{totalMatches === 1 ? '' : 's'}}
+              <ng-container *ngIf="totalMatches > visibleRows.length"> · first {{visibleRows.length}} shown, refine the search</ng-container>
+            </p>
+          </div>
+        </header>
+
+        <div class="dm-table" role="table" aria-label="Variables">
+          <div class="dm-row dm-row_head" role="row">
+            <span role="columnheader">Variable</span>
+            <span role="columnheader">Value</span>
+            <span role="columnheader" class="dm-col-meta">Details</span>
+          </div>
+
+          <div class="dm-row" role="row" *ngFor="let row of visibleRows; let i = index; trackBy: trackRow" [style.--i]="i < 20 ? i : 20"
+            [class.edited]="isEdited(row)" [class.flash]="flashed.has(row.key)" [class.readonly]="!row.writable"
+            [ngClass]="results[row.key] ? 'result_' + results[row.key].tone : ''">
+            <div class="dm-var" role="cell">
+              <div class="dm-var__name">
+                <span class="dm-var__component" *ngIf="search">{{row.variable.componentName}}<ng-container *ngIf="row.variable.componentInstance">[{{row.variable.componentInstance}}]</ng-container>{{row.variable.evseId != null ? ' · ' + evseLabel(row.variable) : ''}} ·</span>
+                {{row.variable.variableName}}<span class="dm-var__instance" *ngIf="row.variable.variableInstance">[{{row.variable.variableInstance}}]</span>
+                <span class="dm-attr" *ngIf="row.attribute.type !== 'Actual'">{{row.attribute.type}}</span>
+              </div>
+              <div class="dm-var__result" *ngIf="results[row.key] as r">
+                {{r.status}}<ng-container *ngIf="r.reason"> · {{r.reason}}</ng-container>
+              </div>
+            </div>
+
+            <div class="dm-value" role="cell">
+              <ng-container [ngSwitch]="kind(row)">
+                <select *ngSwitchCase="'boolean'" class="select" [ngModel]="valueOf(row)" (ngModelChange)="setValue(row, $event)"
+                  [disabled]="!row.writable || !canOperate" [attr.aria-label]="row.variable.variableName">
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                  <option *ngIf="valueOf(row) !== 'true' && valueOf(row) !== 'false'" [value]="valueOf(row)">{{valueOf(row) || '(empty)'}}</option>
+                </select>
+                <select *ngSwitchCase="'options'" class="select" [ngModel]="valueOf(row)" (ngModelChange)="setValue(row, $event)"
+                  [disabled]="!row.writable || !canOperate" [attr.aria-label]="row.variable.variableName">
+                  <option *ngIf="!row.choices.includes(valueOf(row))" [value]="valueOf(row)">{{valueOf(row) || '(empty)'}}</option>
+                  <option *ngFor="let o of row.choices" [value]="o">{{o}}</option>
+                </select>
+                <input *ngSwitchCase="'number'" class="field__input" type="number" [ngModel]="valueOf(row)" (ngModelChange)="setValue(row, $event == null ? '' : '' + $event)"
+                  [attr.min]="row.variable.minLimit" [attr.max]="row.variable.maxLimit" [disabled]="!row.writable || !canOperate" [attr.aria-label]="row.variable.variableName">
+                <input *ngSwitchCase="'secret'" class="field__input" type="password" autocomplete="new-password" [ngModel]="isEdited(row) ? edits[row.key] : ''" (ngModelChange)="setValue(row, $event)"
+                  placeholder="Write-only: type a new value" [disabled]="!canOperate" [attr.aria-label]="row.variable.variableName">
+                <input *ngSwitchDefault class="field__input" [ngModel]="valueOf(row)" (ngModelChange)="setValue(row, $event)" maxlength="1000"
+                  [disabled]="!row.writable || !canOperate" [attr.aria-label]="row.variable.variableName">
+              </ng-container>
+              <button type="button" class="dm-revert" *ngIf="isEdited(row)" (click)="revert(row)" title="Undo this change" aria-label="Undo this change">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+
+            <div class="dm-meta dm-col-meta" role="cell">
+              <span class="dm-chip" [ngClass]="'dm-chip_' + row.attribute.mutability">
+                <svg *ngIf="!row.writable" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-width="2"/></svg>
+                {{row.attribute.mutability === 'ReadWrite' ? 'Read/write' : row.attribute.mutability === 'ReadOnly' ? 'Read-only' : 'Write-only'}}
+              </span>
+              <span class="dm-chip" *ngIf="row.variable.dataType">{{row.variable.dataType}}</span>
+              <span class="dm-chip" *ngIf="row.attribute.persistent" title="Kept after a reboot">Persistent</span>
+              <span class="dm-constraint" *ngIf="constraint(row)">{{constraint(row)}}</span>
+            </div>
+          </div>
+
+          <div class="dm-none" *ngIf="!visibleRows.length">Nothing matches.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Pending changes -->
+  <div class="dm-savebar" *ngIf="state === PageState.Success && editCount" role="region" aria-label="Unsaved changes">
+    <span class="dm-savebar__count">{{editCount}}</span>
+    <span class="dm-savebar__text">
+      change{{editCount === 1 ? '' : 's'}} not sent yet
+      <small *ngIf="!online">— the charger must be connected to receive them</small>
+    </span>
+    <button type="button" class="cfg-btn cfg-btn_ghost" (click)="discard()" [disabled]="sending">Discard</button>
+    <button type="button" class="cfg-btn cfg-btn_primary" (click)="send()" [disabled]="sending || !online || !canOperate">
+      <span class="cfg-spinner" *ngIf="sending"></span>
+      {{sending ? 'Sending…' : 'Send to charger'}}
+    </button>
+  </div>
+</app-dashboard-details-container>

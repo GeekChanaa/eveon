@@ -3,6 +3,7 @@ using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -41,7 +42,7 @@ namespace VoltaXApi.OCPP.Handlers
                 {
                     // Known charge station
                     status = firmwareStatusNotificationRequest.Status.ToString();
-                    _logger.LogInformation("FirmwareStatusNotification => Status={0}", status);
+                    _logger.LogInformation("FirmwareStatusNotification => {ChargePointId} Status={Status}", chargePointStatus.Id, status);
                 }
                 else
                 {
@@ -49,12 +50,12 @@ namespace VoltaXApi.OCPP.Handlers
                     errorCode = ErrorCodes.GenericError;
                 }
 
-                msgOut.JsonPayload = JsonConvert.SerializeObject(firmwareStatusNotificationResponse);
+                msgOut.JsonPayload = JsonConvert.SerializeObject(firmwareStatusNotificationResponse, OCPPMessageFactory.DefaultSettings);
                 _logger.LogTrace("FirmwareStatusNotification => Response serialized");
             }
             catch (Exception exp)
             {
-                _logger.LogError(exp, "FirmwareStatusNotification => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "FirmwareStatusNotification => Exception processing request from {ChargePointId}", chargePointStatus?.Id);
                 errorCode = ErrorCodes.InternalError;
             }
 

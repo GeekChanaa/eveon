@@ -1,0 +1,145 @@
+<div class="certs">
+  <div class="certs__intro">
+    <div>
+      <h2>Certificates</h2>
+      <p>OCPP security profile and the charger's TLS certificates. Commands are sent to the charger and wait for its answer.</p>
+    </div>
+    <button type="button" class="certs__secondary" (click)="load()" [disabled]="loading">{{ loading ? 'Loading...' : 'Reload' }}</button>
+  </div>
+
+  <p class="certs__error" role="alert" *ngIf="error">{{ error }}</p>
+  <p class="certs__message" role="status" *ngIf="message">{{ message }}</p>
+  <ul class="certs__hints" *ngIf="hints.length">
+    <li *ngFor="let hint of hints">{{ hint }}</li>
+  </ul>
+
+  <ng-container *ngIf="data">
+    <p class="certs__warning" *ngIf="data.protocol && data.protocol !== 'ocpp2.0.1'">
+      This charger is connected with {{ data.protocol }}: certificate commands use OCPP 2.0.1 messages and are not available.
+    </p>
+
+    <div class="certs__grid">
+      <section class="certs__card">
+        <h3>Security profile</h3>
+        <dl>
+          <div><dt>Enforced by the CSMS</dt><dd><strong>Profile {{ data.securityProfile }}</strong>
+            <span class="certs__muted">{{ data.securityProfile === 3 ? 'TLS + client certificate' : data.securityProfile === 2 ? 'TLS + Basic auth' : 'Basic auth' }}</span></dd></div>
+          <div><dt>Connection</dt><dd>{{ data.connected ? 'Connected (' + data.protocol + ')' : 'Offline' }}</dd></div>
+          <div><dt>Basic auth password</dt><dd>{{ data.hasPassword ? 'Configured' : 'Not set' }}</dd></div>
+          <div *ngIf="data.hasPinnedCertificate"><dt>Pinned certificate</dt><dd>Thumbprint pinned (legacy)</dd></div>
+        </dl>
+        <form class="certs__form" *ngIf="isAdmin" (ngSubmit)="setProfile()">
+          <label>
+            <span>New profile</span>
+            <select name="profile" [(ngModel)]="profile">
+              <option [ngValue]="1">1: Basic auth</option>
+              <option [ngValue]="2">2: TLS + Basic auth</option>
+              <option [ngValue]="3">3: TLS + client certificate</option>
+            </select>
+          </label>
+          <label class="certs__check">
+            <input type="checkbox" name="force" [(ngModel)]="force">
+            <span>Change the CSMS side even if the charger does not accept it</span>
+          </label>
+          <button type="submit" class="certs__primary" [disabled]="busy === 'profile'">{{ busy === 'profile' ? 'Sending...' : 'Set security profile' }}</button>
+        </form>
+      </section>
+
+      <section class="certs__card">
+        <h3>Current client certificate</h3>
+        <p class="certs__muted" *ngIf="!data.caConfigured">No charger CA is configured on the CSMS: certificates cannot be issued.</p>
+        <ng-container *ngIf="data.current as current; else noCurrent">
+          <dl>
+            <div><dt>Subject</dt><dd>{{ current.subject }}</dd></div>
+            <div><dt>Serial</dt><dd><code>{{ current.serialNumber }}</code></dd></div>
+            <div><dt>Expires</dt><dd [class.certs__danger]="daysLeft(current) < 30">{{ current.notAfter | date:'medium' }} ({{ daysLeft(current) }} days)</dd></div>
+            <div><dt>Status</dt><dd><span class="certs__badge certs__badge--{{ current.status | lowercase }}">{{ current.status }}</span></dd></div>
+          </dl>
+        </ng-container>
+        <ng-template #noCurrent><p class="certs__muted">No active certificate issued by the charger CA.</p></ng-template>
+        <div class="certs__actions" *ngIf="isAdmin">
+          <button type="button" class="certs__primary" [disabled]="busy === 'renew' || !data.connected || !data.caConfigured" (click)="triggerRenewal()">
+            {{ busy === 'renew' ? 'Requesting...' : data.current ? 'Renew certificate' : 'Request certificate' }}
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <section class="certs__card">
+      <div class="certs__card-head">
+        <div>
+          <h3>Installed on the charger</h3>
+          <p class="certs__muted">{{ data.installedReportedAt ? 'Reported ' + (data.installedReportedAt | date:'medium') : 'Not reported yet.' }}</p>
+        </div>
+        <div class="certs__actions" *ngIf="isAdmin">
+          <button type="button" class="certs__secondary" [disabled]="busy === 'refresh' || !data.connected" (click)="refreshInstalled()">{{ busy === 'refresh' ? 'Refreshing...' : 'Refresh' }}</button>
+          <button type="button" class="certs__secondary" [disabled]="!data.connected" (click)="showRootForm = !showRootForm">Install root certificate</button>
+        </div>
+      </div>
+
+      <form class="certs__form certs__root" *ngIf="showRootForm && isAdmin" (ngSubmit)="installRoot()">
+        <label>
+          <span>Type</span>
+          <select name="rootType" [(ngModel)]="rootType">
+            <option value="CSMSRootCertificate">CSMS root (verifies the CSMS server certificate)</option>
+            <option value="ManufacturerRootCertificate">Manufacturer root (verifies firmware)</option>
+          </select>
+        </label>
+        <label>
+          <span>Certificate</span>
+          <select name="rootSource" [(ngModel)]="rootSource">
+            <option value="pem">Paste a PEM certificate</option>
+            <option value="ca" [disabled]="!data.caConfigured">The CSMS charger CA</option>
+          </select>
+        </label>
+        <label *ngIf="rootSource === 'pem'">
+          <span>PEM</span>
+          <textarea name="rootPem" rows="6" [(ngModel)]="rootPem" placeholder="-----BEGIN CERTIFICATE-----"></textarea>
+        </label>
+        <div class="certs__actions">
+          <button type="button" class="certs__secondary" (click)="showRootForm = false">Cancel</button>
+          <button type="submit" class="certs__primary" [disabled]="busy === 'root'">{{ busy === 'root' ? 'Installing...' : 'Install' }}</button>
+        </div>
+      </form>
+
+      <div class="certs__table" *ngIf="data.installed.length; else noInstalled">
+        <table>
+          <thead><tr><th>Type</th><th>Serial</th><th>Issuer name hash</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let installed of data.installed">
+              <td>{{ installed.certificateType }} <span class="certs__badge certs__badge--active" *ngIf="installed.isChargerCa">Charger CA</span></td>
+              <td><code>{{ installed.serialNumber }}</code></td>
+              <td><code [title]="installed.issuerNameHash">{{ installed.issuerNameHash | slice:0:16 }}...</code> <span class="certs__muted">{{ installed.hashAlgorithm }}</span></td>
+              <td class="certs__right">
+                <button *ngIf="isAdmin" type="button" class="certs__link certs__danger" [disabled]="busy === 'delete-' + installed.id || !data.connected" (click)="deleteInstalled(installed)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noInstalled><p class="certs__muted">No certificates reported. {{ isAdmin ? 'Use Refresh to ask the charger.' : '' }}</p></ng-template>
+    </section>
+
+    <section class="certs__card" *ngIf="data.certificates.length">
+      <h3>Issued certificates</h3>
+      <div class="certs__table">
+        <table>
+          <thead><tr><th>Issued</th><th>Serial</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let certificate of data.certificates">
+              <td>{{ certificate.issuedAt | date:'short' }}</td>
+              <td><code [title]="certificate.thumbprintSha256">{{ certificate.serialNumber }}</code></td>
+              <td>{{ certificate.notAfter | date:'mediumDate' }}</td>
+              <td><span class="certs__badge certs__badge--{{ certificate.status | lowercase }}">{{ certificate.status }}</span>
+                <span class="certs__muted" *ngIf="certificate.statusReason"> {{ certificate.statusReason }}</span></td>
+              <td class="certs__right">
+                <button *ngIf="isAdmin && certificate.status !== 'Revoked' && certificate.status !== 'Rejected' && certificate.status !== 'Failed'" type="button"
+                  class="certs__link certs__danger" [disabled]="busy === 'revoke-' + certificate.id" (click)="revoke(certificate)">Revoke</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+</div>

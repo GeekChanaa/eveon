@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.OCPP.Messages
 {
+  /// <summary>OCPP 2.0.1 SetChargingProfile.req: evseId 0 targets the whole charging station.</summary>
   public class SetChargingProfileRequest
   {
-    public string ChargingProfileId { get; set; }
-    public List<ChargingScheduleType> ChargingSchedules { get; set; }
-    public string ConnectorId { get; set; }
-    public DateTime StartTime { get; set; }
-    public int Duration { get; set; }
-    public SalesTariffType SalesTariff { get; set; }
-  }
+    public CustomDataType? CustomData { get; set; }
 
+    [Required]
+    [Range(0, int.MaxValue)]
+    public int EvseId { get; set; }
+
+    [Required]
+    public ChargingProfileType ChargingProfile { get; set; }
+  }
 }

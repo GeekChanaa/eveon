@@ -1,29 +1,79 @@
 
+.documentation-page
+  color: var(--primary9)
+.docs-hero
+  max-width: 760px
+  margin: 8px 0 32px
+.docs-hero__eyebrow
+  display: block
+  margin-bottom: 10px
+  color: var(--secondary1)
+  font-size: 12px
+  font-weight: 700
+  letter-spacing: .1em
+  text-transform: uppercase
+.docs-hero__title
+  margin: 0
+  font-size: clamp(32px, 4vw, 44px)
+  line-height: 1.1
+.docs-hero__description
+  margin: 14px 0 0
+  color: var(--professional4)
+  font-size: 16px
+  line-height: 1.65
 .documentation__links
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  gap: 18px
+.documentation__link
+  display: grid
+  grid-template-columns: 52px minmax(0, 1fr) 20px
+  gap: 16px
+  align-items: center
+  min-height: 156px
+  padding: 26px
+  color: var(--primary9)
+  background: var(--primary1)
+  border: 1px solid var(--primary3)
+  border-radius: 16px
+  box-shadow: 0 8px 24px rgba(26, 29, 31, .05)
+  text-decoration: none
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease
+  &:hover
+    transform: translateY(-3px)
+    border-color: var(--secondary3)
+    box-shadow: 0 14px 30px rgba(26, 29, 31, .1)
+  &:focus-visible
+    outline: 3px solid var(--secondary3)
+    outline-offset: 3px
+.documentation__icon
   display: flex
-  width: 100%
-  flex-wrap: wrap
+  align-items: center
+  justify-content: center
+  width: 52px
+  height: 52px
+  border-radius: 14px
+  background: var(--secondary5)
+  .icon
+    width: 24px
+    height: 24px
+    fill: var(--secondary1)
+.documentation__name, .documentation__description
+  display: block
+.documentation__name
+  margin-bottom: 7px
+  font-size: 18px
+  font-weight: 700
+.documentation__description
+  color: var(--professional4)
+  font-size: 14px
+  line-height: 1.5
+.documentation__arrow
+  width: 18px
+  height: 18px
+  fill: var(--professional4)
+@media (max-width: 767px)
+  .documentation__links
+    grid-template-columns: 1fr
   .documentation__link
-    height: 30vh
-    margin-top: 32px
-    margin-right: 16px
-    background: white
-    backdrop-filter: blur(12px)
-    border-radius: 8px
-    flex: 0 0 31%
-    padding: 32px
-    opacity: 0.9
-    background: var(--secondary5)
-    cursor: pointer
-    transition: ease-in-out all .3s
-    &:hover
-      background: var(--secondary3)
-    .documentation__icon
-      height: 65%
-    .documentation__footer
-      .documentation__name
-        font-size: 1.3em
-        font-weight: 600
-      .documentation__description
-        font-size: 0.8em
-        color: var(--primary8)
+    min-height: 0

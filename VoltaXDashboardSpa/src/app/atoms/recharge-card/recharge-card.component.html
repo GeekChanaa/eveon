@@ -1,66 +1,84 @@
-<div class="charging-card">
-      <!-- Background gradient overlay -->
-      <div class="card-background"></div>
-      
-      <!-- Header with logo and card type -->
-      <div class="card-header">
-        <div class="logo-container">
-          <img src="/assets/images/logos/eveon-logo.svg" alt="Logo" class="logo" />
-        </div>
-        <div class="card-type">
-          <span class="type-label">{{ cardType }}</span>
-          <div class="status-indicator" [class]="'status-' + status.toLowerCase()">
-            <span class="status-dot"></span>
-            <span class="status-text">{{ status }}</span>
-          </div>
-        </div>
-      </div>
+<article class="charging-card">
+  <div class="card-background" aria-hidden="true"></div>
 
-      <!-- Card number section -->
-      <div class="card-number-section">
-        <div class="card-number-container">
-          <span class="card-number" [class.hidden]="!showCardNumber">
-            {{ formatCardNumber(cardNumber) }}
-          </span>
-          <span class="card-number-masked" [class.hidden]="showCardNumber">
-            •••• •••• •••• {{ cardNumber.slice(-4) }}
-          </span>
-          <button class="toggle-visibility" (click)="toggleCardVisibility()" type="button">
-            <svg *ngIf="!showCardNumber" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            <svg *ngIf="showCardNumber" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-              <line x1="1" y1="1" x2="23" y2="23"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Balance and expiration -->
-      <div class="card-footer">
-        <div class="balance-section">
-          <span class="balance-label">Balance</span>
-          <span class="balance-amount">{{ formatBalance(balance) }}</span>
-        </div>
-        <div class="expiration-section">
-          <span class="expiration-label">Expires</span>
-          <span class="expiration-date">{{ formatExpirationDate(expirationDate) }}</span>
-        </div>
-      </div>
-
-      <!-- Charging icon decoration -->
-      <div class="charging-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
-      </div>
-
-      <!-- Animated circuit pattern -->
-      <div class="circuit-pattern">
-        <div class="circuit-line line-1"></div>
-        <div class="circuit-line line-2"></div>
-        <div class="circuit-line line-3"></div>
+  <header class="card-header">
+    <div class="logo-container">
+      <img src="/assets/images/logos/eveon-logo.svg" alt="VoltaX" class="logo" />
+    </div>
+    <div class="card-type">
+      <span class="type-label">{{ cardType }}</span>
+      <div class="status-indicator" [class]="'status-indicator status-' + status.toLowerCase()">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="status-text">{{ status }}</span>
       </div>
     </div>
+  </header>
+
+  <section class="card-number-section" aria-label="Card number">
+    <span class="detail-label">Card number</span>
+    <div class="sensitive-detail-row">
+      <span class="card-number" *ngIf="showCardNumber; else maskedCardNumber">
+        {{ formatCardNumber(cardNumber) }}
+      </span>
+      <ng-template #maskedCardNumber>
+        <span class="card-number card-number-masked">•••• •••• •••• ••••</span>
+      </ng-template>
+      <button
+        class="toggle-visibility"
+        (click)="toggleCardNumberVisibility()"
+        type="button"
+        [attr.aria-label]="showCardNumber ? 'Hide card number' : 'Show card number'"
+        [attr.title]="showCardNumber ? 'Hide card number' : 'Show card number'"
+        [attr.aria-pressed]="showCardNumber">
+        <svg *ngIf="!showCardNumber" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <svg *ngIf="showCardNumber" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <footer class="card-footer">
+    <div class="balance-section">
+      <span class="detail-label">Balance</span>
+      <div class="sensitive-detail-row balance-row">
+        <span class="balance-amount" *ngIf="showBalance; else maskedBalance">
+          {{ formatBalance(balance) }}
+        </span>
+        <ng-template #maskedBalance>
+          <span class="balance-amount balance-masked">••••••</span>
+        </ng-template>
+        <button
+          class="toggle-visibility toggle-visibility-small"
+          (click)="toggleBalanceVisibility()"
+          type="button"
+          [attr.aria-label]="showBalance ? 'Hide balance' : 'Show balance'"
+          [attr.title]="showBalance ? 'Hide balance' : 'Show balance'"
+          [attr.aria-pressed]="showBalance">
+          <svg *ngIf="!showBalance" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg *ngIf="showBalance" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="expiration-section">
+      <span class="detail-label">Expires</span>
+      <span class="expiration-date">{{ formatExpirationDate(expirationDate) }}</span>
+    </div>
+  </footer>
+
+  <div class="charging-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24">
+      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path>
+    </svg>
+  </div>
+</article>

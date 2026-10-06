@@ -28,7 +28,7 @@
       required>
  
     <ul class="list-search-input" [ngClass]="{'show-opacity': showList}">
-      <li *ngFor="let option of filteredOptions" (click)="selectOption(option, inputElem)"
+      <li *ngFor="let option of filteredOptions" (mousedown)="$event.preventDefault(); selectOption(option)"
         class="option-search-input select-option">
         {{ option.name }}
       </li>

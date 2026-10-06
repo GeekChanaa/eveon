@@ -1,4 +1,5 @@
 <form [formGroup]="form" *ngIf="isLoaded">
+  <div class="station-section-heading"><h3>Station &amp; hardware</h3><p>Link this charge point to its location and identify the charging hardware.</p></div>
   <div class="field__group">
 
     <app-search-input 
@@ -54,8 +55,12 @@
       (btnClick)="saveInformations()"
       [disabled]="form.invalid"
       [variant]="'professional'">
-        Next
+        Continue to connectors
     </app-button>
 
   </div>
 </form>
+<div class="charge-point-loading" *ngIf="!isLoaded" role="status">
+  <span class="charge-point-loading__dot" aria-hidden="true"></span>
+  Loading available stations…
+</div>

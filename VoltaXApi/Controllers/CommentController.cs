@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
@@ -28,6 +29,10 @@ namespace VoltaXApi.Controllers
         [HttpPost("CreateComment")]
         public async Task<IActionResult> CreateComment(CreateCommentDto commentDto)
         {
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Unauthorized();
+            // The author is the caller, whatever the body says.
+            commentDto.UserID = userId;
             await this._repository.CreateComment(commentDto);
             return StatusCode(204);
         }

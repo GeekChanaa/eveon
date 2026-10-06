@@ -1,79 +1,175 @@
-.details__container 
+:host
+  --config-surface: var(--vx-surface, var(--primary1))
+  --config-soft: var(--vx-surface-alt, var(--primary2))
+  --config-border: var(--vx-border, var(--primary3))
+  --config-text: var(--vx-text, var(--primary9))
+  --config-muted: var(--professional3)
+  --config-accent: var(--vx-yellow-ink, var(--secondary1))
+  display: block
+  color: var(--config-text)
+
+.config-page
   width: 100%
+  max-width: 1200px
+  margin: 0 auto
+
+.config-intro
   display: flex
-  justify-content: center // center content
-  flex-wrap: wrap
+  align-items: center
+  gap: 18px
+  padding: 24px
+  margin-bottom: 32px
+  border: 1px solid var(--config-border)
+  border-radius: 16px
+  background: var(--config-surface)
 
-  .details-informations__container 
+  h2
+    margin: 0 0 6px
+    color: var(--config-text)
+    font-size: 20px
+    font-weight: 700
+    line-height: 1.4
+    letter-spacing: -.02em
+
+  p
+    color: var(--config-muted)
+    font-size: 14px
+    line-height: 1.7
+
+.config-intro__icon,
+.config-card__icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  color: var(--config-accent)
+  background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+  border-radius: 12px
+
+  svg
+    width: 22px
+    height: 22px
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.7
+    stroke-linecap: round
+    stroke-linejoin: round
+
+.config-intro__icon
+  width: 52px
+  height: 52px
+
+.config-section
+  margin-bottom: 28px
+
+.config-section__heading
+  margin-bottom: 16px
+
+  h3
+    margin: 0 0 5px
+    color: var(--config-text)
+    font-size: 16px
+    font-weight: 700
+    line-height: 1.5
+    letter-spacing: normal
+
+  p
+    color: var(--config-muted)
+    font-size: 13px
+    line-height: 1.6
+
+.config-grid
+  display: grid
+  gap: 16px
+  margin: 0
+
+.config-grid--2
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+
+.config-grid--3
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+
+.config-card
+  display: flex
+  flex-direction: column
+  min-width: 0
+  padding: 22px
+  border: 1px solid var(--config-border)
+  border-radius: 14px
+  background: var(--config-surface)
+  box-shadow: 0 3px 16px rgba(0, 0, 0, .025)
+
+  dt
     display: flex
-    flex-wrap: wrap
-    gap: 16px // spacing between items
-    width: 100%
-    padding: 16px
+    align-items: center
+    gap: 12px
+    margin: 0 0 20px
+    color: var(--config-text)
+    font-size: 13px
+    font-weight: 600
+    line-height: 1.5
 
-    .stat__item 
-      display: flex
-      align-items: center
-      flex: 1 1 250px // responsive width
-      background: #fff
-      border-radius: 8px
-      padding: 12px
-      box-shadow: 0 1px 6px rgba(0,0,0,0.1)
-      transition: transform 0.2s
-      cursor: default
+  dd
+    margin: 0
 
-      &:hover 
-        transform: translateY(-2px)
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15)
-      
+.config-card__icon
+  width: 38px
+  height: 38px
+  border-radius: 10px
+  background: var(--config-soft)
 
-      .stat__icon 
-        display: flex
-        align-items: center
-        justify-content: center
-        width: 50px
-        height: 50px
-        border-radius: 50%
-        margin-right: 12px
-        svg 
-          width: 24px
-          height: 24px
-        
-      
+  svg
+    width: 20px
+    height: 20px
 
-      .stat__line 
-        display: flex
-        flex-direction: column
+.config-card .config-card__value
+  display: flex
+  align-items: baseline
+  flex-wrap: wrap
+  gap: 8px
+  margin-bottom: 16px
+  color: var(--config-text)
+  font-size: clamp(26px, 2.6vw, 34px)
+  font-weight: 700
+  line-height: 1.3
+  letter-spacing: -.025em
+  font-variant-numeric: tabular-nums
+  overflow-wrap: anywhere
 
-        .stat__details 
-          display: flex
-          flex-direction: column
+.config-card__unit
+  color: var(--config-muted)
+  font-size: 12px
+  font-weight: 500
+  letter-spacing: normal
 
-          .stat__label 
-            font-size: 1em
-            font-weight: 600
-            display: flex
-            align-items: center
-            gap: 4px
+.config-card .config-card__hint
+  margin-top: auto
+  padding-top: 14px
+  border-top: 1px solid var(--config-border)
+  color: var(--config-muted)
+  font-size: 12px
+  line-height: 1.7
 
-            .tooltip 
-              cursor: help
-              svg 
-                width: 16px
-                height: 16px
-                fill: var(--primary6)
-              
-            
-          
+@media (max-width: 1023px)
+  .config-grid--3
+    grid-template-columns: repeat(2, minmax(0, 1fr))
 
-          .stat__counter 
-            font-size: 1.1em
-            font-weight: 500
-            color: var(--primary8)
-            margin-top: 4px
-          
-        
-      
-    
-  
+@media (max-width: 600px)
+  .config-intro
+    align-items: flex-start
+    padding: 18px
+    gap: 12px
 
+    h2
+      font-size: 18px
+
+  .config-intro__icon
+    width: 40px
+    height: 40px
+
+  .config-grid
+    grid-template-columns: 1fr
+    gap: 12px
+
+  .config-card
+    padding: 18px

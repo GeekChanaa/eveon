@@ -79,10 +79,11 @@ namespace VoltaXApi.Data
             return _context.Orders.Where(t => t.CardID == cardID);
         }
 
-        public async Task CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
+        public async Task<Order> CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
         {
             Order order = _mapper.Map<CreateRechargeOrderDto,Order>(rechargeOrderDto);
             await AddAsync(order);
+            return order;
         }
 
         public async Task<DisplayRechargeOrderDto> GetOrder(int orderID)

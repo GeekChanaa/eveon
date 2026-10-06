@@ -33,6 +33,18 @@ public class Program
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+                await PermissionSeeder.Seed(db);
+                try
+                {
+                    await OcppDefaultProfileSeeder.Seed(db);
+                }
+                catch (Exception ex)
+                {
+                    // Table missing until AddChargePointProvisioning is applied; the API still starts.
+                    Log.Warning(ex, "Could not seed the default OCPP provisioning profile");
+                }
+                if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Database:InitializePhoneLogin"))
+                    await PhoneLoginSchema.Initialize(db);
                 if (initializeRefreshTokens || builder.Configuration.GetValue<bool?>("Database:InitializeRefreshTokens")
                     == true || (app.Environment.IsDevelopment() && builder.Configuration["Database:InitializeRefreshTokens"] == null))
                     await RefreshTokenSchema.Initialize(db);
@@ -80,21 +92,25 @@ public class Program
         ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
 
         ServiceRegistration.ConfigureSwagger(builder.Services);
-        ServiceRegistration.ConfigureCors(builder.Services);
+        SecurityConfiguration.AddSecurity(builder.Services, builder.Configuration, builder.Environment);
         ServiceRegistration.ConfigureAutoMapper(builder.Services);
         ServiceRegistration.ConfigureQuestPDF(builder.Services);
         ServiceRegistration.ConfigureSignalR(builder.Services);
+        ServiceRegistration.ConfigureScaleOut(builder.Services, builder.Configuration);
     }
 
     private static void ConfigureApp(WebApplication app)
     {
         // Configure middleware
+        SecurityConfiguration.UseSecurity(app);
         AppConfiguration.ConfigureSwagger(app);
         AppConfiguration.ConfigureRouting(app);
         AppConfiguration.ConfigureLocalization(app);
         AppConfiguration.ConfigureCors(app);
         AppConfiguration.ConfigureCookiePolicy(app);
         AppConfiguration.ConfigureAuth(app);
+        // After authentication so the global limit can partition by user.
+        SecurityConfiguration.UseRateLimiting(app);
 
         // After authentication (the log lines carry the caller) and before the endpoints
         // (so handler logs are correlated too).

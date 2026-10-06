@@ -1,36 +1,36 @@
 using System.ComponentModel.DataAnnotations;
 
-
 namespace VoltaXApi.OCPP.Messages
 {
   public class ChargingProfileType
   {
-    public CustomDataType customData { get; set; }
+    public CustomDataType? CustomData { get; set; }
 
     [Required]
-    public int id { get; set; }
+    public int Id { get; set; }
 
     [Required]
-    public int stackLevel { get; set; }
+    [Range(0, int.MaxValue)]
+    public int StackLevel { get; set; }
 
     [Required]
-    public ChargingProfilePurposeEnumType chargingProfilePurpose { get; set; }
+    public ChargingProfilePurposeEnumType ChargingProfilePurpose { get; set; }
 
     [Required]
-    public ChargingProfileKindEnumType chargingProfileKind { get; set; }
+    public ChargingProfileKindEnumType ChargingProfileKind { get; set; }
 
-    public RecurrencyKindEnumType recurrencyKind { get; set; }
+    public RecurrencyKindEnumType? RecurrencyKind { get; set; }
 
-    public DateTime? validFrom { get; set; }
+    public DateTime? ValidFrom { get; set; }
 
-    public DateTime? validTo { get; set; }
+    public DateTime? ValidTo { get; set; }
 
     [Required]
     [MinLength(1)]
     [MaxLength(3)]
-    public List<ChargingScheduleType> chargingSchedule { get; set; }
+    public List<ChargingScheduleType> ChargingSchedule { get; set; }
 
     [MaxLength(36)]
-    public string transactionId { get; set; }
+    public string? TransactionId { get; set; }
   }
 }

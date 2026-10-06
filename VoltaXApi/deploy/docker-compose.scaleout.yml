@@ -1,0 +1,53 @@
+# Two API instances behind Caddy, sharing Redis. See docs/scale-out.md.
+#   cd VoltaXApi/deploy
+#   docker compose -f docker-compose.scaleout.yml up -d --build   (API_ENV_FILE=... to use another env file)
+# The env file holds the secrets (AppSettings__Token, ConnectionStrings__DefaultConnection, ...);
+# SQL Server is external (deploy/sqlserver) and shared by every instance.
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+    networks: [eveon]
+
+  api:
+    build: ..
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+    env_file: ${API_ENV_FILE:-/etc/eveon/api.env}
+    environment:
+      ScaleOut__Redis__ConnectionString: "redis:6379"
+      # Instance ids default to <host>-<pid>-<random>; container host names are already unique.
+      ReverseProxy__KnownProxies__0: "${CADDY_IP:-172.30.0.10}"
+    depends_on:
+      redis:
+        condition: service_healthy
+    # Probes for an orchestrator: GET /health/live and /health/ready (the aspnet image has no curl for a compose healthcheck).
+    networks: [eveon]
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile.scaleout:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [api]
+    networks:
+      eveon:
+        ipv4_address: 172.30.0.10
+
+networks:
+  eveon:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  caddy_data:

@@ -1,0 +1,36 @@
+# Load balancer for docker-compose.scaleout.yml (see docs/scale-out.md).
+# Replace api.eveon.ma with the real API host name (and keep AllowedHosts in api.env in sync).
+
+api.eveon.ma {
+	encode gzip
+
+	# SignalR negotiates over HTTP and then opens the transport with the returned connection id, which only
+	# the negotiating instance knows: hub traffic keeps cookie affinity. Events reach every instance through Redis.
+	@hubs path /chargerHub* /chargingSessionHub* /notificationHub*
+	reverse_proxy @hubs {
+		# Every replica of the "api" service (Docker DNS returns one A record per container).
+		dynamic a api 8080 {
+			refresh 5s
+		}
+		lb_policy cookie eveon_hub
+		# Passive health: active checks do not apply to dynamic upstreams.
+		fail_duration 30s
+	}
+
+	# REST and charger websockets (/ocpp/...): no affinity. A charger reconnects to any instance, which takes
+	# over its ownership; commands for it are routed there from any instance.
+	reverse_proxy {
+		dynamic a api 8080 {
+			refresh 5s
+		}
+		lb_policy least_conn
+		lb_try_duration 5s
+		# Passive health: active checks do not apply to dynamic upstreams.
+		fail_duration 30s
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}

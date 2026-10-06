@@ -5,7 +5,22 @@
     { label: 'Charge Points', link: '/dashboard/charging-points' },
     { label: 'Create' }
   ]">
-  <div form>
+  <div form class="station-wizard charge-point-wizard">
+    <nav class="station-steps" aria-label="Charge point creation progress">
+      <ol>
+        <li *ngFor="let label of ['Charge point details', 'Connectors & pricing']; let i = index"
+          [class.is-current]="currentStep === i" [class.is-complete]="currentStep > i"
+          [attr.aria-current]="currentStep === i ? 'step' : null">
+          <span class="station-steps__number">{{ currentStep > i ? '✓' : i + 1 }}</span>
+          <span>{{ label }}</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="station-intro">
+      <span class="station-eyebrow">Step {{ currentStep + 1 }} of 2</span>
+      <h2>{{ currentStep === 0 ? 'Set up your charge point' : 'Configure connectors & pricing' }}</h2>
+      <p>{{ currentStep === 0 ? 'Choose a station and enter the hardware details for this charge point.' : 'Add the connectors, review their specifications, and set the charging fees.' }}</p>
+    </header>
     <!-- Charge Point Informations Form -->
     <ng-container *ngIf="currentStep == CreateChargePointFormEnum.ChargePointInformations">
       <app-create-charge-point-informations

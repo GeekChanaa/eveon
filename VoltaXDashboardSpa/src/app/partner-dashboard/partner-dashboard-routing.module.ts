@@ -4,12 +4,17 @@ import { PartnerHomeComponent } from './partner-home/partner-home.component';
 import { PartnerConnectorRealtimeComponent } from './partner-connector-realtime/partner-connector-realtime.component';
 import { StatisticsComponent } from '../dashboard/statistics/statistics.component';
 import { PartnerStatisticsComponent } from './partner-statistics/partner-statistics.component';
+import { TwoFactorSettingsComponent } from '../dashboard/profile/profile-security/two-factor-settings/two-factor-settings.component';
 const routes: Routes = [
   {
     path: "",
     component: PartnerHomeComponent,
     loadChildren : () => import('./partner-home/partner-home.module')
       .then(m=>m.PartnerHomeModule)
+  },
+  {
+    path: "security",
+    component: TwoFactorSettingsComponent
   },
   {
     path: "statistics",

@@ -1,3 +1,5 @@
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.DataProtection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,6 +23,7 @@ using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Factories;
 using VoltaXApi.OCPP.Handlers;
 using VoltaXApi.OCPP.Helpers;
+using VoltaXApi.OCPP.Models;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.Services;
 using VoltaXApi.Settings;
@@ -35,11 +38,14 @@ public static class ServiceRegistration
 {
     public static void ConfigureControllers(IServiceCollection services)
     {
+        services.AddScoped<VoltaXApi.Authorization.AccessService>();
+        services.AddSingleton<VoltaXApi.Authorization.HubConnections>();
         services.AddControllers(options =>
         {
             // Registered by type, not as an instance, so the filter can take ILogger and
             // IHostEnvironment from the container.
             options.Filters.Add<GlobalExceptionFilter>();
+            options.Filters.Add<VoltaXApi.Authorization.DashboardAccessFilter>();
         }).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -59,6 +65,13 @@ public static class ServiceRegistration
     
     public static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
+        services.AddMemoryCache();
+        // Protects TOTP secrets and 2FA challenge tokens; keys live in the database so they
+        // survive restarts and are shared between instances.
+        services.AddDataProtection()
+            .SetApplicationName("eveon-api")
+            .PersistKeysToDbContext<VoltaXApiDbContext>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -67,8 +80,12 @@ public static class ServiceRegistration
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
                         .GetBytes(configuration.GetSection("AppSettings:Token").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["AppSettings:Issuer"] ?? JwtService.DefaultIssuer,
+                    ValidateAudience = true,
+                    ValidAudience = configuration["AppSettings:Audience"] ?? JwtService.DefaultAudience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(1)
                 };
 
                 options.Events = new JwtBearerEvents
@@ -79,7 +96,7 @@ public static class ServiceRegistration
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/notification")))
+                            (path.StartsWithSegments("/notification") || path.StartsWithSegments("/notificationHub") || path.StartsWithSegments("/chargerHub") || path.StartsWithSegments("/chargingSessionHub")))
                         {
                             // Read the token out of the query string
                             context.Token = accessToken;
@@ -207,6 +224,8 @@ public static class ServiceRegistration
     public static void ConfigureApplicationServices(IServiceCollection services)
     {
         // Register application services
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IBusinessClock, BusinessClock>();
         services.AddScoped<IChargingStationService, ChargingStationService>();
         services.AddScoped<IStatisticsService, StatisticsService>();
         services.AddScoped<IPartnerStatisticsService, PartnerStatisticsService>();
@@ -222,45 +241,56 @@ public static class ServiceRegistration
         services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPartnerAuthService, PartnerAuthService>();
         services.AddScoped<IGoogleAuthProvider, GoogleAuthProvider>();
         services.AddScoped<IQRCodeService, QRCodeService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<ITwoFactorService, TwoFactorService>();
+        services.AddScoped<IPasswordResetService, PasswordResetService>();
+        services.AddScoped<IEmailVerificationGuard, EmailVerificationGuard>();
         services.AddHostedService<RefreshTokenCleanupService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
+        // GDPR, audit and retention
+        services.AddScoped<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>();
+        services.AddSingleton<VoltaXApi.Services.Audit.IAuditLogger, VoltaXApi.Services.Audit.AuditLogger>();
+        services.AddScoped<VoltaXApi.Services.Gdpr.IUserDataExportService, VoltaXApi.Services.Gdpr.UserDataExportService>();
+        services.AddScoped<VoltaXApi.Services.Gdpr.IAccountDeletionService, VoltaXApi.Services.Gdpr.AccountDeletionService>();
+        services.AddHostedService<VoltaXApi.Services.Gdpr.GdprExportWorker>();
+        services.AddHostedService<VoltaXApi.Services.Gdpr.AccountDeletionWorker>();
+        services.AddHostedService<DataRetentionService>();
+        // OCPI 2.2.1 roaming (CPO); endpoints answer 404 unless Ocpi:Enabled.
+        VoltaXApi.Ocpi.OcpiRegistration.AddOcpi(services);
         services.AddScoped<IFileManagementService, FileManagementService>();
+        // Only implementation until a real payment provider is integrated; it refuses every call outside Development.
+        services.AddSingleton<VoltaXApi.Services.Payments.IPaymentCardTokenizer, VoltaXApi.Services.Payments.DevelopmentFakeCardTokenizer>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IWebSocketRequestsHandler, WebSocketRequestsHandler>();
-        services.AddScoped<WebSocketHandler>();
-        services.AddScoped<OCPPMessageProcessor>();
+        // Connection-level OCPP objects are singletons; every incoming CALL gets its own DI scope.
+        services.AddSingleton<WebSocketHandler>();
+        services.AddSingleton<OCPPMessageProcessor>();
+        services.AddSingleton<IOcppCommandSender>(sp => sp.GetRequiredService<OCPPMessageProcessor>());
+        services.AddSingleton<OcppPendingRequestRegistry>();
+        services.AddSingleton<ChargePointStatusManagerService>();
         services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
         services.AddScoped<INoticeService, NoticeService>();
         services.AddScoped<IChargingSessionService, ChargingSessionService>();
         services.AddScoped<ChargingSessionInvoiceGeneratorService>();
         services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
-        services.AddScoped<WebSocketSubProtocolMatcher>();
+        services.AddSingleton<WebSocketSubProtocolMatcher>();
         
         // Singletons
         services.AddSingleton<WebSocketManagerService>();
-        services.AddSingleton<ChargePointStatusManagerService>();
-        services.AddSingleton<RequestQueueManagerService>();
+        services.AddSingleton<ChargePointConnectivityNotifier>();
+        services.AddSingleton<ProvisioningNotifier>();
+        services.AddSingleton<ReportCompletionTracker>();
         
-        // Register hosted services
-        services.AddSingleton<IHostedService>(serviceProvider =>
-        {
-            // Create a scope
-            using var scope = serviceProvider.CreateScope();
-            
-            // Resolve the service from the scope
-            return scope.ServiceProvider.GetRequiredService<CardExpirationWarningService>();
-        });
-        
-        // Register the actual service as scoped
-        services.AddScoped<CardExpirationWarningService>();
+        // Creates its own scope per run (IServiceScopeFactory), so it is a plain singleton hosted service.
+        services.AddHostedService<CardExpirationWarningService>();
     }
     
     public static void ConfigureOCPPServices(IServiceCollection services)
@@ -269,53 +299,66 @@ public static class ServiceRegistration
         services.AddScoped<IConfigurationService, ConfigurationService>();
         services.AddScoped<IEVDriverService, EVDriverService>();
         services.AddScoped<IMonitoringService, MonitoringService>();
+        services.AddScoped<ProvisioningService>();
         services.AddScoped<IReportingService, ReportingService>();
         services.AddScoped<ISecurityService, SecurityService>();
+        // Charger PKI: CA, client certificate validation (security profile 3), Kestrel mTLS, expiry monitor.
+        VoltaXApi.OCPP.Pki.PkiRegistration.AddChargerPki(services);
         services.AddScoped<ISmartChargingService, SmartChargingService>();
+        // Smart charging: stored profiles, load balancing (debounced trigger + 60 s safety pass), strategies
+        services.AddSingleton<VoltaXApi.SmartCharging.ChargingProfileReportTracker>();
+        services.AddScoped<VoltaXApi.SmartCharging.SmartChargingInboundStore>();
+        services.AddScoped<VoltaXApi.SmartCharging.ILoadBalancingService, VoltaXApi.SmartCharging.LoadBalancingService>();
+        services.AddSingleton<VoltaXApi.SmartCharging.ILoadBalancingTrigger, VoltaXApi.SmartCharging.LoadBalancingTrigger>();
+        services.AddHostedService<VoltaXApi.SmartCharging.LoadBalancingSafetyService>();
+        services.AddScoped<VoltaXApi.SmartCharging.IChargingStrategyService, VoltaXApi.SmartCharging.ChargingStrategyService>();
         services.AddScoped<ITransactionsService, TransactionsService>();
+        // OCPP 2.0.1 device data (events, monitors, customer information, display messages), CostUpdated, log uploads.
+        services.AddScoped<IOcppDeviceDataService, OcppDeviceDataService>();
+        services.AddSingleton<ChargerAlarmNotifier>();
+        services.AddSingleton<MonitoringReportAssembler>();
+        services.AddScoped<IDisplayMessageService, DisplayMessageService>();
+        services.AddSingleton<VoltaXApi.Services.ICostCalculator>(VoltaXApi.Services.CostCalculator.Instance);
+        services.AddSingleton<ICostUpdatedSender, CostUpdatedSender>();
+        services.AddHostedService<CostUpdatedHostedService>();
+        services.AddScoped<ILogUploadUrlFactory, LogUploadUrlFactory>();
+        services.AddSingleton(sp => ChargerLogStorage.FromConfiguration(sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<IWebHostEnvironment>()));
     }
     
     public static void ConfigureOCPPHandlers(IServiceCollection services)
     {
-        // Register OCPP handlers
-        services.AddScoped<OCPPRequestHandler>();
-        services.AddScoped<OCPPRequestHandlerFactory>();
-        
-        // Register specific handlers
-        services.AddScoped<BootNotificationHandler>();
-        services.AddScoped<HeartBeatHandler>();
-        services.AddScoped<AuthorizeHandler>();
-        services.AddScoped<ClearedChargingLimitHandler>();
-        services.AddScoped<DataTransferHandler>();
-        services.AddScoped<FirmwareStatusNotificationHandler>();
-        services.AddScoped<LogStatusNotificationHandler>();
-        services.AddScoped<MeterValuesHandler>();
-        services.AddScoped<NotifyChargingLimitHandler>();
-        services.AddScoped<NotifyEVChargingScheduleHandler>();
-        services.AddScoped<ResetHandler>();
-        services.AddScoped<SecurityEventNotificationHandler>();
-        services.AddScoped<StatusNotificationHandler>();
-        services.AddScoped<UnlockConnectorHandler>();
-        services.AddScoped<TransactionEventHandler>();
-        services.AddScoped<NotifyReportHandler>();
-        
-        // Register handler factories
-        services.AddScoped<Func<BootNotificationHandler>>(sp => () => sp.GetService<BootNotificationHandler>());
-        services.AddScoped<Func<HeartBeatHandler>>(sp => () => sp.GetService<HeartBeatHandler>());
-        services.AddScoped<Func<AuthorizeHandler>>(sp => () => sp.GetService<AuthorizeHandler>());
-        services.AddScoped<Func<ClearedChargingLimitHandler>>(sp => () => sp.GetService<ClearedChargingLimitHandler>());
-        services.AddScoped<Func<DataTransferHandler>>(sp => () => sp.GetService<DataTransferHandler>());
-        services.AddScoped<Func<FirmwareStatusNotificationHandler>>(sp => () => sp.GetService<FirmwareStatusNotificationHandler>());
-        services.AddScoped<Func<LogStatusNotificationHandler>>(sp => () => sp.GetService<LogStatusNotificationHandler>());
-        services.AddScoped<Func<MeterValuesHandler>>(sp => () => sp.GetService<MeterValuesHandler>());
-        services.AddScoped<Func<NotifyChargingLimitHandler>>(sp => () => sp.GetService<NotifyChargingLimitHandler>());
-        services.AddScoped<Func<NotifyEVChargingScheduleHandler>>(sp => () => sp.GetService<NotifyEVChargingScheduleHandler>());
-        services.AddScoped<Func<ResetHandler>>(sp => () => sp.GetService<ResetHandler>());
-        services.AddScoped<Func<SecurityEventNotificationHandler>>(sp => () => sp.GetService<SecurityEventNotificationHandler>());
-        services.AddScoped<Func<StatusNotificationHandler>>(sp => () => sp.GetService<StatusNotificationHandler>());
-        services.AddScoped<Func<UnlockConnectorHandler>>(sp => () => sp.GetService<UnlockConnectorHandler>());
-        services.AddScoped<Func<TransactionEventHandler>>(sp => () => sp.GetService<TransactionEventHandler>());
-        services.AddScoped<Func<NotifyReportHandler>>(sp => () => sp.GetService<NotifyReportHandler>());
+        // Inbound (charger -> CSMS) CALL handlers, keyed by protocol version and action; see OcppInboundHandlerRegistry.
+        // A protocol version is offered at the WebSocket handshake only once it has handlers here.
+        services.AddSingleton<OcppInboundHandlerRegistry>();
+        services.AddSingleton<OCPPRequestHandler>();
+        // Shared OCPP domain services + reservations, and the OCPP 1.6J handlers (enables "ocpp1.6"); see OCPP/Ocpp16.
+        VoltaXApi.OCPP.Ocpp16.Ocpp16Registration.AddOcppSharedDomain(services);
+        VoltaXApi.OCPP.Ocpp16.Ocpp16Registration.AddOcpp16(services);
+
+        services.AddOcppInboundHandler<BootNotificationHandler>(OcppProtocols.Ocpp201, "BootNotification");
+        services.AddOcppInboundHandler<HeartBeatHandler>(OcppProtocols.Ocpp201, "Heartbeat");
+        services.AddOcppInboundHandler<AuthorizeHandler>(OcppProtocols.Ocpp201, "Authorize");
+        services.AddOcppInboundHandler<ClearedChargingLimitHandler>(OcppProtocols.Ocpp201, "ClearedChargingLimit");
+        services.AddOcppInboundHandler<DataTransferHandler>(OcppProtocols.Ocpp201, "DataTransfer");
+        services.AddOcppInboundHandler<FirmwareStatusNotificationHandler>(OcppProtocols.Ocpp201, "FirmwareStatusNotification");
+        services.AddOcppInboundHandler<LogStatusNotificationHandler>(OcppProtocols.Ocpp201, "LogStatusNotification");
+        services.AddOcppInboundHandler<MeterValuesHandler>(OcppProtocols.Ocpp201, "MeterValues");
+        services.AddOcppInboundHandler<NotifyChargingLimitHandler>(OcppProtocols.Ocpp201, "NotifyChargingLimit");
+        services.AddOcppInboundHandler<NotifyEVChargingScheduleHandler>(OcppProtocols.Ocpp201, "NotifyEVChargingSchedule");
+        services.AddOcppInboundHandler<NotifyEVChargingNeedsHandler>(OcppProtocols.Ocpp201, "NotifyEVChargingNeeds");
+        services.AddOcppInboundHandler<ReportChargingProfilesHandler>(OcppProtocols.Ocpp201, "ReportChargingProfiles");
+        services.AddOcppInboundHandler<SecurityEventNotificationHandler>(OcppProtocols.Ocpp201, "SecurityEventNotification");
+        services.AddOcppInboundHandler<SignCertificateHandler>(OcppProtocols.Ocpp201, "SignCertificate");
+        services.AddOcppInboundHandler<GetCertificateStatusHandler>(OcppProtocols.Ocpp201, "GetCertificateStatus");
+        services.AddOcppInboundHandler<Get15118EVCertificateHandler>(OcppProtocols.Ocpp201, "Get15118EVCertificate");
+        services.AddOcppInboundHandler<StatusNotificationHandler>(OcppProtocols.Ocpp201, "StatusNotification");
+        services.AddOcppInboundHandler<TransactionEventHandler>(OcppProtocols.Ocpp201, "TransactionEvent");
+        services.AddOcppInboundHandler<NotifyReportHandler>(OcppProtocols.Ocpp201, "NotifyReport");
+        services.AddSingleton<ConnectorReportBuffer>();
+        services.AddOcppInboundHandler<NotifyEventHandler>(OcppProtocols.Ocpp201, "NotifyEvent");
+        services.AddOcppInboundHandler<NotifyMonitoringReportHandler>(OcppProtocols.Ocpp201, "NotifyMonitoringReport");
+        services.AddOcppInboundHandler<NotifyCustomerInformationHandler>(OcppProtocols.Ocpp201, "NotifyCustomerInformation");
+        services.AddOcppInboundHandler<NotifyDisplayMessagesHandler>(OcppProtocols.Ocpp201, "NotifyDisplayMessages");
     }
     
     public static void ConfigureDatabaseMySql(IServiceCollection services, IConfiguration configuration)
@@ -325,34 +368,22 @@ public static class ServiceRegistration
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             var serverVersion = new MariaDbServerVersion("10.6.15");
             
-            options.UseMySql(connectionString, serverVersion);
+            options.UseMySql(connectionString, serverVersion)
+                .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>());
         });
     }
 
     public static void ConfigureDatabaseSqlServer(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<VoltaXApiDbContext>(options =>
-                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
+                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+                     .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>()));
     }
     
     public static void ConfigureSwagger(IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-    }
-    
-    public static void ConfigureCors(IServiceCollection services)
-    {
-        services.AddCors(options =>
-        {
-            options.AddPolicy("CorsPolicy",
-                builder => builder
-                    .SetIsOriginAllowed(_ => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-            );
-        });
     }
     
     public static void ConfigureAutoMapper(IServiceCollection services)
@@ -375,6 +406,12 @@ public static class ServiceRegistration
     
     public static void ConfigureSignalR(IServiceCollection services)
     {
-        services.AddSignalR();
+        services.AddSignalR(options => options.AddFilter<VoltaXApi.Authorization.AuthorizedHubFilter>());
+    }
+
+    /// <summary>Multi-instance support (Redis backplane, charger registry, command routing); see docs/scale-out.md.</summary>
+    public static void ConfigureScaleOut(IServiceCollection services, IConfiguration configuration)
+    {
+        VoltaXApi.ScaleOut.ScaleOutRegistration.AddScaleOut(services, configuration);
     }
 }

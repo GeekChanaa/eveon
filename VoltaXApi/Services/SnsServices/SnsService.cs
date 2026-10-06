@@ -38,9 +38,7 @@ public class SnsService : ISnsService
             Message = message
         };
 
-        var response = await _snsClient.PublishAsync(request);
-
-        Console.WriteLine($"[SNS] Message published with ID: {response.MessageId}");
+        await _snsClient.PublishAsync(request);
     }
     
     public async Task SendSmsAsync(string phoneNumber, string message)
@@ -51,7 +49,6 @@ public class SnsService : ISnsService
             PhoneNumber = phoneNumber
         };
 
-        var response = await _snsClient.PublishAsync(request);
-        Console.WriteLine($"[SNS SMS] Message sent to {phoneNumber}. MessageId: {response.MessageId}");
+        await _snsClient.PublishAsync(request);
     }
 }

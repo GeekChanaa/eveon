@@ -19,3 +19,15 @@ export interface Notification {
     description: string;
     urgent: boolean;
 }
+
+/** A notification as returned to its receiver by /api/notification and the notification hub. */
+export interface DashboardNotification {
+    id: number;
+    type?: string;
+    action?: string;
+    description?: string;
+    url: string;
+    urgent: boolean;
+    read: boolean;
+    createdAt: string;
+}

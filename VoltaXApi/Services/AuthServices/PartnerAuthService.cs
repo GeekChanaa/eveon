@@ -23,6 +23,8 @@ namespace VoltaXApi.Services
         private readonly IJwtService _jwtService;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IUserClaimsFactory _claimsFactory;
+        private readonly IPasswordResetService _passwordReset;
+        private readonly ITwoFactorService _twoFactor;
 
         public PartnerAuthService(
           IUserRepository userRepository,
@@ -35,9 +37,13 @@ namespace VoltaXApi.Services
           ISnsService snsService,
           IJwtService jwtService,
           IRefreshTokenService refreshTokenService,
-          IUserClaimsFactory claimsFactory
+          IUserClaimsFactory claimsFactory,
+          IPasswordResetService passwordReset,
+          ITwoFactorService twoFactor
         )
         {
+            _passwordReset = passwordReset;
+            _twoFactor = twoFactor;
             _userRepository = userRepository;
             _mailService = mailService;
             _context = context;
@@ -51,61 +57,45 @@ namespace VoltaXApi.Services
             _claimsFactory = claimsFactory;
         }
 
-        public async Task PartnerResetPasswordRequest(string email)
-        {
-            User user = await this._userRepository.GetUserByEmail(email);
+        // Emails a single use, 30 minute reset link. Never reveals whether the address exists.
+        public Task RequestPasswordReset(string email) => _passwordReset.RequestLinkReset(email, partnerPortal: true);
 
-            MailRequest requ = _mailRequestFactory.CreatePasswordResetPasswordMailRequest(email);
-            string newPassword = AuthHelper.GenerateRandomPassword();
-
-            byte[] passwordHash, passwordSalt;
-            AuthHelper.CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
-            await _context.SaveChangesAsync();
-
-            await this._mailService.SendPartnerResetPasswordMailRequest(requ, user.FullName, newPassword);
-        }
+        public Task ResetPassword(string email, string token, string newPassword) => _passwordReset.ResetPassword(email, token, newPassword);
 
         public async Task<LoginResultDto> Login(string email, string password, string ipAddress, string? userAgent = null)
         {
+            if (await _loginAttemptRepository.IsLockedOut(ipAddress))
+                throw new LoginAttemptFailedException(email);
+
             var user = await _context.Users
                 .Include(u => u.Role)
                 .Include(u => u.Role.RolePermissions)
                 .ThenInclude(up => up.Permission)
                 .FirstOrDefaultAsync(x => x.Email == email);
 
+            if (user == null || !user.HasPassword || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt, out bool needsRehash))
+            {
+                if (await _loginAttemptRepository.LoginAttemptFailed(ipAddress))
+                    throw new LoginAttemptFailedException(email);
+                if (user != null && !user.HasPassword)
+                    throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
+                return null;
+            }
+
             if (user.PartnerID == null)
                 throw new NotPartnerException("not a partner account");
 
-            try
+            if (needsRehash)
             {
-                var loginAttempt = await _context.LoginAttempts.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
-
-                if (loginAttempt?.LockoutEndTime > DateTime.UtcNow)
-                    throw new LoginAttemptFailedException(email, loginAttempt.LockoutEndTime);
-
-                if (!user.HasPassword)
-                    throw new UnauthorizedException($"This account was created with {user.AuthProvider} sign in. Use the {user.AuthProvider} button, then set a password from your profile.");
-
-                if (user == null || !AuthHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                {
-                    await _loginAttemptRepository.LoginAttemptFailed(ipAddress);
-                    return null;
-                }
-                var claims = BuildPartnerClaims(user);
-
-                return await IssueSession(user, claims, ipAddress, userAgent);
+                AuthHelper.CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+                await _context.SaveChangesAsync();
             }
-            catch (LoginAttemptFailedException ex)
-            {
-                // MailRequest mailRequest = _mailRequestFactory.CreateLoginFailedAttemptMailRequest(email);
-                // string resetPasswordLink = await GetResetPasswordLinkForUserByEmail(email);
 
-                // await _mailService.SendLoginAttemptFailedEmail(mailRequest, user.FullName, ipAddress, resetPasswordLink);
+            var claims = BuildPartnerClaims(user);
 
-                throw;
-            }
+            return await IssueSession(user, claims, ipAddress, userAgent);
         }
 
         public async Task<LoginResultDto> ExternalLogin(ExternalUserInfoDto externalUser, AuthProviderEnum provider, string? ipAddress = null, string? userAgent = null)
@@ -153,8 +143,18 @@ namespace VoltaXApi.Services
         /// </summary>
         private async Task<LoginResultDto> IssueSession(User user, List<Claim> claims, string? ipAddress, string? userAgent)
         {
-            if (user.IsDeleted || user.SuspendedAt != null)
+            if (user.IsDeleted || user.IsCurrentlySuspended)
                 throw new UnauthorizedException("This account is unavailable or suspended");
+
+            if (user.TwoFactorEnabled)
+                return new LoginResultDto
+                {
+                    RequiresTwoFactor = true,
+                    TwoFactorToken = _twoFactor.CreateChallengeToken(user),
+                    Email = user.Email,
+                    FullName = user.FullName
+                };
+
             var accessToken = _jwtService.GenerateAccessToken(claims);
             var refreshToken = await _refreshTokenService.Issue(user.ID, ipAddress, userAgent);
 
@@ -166,7 +166,8 @@ namespace VoltaXApi.Services
                 RefreshTokenExpiresAt = refreshToken.ExpiresAt,
                 UserId = user.ID,
                 Email = user.Email,
-                FullName = $"{user.FirstName} {user.LastName}"
+                FullName = $"{user.FirstName} {user.LastName}",
+                TwoFactorEnrollmentRequired = _twoFactor.IsEnrollmentRequired(user)
             };
         }
 

@@ -1,1 +1,27 @@
-@import '../../../../styles/display-page'
+@import '../../../../styles/equipment-details'
+
+.content-area
+  padding-top: 4px
+
+.tab-content
+  padding: 0
+
+.station-section
+  .form-field
+    margin: 0
+  app-display-cell
+    display: block
+    padding: 0 24px
+    & + app-display-cell
+      border-top: 1px solid var(--vx-border, #ededed)
+
+.role-value
+  padding: 18px 24px
+  border-bottom: 1px solid var(--vx-border, #ededed)
+  color: var(--vx-text, #171b24)
+  font-size: 14px
+
+@media (max-width: 420px)
+  .station-section app-display-cell, .role-value
+    padding-left: 16px
+    padding-right: 16px

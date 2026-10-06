@@ -1,61 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
+using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.OCPP.Services;
-using System.Threading.Tasks;
 
 namespace VoltaXApi.OCPP.Controllers
 {
+    /// <summary>Every action waits for the charger's answer (see <see cref="OcppCommandResult"/>).</summary>
     [Route("ocpp/[controller]")]
     [ApiController]
     public class MonitoringController : Controller
     {
         private readonly IMonitoringService _monitoringService;
 
-        public MonitoringController(IMonitoringService monitoringService)
+        public MonitoringController(IMonitoringService service)
         {
-            _monitoringService = monitoringService;
+            _monitoringService = service;
         }
 
         [HttpPost("SetVariableMonitoring/{chargePointID}")]
-        public async Task<IActionResult> SetVariableMonitoring(string chargePointID, SetVariableMonitoringRequest request)
-        {
-            await _monitoringService.SetVariableMonitoring(chargePointID, request);
-            return Ok(new { Message = "SetVariableMonitoring request sent successfully." });
-        }
+        public Task<IActionResult> SetVariableMonitoring(string chargePointID, SetVariableMonitoringRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetVariableMonitoring", () => _monitoringService.SetVariableMonitoring(chargePointID, request, cancellationToken));
 
         [HttpPost("ClearVariableMonitoring/{chargePointID}")]
-        public async Task<IActionResult> ClearVariableMonitoring(string chargePointID, ClearVariableMonitoringRequest request)
-        {
-            await _monitoringService.ClearVariableMonitoring(chargePointID, request);
-            return Ok(new { Message = "ClearVariableMonitoring request sent successfully." });
-        }
+        public Task<IActionResult> ClearVariableMonitoring(string chargePointID, ClearVariableMonitoringRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("ClearVariableMonitoring", () => _monitoringService.ClearVariableMonitoring(chargePointID, request, cancellationToken));
 
         [HttpPost("SetMonitoringLevel/{chargePointID}")]
-        public async Task<IActionResult> SetMonitoringLevel(string chargePointID, SetMonitoringLevelRequest request)
-        {
-            await _monitoringService.SetMonitoringLevel(chargePointID, request);
-            return Ok(new { Message = "SetMonitoringLevel request sent successfully." });
-        }
+        public Task<IActionResult> SetMonitoringLevel(string chargePointID, SetMonitoringLevelRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetMonitoringLevel", () => _monitoringService.SetMonitoringLevel(chargePointID, request, cancellationToken));
 
         [HttpPost("SetMonitoringBase/{chargePointID}")]
-        public async Task<IActionResult> SetMonitoringBase(string chargePointID, SetMonitoringBaseRequest request)
-        {
-            await _monitoringService.SetMonitoringBase(chargePointID, request);
-            return Ok(new { Message = "SetMonitoringBase request sent successfully." });
-        }
+        public Task<IActionResult> SetMonitoringBase(string chargePointID, SetMonitoringBaseRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetMonitoringBase", () => _monitoringService.SetMonitoringBase(chargePointID, request, cancellationToken));
 
         [HttpPost("SetVariables/{chargePointID}")]
-        public async Task<IActionResult> SetVariables(string chargePointID, SetVariablesRequest request)
-        {
-            await _monitoringService.SetVariables(chargePointID, request);
-            return Ok(new { Message = "SetVariables request sent successfully." });
-        }
+        public Task<IActionResult> SetVariables(string chargePointID, SetVariablesRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SetVariables", () => _monitoringService.SetVariables(chargePointID, request, cancellationToken));
 
         [HttpPost("GetVariables/{chargePointID}")]
-        public async Task<IActionResult> GetVariables(string chargePointID, GetVariablesRequest request)
-        {
-            await _monitoringService.GetVariables(chargePointID, request);
-            return Ok(new { Message = "GetVariables request sent successfully." });
-        }
+        public Task<IActionResult> GetVariables(string chargePointID, GetVariablesRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("GetVariables", () => _monitoringService.GetVariables(chargePointID, request, cancellationToken));
     }
 }

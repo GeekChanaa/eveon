@@ -5,11 +5,17 @@ import { ServerErrorComponent } from './error-pages/server-error/server-error.co
 import { NotAuthorizedComponent } from './error-pages/not-authorized/not-authorized.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
 import { IndexComponent } from './index/index.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
+import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
+import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.component';
 const routes: Routes = [
   {
     path: "checkout",
     component: RechargeCardOrderComponent,
   },
+  { path: "privacy", component: PrivacyPolicyComponent, title: "Privacy policy" },
+  { path: "terms", component: TermsConditionsComponent, title: "Terms of use" },
+  { path: "cookies", component: CookiesPolicyComponent, title: "Cookie policy" },
   {
     path: "not-found",
     component: NotFoundComponent,

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using OCPP.Core.Server;
 using VoltaXApi.Hubs;
@@ -28,7 +29,7 @@ public static class AppConfiguration
     
     public static void ConfigureCors(WebApplication app)
     {
-        app.UseCors("CorsPolicy");
+        app.UseCors(SecurityConfiguration.CorsPolicy);
     }
     
     public static void ConfigureCookiePolicy(WebApplication app)
@@ -51,6 +52,10 @@ public static class AppConfiguration
                 pattern: "ocpp/{controller=OCPP}/{action=Index}/{id?}");
             endpoints.MapHub<ChargerHub>("/chargerHub");
             endpoints.MapHub<ChargingSessionHub>("/chargingSessionHub");
+            endpoints.MapHub<NotificationHub>("/notificationHub");
+            // Load balancer probes: live = the process answers; ready = database (and Redis when configured) reachable.
+            endpoints.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+            endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
         });
     }
     

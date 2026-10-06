@@ -34,19 +34,38 @@ export class PartnerAuthService {
     ) 
     { }
 
+  /** Always succeeds: the API never tells whether the address belongs to a partner. */
   resetPasswordRequest(email : string){
-    return this.http.get(this.baseUrl+"ResetPartnerPasswordRequest?email="+email);
+    return this.http.post(this.baseUrl+"request-reset", { email });
   }
 
+  /** Sets the new password with the single use token from the reset link. */
+  resetPassword(dto : UserForResetPasswordDto){
+    return this.http.post(this.baseUrl+"reset", dto);
+  }
+
+  /** Resolves with the API response; requiresTwoFactor means a code is still needed. */
   login(model:any){
     return this.http.post(this.baseUrl +'login', model).pipe(
       map((response:any) => {
-        const user = response;
-        if(user){
-          this.storeLoginResult(user);
+        if(response?.token){
+          this.storeLoginResult(response);
         }
+        return response;
       })
     )
+  }
+
+  /** Second sign in step, shared with the customer portal. */
+  verifyTwoFactor(twoFactorToken: string, code: string){
+    return this.http.post(environment.apiUrl + '/api/auth/verify-2fa', { twoFactorToken, code }).pipe(
+      map((response:any) => {
+        if(response?.token){
+          this.storeLoginResult(response);
+        }
+        return response;
+      })
+    );
   }
 
   /** Partner sessions refresh through the shared /api/auth/refresh endpoint. */
@@ -87,14 +106,13 @@ export class PartnerAuthService {
   }
 
   /** Stores the tokens handed back by /partner-auth/google-callback. */
-  completeExternalLogin(token: string, refreshToken?: string) {
-    this.storeLoginResult({ token: token, refreshToken: refreshToken });
+  completeExternalLogin(token: string) {
+    this.storeLoginResult({ token: token });
     return this.decodedToken;
   }
 
   private storeLoginResult(result: any) {
-    this._tokenStorage.clear();
-    this._tokenStorage.store(result);
+    this._tokenStorage.startSession(result);
     this.token = result.token;
     this.decodedToken = this.jwtHelper.decodeToken(result.token);
   }

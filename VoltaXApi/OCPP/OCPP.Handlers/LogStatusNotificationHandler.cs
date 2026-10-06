@@ -1,66 +1,25 @@
-using Newtonsoft.Json;
-using OCPP.Core.Server;
 using VoltaXApi.Data;
-using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
-using VoltaXApi.OCPP.Models;
+using VoltaXApi.OCPP.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-    public class LogStatusNotificationHandler : IOCPPRequestHandler
+    /// <summary>Upload progress of a GetLog request: recorded on its upload ticket so the dashboard shows it.</summary>
+    public class LogStatusNotificationHandler : DeviceDataNotificationHandler<LogStatusNotificationRequest, LogStatusNotificationResponse>
     {
-        private readonly IMessageLogRepository _msgLogRepo;
-        private readonly ILogger _logger;
-        public LogStatusNotificationHandler(
-          ILoggerFactory loggerFactory,
-          IMessageLogRepository messageLogRepository
-        )
+        private readonly ILogUploadUrlFactory _logUploads;
+
+        public LogStatusNotificationHandler(IMessageLogRepository messageLogRepository, ILogUploadUrlFactory logUploads, ILogger<LogStatusNotificationHandler> logger)
+            : base(messageLogRepository, logger) => _logUploads = logUploads;
+
+        protected override async Task<string?> Process(string chargePointId, LogStatusNotificationRequest request)
         {
-            _logger = loggerFactory.CreateLogger(typeof(LogStatusNotificationHandler));
-            _msgLogRepo = messageLogRepository;
-        }
-
-
-        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
-        {
-            string errorCode = null;
-
-            _logger.LogTrace("Processing LogStatusNotification...");
-            LogStatusNotificationResponse logStatusNotificationResponse = new LogStatusNotificationResponse();
-            logStatusNotificationResponse.CustomData = new CustomDataType();
-            logStatusNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
-
-            string status = null;
-
-            try
-            {
-                LogStatusNotificationRequest logStatusNotificationRequest = JsonConvert.DeserializeObject<LogStatusNotificationRequest>(msgIn.JsonPayload);
-                _logger.LogTrace("LogStatusNotification => Message deserialized");
-
-
-                if (chargePointStatus != null)
-                {
-                    // Known charge station
-                    status = logStatusNotificationRequest.Status.ToString();
-                    _logger.LogInformation("LogStatusNotification => Status={0}", status);
-                }
-                else
-                {
-                    // Unknown charge station
-                    errorCode = ErrorCodes.GenericError;
-                }
-
-                msgOut.JsonPayload = JsonConvert.SerializeObject(logStatusNotificationResponse);
-                _logger.LogTrace("LogStatusNotification => Response serialized");
-            }
-            catch (Exception exp)
-            {
-                _logger.LogError(exp, "LogStatusNotification => Exception: {0}", exp.Message);
-                errorCode = ErrorCodes.InternalError;
-            }
-
-            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, status, errorCode, msgIn, msgOut);
-            return errorCode;
+            var status = request.Status.ToString();
+            Logger.LogInformation("LogStatusNotification => {ChargePointId} request {RequestId} Status={Status}", chargePointId, request.RequestId, status);
+            // requestId is absent only for the Idle status (no upload in progress).
+            if (request.RequestId.HasValue)
+                await _logUploads.RecordStatusAsync(chargePointId, request.RequestId, status);
+            return status;
         }
     }
 }

@@ -29,6 +29,10 @@ export class TokenInterceptor implements HttpInterceptor {
         '/api/auth/logout',
         '/api/auth/checktoken',
         '/api/auth/resetpassword',
+        '/api/auth/request-password-reset',
+        '/api/auth/verify-2fa',
+        '/api/auth/phone/request',
+        '/api/auth/phone/verify',
         '/api/auth/google',
         '/api/auth/google-login',
         '/api/auth/google-callback',
@@ -37,7 +41,8 @@ export class TokenInterceptor implements HttpInterceptor {
         '/api/partnerauth/login',
         '/api/partnerauth/google',
         '/api/partnerauth/google-login',
-        '/api/partnerauth/resetpartnerpasswordrequest'
+        '/api/partnerauth/request-reset',
+        '/api/partnerauth/reset'
     ];
 
     constructor(
@@ -47,6 +52,12 @@ export class TokenInterceptor implements HttpInterceptor {
     ) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        // Session endpoints set / read the HttpOnly refresh cookie, which a cross origin
+        // call only stores and sends with credentials.
+        if (this.isAuthEndpoint(request)) {
+            request = request.clone({ withCredentials: true, setHeaders: { 'X-Token-Transport': 'cookie' } });
+        }
+
         if (this.isAnonymous(request)) {
             return next.handle(request);
         }
@@ -126,10 +137,23 @@ export class TokenInterceptor implements HttpInterceptor {
         return url.origin === base.origin && TokenInterceptor.ANONYMOUS_PATHS.includes(path);
     }
 
+    private isAuthEndpoint(request: HttpRequest<any>): boolean {
+        const base = new URL(environment.apiUrl, window.location.origin);
+        const url = new URL(request.url, window.location.origin);
+        const prefix = base.pathname.replace(/\/$/, '').toLowerCase();
+        const path = url.pathname.toLowerCase().slice(prefix.length);
+        return url.origin === base.origin && (path.startsWith('/api/auth/') || path.startsWith('/api/partnerauth/'));
+    }
+
     private isApiRequest(request: HttpRequest<any>): boolean {
         const base = new URL(environment.apiUrl, window.location.origin);
         const url = new URL(request.url, window.location.origin);
+        const basePath = base.pathname.replace(/\/$/, '').toLowerCase();
+        const path = url.pathname.toLowerCase();
+
         return url.origin === base.origin
-            && url.pathname.toLowerCase().startsWith(base.pathname.replace(/\/$/, '').toLowerCase() + '/api/');
+            && (path.startsWith(basePath + '/api/')
+                || path.startsWith(basePath + '/ocpp/'));
     }
 }
+

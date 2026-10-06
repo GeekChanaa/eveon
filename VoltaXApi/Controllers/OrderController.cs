@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
@@ -24,11 +25,21 @@ namespace VoltaXApi.Controllers
         private readonly IOrderService _orderService;
         private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
 
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
+        private readonly IBusinessClock _clock;
+
         public OrderController(
             IOrderRepository repository,
             IInvoiceGeneratorService<InvoiceData> invoiceService,
-            IOrderService orderService) : base(repository)
+            IOrderService orderService,
+            IConfiguration configuration,
+            IWebHostEnvironment environment,
+            IBusinessClock clock) : base(repository)
         {
+            _clock = clock;
+            _configuration = configuration;
+            _environment = environment;
             _repository = repository;
             _invoiceService = invoiceService;
             _orderService = orderService;
@@ -54,8 +65,8 @@ namespace VoltaXApi.Controllers
         [HttpGet("countRechargeAmountToday")]
         public async Task<IActionResult> CountRechargeToday()
         {
-            DateTime today = DateTime.Today;
-            DateTime tomorrow = today.AddDays(1);
+            DateTime today = _clock.StartOfDayUtc(_clock.Today);
+            DateTime tomorrow = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
 
             double count = await _repository.CountRecharge(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
             return Ok(count);
@@ -71,15 +82,15 @@ namespace VoltaXApi.Controllers
         [HttpGet("countRechargeAmountByDay")]
         public async Task<IActionResult> CountRechargeAmountByDay()
         {
-            DateTime endDate = DateTime.Today;
+            DateTime endDate = _clock.Today;
             DateTime startDate = endDate.AddDays(-29);
 
             var rechargeAmountByDay = new List<double>();
 
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                DateTime currentDay = date.Date;
-                DateTime nextDay = currentDay.AddDays(1);
+                DateTime currentDay = _clock.StartOfDayUtc(date);
+                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
 
                 double rechargeAmount = await _repository
                     .CountRecharge(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
@@ -93,8 +104,8 @@ namespace VoltaXApi.Controllers
         [HttpGet("countToday")]
         public async Task<IActionResult> CountToday()
         {
-            DateTime today = DateTime.Today;
-            DateTime tomorrow = today.AddDays(1);
+            DateTime today = _clock.StartOfDayUtc(_clock.Today);
+            DateTime tomorrow = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
             double count = await _repository.CountAsync(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
             return Ok(count);
         }
@@ -102,15 +113,15 @@ namespace VoltaXApi.Controllers
         [HttpGet("countByDay")]
         public async Task<IActionResult> CountByDay()
         {
-            DateTime endDate = DateTime.Today;
+            DateTime endDate = _clock.Today;
             DateTime startDate = endDate.AddDays(-29);
 
             var orderCountByDay = new List<double>();
 
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                DateTime currentDay = date.Date;
-                DateTime nextDay = currentDay.AddDays(1);
+                DateTime currentDay = _clock.StartOfDayUtc(date);
+                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
 
                 double rechargeAmount = await _repository
                     .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
@@ -124,15 +135,15 @@ namespace VoltaXApi.Controllers
         [HttpGet("countByLast7Days")]
         public async Task<IActionResult> CountByLast7Days()
         {
-            DateTime endDate = DateTime.Today;
+            DateTime endDate = _clock.Today;
             DateTime startDate = endDate.AddDays(-6); // subtract 6 to include today in the 7 day count
 
             var orderCountByDay = new List<double>();
 
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                DateTime currentDay = date.Date;
-                DateTime nextDay = currentDay.AddDays(1);
+                DateTime currentDay = _clock.StartOfDayUtc(date);
+                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
 
                 double rechargeAmount = await _repository
                     .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
@@ -146,15 +157,15 @@ namespace VoltaXApi.Controllers
         [HttpGet("countByLast12Months")]
         public async Task<IActionResult> CountByLast12Months()
         {
-            DateTime endDate = DateTime.Today;
+            DateTime endDate = _clock.Today;
             DateTime startDate = endDate.AddYears(-1).AddMonths(1); // subtract a year and add a month to include the current month in the 12 month count
 
             var orderCountByMonth = new List<double>();
 
             for (DateTime month = startDate; month <= endDate; month = month.AddMonths(1))
             {
-                DateTime currentMonthStart = new DateTime(month.Year, month.Month, 1);
-                DateTime nextMonthStart = currentMonthStart.AddMonths(1);
+                DateTime currentMonthStart = _clock.StartOfMonthUtc(month.Year, month.Month);
+                DateTime nextMonthStart = _clock.StartOfDayUtc(new DateTime(month.Year, month.Month, 1).AddMonths(1));
 
                 double rechargeAmount = await _repository
                     .CountAsync(u => u.RechargeDate >= currentMonthStart && u.RechargeDate < nextMonthStart);
@@ -166,10 +177,18 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("RechargeCard")]
-        public async Task<IActionResult> RechargeCard(RechargeOrderDto rechargeOrderDto)
+        public async Task<IActionResult> RechargeCard([FromBody] RechargeOrderDto rechargeOrderDto)
         {
-            await this._orderService.ProcessPayment(rechargeOrderDto);
-            return StatusCode(200);
+            // No payment provider yet: the mock flow credits a card without taking money, so it
+            // only runs in development or where Payments:AllowMockPayments is set explicitly.
+            if (!_environment.IsDevelopment() && !_configuration.GetValue<bool>("Payments:AllowMockPayments"))
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Online payment is not available yet." });
+
+            // The owner always comes from the token, never from the request body.
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Unauthorized();
+            rechargeOrderDto.UserID = userId;
+            return Ok(await _orderService.ProcessPayment(rechargeOrderDto));
         }
 
         [HttpPost("CreateRechargeOrder")]

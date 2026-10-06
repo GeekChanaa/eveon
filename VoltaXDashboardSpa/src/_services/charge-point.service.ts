@@ -84,6 +84,19 @@ export class ChargePointService extends AbstractService<ChargePoint>{
     return this._http.put<any>(this.baseUrl+"setHasChargeCable/"+chargePointID,val)
   }
 
+  regenerateQrCode(chargePointID : number){
+    return this._http.post<void>(this.baseUrl+"RegenerateQrCode/"+chargePointID,{})
+  }
+
+  /** The plain password is only ever returned by this call. */
+  setPassword(chargePointID : number, body : { generate: boolean; password?: string }){
+    return this._http.post<{ username: string; password: string }>(this.baseUrl+"SetPassword/"+chargePointID, body)
+  }
+
+  regenerateAllQrCodes(){
+    return this._http.post<{ count: number }>(this.baseUrl+"RegenerateAllQrCodes",{})
+  }
+
   
 
 }

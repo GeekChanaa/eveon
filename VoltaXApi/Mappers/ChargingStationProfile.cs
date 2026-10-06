@@ -1,6 +1,7 @@
 using AutoMapper;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
+using VoltaXApi.OCPP.Services;
 namespace VoltaXApi.Mappers
 {
     public class ChargingStationProfile : Profile
@@ -15,12 +16,14 @@ namespace VoltaXApi.Mappers
             CreateMap<ConnectorCreateDto, Connector>();
 
             CreateMap<ChargePointCreateDto, ChargePoint>()
-                .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors));
+                .ForMember(dest => dest.Connectors, opt => opt.MapFrom(src => src.Connectors))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Password) ? null : ChargePointPasswordHasher.Hash(src.Password)));
 
             CreateMap<ChargePoint, ChargePointDisplayDto>()
                 .ForMember(dest => dest.ChargingStationName, opt => opt.MapFrom(src => src.ChargingStation.Name))
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.ChargePointModel.Name))
-                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl));
+                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl))
+                .ForMember(dest => dest.HasPassword, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Password)));
 
                 
 
@@ -42,7 +45,8 @@ namespace VoltaXApi.Mappers
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.ChargingStation.Latitude))
                 .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.ChargingStation.Longitude))
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.ChargePointModel.Name))
-                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl));
+                .ForMember(dest => dest.ModelImage, opt => opt.MapFrom(src => src.ChargePointModel.ImageUrl))
+                .ForMember(dest => dest.HasPassword, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Password)));
 
             CreateMap<Connector, ConnectorListDto>();
 

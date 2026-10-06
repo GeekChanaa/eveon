@@ -1,3 +1,5 @@
+import { ChargePointStatusComponent } from 'src/app/atoms/charge-point-status/charge-point-status.component';
+import { OcppVersionBadgeComponent } from 'src/app/atoms/ocpp-version-badge/ocpp-version-badge.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
@@ -54,6 +56,8 @@ import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ra
       ConnectorRealtimeRatingsReportComponent
   ],
     imports: [
+        ChargePointStatusComponent,
+        OcppVersionBadgeComponent,
         AtomsModule,
         ReactiveFormsModule,
         CommonModule,

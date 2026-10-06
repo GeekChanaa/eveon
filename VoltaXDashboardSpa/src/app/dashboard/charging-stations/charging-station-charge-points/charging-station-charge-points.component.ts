@@ -11,6 +11,8 @@ export class ChargingStationChargePointsComponent implements OnInit {
 
   @Input() chargingStationID : number = 0;
   chargePoints : any[] = [];
+  loading = true;
+  loadError = false;
   isChargePointVisible : boolean = false;
   displayedChargePointID : number = 0;
 
@@ -26,9 +28,12 @@ export class ChargingStationChargePointsComponent implements OnInit {
 
   
   getChargingStationChargePoints(){
-    this._chargePointService.getChargingStationChargePoints(this.chargingStationID).subscribe((data) => {
-      this.chargePoints = data;
-    })
+    this.loading = true;
+    this.loadError = false;
+    this._chargePointService.getChargingStationChargePoints(this.chargingStationID).subscribe({
+      next: data => { this.chargePoints = data; this.loading = false; },
+      error: () => { this.loadError = true; this.loading = false; }
+    });
   }
   
   deleteChargePoint(id : number){

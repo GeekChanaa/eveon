@@ -1,54 +1,7 @@
-<!-- Change Phone Step -->
-<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.UpdatePhone">
-  <div [formGroup]="updatePhoneForm">
-    <app-form-field 
-      description="New Phone"
-      placeholder="Phone"
-      title="Phone"
-      [control]="getControl(updatePhoneForm,'phone')"></app-form-field>
-    
-    <div class="form__actions">
-      <app-button (btnClick)="verifyPhone()" size="small" variant="secondary">Save Phone</app-button>
-    </div>
-  </div>
-</ng-container>
-  
-
-<!-- Verification choice -->
-<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.VerificationChoice">
-  <div class="choice__container">
-    <app-card-action
-    class="choice__action" 
-    [actionName]="'Verify Later'"
-    (actionClick)="closeModal()"
-    ></app-card-action>
-
-    <app-card-action
-      class="choice__action"  
-      [actionName]="'Verify Now'"
-      (actionClick)="formStep = UpdatePhoneFormStepEnum.Verification"
-      ></app-card-action>
+<div class="contact-flow">
+  <ol class="contact-flow__steps" aria-label="Phone update progress"><li [class.is-active]="formStep == UpdatePhoneFormStepEnum.UpdatePhone" [class.is-complete]="formStep > UpdatePhoneFormStepEnum.UpdatePhone"><span>1</span><small>New number</small></li><li [class.is-active]="formStep == UpdatePhoneFormStepEnum.VerificationChoice" [class.is-complete]="formStep > UpdatePhoneFormStepEnum.VerificationChoice"><span>2</span><small>Confirm</small></li><li [class.is-active]="formStep == UpdatePhoneFormStepEnum.Verification" [class.is-complete]="formStep > UpdatePhoneFormStepEnum.Verification"><span>3</span><small>Verify</small></li><li [class.is-active]="formStep == UpdatePhoneFormStepEnum.Verified"><span><svg class="icon"><use xlink:href="#icon-check"></use></svg></span><small>Done</small></li></ol>
+  <ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.UpdatePhone"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-phone"></use></svg></span><div><h4>Choose your new phone number</h4><p>Use a number where you can receive a verification message.</p></div></div><div [formGroup]="updatePhoneForm"><app-form-field description="Phone number" placeholder="+212 6XX XXX XXX" title="New phone" [control]="getControl(updatePhoneForm,'phone')"></app-form-field><div class="contact-flow__actions"><app-button (btnClick)="savePhone()" size="small" variant="secondary">Continue</app-button></div></div></ng-container>
+  <ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.VerificationChoice"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-phone"></use></svg></span><div><h4>Phone number updated</h4><p>Verify it now to add an extra layer of protection to your account.</p></div></div><div class="contact-flow__choices"><button type="button" class="choice-card" (click)="closeModal()"><strong>Verify later</strong><span>You can return to profile settings anytime.</span></button><button type="button" class="choice-card choice-card--primary" (click)="formStep = UpdatePhoneFormStepEnum.Verification"><strong>Verify now</strong><span>Enter the code sent to your phone.</span></button></div></ng-container>
+  <ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verification"><div class="contact-flow__intro"><span class="contact-flow__icon"><svg class="icon"><use xlink:href="#icon-lock"></use></svg></span><div><h4>Enter your verification code</h4><p>Check your text messages for the code.</p></div></div><div [formGroup]="verifyPhoneForm"><app-form-field description="Verification code" placeholder="Enter your code" title="Code" [control]="getControl(verifyPhoneForm,'code')"></app-form-field><div class="contact-flow__actions"><app-button (btnClick)="verifyPhone()" size="small" variant="secondary">Verify phone</app-button></div></div></ng-container>
+  <ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verified"><div class="contact-flow__success"><svg class="icon"><use xlink:href="#icon-check-circle"></use></svg><div><h4>Phone verified</h4><p>Your new phone number is ready to use.</p></div></div></ng-container>
 </div>
-</ng-container>
-
-<!-- Verification Step -->
-<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verification">
-  <div [formGroup]="verifyPhoneForm">
-    <app-form-field 
-      description="Code"
-      placeholder="Code"
-      title="Code"
-      [control]="getControl(verifyPhoneForm,'code')"></app-form-field>
-    
-    <div class="form__actions">
-      <app-button (btnClick)="verifyPhone()" size="small" variant="secondary">Verify</app-button>
-    </div>
-  </div>
-</ng-container>
-
-<!-- Verified Step -->
-<ng-container *ngIf="formStep == UpdatePhoneFormStepEnum.Verified">
-  <div>
-    Your Phone has been verified successfully !
-  </div>
-</ng-container>

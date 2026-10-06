@@ -24,91 +24,9 @@ namespace VoltaXApi.Data
 
         public virtual IQueryable<TEntity> GetAllAsync(GlobalParams objectParams)
         {
-            var data = this.dbSet.AsQueryable();
-            // List of parameters of M
-            var props = typeof(TEntity).GetProperties();
-
-            // Sorting
-            if (!string.IsNullOrEmpty(objectParams.OrderBy))
-            {
-                foreach (var prop in props)
-                {
-                    if (prop.Name.ToLower() == objectParams.OrderBy.ToLower())
-                    {
-                        data = objectParams.ReverseOrder == "y" ? data.OrderBy(prop.Name + " descending") : data.OrderBy(prop.Name);
-                    }
-                }
-            }
-
-            // Searching for an occurence of a string Only string Objects 
-            if (objectParams.SearchBy != null && objectParams.SearchBy.Length > 0)
-            {
-                var combinedSearchPredicate = PredicateBuilder.New<TEntity>(false); // 'false' for OR logic
-                foreach (var searchProperty in objectParams.SearchBy)
-                {
-                    var searchPropertyInfo = props.FirstOrDefault(p => p.Name == searchProperty);
-                    if (searchPropertyInfo != null)
-                    {
-                        combinedSearchPredicate = combinedSearchPredicate.Or(entity => EF.Property<string>(entity, searchPropertyInfo.Name).Contains(objectParams.SearchValue));
-
-                    }
-                    else if (searchProperty.Contains('.'))
-                    {
-                        var navigation = searchProperty.Split('.').First();
-                        var navigationProp = searchProperty.Split('.').Last();
-                        data = data.Where(navigation + "." + navigationProp + ".Contains(\"" + objectParams.SearchValue + "\")");
-                    }
-                }
-                data = data.Where(combinedSearchPredicate);
-            }
-
-            // Filtering
-            if (objectParams.FilterBy != null)
-            {
-                string filterQuery1 = "";
-                for (int i = 0; i < objectParams.FilterBy.Length; i++)
-                {
-                    foreach (var prop in props)
-                    {
-                        if (prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?) || prop.PropertyType == typeof(bool) || prop.PropertyType.IsEnum)
-                        {
-                            if (prop.Name == objectParams.FilterBy[i])
-                            {
-                                if (i == 0)
-                                {
-                                    filterQuery1 = prop.Name + " == \"" + objectParams.FilterValue[i] + "\"";
-                                    Console.WriteLine(filterQuery1);
-                                }
-                                if (i != 0)
-                                {
-                                    filterQuery1 = filterQuery1 + " " + objectParams.FilterMethod + " " + prop.Name + " == \"" + objectParams.FilterValue[i] + "\"";
-                                    Console.WriteLine(filterQuery1);
-                                }
-                                if (i == objectParams.FilterValue.Length - 1)
-                                {
-                                    data = data.Where("( " + filterQuery1 + " )");
-                                }
-                            }
-                            else if (objectParams.FilterBy[i].Contains('.'))
-                            {
-                                var navigation = objectParams.FilterBy[i].Split('.').First();
-                                var navigationProp = objectParams.FilterBy[i].Split('.').Last();
-                                data = data.Where(navigation + ".Any(" + navigationProp + " == \"" + objectParams.FilterValue[i] + "\")");
-                            }
-                            else if (objectParams.FilterBy[i].Contains('-'))
-                            {
-                                var navigation = objectParams.FilterBy[i].Split('-').First();
-                                var navigationProp = objectParams.FilterBy[i].Split('-').Last();
-                                data = data.Where(navigation + "." + navigationProp + " == \"" + objectParams.FilterValue[i] + "\"");
-                            }
-                        }
-                    }
-                }
-
-
-            }
-
-            return data;
+            // Field names are resolved against TEntity's real properties and values are bound as
+            // parameters; unknown or malformed fields are rejected with a 400.
+            return SafeDynamicQuery.Apply(this.dbSet.AsQueryable(), objectParams);
         }
 
         public virtual async Task<TEntity> GetByIdAsync(int id)

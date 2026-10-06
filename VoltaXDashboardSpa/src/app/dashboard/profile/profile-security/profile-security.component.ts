@@ -4,8 +4,7 @@ import { LinkedAccountsDto } from 'src/_models/_dtos/linked-accounts-dto';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { AuthService } from 'src/_services/auth.service';
-import { UserInfoDownloadRequestService } from 'src/_services/user-info-download-request.service';
-import { UserService } from 'src/_services/user.service';
+import { GeolocationService } from 'src/_services/geolocation.service';
 
 @Component({
   selector: 'app-profile-security',
@@ -18,12 +17,6 @@ export class ProfileSecurityComponent implements OnInit {
   isLoading : boolean = false;
   @Input() userID : number = 0;
 
-  showRequestConfirmModal : boolean = false;
-
-  isLoadingRequest : boolean = false;
-
-  lastRequest : any | null = null;
-
   linkedAccounts : LinkedAccountsDto | null = null;
   linkedAccountsError : string = "";
   isUnlinkingGoogle : boolean = false;
@@ -32,13 +25,24 @@ export class ProfileSecurityComponent implements OnInit {
 
   constructor(
     private _authService : AuthService,
-    private _userService: UserService,
     private _modalService : ActionModalService,
-    private _userInfoDownloadRequestService: UserInfoDownloadRequestService
+    private _geolocation: GeolocationService
   ) { }
 
+  get locationConsent() {
+    return this._geolocation.consent$.value;
+  }
+
+  grantLocationConsent() {
+    this._geolocation.grantConsent();
+    this._geolocation.requestLocation().catch(() => { });
+  }
+
+  revokeLocationConsent() {
+    this._geolocation.revokeConsent();
+  }
+
   ngOnInit() {
-    this.getLastUserRequest();
     this.getLinkedAccounts();
   }
 
@@ -77,39 +81,6 @@ export class ProfileSecurityComponent implements OnInit {
       this.isUnlinkingGoogle = false;
       this.linkedAccountsError = error?.error?.error ?? "Could not disconnect your Google account.";
     });
-  }
-
-  downloadUserInformations(){
-    this._userService.getUserInformations(this.userID).subscribe((data) => {
-      this._userService.downloadUserInformations(data);
-    })
-  }
-
-  confirmDelete(itemId: any): void {
-    this.showRequestConfirmModal = true;
-  }
-
-  cancelRequest(): void {
-    this.showRequestConfirmModal = false;
-  }
-
-  proceedWithRequest(): void {
-    this._userInfoDownloadRequestService.createRequest(this.userID).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Request Sent! ", 4000);
-      this.showRequestConfirmModal = false;
-    },(error) => {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Error","Something Went wrong please try again later ! ", 4000);
-      this.showRequestConfirmModal = false;
-    })
-  }
-
-  getLastUserRequest(){
-    this.isLoadingRequest = true;
-    this._userInfoDownloadRequestService.userLastRequest(this.userID).subscribe((data) => {
-      console.log(data);
-      this.isLoadingRequest = false;
-      this.lastRequest = data;
-    })
   }
 
 }

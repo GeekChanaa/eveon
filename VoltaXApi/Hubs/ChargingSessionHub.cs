@@ -21,6 +21,7 @@ namespace VoltaXApi.Hubs
     ///   - SessionUpdate(ChargingSessionUpdateDto) — real-time session data
     ///   - ReceiveMessage(string message)          — informational messages
     /// </summary>
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class ChargingSessionHub : Hub
     {
         private readonly ILogger<ChargingSessionHub> _logger;

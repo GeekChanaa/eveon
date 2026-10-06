@@ -1,95 +1,81 @@
-
-using System;
-using System.IO;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using VoltaXApi.Exceptions;
+using VoltaXApi.Helpers;
 
 namespace VoltaXApi.Services
 {
     public class FileManagementService : IFileManagementService
     {
+        private const long EmailTemplateMaxBytes = 1024 * 1024;
 
-        public void UploadImage(string fileName, string folderName, IFormFile file)
+        private readonly ILogger<FileManagementService> _logger;
+        private readonly long _maxImageBytes;
+        private readonly string _webRoot;
+        private readonly string _privateRoot;
+
+        public FileManagementService(ILogger<FileManagementService> logger, IConfiguration configuration)
         {
-            if (!IsValidImageFile(file))
-                throw new Exception("Invalid image format");
-
-            UploadFile(fileName, folderName, file);
+            _logger = logger;
+            _maxImageBytes = configuration.GetValue<long?>("FileUploads:MaxBytes") ?? ImageUploadValidator.DefaultMaxBytes;
+            _webRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
+            _privateRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "App_Data"));
         }
 
-        public void UploadFile(string fileName, string folderName, IFormFile file)
+        public async Task<StoredFile> SaveImageAsync(IFormFile file, string folderName, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                string newPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", folderName);
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(newPath);
-                }
-                if (file.Length > 0)
-                {
-                    string fullPath = Path.Combine(newPath, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            var detected = ImageUploadValidator.Validate(file, _maxImageBytes);
+            var fileName = Guid.NewGuid().ToString("N") + detected.Extension;
+            await WriteAsync(_webRoot, folderName, fileName, file, cancellationToken);
+            return new StoredFile($"{folderName.Trim('/')}/{fileName}", detected.Extension, detected.ContentType);
         }
 
-        public void UploadEmailTemplate(string fileName, string filePath, IFormFile file)
+        public async Task<StoredFile> SaveEmailTemplateAsync(IFormFile file, string folderName, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                string newPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath);
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(newPath);
-                }
-                if (file.Length > 0)
-                {
-                    string fullPath = Path.Combine(newPath, fileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
+            if (file == null || file.Length == 0) throw new ValidationException("Choose an email template to upload.");
+            if (file.Length > EmailTemplateMaxBytes) throw new ValidationException("Email templates must be at most 1 MB.");
+            var extension = Path.GetExtension(file.FileName ?? string.Empty).ToLowerInvariant();
+            if (extension is not ".html" and not ".htm") throw new ValidationException("Email templates must be .html files.");
 
-
-        private bool IsValidImageFile(IFormFile file)
-        {
-            if (file == null) return false;
-
-            string[] permittedExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
-            var fileExtension = Path.GetExtension(file.FileName).ToLower();
-
-            return permittedExtensions.Contains(fileExtension);
+            var fileName = Guid.NewGuid().ToString("N") + ".html";
+            await WriteAsync(_privateRoot, folderName, fileName, file, cancellationToken);
+            return new StoredFile($"{folderName.Trim('/')}/{fileName}", ".html", "text/html");
         }
 
         public void DeleteFileFromRoot(string relativePath)
         {
-          var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-          var absolutePath = Path.Combine(webRootPath, relativePath);
-          if (File.Exists(absolutePath))
-          {
-              File.Delete(absolutePath);
-          }
-          else
-          {
-              Console.WriteLine("File not found.");
-          }
+            var absolutePath = Contained(_webRoot, relativePath);
+            if (File.Exists(absolutePath))
+                File.Delete(absolutePath);
+            else
+                _logger.LogWarning("File to delete was not found: {Path}", relativePath);
+        }
+
+        private async Task WriteAsync(string root, string folderName, string fileName, IFormFile file, CancellationToken cancellationToken)
+        {
+            var folder = Contained(root, folderName);
+            var fullPath = Contained(folder, fileName);
+            try
+            {
+                Directory.CreateDirectory(folder);
+                await using var stream = new FileStream(fullPath, FileMode.CreateNew, FileAccess.Write);
+                await file.CopyToAsync(stream, cancellationToken);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                _logger.LogError(ex, "Storing upload {FileName} in {Folder} failed", fileName, folderName);
+                if (File.Exists(fullPath)) File.Delete(fullPath);
+                throw;
+            }
+        }
+
+        /// <summary>Resolves <paramref name="relative"/> under <paramref name="root"/> and refuses anything that escapes it.</summary>
+        private static string Contained(string root, string relative)
+        {
+            var rootFull = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            var full = Path.GetFullPath(Path.Combine(rootFull, relative.TrimStart('/', '\\')));
+            if (!(full + Path.DirectorySeparatorChar).StartsWith(rootFull, StringComparison.OrdinalIgnoreCase))
+                throw new ValidationException("Invalid file path.");
+            return full;
         }
     }
 }

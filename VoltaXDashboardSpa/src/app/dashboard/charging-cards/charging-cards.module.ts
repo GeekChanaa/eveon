@@ -10,6 +10,7 @@ import { ChargingCardTransactionsComponent } from './charging-card-transactions/
 import { ChargingCardsListComponent } from './charging-cards-list/charging-cards-list.component';
 import { ChargingCardsRoutingModule } from './charging-cards-routing.module';
 import { CreateChargingCardComponent } from './create-charging-card/create-charging-card.component';
+import { ChargingCardHistoryComponent } from './charging-card-history/charging-card-history.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { CreateChargingCardComponent } from './create-charging-card/create-charg
     ChargingCardOrdersComponent,
     ChargingCardTransactionsComponent,
     ChargingCardsListComponent,
-    CreateChargingCardComponent
+    CreateChargingCardComponent,
+    ChargingCardHistoryComponent
   ],
   imports: [
       AtomsModule,
@@ -31,4 +33,3 @@ import { CreateChargingCardComponent } from './create-charging-card/create-charg
   ],
 })
 export class ChargingCardsModule { }
-  

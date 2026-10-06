@@ -1,4 +1,6 @@
-<ng-container *ngIf="editingConnector == 0">
+<p *ngIf="loading" role="status">Loading connector...</p>
+<div *ngIf="loadError" role="alert"><p>Could not load the connector.</p><button class="action-btn action-btn--edit" type="button" (click)="getConnector()">Retry</button></div>
+<ng-container *ngIf="editingConnector == 0 && !loading && !loadError">
   <div class="connector-detail-header">
     <div class="connector-info">
       <div class="connector-badge">
@@ -13,115 +15,42 @@
       </div>
     </div>
     <div class="connector-actions">
-      <button (click)="editConnector(connector.id)" class="action-btn action-btn--edit">
+      <button type="button" (click)="editConnector(connector.id)" class="action-btn action-btn--edit">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
         Edit
       </button>
-      <button (click)="deleteConnector(connector.id)" class="action-btn action-btn--delete">
+      <button type="button" (click)="requestDeleteConnector()" [disabled]="deleting" class="action-btn action-btn--delete">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
         </svg>
-        Delete
+        {{ deleting ? 'Deleting...' : 'Delete' }}
       </button>
     </div>
   </div>
 
   <div class="connector-details-grid">
-    <!-- Basic Information Section -->
-    <div class="details-section">
-      <h3 class="section-title">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        Basic Information
-      </h3>
-      <div class="details-grid">
-        <app-display-item
-          class="detail-item"
-          name="ID"
-          tooltip="info"  
-          value="{{connector.id}}">
-        </app-display-item>
-        
-        <app-display-item
-          class="detail-item"
-          name="Connector ID"
-          tooltip="info"  
-          value="{{connector.connectorID}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item"
-          name="Connector Evse ID"
-          tooltip="info"  
-          value="{{connector.evseID}}">
-        </app-display-item>
-      </div>
-    </div>
-
-    <!-- Pricing Information Section -->
-    <div class="details-section">
-      <h3 class="section-title">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-        </svg>
-        Pricing Configuration
-      </h3>
-      <div class="details-grid">
-        <app-display-item
-          class="detail-item detail-item--featured"
-          name="Flat Fee"
-          tooltip="info"  
-          value="{{connector.flatFee}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item detail-item--featured"
-          name="Price Per Kwh"
-          tooltip="info"  
-          value="{{connector.pricePerKWh}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item"
-          name="Price Per Idle Minute"
-          tooltip="info"  
-          value="{{connector.pricePerIdleMinute}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item"
-          name="Price Per Minute"
-          tooltip="info"  
-          value="{{connector.pricePerMinute}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item"
-          name="Price Per Hour"
-          tooltip="info"  
-          value="{{connector.pricePerHour}}">
-        </app-display-item>
-
-        <app-display-item
-          class="detail-item"
-          name="Cost Per Kwh"
-          tooltip="info"  
-          value="{{connector.costPerKwh}}">
-        </app-display-item>
-      </div>
-    </div>
+    <section class="details-section"><h3>Connector details</h3><dl>
+      <div><dt>ID</dt><dd>{{ connector.id }}</dd></div>
+      <div><dt>Connector ID</dt><dd>{{ connector.connectorID }}</dd></div>
+      <div><dt>EVSE ID</dt><dd>{{ connector.evseID ?? 'Not specified' }}</dd></div>
+    </dl></section>
+    <section class="details-section"><h3>Pricing configuration</h3><dl>
+      <div><dt>Flat fee</dt><dd>{{ connector.flatFee ?? 'Not specified' }}</dd></div>
+      <div><dt>Price per kWh</dt><dd>{{ connector.pricePerKWh ?? 'Not specified' }}</dd></div>
+      <div><dt>Price per idle minute</dt><dd>{{ connector.pricePerIdleMinute ?? 'Not specified' }}</dd></div>
+      <div><dt>Price per minute</dt><dd>{{ connector.pricePerMinute ?? 'Not specified' }}</dd></div>
+      <div><dt>Price per hour</dt><dd>{{ connector.pricePerHour ?? 'Not specified' }}</dd></div>
+      <div><dt>Cost per kWh</dt><dd>{{ connector.costPerKwh ?? 'Not specified' }}</dd></div>
+    </dl></section>
   </div>
 </ng-container>
 
 <ng-container *ngIf="editingConnector != 0">
   <div class="edit-connector-container">
-    <app-charge-point-edit-connector [connectorID]="editingConnector"></app-charge-point-edit-connector>
+    <app-charge-point-edit-connector [connectorID]="editingConnector" (cancelEvent)="editingConnector = 0" (successEvent)="editingConnector = 0; getConnector()"></app-charge-point-edit-connector>
   </div>
 </ng-container>

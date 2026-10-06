@@ -1,3 +1,4 @@
+import { AccessService } from 'src/_services/access.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointService } from 'src/_services/charge-point.service';
@@ -30,17 +31,22 @@ export class ConnectorRealtimeMainComponent implements OnInit {
 
   status : string = "inactive";
 
-  isHovered: boolean = false;
   disabledActions : boolean = true;
   
   chargePoint : any = {};
   chargePointID : number = 0
 
   selectMenuItem(item: ChargerNavbarEnum): void {
-    this.selectedMenuItem = item;
+    if (this.canOpenMenu(item)) this.selectedMenuItem = item;
+  }
+
+  canOpenMenu(item: number): boolean {
+    const permission: Record<number, string> = { 4: 'OperateChargePoints', 5: 'ViewChargePointConfiguration', 6: 'OperateChargePoints', 8: 'ViewChargePointConfiguration', 10: 'ViewChargingSessions', 11: 'ViewTransactions', 12: 'ViewChargePointConfiguration' };
+    return this.access.can(permission[item] || 'ViewChargePoints');
   }
 
   constructor(
+    public access: AccessService,
     private _wsStatusService : WebSocketStatusService,
     private _route: ActivatedRoute,
     private _chargePointService: ChargePointService,

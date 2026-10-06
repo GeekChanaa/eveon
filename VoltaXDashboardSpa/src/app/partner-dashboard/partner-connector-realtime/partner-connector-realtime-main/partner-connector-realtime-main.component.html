@@ -2,18 +2,7 @@
   <div class="page__container page__container--large">
     <div class="page__title h3">
       Charge Point Realtime
-      <div class="status" 
-      [ngClass]="{'active' : status == 'active'}" 
-      (mouseover)="isHovered = true"
-      (mouseleave)="isHovered = false"> 
-        <span class="status-color">
-          <app-connector-status-dot [status]="status"></app-connector-status-dot>
-          {{status}}
-        </span> 
-        <div class="connector-status-container" [ngClass]="{'show' : isHovered}">
-          <app-connector-status-description></app-connector-status-description>
-        </div>
-      </div>
+      <app-charge-point-status [status]="status"></app-charge-point-status>
     </div>
     <div class="charger__navbar">
       <button  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === PartnerChargerNavbarEnum.Overview}" (click)="selectMenuItem(PartnerChargerNavbarEnum.Overview)" class="charger__navbar-item">Overview</button>

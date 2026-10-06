@@ -1,19 +1,15 @@
 
-<div class="page__inner">
+<div class="page__inner icons-page">
   <div class="page__container">
-    <div class="page__title h3">Icons</div>
-  
-    <div class="icons-container">
-      <div class="icon-container" *ngFor="let icon of iconList" (click)="copy(icon)">
-        <div class="icon">
-          <svg class="icon {{icon}}">
-            <use [attr.xlink:href]="'#'+icon"></use>
-          </svg>
-        </div>
-        <div class="icon__label">
-          {{icon}}
-        </div>
-      </div>
-    </div>
+    <a class="docs-back" routerLink="/dashboard/documentation"><svg class="icon"><use xlink:href="#icon-arrow-left"></use></svg>Documentation</a>
+    <header class="icons-header"><span class="icons-header__eyebrow">Design system</span><h1>Icon library</h1><p>Click an icon to copy its name. Use the name with an SVG <code>&lt;use&gt;</code> reference anywhere in the application.</p></header>
+    <div class="icons-toolbar"><span>{{iconList.length}} icons available</span><span class="copy-notice" aria-live="polite">{{copiedIcon ? copiedIcon + ' copied' : 'Click an icon to copy its name'}}</span></div>
+    <section class="icons-container" aria-label="Available icons">
+      <button class="icon-container" type="button" *ngFor="let icon of iconList" (click)="copy(icon)" [attr.aria-label]="'Copy ' + icon">
+        <span class="icon-container__preview"><svg class="icon"><use [attr.xlink:href]="'#'+icon"></use></svg></span>
+        <span class="icon__label">{{icon}}</span>
+        <span class="icon-container__copy">Copy name</span>
+      </button>
+    </section>
   </div>
 </div>

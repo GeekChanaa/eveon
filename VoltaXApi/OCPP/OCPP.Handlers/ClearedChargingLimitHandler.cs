@@ -3,64 +3,65 @@ using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
+using VoltaXApi.SmartCharging;
 
 namespace VoltaXApi.OCPP.Handlers
 {
-  public class ClearedChargingLimitHandler : IOCPPRequestHandler
-  {
-
-    private readonly ILogger _logger;
-    private readonly IMessageLogRepository _msgLogRepo;
-
-    public ClearedChargingLimitHandler(
-      ILoggerFactory loggerFactory,
-      IMessageLogRepository messageLogRepository
-    )
+    /// <summary>ClearedChargingLimit (2.0.1): the external limits of a source are lifted; their stored rows are marked Cleared.</summary>
+    public class ClearedChargingLimitHandler : IOCPPRequestHandler
     {
-      _logger = loggerFactory.CreateLogger(typeof(ClearedChargingLimitHandler));
-      _msgLogRepo = messageLogRepository;
+        private readonly ILogger _logger;
+        private readonly IMessageLogRepository _msgLogRepo;
+        private readonly SmartChargingInboundStore _store;
+
+        public ClearedChargingLimitHandler(
+            ILoggerFactory loggerFactory,
+            IMessageLogRepository messageLogRepository,
+            SmartChargingInboundStore store)
+        {
+            _logger = loggerFactory.CreateLogger(typeof(ClearedChargingLimitHandler));
+            _msgLogRepo = messageLogRepository;
+            _store = store;
+        }
+
+        public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
+        {
+            string? errorCode = null;
+            string? source = null;
+            int? evseId = null;
+
+            var clearedChargingLimitResponse = new ClearedChargingLimitResponse
+            {
+                CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId }
+            };
+
+            try
+            {
+                var clearedChargingLimitRequest = JsonConvert.DeserializeObject<ClearedChargingLimitRequest>(msgIn.JsonPayload ?? string.Empty);
+                if (clearedChargingLimitRequest == null)
+                {
+                    errorCode = ErrorCodes.FormationViolation;
+                }
+                else
+                {
+                    source = clearedChargingLimitRequest.ChargingLimitSource.ToString();
+                    evseId = clearedChargingLimitRequest.EvseId;
+                    _logger.LogInformation("ClearedChargingLimit => {ChargePointId} EVSE {EvseId} Source={Source}", chargePointStatus.Id, evseId, source);
+                    await _store.ClearChargingLimitAsync(chargePointStatus.Id, source, evseId);
+                }
+
+                msgOut.JsonPayload = JsonConvert.SerializeObject(clearedChargingLimitResponse, OCPPMessageFactory.DefaultSettings);
+            }
+            catch (Exception exp)
+            {
+                _logger.LogError(exp, "ClearedChargingLimit => Exception processing request from {ChargePointId}", chargePointStatus.Id);
+                errorCode = ErrorCodes.InternalError;
+            }
+
+            await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, evseId, msgIn.Action, source!, errorCode!, msgIn, msgOut);
+            return errorCode!;
+        }
     }
-
-      public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
-      {
-
-          string errorCode = null;
-
-          _logger.LogTrace("Processing ClearedChargingLimit...");
-          ClearedChargingLimitResponse clearedChargingLimitResponse = new ClearedChargingLimitResponse();
-          clearedChargingLimitResponse.CustomData = new CustomDataType();
-          clearedChargingLimitResponse.CustomData.VendorId = OCPPHelper.VendorId;
-
-          try
-          {
-              ClearedChargingLimitRequest clearedChargingLimitRequest = JsonConvert.DeserializeObject<ClearedChargingLimitRequest>(msgIn.JsonPayload);
-              _logger.LogTrace("ClearedChargingLimit => Message deserialized");
-
-              // if (ChargePointStatus != null)
-              // {
-              //     // Known charge station
-              //     source = clearedChargingLimitRequest.ChargingLimitSource.ToString();
-              //     connectorId = clearedChargingLimitRequest.EvseId;
-              //     _logger.LogInformation("ClearedChargingLimit => Source={0}", source);
-              // }
-              // else
-              // {
-              //     // Unknown charge station
-              //     errorCode = ErrorCodes.GenericError;
-              // }
-
-              msgOut.JsonPayload = JsonConvert.SerializeObject(clearedChargingLimitResponse);
-              _logger.LogTrace("ClearedChargingLimit => Response serialized");
-          }
-          catch (Exception exp)
-          {
-              _logger.LogError(exp, "ClearedChargingLimit => Exception: {0}", exp.Message);
-              errorCode = ErrorCodes.InternalError;
-          }
-
-          // await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, source, errorCode);
-          return errorCode;
-      }
-  }
 }

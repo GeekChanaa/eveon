@@ -1,3 +1,4 @@
+import { UserAccessComponent } from './user-access/user-access.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
@@ -23,6 +24,7 @@ import { UserOrdersComponent } from './user-orders/user-orders.component';
         UserOrdersComponent
     ],
     imports: [
+        UserAccessComponent,
         AtomsModule,
         ReactiveFormsModule,
         CommonModule,

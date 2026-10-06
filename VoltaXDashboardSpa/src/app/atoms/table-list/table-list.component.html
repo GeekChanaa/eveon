@@ -5,7 +5,7 @@
 <div class="row card">
   <app-progress-bar *ngIf="isLoading"></app-progress-bar>
   <div class="card__head">
-    
+
     <form class="form" *ngIf="searchable">
       <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
 
@@ -15,28 +15,21 @@
         </svg>
       </button>
     </form>
-    <div class="card__nav">
-      <app-button
-        *ngIf="createLink != ''" routerLink="{{createLink}}"
-        variant="secondary"
-        size="small">
-      New</app-button>
-    </div>
-    <div class="filters" [ngClass]="{'active': isActive}">
-      <app-button
-        variant="primary"
-        (btnClick)="toggleActive($event)"
-        size="small">
-        <svg class="icon icon-filter">
-          <use xlink:href="#icon-filter"></use>
+    <div class="filters list-filter-control" [ngClass]="{'active': isActive}" (keydown.escape)="removeActive(); filterToggle.focus()">
+      <button #filterToggle type="button" class="list-tool" [class.is-open]="isActive"
+        [attr.aria-expanded]="isActive" (click)="toggleActive($event)">
+        <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h9m4 0h3M4 17h3m4 0h9" />
+          <circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" />
         </svg>
-      </app-button>
+        <span>Filters</span>
+      </button>
 
-      
+
       <div class="filters__body">
           <div class="filters__top">
             <div class="title-red filters__title">Filtering {{names}}</div>
-            <button class="filters__close" (click)="removeActive()">
+            <button type="button" class="filters__close" aria-label="Close filters" (click)="removeActive(); filterToggle.focus()">
               <svg class="icon icon-close">
                 <use xlink:href="#icon-close"></use>
               </svg>
@@ -50,30 +43,36 @@
         </div>
       <div class="filters__overlay" (click)="removeActive()"></div>
     </div>
-    <div>
-      <app-button
-        variant="primary"
-        (btnClick)="toggleMenu($event)"
-        size="small">
-        <svg class="icon icon-eye">
-          <use xlink:href="#icon-eye"></use>
+    <div class="list-columns-control" (keydown.escape)="displayMenu = false; columnsToggle.focus()">
+      <button #columnsToggle type="button" class="list-tool" [class.is-open]="displayMenu"
+        [attr.aria-expanded]="displayMenu" (click)="toggleMenu($event)">
+        <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="3" /><path d="M9 4v16m6-16v16" />
         </svg>
-      </app-button>
+        <span>Columns</span>
+        <svg class="list-tool__icon list-tool__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4" /></svg>
+      </button>
       <div class="display__columns" *ngIf="displayMenu">
         <div class="display__columns_options">
-          <div class="filters__label">Showing</div>
+          <div class="filters__label">Visible columns</div>
+          <p class="list-columns-hint">Choose what appears in this table.</p>
           <div class="filters__list">
             <label class="checkbox checkbox_reverse checkbox__display" *ngFor="let field of fields">
               <input value="{{fieldShown[field]}}" [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
               <span class="checkbox__inner">
                 <span class="checkbox__tick"></span>
                 <span class="checkbox__text">{{field | camelCaseToSpace}}</span>
-              </span> 
+              </span>
             </label>
           </div>
         </div>
       </div>
     </div>
+    <ng-content select="[list__actions]"></ng-content>
+    <a *ngIf="createLink != '' && access.canUrl(createLink)" [routerLink]="createLink" class="list-tool list-tool--new" [attr.aria-label]="'Create new ' + name">
+      <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+      <span>New</span>
+    </a>
   </div>
 
 
@@ -88,21 +87,21 @@
           <div class="row__row">
             <ng-container *ngFor="let field of fields">
               <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">
-                {{field | camelCaseToSpace}} 
+                {{field | camelCaseToSpace}}
                 <ng-container *ngIf="sortedColumn == field && itemParams.reverseOrder == 'n'">
                   <svg  class="icon icon-arrow-down">
                     <use xlink:href="#icon-arrow-down"></use>
-                  </svg> 
+                  </svg>
                 </ng-container>
 
                 <ng-container *ngIf="sortedColumn == field && itemParams.reverseOrder == 'y'">
                   <svg  class="icon icon-arrow-down" style="transform: rotate(180deg);">
                     <use xlink:href="#icon-arrow-down"></use>
-                  </svg>  
-                </ng-container> 
-                
-                
-                
+                  </svg>
+                </ng-container>
+
+
+
               </div>
             </ng-container>
             <div class="row__col">Options</div>
@@ -124,15 +123,15 @@
                         </div>
                       </div>
                     </div>
-                    <button *ngIf="deletable" (click)="confirmDelete(item.id)" class="table__action delete-btn"> 
+                    <button *ngIf="deletable && canDelete" (click)="confirmDelete(item.id)" class="table__action delete-btn">
                         <svg class="icon icon-trash">
                             <use xlink:href="#icon-trash"></use>
-                        </svg>   
+                        </svg>
                     </button>
-                    <button *ngIf="displayable" (click)="display(item)" class="table__action display-btn"> 
+                    <button *ngIf="displayable" (click)="display(item)" class="table__action display-btn">
                         <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
-                        </svg>  
+                        </svg>
                     </button>
                     <ng-container *ngIf="customButtonTemplate">
                         <ng-container *ngTemplateOutlet="customButtonTemplate.template; context: { $implicit: item }"></ng-container>
@@ -141,17 +140,17 @@
             </div>
             </div>
 
-         
-          
-          
-          
+
+
+
+
 
         </div>
       </div>
       <div class="row__foot">
-        
-        <button 
-          class="button-stroke pagination__btn" 
+
+        <button
+          class="button-stroke pagination__btn"
           [ngClass]="{'inactive' : currentPage == 1}"
           [disabled]="currentPage == 1"
           (click)="previousPage()"
@@ -172,9 +171,9 @@
           </div>
         </div>
 
-        <button  
-          class="button-stroke pagination__btn" 
-          (click)="nextPage()" 
+        <button
+          class="button-stroke pagination__btn"
+          (click)="nextPage()"
           [disabled]="currentPage == pagination.totalPages"
           [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
           >
@@ -182,7 +181,7 @@
             <use xlink:href="#icon-arrow-next"></use>
           </svg>
         </button>
-        
+
       </div>
     </div>
   </div>

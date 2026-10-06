@@ -33,7 +33,6 @@ export class ChargingStationAddChargePointComponent implements OnInit {
       serialNumber : new FormControl(''),
       name : new FormControl(''),
       username : new FormControl(''),
-      password : new FormControl(''),
       clientCertThumb : new FormControl(''),
       chargePointID: new FormControl(''),
       status : new FormControl('Available'),
@@ -63,7 +62,6 @@ export class ChargingStationAddChargePointComponent implements OnInit {
       status: cpf.status,
       comment: cpf.comment,
       username: cpf.username,
-      password: cpf.password,
       clientCertThumb: cpf.clientCertThumb,
       chargePointId: cpf.chargePointID,
       chargingStationID: this.chargingStationID

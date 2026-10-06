@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { ChargingStationImageService } from 'src/_services/charging-station-image.service';
@@ -9,10 +9,13 @@ import { environment } from 'src/environments/environment';
   templateUrl: './charging-station-images.component.html',
   styleUrls: ['./charging-station-images.component.sass']
 })
-export class ChargingStationImagesComponent implements OnInit {
+export class ChargingStationImagesComponent implements OnInit, OnDestroy {
 
   @Input() chargingStationID: number = 0;
   images: any[] = [];
+  loading = true;
+  loadError = false;
+  dragging = false;
   rootPathUrl: string = environment.apiStaticFilesUrl;
   addingImages: boolean = false;
 
@@ -32,10 +35,12 @@ export class ChargingStationImagesComponent implements OnInit {
   }
 
   getImages() {
-    this._chargingStationImageService.getChargingStationImages(this.chargingStationID).subscribe((data) => {
-      this.images = data;
-      console.log("this is the images", this.images);
-    })
+    this.loading = true;
+    this.loadError = false;
+    this._chargingStationImageService.getChargingStationImages(this.chargingStationID).subscribe({
+      next: data => { this.images = data; this.loading = false; },
+      error: () => { this.loadError = true; this.loading = false; }
+    });
   }
 
   deleteImage(id: number) {
@@ -50,6 +55,7 @@ export class ChargingStationImagesComponent implements OnInit {
 
 
   handleUpload(event: any): void {
+    if (this.imagesUploading) return;
     this.fileErrors = [];
     if (event.target.files && event.target.files[0]) {
       for (var i = 0; i < event.target.files.length; i++) {
@@ -78,11 +84,14 @@ export class ChargingStationImagesComponent implements OnInit {
       event.stopPropagation();
       event.preventDefault();
     }
+    if (this.imagesUploading) return;
+    URL.revokeObjectURL(this.displayedImages[i]);
     this.chargingStationImages.splice(i, 1);
     this.displayedImages.splice(i, 1);
   }
 
   uploadImages() {
+    if (this.imagesUploading || !this.chargingStationImages.length) return;
     this.imagesUploading = true;
     let formData = new FormData();
 
@@ -98,6 +107,7 @@ export class ChargingStationImagesComponent implements OnInit {
       
       // Reset state and close adding images view
       this.chargingStationImages = [];
+      this.displayedImages.forEach(url => URL.revokeObjectURL(url));
       this.displayedImages = [];
       this.addingImages = false;
       
@@ -120,21 +130,23 @@ export class ChargingStationImagesComponent implements OnInit {
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    // Add drag-over class for visual feedback
+    this.dragging = !this.imagesUploading;
   }
 
   onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    // Remove drag-over class
+    this.dragging = false;
   }
 
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
+    this.dragging = false;
+    if (this.imagesUploading) return;
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
-      console.log("this is the files", files);
+
       // Process the dropped files
       this.fileErrors = [];
       for (let i = 0; i < files.length; i++) {
@@ -161,11 +173,17 @@ export class ChargingStationImagesComponent implements OnInit {
   }
 
   cancelAddingImages(): void {
+    if (this.imagesUploading) return;
     this.addingImages = false;
+    this.displayedImages.forEach(url => URL.revokeObjectURL(url));
     // Clear any selected images and errors
     this.chargingStationImages = [];
     this.displayedImages = [];
     this.fileErrors = [];
+  }
+
+  ngOnDestroy(): void {
+    this.displayedImages.forEach(url => URL.revokeObjectURL(url));
   }
 
 }

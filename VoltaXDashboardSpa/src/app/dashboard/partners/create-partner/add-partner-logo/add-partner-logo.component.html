@@ -3,20 +3,21 @@
     { label: 'Partners', link: '/dashboard/partners' },
     { label: 'Create' }
   ]">
-  <div form>
+  <div form class="station-wizard people-logo">
+    <header class="station-intro"><span class="station-eyebrow">Partner identity</span><h2>Add a partner logo</h2><p>Choose a logo to make this partner recognizable across the dashboard. You can also skip this step.</p></header>
     <div class="create__card card">
       <div class="file">
         <div class="file__wrap">
-          <input class="upload-input" type="file" (change)="handleUpload($event)" />
+          <input aria-label="Choose partner logo" class="upload-input" type="file" (change)="handleUpload($event)" />
           <div class="file__box" *ngIf="!displayedLogo">
             <svg class="icon icon-upload">
               <use xlink:href="#icon-upload"></use>
-            </svg>Click or drop image
+            </svg>Choose a logo
           </div>
           <div class="files__box">
             <div *ngIf="displayedLogo != null" class="image__box">
-              <div class="image__clear" (click)="clearImage()">X</div>
-              <img [src]="displayedLogo" alt="">
+              <button type="button" class="image__clear" aria-label="Remove selected logo" (click)="clearImage()">&times;</button>
+              <img [src]="displayedLogo" alt="Selected partner logo">
             </div>
           </div>
         </div>
@@ -31,7 +32,7 @@
         <app-button class="ml-auto" [variant]="'secondary'"
         (btnClick)="changeLogo()"
           type="submit">
-          Submit
+          Save logo
         </app-button>
       </div>
   </div>

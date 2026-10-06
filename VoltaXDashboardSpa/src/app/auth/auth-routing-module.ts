@@ -11,15 +11,16 @@ import { EnterPhoneNumberComponent } from './enter-phone-number/enter-phone-numb
 import { CompleteProfileComponent } from './complete-profile/complete-profile.component';
 import { ResetPasswordSuccessComponent } from './reset-password-success/reset-password-success.component';
 import { GoogleCallbackComponent } from './google-callback/google-callback.component';
+import { GuestGuard } from 'src/_guards/guest.guard';
 
 
 
 export const AuthRoutes: Routes= [
-  { path : 'login' , component : LoginComponent },
-  { path : 'register' , component : SignUpComponent },
-  { path : 'request-password' , component : RequestPasswordComponent },
-  { path : 'reset-password' , component : ResetPasswordComponent },
-  { path : 'reset-password-success' , component : ResetPasswordSuccessComponent },
+  { path : 'login' , component : LoginComponent, canActivate: [GuestGuard] },
+  { path : 'register' , component : SignUpComponent, canActivate: [GuestGuard] },
+  { path : 'request-password' , component : RequestPasswordComponent, canActivate: [GuestGuard] },
+  { path : 'reset-password' , component : ResetPasswordComponent, canActivate: [GuestGuard] },
+  { path : 'reset-password-success' , component : ResetPasswordSuccessComponent, canActivate: [GuestGuard] },
   { path : 'verification-mail-sent' , component : VerificationMailSentComponent },
   { path : 'verify-email' , component : VerifyEmailComponent },
   { path : 'verify-phone' , component : VerifyPhoneComponent },

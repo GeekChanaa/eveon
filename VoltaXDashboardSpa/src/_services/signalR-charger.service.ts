@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'src/environments/environment';
+import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,12 +9,12 @@ import { environment } from 'src/environments/environment';
 export class SignalRChargerService {
   private hubConnection: signalR.HubConnection | undefined;
 
-  constructor() { }
+  constructor(private _tokens: TokenStorageService) { }
 
   // Start the connection to SignalR hub
   public startConnection(chargePointID : string): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.apiUrl+'/chargerHub')
+      .withUrl(environment.apiUrl+'/chargerHub', { accessTokenFactory: () => this._tokens.accessToken || '' })
       .build();
 
     this.hubConnection

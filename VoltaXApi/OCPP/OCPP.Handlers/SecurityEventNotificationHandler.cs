@@ -1,9 +1,9 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -23,40 +23,31 @@ namespace VoltaXApi.OCPP.Handlers
       _msgLogRepo = messageLogRepository;
     }
 
-
     public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
     {
       string? errorCode = null;
-      string? bootReason = null;
+      string? eventType = null;
       try
       {
-        var settings = new JsonSerializerSettings
+        var request = JsonConvert.DeserializeObject<SecurityEventNotificationRequest>(msgIn.JsonPayload ?? string.Empty);
+        eventType = request?.Type;
+        _logger.LogWarning("SecurityEventNotification => {ChargePointId} Type={Type} At={Timestamp:o} TechInfo={TechInfo}",
+          chargePointStatus.Id, request?.Type, request?.Timestamp, request?.TechInfo);
+
+        var response = new SecurityEventNotificationResponse
         {
-          Converters = new List<JsonConverter> { new StringEnumConverter() }
+          CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId }
         };
-        _logger.LogTrace("Processing boot notification...");
-        BootNotificationRequest bootNotificationRequest = JsonConvert.DeserializeObject<BootNotificationRequest>(msgIn.JsonPayload);
-        _logger.LogTrace("BootNotification => Message deserialized");
-
-        bootReason = bootNotificationRequest?.Reason.ToString();
-        _logger.LogInformation("BootNotification => Reason={0}", bootReason);
-
-        SecurityEventNotificationResponse securityEventNotificationResponse = new SecurityEventNotificationResponse();
-
-        securityEventNotificationResponse.CustomData = new CustomDataType();
-        securityEventNotificationResponse.CustomData.VendorId = OCPPHelper.VendorId;
-        
-        msgOut.JsonPayload = JsonConvert.SerializeObject(securityEventNotificationResponse, settings);
-        _logger.LogTrace("BootNotification => Response serialized");
+        msgOut.JsonPayload = JsonConvert.SerializeObject(response, OCPPMessageFactory.DefaultSettings);
       }
       catch (Exception exp)
       {
-        _logger.LogError(exp, "BootNotification => Exception: {0}", exp.Message);
+        _logger.LogError(exp, "SecurityEventNotification => Exception processing request from {ChargePointId}", chargePointStatus.Id);
         errorCode = ErrorCodes.FormationViolation;
       }
 
-      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode, msgIn, msgOut);
-      return errorCode;
+      await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, eventType!, errorCode!, msgIn, msgOut);
+      return errorCode!;
     }
   }
 }

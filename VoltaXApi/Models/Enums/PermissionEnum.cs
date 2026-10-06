@@ -21,6 +21,7 @@ public enum PermissionEnum
     CreateChargingCards,
     EditChargingCards,
     DeleteChargingCards,
+    ViewChargingCardHistory,
 
     ViewNotices,
     CreateNotices,
@@ -67,5 +68,19 @@ public enum PermissionEnum
     EditPartners,
     DeletePartners,
 
+    AccessDashboard,
+    ViewDashboard,
+    ViewDocumentation,
+    OperateChargePoints,
+    ViewGlobalConfigurations,
+    EditGlobalConfigurations,
+    ViewComments,
+    CreateComments,
+    EditComments,
+    DeleteComments,
+    ViewOcppLocalLists,
+    CreateOcppLocalLists,
+    EditOcppLocalLists,
+    DeleteOcppLocalLists,
     ViewStatisticsPage
 }

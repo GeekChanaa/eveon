@@ -1,87 +1,98 @@
-
-
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using OCPP.Core.Server;
 using VoltaXApi.Data;
-using VoltaXApi.Hubs;
-using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Factories;
 using VoltaXApi.OCPP.Models;
-using VoltaXApi.OCPP.Services;
-using VoltaXApi.Services;
 
 namespace VoltaXApi.OCPP.Handlers
 {
+    /// <summary>
+    /// Runs one charger-initiated CALL: resolves its handler by (protocol version, action) from a fresh DI scope
+    /// (so every message gets its own DbContext) and turns the outcome into the CALLRESULT or CALLERROR frame.
+    /// </summary>
     public class OCPPRequestHandler
-    {   
+    {
         public const string VENDOR_ID = "VoltaX Charging";
-        private readonly IMessageLogRepository _msgLogRepo;
-        private readonly ILogger _logger;
-        private readonly OCPPRequestHandlerFactory _handlerFactory;
-        
-        public OCPPRequestHandler(
-            ILoggerFactory loggerFactory,
-            IMessageLogRepository messageLogRepository,
-            OCPPRequestHandlerFactory handlerFactory
-        )
+
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly OcppInboundHandlerRegistry _registry;
+        private readonly ILogger<OCPPRequestHandler> _logger;
+
+        public OCPPRequestHandler(IServiceScopeFactory scopeFactory, OcppInboundHandlerRegistry registry, ILogger<OCPPRequestHandler> logger)
         {
-            _logger = loggerFactory.CreateLogger(typeof(LogStatusNotificationHandler));
-            _msgLogRepo = messageLogRepository;
-            _handlerFactory = handlerFactory;
+            _scopeFactory = scopeFactory;
+            _registry = registry;
+            _logger = logger;
         }
 
-        public async Task<OCPPMessage> ProcessRequest(OCPPMessage msgIn, ChargePointStatus chargePointStatus)
+        /// <summary>Returns the serialized reply frame. Never throws for handler failures.</summary>
+        public async Task<string> ProcessRequest(OcppConnection connection, OcppFrame call, string rawMessage)
         {
-            OCPPMessage msgOut = new OCPPMessage
-            {
-                MessageType = "3",
-                UniqueId = msgIn.UniqueId,
-                Action = msgIn.Action
-            };
+            var msgIn = new OCPPMessage("2", call.UniqueId, call.Action!, call.Payload, rawMessage);
+            var msgOut = new OCPPMessage { MessageType = "3", UniqueId = call.UniqueId, Action = call.Action! };
 
-            
-
-            if (msgIn.MessageType == "2")
+            using var logScope = _logger.BeginScope(new Dictionary<string, object?>
             {
-                var handler = _handlerFactory.GetHandler(msgIn.Action);
+                ["ChargePointId"] = connection.ChargePointId,
+                ["OcppAction"] = call.Action,
+                ["OcppMessageId"] = call.UniqueId
+            });
 
-                if (handler != null)
-                {
-                    string errorCode = await handler.Handle(msgIn, msgOut, chargePointStatus);
-                    
-                    
-                    if (!string.IsNullOrEmpty(errorCode))
-                    {
-                        msgOut.MessageType = "4"; // Error type
-                        msgOut.ErrorCode = errorCode;
-                        _logger.LogDebug("ControllerOCPP20 => Return error code message: ErrorCode={0}", errorCode);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No handler for this action");
-                    // Log unsupported action
-                    string errorCode = ErrorCodes.NotSupported;
-                    await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, msgIn.JsonPayload, errorCode, msgIn, msgOut);
-                    msgOut.MessageType = "4";
-                    msgOut.ErrorCode = errorCode;
-                }
-            }
-            else
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var handler = _registry.Resolve(scope.ServiceProvider, connection.ProtocolVersion, call.Action!);
+            if (handler == null)
             {
-                _logger.LogError("ControllerOCPP20 => Protocol error: wrong message type", msgIn.MessageType);
+                _logger.LogWarning("No {Protocol} handler for action {Action} from {ChargePointId}", connection.ProtocolVersion, call.Action, connection.ChargePointId);
                 msgOut.MessageType = "4";
-                msgOut.ErrorCode = ErrorCodes.ProtocolError;
+                msgOut.ErrorCode = ErrorCodes.NotImplemented;
+                await TryLog(scope.ServiceProvider, connection, msgIn, msgOut);
+                return CallError(connection, call.UniqueId, OcppError.NotImplemented, $"Action {call.Action} is not implemented.");
             }
 
-            return msgOut;
+            string? errorCode;
+            try
+            {
+                errorCode = await handler.Handle(msgIn, msgOut, connection.Status);
+            }
+            catch (Exception ex)
+            {
+                // The charger only gets a generic description; details stay in the server log.
+                _logger.LogError(ex, "{Action} handler failed for {ChargePointId} (message {MessageId})", call.Action, connection.ChargePointId, call.UniqueId);
+                msgOut.MessageType = "4";
+                msgOut.ErrorCode = ErrorCodes.InternalError;
+                await TryLogInNewScope(connection, msgIn, msgOut);
+                return CallError(connection, call.UniqueId, OcppError.InternalError, "An internal error occurred while processing the request.");
+            }
+
+            if (!string.IsNullOrEmpty(errorCode))
+            {
+                var error = OcppErrors.Parse(errorCode);
+                _logger.LogInformation("{Action} from {ChargePointId} answered with CALLERROR {ErrorCode}", call.Action, connection.ChargePointId, error);
+                return CallError(connection, call.UniqueId, error, OcppErrors.DefaultDescription(error));
+            }
+
+            return OcppJson.SerializeCallResult(call.UniqueId, msgOut.JsonPayload);
+        }
+
+        public static string CallError(OcppConnection connection, string uniqueId, OcppError error, string description) =>
+            OcppJson.SerializeCallError(uniqueId, OcppErrors.ToWireName(error, connection.ProtocolVersion), description);
+
+        private async Task TryLog(IServiceProvider services, OcppConnection connection, OCPPMessage msgIn, OCPPMessage msgOut)
+        {
+            try
+            {
+                var repository = services.GetRequiredService<IMessageLogRepository>();
+                await repository.SaveLogMessage(connection.ChargePointId, null, msgIn.Action, msgIn.JsonPayload, msgOut.ErrorCode, msgIn, msgOut);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Could not store the message log of {Action} from {ChargePointId}", msgIn.Action, connection.ChargePointId);
+            }
+        }
+
+        // The handler's DbContext may be unusable after its exception.
+        private async Task TryLogInNewScope(OcppConnection connection, OCPPMessage msgIn, OCPPMessage msgOut)
+        {
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            await TryLog(scope.ServiceProvider, connection, msgIn, msgOut);
         }
     }
-
 }

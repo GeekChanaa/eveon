@@ -9,8 +9,9 @@ namespace VoltaXApi.Mappers
         public AutoMapperProfile()
         {
             CreateMap<DebitCard, DebitCardListingDto>()
-                .ForMember(dest => dest.CardNumberHidden, opt => opt.MapFrom(src => Mask(src.CardNumber)))
-                .ForMember(dest => dest.NameHidden, opt => opt.MapFrom(src => Mask(src.Name)));
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Brand))
+                .ForMember(dest => dest.CardNumberHidden, opt => opt.MapFrom(src => "•••• " + src.Last4))
+                .ForMember(dest => dest.NameHidden, opt => opt.MapFrom(src => Mask(src.Name ?? "")));
             
             
            

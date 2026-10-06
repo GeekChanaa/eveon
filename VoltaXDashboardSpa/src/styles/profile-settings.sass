@@ -1,0 +1,86 @@
+.profile-settings
+  color: var(--vx-text, #171b24)
+  .card
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 14px
+    background: var(--vx-surface, #fff)
+    box-shadow: none
+  .card-header
+    padding: 22px 24px
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    background: transparent
+    h2
+      font-size: 18px
+      color: var(--vx-text, #171b24)
+  .card-content
+    padding: 24px
+  .form-content
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 24px
+  .form-section
+    min-width: 0
+    padding: 20px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 12px
+    background: var(--vx-surface, #fff)
+  .section-title
+    margin-bottom: 16px
+    color: var(--vx-text, #171b24)
+    font-size: 15px
+  .field__label
+    color: var(--vx-text-muted, #737985)
+    font-size: 12px
+  .field__information
+    color: var(--vx-text, #171b24)
+    padding: 8px 0 20px
+  .field__edit
+    padding: 6px 10px
+    margin-left: auto
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 7px
+    background: var(--vx-surface, #fff)
+    color: var(--vx-text, #171b24)
+    font-size: 12px
+    svg
+      display: none
+  .settings__profile
+    margin-bottom: 24px
+  .settings__avatar
+    position: relative
+    width: 88px
+    height: 88px
+    img
+      width: 88px
+      height: 88px
+      border-radius: 50%
+      object-fit: cover
+    .settings__avatar-upload
+      opacity: 1
+      top: auto
+      bottom: -4px
+      left: auto
+      right: -4px
+      transform: none
+      background: var(--vx-yellow, #e5b223)
+      color: #171b24
+  .connected__container, .download__container
+    background: var(--vx-surface-alt, #fafafa)
+    color: var(--vx-text, #171b24)
+    border-color: var(--vx-border, #ededed)
+  .connected__name
+    color: var(--vx-text, #171b24)
+  .connected__status, .connected__hint
+    color: var(--vx-text-muted, #737985)
+  input:not([type=checkbox]), select
+    background: var(--vx-surface, #fff)
+    color: var(--vx-text, #171b24)
+    border-color: var(--vx-border, #ededed)
+  button:focus-visible
+    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline-offset: 3px
+  @media (max-width: 760px)
+    .form-content
+      grid-template-columns: 1fr
+    .card-content, .form-section
+      padding: 16px

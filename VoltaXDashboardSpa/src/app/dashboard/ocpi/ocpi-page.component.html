@@ -1,0 +1,151 @@
+<app-dashboard-details-container [state]="ready" title="Roaming (OCPI)"
+  [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Roaming (OCPI)' }]">
+  <div class="ocpi">
+    <section class="ocpi__card ocpi__summary" *ngIf="settings">
+      <div>
+        <span class="ocpi__label">Status</span>
+        <span class="ocpi__badge" [class.ocpi__badge--ok]="settings.enabled">{{ settings.enabled ? 'Enabled' : 'Disabled (Ocpi:Enabled)' }}</span>
+      </div>
+      <div>
+        <span class="ocpi__label">Our party</span>
+        <strong>{{ settings.countryCode }}-{{ settings.partyId }} (CPO, OCPI 2.2.1)</strong>
+      </div>
+      <div>
+        <span class="ocpi__label">Versions URL</span>
+        <code>{{ settings.versionsUrl || 'Ocpi:BaseUrl is not set' }}</code>
+      </div>
+    </section>
+
+    <div class="ocpi__error" *ngIf="error">{{ error }}</div>
+    <div class="ocpi__message" *ngIf="message">{{ message }}</div>
+
+    <div class="ocpi__forms">
+      <form class="ocpi__card ocpi__form" (ngSubmit)="createInvite()">
+        <h3>Invite a partner</h3>
+        <p>Generates a token A to send to the eMSP. They register with it on our versions URL.</p>
+        <label>
+          <span>Partner name</span>
+          <input type="text" name="inviteName" [(ngModel)]="inviteName" maxlength="100" required>
+        </label>
+        <button type="submit" class="button" [disabled]="!inviteName.trim()">Generate token A</button>
+        <div class="ocpi__secret" *ngIf="invite">
+          <small>Shown once. Send both values over a secure channel.</small>
+          <div><span>Token A</span><code>{{ invite.tokenA }}</code><button type="button" class="ocpi__link" (click)="copy(invite.tokenA)">Copy</button></div>
+          <div><span>Versions URL</span><code>{{ invite.versionsUrl }}</code><button type="button" class="ocpi__link" (click)="copy(invite.versionsUrl)">Copy</button></div>
+        </div>
+      </form>
+
+      <form class="ocpi__card ocpi__form" (ngSubmit)="register()">
+        <h3>Connect to a partner</h3>
+        <p>Uses the versions URL and token A issued by the eMSP or hub.</p>
+        <label>
+          <span>Partner name</span>
+          <input type="text" name="connectName" [(ngModel)]="connect.name" maxlength="100" required>
+        </label>
+        <label>
+          <span>Versions URL</span>
+          <input type="url" name="versionsUrl" [(ngModel)]="connect.versionsUrl" placeholder="https://partner.example/ocpi/versions" required>
+        </label>
+        <label>
+          <span>Token A</span>
+          <input type="password" name="tokenA" [(ngModel)]="connect.tokenA" maxlength="64" autocomplete="off" required>
+        </label>
+        <button type="submit" class="button" [disabled]="connecting || !connect.name.trim() || !connect.versionsUrl.trim() || !connect.tokenA.trim()">
+          {{ connecting ? 'Registering...' : 'Start registration' }}
+        </button>
+      </form>
+    </div>
+
+    <h3 class="ocpi__title">Partners</h3>
+    <div class="ocpi__table-wrapper">
+      <table class="ocpi__table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Party</th>
+            <th>Status</th>
+            <th>Registered</th>
+            <th>Tokens</th>
+            <th>Outbox</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="loading"><td colspan="7" class="ocpi__empty">Loading...</td></tr>
+          <tr *ngIf="!loading && partners.length === 0"><td colspan="7" class="ocpi__empty">No roaming partner yet.</td></tr>
+          <ng-container *ngFor="let partner of partners">
+            <tr *ngIf="!loading">
+              <td>
+                <div>{{ partner.name }}</div>
+                <small *ngIf="partner.lastError" class="ocpi__error">{{ partner.lastError }}</small>
+              </td>
+              <td>{{ partner.countryCode ? partner.countryCode + '-' + partner.partyId : '-' }} <small *ngIf="partner.role">{{ partner.role }}</small></td>
+              <td>
+                <span class="ocpi__badge" [class.ocpi__badge--ok]="partner.status === 'Registered'">{{ partner.status }}</span>
+                <small *ngIf="partner.awaitingTokenA"> awaiting registration</small>
+              </td>
+              <td>{{ partner.registeredAt ? (partner.registeredAt | date:'yyyy-MM-dd HH:mm':'UTC') : '-' }}</td>
+              <td>{{ partner.tokens }}</td>
+              <td>{{ partner.pendingMessages }} pending<span *ngIf="partner.failedMessages" class="ocpi__error">, {{ partner.failedMessages }} failed</span></td>
+              <td class="ocpi__actions">
+                <button type="button" class="ocpi__link" *ngIf="partner.endpoints.length" (click)="toggle(partner)">{{ expandedId === partner.id ? 'Hide' : 'Endpoints' }}</button>
+                <button type="button" class="ocpi__link" *ngIf="partner.status === 'Registered'" [disabled]="busyId === partner.id" (click)="refresh(partner)">Refresh</button>
+                <button type="button" class="ocpi__link" *ngIf="partner.status === 'Registered'" [disabled]="busyId === partner.id" (click)="suspend(partner)">Suspend</button>
+                <button type="button" class="ocpi__link" *ngIf="partner.status === 'Suspended'" [disabled]="busyId === partner.id" (click)="resume(partner)">Resume</button>
+                <button type="button" class="ocpi__link ocpi__link--danger" *ngIf="partner.status !== 'Unregistered'" [disabled]="busyId === partner.id" (click)="unregister(partner)">Unregister</button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && expandedId === partner.id" class="ocpi__details">
+              <td colspan="7">
+                <small>Versions: {{ partner.versionsUrl }} ({{ partner.version }})</small>
+                <table class="ocpi__endpoints">
+                  <thead><tr><th>Module</th><th>Role</th><th>URL</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let endpoint of partner.endpoints">
+                      <td>{{ endpoint.identifier }}</td>
+                      <td>{{ endpoint.role }}</td>
+                      <td>{{ endpoint.url }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="ocpi__title">Failed pushes</h3>
+    <div class="ocpi__table-wrapper">
+      <table class="ocpi__table">
+        <thead>
+          <tr>
+            <th>Created (UTC)</th>
+            <th>Partner</th>
+            <th>Call</th>
+            <th>Attempts</th>
+            <th>Last error</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="outbox.length === 0"><td colspan="6" class="ocpi__empty">No failed messages.</td></tr>
+          <tr *ngFor="let item of outbox">
+            <td>{{ item.createdAt | date:'yyyy-MM-dd HH:mm:ss':'UTC' }}</td>
+            <td>{{ item.partyName }}</td>
+            <td><span class="ocpi__badge">{{ item.module }}</span> {{ item.method }} <small class="ocpi__url">{{ item.url }}</small></td>
+            <td>{{ item.attempts }}</td>
+            <td><small>{{ item.lastError }}</small></td>
+            <td><button type="button" class="ocpi__link" (click)="retry(item)">Retry</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ocpi__pager" *ngIf="outboxTotal > pageSize">
+      <span>{{ outboxTotal }} messages</span>
+      <button type="button" class="button-stroke" [disabled]="outboxPage <= 1" (click)="goToOutbox(outboxPage - 1)">Previous</button>
+      <span>Page {{ outboxPage }} / {{ outboxPages }}</span>
+      <button type="button" class="button-stroke" [disabled]="outboxPage >= outboxPages" (click)="goToOutbox(outboxPage + 1)">Next</button>
+    </div>
+  </div>
+</app-dashboard-details-container>

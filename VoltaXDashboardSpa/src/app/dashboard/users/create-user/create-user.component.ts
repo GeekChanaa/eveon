@@ -56,7 +56,7 @@ export class CreateUserComponent implements OnInit {
         partnerID : new FormControl(null),
         isEmailVerified : new FormControl(false),
         isPhoneNumberVerified : new FormControl(false),
-        roleID : new FormControl(2),
+        roleID : new FormControl(null, Validators.required),
         electricVehicleModelID : new FormControl("")
       })
   }
@@ -107,6 +107,8 @@ export class CreateUserComponent implements OnInit {
   getAllRoles(){
     this._roleService.getAllRoles().subscribe((data) => {
       this.roles = data.map((role : any) => ({ label : role.name, value : role.id}));
+        const customer = data.find((role: any) => role.name === 'Customer');
+        this.userForm.get('roleID')?.setValue(customer?.id ?? null);
     })
   }
 }

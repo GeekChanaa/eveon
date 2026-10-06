@@ -1,18 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { CardStatusEnum } from 'src/_models/_enums/card-status';
-import { CardTypeEnum } from 'src/_models/_enums/card-type';
-import { Card } from 'src/_models/card';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-recharge-card',
   templateUrl: './recharge-card.component.html',
   styleUrls: ['./recharge-card.component.sass']
 })
-export class RechargeCardComponent implements OnInit {
-  ngOnInit(): void {
-
-  }
-
+export class RechargeCardComponent {
   @Input() cardNumber: string = '1234567890123456';
   @Input() cardType: string = 'Premium Charging';
   @Input() expirationDate: string = '12/26';
@@ -20,17 +13,22 @@ export class RechargeCardComponent implements OnInit {
   @Input() balance: number = 85.50;
 
   showCardNumber: boolean = false;
+  showBalance: boolean = false;
 
-  toggleCardVisibility(): void {
+  toggleCardNumberVisibility(): void {
     this.showCardNumber = !this.showCardNumber;
   }
 
+  toggleBalanceVisibility(): void {
+    this.showBalance = !this.showBalance;
+  }
+
   formatCardNumber(cardNumber: string): string {
-    return cardNumber.replace(/(.{4})/g, '$1 ').trim();
+    return (cardNumber || '').replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
   }
 
   formatBalance(balance: number): string {
-    return `$${balance.toFixed(2)}`;
+    return `${Number(balance || 0).toFixed(2)} MAD`;
   }
 
   formatExpirationDate(date: string): string {

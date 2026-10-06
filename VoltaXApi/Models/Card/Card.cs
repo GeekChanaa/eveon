@@ -5,6 +5,7 @@ namespace VoltaXApi.Models
     public class Card  : IEntity
     {
         public int ID { get; set; }
+        [NotUpdatable]
         public string CardNumber { get; set; }
         [NotMapped]
         public string LastFourDigits { get { return CardNumber.Substring(CardNumber.Length - 4);} }

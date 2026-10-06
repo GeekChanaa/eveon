@@ -82,7 +82,7 @@ namespace VoltaXApi.Services
                 throw new UnauthorizedException("Invalid refresh token");
             }
 
-            if (user.SuspendedAt != null)
+            if (user.IsCurrentlySuspended)
             {
                 await RevokeAllForUser(user.ID, "suspended");
                 throw new UnauthorizedException("This account is suspended");

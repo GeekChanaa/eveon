@@ -9,9 +9,9 @@ public class ChargingSessionInvoice
     public string ChargePointName { get; set; }
     public double TotalKwhCharged { get; set; }
     public double TotalPrice { get; set; }
-    public int ConnectorID { get; set; }
+    public int? ConnectorID { get; set; }
     public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public string CardNumber { get; set; }
     public double ChargedMinutes { get; set; }
     public double IdleMinutes { get; set; }
@@ -20,6 +20,8 @@ public class ChargingSessionInvoice
     public double KwhsCharged { get; set; }
     public double TotalPriceWithVAT { get; set; }
     public double TotalPriceWithoutVAT { get; set; }
+    public double ChargingPriceWithVAT { get; set; }
+    public double IdlePriceWithVAT { get; set; }
     public double CardBalance { get; set; }
     public double ChargingSessionID { get; set; }
     public List<TransactionItem> Transactions { get; set; }

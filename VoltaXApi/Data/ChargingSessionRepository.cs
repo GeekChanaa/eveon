@@ -14,12 +14,15 @@ namespace VoltaXApi.Data
     private readonly IMapper _mapper;
     private readonly ILogger<ChargingSessionRepository> _logger;
     private readonly GlobalConfigurations _globalConfigurations;
+    private readonly VoltaXApi.Services.IBusinessClock _clock;
     public ChargingSessionRepository(
         VoltaXApiDbContext context,
         ILogger<ChargingSessionRepository> logger,
         GlobalConfigurations globalConfigurations,
-        IMapper mapper) : base(context)
+        IMapper mapper,
+        VoltaXApi.Services.IBusinessClock clock) : base(context)
     {
+      _clock = clock;
       _logger = logger;
       _mapper = mapper;
       _globalConfigurations = globalConfigurations;
@@ -131,7 +134,8 @@ namespace VoltaXApi.Data
 
     public async Task<int> GetChargePointNbrChargingSessionsToday(int chargePointID)
     {
-      return await _context.ChargingSessions.Where(cs => cs.StartDate >= DateTime.Now.AddDays(-1)).CountAsync(cs => cs.Connector.ChargePointID == chargePointID);
+      var from = _clock.StartOfDayUtc(_clock.Today);
+      return await _context.ChargingSessions.CountAsync(cs => cs.StartDate >= from && cs.Connector!.ChargePointID == chargePointID);
     }
 
     public IQueryable<ChargingSessionListDto> GetChargingSessions()
@@ -183,38 +187,40 @@ namespace VoltaXApi.Data
 
     public async Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
     {
-      var chargingSessions = await _context.ChargingSessions
-          .Where(t => t.StartDate >= DateTime.Today.AddDays(-30))
+      var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
+      var startDates = await _context.ChargingSessions.AsNoTracking()
+          .Where(cs => cs.StartDate >= from && cs.Connector!.ChargePointID == chargePointID)
+          .Select(cs => cs.StartDate)
           .ToListAsync();
 
-      var nbrChargingSessionsByDay = new Dictionary<DateTime, double>();
-      foreach (var transaction in chargingSessions)
-      {
-        var date = transaction.StartDate.Date;
-
-        if (nbrChargingSessionsByDay.ContainsKey(date))
-        {
-          nbrChargingSessionsByDay[date] += 1;
-        }
-        else
-        {
-          nbrChargingSessionsByDay[date] = 1;
-        }
-      }
-
-      return nbrChargingSessionsByDay;
+      return startDates
+          .GroupBy(date => _clock.ToLocal(date).Date)
+          .ToDictionary(g => g.Key, g => (double)g.Count());
     }
 
     public IQueryable<ChargingSessionListDto> GetUserChargingSessions(int userID, GlobalParams globalParams)
     {
-      return GetAllAsync(globalParams).Where(u => u.UserID == userID).Select(cs => new ChargingSessionListDto
+      // The soft-delete filters on Connector / ChargePoint / Card turn their joins into INNER JOINs
+      // that run *after* SQL Server has paged the sessions, so a page whose sessions sit on a
+      // deleted connector came back empty while the count still included them. A user's history
+      // keeps those sessions: the filters are lifted and only the session's own flag is checked.
+      var sessions = GetAllAsync(globalParams)
+        .IgnoreQueryFilters()
+        .Where(cs => !cs.IsDeleted && cs.UserID == userID);
+
+      // Without an explicit order, OFFSET/FETCH pages over an arbitrary order.
+      if (string.IsNullOrEmpty(globalParams.OrderBy))
+        sessions = sessions.OrderByDescending(cs => cs.StartDate).ThenByDescending(cs => cs.ID);
+
+      return sessions.Select(cs => new ChargingSessionListDto
       {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
         ChargePointName = cs.Connector.ChargePoint.ChargePointId,
         ConnectorID = cs.ConnectorID,
         ChargePointID = cs.Connector.ChargePointID,
-        UserName = cs.User.FullName,
+        // FullName is a C# property: using it made EF load the whole user row, password hash included.
+        UserName = cs.User.FirstName + " " + cs.User.LastName,
         CardNumber = cs.Card.CardNumber,
         StartDate = cs.StartDate,
         EndDate = cs.EndDate,
@@ -229,6 +235,46 @@ namespace VoltaXApi.Data
         
         ChargingSessionStatus = cs.ChargingSessionStatus,
       }).AsQueryable();
+    }
+
+    public IQueryable<MyChargingSessionDto> GetMyChargingSessions(int userID)
+    {
+      return _context.ChargingSessions
+          .AsNoTracking()
+          .Where(session => session.UserID == userID)
+          .OrderByDescending(session => session.StartDate)
+          .ThenByDescending(session => session.ID)
+          .Select(session => new MyChargingSessionDto
+          {
+            ID = session.ID,
+            StationName = session.Connector != null &&
+                session.Connector.ChargePoint != null &&
+                session.Connector.ChargePoint.ChargingStation != null
+                    ? session.Connector.ChargePoint.ChargingStation.Name
+                    : null,
+            StationAddress = session.Connector != null &&
+                session.Connector.ChargePoint != null &&
+                session.Connector.ChargePoint.ChargingStation != null
+                    ? session.Connector.ChargePoint.ChargingStation.Address
+                    : null,
+            ChargePointName = session.Connector != null && session.Connector.ChargePoint != null
+                ? session.Connector.ChargePoint.ChargePointId
+                : null,
+            Connector = session.Connector != null
+                ? "EVSE " + session.Connector.EvseID + " / Connector " + session.Connector.ConnectorID
+                : null,
+            StartDate = session.StartDate,
+            EndDate = session.EndDate,
+            ChargedMinutes = session.ChargedMinutes ?? 0,
+            IdleMinutes = session.IdleMinutes ?? 0,
+            ChargedKwhs = session.ChargedKwhs ?? 0,
+            TotalPriceWithVAT = session.TotalPriceWithVAT(
+                _globalConfigurations.Vat,
+                (int)_globalConfigurations.GracePeriod),
+            StoppedReason = session.StoppedReason,
+            Status = session.ChargingSessionStatus,
+            InvoiceAvailable = session.EndDate.HasValue
+          });
     }
 
     

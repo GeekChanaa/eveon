@@ -1,0 +1,631 @@
+// Theme tokens come from `.vx-provisioning` (styles/theme.sass): this dialog lives in the
+// dashboard shell, outside `.page.vx`.
+$surface: var(--vx-surface, #FFFFFF)
+$surface-alt: var(--vx-surface-alt, #FAFAFA)
+$hover: var(--vx-hover, #F4F4F4)
+$border: var(--vx-border, #EDEDED)
+$text: var(--vx-text, #0B0B0B)
+$muted: var(--vx-text-muted, #7A7C80)
+$yellow: var(--vx-yellow, #E5B223)
+$yellow-soft: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+$yellow-ink: var(--vx-yellow-ink, #8A6410)
+$ok: #1F9D55
+$warn: #B7791F
+$bad: #DC2626
+
+.sr-only
+  position: absolute
+  width: 1px
+  height: 1px
+  overflow: hidden
+  clip: rect(0 0 0 0)
+  white-space: nowrap
+
+.prov__overlay
+  position: fixed
+  inset: 0
+  z-index: 900
+  background: rgba(11, 11, 11, .45)
+  backdrop-filter: blur(6px)
+
+.prov
+  position: fixed
+  top: 50%
+  left: 50%
+  z-index: 901
+  transform: translate(-50%, -50%)
+  width: min(600px, calc(100vw - 32px))
+  max-height: calc(100vh - 48px)
+  display: flex
+  flex-direction: column
+  overflow: hidden
+  border: 1px solid $border
+  border-radius: 18px
+  background: $surface
+  color: $text
+  box-shadow: 0 30px 80px -24px rgba(0, 0, 0, .45)
+  animation: prov-in .22s ease-out
+
+  &.prov_wide
+    width: min(1000px, calc(100vw - 32px))
+
+@keyframes prov-in
+  from
+    opacity: 0
+    transform: translate(-50%, calc(-50% + 12px))
+
+// ---------------------------------------------------------------- header
+
+.prov__header
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: 16px
+  padding: 22px 22px 18px 26px
+  border-bottom: 1px solid $border
+
+.prov__eyebrow
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  font-size: 11px
+  font-weight: 700
+  letter-spacing: .06em
+  text-transform: uppercase
+  color: $yellow-ink
+
+.prov__pulse
+  position: relative
+  width: 8px
+  height: 8px
+  border-radius: 50%
+  background: $yellow
+
+  &::after
+    content: ''
+    position: absolute
+    inset: -4px
+    border-radius: 50%
+    border: 2px solid $yellow
+    opacity: 0
+    animation: prov-pulse 1.8s ease-out infinite
+
+@keyframes prov-pulse
+  0%
+    transform: scale(.5)
+    opacity: .8
+  100%
+    transform: scale(1.6)
+    opacity: 0
+
+.prov__title
+  margin: 6px 0 4px
+  font-size: 22px
+  font-weight: 700
+  letter-spacing: -.02em
+  word-break: break-all
+
+.prov__meta
+  display: flex
+  flex-wrap: wrap
+  gap: 4px 14px
+  margin: 0
+  font-size: 12.5px
+  color: $muted
+
+  span + span::before
+    content: '·'
+    margin-right: 14px
+    margin-left: -8px
+
+.prov__close
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  width: 34px
+  height: 34px
+  padding: 0
+  border: 1px solid $border
+  border-radius: 9px
+  background: transparent
+  cursor: pointer
+
+  svg
+    width: 16px
+    height: 16px
+    stroke: $muted
+
+  &:hover
+    background: $hover
+    svg
+      stroke: $text
+
+// ---------------------------------------------------------------- body
+
+.prov__body
+  flex: 1 1 auto
+  min-height: 0
+  overflow-y: auto
+  padding: 22px 26px 24px
+
+.prov__lead
+  margin: 0 0 18px
+  font-size: 14px
+  line-height: 1.6
+  color: $text
+
+  &.prov__lead_small
+    font-size: 13px
+    color: $muted
+
+.prov__choices
+  display: grid
+  gap: 12px
+
+.prov__choice
+  display: flex
+  align-items: flex-start
+  gap: 14px
+  width: 100%
+  padding: 16px 18px
+  border: 1px solid $border
+  border-radius: 14px
+  background: $surface
+  text-align: left
+  color: $text
+  cursor: pointer
+  transition: border-color .18s, background .18s, transform .18s
+
+  &:hover,
+  &:focus-visible
+    border-color: $yellow
+    background: $yellow-soft
+    outline: none
+
+  &:active
+    transform: scale(.995)
+
+.prov__choice-icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  width: 42px
+  height: 42px
+  border-radius: 11px
+  background: $yellow-soft
+  color: $yellow-ink
+
+  svg
+    width: 20px
+    height: 20px
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.8
+    stroke-linecap: round
+    stroke-linejoin: round
+
+.prov__choice-text
+  display: grid
+  gap: 4px
+
+.prov__choice-title
+  display: flex
+  align-items: center
+  gap: 8px
+  font-size: 15px
+  font-weight: 700
+
+.prov__choice-desc
+  font-size: 13px
+  line-height: 1.5
+  color: $muted
+
+.prov__tag
+  padding: 2px 7px
+  border-radius: 999px
+  background: $yellow
+  font-size: 10px
+  font-weight: 700
+  letter-spacing: .04em
+  text-transform: uppercase
+  color: #0B0B0B
+
+// ---------------------------------------------------------------- footer & buttons
+
+.prov__footer
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  gap: 10px
+  margin-top: 22px
+
+  &.prov__footer_split
+    justify-content: space-between
+
+.prov__footer-actions
+  display: flex
+  align-items: center
+  gap: 12px
+
+.prov__count
+  font-size: 12.5px
+  color: $muted
+
+.prov__btn
+  height: 40px
+  padding: 0 18px
+  border: 1px solid $border
+  border-radius: 10px
+  background: $surface
+  font-size: 13.5px
+  font-weight: 600
+  color: $text
+  cursor: pointer
+  transition: background .18s, border-color .18s, opacity .18s
+
+  &:hover:not(:disabled)
+    border-color: $yellow
+
+  &:disabled
+    opacity: .5
+    cursor: default
+
+  &.prov__btn_primary
+    border-color: $yellow
+    background: $yellow
+    color: #0B0B0B
+
+    &:hover:not(:disabled)
+      background: var(--vx-yellow-hover, #D0A01B)
+
+  &.prov__btn_ghost
+    background: transparent
+
+.prov__link
+  padding: 0
+  border: 0
+  background: none
+  font-size: 13px
+  font-weight: 600
+  color: $muted
+  text-decoration: underline
+  text-underline-offset: 3px
+  cursor: pointer
+
+  &:hover
+    color: $bad
+
+// ---------------------------------------------------------------- working
+
+.prov__working
+  display: grid
+  justify-items: center
+  gap: 8px
+  padding: 36px 10px 28px
+  text-align: center
+
+  h3
+    margin: 10px 0 0
+    font-size: 16px
+    font-weight: 700
+
+  p
+    max-width: 380px
+    margin: 0
+    font-size: 13px
+    line-height: 1.6
+    color: $muted
+
+.prov__spinner
+  width: 38px
+  height: 38px
+  border: 3px solid $border
+  border-top-color: $yellow
+  border-radius: 50%
+  animation: prov-spin .8s linear infinite
+
+@keyframes prov-spin
+  to
+    transform: rotate(360deg)
+
+// ---------------------------------------------------------------- review table
+
+.prov__notice
+  margin-bottom: 14px
+  padding: 11px 14px
+  border: 1px solid $border
+  border-left: 3px solid $yellow
+  border-radius: 10px
+  background: $surface-alt
+  font-size: 13px
+  line-height: 1.5
+
+  &.prov__notice_warn
+    border-left-color: $warn
+
+.prov__table-wrap
+  max-height: 52vh
+  overflow: auto
+  border: 1px solid $border
+  border-radius: 12px
+
+  &.prov__table-wrap_short
+    max-height: 40vh
+    margin-top: 16px
+
+.prov__table
+  width: 100%
+  min-width: 720px
+  border-collapse: collapse
+  font-size: 13px
+
+  thead th
+    position: sticky
+    top: 0
+    z-index: 1
+    padding: 10px 12px
+    border-bottom: 1px solid $border
+    background: $surface
+    font-size: 11px
+    font-weight: 600
+    letter-spacing: .06em
+    text-align: left
+    text-transform: uppercase
+    color: $muted
+
+  td
+    padding: 10px 12px
+    border-bottom: 1px solid $border
+    vertical-align: top
+
+  tbody:last-child tr:last-child td
+    border-bottom: 0
+
+.prov__group-row th
+  padding: 14px 12px 6px
+  background: $surface-alt
+  border-bottom: 1px solid $border
+  font-size: 12px
+  font-weight: 700
+  text-align: left
+  color: $text
+
+.prov__row_off td:not(.prov__col-check)
+  opacity: .5
+
+.prov__col-check
+  width: 36px
+  text-align: center
+
+  input
+    width: 16px
+    height: 16px
+    margin-top: 2px
+    accent-color: #E5B223
+    cursor: pointer
+
+.prov__col-value
+  width: 240px
+
+.prov__col-actions
+  width: 40px
+  text-align: right
+
+.prov__var
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace
+  font-size: 12.5px
+  font-weight: 600
+  word-break: break-word
+
+.prov__desc
+  margin-top: 3px
+  font-size: 12px
+  line-height: 1.45
+  color: $muted
+
+.prov__current
+  max-width: 180px
+  margin-top: 5px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  font-family: 'SFMono-Regular', Consolas, monospace
+  font-size: 12px
+  color: $muted
+
+.prov__mono
+  font-family: 'SFMono-Regular', Consolas, monospace
+  font-size: 12px
+  word-break: break-word
+
+.prov__input
+  width: 100%
+  height: 34px
+  font-size: 13px
+
+.prov__hint
+  margin-top: 4px
+  font-size: 11.5px
+  color: $muted
+
+.prov__badge,
+.prov__status
+  display: inline-block
+  padding: 2px 8px
+  border-radius: 999px
+  font-size: 11px
+  font-weight: 600
+  white-space: nowrap
+  cursor: default
+
+.prov__badge_Writable,
+.prov__status_ok
+  background: rgba(31, 157, 85, .12)
+  color: $ok
+
+.prov__badge_ReadOnly,
+.prov__status_bad
+  background: rgba(220, 38, 38, .1)
+  color: $bad
+
+.prov__badge_NotReported,
+.prov__status_warn
+  background: rgba(183, 121, 31, .14)
+  color: $warn
+
+.prov__badge_Unknown
+  background: $hover
+  color: $muted
+
+.prov__icon-btn
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  width: 28px
+  height: 28px
+  padding: 0
+  border: 1px solid transparent
+  border-radius: 7px
+  background: transparent
+  cursor: pointer
+
+  svg
+    width: 14px
+    height: 14px
+    stroke: $muted
+
+  &:hover
+    border-color: $bad
+    svg
+      stroke: $bad
+
+// ---------------------------------------------------------------- add row
+
+.prov__add-toggle
+  margin-top: 12px
+  padding: 0
+  border: 0
+  background: none
+  font-size: 13px
+  font-weight: 600
+  color: $yellow-ink
+  cursor: pointer
+
+  &:hover
+    text-decoration: underline
+
+.prov__add
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 10px
+  margin-top: 12px
+  padding: 14px
+  border: 1px dashed $border
+  border-radius: 12px
+
+  label
+    display: grid
+    gap: 5px
+    margin: 0
+
+    span
+      font-size: 11px
+      font-weight: 600
+      letter-spacing: .05em
+      text-transform: uppercase
+      color: $muted
+
+  .field__input,
+  .select
+    height: 34px
+    font-size: 13px
+
+.prov__add-actions
+  grid-column: 1 / -1
+  display: flex
+  justify-content: flex-end
+  gap: 8px
+
+.prov__error
+  margin-top: 12px
+  font-size: 13px
+  font-weight: 600
+  color: $bad
+
+// ---------------------------------------------------------------- outcome
+
+.prov__outcome
+  display: flex
+  align-items: flex-start
+  gap: 14px
+  padding: 16px 18px
+  border: 1px solid $border
+  border-radius: 14px
+
+  h3
+    margin: 2px 0 4px
+    font-size: 16px
+    font-weight: 700
+
+  p
+    margin: 4px 0 0
+    font-size: 13px
+    line-height: 1.55
+    color: $muted
+
+.prov__outcome-icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  width: 36px
+  height: 36px
+  border-radius: 50%
+
+  svg
+    width: 20px
+    height: 20px
+
+.prov__outcome_ok .prov__outcome-icon
+  background: rgba(31, 157, 85, .14)
+  svg
+    stroke: $ok
+
+.prov__outcome_bad .prov__outcome-icon
+  background: rgba(220, 38, 38, .12)
+  svg
+    stroke: $bad
+
+.prov__followup
+  font-family: 'SFMono-Regular', Consolas, monospace
+  font-size: 12px !important
+
+// ---------------------------------------------------------------- dark & small screens
+
+:host-context(body.dark)
+  .prov
+    box-shadow: 0 30px 80px -24px rgba(0, 0, 0, .85)
+
+  .prov__input,
+  .prov__add .field__input
+    color-scheme: dark
+
+@media (max-width: 640px)
+  .prov__header
+    padding: 18px 16px 14px 18px
+
+  .prov__body
+    padding: 18px
+
+  .prov__add
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+  .prov__footer_split
+    flex-wrap: wrap
+
+.prov__links
+  display: flex
+  flex-wrap: wrap
+  gap: 6px 16px

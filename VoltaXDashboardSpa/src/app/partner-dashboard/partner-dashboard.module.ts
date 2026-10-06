@@ -6,6 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { PartnerDashboardRoutingModule } from './partner-dashboard-routing.module';
 import { PartnerStatisticsComponent } from './partner-statistics/partner-statistics.component';
+import { TwoFactorSettingsModule } from '../dashboard/profile/profile-security/two-factor-settings/two-factor-settings.module';
 @NgModule({
     declarations: [
         PartnerStatisticsComponent,
@@ -17,7 +18,8 @@ import { PartnerStatisticsComponent } from './partner-statistics/partner-statist
         CommonModule,
         SharedModule,
         FormsModule,
-        PartnerDashboardRoutingModule
+        PartnerDashboardRoutingModule,
+        TwoFactorSettingsModule
     ],
   })
   export class PartnerDashboardModule { }

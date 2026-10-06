@@ -140,27 +140,10 @@ namespace VoltaXApi.Controllers
         [HttpPost("UploadUserAvatar/{userID}")]
         public async Task<IActionResult> UploadUserAvatar(IFormFile imageFile, int userID)
         {
-            Console.WriteLine("this is the userController Function");
-            try
-            {
-
-                if (Request.Form.Files.Count == 1)
-                {
-                    var file = Request.Form.Files[0];
-                    await _userService.UploadUserAvatar(file, userID);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-                return BadRequest();
-            }
+            if (Request.Form.Files.Count != 1) return BadRequest("Upload exactly one image.");
+            var file = Request.Form.Files[0];
+            await _userService.UploadUserAvatar(file, userID);
+            return Ok();
         }
         
         [HttpGet("GetRoleUsers/{roleID}")]

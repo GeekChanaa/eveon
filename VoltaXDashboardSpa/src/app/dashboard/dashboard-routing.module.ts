@@ -146,18 +146,12 @@ const routes: Routes = [
     loadChildren : () => import('./user-info-download-requests/user-info-download-requests.module')
       .then(m=>m.UserInfoDownloadRequestsModule)
   },
-  {
-    path: "permissions",
-    component: RechargeOrdersComponent,
-    loadChildren : () => import('./permissions/permissions.module')
-      .then(m=>m.PermissionsModule)
-  },
-  {
-    path: "roles",
-    component: RechargeOrdersComponent,
-    loadChildren : () => import('./roles/roles.module')
-      .then(m=>m.RolesModule)
-  },
+  { path: "permissions", redirectTo: "roles", pathMatch: "full" },
+  { path: "roles", loadComponent: () => import('./roles/roles-page.component').then(m => m.RolesPageComponent) },
+  { path: "audit-logs", loadComponent: () => import('./audit-logs/audit-logs-page.component').then(m => m.AuditLogsPageComponent) },
+  { path: "ocpi", loadComponent: () => import('./ocpi/ocpi-page.component').then(m => m.OcpiPageComponent) },
+  { path: "pki", loadComponent: () => import('./pki/pki-page.component').then(m => m.PkiPageComponent) },
+  { path: "charger-events", loadComponent: () => import('./charger-events/charger-events-page.component').then(m => m.ChargerEventsPageComponent) },
   {
     path: "statistics",
     component: StatisticsComponent,
@@ -169,6 +163,11 @@ const routes: Routes = [
   {
     path: "ocpp-configuration",
     component: OcppConfigurationComponent,
+  },
+  {
+    path: "charge-point-configurations",
+    loadChildren : () => import('./charge-point-configurations/charge-point-configurations.module')
+      .then(m=>m.ChargePointConfigurationsModule)
   },
   {
     path: "ocpp-local-list",

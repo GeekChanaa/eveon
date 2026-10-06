@@ -1,3 +1,4 @@
+using VoltaXApi.Exceptions;
 using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
@@ -64,8 +65,8 @@ namespace VoltaXApi.Controllers
                 return await this._repository.GetChargingStationRevenue(chargingStationID);
             }
 
-            DateTime? startDate = DateTime.Parse(start);
-            DateTime? endDate = DateTime.Parse(end);
+            DateTime? startDate = DateTime.Parse(start, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
+            DateTime? endDate = DateTime.Parse(end, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
 
             return await this._repository.GetChargingStationRevenue(chargingStationID, startDate, endDate);
         }
@@ -117,8 +118,9 @@ namespace VoltaXApi.Controllers
                 
                 return Ok(new { id = chargingStation.ID });
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is ValidationException or ArgumentException)
             {
+                // Expected input errors only; anything else reaches GlobalExceptionFilter (generic 500).
                 return BadRequest(ex.Message);
             }
 
@@ -143,8 +145,8 @@ namespace VoltaXApi.Controllers
             }
 
 
-            DateTime? startDate = DateTime.Parse(start);
-            DateTime? endDate = DateTime.Parse(end);
+            DateTime? startDate = DateTime.Parse(start, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
+            DateTime? endDate = DateTime.Parse(end, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
 
             return await this._repository.GetPartnerChargingStationRevenue(partnerID,chargingStationID, startDate, endDate);
         }
@@ -195,6 +197,17 @@ namespace VoltaXApi.Controllers
         public async Task<ActionResult<ChargingStationForSelectDto>> GetChargingStationsForSelect() 
         {
             return Ok(await _repository.GetChargingStationsForSelect());
+        }
+
+        /// <summary>
+        /// Searches the stations shown on the map by address and connector type, with their live availability.
+        /// Example: GET api/ChargingStation/SearchChargingStations?query=agdal rabat&amp;availability=Available&amp;connectorTypes=cType2&amp;connectorTypes=cCCS2
+        /// Open to every signed-in user.
+        /// </summary>
+        [HttpGet("SearchChargingStations")]
+        public async Task<ActionResult<ChargingStationSearchResponseDto>> SearchChargingStations([FromQuery] ChargingStationSearchParams searchParams)
+        {
+            return Ok(await _repository.SearchChargingStations(searchParams));
         }
 
         [HttpGet("GetChargingStationsForMap")]

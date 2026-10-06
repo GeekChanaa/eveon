@@ -9,7 +9,8 @@ RUN dotnet restore
 # Copy the project files and build the application
 COPY . ./
 
-# Copy appsettings.prod.json instead of appsettings.json
+# Production defaults (no secrets: those come from environment variables at run time,
+# e.g. -e AppSettings__Token=... -e ConnectionStrings__DefaultConnection=...).
 COPY appsettings.production.json ./appsettings.json
 
 RUN dotnet publish -c Release -o out
@@ -18,4 +19,12 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "VoltaXApi.dll"]
+
+# Run as the image's unprivileged user instead of root.
+USER $APP_UID
+
+# Railway injects PORT; fall back to 8080 elsewhere
+ENV PORT=8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_HTTP_PORTS=${PORT} exec dotnet VoltaXApi.dll"]

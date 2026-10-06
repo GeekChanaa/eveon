@@ -1,113 +1,95 @@
 using Microsoft.AspNetCore.Mvc;
-using VoltaXApi.Data;
-using Microsoft.AspNetCore.SignalR;
-using VoltaXApi.Models;
-using VoltaXApi.Dtos;
-using System.Threading.Tasks;
 using System.Security.Claims;
 using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Messages;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-using System.Linq;
+using VoltaXApi.OCPP.Exceptions;
 
 namespace VoltaXApi.OCPP.Controllers
 {
+    /// <summary>EV driver commands. Every action waits for the charger's answer (see <see cref="OcppCommandResult"/>).</summary>
     [ApiController]
-    [Route("ocpp/[controller]")]    
+    [Route("ocpp/[controller]")]
     public class EVDriverController : Controller
     {
         private readonly IEVDriverService _EVDriverService;
+        private readonly ILogger<EVDriverController> _logger;
 
         public EVDriverController(
-            IEVDriverService EVDriverService
+            IEVDriverService EVDriverService,
+            ILogger<EVDriverController> logger
         ){
             _EVDriverService = EVDriverService;
+            _logger = logger;
         }
 
         [HttpPost("RequestStartTransaction/{chargePointID}")]
-        public async Task<IActionResult> RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request)
-        {
-            Console.WriteLine("Received RequestStartTransaction for ChargePointID: {0}", chargePointID);
-            var obj = JsonConvert.SerializeObject(request);
-            await _EVDriverService.RequestStartTransaction(chargePointID, request);
-            return Ok(new { Message = "Request to start transaction sent successfully." });
-        }
+        public Task<IActionResult> RequestStartTransaction(string chargePointID, RequestStartTransactionRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("RequestStartTransaction", () => _EVDriverService.RequestStartTransaction(chargePointID, request, cancellationToken));
 
         [Authorize]
         [HttpPost("RequestStartTransactionMobile/{chargePointID}")]
-        public async Task<IActionResult> RequestStartTransactionMobile(string chargePointID, RequestStartTransactionRequest request)
+        public async Task<IActionResult> RequestStartTransactionMobile(string chargePointID, RequestStartTransactionRequest request, CancellationToken cancellationToken)
         {
-            var userIdClaim = Request.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
-            {
+            if (!TryGetUserId(out var userId))
                 return Unauthorized(new { Message = "Invalid or missing user authentication." });
-            }
 
-            Console.WriteLine("Received RequestStartTransactionMobile for ChargePointID: {0}, UserID: {1}", chargePointID, userId);
-            var obj = JsonConvert.SerializeObject(request);
-            await _EVDriverService.RequestStartTransactionMobile(chargePointID, request, userId);
-            return Ok(new { Message = "Request to start transaction sent successfully." });
+            _logger.LogInformation("RequestStartTransactionMobile for {ChargePointId} by user {UserId}", chargePointID, userId);
+            try
+            {
+                return await OcppCommandResult.Run("RequestStartTransaction",
+                    () => _EVDriverService.RequestStartTransactionMobile(chargePointID, request, userId, cancellationToken));
+            }
+            catch (ChargingOwnershipException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { Message = ex.Message });
+            }
         }
 
         [HttpPost("RequestStopTransaction/{chargePointID}")]
-        public async Task<IActionResult> RequestStopTransaction(string chargePointID, RequestStopTransactionRequest request)
-        {
-            await _EVDriverService.RequestStopTransaction(chargePointID, request);
-            return Ok(new { Message = "Request to stop transaction sent successfully." });
-        }
+        public Task<IActionResult> RequestStopTransaction(string chargePointID, RequestStopTransactionRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("RequestStopTransaction", () => _EVDriverService.RequestStopTransaction(chargePointID, request, cancellationToken));
 
         [Authorize]
         [HttpPost("RequestStopTransactionMobile/{chargePointID}")]
-        public async Task<IActionResult> RequestStopTransactionMobile(string chargePointID, RequestStopTransactionRequest request)
+        public Task<IActionResult> RequestStopTransactionMobile(string chargePointID, RequestStopTransactionRequest request, CancellationToken cancellationToken)
         {
-            await _EVDriverService.RequestStopTransactionMobile(chargePointID, request);
-            return Ok(new { Message = "Request to stop transaction sent successfully." });
+            if (!TryGetUserId(out var userId))
+                return Task.FromResult<IActionResult>(Unauthorized(new { Message = "Invalid or missing user authentication." }));
+
+            return OcppCommandResult.Run("RequestStopTransaction",
+                () => _EVDriverService.RequestStopTransactionMobile(chargePointID, request, userId, cancellationToken));
         }
 
         [HttpPost("CancelReservation/{chargePointID}")]
-        public async Task<IActionResult> CancelReservation(string chargePointID, CancelReservationRequest request)
-        {
-            await _EVDriverService.CancelReservation(chargePointID, request);
-            return Ok(new { Message = "Reservation cancellation request sent successfully." });
-        }
+        public Task<IActionResult> CancelReservation(string chargePointID, CancelReservationRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("CancelReservation", () => _EVDriverService.CancelReservation(chargePointID, request, cancellationToken));
 
         [HttpPost("ReserveNow/{chargePointID}")]
-        public async Task<IActionResult> ReserveNow(string chargePointID, ReserveNowRequest request)
-        {
-            await _EVDriverService.ReserveNow(chargePointID, request);
-            return Ok(new { Message = "Reservation request sent successfully." });
-        }
+        public Task<IActionResult> ReserveNow(string chargePointID, ReserveNowRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("ReserveNow", () => _EVDriverService.ReserveNow(chargePointID, request, cancellationToken));
 
         [HttpPost("UnlockConnector/{chargePointID}")]
-        public async Task<IActionResult> UnlockConnector(string chargePointID, UnlockConnectorRequest request)
-        {
-            await _EVDriverService.UnlockConnector(chargePointID, request);
-            return Ok(new { Message = "Unlock connector request sent successfully." });
-        }
+        public Task<IActionResult> UnlockConnector(string chargePointID, UnlockConnectorRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("UnlockConnector", () => _EVDriverService.UnlockConnector(chargePointID, request, cancellationToken));
 
         [HttpPost("ClearCache/{chargePointID}")]
-        public async Task<IActionResult> ClearCache(string chargePointID, ClearCacheRequest request)
-        {
-            await _EVDriverService.ClearCache(chargePointID, request);
-            return Ok(new { Message = "Clear cache request sent successfully." });
-        }
+        public Task<IActionResult> ClearCache(string chargePointID, ClearCacheRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("ClearCache", () => _EVDriverService.ClearCache(chargePointID, request, cancellationToken));
 
         [HttpPost("SendLocalList/{chargePointID}")]
-        public async Task<IActionResult> SendLocalList(string chargePointID, SendLocalListRequest request)
-        {
-            await _EVDriverService.SendLocalList(chargePointID, request);
-            return Ok(new { Message = "Send local list request sent successfully." });
-        }
+        public Task<IActionResult> SendLocalList(string chargePointID, SendLocalListRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("SendLocalList", () => _EVDriverService.SendLocalList(chargePointID, request, cancellationToken));
 
         [HttpPost("GetLocalListVersion/{chargePointID}")]
-        public async Task<IActionResult> GetLocalListVersion(string chargePointID, GetLocalListVersionRequest request)
+        public Task<IActionResult> GetLocalListVersion(string chargePointID, GetLocalListVersionRequest request, CancellationToken cancellationToken) =>
+            OcppCommandResult.Run("GetLocalListVersion", () => _EVDriverService.GetLocalListVersion(chargePointID, request, cancellationToken));
+
+        private bool TryGetUserId(out int userId)
         {
-            await _EVDriverService.GetLocalListVersion(chargePointID, request);
-            return Ok(new { Message = "Get local list version request sent successfully." });
+            userId = 0;
+            var userIdClaim = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return !string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out userId);
         }
-
-
     }
 }

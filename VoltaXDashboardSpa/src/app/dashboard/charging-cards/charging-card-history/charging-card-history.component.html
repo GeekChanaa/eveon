@@ -1,0 +1,11 @@
+<div class="page__inner">
+  <div class="page__container">
+    <app-display-table-list
+      name="charging card history"
+      names="charging card history"
+      routeName="charging-cards"
+      [fields]="fields"
+      [getItemsObservable]="getHistoryObservable.bind(this)">
+    </app-display-table-list>
+  </div>
+</div>

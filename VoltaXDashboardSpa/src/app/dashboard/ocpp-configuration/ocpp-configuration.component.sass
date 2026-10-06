@@ -1,0 +1,418 @@
+$surface: var(--vx-surface, #FFFFFF)
+$surface-alt: var(--vx-surface-alt, #FAFAFA)
+$hover: var(--vx-hover, #F4F4F4)
+$border: var(--vx-border, #EDEDED)
+$text: var(--vx-text, #0B0B0B)
+$muted: var(--vx-text-muted, #7A7C80)
+$yellow: var(--vx-yellow, #E5B223)
+$yellow-soft: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+$yellow-ink: var(--vx-yellow-ink, #8A6410)
+$bad: #DC2626
+
+:host
+  display: block
+  color: $text
+
+.profile-page
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+  padding-bottom: 24px
+
+// ---------------------------------------------------------------- intro
+
+.profile-intro
+  display: flex
+  align-items: center
+  gap: 18px
+  padding: 22px 24px
+  margin-bottom: 20px
+  border: 1px solid $border
+  border-radius: 16px
+  background: $surface
+
+  h2
+    margin: 0 0 6px
+    font-size: 19px
+    font-weight: 700
+    letter-spacing: -.02em
+
+  p
+    margin: 0
+    max-width: 720px
+    font-size: 13.5px
+    line-height: 1.65
+    color: $muted
+
+.profile-intro__icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-shrink: 0
+  width: 50px
+  height: 50px
+  border-radius: 12px
+  background: $yellow-soft
+  color: $yellow-ink
+
+  svg
+    width: 22px
+    height: 22px
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.7
+    stroke-linecap: round
+    stroke-linejoin: round
+
+.profile-intro__stat
+  display: grid
+  justify-items: end
+  margin-left: auto
+  flex-shrink: 0
+
+  strong
+    font-size: 26px
+    font-weight: 700
+    line-height: 1.1
+    font-variant-numeric: tabular-nums
+
+  span
+    font-size: 12px
+    color: $muted
+
+// ---------------------------------------------------------------- toolbar
+
+.profile-toolbar
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: space-between
+  gap: 12px
+  margin-bottom: 18px
+
+.profile-toolbar__actions
+  display: flex
+  gap: 10px
+
+.profile-search
+  position: relative
+  flex: 1 1 320px
+  max-width: 440px
+  margin: 0
+
+  svg
+    position: absolute
+    top: 50%
+    left: 12px
+    width: 16px
+    height: 16px
+    transform: translateY(-50%)
+    stroke: $muted
+    pointer-events: none
+
+  .field__input
+    padding-left: 36px
+
+.profile-btn
+  height: 38px
+  padding: 0 16px
+  border: 1px solid $border
+  border-radius: 9px
+  background: $surface
+  font-size: 13px
+  font-weight: 600
+  color: $text
+  cursor: pointer
+  transition: border-color .18s, background .18s, opacity .18s
+
+  &:hover:not(:disabled)
+    border-color: $yellow
+
+  &:disabled
+    opacity: .5
+    cursor: default
+
+  &.profile-btn_ghost
+    background: transparent
+
+  &.profile-btn_primary
+    border-color: $yellow
+    background: $yellow
+    color: #0B0B0B
+
+    &:hover:not(:disabled)
+      background: var(--vx-yellow-hover, #D0A01B)
+
+.profile-readonly,
+.profile-empty
+  margin: 0 0 16px
+  padding: 14px 16px
+  border: 1px dashed $border
+  border-radius: 12px
+  font-size: 13px
+  color: $muted
+
+// ---------------------------------------------------------------- groups & rows
+
+.profile-group
+  margin-bottom: 22px
+
+.profile-group__title
+  display: flex
+  align-items: center
+  gap: 8px
+  margin: 0 0 10px
+  font-size: 14px
+  font-weight: 700
+
+  &::before
+    content: ''
+    width: 3px
+    height: 16px
+    border-radius: 2px
+    background: $yellow
+
+  span
+    padding: 1px 7px
+    border-radius: 999px
+    background: $hover
+    font-size: 11px
+    font-weight: 600
+    color: $muted
+
+.profile-list
+  overflow: hidden
+  border: 1px solid $border
+  border-radius: 12px
+  background: $surface
+
+.profile-row
+  border-bottom: 1px solid $border
+
+  &:last-child
+    border-bottom: 0
+
+  &.profile-row_editing
+    background: $surface-alt
+
+  &.profile-row_off .profile-row__info,
+  &.profile-row_off .profile-row__value
+    opacity: .5
+
+.profile-row__main
+  display: flex
+  align-items: center
+  gap: 14px
+  padding: 12px 14px 12px 16px
+
+.profile-row__info
+  flex: 1 1 auto
+  min-width: 0
+
+.profile-row__label
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 6px
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace
+  font-size: 13px
+  font-weight: 600
+  word-break: break-word
+
+.profile-attr
+  padding: 1px 6px
+  border-radius: 5px
+  background: $yellow-soft
+  font-family: inherit
+  font-size: 10.5px
+  color: $yellow-ink
+
+.profile-row__desc
+  margin-top: 3px
+  font-size: 12.5px
+  line-height: 1.45
+  color: $muted
+
+.profile-row__value
+  flex: 0 0 280px
+
+  .field__input
+    height: 36px
+    font-family: 'SFMono-Regular', Consolas, monospace
+    font-size: 12.5px
+
+.profile-row__actions
+  display: flex
+  flex-shrink: 0
+  gap: 4px
+
+.profile-icon
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  width: 30px
+  height: 30px
+  padding: 0
+  border: 1px solid transparent
+  border-radius: 8px
+  background: transparent
+  cursor: pointer
+  transition: border-color .16s, background .16s
+
+  svg
+    width: 15px
+    height: 15px
+    stroke: $muted
+
+  &:hover:not(:disabled),
+  &.active
+    border-color: $border
+    background: $hover
+
+    svg
+      stroke: $text
+
+  &:disabled
+    opacity: .3
+    cursor: default
+
+  &.profile-icon_danger:hover:not(:disabled)
+    border-color: $bad
+    background: rgba(220, 38, 38, .08)
+
+    svg
+      stroke: $bad
+
+// Switch
+.profile-toggle
+  position: relative
+  flex-shrink: 0
+  margin: 0
+  cursor: pointer
+
+  input
+    position: absolute
+    opacity: 0
+    width: 1px
+    height: 1px
+
+  input:focus-visible + .profile-toggle__track
+    outline: 2px solid $yellow
+    outline-offset: 2px
+
+  input:checked + .profile-toggle__track
+    background: $yellow
+
+    .profile-toggle__thumb
+      transform: translateX(14px)
+
+  input:disabled + .profile-toggle__track
+    opacity: .6
+    cursor: default
+
+.profile-toggle__track
+  display: block
+  width: 34px
+  height: 20px
+  padding: 2px
+  border-radius: 999px
+  background: $border
+  transition: background .18s
+
+.profile-toggle__thumb
+  display: block
+  width: 16px
+  height: 16px
+  border-radius: 50%
+  background: #FFFFFF
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .25)
+  transition: transform .18s
+
+// Inline editor
+.profile-editor
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 12px
+  padding: 4px 16px 16px 64px
+
+  label
+    display: grid
+    gap: 5px
+    margin: 0
+
+    span
+      font-size: 11px
+      font-weight: 600
+      letter-spacing: .05em
+      text-transform: uppercase
+      color: $muted
+
+  .field__input,
+  .select
+    height: 36px
+    font-size: 13px
+
+.profile-editor__wide
+  grid-column: span 2
+
+// ---------------------------------------------------------------- save bar
+
+.profile-savebar
+  position: sticky
+  bottom: 16px
+  z-index: 5
+  display: flex
+  align-items: center
+  gap: 10px
+  max-width: 1200px
+  margin: 8px auto 0
+  padding: 12px 14px 12px 20px
+  border: 1px solid $border
+  border-radius: 14px
+  background: $surface
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, .35)
+  animation: savebar-in .2s ease-out
+
+.profile-savebar__text
+  flex: 1 1 auto
+  font-size: 13.5px
+  font-weight: 600
+
+.profile-savebar__error
+  color: $bad
+
+@keyframes savebar-in
+  from
+    opacity: 0
+    transform: translateY(8px)
+
+// ---------------------------------------------------------------- small screens
+
+@media (max-width: 900px)
+  .profile-row__main
+    flex-wrap: wrap
+
+  .profile-row__info
+    flex-basis: calc(100% - 60px)
+
+  .profile-row__value
+    flex: 1 1 200px
+    margin-left: 48px
+
+  .profile-editor
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    padding-left: 16px
+
+@media (max-width: 560px)
+  .profile-intro
+    flex-wrap: wrap
+
+  .profile-intro__stat
+    justify-items: start
+    margin-left: 0
+
+  .profile-editor
+    grid-template-columns: minmax(0, 1fr)
+
+  .profile-editor__wide
+    grid-column: auto

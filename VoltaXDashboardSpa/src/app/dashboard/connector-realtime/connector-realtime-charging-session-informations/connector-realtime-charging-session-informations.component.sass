@@ -1,641 +1,217 @@
-@import ./../../../../styles/connector-realtime
-// Main Container
-.charging-session-page 
-  background: var(--primary2)
-  min-height: 100vh
-  padding: 2rem 0
-  
-  .page__container 
-    max-width: 1400px
-    margin: 0 auto
-    padding: 0 2rem
-  
+@import '../../../../styles/equipment-details'
 
+:host
+  display: block
+  color: var(--vx-text, #171b24)
 
-// Header Section
-.session-header 
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
-  border-radius: 1.5rem
-  padding: 2.5rem
-  margin-bottom: 3rem
-  color: white
-  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1), 0 10px 10px -5px rgba(99, 102, 241, 0.04)
+.session-summary
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 16px
+  margin: -8px 0 24px
 
-  .header-content 
-    display: flex
-    justify-content: space-between
-    align-items: center
-  
+.summary-context
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 10px 16px
+  color: var(--vx-text-muted, #737985)
+  font-size: 12px
+  a
+    color: var(--vx-yellow-ink, #8a6410)
+    text-decoration: none
+    &:hover
+      text-decoration: underline
 
-  .session-info 
-    display: flex
-    align-items: center
-    gap: 1.5rem
-  
-
-  .session-badge 
-    display: flex
-    align-items: center
-    justify-content: center
-    width: 4rem
-    height: 4rem
-    background: rgba(255, 255, 255, 0.2)
-    border-radius: 1rem
-    backdrop-filter: blur(10px)
-    border: 1px solid rgba(255, 255, 255, 0.3)
-  
-
-  .session-title 
-    font-size: 2.5rem
-    font-weight: 700
-    margin: 0
-    background: linear-gradient(45deg, #ffffff 0%, #e0e7ff 100%)
-    -webkit-background-clip: text
-    -webkit-text-fill-color: transparent
-  
-
-  .session-subtitle 
-    font-size: 1.1rem
-    opacity: 0.9
-    margin: 0.5rem 0 0 0
-  
-
-  .header-actions 
-    display: flex
-    gap: 1rem
-  
-
-
-// Action Buttons
-.action-btn 
+.invoice-action
   display: inline-flex
   align-items: center
-  gap: 0.5rem
-  padding: 1rem 1.5rem
-  border: 2px solid rgba(255, 255, 255, 0.3)
-  background: rgba(255, 255, 255, 0.1)
-  color: white
-  border-radius: 0.75rem
+  gap: 8px
+  border: 0
+  svg
+    width: 16px
+    height: 16px
+
+.status-pill
+  display: inline-flex
+  align-items: center
+  min-height: 26px
+  padding: 4px 9px
+  border-radius: 999px
+  background: #fef0c7
+  color: #8a6410
+  font-size: 11px
   font-weight: 600
-  font-size: 0.875rem
-  cursor: pointer
-  transition: all 0.3s ease
-  backdrop-filter: blur(10px)
-  
-  &:hover 
-    transform: translateY(-2px)
-    background: rgba(255, 255, 255, 0.2)
-    border-color: rgba(255, 255, 255, 0.5)
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15)
-  
-  
-  &:active 
-    transform: translateY(0)
-  
+  &[data-status='Completed']
+    background: #d1fadf
+    color: #027a48
+  &[data-status='CompletedOccupied']
+    background: #dbeafe
+    color: #175cd3
+  &[data-status='NotStarted']
+    background: #f2f4f7
+    color: #475467
 
+.metrics-grid
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 14px
+  margin-bottom: 32px
 
-// Loading Container
-.loading-container 
-  display: flex
-  justify-content: center
-  align-items: center
-  height: 400px
-  background: white
-  border-radius: 1.5rem
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1)
-
-
-// Section Headers
-.section-header 
+.metric-card
   display: flex
   align-items: center
-  gap: 1rem
-  margin-bottom: 2rem
-
-  .section-icon 
-    display: flex
-    align-items: center
-    justify-content: center
-    width: 3rem
-    height: 3rem
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
-    border-radius: 0.75rem
-    color: white
-  
-
-  .section-title 
-    font-size: 1.75rem
+  gap: 13px
+  min-width: 0
+  padding: 18px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  .metric-icon
+    display: grid
+    place-items: center
+    width: 38px
+    height: 38px
+    flex: 0 0 38px
+    border-radius: 9px
+    background: var(--vx-yellow-soft, #e5b22314)
+    color: var(--vx-yellow-ink, #8a6410)
+    svg
+      width: 20px
+      height: 20px
+  > div
+    min-width: 0
+    display: grid
+    gap: 4px
+  span
+    color: var(--vx-text-muted, #737985)
+    font-size: 11px
+  strong
+    overflow-wrap: anywhere
+    font-size: 16px
     font-weight: 600
-    color: var(--primary9)
-    margin: 0
-  
 
-  .vat-toggle-wrapper 
-    margin-left: auto
-  
-
-
-// Info Section
-.info-section 
-  background: var(--primary1)
-  border-radius: 1.5rem
-  padding: 2.5rem
-  margin-bottom: 3rem
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid var(--primary2)
-
-
-.info-grid 
-  display: grid
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
-  gap: 1.5rem
-
-  .info-item 
-    background: #f8fafc
-    border-radius: 1rem
-    padding: 1.5rem
-    border: 1px solid #e2e8f0
-    transition: all 0.3s ease
-
-    &:hover 
-      background: #f1f5f9
-      border-color: #cbd5e1
-      transform: translateY(-2px)
-      box-shadow: 0 4px 12px var(--primary2)
-    
-  
-
-
-// Summary Cards Grid
-.summary-grid 
-  display: grid
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
-  gap: 2rem
-  margin-bottom: 3rem
-  background: var(--primary2)
-
-
-.summary-card 
-  background: var(--primary1)
-  border-radius: 1.5rem
-  padding: 2rem
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid var(--primary2)
-  transition: all 0.3s ease
-
-  &:hover 
-    transform: translateY(-4px)
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)
-  
-
-  .summary-icon 
-    display: flex
-    align-items: center
-    justify-content: center
-    width: 3.5rem
-    height: 3.5rem
-    border-radius: 1rem
-    margin-bottom: 1.5rem
-  
-
-  .summary-title 
-    font-size: 1.25rem
-    font-weight: 600
-    color: var(--primary9)
-    margin: 0 0 1.5rem 0
-  
-
-  &--energy 
-    .summary-icon 
-      background: linear-gradient(135deg, #10b981 0%, #34d399 100%)
-      color: white
-    
-  
-
-  &--idle 
-    .summary-icon 
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)
-      color: white
-    
-  
-
-  &--pricing 
-    .summary-icon 
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
-      color: white
-    
-  
-
-
-// Summary Details
-.summary-details 
-  .detail-row 
-    display: flex
-    justify-content: space-between
-    align-items: center
-    padding: 0.75rem 0
-    border-bottom: 1px solid var(--primary2)
-
-    &:last-child 
-      border-bottom: none
-    
-
-    &--total 
-      border-top: 2px solid #e2e8f0
-      margin-top: 1rem
-      padding-top: 1rem
-      font-weight: 600
-      
-      .detail-value 
-        color: #059669
-        font-size: 1.125rem
-        font-weight: 700
-      
-    
-
-    .detail-label 
-      color: #64748b
-      font-size: 0.875rem
-      font-weight: 500
-    
-
-    .detail-value 
-      color: var(--primary9)
-      font-weight: 600
-    
-  
-
-
-// Payment Card Section
-.payment-card-section 
-  margin-top: 2rem
-  padding-top: 2rem
-  border-top: 2px solid #f1f5f9
-
-
-.payment-card-visual 
-  background: linear-gradient(135deg, #1e293b 0%, #475569 100%)
-  border-radius: 1rem
-  padding: 1.5rem
-  color: white
-  position: relative
-  overflow: hidden
-
-  &::before 
-    content: ''
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>')
-    opacity: 0.1
-  
-
-  .card-chip 
-    width: 2.5rem
-    height: 2rem
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)
-    border-radius: 0.25rem
-    margin-bottom: 1.5rem
-    position: relative
-    z-index: 1
-  
-
-  .card-details 
-    position: relative
-    z-index: 1
-    margin-bottom: 1rem
-  
-
-  .card-label 
-    font-size: 0.75rem
-    opacity: 0.8
-    margin-bottom: 0.25rem
-  
-
-  .card-number 
-    font-size: 1.25rem
-    font-weight: 600
-    letter-spacing: 0.1em
-  
-
-  .card-balance 
-    display: flex
-    justify-content: space-between
-    align-items: center
-    position: relative
-    z-index: 1
-  
-
-  .balance-label 
-    font-size: 0.875rem
-    opacity: 0.9
-  
-
-  .balance-amount 
-    font-size: 1.25rem
-    font-weight: 700
-    color: #34d399
-  
-
-
-// Breakdown Section
-.breakdown-section 
-  background: var(--primary1)
-  border-radius: 1.5rem
-  padding: 2.5rem
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)
-  border: 1px solid var(--primary2)
-
-
-// Enhanced Price Table
-.price-table-container 
-  background: #f8fafc
-  border-radius: 1rem
-  padding: 1.5rem
-  border: 1px solid #e2e8f0
-
-
-.modern-price-table 
-  width: 100%
-  border-collapse: collapse
-  border-spacing: 0
-
-  thead tr 
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)
-    
-    th 
-      padding: 1.25rem 1rem
-      text-align: left
-      font-weight: 600
-      font-size: 0.875rem
-      color: white
-      border: none
-
-      &:first-child 
-        border-radius: 0.5rem 0 0 0
-      
-
-      &:last-child 
-        border-radius: 0 0.5rem 0 0
-      
-    
-  
-
-  tbody 
-    .table-row 
-      background: white
-      transition: all 0.2s ease
-
-      &:hover 
-        background: #f8fafc
-        transform: scale(1.01)
-      
-
-      &.vat-row 
-        background: #fef3c7
-        
-        &:hover 
-          background: #fde68a
-        
-      
-
-      td 
-        padding: 1rem
-        border-bottom: 1px solid #e2e8f0
-        font-size: 0.875rem
-        color: #374151
-
-        &.service-cell 
-          display: flex
-          align-items: center
-          gap: 0.75rem
-          font-weight: 600
-          color: var(--primary9)
-
-          .service-icon 
-            font-size: 1.25rem
-          
-        
-
-        &.amount-cell 
-          font-weight: 600
-          color: #059669
-          text-align: right
-        
-      
-    
-
-    .total-row 
-      background: linear-gradient(135deg, #1e293b 0%, #475569 100%)
-      color: white
-      font-weight: 700
-
-      td 
-        border: none
-        font-size: 1rem
-
-        &.total-label 
-          font-weight: 700
-          color: #ffffff
-        
-
-        &.total-minutes 
-          color: #e0e7ff
-          font-weight: 600
-        
-
-        &.total-amount 
-          color: #34d399
-          font-weight: 700
-          font-size: 1.125rem
-          text-align: right
-        
-      
-    
-  
-
-
-// VAT Toggle Styles
-.vat-toggle 
-  background: #f1f5f9
-  border-radius: 0.75rem
-  
-  button 
-    padding: 0.5rem 1rem
-    border-radius: 0.5rem
-    border: none
-    background: transparent
-    color: #64748b
+.detail-row
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  gap: 24px
+  padding: 16px 24px
+  & + &
+    border-top: 1px solid var(--vx-border, #ededed)
+  span
+    flex-shrink: 0
+    color: var(--vx-text-muted, #737985)
+    font-size: 12px
+  strong
+    min-width: 0
+    text-align: right
+    overflow-wrap: anywhere
+    font-size: 13px
     font-weight: 500
-    font-size: 0.875rem
-    cursor: pointer
-    transition: all 0.2s ease
 
-    &.active 
-      background: #6366f1
-      color: white
-      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3)
-    
+.billing-section
+  margin-top: 28px
+  overflow: hidden
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
 
-    &:hover:not(.active) 
-      color: #374151
-      background: #e2e8f0
-    
-  
+.billing-heading
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 16px
+  padding: 22px 24px
+  border-bottom: 1px solid var(--vx-border, #ededed)
+  h2
+    margin: 0 0 6px
+    font-size: 15px
+    font-weight: 600
+  p
+    margin: 0
+    color: var(--vx-text-muted, #737985)
+    font-size: 12px
 
+.billing-row
+  display: grid
+  grid-template-columns: minmax(180px, 1.4fr) repeat(3, minmax(110px, 1fr))
+  align-items: center
+  gap: 16px
+  padding: 15px 24px
+  border-bottom: 1px solid var(--vx-border, #ededed)
+  font-size: 13px
+  > :not(:first-child)
+    text-align: right
+  span
+    color: var(--vx-text-muted, #737985)
+  strong
+    font-weight: 500
 
-// Responsive Design
-@media (max-width: 1200px) 
-  .summary-grid 
+.billing-row--head
+  padding-top: 11px
+  padding-bottom: 11px
+  background: var(--vx-surface-alt, #fafafa)
+  color: var(--vx-text-muted, #737985)
+  font-size: 11px
+  font-weight: 600
+  text-transform: uppercase
+  letter-spacing: .04em
+
+.billing-total
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 20px
+  padding: 20px 24px
+  background: var(--vx-yellow-soft, #e5b22314)
+  div
+    display: grid
+    gap: 4px
+  span
+    font-size: 13px
+    font-weight: 600
+  small
+    color: var(--vx-text-muted, #737985)
+    font-size: 11px
+  > strong
+    color: var(--vx-yellow-ink, #8a6410)
+    font-size: 19px
+
+button:disabled
+  opacity: .55
+  cursor: not-allowed
+
+@media (max-width: 980px)
+  .metrics-grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+@media (max-width: 700px)
+  .billing-row
+    grid-template-columns: minmax(120px, 1.4fr) repeat(3, minmax(90px, 1fr))
+    min-width: 620px
+  .billing-table
+    overflow-x: auto
+
+@media (max-width: 520px)
+  .session-summary
+    align-items: stretch
+  .summary-context
+    width: 100%
+  .invoice-action
+    justify-content: center
+    width: 100%
+  .metrics-grid
     grid-template-columns: 1fr
-  
-  
-  .charging-session-page .page__container 
-    padding: 0 1.5rem
-  
-
-
-@media (max-width: 768px) 
-  .session-header 
-    padding: 2rem
-    
-    .header-content 
-      flex-direction: column
-      gap: 2rem
-      text-align: center
-    
-    
-    .session-title 
-      font-size: 2rem
-    
-    
-    .header-actions 
-      width: 100%
-      justify-content: center
-    
-  
-
-  .info-grid 
-    grid-template-columns: 1fr
-    gap: 1rem
-  
-
-  .summary-card 
-    padding: 1.5rem
-  
-
-  .section-header 
-    flex-wrap: wrap
-    gap: 1rem
-    
-    .vat-toggle-wrapper 
-      margin-left: 0
-      width: 100%
-    
-  
-
-  .modern-price-table 
-    font-size: 0.75rem
-    
-    thead th,
-    tbody td 
-      padding: 0.75rem 0.5rem
-    
-    
-    .service-cell 
-      flex-direction: column
-      align-items: flex-start
-      gap: 0.25rem
-      
-      .service-icon 
-        display: none
-      
-    
-  
-
-  .payment-card-visual 
-    padding: 1.25rem
-    
-    .card-balance 
-      flex-direction: column
-      gap: 0.5rem
-      text-align: center
-    
-  
-
-
-@media (max-width: 480px) 
-  .charging-session-page 
-    padding: 1rem 0
-    
-    .page__container 
-      padding: 0 1rem
-    
-  
-
-  .session-header 
-    padding: 1.5rem
-    margin-bottom: 2rem
-  
-
-  .info-section,
-  .breakdown-section 
-    padding: 1.5rem
-  
-
-  .summary-card 
-    padding: 1.25rem
-  
-
-  .action-btn 
-    padding: 0.75rem 1rem
-    font-size: 0.8rem
-  
-
-
-// Animation keyframes
-@keyframes slideInUp 
-  from 
-    opacity: 0
-    transform: translateY(30px)
-  
-  to 
-    opacity: 1
-    transform: translateY(0)
-  
-
-
-@keyframes fadeIn 
-  from 
-    opacity: 0
-  
-  to 
-    opacity: 1
-  
-
-
-// Apply animations
-.info-section,
-.summary-card,
-.breakdown-section 
-  animation: slideInUp 0.6s ease-out
-
-
-.session-header 
-  animation: fadeIn 0.8s ease-out
-
-
-// Loading animations
-@keyframes pulse 
-  0%, 100% 
-    opacity: 1
-  
-  50% 
-    opacity: 0.5
-  
-
-
-.loading-container 
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite
+  .detail-row
+    align-items: flex-start
+    padding: 15px 18px
+    gap: 14px
+  .billing-heading
+    align-items: stretch
+    padding: 18px
+  .billing-total
+    padding: 18px

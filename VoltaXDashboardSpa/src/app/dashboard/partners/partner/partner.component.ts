@@ -21,6 +21,10 @@ enum PartnerTabsEnum {
 export class PartnerComponent implements OnInit {
 
   tabsEnum: PartnerTabsEnum = PartnerTabsEnum.InformationsTab;
+  readonly tabs = [
+    { id: PartnerTabsEnum.InformationsTab, label: 'Information', description: 'Profile, contact & business details', icon: 'M12 11v6M12 7v1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0' },
+    { id: PartnerTabsEnum.ChargingStationsTab, label: 'Charging stations', description: 'Stations managed by this partner', icon: 'M8 3v5m8-5v5M6 8h12v4a6 6 0 0 1-12 0V8Zm6 10v4' }
+  ];
   staticUrl: string = environment.apiStaticFilesUrl;
 
   PageState = PageState;
@@ -98,6 +102,19 @@ export class PartnerComponent implements OnInit {
 
   changeTab(tab: any) {
     this.tabsEnum = tab;
+  }
+
+  onTabKey(event: KeyboardEvent, index: number): void {
+    let next = index;
+    if (event.key === 'ArrowRight') next = (index + 1) % this.tabs.length;
+    else if (event.key === 'ArrowLeft') next = (index + this.tabs.length - 1) % this.tabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = this.tabs.length - 1;
+    else return;
+    event.preventDefault();
+    this.changeTab(this.tabs[next].id);
+    const tablist = (event.currentTarget as HTMLElement).parentElement;
+    (tablist?.querySelectorAll('button')[next] as HTMLButtonElement)?.focus();
   }
 
 

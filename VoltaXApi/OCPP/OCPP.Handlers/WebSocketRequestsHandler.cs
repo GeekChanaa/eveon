@@ -14,88 +14,102 @@ namespace VoltaXApi.OCPP.Handlers
 {
   public class WebSocketRequestsHandler : IWebSocketRequestsHandler
   {
-    private const string Protocol_OCPP16 = "ocpp1.6";
-    private const string Protocol_OCPP20 = "ocpp2.0.1";
-    private static readonly string[] SupportedProtocols = { Protocol_OCPP20, Protocol_OCPP16 };
     private IChargePointRepository _chargePointRepo;
     private readonly AuthenticationService _authService;
-    private readonly WebSocketManagerService _webSocketManagerService;
-    private readonly ChargePointStatusManagerService _chargePointStatusManagerService;
     private readonly WebSocketSubProtocolMatcher _webSocketSubProtocolMatcher;
     private readonly WebSocketHandler _webSocketHandler;
-    private readonly RequestQueueManagerService _requestQueueManagerService;
-
+    private readonly ILogger<WebSocketRequestsHandler> _logger;
+    private readonly bool _allowUnauthenticatedChargers;
 
     public WebSocketRequestsHandler(
       IChargePointRepository chargePointRepo,
-      WebSocketManagerService webSocketManagerService,
-      ChargePointStatusManagerService chargePointStatusManagerService,
       WebSocketSubProtocolMatcher webSocketSubProtocolMatcher,
       WebSocketHandler webSocketHandler,
-      RequestQueueManagerService requestQueueManagerService
+      ILogger<WebSocketRequestsHandler> logger,
+      IConfiguration configuration
     )
     {
       _authService = new AuthenticationService();
       _chargePointRepo = chargePointRepo;
-      _webSocketManagerService = webSocketManagerService;
-      _chargePointStatusManagerService = chargePointStatusManagerService;
       _webSocketSubProtocolMatcher = webSocketSubProtocolMatcher;
       _webSocketHandler = webSocketHandler;
-      _requestQueueManagerService = requestQueueManagerService;
+      _logger = logger;
+      _allowUnauthenticatedChargers = configuration.GetValue("Ocpp:AllowUnauthenticatedChargers", false);
     }
 
     public async Task Handle(HttpContext context)
     {
-        Console.WriteLine("OCPPMiddleware => Websocket request: Path='{0}'", context.Request.Path);
-        
-        ChargePointStatus? chargePointStatus = null;
-
         if (!context.Request.Path.StartsWithSegments("/OCPP"))
         {
+          _logger.LogWarning("WebSocket request outside /OCPP rejected: {Path}", context.Request.Path);
           context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
           return;
         }
     
-        string chargepointIdentifier = context.Request.Path.Value.Split('/').Last();
+        string chargepointIdentifier = context.Request.Path.Value!.Split('/').Last();
         ChargePoint? chargePoint = await _chargePointRepo.GetChargePointByChargePointIDAsync(chargepointIdentifier);
         if (chargePoint == null)
         {
-            Console.WriteLine($"No ChargePoint found with identifier {chargepointIdentifier}");
-            context.Response.StatusCode = (int)HttpStatusCode.PreconditionFailed;
+            _logger.LogWarning("OCPP connection rejected: unknown charge point {ChargePointId}", chargepointIdentifier);
+            RejectUnauthorized(context);
             return;
         }
- 
-        Console.WriteLine("Found chargepoint with identifier={0}", chargePoint.ChargePointId);
-        _authService.AuthenticateChargePoint(context, chargePoint);
 
-        chargePointStatus = new ChargePointStatus(chargePoint);
-        if (chargePointStatus != null)
+        if (!await IsAuthenticated(context, chargePoint, chargepointIdentifier))
         {
-            // Match supported sub protocols
-            string subProtocol = _webSocketSubProtocolMatcher.GetMatchingSubProtocol(context);
-            if (string.IsNullOrEmpty(subProtocol))
-            {
-                Console.WriteLine("OCPPMiddleware => No supported sub-protocol from charge station '{0}'", chargepointIdentifier);
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            }
-            else
-            {
-                chargePointStatus.Protocol = subProtocol;
+            RejectUnauthorized(context);
+            return;
+        }
 
-               _chargePointStatusManagerService.UpdateChargePointStatus(chargepointIdentifier, chargePointStatus);
-                
-                Console.WriteLine("OCPPMiddleware => Waiting for message...");
-                await _webSocketHandler.AcceptWebSocketAsync(context, subProtocol, chargePointStatus);
-                
-            }
-        }
-        else
+        // Only versions with registered handlers are offered (see OcppInboundHandlerRegistry).
+        string? subProtocol = _webSocketSubProtocolMatcher.GetMatchingSubProtocol(context);
+        if (string.IsNullOrEmpty(subProtocol))
         {
-            Console.WriteLine("OCPPMiddleware => no chargepoint: http 412");
-            context.Response.StatusCode = (int)HttpStatusCode.PreconditionFailed;
+            _logger.LogWarning("OCPP connection rejected for {ChargePointId}: none of the requested sub-protocols [{Requested}] is supported [{Supported}]",
+                chargepointIdentifier, string.Join(", ", context.WebSockets.WebSocketRequestedProtocols), string.Join(", ", _webSocketSubProtocolMatcher.SupportedProtocols));
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return;
         }
+
+        var chargePointStatus = new ChargePointStatus(chargePoint) { Protocol = subProtocol };
+        await _webSocketHandler.AcceptWebSocketAsync(context, subProtocol, chargePointStatus);
     }
 
+    private async Task<bool> IsAuthenticated(HttpContext context, ChargePoint chargePoint, string identity)
+    {
+        var result = _authService.AuthenticateChargePoint(context, chargePoint, identity, out var upgradedHash);
+        if (result == ChargePointAuthResult.Success)
+        {
+            if (upgradedHash != null)
+            {
+                try
+                {
+                    chargePoint.Password = upgradedHash;
+                    await _chargePointRepo.Update(chargePoint);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not upgrade legacy password hash for charge point {ChargePointId}", identity);
+                }
+            }
+            return true;
+        }
 
+        if (result == ChargePointAuthResult.NoCredentialsConfigured && _allowUnauthenticatedChargers)
+        {
+            _logger.LogWarning("SECURITY: charge point {ChargePointId} has no password or certificate and was accepted WITHOUT authentication because Ocpp:AllowUnauthenticatedChargers is enabled. Set a password for this charger.", identity);
+            return true;
+        }
+
+        _logger.LogWarning("OCPP connection rejected for charge point {ChargePointId} from {RemoteIp}: {Reason}",
+            identity, context.Connection.RemoteIpAddress, result);
+        return false;
+    }
+
+    private static void RejectUnauthorized(HttpContext context)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        context.Response.Headers["WWW-Authenticate"] = "Basic realm=\"OCPP\", charset=\"UTF-8\"";
+    }
   }
 }

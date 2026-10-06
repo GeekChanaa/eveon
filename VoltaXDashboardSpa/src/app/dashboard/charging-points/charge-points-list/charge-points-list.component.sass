@@ -1,0 +1,40 @@
+// Shown only for charge points VoltaX never configured; opens the guided setup.
+.setup-btn
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  width: 34px
+  height: 34px
+  padding: 0
+  border-radius: 50%
+  border-color: var(--vx-yellow, #E5B223)
+  background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+  color: var(--vx-yellow-ink, #8A6410)
+  text-decoration: none
+  animation: setup-glow 2.4s ease-in-out infinite
+  transition: background .2s, color .2s, transform .15s
+
+  svg
+    width: 16px
+    height: 16px
+    flex-shrink: 0
+    fill: none
+    stroke: currentColor
+
+  &:hover
+    background: var(--vx-yellow, #E5B223)
+    color: #0B0B0B
+
+  &:active
+    transform: scale(.96)
+
+  &:focus-visible
+    outline: 2px solid var(--vx-yellow, #E5B223)
+    outline-offset: 2px
+
+  @media (prefers-reduced-motion: reduce)
+    animation: none
+
+@keyframes setup-glow
+  50%
+    box-shadow: 0 0 0 4px rgba(229, 178, 35, .18)

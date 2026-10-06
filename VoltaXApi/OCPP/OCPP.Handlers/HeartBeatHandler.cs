@@ -3,6 +3,7 @@ using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -34,7 +35,7 @@ namespace VoltaXApi.OCPP.Handlers
 
         heartbeatResponse.CurrentTime = DateTimeOffset.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-        msgOut.JsonPayload = JsonConvert.SerializeObject(heartbeatResponse);
+        msgOut.JsonPayload = JsonConvert.SerializeObject(heartbeatResponse, OCPPMessageFactory.DefaultSettings);
         _logger.LogTrace("Heartbeat => Response serialized");
 
         await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgIn.Action, null, errorCode, msgIn, msgOut);

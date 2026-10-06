@@ -8,6 +8,7 @@ import { HomeChargerBindListComponent } from './home-charger-bind-list/home-char
 import { HomeComponent } from './home/home.component';
 import { TabsStatisticsComponent } from './home/tabs-statistics/tabs-statistics.component';
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
+import { ChargePointProvisioningComponent } from './charge-point-provisioning/charge-point-provisioning.component';
 import { RechargeOrdersComponent } from './recharge-orders/recharge-orders.component';
 import { StationLoadBalanceComponent } from './station-load-balance/station-load-balance.component';
 import { UsersComponent } from './users/users.component';
@@ -35,6 +36,7 @@ import { ChargingSessionsComponent } from './charging-sessions/charging-sessions
       AlarmManagementComponent,
       ChargingProfileComponent,
       OcppConfigurationComponent,
+      ChargePointProvisioningComponent,
       TabsStatisticsComponent,
       DashboardComponent,
       StatisticsComponent,

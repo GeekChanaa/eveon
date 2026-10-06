@@ -1,91 +1,77 @@
-<div class="header__body">
-  <div class="header__top">
-    <div class="header__title">Notification</div>
-    <div class="actions actions_small">
-      <button class="actions__button">
-        <svg class="icon icon-more-horizontal">
-          <use xlink:href="#icon-more-horizontal"></use>
-        </svg>
+<div class="header__item header__item_notifications" (keydown.escape)="close(true)">
+  <button #toggle type="button" class="header__head" [class.active]="state.unreadCount > 0" (click)="togglePanel()"
+    aria-haspopup="true" [attr.aria-expanded]="open" aria-controls="notification-panel"
+    [attr.aria-label]="state.unreadCount ? 'Notifications, ' + state.unreadCount + ' unread' : 'Notifications'">
+    <svg class="icon icon-notification" aria-hidden="true">
+      <use xlink:href="#icon-notification"></use>
+    </svg>
+  </button>
+
+  <section id="notification-panel" class="notif-panel" *ngIf="open" aria-label="Notifications">
+    <header class="notif-panel__head">
+      <div>
+        <h2>Notifications</h2>
+        <p>{{ state.unreadCount ? state.unreadCount + ' unread' : 'You are all caught up' }}</p>
+      </div>
+      <div class="notif-panel__tools">
+        <button type="button" class="notif-link" [disabled]="!state.unreadCount" (click)="markAllAsRead()">Mark all as read</button>
+        <button type="button" class="notif-link notif-link--muted" [disabled]="!state.items.length" (click)="requestClearAll()">Clear all</button>
+      </div>
+    </header>
+
+    <div class="notif-filter" role="group" aria-label="Filter notifications">
+      <button type="button" [class.is-active]="filter === 'all'" [attr.aria-pressed]="filter === 'all'" (click)="filter = 'all'">All</button>
+      <button type="button" [class.is-active]="filter === 'unread'" [attr.aria-pressed]="filter === 'unread'" (click)="filter = 'unread'">
+        Unread <span *ngIf="state.unreadCount" class="notif-count">{{ badge }}</span>
       </button>
-      <div class="actions__body">
-        <button class="actions__option">
-          <svg class="icon icon-check">
-            <use xlink:href="#icon-check"></use>
-          </svg>Mark as read
-        </button>
-        <button class="actions__option">
-          <svg class="icon icon-trash">
-            <use xlink:href="#icon-trash"></use>
-          </svg>Delete notifications
-        </button>
-      </div>
     </div>
+
+    <div class="notif-list">
+      <p class="notif-state" *ngIf="state.loading && !state.items.length" role="status">Loading notifications...</p>
+      <div class="notif-state" *ngIf="state.error && !state.items.length" role="alert">
+        <p>Could not load notifications.</p>
+        <button type="button" class="notif-link" (click)="retry()">Retry</button>
+      </div>
+      <p class="notif-state" *ngIf="!state.loading && !state.error && !visibleItems.length">
+        {{ filter === 'unread' ? 'No unread notifications.' : 'No notifications yet. Charger outages, reports and data requests will show up here.' }}
+      </p>
+
+      <article *ngFor="let item of visibleItems" class="notif-item" [class.is-unread]="!item.read" [attr.data-tone]="meta(item).tone">
+        <button type="button" class="notif-item__main" (click)="openNotification(item)">
+          <span class="notif-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path [attr.d]="meta(item).icon" /></svg>
+          </span>
+          <span class="notif-item__body">
+            <span class="notif-item__line">
+              <strong>{{ meta(item).label }}</strong>
+              <span *ngIf="item.urgent" class="notif-urgent">Urgent</span>
+              <time [attr.datetime]="item.createdAt" [title]="item.createdAt | date:'medium'">{{ timeAgo(item.createdAt) }}</time>
+            </span>
+            <span class="notif-item__text">{{ item.description }}</span>
+          </span>
+          <span *ngIf="!item.read" class="notif-dot"><span class="visually-hidden">Unread</span></span>
+        </button>
+        <button type="button" class="notif-remove" (click)="remove(item, $event)" aria-label="Remove notification">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </article>
+    </div>
+  </section>
+</div>
+
+<div class="notif-toasts" aria-live="polite">
+  <div *ngFor="let toast of toasts" class="notif-toast" [attr.data-tone]="meta(toast.notification).tone">
+    <button type="button" class="notif-toast__main" (click)="openNotification(toast.notification)">
+      <span class="notif-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path [attr.d]="meta(toast.notification).icon" /></svg>
+      </span>
+      <span class="notif-item__body">
+        <strong>{{ meta(toast.notification).label }}</strong>
+        <span class="notif-item__text">{{ toast.notification.description }}</span>
+      </span>
+    </button>
+    <button type="button" class="notif-remove" (click)="dismissToast(toast.notification.id)" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
   </div>
-  <div class="header__list"><a class="header__notification new" href="notification.html">
-      <div class="header__avatar"><img src="img/content/avatar-1.jpg" alt="Avatar">
-        <div class="header__icon" style="background-color: #2A85FF;"><img src="img/content/message.svg"
-            alt="Status"></div>
-      </div>
-      <div class="header__details">
-        <div class="header__line">
-          <div class="header__subtitle">Domenica</div>
-          <div class="header__login">@domenica</div>
-          <div class="header__time">1h</div>
-        </div>
-        <div class="header__content">Comment on <strong>Smiles – 3D icons</strong></div>
-      </div>
-    </a><a class="header__notification new" href="notification.html">
-      <div class="header__avatar"><img src="img/content/avatar-2.jpg" alt="Avatar">
-        <div class="header__icon" style="background-color: #FF6A55;"><img src="img/content/heart.svg"
-            alt="Status"></div>
-      </div>
-      <div class="header__details">
-        <div class="header__line">
-          <div class="header__subtitle">Janice</div>
-          <div class="header__login">@ethel</div>
-          <div class="header__time">2h</div>
-        </div>
-        <div class="header__content">Likes <strong>Smiles – 3D icons</strong></div>
-      </div>
-    </a><a class="header__notification new" href="notification.html">
-      <div class="header__avatar"><img src="img/content/avatar-3.jpg" alt="Avatar">
-        <div class="header__icon" style="background-color: #83BF6E;"><img src="img/content/shopping-bag.svg"
-            alt="Status"></div>
-      </div>
-      <div class="header__details">
-        <div class="header__line">
-          <div class="header__subtitle">Janiya</div>
-          <div class="header__login">@ethel</div>
-          <div class="header__time">4h</div>
-        </div>
-        <div class="header__content">Purchased <strong>Smiles – 3D icons</strong></div>
-      </div>
-    </a><a class="header__notification" href="notification.html">
-      <div class="header__avatar"><img src="img/content/avatar-4.jpg" alt="Avatar">
-        <div class="header__icon" style="background-color: #8E59FF;"><img src="img/content/star.svg" alt="Status">
-        </div>
-      </div>
-      <div class="header__details">
-        <div class="header__line">
-          <div class="header__subtitle">Danial</div>
-          <div class="header__login">@danial</div>
-          <div class="header__time">6h</div>
-        </div>
-        <div class="header__content">Rate <img src="img/content/rating-star.svg" alt="Star" /> <strong>5</strong>
-          for <strong>Smiles – 3D icons</strong></div>
-      </div>
-    </a><a class="header__notification" href="notification.html">
-      <div class="header__avatar"><img src="img/content/avatar-5.jpg" alt="Avatar">
-        <div class="header__icon" style="background-color: #2A85FF;"><img src="img/content/message.svg"
-            alt="Status"></div>
-      </div>
-      <div class="header__details">
-        <div class="header__line">
-          <div class="header__subtitle">Esmeralda</div>
-          <div class="header__login">@esmeralda</div>
-          <div class="header__time">8h</div>
-        </div>
-        <div class="header__content">Comment on <strong>Smiles – 3D icons</strong></div>
-      </div>
-    </a></div><a class="button header__button" href="notification.html">See all notifications</a>
 </div>

@@ -15,7 +15,9 @@ import { ProfileUpdatePhoneComponent } from './account-informations/profile-upda
 import { ProfileVerifyEmailComponent } from './account-informations/profile-verify-email/profile-verify-email.component';
 import { ProfileVerifyPhoneComponent } from './account-informations/profile-verify-phone/profile-verify-phone.component';
 import { ProfileSecurityChangePasswordComponent } from './profile-security/profile-security-change-password/profile-security-change-password.component';
+import { TwoFactorSettingsModule } from './profile-security/two-factor-settings/two-factor-settings.module';
 import { AddDebitCardProfileComponent } from './debit-cards/add-debit-card-profile/add-debit-card-profile.component';
+import { ProfilePrivacyComponent } from './profile-privacy/profile-privacy.component';
 @NgModule({
     declarations: [
         AccountInformationsComponent,
@@ -30,7 +32,8 @@ import { AddDebitCardProfileComponent } from './debit-cards/add-debit-card-profi
         ProfileVerifyEmailComponent,
         ProfileVerifyPhoneComponent,
         ProfileSecurityChangePasswordComponent,
-        AddDebitCardProfileComponent
+        AddDebitCardProfileComponent,
+        ProfilePrivacyComponent
     ],
     imports: [
         AtomsModule,
@@ -38,7 +41,8 @@ import { AddDebitCardProfileComponent } from './debit-cards/add-debit-card-profi
         CommonModule,
         SharedModule,
         FormsModule,
-        ProfileRoutingModule
+        ProfileRoutingModule,
+        TwoFactorSettingsModule
     ],
   })
   export class ProfileModule { }

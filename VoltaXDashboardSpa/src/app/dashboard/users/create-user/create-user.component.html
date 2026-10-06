@@ -1,57 +1,52 @@
 <!-- inner-->
-<app-dashboard-form-container title="New Role" [items]="[
+<app-dashboard-form-container title="New User" [items]="[
     { label: 'Dashboard', link: '/dashboard' },
     { label: 'Users', link: '/dashboard/users' },
     { label: 'Create' }
   ]">
-  <form [formGroup]="userForm" form (ngSubmit)="onSubmit()">
-    <app-form-field class="field" title="First Name" description="tbd" placeholder="First Name"
+  <form class="station-wizard people-create" [formGroup]="userForm" form (ngSubmit)="onSubmit()">
+<header class="station-intro"><span class="station-eyebrow">User account</span><h2>Create a new user</h2><p>Add profile details, contact information, and account access.</p></header>
+<section class="people-form-section"><div class="station-section-heading"><h3>Profile</h3><p>Basic information about the account holder.</p></div><div class="field__group">
+<app-form-field class="field" title="First Name" description="The user?s given name." placeholder="First Name"
       [control]="getControl('firstName')"></app-form-field>
-
-    <app-form-field class="field" title="Last Name" description="tbd" placeholder="Last Name"
+<app-form-field class="field" title="Last Name" description="The user?s family name." placeholder="Last Name"
       [control]="getControl('lastName')"></app-form-field>
-
-    <app-form-field class="field" title="Email" description="tbd" placeholder="Email"
-      [control]="getControl('email')"></app-form-field>
-
-    <app-form-field class="field" title="gender" inputType="select" placeholder="Gender" description="tbd"
+<app-form-field class="field" title="gender" inputType="select" placeholder="Gender" description="Select the user?s gender."
       [control]="getControl('gender')" [options]="genders"></app-form-field>
-
-    <app-form-field class="field" title="City" description="tbd" placeholder="City"
+<app-form-field class="field" title="Birthday" inputType="datetime" description="The user?s date of birth." placeholder="Birthday"
+      [control]="getControl('birthday')"></app-form-field>
+<app-form-field class="field" title="City" description="The city where the user is based." placeholder="City"
       [control]="getControl('city')"></app-form-field>
-
-
-    <app-search-input class="field__wrap" class="field" title="Vehicle"
+<app-search-input class="field" title="Vehicle"
       description="The make and the brand of the user's electric vehicle" placeholder="Electric Vehicle"
       [control]="getControl('electricVehicleModelID')" [options]="evModels"></app-search-input>
-
-    <app-form-field class="field" title="Birthday" inputType="datetime" description="tbd" placeholder="Birthday"
-      [control]="getControl('birthday')"></app-form-field>
-
-    <app-form-field class="field" title="Phone" description="tbd" placeholder="Phone"
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Contact information</h3><p>Set the email and phone details used for this account.</p></div><div class="field__group">
+<app-form-field class="field" title="Email" description="Email address associated with the account." placeholder="Email"
+      [control]="getControl('email')"></app-form-field>
+<app-form-field class="field" title="Phone" description="Contact phone number." placeholder="Phone"
       [control]="getControl('phone')"></app-form-field>
-
-    <app-form-field class="field" title="Password" inputType="password" description="tbd" placeholder="Password"
-      [control]="getControl('password')"></app-form-field>
-
-    <!-- PartnerID -->
-    <app-form-field class="field" title="Partner" inputType="select" placeholder="Partner" description="tbd"
-      [control]="getControl('partnerID')" [options]="partnersOptions"></app-form-field>
-
-    <app-form-field class="field" title="Verified Email ?" inputType="checkbox" description="tbd" placeholder="verified"
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Verification</h3><p>Record the current verification state of these contact details.</p></div><div class="station-amenities">
+<app-form-field class="field" title="Verified Email ?" inputType="checkbox" description="Whether this email address has already been verified." placeholder="verified"
       [control]="getControl('isEmailVerified')"></app-form-field>
-
-    <app-form-field class="field" title="Verified Phone ?" inputType="checkbox" description="tbd" placeholder="verified"
+<app-form-field class="field" title="Verified Phone ?" inputType="checkbox" description="Whether this phone number has already been verified." placeholder="verified"
       [control]="getControl('isPhoneNumberVerified')"></app-form-field>
-
-    <app-form-field class="field" title="role" inputType="select" [options]="roles" description="tbd"
+</div></section>
+<section class="people-form-section"><div class="station-section-heading"><h3>Account access</h3><p>Choose the partner association, role, and password.</p></div><div class="field__group">
+<app-form-field class="field" title="Partner" inputType="select" placeholder="Partner" description="Associate this user with a partner."
+      [control]="getControl('partnerID')" [options]="partnersOptions"></app-form-field>
+<app-form-field class="field" title="role" inputType="select" [options]="roles" description="Choose the account?s access role."
       [control]="getControl('roleID')"></app-form-field>
-    <div class="btns_group">
+<app-form-field class="field" title="Password" inputType="password" description="Set the account password." placeholder="Password"
+      [control]="getControl('password')"></app-form-field>
+</div></section>
+    <div class="form__actions people-submit">
       <app-button variant="secondary" [disabled]="userForm.invalid" [ngClass]="{'disabled': userForm.invalid}"
         type="submit">
         <app-svg-spinner *ngIf="isLoading"></app-svg-spinner>
         <ng-container *ngIf="!isLoading">
-          Submit
+          Create user
         </ng-container>
       </app-button>
     </div>

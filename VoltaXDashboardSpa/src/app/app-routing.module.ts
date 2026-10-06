@@ -1,3 +1,5 @@
+import { dashboardPermissionGuard, partnerPermissionGuard } from 'src/_guards/dashboard-permission.guard';
+import { AccessDeniedComponent } from './global/error-pages/access-denied/access-denied.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './auth/auth.component';
@@ -11,10 +13,12 @@ import { GoodByeComponent } from './good-bye/good-bye.component';
 import { PartnerAuthComponent } from './partner-auth/partner-auth.component';
 
 const routes: Routes = [
+  { path: "access-denied", component: AccessDeniedComponent },
   {
     path: "dashboard",
     component: DashboardComponent,
-    canActivate : [AuthGuard],
+    canActivate : [AuthGuard, dashboardPermissionGuard],
+    canActivateChild: [dashboardPermissionGuard],
     loadChildren : () => import('./dashboard/dashboard.module').then( m => m.DashboardModule)
   },
   {
@@ -25,7 +29,8 @@ const routes: Routes = [
   },{
     path: "partner-dashboard",
     component: PartnerDashboardComponent,
-    canActivate : [AuthGuard],
+    canActivate : [AuthGuard, partnerPermissionGuard],
+    canActivateChild: [partnerPermissionGuard],
     loadChildren : () => import('./partner-dashboard/partner-dashboard.module').then( m => m.PartnerDashboardModule)
   },
   {

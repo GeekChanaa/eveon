@@ -10,6 +10,8 @@ export class ConfirmModalComponent implements OnInit {
   isVisible = false;
   title = '';
   message = '';
+  confirmLabel = 'Confirm';
+  tone: 'default' | 'danger' = 'default';
   private onConfirmCallback!: (...args: any[]) => void;
 
   constructor(
@@ -17,10 +19,12 @@ export class ConfirmModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._confirmService.confirmationRequest$.subscribe(({ title, message, onConfirm }) => {
+    this._confirmService.confirmationRequest$.subscribe(({ title, message, onConfirm, confirmLabel, tone }) => {
       this.title = title;
       this.message = message;
       this.onConfirmCallback = onConfirm;
+      this.confirmLabel = confirmLabel || 'Confirm';
+      this.tone = tone || 'default';
       this.isVisible = true;
     });
   }
@@ -34,6 +38,10 @@ export class ConfirmModalComponent implements OnInit {
 
   cancel() {
     this.isVisible = false;
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) this.cancel();
   }
 
 }

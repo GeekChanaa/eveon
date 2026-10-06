@@ -5,7 +5,22 @@
     { label: 'Charging Stations', link: '/dashboard/charging-stations' },
     { label: 'Create' }
   ]">
-  <div form>
+  <div form class="station-wizard">
+    <nav class="station-steps" aria-label="Station creation progress">
+      <ol>
+        <li *ngFor="let label of ['Station type', 'Details', 'Location', 'Charge points', 'Photos', 'Review']; let i = index"
+          [class.is-current]="currentStep === i" [class.is-complete]="currentStep > i"
+          [attr.aria-current]="currentStep === i ? 'step' : null">
+          <span class="station-steps__number">{{ currentStep > i ? '✓' : i + 1 }}</span>
+          <span>{{ label }}</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="station-intro">
+      <span class="station-eyebrow">Step {{ currentStep + 1 }} of 6</span>
+      <h2>{{ ['Choose your station type', 'Station details', 'Set the station location', 'Configure your charge points', 'Add station photos', 'Review your station'][currentStep] }}</h2>
+      <p>{{ ['Choose who owns this charging station to begin setup.', 'Define the station settings and the amenities available to drivers.', 'Enter the address and select the exact charging location on the map.', 'Add the charging hardware, connectors, and pricing for this location.', 'Help drivers recognize the station when they arrive.', 'Check the details below before creating your charging station.'][currentStep] }}</p>
+    </header>
     <!-- Charging Station Type Choice -->
     <ng-container *ngIf="currentStep == CreateChargingStationFormStepEnum.ChargingStationTypeChoice">
       <app-create-charging-station-type-choice

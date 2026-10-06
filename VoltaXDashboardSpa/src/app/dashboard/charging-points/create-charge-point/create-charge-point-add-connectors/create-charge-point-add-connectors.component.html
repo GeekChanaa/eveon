@@ -1,32 +1,37 @@
 
 <div class="charge-points-container">
+  <div class="charge-point-summary" aria-label="Charge point summary">
+    <div><span class="equipment-label">Serial number</span><span class="equipment-value">{{ chargePoint.serialNumber }}</span></div>
+    <div><span class="equipment-label">Category</span><span class="equipment-value">{{ chargePoint.category }}</span></div>
+    <div><span class="equipment-label">Status</span><span class="equipment-value">{{ chargePoint.status }}</span></div>
+  </div>
   <div class="header-actions">
-    <h2>Connectors</h2>
+    <h3>Connectors <span class="station-count">{{ chargePoint.connectors?.length || 0 }} / {{ chargePoint.category === 'Single' ? 1 : 2 }}</span></h3>
     <app-button
       (btnClick)="openAddConnectorModal()"
       [disabled]="!canAddConnector()"
       [variant]="'secondary'"
       size="small">
-        Add Connector
+        + Add connector
     </app-button>
   </div>
   
   <div class="charge-points-list" *ngIf="chargePoint.connectors.length > 0">
     <div class="connectors-section">
       <div class="connectors-header">
-        <h4>Connectors ({{ chargePoint.connectors?.length || 0 }}/{{ chargePoint.category === 'Single' ? 1 : 2 }})</h4>
+        <h4>Connector specifications &amp; fees</h4>
       </div>
      
       <div class="connectors-list" *ngIf="chargePoint.connectors?.length > 0">
         <div class="connector-item" *ngFor="let connector of chargePoint.connectors; let i = index">
           <div class="connector-info">
-            <p>Power: {{ connector.power }} kW</p>
-            <p>Type: {{ connector.type }}</p>
-            <p>Price per kWh: {{ connector.pricePerKWh || '-' }}</p>
-            <p>Price per Idle Minute: {{ connector.pricePerIdleMinute || '-' }}</p>
-            <p>Cost Per Kwh: {{ connector.costPerKwh || '-' }}</p>
-            <p>Price per Minute: {{ connector.pricePerMinute || '-' }}</p>
-            <p>Flat Fee: {{ connector.flatFee || '-' }}</p>
+            <p><span class="equipment-label">Power</span><span class="equipment-value">{{ connector.power }} kW</span></p>
+            <p><span class="equipment-label">Type</span><span class="equipment-value">{{ connector.type }}</span></p>
+            <p><span class="equipment-label">Price per kWh</span><span class="equipment-value">{{ connector.pricePerKWh || '-' }}</span></p>
+            <p><span class="equipment-label">Price per Idle Minute</span><span class="equipment-value">{{ connector.pricePerIdleMinute || '-' }}</span></p>
+            <p><span class="equipment-label">Cost Per Kwh</span><span class="equipment-value">{{ connector.costPerKwh || '-' }}</span></p>
+            <p><span class="equipment-label">Price per Minute</span><span class="equipment-value">{{ connector.pricePerMinute || '-' }}</span></p>
+            <p><span class="equipment-label">Flat Fee</span><span class="equipment-value">{{ connector.flatFee || '-' }}</span></p>
           </div>
           <div class="connector-actions">
             <button class="btn btn-small"  (click)="openEditConnectorModal(i)">Edit</button>
@@ -42,7 +47,9 @@
   </div>
   
   <div class="empty-state" *ngIf="chargePoint.connectors.length === 0">
-    <p>No charge points added yet. Click the button above to add your first charge point.</p>
+    <span class="station-empty-icon" aria-hidden="true">+</span>
+    <h3>No connectors yet</h3>
+    <p>Use Add connector to configure the connector type, power, and charging fees.</p>
   </div>
 </div>
 
@@ -51,7 +58,7 @@
   <div class="modal" [@modalAnimation]>
     <div class="modal-header">
       <h3>{{ currentConnectorIndex !== null ? 'Edit' : 'Add' }} Connector</h3>
-      <button class="close-btn" (click)="closeConnectorModal()">&times;</button>
+      <button type="button" class="close-btn" aria-label="Close connector dialog" (click)="closeConnectorModal()">&times;</button>
     </div>
     
     <div class="modal-body">
@@ -83,7 +90,7 @@
     (btnClick)="saveInformations()"
     [isLoading]="isSaving"
     [variant]="'secondary'">
-      Submit
+      Create charge point
   </app-button>
 
 </div>

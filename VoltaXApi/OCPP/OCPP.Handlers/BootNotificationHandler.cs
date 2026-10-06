@@ -1,11 +1,13 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.Services;
+using VoltaXApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace VoltaXApi.OCPP.Handlers
 {
@@ -14,23 +16,17 @@ namespace VoltaXApi.OCPP.Handlers
 
     private readonly ILogger _logger;
     private readonly IMessageLogRepository _msgLogRepo;
-    private readonly IChargePointRepository _chargePointRepository;
-    private readonly IChargePointModelRepository _chargePointModelRepository;
-    private readonly IChargePointService _chargePointService;
+    private readonly ChargePointBootService _bootService;
 
     public BootNotificationHandler(
       ILoggerFactory loggerFactory,
       IMessageLogRepository messageLogRepository,
-      IChargePointRepository chargePointRepository,
-      IChargePointModelRepository chargePointModelRepository,
-      IChargePointService chargePointService
+      ChargePointBootService bootService
     )
     {
       _logger = loggerFactory.CreateLogger(typeof(BootNotificationHandler));
       _msgLogRepo = messageLogRepository;
-      _chargePointRepository = chargePointRepository;
-      _chargePointModelRepository = chargePointModelRepository;
-      _chargePointService = chargePointService;
+      _bootService = bootService;
     }
 
 
@@ -40,52 +36,38 @@ namespace VoltaXApi.OCPP.Handlers
       string? bootReason = null;
       try
       {
-        var settings = new JsonSerializerSettings
+        var bootNotificationRequest = JsonConvert.DeserializeObject<BootNotificationRequest>(msgIn.JsonPayload ?? string.Empty);
+        if (bootNotificationRequest?.ChargingStation == null)
         {
-          Converters = new List<JsonConverter> { new StringEnumConverter() }
-        };
-        _logger.LogTrace("Processing boot notification...");
-        BootNotificationRequest bootNotificationRequest = JsonConvert.DeserializeObject<BootNotificationRequest>(msgIn.JsonPayload);
-        _logger.LogTrace("BootNotification => Message deserialized");
-
-        bootReason = bootNotificationRequest?.Reason.ToString();
-
-        // Updating ChargePoint Informations based on the bootnotificationRequest
-        await _chargePointService.SetBootNotificationInfo(chargePointStatus, bootNotificationRequest);
-
-
-        _logger.LogInformation("BootNotification => Reason={0}", bootReason);
-        BootNotificationResponse bootNotificationResponse = new BootNotificationResponse();
-        bootNotificationResponse.CurrentTime = DateTime.Now;
-        bootNotificationResponse.Interval = 300;
-
-        bootNotificationResponse.CustomData = new CustomDataType
+          _logger.LogWarning("BootNotification => Invalid payload from {ChargePointId}", chargePointStatus.Id);
+          errorCode = ErrorCodes.FormationViolation;
+        }
+        else
         {
-          VendorId = OCPPHelper.VendorId
-        };
+          bootReason = bootNotificationRequest.Reason.ToString();
+          _logger.LogInformation("BootNotification => {ChargePointId} Reason={Reason}", chargePointStatus.Id, bootReason);
 
-        // if (ChargePointStatus != null)
-        // {
-        //   // Known charge station => accept
-        //   bootNotificationResponse.Status = RegistrationStatusEnumType.Accepted;
-        // }
-        // else
-        // {
-        //   // Unknown charge station => reject
-        //   bootNotificationResponse.Status = RegistrationStatusEnumType.Rejected;
-        // }
+          var decision = await _bootService.RegisterBootAsync(chargePointStatus, bootNotificationRequest);
+          var bootNotificationResponse = new BootNotificationResponse
+          {
+            CurrentTime = DateTime.UtcNow,
+            Interval = decision.Interval,
+            Status = decision.Status,
+            CustomData = new CustomDataType { VendorId = OCPPHelper.VendorId }
+          };
 
-        msgOut.JsonPayload = JsonConvert.SerializeObject(bootNotificationResponse, settings);
-        _logger.LogTrace("BootNotification => Response serialized");
+          _logger.LogInformation("BootNotification => {ChargePointId} answered {Status}", chargePointStatus.Id, bootNotificationResponse.Status);
+          msgOut.JsonPayload = JsonConvert.SerializeObject(bootNotificationResponse, OCPPMessageFactory.DefaultSettings);
+        }
       }
       catch (Exception exp)
       {
-        _logger.LogError(exp, "BootNotification => Exception: {0}", exp.Message);
+        _logger.LogError(exp, "BootNotification => Exception processing request from {ChargePointId}", chargePointStatus.Id);
         errorCode = ErrorCodes.FormationViolation;
       }
 
       await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, null, msgIn.Action, bootReason, errorCode, msgIn, msgOut);
-      return errorCode;
+      return errorCode!;
     }
   }
 }

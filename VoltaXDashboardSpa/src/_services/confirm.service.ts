@@ -9,11 +9,18 @@ export class ConfirmService {
     title: string;
     message: string;
     onConfirm: (...args: any[]) => void;
+    confirmLabel?: string;
+    tone?: 'default' | 'danger';
   }>();
 
   confirmationRequest$ = this.confirmationRequest.asObservable();
 
-  requestConfirmation(title: string, message: string, onConfirm: (...args: any[]) => void): void {
-    this.confirmationRequest.next({ title, message, onConfirm });
+  requestConfirmation(
+    title: string,
+    message: string,
+    onConfirm: (...args: any[]) => void,
+    options: { confirmLabel?: string; tone?: 'default' | 'danger' } = {}
+  ): void {
+    this.confirmationRequest.next({ title, message, onConfirm, ...options });
   }
 }

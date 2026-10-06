@@ -32,15 +32,6 @@ namespace VoltaXApi.OCPP.Handlers
                 ResetResponse resetResponse = JsonConvert.DeserializeObject<ResetResponse>(msgIn.JsonPayload);
                 _logger.LogInformation("Reset => Answer status: {0}", resetResponse?.Status);
                 await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgOut.Action, resetResponse?.Status.ToString(), msgIn.ErrorCode, msgIn, msgOut);
-
-                if (msgOut.TaskCompletionSource != null)
-                {
-                    // Set API response as TaskCompletion-result
-                    string apiResult = "{\"status\": " + JsonConvert.ToString(resetResponse.Status.ToString()) + "}";
-                    _logger.LogTrace("HandleReset => API response: {0}", apiResult);
-
-                    msgOut.TaskCompletionSource.SetResult(apiResult);
-                }
             }
             catch (Exception exp)
             {

@@ -1,0 +1,164 @@
+// Shared tokens and small pieces for the charge point configuration pages (light + dark via styles/theme.sass).
+$surface: var(--vx-surface, #FFFFFF)
+$surface-alt: var(--vx-surface-alt, #FAFAFA)
+$hover: var(--vx-hover, #F4F4F4)
+$border: var(--vx-border, #EDEDED)
+$text: var(--vx-text, #0B0B0B)
+$muted: var(--vx-text-muted, #7A7C80)
+$yellow: var(--vx-yellow, #E5B223)
+$yellow-soft: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+$yellow-ink: var(--vx-yellow-ink, #8A6410)
+$ok: #1F9D55
+$ok-soft: rgba(31, 157, 85, .12)
+$warn: #B7791F
+$warn-soft: rgba(183, 121, 31, .14)
+$bad: #DC2626
+$bad-soft: rgba(220, 38, 38, .1)
+$ease: cubic-bezier(.2, .8, .2, 1)
+
+@mixin reduced-motion
+  @media (prefers-reduced-motion: reduce)
+    @content
+
+@mixin card
+  border: 1px solid $border
+  border-radius: 16px
+  background: $surface
+
+@mixin rise($delay-var: 0)
+  animation: cfg-rise .45s $ease both
+  animation-delay: calc(var(--i, #{$delay-var}) * 45ms)
+  +reduced-motion
+    animation: none
+
+@keyframes cfg-rise
+  from
+    opacity: 0
+    transform: translateY(10px)
+
+@keyframes cfg-ping
+  0%
+    transform: scale(1)
+    opacity: .55
+  80%, 100%
+    transform: scale(2.6)
+    opacity: 0
+
+@keyframes cfg-spin
+  to
+    transform: rotate(360deg)
+
+.cfg-dot
+  position: relative
+  display: inline-block
+  flex: none
+  width: 8px
+  height: 8px
+  border-radius: 50%
+  background: $muted
+  opacity: .6
+
+  &.cfg-dot_on
+    background: $ok
+    opacity: 1
+
+    &::after
+      content: ''
+      position: absolute
+      inset: 0
+      border-radius: 50%
+      background: $ok
+      animation: cfg-ping 1.8s ease-out infinite
+      +reduced-motion
+        animation: none
+
+.cfg-badge
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  padding: 3px 10px
+  border-radius: 999px
+  font-size: 11.5px
+  font-weight: 700
+  white-space: nowrap
+
+  &.cfg-badge_ok
+    background: $ok-soft
+    color: $ok
+  &.cfg-badge_warn
+    background: $warn-soft
+    color: $warn
+  &.cfg-badge_bad
+    background: $bad-soft
+    color: $bad
+  &.cfg-badge_pending
+    background: $yellow-soft
+    color: $yellow-ink
+  &.cfg-badge_muted
+    background: $hover
+    color: $muted
+
+.cfg-btn
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  gap: 7px
+  min-height: 38px
+  padding: 0 16px
+  border: 1px solid $border
+  border-radius: 10px
+  background: $surface
+  color: $text
+  font: inherit
+  font-size: 13.5px
+  font-weight: 650
+  text-decoration: none
+  cursor: pointer
+  transition: background .15s, border-color .15s, transform .15s $ease, box-shadow .15s
+
+  svg
+    width: 16px
+    height: 16px
+    stroke: currentColor
+    flex: none
+
+  &:hover:not(:disabled)
+    background: $hover
+    color: $text
+
+  &:active:not(:disabled)
+    transform: scale(.97)
+
+  &:focus-visible
+    outline: 2px solid $yellow
+    outline-offset: 2px
+
+  &:disabled
+    opacity: .5
+    cursor: not-allowed
+
+  &.cfg-btn_primary
+    border-color: transparent
+    background: $yellow
+    color: #0B0B0B
+
+    &:hover:not(:disabled)
+      background: var(--vx-yellow-hover, #D0A01B)
+      color: #0B0B0B
+      box-shadow: 0 6px 18px -8px rgba(229, 178, 35, .8)
+
+  &.cfg-btn_ghost
+    border-color: transparent
+    background: transparent
+
+  &.cfg-btn_danger
+    color: $bad
+
+.cfg-spinner
+  display: inline-block
+  width: 16px
+  height: 16px
+  border: 2px solid currentColor
+  border-right-color: transparent
+  border-radius: 50%
+  animation: cfg-spin .7s linear infinite

@@ -1,39 +1,13 @@
-<app-dashboard-form-container title="New Recharge Order" [items]="[
-    { label: 'Dashboard', link: '/dashboard' },
-    { label: 'Orders', link: '/dashboard/orders' },
-    { label: 'Create' }
-  ]">
-  <div form>
-    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
-      <div class="create__card card charge_point_form">
-        <div class="create__group create__group3">
-
-          <app-form-field class="field" title="Order Status" inputType="select_enum" enumName="RechargeOrderStatus"
-            description="The status of the order" [control]="getControl('status')"></app-form-field>
-          
-
-          <app-search-input class="field"
-            placeholder="Card"
-            title="Card"
-            description="The Card to be affected by this order."
-            [control]="getControl('cardID')"
-            [options]="cards"></app-search-input>
-
-
-          <app-form-field class="field" title="Amount" placeholder="Amount" description="Amount of the order"
-            [control]="getControl('amount')" icon="icon-info"></app-form-field>
-
-            
-        </div>
-      </div>
-      <div class="form__actions">
-        <app-button class="ml-auto" [disabled]="orderForm.invalid" [isLoading]="isLoading" [variant]="'secondary'"
-          type="submit">
-          Submit
-        </app-button>
-      </div>
-
+<app-dashboard-form-container title="New recharge order" [items]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Recharge orders', link: '/dashboard/recharge-orders' }, { label: 'New order' }]">
+  <div form class="recharge-order-create">
+    <div class="station-intro"><h2>Mock payment</h2><p>Choose a card, amount, and payment outcome. Only completed payments credit the card balance.</p></div>
+    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" novalidate>
+      <section class="order-section"><header><h3>Recharge details</h3><p>Select the target card and amount.</p></header><div class="order-fields">
+        <label><span>Recharge card</span><select formControlName="cardID"><option value="">Select a card</option><option *ngFor="let card of cards" [value]="card.id">{{ card.name }}</option></select><small *ngIf="getControl('cardID').touched && getControl('cardID').invalid">Select a recharge card.</small></label>
+        <label><span>Amount</span><div class="amount-input"><input formControlName="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"><span>MAD</span></div><small *ngIf="getControl('amount').touched && getControl('amount').invalid">Enter an amount greater than zero.</small></label>
+      </div></section>
+      <section class="order-section"><header><h3>Mock payment outcome</h3><p>Every attempt gets a quote email; only Completed updates the balance.</p></header><div class="status-options"><label *ngFor="let status of paymentStatuses" [class.selected]="orderForm.value.status === status"><input type="radio" formControlName="status" [value]="status"><span>{{ status }}</span></label></div></section>
+      <div class="form-actions"><button type="button" class="secondary-action" [routerLink]="['/dashboard/recharge-orders']">Cancel</button><button type="submit" class="primary-action" [disabled]="isLoading">{{ isLoading ? 'Processing...' : 'Create payment' }}</button></div>
     </form>
   </div>
-
 </app-dashboard-form-container>

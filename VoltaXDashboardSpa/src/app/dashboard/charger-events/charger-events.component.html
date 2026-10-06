@@ -1,0 +1,111 @@
+<div class="events">
+  <form class="events__filters" (ngSubmit)="search()">
+    <label *ngIf="!chargePointId">
+      <span>Search</span>
+      <input type="text" name="search" [(ngModel)]="filters.search" placeholder="Charge point, code, value...">
+    </label>
+    <label>
+      <span>Component</span>
+      <input type="text" name="component" [(ngModel)]="filters.component" placeholder="EVSE, Connector...">
+    </label>
+    <label>
+      <span>Variable</span>
+      <input type="text" name="variable" [(ngModel)]="filters.variable" placeholder="Problem, Temperature...">
+    </label>
+    <label>
+      <span>Max severity</span>
+      <select name="maxSeverity" [(ngModel)]="filters.maxSeverity">
+        <option [ngValue]="null">Any</option>
+        <option *ngFor="let s of [0,1,2,3,4,5,6,7,8,9]" [ngValue]="s">{{ severityLabel(s) }}</option>
+      </select>
+    </label>
+    <label>
+      <span>From</span>
+      <input type="date" name="from" [(ngModel)]="filters.from">
+    </label>
+    <label>
+      <span>To</span>
+      <input type="date" name="to" [(ngModel)]="filters.to">
+    </label>
+    <label class="events__check">
+      <input type="checkbox" name="alarmsOnly" [(ngModel)]="filters.alarmsOnly">
+      <span>Active alarms only</span>
+    </label>
+    <div class="events__filter-actions">
+      <button type="submit" class="button">Search</button>
+      <button type="button" class="button-stroke" (click)="reset()">Reset</button>
+    </div>
+  </form>
+
+  <div class="events__status">
+    <span class="events__live" [class.is-live]="live" role="status">{{ live ? 'Live: new alarms appear automatically' : 'Live updates unavailable' }}</span>
+    <button type="button" class="events__link" *ngIf="liveCount" (click)="search()">{{ liveCount }} new alarm(s), refresh</button>
+    <button type="button" class="events__link" *ngIf="chargePointId" (click)="toggleMonitors()">{{ showMonitors ? 'Hide monitors' : 'Show configured monitors' }}</button>
+  </div>
+
+  <div class="events__error" role="alert" *ngIf="error">{{ error }}</div>
+
+  <div class="events__table-wrapper" *ngIf="showMonitors">
+    <table class="events__table">
+      <caption>Monitors reported by the charger (GetMonitoringReport)</caption>
+      <thead><tr><th>Id</th><th>Component</th><th>Variable</th><th>Type</th><th>Value</th><th>Severity</th><th>Reported (UTC)</th></tr></thead>
+      <tbody>
+        <tr *ngIf="monitors.length === 0"><td colspan="7" class="events__empty">No monitor reported yet. Request a monitoring report from the realtime view.</td></tr>
+        <tr *ngFor="let m of monitors">
+          <td>{{ m.monitoringId }}</td>
+          <td>{{ m.componentName }}<span *ngIf="m.componentInstance"> / {{ m.componentInstance }}</span><small *ngIf="m.evseId"> EVSE {{ m.evseId }}<span *ngIf="m.connectorId">.{{ m.connectorId }}</span></small></td>
+          <td>{{ m.variableName }}<span *ngIf="m.variableInstance"> / {{ m.variableInstance }}</span></td>
+          <td>{{ m.type }}<small *ngIf="m.transaction"> (transaction)</small></td>
+          <td>{{ m.value }}</td>
+          <td>{{ severityLabel(m.severity) }}</td>
+          <td>{{ m.reportedAt | date:'yyyy-MM-dd HH:mm':'UTC' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="events__table-wrapper">
+    <table class="events__table">
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th *ngIf="!chargePointId">Charge point</th>
+          <th>Component / variable</th>
+          <th>Value</th>
+          <th>Severity</th>
+          <th>Trigger</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="loading"><td [attr.colspan]="chargePointId ? 6 : 7" class="events__empty">Loading...</td></tr>
+        <tr *ngIf="!loading && items.length === 0"><td [attr.colspan]="chargePointId ? 6 : 7" class="events__empty">No events match these filters.</td></tr>
+        <ng-container *ngIf="!loading">
+          <tr *ngFor="let e of items" [class.is-alarm]="isAlarm(e)" [class.is-cleared]="e.cleared">
+            <td>{{ e.timestamp | date:'yyyy-MM-dd HH:mm:ss':'UTC' }}</td>
+            <td *ngIf="!chargePointId">{{ e.chargePointID }}</td>
+            <td>
+              <div>{{ e.componentName }}<span *ngIf="e.componentInstance"> / {{ e.componentInstance }}</span> &middot; {{ e.variableName }}<span *ngIf="e.variableInstance"> / {{ e.variableInstance }}</span></div>
+              <small *ngIf="e.evseId">EVSE {{ e.evseId }}<span *ngIf="e.connectorId"> connector {{ e.connectorId }}</span></small>
+            </td>
+            <td>{{ e.actualValue || '-' }}<small *ngIf="e.cleared"> (cleared)</small></td>
+            <td><span class="events__severity" [attr.data-level]="e.severity ?? 'none'">{{ severityLabel(e.severity) }}</span></td>
+            <td>{{ e.trigger }}<small> {{ e.eventNotificationType }}</small></td>
+            <td>
+              <div *ngIf="e.techCode">Code {{ e.techCode }}</div>
+              <small *ngIf="e.techInfo">{{ e.techInfo }}</small>
+              <small *ngIf="e.transactionId"> Transaction {{ e.transactionId }}</small>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="events__pager">
+    <span>{{ totalCount }} events</span>
+    <button type="button" class="button-stroke" [disabled]="page <= 1 || loading" (click)="goTo(page - 1)">Previous</button>
+    <span>Page {{ page }} / {{ totalPages }}</span>
+    <button type="button" class="button-stroke" [disabled]="page >= totalPages || loading" (click)="goTo(page + 1)">Next</button>
+  </div>
+</div>

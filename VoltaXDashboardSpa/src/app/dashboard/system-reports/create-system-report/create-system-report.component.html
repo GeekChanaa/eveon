@@ -3,99 +3,143 @@
       { label: 'System Reports', link: '/dashboard/system-reports' },
       { label: 'Create' }
     ]">
-  <div form>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div form class="system-report-form">
+    <div class="form-heading">
+      <h2>Report details</h2>
+      <p>Describe the issue and link any related equipment or users.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <app-progress-bar *ngIf="isLoading"></app-progress-bar>
+      <app-preloader-container *ngIf="isLoading"></app-preloader-container>
+
       <div class="field__group">
-          <app-progress-bar *ngIf="isLoading"></app-progress-bar>
-          <ng-container *ngIf="isLoading">
-            <app-preloader-container></app-preloader-container>
-          </ng-container>
+        <app-form-field
+          class="field field--wide"
+          title="Issue Description"
+          inputType="textarea"
+          placeholder="Describe the issue..."
+          description="Describe what happened and include any details that can help resolve the issue."
+          [control]="getControl('issueDescription')">
+        </app-form-field>
 
-            <app-form-field class="field" title="Issue Description" inputType="text" 
-              description="Description of the issue of the report."
-              [control]="getControl('issueDescription')"></app-form-field>
+        <app-form-field
+          class="field"
+          title="Criticality"
+          inputType="select_enum"
+          enumName="ReportCriticality"
+          description="Set the urgency and operational impact of the issue."
+          [control]="getControl('criticality')">
+        </app-form-field>
 
-            <app-form-field class="field" title="Criticality" inputType="select_enum" enumName="ReportCriticality"
-              description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
-              [control]="getControl('criticality')"></app-form-field>
+        <app-form-field
+          class="field"
+          title="Status"
+          inputType="select_enum"
+          enumName="ReportStatusEnum"
+          description="Choose the initial workflow status."
+          [control]="getControl('status')">
+        </app-form-field>
 
+        <app-form-field
+          class="field"
+          title="Category"
+          inputType="select_enum"
+          enumName="ReportCategory"
+          description="Classify the report for the appropriate support workflow."
+          [control]="getControl('reportCategory')">
+        </app-form-field>
 
-            <app-form-field class="field" title="Status" inputType="select_enum" enumName="ReportStatusEnum"
-              description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
-              [control]="getControl('status')"></app-form-field>
+        <app-search-input
+          class="field"
+          placeholder="Search charge points"
+          title="Charge Point"
+          description="The charge point concerned by this report."
+          [control]="getControl('chargePointID')"
+          [options]="chargePoints">
+        </app-search-input>
 
-            <app-form-field class="field" title="Status" inputType="select_enum" enumName="ReportCategory"
-              description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
-              [control]="getControl('reportCategory')"></app-form-field>
+        <app-search-input
+          class="field"
+          placeholder="Select a charge point first"
+          title="Connector"
+          [disabled]="!getControl('chargePointID').value"
+          description="The connector concerned by this report."
+          [control]="getControl('connectorID')"
+          [options]="connectors">
+        </app-search-input>
 
-            <app-form-field class="field" title="Send Email ?" inputType="toggle" 
-              description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
-              [control]="getControl('isEmail')"></app-form-field>
+        <app-search-input
+          class="field"
+          placeholder="Search support users"
+          title="Assigned User"
+          description="The support user responsible for this report."
+          [control]="getControl('assignedID')"
+          [options]="supports">
+        </app-search-input>
 
+        <app-search-input
+          class="field"
+          placeholder="Search users"
+          title="Concerned User"
+          description="The user affected by the issue."
+          [control]="getControl('userID')"
+          [options]="users">
+        </app-search-input>
 
-            <app-form-field class="field" title="Send Notification ?" inputType="toggle" 
-              description="The type of parking available at this charging station (e.g., Street Parking, Garage, Lot)."
-              [control]="getControl('isNotification')"></app-form-field>
-
-              <app-search-input class="field"
-                placeholder="Charge Point"
-                title="Charge Point"
-                description="The Charge point concerned with this report"
-                [control]="getControl('chargePointID')"
-                [options]="chargePoints"></app-search-input>
-
-            <app-search-input class="field"
-                placeholder="Connector"
-                title="Connector"
-                [disabled]="!getControl('chargePointID')?.value"
-                description="The Connector concerned with this report"
-                [control]="getControl('connectorID')"
-                [options]="connectors"></app-search-input>
-
-
-            <app-search-input class="field"
-                placeholder="Assigned User"
-                title="Assigned User"
-                description="The Assigned User for this report"
-                [control]="getControl('assignedID')"
-                [options]="supports"></app-search-input>
-
-            <app-search-input class="field"
-                placeholder="Concerned User"
-                title="Concerned User"
-                description="The Concerned User for this report"
-                [control]="getControl('userID')"
-                [options]="users"></app-search-input>
-                
-
-            <div class="field">
-              <div class="field__label">Card
-                <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                  <svg class="icon icon-info">
-                    <use xlink:href="#icon-info"></use>
-                  </svg>
-                </div>
-              </div>
-              <div class="field__wrap">
-                <div class="field__wrap">
-                  <select class="select" formControlName="cardID">
-                    <option [value]="null">None</option>
-                    <option *ngFor="let card of cards" value="{{card.id}}">{{card.fullName}} {{card.cardNumber}}
-                    </option>
-                  </select>
-                </div>
-              </div>
+        <div class="field">
+          <div class="field__label">
+            Card
+            <div class="tooltip" title="Optionally link the recharge card concerned by this report.">
+              <svg class="icon icon-info" aria-hidden="true">
+                <use xlink:href="#icon-info"></use>
+              </svg>
             </div>
+          </div>
+          <div class="field__wrap">
+            <select class="select" formControlName="cardID">
+              <option [ngValue]="null">No card selected</option>
+              <option *ngFor="let card of cards" [ngValue]="card.id">
+                {{ card.fullName }} {{ card.cardNumber }}
+              </option>
+            </select>
+          </div>
+        </div>
 
+        <app-form-field
+          class="field notification-field"
+          title="Send Email"
+          inputType="toggle"
+          description="Send an email when this report is created."
+          [control]="getControl('isEmail')">
+        </app-form-field>
+
+        <app-form-field
+          class="field notification-field"
+          title="Send Notification"
+          inputType="toggle"
+          description="Send an in-app notification when this report is created."
+          [control]="getControl('isNotification')">
+        </app-form-field>
       </div>
+
       <div class="form__actions">
-        <app-button class="ml-auto" [disabled]="form.invalid" [isLoading]="isLoading" [variant]="'secondary'"
-          type="submit">
-          Submit
+        <app-button
+          type="button"
+          variant="primary"
+          [outlined]="true"
+          [disabled]="isLoading"
+          routerLink="/dashboard/system-reports">
+          Cancel
+        </app-button>
+        <app-button
+          type="submit"
+          variant="secondary"
+          [disabled]="form.invalid"
+          [isLoading]="isLoading">
+          Create report
         </app-button>
       </div>
     </form>
   </div>
-
-
 </app-dashboard-form-container>

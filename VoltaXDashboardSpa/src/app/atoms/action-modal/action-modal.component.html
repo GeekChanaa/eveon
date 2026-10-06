@@ -1,14 +1,10 @@
-<div [ngClass]="{'active' : isVisible}">
-  <div class="modal">
-    <div class="modal-content" [ngClass]="{'active' : isVisible}">
-      <div class="modal-img">
-        <img src="{{image}}" alt="">
-      </div>
-      <div class="modal-message">
-        <div class="title">{{title}}</div>
-        <div class="message">{{message}}</div>
-      </div>
-    </div>
-  </div>
-    
+<div class="notification-region" aria-live="polite" aria-atomic="true">
+  <section *ngIf="isMounted" class="action-notification" [class.is-visible]="isVisible"
+    [class.is-leaving]="isLeaving" [ngClass]="statusClass" role="status">
+    <div class="modal-img"><img [src]="image" alt="" aria-hidden="true"></div>
+    <div class="modal-message"><div class="title">{{title}}</div><div class="message">{{message}}</div></div>
+    <button type="button" class="notification-close" (click)="hide()" aria-label="Dismiss notification">
+      <span aria-hidden="true">×</span>
+    </button>
+  </section>
 </div>

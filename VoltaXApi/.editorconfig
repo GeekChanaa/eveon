@@ -1,0 +1,7 @@
+[*.cs]
+# DateTime.Now / DateTime.Today / DateTimeOffset.Now are banned (BannedSymbols.txt).
+dotnet_diagnostic.RS0030.severity = error
+
+# Not yet migrated: seed data and OCPP transport files.
+[{Seeders/**.cs,OCPP/OCPP.Handlers/WebSocketHandler.cs,OCPP/OCPP.Services/EVDriverService.cs,OCPP/OCPP.Services/OCPPMiddleware.cs}]
+dotnet_diagnostic.RS0030.severity = warning

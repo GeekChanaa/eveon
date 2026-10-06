@@ -1,0 +1,80 @@
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'Charge Point Configurations'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charge Point Configurations' }
+  ]">
+  <div class="cfg-list" *ngIf="state === PageState.Success">
+
+    <div class="cfg-stats">
+      <div class="cfg-stat" style="--i: 0">
+        <span class="cfg-stat__label">Charge points</span>
+        <strong class="cfg-stat__value">{{stats.total}}</strong>
+      </div>
+      <div class="cfg-stat cfg-stat_online" style="--i: 1">
+        <span class="cfg-stat__label"><span class="cfg-dot cfg-dot_on"></span>Connected now</span>
+        <strong class="cfg-stat__value">{{stats.online}}</strong>
+      </div>
+      <div class="cfg-stat cfg-stat_setup" style="--i: 2">
+        <span class="cfg-stat__label">Need setup</span>
+        <strong class="cfg-stat__value">{{stats.setup}}</strong>
+      </div>
+      <div class="cfg-stat cfg-stat_ok" style="--i: 3">
+        <span class="cfg-stat__label">Configured by VoltaX</span>
+        <strong class="cfg-stat__value">{{stats.configured}}</strong>
+      </div>
+    </div>
+
+    <div class="cfg-toolbar">
+      <label class="cfg-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke-width="2"/><path d="m16 16 4 4" stroke-width="2" stroke-linecap="round"/></svg>
+        <input class="field__input" type="search" [(ngModel)]="search" (ngModelChange)="applyFilter()"
+          placeholder="Search by id, station, vendor, serial" aria-label="Search charge points">
+      </label>
+      <div class="cfg-segments" role="tablist" aria-label="Filter charge points">
+        <button type="button" role="tab" *ngFor="let f of filters" class="cfg-segment" [class.active]="filter === f.key"
+          [attr.aria-selected]="filter === f.key" (click)="setFilter(f.key)">
+          {{f.label}} <span class="cfg-segment__count">{{count(f.key)}}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="cfg-empty" *ngIf="visible.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6z" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <p>{{search || filter !== 'all' ? 'No charge point matches this filter.' : 'No charge point yet.'}}</p>
+    </div>
+
+    <div class="cfg-grid">
+      <article class="cfg-card" *ngFor="let cp of visible; let i = index; trackBy: trackCp" [style.--i]="i < 12 ? i : 12"
+        [class.cfg-card_setup]="!cp.isConfigured">
+        <header class="cfg-card__head">
+          <span class="cfg-conn" [class.cfg-conn_on]="cp.isOnline" [title]="cp.isOnline ? 'Connected' : 'Not connected'">
+            <span class="cfg-dot" [class.cfg-dot_on]="cp.isOnline"></span>{{cp.isOnline ? 'Online' : 'Offline'}}
+          </span>
+          <span class="cfg-badge" [ngClass]="'cfg-badge_' + badge(cp).tone">{{badge(cp).label}}</span>
+        </header>
+
+        <h3 class="cfg-card__title">{{cp.chargePointId}}</h3>
+        <p class="cfg-card__station">{{cp.stationName || 'No station'}}</p>
+
+        <dl class="cfg-card__facts">
+          <div><dt>Model</dt><dd>{{(cp.vendorName || cp.modelName) ? (cp.vendorName || '') + ' ' + (cp.modelName || '') : '—'}}</dd></div>
+          <div><dt>Firmware</dt><dd>{{cp.firmwareVersion || '—'}}</dd></div>
+          <div><dt>Device model</dt><dd>{{cp.reportedVariableCount ? cp.reportedVariableCount + ' variables' : 'Not read yet'}}</dd></div>
+          <div><dt>Configured</dt><dd>{{cp.isConfigured && cp.configuredAt ? (cp.configuredAt | date: 'dd MMM yyyy, HH:mm') : '—'}}</dd></div>
+        </dl>
+
+        <footer class="cfg-card__actions">
+          <a *ngIf="!cp.isConfigured" class="cfg-btn cfg-btn_primary" [routerLink]="[cp.chargePointId, 'setup']">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6z" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Set up
+          </a>
+          <a class="cfg-btn" [class.cfg-btn_primary]="cp.isConfigured" [routerLink]="[cp.chargePointId]">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9" stroke-width="1.8" stroke-linecap="round"/><circle cx="15" cy="7" r="2" stroke-width="1.8"/><circle cx="9" cy="17" r="2" stroke-width="1.8"/></svg>
+            Configuration
+          </a>
+        </footer>
+      </article>
+    </div>
+  </div>
+</app-dashboard-details-container>

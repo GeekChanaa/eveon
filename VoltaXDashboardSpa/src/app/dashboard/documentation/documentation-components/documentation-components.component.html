@@ -1,21 +1,11 @@
-<div class="page__inner">
+<div class="page__inner documentation-list">
   <div class="page__container">
-    <div class="page__title h3">Components</div>
-
-    <div class="card">
-      List Of Ocpp Components : 
-      <div class="stats">
-        <div class="stats__table">
-          <div class="stats__row">
-            <div class="stats__col">Component</div>
-          </div>
-          <div class="stats__row" *ngFor="let component of components">
-            <div class="stats__col component__name" [routerLink]="['/dashboard/documentation/components/'+component.component]">{{component.component}}</div>
-          </div>
-          
-        </div>
-      </div>
-    </div>
+    <a class="docs-back" routerLink="/dashboard/documentation"><svg class="icon"><use xlink:href="#icon-arrow-left"></use></svg>Documentation</a>
+    <header class="docs-header"><span class="docs-header__eyebrow">OCPP catalogue</span><h1>Components</h1><p>Components represent the functional parts of a charging station. Open one to see the variables defined for it.</p></header>
+    <section class="docs-panel" aria-labelledby="components-list-title">
+      <div class="docs-panel__heading"><div><h2 id="components-list-title">Available components</h2><p>{{components.length || 0}} entries in the catalogue</p></div></div>
+      <div class="docs-table-wrap"><table class="docs-table"><thead><tr><th scope="col">Component</th><th scope="col">Explore</th></tr></thead><tbody><tr *ngFor="let component of components"><td><a [routerLink]="['/dashboard/documentation/components/'+component.component]">{{component.component}}</a></td><td><a class="docs-table__action" [routerLink]="['/dashboard/documentation/components/'+component.component]">View details <svg class="icon"><use xlink:href="#icon-arrow-right"></use></svg></a></td></tr><tr *ngIf="!components?.length"><td colspan="2" class="docs-empty">No components are currently available.</td></tr></tbody></table></div>
+    </section>
   </div>
 </div>
 

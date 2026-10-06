@@ -45,7 +45,7 @@ export class RequestCallerService {
         return this._configurationService.clearDisplayMessage(chargePointID,request);
         break;
       case "ClearedChargingLimit":
-        return this._smartChargingService.clearedChargingLimit(chargePointID,request);
+        // Sent by the charger, never by the CSMS.
         break;
       case "ClearVariableMonitoring":
         return this._monitoringService.clearVariableMonitoring(chargePointID,request);

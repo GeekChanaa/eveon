@@ -13,7 +13,7 @@ export interface ChargePoint {
     status: ChargePointStatusEnum;
     comment: string;
     username: string;
-    password: string;
+    hasPassword?: boolean;
     clientCertThumb: string;
     connectors : Connector[];
     transactions: Transaction[];

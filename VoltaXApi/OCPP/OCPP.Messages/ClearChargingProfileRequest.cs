@@ -1,26 +1,19 @@
 namespace VoltaXApi.OCPP.Messages
 {
-    public class ClearChargingProfileRequest
+  /// <summary>OCPP 2.0.1 ClearChargingProfile.req: by id, or every profile matching the criteria (no criteria = all).</summary>
+  public class ClearChargingProfileRequest
   {
-      public CustomDataType CustomData { get; set; }
-      public int ChargingProfileId { get; set; }
-      public ClearChargingProfileType ChargingProfileCriteria { get; set; }
-  }
-
-  public enum ChargingProfilePurposeEnum
-  {
-      ChargingStationExternalConstraints,
-      ChargingStationMaxProfile,
-      TxDefaultProfile,
-      TxProfile
+      public CustomDataType? CustomData { get; set; }
+      public int? ChargingProfileId { get; set; }
+      public ClearChargingProfileType? ChargingProfileCriteria { get; set; }
   }
 
   public class ClearChargingProfileType
   {
-      public CustomDataType CustomData { get; set; }
-      public int? EvseId { get; set; } // Nullable integer for EVSE ID, 0 specifies overall Charging Station
-      public ChargingProfilePurposeEnum ChargingProfilePurpose { get; set; }
-      public int? StackLevel { get; set; } // Nullable integer for stack level
+      public CustomDataType? CustomData { get; set; }
+      /// <summary>0 = profiles of the whole charging station.</summary>
+      public int? EvseId { get; set; }
+      public ChargingProfilePurposeEnumType? ChargingProfilePurpose { get; set; }
+      public int? StackLevel { get; set; }
   }
-
 }

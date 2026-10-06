@@ -3,9 +3,9 @@
   <div class="charge-point-card" *ngFor="let chargePoint of chargePoints; let i = index">
     <div class="charge-point-header">
       <div class="charge-point-info">
-        <p>Serial: {{ chargePoint.serialNumber }}</p>
-        <p>Category: {{ chargePoint.category }}</p>
-        <p>Status: <span [ngClass]="'status-' + chargePoint.status.toLowerCase()">{{ chargePoint.status }}</span></p>
+        <p><span class="equipment-label">Serial</span><span class="equipment-value">{{ chargePoint.serialNumber }}</span></p>
+        <p><span class="equipment-label">Category</span><span class="equipment-value">{{ chargePoint.category }}</span></p>
+        <p><span class="equipment-label">Status</span><span class="equipment-value"><span [ngClass]="'status-' + chargePoint.status.toLowerCase()">{{ chargePoint.status }}</span></span></p>
       </div>
       <div class="charge-point-actions">
         <button class="btn btn-small" *ngIf="editableChargePoint" (click)="openEditChargePointModal(i)">Edit</button>
@@ -26,13 +26,13 @@
       <div class="connectors-list" *ngIf="chargePoint.connectors?.length > 0">
         <div class="connector-item" *ngFor="let connector of chargePoint.connectors; let j = index">
           <div class="connector-info">
-            <p>Power: {{ connector.power }} kW</p>
-            <p>Type: {{ connector.type }}</p>
-            <p>Price per kWh: {{ connector.pricePerKWh || '-' }}</p>
-            <p>Price per Idle Minute: {{ connector.pricePerIdleMinute || '-' }}</p>
-            <p>Cost Per Kwh: {{ connector.costPerKwh || '-' }}</p>
-            <p>Price per Minute: {{ connector.pricePerMinute || '-' }}</p>
-            <p>Flat Fee: {{ connector.flatFee || '-' }}</p>
+            <p><span class="equipment-label">Power</span><span class="equipment-value">{{ connector.power }} kW</span></p>
+            <p><span class="equipment-label">Type</span><span class="equipment-value">{{ connector.type }}</span></p>
+            <p><span class="equipment-label">Price per kWh</span><span class="equipment-value">{{ connector.pricePerKWh || '-' }}</span></p>
+            <p><span class="equipment-label">Price per Idle Minute</span><span class="equipment-value">{{ connector.pricePerIdleMinute || '-' }}</span></p>
+            <p><span class="equipment-label">Cost Per Kwh</span><span class="equipment-value">{{ connector.costPerKwh || '-' }}</span></p>
+            <p><span class="equipment-label">Price per Minute</span><span class="equipment-value">{{ connector.pricePerMinute || '-' }}</span></p>
+            <p><span class="equipment-label">Flat Fee</span><span class="equipment-value">{{ connector.flatFee || '-' }}</span></p>
           </div>
           <div class="connector-actions">
             <button class="btn btn-small" *ngIf="editableConnector" (click)="openEditConnectorModal(i, j)">Edit</button>

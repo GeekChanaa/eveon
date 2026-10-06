@@ -29,10 +29,6 @@ export class OcppSmartChargingService {
     return this._http.post<any>(this.baseUrl+"SetChargingProfile/"+chargePointID,request, this.httpOptions);
   }
   
-  clearedChargingLimit(chargePointID : string, request : any){
-    return this._http.post<any>(this.baseUrl+"ClearedChargingLimit/"+chargePointID,request, this.httpOptions);
-  }
-  
   getCompositeSchedule(chargePointID : string, request : any){
     return this._http.post<any>(this.baseUrl+"GetCompositeSchedule/"+chargePointID,request, this.httpOptions);
   }

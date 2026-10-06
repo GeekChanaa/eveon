@@ -1,179 +1,68 @@
-<app-dashboard-details-container 
+<app-dashboard-details-container
   [state]="state"
   [title]="'Global Configurations'" [breadcrumbs]="[
-  { label: 'Dashboard', link: '/dashboard' },
-  { label: 'Global Configurations' }
-]">
-
-    <div class="settings" *ngIf="configuration">
-      <div class="details__container">
-        <div class="details-informations__container">
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #B5E4CA;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Connector Default Price Per Kwh
-                  <div class="tooltip" title="Default Price Per KWH for any Connector">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.defaultPricePerKwh | number:'1.2-2'}}</div>
-
-              </div>
-            </div>
-          </div>
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Connector Default Cost Per Kwh
-                  <div class="tooltip" title="Default Cost Per Kwh for each Connector">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.defaultCostPerKwh| number:'1.2-2' }}</div>
-               
-              </div>
-            </div>
-          </div>
-
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #B5E4CA;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Connector Default Flat Fee
-                  <div class="tooltip" title="Default Flat Fee for each connector">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.defaultFlatFee| number:'1.2-2'}}</div>
-                
-              </div>
-            </div>
-          </div>
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Connector Default Idle Time Pricing (per minute)
-                  <div class="tooltip" title="Default Idle time pricing per minute for each connector">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.defaultIdleTimePricing| number:'1.2-2' }}</div>
-                
-              </div>
-            </div>
-          </div>
-
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Connector Default Pricing (per minute)
-                  <div class="tooltip" title="Default pricing per minute for each connector">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.defaultPricePerMinute| number:'1.2-2' }}</div>
-                
-              </div>
-            </div>
-          </div>
-
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Default Grace Period (per second)
-                  <div class="tooltip" title="Default Idle Charging Session per second">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.gracePeriod| number:'1.2-2' }}</div>
-                
-              </div>
-            </div>
-          </div>
-
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Default Grace Amount (per DH)
-                  <div class="tooltip" title="Default grace amount for each user before suspending the account">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.graceAmount| number:'1.2-2' }}</div>
-                
-              </div>
-            </div>
-          </div>
-
-          <div class="stat__item">
-            <div class="stat__icon" style="background-color: #CABDFF;">
-              <svg class="icon icon-info">
-                <use xlink:href="#icon-info"></use>
-              </svg>
-            </div>
-            <div class="stat__line">
-              <div class="stat__details">
-                <div class="stat__label">Default VAT (percentage)
-                  <div class="tooltip" title="Default vat pricing for charging">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="stat__counter">{{configuration.vat * 100| number:'1.2-2' }}%</div>
-                
-              </div>
-            </div>
-          </div>
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Global Configurations' }
+  ]">
+  <div class="config-page" *ngIf="configuration">
+    <header class="config-intro">
+      <span class="config-intro__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></span>
+      <div><h2>Platform defaults</h2><p>Review the default charging rates, grace settings, and tax configuration in one place.</p></div>
+    </header>
+    <section class="config-section" aria-labelledby="config-section-0">
+      <div class="config-section__heading"><h3 id="config-section-0">Energy pricing</h3><p>Default rates for energy consumed and operating cost.</p></div>
+      <dl class="config-grid config-grid--2">
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m13 2-8 12h6l-1 8 9-13h-6z"/></svg></span><span>Energy price</span></dt>
+          <dd class="config-card__value">{{ configuration.defaultPricePerKwh | number:'1.2-2' }}<span class="config-card__unit">per kWh</span></dd>
+          <dd class="config-card__hint">Default energy price charged for a connector.</dd>
         </div>
-      </div>
-    </div>
-  </app-dashboard-details-container>
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2m-8 4h2m4 0h2m-8 3h2m4 0h2"/></svg></span><span>Energy cost</span></dt>
+          <dd class="config-card__value">{{ configuration.defaultCostPerKwh | number:'1.2-2' }}<span class="config-card__unit">per kWh</span></dd>
+          <dd class="config-card__hint">Default operating cost of energy for a connector.</dd>
+        </div>
+      </dl>
+    </section>
+    <section class="config-section" aria-labelledby="config-section-1">
+      <div class="config-section__heading"><h3 id="config-section-1">Session charges</h3><p>Default fees for starting a session, charging time, and idle time.</p></div>
+      <dl class="config-grid config-grid--3">
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z M9 7h6M9 11h6M9 15h3"/></svg></span><span>Flat fee</span></dt>
+          <dd class="config-card__value">{{ configuration.defaultFlatFee | number:'1.2-2' }}<span class="config-card__unit">per session</span></dd>
+          <dd class="config-card__hint">Fixed fee applied when a charging session starts.</dd>
+        </div>
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span>Charging time</span></dt>
+          <dd class="config-card__value">{{ configuration.defaultPricePerMinute | number:'1.2-2' }}<span class="config-card__unit">per minute</span></dd>
+          <dd class="config-card__hint">Default rate for time spent actively charging.</dd>
+        </div>
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/></svg></span><span>Idle time</span></dt>
+          <dd class="config-card__value">{{ configuration.defaultIdleTimePricing | number:'1.2-2' }}<span class="config-card__unit">per minute</span></dd>
+          <dd class="config-card__hint">Default rate for idle time after charging finishes.</dd>
+        </div>
+      </dl>
+    </section>
+    <section class="config-section" aria-labelledby="config-section-2">
+      <div class="config-section__heading"><h3 id="config-section-2">Grace &amp; tax</h3><p>Default grace settings and the tax rate applied to charging.</p></div>
+      <dl class="config-grid config-grid--3">
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3v4l5 5-5 5v4m10-18v4l-5 5 5 5v4"/></svg></span><span>Grace period</span></dt>
+          <dd class="config-card__value">{{ configuration.gracePeriod | number:'1.2-2' }}<span class="config-card__unit">seconds</span></dd>
+          <dd class="config-card__hint">Grace time configured for charging sessions.</dd>
+        </div>
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h14V4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14V6H4Zm16 5h-5v4h5"/><path d="M16 13h1"/></svg></span><span>Account grace amount</span></dt>
+          <dd class="config-card__value">{{ configuration.graceAmount | number:'1.2-2' }}<span class="config-card__unit">DH</span></dd>
+          <dd class="config-card__hint">Default account allowance before suspension.</dd>
+        </div>
+        <div class="config-card">
+          <dt><span class="config-card__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 19 14-14"/><circle cx="7" cy="7" r="3"/><circle cx="17" cy="17" r="3"/></svg></span><span>VAT</span></dt>
+          <dd class="config-card__value">{{ configuration.vat * 100 | number:'1.2-2' }}<span class="config-card__unit">%</span></dd>
+          <dd class="config-card__hint">Default value-added tax rate for charging.</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</app-dashboard-details-container>

@@ -1,4 +1,32 @@
-@import '../../../../styles/display-page'
+@import '../../../../styles/equipment-details'
+
+.tab-content
+  padding: 0
+
+.partner-profile
+  display: grid
+  gap: 24px
+
+.logo-section
+  padding: 24px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
+
+.station-section
+  .field-group
+    display: grid
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    gap: 0 24px
+  app-display-cell
+    display: block
+    padding: 0 24px
+  > app-display-cell + app-display-cell
+    border-top: 1px solid var(--vx-border, #ededed)
+
+@media (max-width: 650px)
+  .station-section .field-group
+    grid-template-columns: 1fr
 
 .logo-container 
   position: relative

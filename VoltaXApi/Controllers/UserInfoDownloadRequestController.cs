@@ -21,13 +21,19 @@ namespace VoltaXApi.Controllers
     {
         private readonly IUserInfoDownloadRequestRepository _repository;
         private readonly IUserInfoDownloadRequestService _service;
+        private readonly INotificationService _notificationService;
+        private readonly IUserRepository _userRepository;
         
         public UserInfoDownloadRequestController(
             IUserInfoDownloadRequestRepository repository,
-            IUserInfoDownloadRequestService service) : base(repository)
+            IUserInfoDownloadRequestService service,
+            INotificationService notificationService,
+            IUserRepository userRepository) : base(repository)
         {
             _repository = repository;
             _service = service;
+            _notificationService = notificationService;
+            _userRepository = userRepository;
         }
         
         [HttpPost("create")]
@@ -36,63 +42,39 @@ namespace VoltaXApi.Controllers
             try
             {
                 var request = await _repository.CreateDownloadRequestAsync(userId);
-                return CreatedAtAction(nameof(GetById), new { id = request.ID }, request);
+                var email = await _userRepository.GetUserEmailByID(userId);
+                await _notificationService.NotifyDashboardAsync(
+                    new DashboardNotification("Data Request", "UserInfoDownloadRequested", $"{email} requested a copy of their personal data.", request.ID.ToString()),
+                    "ViewUserInfoDownloadRequests", $"/dashboard/user-info-download-requests/{request.ID}");
+                return CreatedAtAction(nameof(GetById), new { id = request.ID }, new { request.ID, request.RequestTime, request.Status });
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+                return Conflict("A data export request is already in progress.");
             }
         }
 
         [HttpGet("getRequestByID/{requestID}")]
         public async Task<ActionResult<UserInfoDownloadRequestDisplayDto>> getRequestByID(int requestID)
         {
-            try
-            {
-                var request = await _repository.GetRequestByID(requestID);
-                return Ok(request);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
+            var request = await _repository.GetRequestByID(requestID);
+            if (request == null) return NotFound();
+            return Ok(request);
         }
 
         [HttpGet("GetAllRequests")]
         public async Task<ActionResult<PagedList<UserInfoDownloadRequestListDto>>> GetAllRequests([FromQuery] GlobalParams globalParams)
         {
-            try
-            {
-                var requests = this._repository.GetUserInfoDownloadRequestList(globalParams);
-                var requestsList = await PagedList<UserInfoDownloadRequestListDto>.CreateAsync(requests,globalParams.PageNumber, globalParams.PageSize);
-                Response.AddPagination(requestsList.CurrentPage, requestsList.PageSize, requestsList.TotalCount, requestsList.TotalPages);
-                return requestsList;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
+            var requests = this._repository.GetUserInfoDownloadRequestList(globalParams);
+            var requestsList = await PagedList<UserInfoDownloadRequestListDto>.CreateAsync(requests,globalParams.PageNumber, globalParams.PageSize);
+            Response.AddPagination(requestsList.CurrentPage, requestsList.PageSize, requestsList.TotalCount, requestsList.TotalPages);
+            return requestsList;
         }
 
         [HttpGet("UserLastRequest/{userID}")]
         public async Task<ActionResult<UserInfoDownloadRequestDisplayDto>> UserLastRequest(int userID)
         {
-            try
-            {
-                return await this._repository.UserLastRequest(userID);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
+            return await this._repository.UserLastRequest(userID);
         }
 
         [HttpPost("ApproveRequest/{requestID}")]
@@ -102,25 +84,31 @@ namespace VoltaXApi.Controllers
             {
                 return await this._service.ApproveRequest(requestID);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                throw ex;
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+                return NotFound();
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict("Only pending requests can be approved.");
             }
         }
 
-        [HttpPost("DenyRequest/{userID}")]
-        public async Task<ActionResult<bool>> DenyRequest(int userID)
+        [HttpPost("DenyRequest/{requestID}")]
+        public async Task<ActionResult<bool>> DenyRequest(int requestID)
         {
             try
             {
-                return await this._service.DenyRequest(userID);
+                return await this._service.DenyRequest(requestID);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+                return NotFound();
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict("Only pending requests can be denied.");
             }
         }
-        
     }
 }

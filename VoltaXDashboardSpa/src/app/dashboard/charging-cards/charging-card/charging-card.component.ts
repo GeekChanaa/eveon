@@ -5,11 +5,13 @@ import { PageState } from 'src/_models/_enums/page-state.enum';
 import { CardService } from 'src/_services/card.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { environment } from 'src/environments/environment';
+import { AccessService } from 'src/_services/access.service';
 
 enum ChargingCardTabsEnum {
   InformationsTab = "InformationsTab",
   Transactions = "Transactions",
   Orders = "Orders",
+  History = "History",
 }
 @Component({
   selector: 'app-charging-card',
@@ -39,7 +41,8 @@ export class ChargingCardComponent implements OnInit {
   constructor(
     private _cardService: CardService,
     private _route: ActivatedRoute,
-    private _enumService : EnumMappingService
+    private _enumService : EnumMappingService,
+    public access: AccessService
   ) {
     this.cardForm = new FormGroup({
       serialNumber : new FormControl(''),
@@ -64,12 +67,13 @@ export class ChargingCardComponent implements OnInit {
   getChargingCardByID(id : number){
     this.state = PageState.Loading;
     this.cardID = id;
-    this._cardService.getCardByID(id).subscribe((cs) => {
-      this.card = cs;
-      this.state = PageState.Success
-      console.log("this is the card");
-      console.log(this.card);
-    })
+    this._cardService.getCardByID(id).subscribe({
+      next: (card) => {
+        this.card = card;
+        this.state = PageState.Success;
+      },
+      error: (error) => this.state = error.status === 404 ? PageState.NotFound : PageState.Error
+    });
   }
 
   changeTab(tab : any){

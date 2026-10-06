@@ -1,0 +1,125 @@
+.contact-flow
+  color: var(--primary9)
+.contact-flow__steps
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  gap: 4px
+  margin: 0 0 26px
+  padding: 0
+  list-style: none
+  li
+    position: relative
+    display: grid
+    justify-items: center
+    gap: 5px
+    color: var(--professional5)
+    font-size: 11px
+    font-weight: 650
+    &:not(:last-child)::after
+      position: absolute
+      top: 14px
+      left: calc(50% + 18px)
+      width: calc(100% - 36px)
+      height: 2px
+      background: var(--primary4)
+      content: ''
+    &.is-complete:not(:last-child)::after
+      background: var(--secondary2)
+  span
+    display: grid
+    place-items: center
+    width: 30px
+    height: 30px
+    color: var(--professional4)
+    background: var(--primary3)
+    border-radius: 50%
+    .icon
+      width: 15px
+      height: 15px
+      fill: currentColor
+  .is-active, .is-complete
+    color: var(--secondary1)
+    span
+      color: var(--professional2)
+      background: var(--secondary2)
+.contact-flow__intro
+  display: flex
+  gap: 13px
+  margin-bottom: 22px
+  h4
+    margin: 1px 0 5px
+    font-size: 16px
+  p
+    margin: 0
+    color: var(--professional4)
+    font-size: 13px
+    line-height: 1.5
+.contact-flow__icon
+  display: grid
+  place-items: center
+  flex: 0 0 38px
+  width: 38px
+  height: 38px
+  color: var(--secondary1)
+  background: var(--secondary5)
+  border-radius: 11px
+  .icon
+    width: 19px
+    height: 19px
+    fill: currentColor
+.contact-flow__actions
+  display: flex
+  justify-content: flex-end
+  margin-top: 22px
+.contact-flow__choices
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 12px
+.choice-card
+  display: grid
+  gap: 5px
+  min-height: 92px
+  padding: 15px
+  color: var(--primary9)
+  background: var(--primary2)
+  border: 1px solid var(--primary3)
+  border-radius: 12px
+  cursor: pointer
+  text-align: left
+  transition: border-color .16s ease, transform .16s ease
+  strong
+    font-size: 13px
+  span
+    color: var(--professional4)
+    font-size: 12px
+    line-height: 1.35
+  &:hover
+    transform: translateY(-1px)
+    border-color: var(--secondary3)
+.choice-card--primary
+  background: var(--secondary5)
+  border-color: var(--secondary3)
+.contact-flow__success
+  display: flex
+  align-items: center
+  gap: 13px
+  padding: 16px
+  background: rgba(8, 124, 88, .1)
+  border-radius: 12px
+  .icon
+    width: 31px
+    height: 31px
+    fill: #087c58
+  h4
+    margin: 0 0 4px
+    color: #087c58
+    font-size: 15px
+  p
+    margin: 0
+    color: var(--professional4)
+    font-size: 13px
+@media (max-width: 480px)
+  .contact-flow__steps small
+    font-size: 9px
+  .contact-flow__choices
+    grid-template-columns: 1fr

@@ -129,7 +129,9 @@ deploy_to_aws() {
         #docker pull "jaberfeka/voltax-api:latest"
         
         # Run new container
-        docker run -d --name "$PROJECT_NAME" -p 80:5000 "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
+        # Secrets live only on the server in /etc/eveon/api.env (see deploy/api.env.example).
+        # The API listens on localhost only; Caddy (deploy/Caddyfile) terminates HTTPS in front of it.
+        docker run -d --name "$PROJECT_NAME" --restart unless-stopped --env-file /etc/eveon/api.env -p 127.0.0.1:8080:8080 "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
         # docker run -d --name "voltax-api" -p 80:5000 "jaberfeka/voltax-api:latest"
 EOSSH
 

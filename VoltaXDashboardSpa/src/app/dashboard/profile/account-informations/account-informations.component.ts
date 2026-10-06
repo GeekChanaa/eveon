@@ -1,3 +1,5 @@
+import { AccessService } from 'src/_services/access.service';
+import { avatarUrl } from 'src/_helpers/avatar-url';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
@@ -15,6 +17,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./account-informations.component.sass']
 })
 export class AccountInformationsComponent implements OnInit {
+resolveAvatar = avatarUrl;
 editingImage: boolean = false;
   imageUploading: boolean = false;
   displayedImage: string | null = null;
@@ -62,10 +65,11 @@ editingImage: boolean = false;
   // CurrentUser
   user : any = {}
 
-  updateUserObservable = (id : number, model : any) => this._userService.editUserDashboardInformations(id, model);
+  updateUserObservable = (id : number, model : any) => this.access.updateProfile(model);
 
   // Constructor
   constructor(
+    private access: AccessService,
     private _authService : AuthService,
     private _userService : UserService,
     private _fileManagementService : FileManagementService,
@@ -90,7 +94,7 @@ editingImage: boolean = false;
   
 
   getUserByID(id : number ){
-    this._userService.getUserDashboardDisplayInformations(id).subscribe((data) => {
+    this.access.profile().subscribe((data) => {
       this.user = data;
       this._userService.setAvatarUrl(this.user.imageUrl);
     })

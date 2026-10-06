@@ -1,12 +1,11 @@
 public class LoginAttemptFailedException : Exception
 {
     public string Email { get; }
-    public DateTime LockoutEndTime { get; }
 
-    public LoginAttemptFailedException(string email, DateTime lockoutEndTime)
-        : base($"Too many failed login attempts. Account locked until {lockoutEndTime}")
+    // The lockout end is deliberately left out of the message: it reaches the client.
+    public LoginAttemptFailedException(string email)
+        : base("Too many failed attempts")
     {
         Email = email;
-        LockoutEndTime = lockoutEndTime;
     }
 }

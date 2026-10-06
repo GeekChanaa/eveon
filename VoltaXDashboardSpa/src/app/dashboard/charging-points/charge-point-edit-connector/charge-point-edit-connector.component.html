@@ -1,72 +1,18 @@
-<form [formGroup]="connectorForm">
-  
-  <app-form-field
-    class="field"
-    title="Connector ID"
-    description="tbd"
-    [control]="getControl('connectorID')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="EVSE ID"
-    description="tbd"
-    [control]="getControl('evseID')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="speed"
-    description="tbd"
-    [control]="getControl('speed')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Price Per Kwh"
-    description="tbd"
-    [control]="getControl('pricePerKWh')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Price Per Minute"
-    description="tbd"
-    [control]="getControl('pricePerMinute')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Price Per Minute"
-    description="tbd"
-    [control]="getControl('pricePerIdleMinute')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Price Per Hour"
-    description="tbd"
-    [control]="getControl('pricePerHour')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Cost Per Kwh"
-    description="tbd"
-    [control]="getControl('costPerKwh')"
-  ></app-form-field>
-
-  <app-form-field
-    class="field"
-    title="Flat Fee"
-    description="flat fee means a fixed cost charged for using the charger, regardless of the charging duration or the amount of energy consumed."
-    [control]="getControl('flatFee')"
-  ></app-form-field>
-
-  <div class="flex form__actions">
-    <button (click)="cpfOnSubmit()" class="button submit__button">Update</button>
-    <button (click)="cancelEvent.emit()" class="button-stroke btn-cancel">
-      Cancel
-    </button>
-  </div>
-</form>
+<section class="connector-editor">
+  <header><h2>Edit connector</h2><p>Update the port identifiers and pricing, then save your changes.</p></header>
+  <p *ngIf="loading" role="status">Loading connector...</p>
+  <div *ngIf="loadError" role="alert"><p>Could not load the connector.</p><button type="button" class="secondary-action" (click)="getConnector()">Retry</button></div>
+  <form *ngIf="!loading && !loadError" [formGroup]="connectorForm" (ngSubmit)="cpfOnSubmit()" [attr.aria-busy]="saving">
+    <div class="editor-grid"><div class="editor-field" *ngFor="let field of fields">
+      <label [for]="'connector-' + field.key">{{ field.label }}</label>
+      <select *ngIf="field.key === 'speed'; else numberInput" [id]="'connector-' + field.key" [formControlName]="field.key" [attr.aria-invalid]="getControl(field.key).touched && getControl(field.key).invalid">
+        <option *ngFor="let option of speedOptions" [ngValue]="option.value">{{ option.label }}</option>
+      </select>
+      <ng-template #numberInput><input type="number" min="0" [step]="field.key === 'connectorID' || field.key === 'evseID' ? '1' : 'any'" [id]="'connector-' + field.key" [formControlName]="field.key" [attr.aria-invalid]="getControl(field.key).touched && getControl(field.key).invalid"></ng-template>
+      <p role="alert" *ngIf="getControl(field.key).touched && getControl(field.key).invalid">Enter a valid non-negative {{ field.key === 'connectorID' || field.key === 'evseID' ? 'whole number' : 'number' }}.</p>
+    </div></div>
+    <p class="field-error" role="alert" *ngIf="saveError">{{ saveError }}</p>
+    <div class="edit-actions"><button type="button" class="secondary-action" [disabled]="saving" (click)="cancelEvent.emit()">Cancel</button><button type="submit" class="primary-action" [disabled]="saving || connectorForm.invalid">{{ saving ? 'Saving...' : 'Save changes' }}</button></div>
+  </form>
+  <button type="button" class="secondary-action" *ngIf="loading || loadError" (click)="cancelEvent.emit()">Cancel</button>
+</section>

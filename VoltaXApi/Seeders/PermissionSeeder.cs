@@ -66,6 +66,7 @@ public static class PermissionSeeder
             PermissionEnum.CreateChargingCards => "Can create charging cards",
             PermissionEnum.EditChargingCards => "Can edit charging cards",
             PermissionEnum.DeleteChargingCards => "Can delete charging cards",
+            PermissionEnum.ViewChargingCardHistory => "Can view the immutable charging card change history",
 
             PermissionEnum.ViewNotices => "Can view notices",
             PermissionEnum.CreateNotices => "Can create notices",

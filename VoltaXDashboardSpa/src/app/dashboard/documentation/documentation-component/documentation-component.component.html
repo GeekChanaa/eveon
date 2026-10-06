@@ -1,36 +1,9 @@
-<div class="page__inner">
+<div class="page__inner documentation-detail">
   <div class="page__container">
-    <div class="page__title h3">Component {{component.component}} </div>
-
-    <div class="card">
-      <div class="title-purple card__title">
-        Description
-      </div>
-
-      <div class="component__description">
-        {{component.description}}
-      </div>
-      
-      <div class="title-purple card__title">
-        Variables Associated to the component : {{component.component}}
-      </div>
-       
-      <div class="stats">
-        <div class="stats__table">
-          <div class="stats__row">
-            <div class="stats__col">Variable</div>
-            <div class="stats__col">Data Type</div>
-            <div class="stats__col">Unit</div>
-          </div>
-          <div class="stats__row" *ngFor="let variable of component.associatedVariables">
-            <div class="stats__col component__name" [routerLink]="['/dashboard/documentation/variables/'+variable.name]">{{variable.name}}</div>
-            <div class="stats__col" >{{variable.dataType}}</div>
-            <div class="stats__col" >{{variable.unit}}</div>
-          </div>
-          
-        </div>
-      </div>
-    </div>
+    <a class="docs-back" routerLink="/dashboard/documentation/components"><svg class="icon"><use xlink:href="#icon-arrow-left"></use></svg>All components</a>
+    <header class="detail-header"><span class="detail-header__eyebrow">OCPP component</span><h1>{{component?.component || 'Component'}}</h1><p>Configuration and telemetry variables supported by this component.</p></header>
+    <section class="detail-summary"><h2>Description</h2><p>{{component?.description || 'No description is available for this component yet.'}}</p></section>
+    <section class="docs-panel" aria-labelledby="component-variables-title"><div class="docs-panel__heading"><div><h2 id="component-variables-title">Associated variables</h2><p>Each variable links to its full catalogue entry.</p></div><span class="detail-count">{{component?.associatedVariables?.length || 0}}</span></div><div class="docs-table-wrap"><table class="docs-table"><thead><tr><th scope="col">Variable</th><th scope="col">Data type</th><th scope="col">Unit</th></tr></thead><tbody><tr *ngFor="let variable of component?.associatedVariables"><td><a [routerLink]="['/dashboard/documentation/variables/'+variable.name]">{{variable.name}}</a></td><td>{{variable.dataType || '—'}}</td><td>{{variable.unit || '—'}}</td></tr><tr *ngIf="!component?.associatedVariables?.length"><td class="docs-empty" colspan="3">No variables are associated with this component.</td></tr></tbody></table></div></section>
   </div>
 </div>
 

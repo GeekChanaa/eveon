@@ -1,0 +1,582 @@
+@use '../cfg' as *
+
+.dm
+  display: flex
+  flex-direction: column
+  gap: 16px
+  padding-bottom: 80px
+  color: $text
+
+// ---------------------------------------------------------------- header
+
+.dm-head
+  +card
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: space-between
+  gap: 16px
+  padding: 20px 22px
+  animation: cfg-rise .4s $ease both
+
+.dm-head__main
+  min-width: 0
+
+.dm-head__line
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 10px 14px
+
+  h2
+    margin: 0
+    font-size: 22px
+    font-weight: 800
+    letter-spacing: -.02em
+    word-break: break-all
+
+.dm-conn
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  font-size: 12.5px
+  font-weight: 650
+  color: $muted
+
+  &.on
+    color: $ok
+
+.dm-head__meta
+  display: flex
+  flex-wrap: wrap
+  gap: 4px 16px
+  margin: 8px 0 0
+  font-size: 13px
+  color: $muted
+
+.dm-head__actions
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+
+  .cfg-btn.pulse
+    animation: attention 1.6s ease-in-out infinite
+    +reduced-motion
+      animation: none
+
+@keyframes attention
+  50%
+    box-shadow: 0 0 0 5px $bad-soft
+
+.dm-menu
+  position: relative
+
+.dm-menu__list
+  position: absolute
+  top: calc(100% + 6px)
+  right: 0
+  z-index: 20
+  display: flex
+  flex-direction: column
+  width: 290px
+  padding: 6px
+  border: 1px solid $border
+  border-radius: 14px
+  background: $surface
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .4)
+  animation: cfg-rise .2s $ease
+
+  button
+    display: flex
+    flex-direction: column
+    gap: 2px
+    padding: 10px 12px
+    border: 0
+    border-radius: 10px
+    background: transparent
+    color: $text
+    font: inherit
+    text-align: left
+    cursor: pointer
+
+    &:hover, &:focus-visible
+      background: $hover
+      outline: none
+
+    strong
+      font-size: 13.5px
+
+    span
+      font-size: 12px
+      color: $muted
+
+// ---------------------------------------------------------------- banners
+
+.dm-banner
+  padding: 12px 16px
+  border-radius: 12px
+  font-size: 13.5px
+  line-height: 1.5
+  animation: cfg-rise .4s $ease both
+
+  a
+    margin-left: 6px
+    color: inherit
+    font-weight: 700
+
+  &.dm-banner_warn
+    background: $warn-soft
+    color: $warn
+
+  &.dm-banner_pending
+    background: $yellow-soft
+    color: $yellow-ink
+
+// ---------------------------------------------------------------- empty
+
+.dm-empty
+  +card
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 8px
+  padding: 48px 20px
+  text-align: center
+  animation: cfg-rise .45s $ease both
+
+  h3
+    margin: 12px 0 0
+    font-size: 19px
+
+  p
+    max-width: 460px
+    margin: 0 0 12px
+    color: $muted
+    font-size: 14px
+
+.dm-empty__art
+  display: grid
+  grid-template-columns: repeat(3, 20px)
+  gap: 6px
+
+  span
+    height: 20px
+    border-radius: 6px
+    background: $hover
+    animation: blink 2.2s ease-in-out infinite
+    animation-delay: calc(var(--c) * 140ms)
+    +reduced-motion
+      animation: none
+
+@keyframes blink
+  50%
+    background: $yellow-soft
+
+// ---------------------------------------------------------------- layout
+
+.dm-body
+  display: grid
+  grid-template-columns: 290px minmax(0, 1fr)
+  gap: 16px
+  align-items: start
+
+  @media (max-width: 1000px)
+    grid-template-columns: 1fr
+
+.dm-side
+  +card
+  position: sticky
+  top: 16px
+  display: flex
+  flex-direction: column
+  gap: 12px
+  max-height: calc(100vh - 32px)
+  padding: 14px
+  animation: cfg-rise .45s .05s $ease both
+
+  @media (max-width: 1000px)
+    position: static
+    max-height: 420px
+
+.dm-search
+  position: relative
+
+  svg
+    position: absolute
+    top: 50%
+    left: 12px
+    width: 16px
+    height: 16px
+    transform: translateY(-50%)
+    stroke: $muted
+    pointer-events: none
+
+  input
+    width: 100%
+    padding-left: 36px
+
+.dm-switch
+  display: inline-flex
+  align-items: center
+  gap: 10px
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+
+  input
+    position: absolute
+    opacity: 0
+    pointer-events: none
+
+.dm-switch__track
+  position: relative
+  width: 34px
+  height: 20px
+  border-radius: 999px
+  background: $border
+  transition: background .2s
+
+.dm-switch__thumb
+  position: absolute
+  top: 3px
+  left: 3px
+  width: 14px
+  height: 14px
+  border-radius: 50%
+  background: #fff
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25)
+  transition: transform .25s $ease
+
+.dm-switch input:checked + .dm-switch__track
+  background: $yellow
+
+  .dm-switch__thumb
+    transform: translateX(14px)
+
+.dm-switch input:focus-visible + .dm-switch__track
+  outline: 2px solid $yellow
+  outline-offset: 2px
+
+.dm-components
+  display: flex
+  flex-direction: column
+  gap: 2px
+  margin: 0 -6px
+  overflow-y: auto
+
+.dm-components__none
+  margin: 8px
+  color: $muted
+  font-size: 13px
+
+.dm-component
+  display: flex
+  align-items: center
+  gap: 10px
+  padding: 8px 10px
+  border: 0
+  border-radius: 10px
+  background: transparent
+  color: $text
+  font: inherit
+  text-align: left
+  cursor: pointer
+  transition: background .15s
+
+  &:hover
+    background: $hover
+
+  &:focus-visible
+    outline: 2px solid $yellow
+    outline-offset: -2px
+
+  &.active
+    background: $yellow-soft
+
+    .dm-component__name
+      color: $yellow-ink
+
+    .dm-component__count
+      background: $yellow
+      color: #0B0B0B
+
+.dm-component__text
+  display: flex
+  flex: 1
+  flex-direction: column
+  min-width: 0
+
+.dm-component__name
+  overflow: hidden
+  font-size: 13.5px
+  font-weight: 650
+  text-overflow: ellipsis
+  white-space: nowrap
+
+.dm-component__detail
+  font-size: 11.5px
+  color: $muted
+
+.dm-component__count
+  min-width: 26px
+  padding: 2px 7px
+  border-radius: 999px
+  background: $hover
+  color: $muted
+  font-size: 11px
+  font-weight: 700
+  text-align: center
+  font-variant-numeric: tabular-nums
+  transition: background .15s
+
+// ---------------------------------------------------------------- table
+
+.dm-main
+  +card
+  min-width: 0
+  overflow: hidden
+  animation: cfg-rise .45s .1s $ease both
+
+.dm-main__head
+  padding: 16px 18px
+  border-bottom: 1px solid $border
+
+  h3
+    margin: 0
+    font-size: 17px
+    font-weight: 750
+
+    small
+      margin-left: 6px
+      font-size: 13px
+      font-weight: 600
+      color: $muted
+
+  p
+    margin: 2px 0 0
+    font-size: 12.5px
+    color: $muted
+
+.dm-row
+  display: grid
+  grid-template-columns: minmax(0, 1.2fr) minmax(180px, 1fr) minmax(0, .9fr)
+  align-items: center
+  gap: 14px
+  padding: 10px 18px
+  border-bottom: 1px solid $border
+  animation: cfg-rise .3s $ease both
+  animation-delay: calc(var(--i, 0) * 18ms)
+  transition: background .3s, box-shadow .3s
+
+  &:last-child
+    border-bottom: 0
+
+  @media (max-width: 760px)
+    grid-template-columns: 1fr
+    gap: 8px
+
+    .dm-col-meta
+      display: none
+
+  &.dm-row_head
+    padding-top: 9px
+    padding-bottom: 9px
+    background: $surface-alt
+    font-size: 11px
+    font-weight: 700
+    letter-spacing: .05em
+    text-transform: uppercase
+    color: $muted
+    animation: none
+
+    @media (max-width: 760px)
+      display: none
+
+  &.readonly
+    .dm-var__name
+      color: $muted
+
+  &.edited
+    background: $yellow-soft
+    box-shadow: inset 3px 0 0 $yellow
+
+  &.flash
+    animation: flash 1.6s $ease
+
+  &.result_bad
+    background: $bad-soft
+    box-shadow: inset 3px 0 0 $bad
+
+  &.result_warn
+    box-shadow: inset 3px 0 0 $warn
+
+@keyframes flash
+  0%
+    background: $ok-soft
+    box-shadow: inset 3px 0 0 $ok
+
+.dm-var__name
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+  font-size: 13px
+  font-weight: 600
+  word-break: break-word
+
+.dm-var__component
+  color: $muted
+  font-weight: 500
+
+.dm-var__instance
+  color: $yellow-ink
+
+.dm-attr
+  margin-left: 6px
+  padding: 1px 6px
+  border-radius: 6px
+  background: $hover
+  color: $muted
+  font-family: inherit
+  font-size: 10.5px
+  font-weight: 700
+  text-transform: uppercase
+
+.dm-var__result
+  margin-top: 3px
+  font-size: 12px
+  font-weight: 650
+
+  .result_ok &
+    color: $ok
+  .result_warn &
+    color: $warn
+  .result_bad &
+    color: $bad
+
+.dm-value
+  display: flex
+  align-items: center
+  gap: 6px
+
+  .select, .field__input
+    width: 100%
+    min-width: 0
+    height: 38px
+
+  .field__input:disabled, .select:disabled
+    opacity: .75
+    cursor: not-allowed
+
+.dm-revert
+  display: grid
+  flex: none
+  place-items: center
+  width: 32px
+  height: 32px
+  border: 0
+  border-radius: 8px
+  background: transparent
+  color: $muted
+  cursor: pointer
+  animation: cfg-rise .2s $ease
+
+  svg
+    width: 16px
+    height: 16px
+    stroke: currentColor
+
+  &:hover
+    background: $hover
+    color: $text
+
+.dm-meta
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 5px
+
+.dm-chip
+  display: inline-flex
+  align-items: center
+  gap: 4px
+  padding: 2px 8px
+  border-radius: 999px
+  background: $hover
+  color: $muted
+  font-size: 11px
+  font-weight: 650
+
+  svg
+    width: 11px
+    height: 11px
+    stroke: currentColor
+
+  &.dm-chip_ReadWrite
+    background: $ok-soft
+    color: $ok
+
+  &.dm-chip_WriteOnly
+    background: $yellow-soft
+    color: $yellow-ink
+
+.dm-constraint
+  width: 100%
+  font-size: 11.5px
+  color: $muted
+
+.dm-none
+  padding: 32px
+  color: $muted
+  text-align: center
+
+// ---------------------------------------------------------------- save bar
+
+.dm-savebar
+  position: fixed
+  left: 50%
+  bottom: 24px
+  z-index: 50
+  display: flex
+  align-items: center
+  gap: 12px
+  width: max-content
+  max-width: calc(100vw - 32px)
+  padding: 10px 10px 10px 14px
+  border: 1px solid $border
+  border-radius: 16px
+  background: $surface
+  color: $text
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .45)
+  transform: translateX(-50%)
+  animation: bar-in .35s $ease both
+
+@keyframes bar-in
+  from
+    opacity: 0
+    transform: translate(-50%, 20px)
+
+.dm-savebar__count
+  display: grid
+  place-items: center
+  min-width: 28px
+  height: 28px
+  padding: 0 8px
+  border-radius: 999px
+  background: $yellow
+  color: #0B0B0B
+  font-size: 13px
+  font-weight: 800
+  animation: pop .3s $ease
+
+@keyframes pop
+  from
+    transform: scale(.5)
+
+.dm-savebar__text
+  display: flex
+  flex-direction: column
+  font-size: 13.5px
+  font-weight: 650
+
+  small
+    font-size: 12px
+    font-weight: 500
+    color: $warn

@@ -23,7 +23,7 @@ public class InvoiceDocument : IDocument
         _data = data;
         _companyInformations = companyInformations;
         _webHostEnvironment = webHostEnvironment;
-        _logoImage = Path.Combine(_webHostEnvironment.WebRootPath, "Assets\\Images", "logo.jpg");
+        _logoImage = Path.Combine(_webHostEnvironment.WebRootPath, "Assets", "images", "logo.jpg");
     }
 
     public void Compose(IDocumentContainer container)

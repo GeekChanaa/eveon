@@ -25,5 +25,8 @@ namespace VoltaXApi.Data
         IQueryable<ChargePointCRListDto> GetAllPartnerChargePoints(GlobalParams globalParams, int partnerID);
         Task<int> GetLatestChargePointNumberAsync();
         Task<ChargePointDetailsForMobileDto?> GetChargePointByQrCode(string qrCode);
+        Task<bool> RegenerateQrValue(int chargePointID);
+        Task<int> RegenerateAllQrValues();
+        Task<bool> SetPasswordHash(int chargePointID, string passwordHash);
     }
 }

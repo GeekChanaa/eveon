@@ -1,41 +1,188 @@
 @import ./../../../../styles/connector-realtime
-@import ../../../../styles/settings
 
+:host
+  display: block
 
-.price__input
-  width: 20%
-  height: 32px
-  padding: 0 5px
-  border-radius: 4px
-  font-size: 14px
-  font-weight: 400
-  &:not(:first-child)
-    margin-left: 12px
-    
+.pricing-access
+  display: grid
+  gap: 20px
 
-.form__container
-  flex: 0 0 100%
-  margin-top: 12px
-
-.update-button
-  margin-left: 14px
-
-.reset__button
-  padding: 12px 24px
-  margin-top: 12px
-  font-size: 1.2em
-  font-weight: 500
-  background: var(--primary2)
-  border-radius: 6px
-  transition: ease-in-out all .3s
+.section-intro
   display: flex
   align-items: center
-  justify-content: center
+  justify-content: space-between
+  gap: 16px
+  h2
+    margin: 0 0 5px
+    font-size: 20px
+    font-weight: 600
+    color: var(--vx-text, #171b24)
+  p
+    margin: 0
+    font-size: 13px
+    color: var(--vx-text-muted, #737985)
+
+.connector-card
+  overflow: hidden
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
+  > header
+    display: flex
+    align-items: center
+    gap: 12px
+    padding: 20px 24px
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    h3
+      margin: 0 0 4px
+      font-size: 15px
+      font-weight: 600
+      color: var(--vx-text, #171b24)
+    p
+      margin: 0
+      font-size: 12px
+      color: var(--vx-text-muted, #737985)
+
+.connector-icon
+  display: grid
+  place-items: center
+  width: 38px
+  height: 38px
+  border-radius: 9px
+  background: var(--vx-yellow-soft, #e5b22314)
+  color: var(--vx-yellow-ink, #8a6410)
   svg
-    margin-left: 12px
-    transition: ease-in-out all .3s
+    width: 21px
+    height: 21px
+
+.pricing-form
+  padding: 22px 24px
+
+.price-fields
+  display: grid
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  gap: 16px
+  label > span
+    display: block
+    margin-bottom: 7px
+    font-size: 12px
+    font-weight: 500
+    color: var(--vx-text-muted, #737985)
+
+.currency-input
+  display: flex
+  align-items: center
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 8px
+  background: var(--vx-surface, #fff)
+  transition: border-color .18s, box-shadow .18s
+  &:focus-within
+    border-color: var(--vx-yellow, #e5b223)
+    box-shadow: 0 0 0 2px var(--vx-yellow-soft, #e5b22314)
+  input
+    width: 100%
+    min-width: 0
+    height: 42px
+    padding: 9px 10px
+    border: 0
+    outline: 0
+    background: transparent
+    color: var(--vx-text, #171b24)
+    font: inherit
+    font-size: 14px
+    font-variant-numeric: tabular-nums
+  span
+    flex-shrink: 0
+    padding-right: 10px
+    color: var(--vx-text-muted, #737985)
+    font-size: 11px
+    white-space: nowrap
+
+.form-actions
+  display: flex
+  justify-content: flex-end
+  margin-top: 16px
+
+.primary-action, .secondary-action
+  min-height: 38px
+  padding: 8px 13px
+  border-radius: 8px
+  font-size: 12px
+  font-weight: 600
+  cursor: pointer
+
+.primary-action
+  border: 1px solid var(--vx-yellow, #e5b223)
+  background: var(--vx-yellow, #e5b223)
+  color: #171b24
+
+.secondary-action
+  border: 1px solid var(--vx-border, #ededed)
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+
+button:disabled
+  opacity: .45
+  cursor: not-allowed
+
+.flat-fee-section
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(220px, .75fr) auto
+  align-items: end
+  gap: 16px
+  padding: 20px 24px
+  border-top: 1px solid var(--vx-border, #ededed)
+  background: var(--vx-surface-alt, #fafafa)
+  h4
+    margin: 0 0 4px
+    font-size: 14px
+    color: var(--vx-text, #171b24)
+  p
+    margin: 0
+    font-size: 12px
+    line-height: 1.5
+    color: var(--vx-text-muted, #737985)
+  form
+    display: flex
+    align-items: center
+    gap: 8px
+
+.flat-fee-input
+  flex: 1
+
+.text-action
+  padding: 8px 0
+  border: 0
+  background: transparent
+  color: var(--vx-text-muted, #737985)
+  font-size: 12px
+  cursor: pointer
   &:hover
-    background: var(--primary9)
-    color: var(--primary1)
-    svg
-      fill: var(--primary1)
+    color: var(--vx-text, #171b24)
+    text-decoration: underline
+
+.sr-only
+  position: absolute
+  width: 1px
+  height: 1px
+  overflow: hidden
+  clip: rect(0, 0, 0, 0)
+  white-space: nowrap
+
+@media (max-width: 760px)
+  .price-fields, .flat-fee-section
+    grid-template-columns: 1fr
+  .flat-fee-section
+    align-items: stretch
+  .flat-fee-section form
+    max-width: none
+  .text-action
+    justify-self: start
+
+@media (max-width: 480px)
+  .section-intro
+    align-items: flex-start
+    flex-direction: column
+  .connector-card > header, .pricing-form, .flat-fee-section
+    padding-left: 16px
+    padding-right: 16px

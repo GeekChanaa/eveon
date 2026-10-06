@@ -34,15 +34,6 @@ namespace VoltaXApi.OCPP.Handlers
         UnlockConnectorResponse unlockConnectorResponse = JsonConvert.DeserializeObject<UnlockConnectorResponse>(msgIn.JsonPayload);
         _logger.LogInformation("HandleUnlockConnector => Answer status: {0}", unlockConnectorResponse?.Status);
         await _msgLogRepo.SaveLogMessage(chargePointStatus?.Id, null, msgOut.Action, unlockConnectorResponse?.Status.ToString(), msgIn.ErrorCode, msgIn, msgOut);
-
-        if (msgOut.TaskCompletionSource != null)
-        {
-          // Set API response as TaskCompletion-result
-          string apiResult = "{\"status\": " + JsonConvert.ToString(unlockConnectorResponse.Status.ToString()) + "}";
-          _logger.LogTrace("HandleUnlockConnector => API response: {0}", apiResult);
-
-          msgOut.TaskCompletionSource.SetResult(apiResult);
-        }
       }
       catch (Exception exp)
       {

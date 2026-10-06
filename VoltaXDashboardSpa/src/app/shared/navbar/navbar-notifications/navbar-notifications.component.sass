@@ -1,0 +1,325 @@
+// The theme's `.header__item:not(:last-child)` gap no longer matches: the item is the host's only child.
+:host
+  display: block
+  margin-right: 24px
+
+.header__item
+  position: relative
+
+[data-tone="danger"]
+  --tone: #E5484D
+[data-tone="success"]
+  --tone: #30A46C
+[data-tone="warning"]
+  --tone: #F76B15
+[data-tone="info"]
+  --tone: #2A85FF
+[data-tone="accent"]
+  --tone: #8E59FF
+[data-tone="neutral"]
+  --tone: var(--vx-text-muted, #737985)
+
+.visually-hidden
+  position: absolute
+  width: 1px
+  height: 1px
+  overflow: hidden
+  clip: rect(0 0 0 0)
+  white-space: nowrap
+
+.notif-panel
+  position: absolute
+  top: calc(100% + 10px)
+  right: 0
+  z-index: 30
+  display: flex
+  flex-direction: column
+  width: 390px
+  max-height: min(580px, calc(100vh - 100px))
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, .28)
+  overflow: hidden
+
+.notif-panel__head
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: 12px
+  padding: 16px 16px 10px
+  h2
+    margin: 0
+    font-size: 16px
+    font-weight: 700
+    line-height: 1.3
+  p
+    margin: 2px 0 0
+    font-size: 12px
+    color: var(--vx-text-muted, #737985)
+
+.notif-panel__tools
+  display: flex
+  gap: 12px
+  padding-top: 2px
+
+.notif-link
+  padding: 0
+  border: 0
+  background: none
+  color: var(--vx-yellow-ink, #8a6410)
+  font-family: inherit
+  font-size: 12px
+  font-weight: 600
+  white-space: nowrap
+  cursor: pointer
+  &:hover:not(:disabled)
+    text-decoration: underline
+  &:disabled
+    color: var(--vx-text-muted, #737985)
+    opacity: .5
+    cursor: default
+  &:focus-visible
+    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline-offset: 2px
+
+.notif-link--muted:not(:disabled)
+  color: var(--vx-text-muted, #737985)
+
+.notif-filter
+  display: flex
+  gap: 6px
+  padding: 0 16px 10px
+  border-bottom: 1px solid var(--vx-border, #ededed)
+  button
+    display: inline-flex
+    align-items: center
+    gap: 6px
+    min-height: 28px
+    padding: 0 10px
+    border: 1px solid transparent
+    border-radius: 999px
+    background: none
+    color: var(--vx-text-muted, #737985)
+    font-family: inherit
+    font-size: 12px
+    font-weight: 600
+    cursor: pointer
+    &:hover
+      background: var(--vx-hover, rgba(0, 0, 0, .04))
+    &.is-active
+      border-color: var(--vx-border, #ededed)
+      background: var(--vx-surface-alt, #f7f7f8)
+      color: var(--vx-text, #171b24)
+    &:focus-visible
+      outline: 2px solid var(--vx-yellow, #e5b223)
+      outline-offset: 2px
+
+.notif-count
+  min-width: 18px
+  padding: 1px 5px
+  border-radius: 999px
+  background: var(--vx-yellow, #e5b223)
+  color: #171717
+  font-size: 10px
+  line-height: 16px
+  text-align: center
+
+.notif-list
+  flex: 1
+  min-height: 0
+  overflow-y: auto
+  padding: 6px
+
+.notif-state
+  margin: 0
+  padding: 28px 16px
+  font-size: 13px
+  line-height: 1.6
+  text-align: center
+  color: var(--vx-text-muted, #737985)
+  p
+    margin: 0 0 8px
+
+.notif-item
+  position: relative
+  display: flex
+  border-radius: 10px
+  &:hover, &:focus-within
+    background: var(--vx-hover, rgba(0, 0, 0, .04))
+    .notif-remove
+      opacity: 1
+
+.notif-item__main, .notif-toast__main
+  display: flex
+  flex: 1
+  gap: 12px
+  min-width: 0
+  padding: 10px 36px 10px 10px
+  border: 0
+  border-radius: 10px
+  background: none
+  color: inherit
+  font-family: inherit
+  text-align: left
+  cursor: pointer
+  &:focus-visible
+    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline-offset: -2px
+
+.notif-icon
+  display: grid
+  flex-shrink: 0
+  place-items: center
+  width: 36px
+  height: 36px
+  border-radius: 10px
+  background: color-mix(in srgb, var(--tone) 14%, transparent)
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: var(--tone)
+    stroke-width: 1.8
+    stroke-linecap: round
+    stroke-linejoin: round
+
+.notif-item__body
+  display: grid
+  gap: 3px
+  min-width: 0
+
+.notif-item__line
+  display: flex
+  align-items: center
+  gap: 6px
+  strong
+    font-size: 13px
+    font-weight: 600
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+  time
+    margin-left: auto
+    flex-shrink: 0
+    font-size: 11px
+    color: var(--vx-text-muted, #737985)
+
+.notif-item__body > strong
+  font-size: 13px
+  font-weight: 600
+
+.notif-item__text
+  display: -webkit-box
+  overflow: hidden
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  font-size: 12px
+  line-height: 1.5
+  color: var(--vx-text-muted, #737985)
+  overflow-wrap: anywhere
+
+.notif-item.is-unread .notif-item__text
+  color: var(--vx-text, #171b24)
+
+.notif-urgent
+  flex-shrink: 0
+  padding: 1px 6px
+  border-radius: 999px
+  background: color-mix(in srgb, #E5484D 14%, transparent)
+  color: #E5484D
+  font-size: 10px
+  font-weight: 700
+  text-transform: uppercase
+  letter-spacing: .04em
+
+.notif-dot
+  position: absolute
+  top: 16px
+  right: 14px
+  width: 8px
+  height: 8px
+  border-radius: 50%
+  background: var(--vx-yellow, #e5b223)
+
+.notif-remove
+  position: absolute
+  right: 6px
+  bottom: 8px
+  display: grid
+  place-items: center
+  width: 26px
+  height: 26px
+  padding: 0
+  border: 0
+  border-radius: 6px
+  background: none
+  color: var(--vx-text-muted, #737985)
+  opacity: 0
+  cursor: pointer
+  transition: opacity .12s
+  svg
+    width: 14px
+    height: 14px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2
+    stroke-linecap: round
+  &:hover
+    background: var(--vx-surface-alt, #f7f7f8)
+    color: var(--vx-text, #171b24)
+  &:focus-visible
+    opacity: 1
+    outline: 2px solid var(--vx-yellow, #e5b223)
+
+// Touch screens have no hover to reveal the remove button.
+@media (hover: none)
+  .notif-remove
+    opacity: 1
+
+.notif-toasts
+  position: fixed
+  right: 24px
+  bottom: 24px
+  z-index: 1000
+  display: flex
+  flex-direction: column
+  gap: 10px
+  width: 360px
+  max-width: calc(100vw - 32px)
+
+.notif-toast
+  position: relative
+  display: flex
+  border: 1px solid var(--vx-border, #ededed)
+  border-left: 4px solid var(--tone)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, .32)
+  animation: notif-in .2s ease-out
+  .notif-remove
+    top: 8px
+    bottom: auto
+    opacity: 1
+
+@keyframes notif-in
+  from
+    opacity: 0
+    transform: translateY(8px)
+
+@media (prefers-reduced-motion: reduce)
+  .notif-toast
+    animation: none
+
+@media (max-width: 650px)
+  .notif-panel
+    position: fixed
+    top: 72px
+    right: 16px
+    left: 16px
+    width: auto
+  .notif-toasts
+    right: 16px
+    bottom: 16px

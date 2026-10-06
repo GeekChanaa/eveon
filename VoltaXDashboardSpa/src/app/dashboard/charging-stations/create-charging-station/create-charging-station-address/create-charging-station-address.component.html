@@ -28,9 +28,12 @@
     [control]="getControl('address')"
   ></app-form-field>
 
+  <div class="station-section-heading"><h3>Pin the exact location</h3><p>Click on the map to place the station at its charging entrance.</p></div>
+  <div class="station-map">
   <app-map-picker
     (locationSelected)="onLocationSelected($event)" 
     [useCurrentLocation]="true"></app-map-picker>
+  </div>
 
   <div class="form__actions">
     <app-button

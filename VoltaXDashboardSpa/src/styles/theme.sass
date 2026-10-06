@@ -8,7 +8,8 @@
 // sidebar components but never gets the class, so it keeps its current look.
 // ---------------------------------------------------------------------------
 
-.page.vx
+// Status overlays are attached to body, outside the dashboard shell.
+.page.vx, .vx-status-overlay, .vx-account-overlay, .vx-action-modal, .vx-provisioning
   // brand
   --vx-yellow: #E5B223
   --vx-yellow-hover: #D0A01B
@@ -30,7 +31,7 @@
 
   --vx-radius: 10px
 
-body.dark .vx
+body.dark .vx, body.dark .vx-status-overlay, body.dark .vx-account-overlay, body.dark .vx-action-modal, body.dark .vx-provisioning
   --vx-yellow: #F0BE3C
   --vx-yellow-hover: #FFD05C
   --vx-yellow-soft: rgba(240, 190, 60, .16)
@@ -46,6 +47,15 @@ body.dark .vx
 
   --vx-text: #FAFAFA
   --vx-text-muted: #8B9095
+
+.vx-status-overlay
+  color-scheme: light
+  --mdc-dialog-container-color: var(--vx-surface)
+  --mdc-dialog-subhead-color: var(--vx-text)
+  --mdc-dialog-supporting-text-color: var(--vx-text-muted)
+
+body.dark .vx-status-overlay
+  color-scheme: dark
 
 // ---------------------------------------------------------------------------
 // Sidebar
@@ -247,22 +257,19 @@ body.dark .vx .sidebar__body:before
   .icon
     display: none
 
-// The nested link needs to read as selected on its own: the group above it is
-// highlighted too, so a dot alone was too quiet to tell the children apart.
-.vx .sidebar__link.active
-  background: var(--vx-yellow-soft)
+// Reserve the background highlight for the dropdown title. Nested selections
+// use accent text, stronger weight, and a dot in both themes.
+.page.vx .sidebar__link.active,
+body.dark .vx .sidebar__link.active
+  background: transparent
   box-shadow: none
-  color: var(--vx-text)
+  color: var(--vx-yellow-ink)
   font-weight: 600
 
   &:before
     background: var(--vx-yellow)
     width: 8px
     height: 8px
-
-body.dark .vx .sidebar__link.active
-  background: var(--vx-yellow-soft)
-  box-shadow: none
 
 // Chevron follows the fold state, which now lives on `.sidebar__item_dropdown.active`.
 .vx .sidebar__head .icon:last-child
@@ -579,3 +586,66 @@ body.dark .vx .header__body
 
   &:hover
     color: var(--vx-yellow)
+
+.vx-account-overlay.mat-mdc-menu-panel
+  min-width: 300px
+  max-width: min(340px, calc(100vw - 32px))
+  padding: 6px
+  overflow: hidden
+  border: 1px solid var(--vx-border)
+  border-radius: 16px
+  background: var(--vx-surface)
+  color: var(--vx-text)
+  box-shadow: 0 18px 48px -18px rgba(0, 0, 0, .28)
+  .mat-mdc-menu-content
+    padding: 0
+  // The Material theme paints the label span with its light-theme text colour,
+  // which beats the colour set on the item itself — let it follow the item.
+  .mat-mdc-menu-item .mdc-list-item__primary-text
+    color: inherit
+  .mat-mdc-menu-item
+    min-height: 42px
+    margin: 2px 0
+    border-radius: 9px
+    color: var(--vx-text)
+    font-size: 13px
+    font-weight: 600
+    letter-spacing: .005em
+    transition: background-color .16s ease, color .16s ease
+  .mat-mdc-menu-item:hover, .mat-mdc-menu-item:focus
+    background: var(--vx-hover)
+  .account-menu-item
+    position: relative
+    padding-left: 16px
+    display: flex
+    align-items: center
+    gap: 10px
+    .icon
+      width: 17px
+      height: 17px
+      fill: currentColor
+    &::before
+      content: ''
+      width: 3px
+      height: 18px
+      position: absolute
+      left: 0
+      border-radius: 0 3px 3px 0
+      background: transparent
+    &:hover::before, &:focus::before
+      background: var(--vx-yellow)
+  .signout-action
+    color: #d64343
+    .icon
+      transform: rotate(180deg)
+    &:hover, &:focus
+      background: rgba(214, 67, 67, .10)
+    &::before
+      background: rgba(214, 67, 67, .45)
+
+body.dark .vx-account-overlay.mat-mdc-menu-panel
+  box-shadow: 0 18px 48px -18px rgba(0, 0, 0, .72)
+  .signout-action
+    color: #ff8e8e
+    &:hover, &:focus
+      background: rgba(255, 142, 142, .12)

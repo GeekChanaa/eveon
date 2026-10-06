@@ -1,10 +1,5 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using VoltaXApi.ScaleOut;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using VoltaXApi.Data;
 using VoltaXApi.Helpers;
@@ -15,16 +10,22 @@ namespace VoltaXApi.Services
     public class CardExpirationWarningService : BackgroundService
     {
         private readonly ILogger<CardExpirationWarningService> _logger;
-        private readonly  IServiceScopeFactory _scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IBusinessClock _clock;
+        private readonly IClusterJobLease _lease;
         private readonly CardExpirationSettings _settings;
 
         public CardExpirationWarningService(
             ILogger<CardExpirationWarningService> logger,
             IOptions<CardExpirationSettings> options,
-             IServiceScopeFactory scopeFactory)
+            IServiceScopeFactory scopeFactory,
+            IBusinessClock clock,
+            IClusterJobLease lease)
         {
+            _lease = lease;
             _logger = logger;
-            _scopeFactory = scopeFactory;;
+            _scopeFactory = scopeFactory;
+            _clock = clock;
             _settings = options.Value;
         }
 
@@ -34,28 +35,28 @@ namespace VoltaXApi.Services
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                // Calculate the time until next check
-                var now = DateTime.Now;
-                var nextRunTime = now.Date.Add(_settings.CheckTime);
+                // CheckTime is a time of day in the business time zone.
+                var nextRunLocal = _clock.Today.Add(_settings.CheckTime);
+                if (_clock.LocalNow > nextRunLocal)
+                    nextRunLocal = nextRunLocal.AddDays(1);
 
-                if (now > nextRunTime)
-                {
-                    nextRunTime = nextRunTime.AddDays(1);
-                }
+                var nextRunUtc = _clock.StartOfDayUtc(nextRunLocal.Date).Add(nextRunLocal.TimeOfDay);
+                var delay = nextRunUtc - _clock.UtcNow;
+                _logger.LogInformation("Next card expiration check scheduled at {NextRunUtc:o} (UTC)", nextRunUtc);
 
-                var delay = nextRunTime - now;
-                _logger.LogInformation($"Next card expiration check scheduled at: {nextRunTime}");
+                if (delay > TimeSpan.Zero)
+                    await Task.Delay(delay, stoppingToken);
 
-                // Delay until next check time
-                await Task.Delay(delay, stoppingToken);
-                
-                // Run the check
                 try
                 {
-                    await ProcessCardExpirations();
-                    _logger.LogInformation("Card expiration check completed successfully.");
+                    // Only one replica runs this job (see ScaleOut/ClusterJobLease.cs).
+                    if (await _lease.TryAcquireAsync("card-expiration-warnings", TimeSpan.FromHours(23), stoppingToken))
+                    {
+                        await ProcessCardExpirations(stoppingToken);
+                        _logger.LogInformation("Card expiration check completed successfully.");
+                    }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     _logger.LogError(ex, "Error occurred while checking card expirations.");
                 }
@@ -65,59 +66,61 @@ namespace VoltaXApi.Services
             }
         }
 
-        private async Task ProcessCardExpirations()
+        private async Task ProcessCardExpirations(CancellationToken cancellationToken)
         {
-            // Create a new scope for each execution
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                // Get services from the scope
-                var cardRepository = scope.ServiceProvider.GetRequiredService<ICardRepository>();
-                var mailService = scope.ServiceProvider.GetRequiredService<IMailService>();
-                var cardExpirationNotificationRepository = scope.ServiceProvider.GetRequiredService<ICardExpirationNotificationRepository>();
-                
-                _logger.LogInformation("Starting card expiration check...");
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+            var mailService = scope.ServiceProvider.GetRequiredService<IMailService>();
+            var cardExpirationNotificationRepository = scope.ServiceProvider.GetRequiredService<ICardExpirationNotificationRepository>();
 
-                // Get cards that need notification
-                var cards = await cardRepository.GetAllCards();
-                var today = DateTime.Today;
+            _logger.LogInformation("Starting card expiration check...");
+
+            var today = _clock.Today;
+            foreach (var interval in _settings.WarningIntervals.Where(i => i.Enabled))
+            {
+                // Cards whose whole-day distance to expiration, counted from the start of the business day
+                // (TimeSpan.Days truncates toward zero), equals the interval.
+                var (fromUtc, toUtc) = ExpirationWindow(today, interval.DaysBeforeExpiration);
+                var cards = await db.Cards.AsNoTracking()
+                    .Include(c => c.User)
+                    .Where(c => c.ExpirationDate > fromUtc && c.ExpirationDate < toUtc)
+                    .ToListAsync(cancellationToken);
 
                 foreach (var card in cards)
                 {
-                    // Calculate days until expiration
-                    var daysUntilExpiration = (card.ExpirationDate - today).Days;
+                    if (string.IsNullOrWhiteSpace(card.User?.Email))
+                        continue;
 
-                    // Check against each warning interval
-                    foreach (var interval in _settings.WarningIntervals.Where(i => i.Enabled))
+                    if (await cardExpirationNotificationRepository.HasNotificationBeenSentAsync(card.ID, interval.Name))
                     {
-                        if (daysUntilExpiration == interval.DaysBeforeExpiration)
-                        {
-                            // Check if notification has already been sent for this interval
-                            bool alreadySent = await cardExpirationNotificationRepository.HasNotificationBeenSentAsync(card.ID, interval.Name);
-                            
-                            if (!alreadySent)
-                            {
-                                _logger.LogInformation($"Sending {interval.Name} expiration warning for card ending with {card.LastFourDigits}");
-                                
-
-                                // Send the email
-                                MailRequest mailRequest = new()
-                                {
-                                    Name = "VoltaX Card Expiration Card",
-                                    ToEmails = new List<string> { card.User.Email},
-                                    Subject = "VoltaX Card Expiration"
-                                };
-                                await mailService.SendWarningEmail(mailRequest, card.User.FullName);
-                                // Record that the notification was sent
-                                await cardExpirationNotificationRepository.CreateCardExpirationNotification(card.ID, interval.Name);
-                            }
-                            else
-                            {
-                                _logger.LogInformation($"Skipping {interval.Name} notification for card {card.LastFourDigits} as it was already sent");
-                            }
-                        }
+                        _logger.LogInformation("Skipping {Interval} notification for card {CardId}: already sent", interval.Name, card.ID);
+                        continue;
                     }
+
+                    _logger.LogInformation("Sending {Interval} expiration warning for card {CardId}", interval.Name, card.ID);
+                    var mailRequest = new MailRequest
+                    {
+                        Name = "VoltaX Card Expiration Card",
+                        ToEmails = new List<string> { card.User.Email },
+                        Subject = "VoltaX Card Expiration"
+                    };
+                    await mailService.SendWarningEmail(mailRequest, card.User.FullName);
+                    await cardExpirationNotificationRepository.CreateCardExpirationNotification(card.ID, interval.Name);
                 }
             }
+        }
+
+        /// <summary>
+        /// Exclusive UTC bounds of the expiration instants for which (expiration - start of today).Days == days.
+        /// </summary>
+        private (DateTime FromUtc, DateTime ToUtc) ExpirationWindow(DateTime today, int days)
+        {
+            var startOfToday = _clock.StartOfDayUtc(today);
+            if (days > 0)
+                return (startOfToday.AddDays(days).AddTicks(-1), startOfToday.AddDays(days + 1));
+            if (days < 0)
+                return (startOfToday.AddDays(days - 1), startOfToday.AddDays(days).AddTicks(1));
+            return (startOfToday.AddDays(-1), startOfToday.AddDays(1));
         }
     }
 }

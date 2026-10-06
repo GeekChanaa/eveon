@@ -1,22 +1,34 @@
-using System.Net.WebSockets;
+using VoltaXApi.OCPP.Factories;
 
 namespace VoltaXApi.OCPP.Helpers
 {
+  /// <summary>
+  /// Picks the OCPP sub-protocol for a handshake. Only versions with registered inbound handlers are offered
+  /// (see <see cref="OcppInboundHandlerRegistry"/>), most preferred first.
+  /// </summary>
   public class WebSocketSubProtocolMatcher
   {
-      private static readonly string[] SupportedProtocols = { "ocpp2.0.1", "ocpp1.6" };
+      private readonly OcppInboundHandlerRegistry _registry;
 
-      public string? GetMatchingSubProtocol(HttpContext context)
+      public WebSocketSubProtocolMatcher(OcppInboundHandlerRegistry registry)
       {
-          foreach (var protocol in SupportedProtocols)
+          _registry = registry;
+      }
+
+      public IReadOnlyList<string> SupportedProtocols => _registry.SupportedProtocols;
+
+      public string? GetMatchingSubProtocol(HttpContext context) =>
+          GetMatchingSubProtocol(context.WebSockets.WebSocketRequestedProtocols);
+
+      public string? GetMatchingSubProtocol(IEnumerable<string> requestedProtocols)
+      {
+          var requested = requestedProtocols.ToList();
+          foreach (var protocol in _registry.SupportedProtocols)
           {
-              if (context.WebSockets.WebSocketRequestedProtocols.Contains(protocol))
-              {
-                  return protocol;
-              }
+              var match = requested.FirstOrDefault(r => string.Equals(r, protocol, StringComparison.OrdinalIgnoreCase));
+              if (match != null) return protocol;
           }
           return null;
       }
   }
-
 }

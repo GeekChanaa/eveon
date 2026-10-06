@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 
 namespace VoltaXApi.OCPP.Handlers
@@ -45,12 +46,12 @@ namespace VoltaXApi.OCPP.Handlers
                     errorCode = ErrorCodes.GenericError;
                 }
 
-                msgOut.JsonPayload = JsonConvert.SerializeObject(dataTransferResponse);
+                msgOut.JsonPayload = JsonConvert.SerializeObject(dataTransferResponse, OCPPMessageFactory.DefaultSettings);
                 _logger.LogTrace("DataTransfer => Response serialized");
             }
             catch (Exception exp)
             {
-                _logger.LogError(exp, "DataTransfer => Exception: {0}", exp.Message);
+                _logger.LogError(exp, "DataTransfer => Exception processing request from {ChargePointId}", chargePointStatus?.Id);
                 errorCode = ErrorCodes.InternalError;
             }
 

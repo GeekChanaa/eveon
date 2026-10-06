@@ -1,14 +1,6 @@
-
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using VoltaXApi.Dtos;
 using VoltaXApi.Data;
+using VoltaXApi.Dtos;
 using VoltaXApi.Models;
-using OCPP.Core.Server;
 using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Services
@@ -17,77 +9,30 @@ namespace VoltaXApi.Services
     {
         private readonly IConnectorRepository _connectorRepository;
         private readonly IChargePointRepository _chargePointRepository;
-        private readonly GlobalConfigurations _globalConfig;
 
-        public ConnectorService(
-          IConnectorRepository connectorRepository,
-          IChargePointRepository chargePointRepository,
-          GlobalConfigurations globalConfigurations
-        ){
-          _connectorRepository = connectorRepository;
-          _chargePointRepository = chargePointRepository;
-          _globalConfig = globalConfigurations;
-        }
-
-      public async Task<List<ConnectorListDto>?> RefreshChargePointConnectors(List<ReportDataType>? connectorsToRefresh, string chargePointID)
-      {
-
-        var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID);
-        // Delete all connectors that are not included in the connectors to refresh as they do not belong to the charge point
-
-        foreach(var reportData in connectorsToRefresh)
+        public ConnectorService(IConnectorRepository connectorRepository,
+            IChargePointRepository chargePointRepository, GlobalConfigurations globalConfigurations)
         {
-          Connector? connector = await this._connectorRepository
-            .GetConnectorByConnectorIdEvseId(reportData.Component.Evse.ConnectorId,reportData.Component.Evse.Id,chargePoint.ID);
-          if(connector == null)
-          {
-            Connector newConnector = new Connector{
-              ChargePointID = chargePoint.ID,
-              EvseID = reportData.Component.Evse.Id,
-              ConnectorID = reportData.Component.Evse.ConnectorId,
-              PricePerIdleMinute = (double) _globalConfig.DefaultIdleTimePricing,
-              PricePerKWh = (double) _globalConfig.DefaultPricePerKwh,
-              CostPerKwh = (double) _globalConfig.DefaultCostPerKwh
-            };
-            await _connectorRepository.AddAsync(newConnector);
-          }
+            _connectorRepository = connectorRepository;
+            _chargePointRepository = chargePointRepository;
         }
 
-        return await this._connectorRepository.GetChargePointConnectors(chargePoint.ID);
-
-      }
-
-
-        private async Task<bool> DeleteExistingConnectorsForFirstConfiguration(int chargePointID,List<ReportDataType>? connectorsToRefresh)
+        public async Task<List<ConnectorListDto>?> RefreshChargePointConnectors(
+            List<ReportDataType>? connectorsToRefresh, string chargePointID)
         {
-          if (connectorsToRefresh == null || !connectorsToRefresh.Any())
-          {
-              return false; // No connectors to refresh
-          }
+            ArgumentNullException.ThrowIfNull(connectorsToRefresh);
+            // A configuration-only report is not a connector inventory.
+            if (connectorsToRefresh.Count == 0) return null;
+            if (connectorsToRefresh.Any(r => r.Component?.Evse == null ||
+                r.Component.Evse.Id <= 0 || r.Component.Evse.ConnectorId is not > 0))
+                throw new ArgumentException("A connector report must contain positive EVSE and connector IDs.");
 
-          var chargePointConnectors = await this._connectorRepository.GetChargePointConnectors(chargePointID);
-
-          // Connectors that are not conform
-          var connectorsToRemove = chargePointConnectors.Where(chargePointConnector =>
-              !connectorsToRefresh.Any(connectorsToRefreshItem =>
-                  connectorsToRefreshItem.Component.Evse.Id == chargePointConnector.EvseID &&
-                  connectorsToRefreshItem.Component.Evse.ConnectorId == chargePointConnector.ConnectorID)).ToList();
-
-          // Connectors that are not yet in there
-          connectorsToRefresh.RemoveAll(connectorsToRefreshItem =>
-            chargePointConnectors.Any(chargePointConnector =>
-                connectorsToRefreshItem.Component.Evse.Id == chargePointConnector.EvseID &&
-                connectorsToRefreshItem.Component.Evse.ConnectorId == chargePointConnector.ConnectorID));
-
-          // Remove the identified connectors
-          foreach (var connector in connectorsToRemove)
-          {
-              await this._connectorRepository.RemoveByID(connector.ID);
-          }
-          
-
-          return true;
+            var chargePoint = await _chargePointRepository.GetChargePointByChargePointIDAsync(chargePointID)
+                ?? throw new InvalidOperationException("Charge point not found.");
+            var keys = connectorsToRefresh.Select(r =>
+                (EvseID: r.Component.Evse.Id, ConnectorID: r.Component.Evse.ConnectorId!.Value)).Distinct().ToArray();
+            await _connectorRepository.ReconcileChargePointConnectors(chargePoint.ID, keys);
+            return await _connectorRepository.GetChargePointConnectors(chargePoint.ID);
         }
-
-  }
+    }
 }

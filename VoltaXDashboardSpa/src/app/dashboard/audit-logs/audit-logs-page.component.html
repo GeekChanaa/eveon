@@ -1,0 +1,98 @@
+<app-dashboard-details-container [state]="ready" title="Audit log"
+  [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Audit log' }]">
+  <div class="audit">
+    <form class="audit__filters" (ngSubmit)="search()">
+      <label>
+        <span>User email</span>
+        <input type="text" name="user" [(ngModel)]="filters.user" placeholder="name@example.com">
+      </label>
+      <label>
+        <span>Entity type</span>
+        <select name="entityType" [(ngModel)]="filters.entityType">
+          <option value="">All</option>
+          <option *ngFor="let type of entityTypes" [value]="type">{{ type }}</option>
+        </select>
+      </label>
+      <label>
+        <span>Entity id</span>
+        <input type="text" name="entityId" [(ngModel)]="filters.entityId">
+      </label>
+      <label>
+        <span>Action</span>
+        <input type="text" name="action" [(ngModel)]="filters.action" placeholder="Updated, LoginFailed...">
+      </label>
+      <label>
+        <span>From</span>
+        <input type="date" name="from" [(ngModel)]="filters.from">
+      </label>
+      <label>
+        <span>To</span>
+        <input type="date" name="to" [(ngModel)]="filters.to">
+      </label>
+      <div class="audit__filter-actions">
+        <button type="submit" class="button">Search</button>
+        <button type="button" class="button-stroke" (click)="reset()">Reset</button>
+      </div>
+    </form>
+
+    <div class="audit__error" *ngIf="error">{{ error }}</div>
+
+    <div class="audit__table-wrapper">
+      <table class="audit__table">
+        <thead>
+          <tr>
+            <th>Date (UTC)</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>IP address</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="loading"><td colspan="6" class="audit__empty">Loading...</td></tr>
+          <tr *ngIf="!loading && items.length === 0"><td colspan="6" class="audit__empty">No entries match these filters.</td></tr>
+          <ng-container *ngFor="let entry of items">
+            <tr *ngIf="!loading">
+              <td>{{ entry.occurredAt | date:'yyyy-MM-dd HH:mm:ss':'UTC' }}</td>
+              <td>
+                <div>{{ entry.userEmail || (entry.userID ? '#' + entry.userID : 'System') }}</div>
+                <small *ngIf="entry.role">{{ entry.role }}</small>
+              </td>
+              <td><span class="audit__action">{{ entry.action }}</span></td>
+              <td>{{ entry.entityType || '-' }}<span *ngIf="entry.entityID"> #{{ entry.entityID }}</span></td>
+              <td>{{ entry.ipAddress || '-' }}</td>
+              <td>
+                <button type="button" class="audit__toggle" *ngIf="entry.changesJson" (click)="toggle(entry)">
+                  {{ expandedId === entry.id ? 'Hide' : 'Details' }}
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && expandedId === entry.id" class="audit__details">
+              <td colspan="6">
+                <table class="audit__changes">
+                  <thead><tr><th>Property</th><th>Old</th><th>New</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let change of changes(entry)">
+                      <td>{{ change.property }}</td>
+                      <td>{{ change.old }}</td>
+                      <td>{{ change.next }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <small *ngIf="entry.correlationID">Correlation id: {{ entry.correlationID }}</small>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="audit__pager">
+      <span>{{ totalCount }} entries</span>
+      <button type="button" class="button-stroke" [disabled]="page <= 1 || loading" (click)="goTo(page - 1)">Previous</button>
+      <span>Page {{ page }} / {{ totalPages }}</span>
+      <button type="button" class="button-stroke" [disabled]="page >= totalPages || loading" (click)="goTo(page + 1)">Next</button>
+    </div>
+  </div>
+</app-dashboard-details-container>

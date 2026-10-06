@@ -34,9 +34,27 @@ namespace VoltaXApi.Controllers
 
 
         [HttpGet("GetChargePointMessageLogs/{chargePointID}")]
-        public async Task<ActionResult<List<MessageLog>>> GetPartnerMessageLogs(string chargePointId , [FromQuery] GlobalParams globalParams)
+        public async Task<ActionResult<List<MessageLog>>> GetPartnerMessageLogs(
+            string chargePointId,
+            [FromQuery] GlobalParams globalParams,
+            [FromQuery] DateTime? from = null,
+            [FromQuery] DateTime? to = null)
         {
-            var msgLogsDto = _repository.GetAllAsync(globalParams).Where(u => u.ChargePointId == chargePointId).ProjectTo<MessageLogListDto>(_mapper.ConfigurationProvider);
+            var msgLogs = _repository.GetAllAsync(globalParams).Where(u => u.ChargePointId == chargePointId);
+
+            // LogTime is stored in UTC; the client sends ISO strings with an offset, which bind as UTC.
+            if (from.HasValue)
+            {
+                var fromUtc = from.Value.ToUniversalTime();
+                msgLogs = msgLogs.Where(u => u.LogTime >= fromUtc);
+            }
+            if (to.HasValue)
+            {
+                var toUtc = to.Value.ToUniversalTime();
+                msgLogs = msgLogs.Where(u => u.LogTime <= toUtc);
+            }
+
+            var msgLogsDto = msgLogs.ProjectTo<MessageLogListDto>(_mapper.ConfigurationProvider);
             var MessageLogs = await PagedList<MessageLogListDto>.CreateAsync(msgLogsDto, globalParams.PageNumber, globalParams.PageSize);
             Response.AddPagination(MessageLogs.CurrentPage, MessageLogs.PageSize, MessageLogs.TotalCount, MessageLogs.TotalPages);
             return Ok(MessageLogs);

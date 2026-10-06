@@ -1,3 +1,220 @@
-<p>
-  charging-profile works!
-</p>
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'Charging Profiles'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Charging Profiles' }
+  ]">
+  <div class="sc-page">
+    <section class="sc-card">
+      <div class="sc-row">
+        <label class="sc-field sc-field--grow">
+          <span>Charge point</span>
+          <select [(ngModel)]="selectedChargePointId" (ngModelChange)="selectChargePoint()">
+            <option [ngValue]="null">Select a charge point</option>
+            <option *ngFor="let cp of chargePoints" [ngValue]="cp.id">
+              {{ cp.chargePointId }} · {{ cp.chargingStationName }} · {{ cp.protocol || 'offline' }}
+            </option>
+          </select>
+        </label>
+        <label class="sc-field" *ngIf="selected">
+          <span>EVSE</span>
+          <select [(ngModel)]="evseFilter">
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let evse of evseOptions" [ngValue]="evse">{{ evse === 0 ? '0 (whole charger)' : evse }}</option>
+          </select>
+        </label>
+      </div>
+      <p class="sc-hint" *ngIf="selected && !selected.protocol">This charge point is offline: profiles can be viewed but not sent.</p>
+    </section>
+
+    <ng-container *ngIf="selected">
+      <section class="sc-card">
+        <div class="sc-card__head">
+          <h3>Stored profiles</h3>
+          <div class="sc-actions">
+            <label class="sc-check"><input type="checkbox" [(ngModel)]="includeCleared" (ngModelChange)="loadProfiles()"> Show cleared</label>
+            <button class="button-stroke button-small" (click)="loadProfiles()">Refresh</button>
+            <button class="button-stroke button-small" *ngIf="isOcpp201" (click)="requestReport()" title="GetChargingProfiles: the charger reports what it really holds">Sync from charger</button>
+            <button class="button button-small" [disabled]="!selected.protocol" (click)="newProfile('TxDefaultProfile')">New TxDefault</button>
+            <button class="button button-small" [disabled]="!selected.protocol" (click)="newProfile('ChargingStationMaxProfile')">New station max</button>
+          </div>
+        </div>
+        <div class="sc-table-wrap">
+          <table class="sc-table">
+            <thead>
+              <tr>
+                <th>OCPP id</th><th>EVSE</th><th>Purpose</th><th>Stack</th><th>Kind</th><th>Schedule</th><th>Source</th><th>Status</th><th>Sent</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of visibleProfiles">
+                <td>{{ p.ocppProfileId }}</td>
+                <td>{{ p.evseId }}</td>
+                <td>{{ p.purpose }}<div class="sc-sub" *ngIf="p.transactionId">tx {{ p.transactionId }}</div><div class="sc-sub" *ngIf="p.chargingLimitSource">{{ p.chargingLimitSource }}</div></td>
+                <td>{{ p.stackLevel }}</td>
+                <td>{{ p.kind }}<span *ngIf="p.recurrencyKind"> · {{ p.recurrencyKind }}</span></td>
+                <td class="sc-periods">{{ periodsSummary(p) }}<div class="sc-sub" *ngIf="p.startSchedule">from {{ p.startSchedule | date:'short' }}</div></td>
+                <td>{{ p.source }}</td>
+                <td><span [class]="statusClass(p.status)">{{ p.status }}</span><div class="sc-sub sc-error" *ngIf="p.lastError">{{ p.lastError }}</div></td>
+                <td>{{ p.lastSentAt ? (p.lastSentAt | date:'short') : '—' }}</td>
+                <td class="sc-cell-actions">
+                  <button class="button-stroke button-small" *ngIf="canEdit(p)" [disabled]="!selected.protocol" (click)="editProfile(p)">Edit</button>
+                  <button class="button-stroke button-small" *ngIf="canClear(p)" [disabled]="!selected.protocol" (click)="clearProfile(p)">Clear</button>
+                </td>
+              </tr>
+              <tr *ngIf="!loadingProfiles && visibleProfiles.length === 0"><td colspan="10" class="sc-empty">No charging profile.</td></tr>
+              <tr *ngIf="loadingProfiles"><td colspan="10" class="sc-empty">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sc-card" *ngIf="form">
+        <div class="sc-card__head">
+          <h3>{{ form.chargingProfileID ? 'Edit' : 'New' }} {{ form.purpose }}</h3>
+          <button class="button-stroke button-small" (click)="form = null">Cancel</button>
+        </div>
+        <div class="sc-grid">
+          <label class="sc-field">
+            <span>Purpose</span>
+            <select [(ngModel)]="form.purpose" (ngModelChange)="onPurposeChange()">
+              <option value="TxDefaultProfile">TxDefaultProfile</option>
+              <option value="ChargingStationMaxProfile">ChargingStationMaxProfile</option>
+            </select>
+          </label>
+          <label class="sc-field">
+            <span>EVSE</span>
+            <select [(ngModel)]="form.evseId" [disabled]="form.purpose === 'ChargingStationMaxProfile'">
+              <option *ngFor="let evse of evseOptions" [ngValue]="evse">{{ evse === 0 ? '0 (whole charger)' : evse }}</option>
+            </select>
+          </label>
+          <label class="sc-field">
+            <span>Stack level</span>
+            <input type="number" min="0" [(ngModel)]="form.stackLevel">
+          </label>
+          <label class="sc-field">
+            <span>Kind</span>
+            <select [(ngModel)]="form.kind">
+              <option value="Absolute">Absolute</option>
+              <option value="Recurring">Recurring</option>
+              <option value="Relative">Relative</option>
+            </select>
+          </label>
+          <label class="sc-field" *ngIf="form.kind === 'Recurring'">
+            <span>Recurrence</span>
+            <select [(ngModel)]="form.recurrencyKind">
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+            </select>
+          </label>
+          <label class="sc-field" *ngIf="form.kind !== 'Relative'">
+            <span>Schedule start</span>
+            <input type="datetime-local" [(ngModel)]="form.startSchedule">
+            <small>{{ form.kind === 'Recurring' ? 'Empty: today 00:00 (business time zone)' : 'Empty: now' }}</small>
+          </label>
+          <label class="sc-field">
+            <span>Duration (min)</span>
+            <input type="number" min="1" [(ngModel)]="form.durationMinutes" placeholder="unlimited">
+          </label>
+          <label class="sc-field">
+            <span>Unit</span>
+            <select [(ngModel)]="form.chargingRateUnit">
+              <option value="A">A (per phase)</option>
+              <option value="W">W</option>
+            </select>
+          </label>
+          <label class="sc-field">
+            <span>Valid from</span>
+            <input type="datetime-local" [(ngModel)]="form.validFrom">
+          </label>
+          <label class="sc-field">
+            <span>Valid to</span>
+            <input type="datetime-local" [(ngModel)]="form.validTo">
+          </label>
+        </div>
+
+        <h4 class="sc-subtitle">Periods</h4>
+        <table class="sc-table sc-table--compact">
+          <thead><tr><th>Start offset (min)</th><th></th><th>Limit ({{ form.chargingRateUnit }})</th><th>Phases</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let period of form.periods; let i = index">
+              <td><input type="number" min="0" [(ngModel)]="period.startMinutes" [disabled]="i === 0"></td>
+              <td class="sc-sub">+{{ formatOffset(period.startMinutes * 60) }}</td>
+              <td><input type="number" min="0" step="0.1" [(ngModel)]="period.limit"></td>
+              <td>
+                <select [(ngModel)]="period.numberPhases">
+                  <option [ngValue]="null">default</option>
+                  <option [ngValue]="1">1</option>
+                  <option [ngValue]="3">3</option>
+                </select>
+              </td>
+              <td><button class="button-stroke button-small" [disabled]="form.periods.length === 1" (click)="removePeriod(i)">Remove</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sc-actions sc-actions--end">
+          <button class="button-stroke button-small" (click)="addPeriod()">Add period</button>
+          <button class="button button-small" [disabled]="sending" (click)="sendProfile()">{{ sending ? 'Waiting for the charger…' : 'Send to charger' }}</button>
+        </div>
+      </section>
+
+      <section class="sc-card">
+        <div class="sc-card__head">
+          <h3>Composite schedule</h3>
+          <div class="sc-actions">
+            <label class="sc-field sc-field--inline">
+              <span>EVSE</span>
+              <select [(ngModel)]="compositeEvse">
+                <option *ngFor="let evse of evseOptions" [ngValue]="evse">{{ evse }}</option>
+              </select>
+            </label>
+            <label class="sc-field sc-field--inline">
+              <span>Duration</span>
+              <select [(ngModel)]="compositeDuration">
+                <option *ngFor="let d of durations" [ngValue]="d.value">{{ d.label }}</option>
+              </select>
+            </label>
+            <label class="sc-field sc-field--inline">
+              <span>Unit</span>
+              <select [(ngModel)]="compositeUnit">
+                <option value="">charger default</option>
+                <option value="A">A</option>
+                <option value="W">W</option>
+              </select>
+            </label>
+            <button class="button button-small" [disabled]="compositeLoading || !selected.protocol" (click)="loadComposite()">{{ compositeLoading ? 'Waiting…' : 'Get schedule' }}</button>
+          </div>
+        </div>
+        <p class="sc-hint" *ngIf="!composite">What the charger will actually apply: the combination of every active profile and external limit.</p>
+        <ng-container *ngIf="composite">
+          <p class="sc-hint" *ngIf="composite.status !== 'Accepted'">Charger answered {{ composite.status }}<span *ngIf="composite.reason">: {{ composite.reason }}</span></p>
+          <apx-chart *ngIf="compositeChart" [series]="compositeChart.series" [chart]="compositeChart.chart" [xaxis]="compositeChart.xaxis"
+            [yaxis]="compositeChart.yaxis" [stroke]="compositeChart.stroke" [dataLabels]="compositeChart.dataLabels" [tooltip]="compositeChart.tooltip"
+            [grid]="compositeChart.grid" [colors]="compositeChart.colors" [legend]="compositeChart.legend"></apx-chart>
+          <p class="sc-hint" *ngIf="composite.status === 'Accepted' && composite.periods.length === 0">No limit applies in this window.</p>
+        </ng-container>
+      </section>
+
+      <section class="sc-card" *ngIf="evNeeds.length > 0">
+        <div class="sc-card__head"><h3>EV charging needs (ISO 15118)</h3></div>
+        <div class="sc-table-wrap">
+          <table class="sc-table">
+            <thead><tr><th>Received</th><th>EVSE</th><th>Transfer</th><th>Departure</th><th>Energy (Wh)</th><th>Current (A)</th><th>Max power (W)</th><th>SoC</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let n of evNeeds">
+                <td>{{ n.receivedAt | date:'short' }}</td>
+                <td>{{ n.evseId }}</td>
+                <td>{{ n.requestedEnergyTransfer || '—' }}</td>
+                <td>{{ n.departureTime ? (n.departureTime | date:'short') : '—' }}</td>
+                <td>{{ n.energyAmount ?? '—' }}</td>
+                <td>{{ n.evMinCurrent ?? '—' }} – {{ n.evMaxCurrent ?? '—' }}</td>
+                <td>{{ n.evMaxPower ?? '—' }}</td>
+                <td>{{ n.stateOfCharge != null ? n.stateOfCharge + ' %' : '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+</app-dashboard-details-container>

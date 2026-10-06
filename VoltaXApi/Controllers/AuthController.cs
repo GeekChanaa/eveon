@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using VoltaXApi.Configurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 
 namespace VoltaXApi.Controllers
 {
@@ -34,6 +38,11 @@ namespace VoltaXApi.Controllers
         private readonly IGoogleAuthProvider _googleAuthProvider;
         private readonly IPartnerAuthService _partnerAuthService;
         private readonly IRefreshTokenService _refreshTokenService;
+        private readonly ITwoFactorService _twoFactorService;
+        private readonly VoltaXApi.ScaleOut.ISecurityStateStore _cache;
+        private readonly IOptionsMonitor<JwtBearerOptions> _jwtOptions;
+
+        private static readonly TimeSpan GoogleLinkTicketLifetime = TimeSpan.FromSeconds(60);
 
         public AuthController(
                 IAuthRepository repo,
@@ -46,8 +55,14 @@ namespace VoltaXApi.Controllers
                 ISnsService snsService,
                 IGoogleAuthProvider googleAuthProvider,
                 IPartnerAuthService partnerAuthService,
-                IRefreshTokenService refreshTokenService)
+                IRefreshTokenService refreshTokenService,
+                ITwoFactorService twoFactorService,
+                VoltaXApi.ScaleOut.ISecurityStateStore cache,
+                IOptionsMonitor<JwtBearerOptions> jwtOptions)
         {
+            _twoFactorService = twoFactorService;
+            _cache = cache;
+            _jwtOptions = jwtOptions;
             _refreshTokenService = refreshTokenService;
             _googleAuthProvider = googleAuthProvider;
             _partnerAuthService = partnerAuthService;
@@ -63,6 +78,7 @@ namespace VoltaXApi.Controllers
 
         // Registration Method
         [HttpPost("Register")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
         {
             User user = await this._authService.Register(userForRegisterDto);
@@ -77,6 +93,7 @@ namespace VoltaXApi.Controllers
 
         // Login Method, accepts either an email address or a phone number
         [HttpPost("Login")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> Login(UserForLoginDto loginDto)
         {
             if (string.IsNullOrWhiteSpace(loginDto.Identifier))
@@ -87,7 +104,19 @@ namespace VoltaXApi.Controllers
             if (result == null)
                 return Unauthorized();
 
-            return Ok(result);
+            return Ok(RefreshTokenCookie.Apply(HttpContext, result));
+        }
+
+        /// <summary>
+        /// Second step of a sign in on an account with 2FA: the challenge token from the
+        /// login response plus a 6 digit TOTP code (or a recovery code).
+        /// </summary>
+        [HttpPost("verify-2fa")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> VerifyTwoFactor([FromBody] TwoFactorLoginDto dto)
+        {
+            var result = await _authService.CompleteTwoFactorLogin(dto.TwoFactorToken, dto.Code, ClientIp(), ClientUserAgent());
+            return Ok(RefreshTokenCookie.Apply(HttpContext, result));
         }
 
 
@@ -97,14 +126,9 @@ namespace VoltaXApi.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                tokenHandler.ValidateToken(token.Token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                            .GetBytes(_config.GetSection("AppSettings:Token").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                }, out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(token.Token,
+                    _jwtOptions.Get(JwtBearerDefaults.AuthenticationScheme).TokenValidationParameters,
+                    out SecurityToken validatedToken);
             }
             catch
             {
@@ -116,12 +140,21 @@ namespace VoltaXApi.Controllers
         /// <summary>
         /// Swaps a refresh token for a new access / refresh pair. The presented token is
         /// spent in the process, so a client must always store the one it gets back.
+        /// Browsers send it in the HttpOnly cookie, mobile clients in the body.
         /// </summary>
         [HttpPost("Refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto dto)
+        public async Task<IActionResult> Refresh([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RefreshTokenRequestDto? dto)
         {
-            var result = await _refreshTokenService.Rotate(dto.RefreshToken, ClientIp(), ClientUserAgent());
-            return Ok(result);
+            try
+            {
+                var result = await _refreshTokenService.Rotate(RefreshTokenCookie.Read(HttpContext, dto?.RefreshToken), ClientIp(), ClientUserAgent());
+                return Ok(RefreshTokenCookie.Apply(HttpContext, result));
+            }
+            catch (UnauthorizedException)
+            {
+                RefreshTokenCookie.Clear(HttpContext);
+                throw;
+            }
         }
 
         /// <summary>
@@ -129,9 +162,12 @@ namespace VoltaXApi.Controllers
         /// tell the caller whether a token was real.
         /// </summary>
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto dto)
+        public async Task<IActionResult> Logout([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RefreshTokenRequestDto? dto)
         {
-            await _refreshTokenService.Revoke(dto.RefreshToken, "logout");
+            var token = RefreshTokenCookie.Read(HttpContext, dto?.RefreshToken);
+            if (token != null)
+                await _refreshTokenService.Revoke(token, "logout");
+            RefreshTokenCookie.Clear(HttpContext);
             return Ok();
         }
 
@@ -141,33 +177,30 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> LogoutEverywhere()
         {
             await _refreshTokenService.RevokeAllForUser(GetCurrentUserId(), "logout-everywhere");
+            RefreshTokenCookie.Clear(HttpContext);
             return Ok();
         }
 
+        /// <summary>Sets a new password with the single use, expiring token from the reset email / mobile code.</summary>
         [HttpPost("ResetPassword")]
-        public async Task ResetPassword(UserForResetPasswordDto userDto)
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> ResetPassword(UserForResetPasswordDto userDto)
         {
-            var user = await this._userRepo.FindUserByEmail(userDto.Email);
-            if (user == null)
-                throw new NotFoundException("User not found");
+            await _authService.ResetPassword(userDto.Email, userDto.Token, userDto.Password);
+            return Ok();
+        }
 
-            if (string.IsNullOrWhiteSpace(userDto.Token) || user.ResetPasswordToken != userDto.Token)
-                throw new ValidationException("Invalid token");
-
-            byte[] passHash, passSalt;
-            AuthHelper.CreatePasswordHash(userDto.Password, out passHash, out passSalt); // Make sure to hash the password!
-            user.PasswordHash = passHash;
-            user.PasswordSalt = passSalt;
-
-            user.ResetPasswordToken = null;
-
-            await this._userRepo.Update(user);
-
-            // The old password is gone, so every session opened with it goes too.
-            await _refreshTokenService.RevokeAllForUser(user.ID, "password-reset");
+        /// <summary>Always 200, whether or not the address belongs to an account.</summary>
+        [HttpPost("request-password-reset")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] EmailRequestDto dto)
+        {
+            await _authService.ResetPasswordRequest(dto.Email);
+            return Ok();
         }
 
         [HttpGet("ResetPassword")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> ResetPasswordRequest([FromQuery] string email)
         {
             await _authService.ResetPasswordRequest(email);
@@ -175,28 +208,24 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("ResetPasswordForMobile")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> ResetPasswordRequestForMobile([FromQuery] string email)
         {
             await _authService.ResetPasswordRequestForMobile(email);
             return StatusCode(200);
         }
 
+        /// <summary>Max 5 attempts per code; a correct code returns a fresh single use reset token.</summary>
         [HttpPost("VerifyResetPasswordCodeForMobile")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> VerifyResetPasswordCodeForMobile([FromBody] UserResetPasswordForMobileDto userResetPasswordForMobileDto)
         {
-            try
+            var resetPasswordToken = await _authService.VerifyResetPasswordCodeForMobile(userResetPasswordForMobileDto);
+            return Ok(new
             {
-                var resetPasswordToken = await _authService.VerifyResetPasswordCodeForMobile(userResetPasswordForMobileDto);
-                return Ok(new 
-                { 
-                    email = userResetPasswordForMobileDto.Email, 
-                    resetPasswordToken = resetPasswordToken 
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+                email = userResetPasswordForMobileDto.Email,
+                resetPasswordToken = resetPasswordToken
+            });
         }
 
         [HttpPost("ChangePassword")]
@@ -223,6 +252,7 @@ namespace VoltaXApi.Controllers
 
         // Verifying the email
         [HttpPost("VerifyEmail")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDto verifyEmailDto)
         {
             // Checking the password
@@ -238,6 +268,7 @@ namespace VoltaXApi.Controllers
 
         // Verifying the phone number
         [HttpPost("VerifyPhone")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
         {
             try
@@ -252,6 +283,7 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("SendPhoneVerificationSMS")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
         {
             await this._authService.SendPhoneVerificationToken(addPhoneNumberDto);
@@ -260,11 +292,53 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpPost("SendEmailVerificationCode")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> SendEmailVerificationCode([FromBody] int userID)
         {
             await this._authService.CreateEmailVerificationToken(userID);
 
             return StatusCode(200);
+        }
+
+        /// <summary>Re-sends the verification link to the signed in user's address (no-op once verified).</summary>
+        [Authorize]
+        [HttpPost("resend-verification")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> ResendVerification()
+        {
+            await _authService.ResendVerificationEmail(GetCurrentUserId());
+            return Ok();
+        }
+
+        // -----------------------------------------------------------------
+        // Two factor authentication (TOTP) for admin and partner accounts
+        // -----------------------------------------------------------------
+
+        [Authorize]
+        [HttpGet("2fa")]
+        public async Task<IActionResult> GetTwoFactorStatus()
+            => Ok(await _twoFactorService.GetStatus(GetCurrentUserId()));
+
+        /// <summary>Generates a new (pending) secret; returned once as otpauth URI, base32 and QR code.</summary>
+        [Authorize]
+        [HttpPost("2fa/enroll")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> BeginTwoFactorEnrollment()
+            => Ok(await _twoFactorService.BeginEnrollment(GetCurrentUserId()));
+
+        [Authorize]
+        [HttpPost("2fa/confirm")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> ConfirmTwoFactorEnrollment([FromBody] TwoFactorCodeDto dto)
+            => Ok(new { recoveryCodes = await _twoFactorService.ConfirmEnrollment(GetCurrentUserId(), dto.Code) });
+
+        [Authorize]
+        [HttpPost("2fa/disable")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> DisableTwoFactor([FromBody] TwoFactorDisableDto dto)
+        {
+            await _twoFactorService.Disable(GetCurrentUserId(), dto.Password, dto.Code);
+            return Ok();
         }
 
         [HttpGet("SendSmsTest/{phone}")]
@@ -298,13 +372,26 @@ namespace VoltaXApi.Controllers
         }
 
         /// <summary>
+        /// Issues a one time, 60 second ticket for <see cref="GoogleLink"/>: a top level
+        /// navigation cannot carry the Authorization header, and the JWT must never travel in a URL.
+        /// </summary>
+        [Authorize]
+        [HttpPost("google/link-ticket")]
+        public async Task<IActionResult> CreateGoogleLinkTicket()
+        {
+            var ticket = AuthHelper.GenerateSecureToken();
+            await _cache.SetAsync(GoogleLinkTicketKey(ticket), GetCurrentUserId().ToString(), GoogleLinkTicketLifetime);
+            return Ok(new { ticket, expiresIn = (int)GoogleLinkTicketLifetime.TotalSeconds });
+        }
+
+        /// <summary>
         /// Starts the redirect flow for an already authenticated user that wants to attach
-        /// their Google account. The ticket is the user's own JWT.
+        /// their Google account. The ticket comes from <see cref="CreateGoogleLinkTicket"/> and is spent here.
         /// </summary>
         [HttpGet("google-link")]
-        public IActionResult GoogleLink([FromQuery] string ticket, [FromQuery] string? returnUrl = null)
+        public async Task<IActionResult> GoogleLink([FromQuery] string ticket, [FromQuery] string? returnUrl = null)
         {
-            var userID = ReadUserIdFromTicket(ticket);
+            var userID = await ConsumeGoogleLinkTicket(ticket);
             if (userID == null)
                 return Redirect(BuildSpaRedirect(ExternalAuthDefaults.CustomerPortal, error: "Your session expired, please sign in again"));
 
@@ -359,12 +446,20 @@ namespace VoltaXApi.Controllers
                     ? await _partnerAuthService.ExternalLogin(externalUser, AuthProviderEnum.Google, ClientIp(), ClientUserAgent())
                     : await _authService.ExternalLogin(externalUser, AuthProviderEnum.Google, ClientIp(), ClientUserAgent());
 
-                return Redirect(BuildSpaRedirect(portal, token: login.Token, refreshToken: login.RefreshToken, returnUrl: returnUrl));
+                if (login.RequiresTwoFactor)
+                    return Redirect(BuildSpaRedirect(portal, twoFactorToken: login.TwoFactorToken, returnUrl: returnUrl));
+
+                // The refresh token goes into the HttpOnly cookie, never into the URL.
+                RefreshTokenCookie.Apply(HttpContext, login);
+                return Redirect(BuildSpaRedirect(portal, token: login.Token, returnUrl: returnUrl,
+                    enrollTwoFactor: login.TwoFactorEnrollmentRequired));
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Google sign in failed");
-                return Redirect(BuildSpaRedirect(portal, error: ex.Message, returnUrl: returnUrl));
+                // Only our own, user-facing messages go back to the SPA; anything else stays in the log.
+                var error = ex is UnauthorizedException or ValidationException ? ex.Message : "Google sign in failed. Please try again.";
+                return Redirect(BuildSpaRedirect(portal, error: error, returnUrl: returnUrl));
             }
         }
 
@@ -373,12 +468,13 @@ namespace VoltaXApi.Controllers
         /// the client already holds a Google ID token and exchanges it for a VoltaX JWT.
         /// </summary>
         [HttpPost("google")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> GoogleTokenLogin([FromBody] GoogleLoginDto googleLoginDto)
         {
             var externalUser = await _googleAuthProvider.ValidateIdTokenAsync(googleLoginDto.IdToken);
             var result = await _authService.ExternalLogin(externalUser, AuthProviderEnum.Google, ClientIp(), ClientUserAgent());
 
-            return Ok(result);
+            return Ok(RefreshTokenCookie.Apply(HttpContext, result));
         }
 
         [Authorize]
@@ -416,41 +512,23 @@ namespace VoltaXApi.Controllers
             return userID;
         }
 
-        /// <summary>
-        /// Validates a VoltaX JWT handed over in a query string (the browser cannot set an
-        /// Authorization header on a top level navigation) and returns the user it belongs to.
-        /// </summary>
-        private int? ReadUserIdFromTicket(string ticket)
+        private static string GoogleLinkTicketKey(string ticket) => "google-link-ticket:" + AuthHelper.Sha256Hex(ticket);
+
+        private async Task<int?> ConsumeGoogleLinkTicket(string ticket)
         {
             if (string.IsNullOrWhiteSpace(ticket))
                 return null;
 
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var principal = tokenHandler.ValidateToken(ticket, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                        .GetBytes(_config.GetSection("AppSettings:Token").Value)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                }, out _);
-
-                var value = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-                return int.TryParse(value, out var userID) ? userID : null;
-            }
-            catch
-            {
-                return null;
-            }
+            // Read and delete in one step, so a ticket is spent once even across instances.
+            var value = await _cache.TakeAsync(GoogleLinkTicketKey(ticket));
+            return int.TryParse(value, out var userID) ? userID : null;
         }
 
         private string ClientIp() => HttpContext.Connection.RemoteIpAddress?.ToString();
 
         private string ClientUserAgent() => Request.Headers["User-Agent"].ToString();
 
-        private string BuildSpaRedirect(string portal, string? token = null, string? refreshToken = null, string? error = null, bool linked = false, string? returnUrl = null)
+        private string BuildSpaRedirect(string portal, string? token = null, string? twoFactorToken = null, string? error = null, bool linked = false, string? returnUrl = null, bool enrollTwoFactor = false)
         {
             string spaLink = _config["SpaLink"];
             if (!spaLink.EndsWith("/"))
@@ -465,8 +543,11 @@ namespace VoltaXApi.Controllers
             if (!string.IsNullOrEmpty(token))
                 query.Add("token=" + Uri.EscapeDataString(token));
 
-            if (!string.IsNullOrEmpty(refreshToken))
-                query.Add("refreshToken=" + Uri.EscapeDataString(refreshToken));
+            if (!string.IsNullOrEmpty(twoFactorToken))
+                query.Add("twoFactorToken=" + Uri.EscapeDataString(twoFactorToken));
+
+            if (enrollTwoFactor)
+                query.Add("enrollTwoFactor=true");
 
             if (!string.IsNullOrEmpty(error))
                 query.Add("error=" + Uri.EscapeDataString(error));

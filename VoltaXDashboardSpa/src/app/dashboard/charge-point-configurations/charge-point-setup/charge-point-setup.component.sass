@@ -1,0 +1,968 @@
+@use '../cfg' as *
+
+.setup
+  display: flex
+  flex-direction: column
+  gap: 20px
+  color: $text
+
+// ---------------------------------------------------------------- hero
+
+.setup-hero
+  +card
+  position: relative
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 20px
+  padding: 24px 26px
+  overflow: hidden
+
+.setup-hero__glow
+  position: absolute
+  top: -120px
+  right: -80px
+  width: 340px
+  height: 340px
+  border-radius: 50%
+  background: radial-gradient(circle, rgba(229, 178, 35, .28), transparent 65%)
+  animation: glow-drift 8s ease-in-out infinite alternate
+  pointer-events: none
+  +reduced-motion
+    animation: none
+
+@keyframes glow-drift
+  to
+    transform: translate(-60px, 40px) scale(1.15)
+
+.setup-hero__text
+  position: relative
+
+.setup-hero__eyebrow
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  font-size: 11.5px
+  font-weight: 750
+  letter-spacing: .07em
+  text-transform: uppercase
+  color: $yellow-ink
+
+  svg
+    width: 15px
+    height: 15px
+    stroke: currentColor
+
+.setup-hero__title
+  margin: 6px 0 4px
+  font-size: 26px
+  font-weight: 800
+  letter-spacing: -.02em
+  word-break: break-all
+
+.setup-hero__meta
+  display: flex
+  flex-wrap: wrap
+  gap: 6px 16px
+  margin: 0
+  font-size: 13px
+  color: $muted
+
+.setup-hero__conn
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  font-weight: 650
+
+  &.on
+    color: $ok
+
+.setup-hero__progress
+  position: relative
+  flex: none
+  width: 64px
+  height: 64px
+
+  svg
+    width: 100%
+    height: 100%
+    transform: rotate(-90deg)
+
+  circle
+    fill: none
+    stroke-width: 4
+
+  .track
+    stroke: $hover
+
+  .fill
+    stroke: $yellow
+    stroke-linecap: round
+    stroke-dasharray: 119.4
+    transition: stroke-dashoffset .8s $ease
+
+  span
+    position: absolute
+    inset: 0
+    display: grid
+    place-items: center
+    font-size: 13px
+    font-weight: 750
+    font-variant-numeric: tabular-nums
+
+// ---------------------------------------------------------------- layout
+
+.setup-body
+  display: grid
+  grid-template-columns: 260px minmax(0, 1fr)
+  gap: 20px
+  align-items: start
+
+  @media (max-width: 960px)
+    grid-template-columns: 1fr
+
+// ---------------------------------------------------------------- rail
+
+.setup-rail
+  +card
+  position: relative
+  margin: 0
+  padding: 22px 18px
+  list-style: none
+
+  // The connecting line behind the nodes, filled up to the current step.
+  &::before, &::after
+    content: ''
+    position: absolute
+    top: 40px
+    bottom: 40px
+    left: 35px
+    width: 2px
+    border-radius: 2px
+
+  &::before
+    background: $border
+
+  &::after
+    bottom: auto
+    height: calc((100% - 80px) * var(--progress, 0) / 100)
+    background: linear-gradient(180deg, #{$ok}, #{$yellow})
+    transition: height .8s $ease
+
+  @media (max-width: 960px)
+    display: flex
+    gap: 8px
+    padding: 16px
+    overflow-x: auto
+
+    &::before, &::after
+      display: none
+
+.setup-rail__step
+  position: relative
+  z-index: 1
+  display: flex
+  align-items: center
+  gap: 14px
+  padding: 9px 0
+
+  @media (max-width: 960px)
+    flex: none
+    padding: 0
+
+    .setup-rail__hint
+      display: none
+
+.setup-rail__node
+  display: grid
+  flex: none
+  place-items: center
+  width: 36px
+  height: 36px
+  border: 2px solid $border
+  border-radius: 50%
+  background: $surface
+  color: $muted
+  font-size: 13px
+  font-weight: 750
+  transition: border-color .35s, background .35s, color .35s, transform .35s $ease
+
+  svg
+    width: 18px
+    height: 18px
+    stroke: currentColor
+
+  .draw
+    stroke-dasharray: 24
+    stroke-dashoffset: 24
+    animation: draw .45s .1s $ease forwards
+    +reduced-motion
+      animation: none
+      stroke-dashoffset: 0
+
+.setup-rail__text
+  display: flex
+  flex-direction: column
+  min-width: 0
+
+.setup-rail__title
+  font-size: 14px
+  font-weight: 700
+  color: $muted
+  transition: color .3s
+
+.setup-rail__hint
+  font-size: 12px
+  color: $muted
+  opacity: .8
+
+.setup-rail__step.is-done
+  .setup-rail__node
+    border-color: $ok
+    background: $ok
+    color: #fff
+  .setup-rail__title
+    color: $text
+
+.setup-rail__step.is-active
+  .setup-rail__node
+    position: relative
+    border-color: $yellow
+    background: $yellow
+    color: #0B0B0B
+    transform: scale(1.08)
+
+    &::after
+      content: ''
+      position: absolute
+      inset: -6px
+      border: 2px solid $yellow
+      border-radius: 50%
+      animation: cfg-ping 1.6s ease-out infinite
+      +reduced-motion
+        animation: none
+        opacity: .3
+  .setup-rail__title
+    color: $text
+
+.setup-rail__step.is-error
+  .setup-rail__node
+    border-color: $bad
+    background: $bad
+    color: #fff
+    animation: shake .4s
+  .setup-rail__title
+    color: $bad
+
+@keyframes draw
+  to
+    stroke-dashoffset: 0
+
+@keyframes shake
+  25%
+    transform: translateX(-3px)
+  75%
+    transform: translateX(3px)
+
+// ---------------------------------------------------------------- stage / panels
+
+.setup-stage
+  +card
+  position: relative
+  min-height: 420px
+  padding: 34px
+  overflow: hidden
+
+  @media (max-width: 640px)
+    padding: 22px 18px
+
+.panel
+  display: flex
+  flex-direction: column
+  align-items: center
+  max-width: 560px
+  margin: 0 auto
+  text-align: center
+  animation: panel-in .5s $ease both
+  +reduced-motion
+    animation: none
+
+  h3
+    margin: 18px 0 6px
+    font-size: 21px
+    font-weight: 780
+    letter-spacing: -.01em
+
+  p
+    margin: 0 0 6px
+    color: $muted
+    font-size: 14px
+    line-height: 1.55
+
+  code
+    padding: 1px 6px
+    border-radius: 6px
+    background: $hover
+    color: $text
+    font-size: 12.5px
+
+  &.panel_wide
+    max-width: none
+    align-items: stretch
+    text-align: left
+
+    h3
+      margin-top: 0
+
+@keyframes panel-in
+  from
+    opacity: 0
+    transform: translateY(16px) scale(.985)
+    filter: blur(3px)
+
+.elapsed
+  display: inline-block
+  margin-left: 6px
+  padding: 2px 8px
+  border-radius: 999px
+  background: $hover
+  color: $muted
+  font-size: 12px
+  font-weight: 650
+  vertical-align: middle
+  font-variant-numeric: tabular-nums
+
+.ok-text
+  color: $ok
+
+.muted
+  font-size: 12.5px !important
+
+.note
+  margin-top: 14px !important
+  padding: 10px 14px
+  border-radius: 10px
+  background: $yellow-soft
+  color: $yellow-ink !important
+  font-size: 13px !important
+
+.panel__actions
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  gap: 10px
+  margin-top: 26px
+
+  &.panel__actions_split
+    justify-content: space-between
+
+.cfg-btn_big
+  min-height: 46px
+  padding: 0 22px
+  font-size: 14.5px
+
+  svg
+    transition: transform .2s $ease
+
+  &:hover:not(:disabled) svg
+    transform: translateX(3px)
+
+// ---------------------------------------------------------------- error
+
+.panel__icon
+  display: grid
+  place-items: center
+  width: 64px
+  height: 64px
+  border-radius: 50%
+  animation: pop .45s $ease both
+
+  svg
+    width: 30px
+    height: 30px
+    stroke: currentColor
+
+  &.panel__icon_bad
+    background: $bad-soft
+    color: $bad
+
+@keyframes pop
+  0%
+    transform: scale(.4)
+    opacity: 0
+  70%
+    transform: scale(1.08)
+
+// ---------------------------------------------------------------- 1. connect
+
+.link-visual
+  display: flex
+  align-items: center
+  gap: 0
+  width: 100%
+  max-width: 440px
+  margin-top: 10px
+
+.link-visual__end
+  position: relative
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 8px
+  flex: none
+  width: 110px
+  font-size: 12px
+  font-weight: 650
+  color: $muted
+  word-break: break-all
+
+  svg
+    position: relative
+    z-index: 1
+    width: 64px
+    height: 64px
+    padding: 14px
+    border: 1px solid $border
+    border-radius: 20px
+    background: $surface
+    stroke: $text
+    transition: border-color .4s, box-shadow .4s
+
+.link-visual__end_cp .ring
+  position: absolute
+  top: 0
+  left: 50%
+  width: 64px
+  height: 64px
+  margin-left: -32px
+  border: 2px solid $yellow
+  border-radius: 20px
+  opacity: 0
+
+.link-visual__wire
+  position: relative
+  flex: 1
+  height: 2px
+  margin-bottom: 26px
+  background: repeating-linear-gradient(90deg, #{$border} 0 6px, transparent 6px 12px)
+  transition: background .4s
+
+.packet
+  position: absolute
+  top: -3px
+  left: 0
+  width: 8px
+  height: 8px
+  border-radius: 50%
+  background: $yellow
+  opacity: 0
+
+.link-visual.is-waiting
+  .ring
+    animation: radar 2s ease-out infinite
+    animation-delay: var(--d)
+  .packet
+    animation: travel 1.6s ease-in-out infinite
+    animation-delay: var(--d)
+
+.link-visual.is-linked
+  .link-visual__wire
+    background: $ok
+    animation: wire-fill .6s $ease both
+  .link-visual__end svg
+    border-color: $ok
+    box-shadow: 0 0 0 6px $ok-soft
+
+@keyframes radar
+  0%
+    transform: scale(1)
+    opacity: .6
+  100%
+    transform: scale(1.7)
+    opacity: 0
+
+@keyframes travel
+  0%
+    left: 0
+    opacity: 0
+  15%, 70%
+    opacity: 1
+  100%
+    left: calc(100% - 8px)
+    opacity: 0
+
+@keyframes wire-fill
+  from
+    clip-path: inset(0 100% 0 0)
+
+// ---------------------------------------------------------------- 2. identify
+
+.identity
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  gap: 10px
+  width: 100%
+  margin: 22px 0 0
+  text-align: left
+
+  @media (max-width: 560px)
+    grid-template-columns: 1fr
+
+  div
+    padding: 12px 14px
+    border: 1px solid $border
+    border-radius: 12px
+    background: $surface-alt
+    animation: cfg-rise .45s $ease both
+    animation-delay: calc(var(--i) * 110ms + 150ms)
+    +reduced-motion
+      animation: none
+
+  dt
+    font-size: 11px
+    font-weight: 650
+    letter-spacing: .04em
+    text-transform: uppercase
+    color: $muted
+
+  dd
+    margin: 3px 0 0
+    font-size: 14px
+    font-weight: 650
+    word-break: break-word
+
+// ---------------------------------------------------------------- 3. discover
+
+.scan
+  position: relative
+  width: 220px
+  height: 132px
+  margin-top: 8px
+  padding: 14px
+  border: 1px solid $border
+  border-radius: 18px
+  background: $surface-alt
+  overflow: hidden
+
+.scan__grid
+  display: grid
+  grid-template-columns: repeat(6, 1fr)
+  gap: 7px
+  height: 100%
+
+  span
+    border-radius: 5px
+    background: $hover
+    animation: cell 2.4s ease-in-out infinite
+    animation-delay: calc(var(--c) * 90ms)
+    +reduced-motion
+      animation: none
+
+.scan__beam
+  position: absolute
+  top: 0
+  bottom: 0
+  left: -40%
+  width: 40%
+  background: linear-gradient(90deg, transparent, rgba(229, 178, 35, .35), transparent)
+  animation: beam 1.8s linear infinite
+  +reduced-motion
+    animation: none
+
+.scan.is-done
+  .scan__beam
+    display: none
+  .scan__grid span
+    background: $ok-soft
+    animation: cfg-rise .3s $ease both
+    animation-delay: calc(var(--c) * 25ms)
+
+@keyframes cell
+  0%, 100%
+    background: $hover
+  40%
+    background: $yellow-soft
+
+@keyframes beam
+  to
+    left: 100%
+
+.hint-swap
+  min-height: 22px
+  animation: cfg-rise .4s $ease
+
+// ---------------------------------------------------------------- 4. review
+
+.notice
+  margin: 14px 0 0
+  padding: 12px 14px
+  border-radius: 12px
+  background: $hover
+  font-size: 13px
+  line-height: 1.5
+
+  &.notice_warn
+    background: $warn-soft
+    color: $warn
+
+.tiles
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 10px
+  margin: 18px 0
+
+  @media (max-width: 640px)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+
+.tile
+  display: flex
+  flex-direction: column
+  gap: 2px
+  padding: 14px
+  border: 1px solid $border
+  border-radius: 12px
+  +rise
+
+  strong
+    font-size: 24px
+    font-weight: 800
+    font-variant-numeric: tabular-nums
+
+  span
+    font-size: 12px
+    color: $muted
+
+  &.tile_primary
+    border-color: transparent
+    background: $yellow-soft
+
+    strong
+      color: $yellow-ink
+
+.groups
+  display: flex
+  flex-direction: column
+  gap: 8px
+
+.group
+  border: 1px solid $border
+  border-radius: 12px
+  overflow: hidden
+  +rise
+  transition: border-color .2s
+
+  &.open
+    border-color: color-mix(in srgb, #{$yellow} 50%, #{$border})
+
+.group__head
+  display: flex
+  align-items: center
+  gap: 10px
+  width: 100%
+  padding: 13px 16px
+  border: 0
+  background: $surface
+  color: $text
+  font: inherit
+  text-align: left
+  cursor: pointer
+
+  &:hover
+    background: $hover
+
+  &:focus-visible
+    outline: 2px solid $yellow
+    outline-offset: -2px
+
+.group__name
+  flex: 1
+  font-size: 14px
+  font-weight: 700
+
+.group__count
+  font-size: 12px
+  font-weight: 650
+  color: $muted
+  font-variant-numeric: tabular-nums
+
+.group__chevron
+  width: 18px
+  height: 18px
+  stroke: $muted
+  transition: transform .25s $ease
+
+.group.open .group__chevron
+  transform: rotate(180deg)
+
+.group__body
+  border-top: 1px solid $border
+  animation: expand .3s $ease
+
+@keyframes expand
+  from
+    opacity: 0
+    transform: translateY(-6px)
+
+.setting
+  display: grid
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(150px, 240px)
+  align-items: center
+  gap: 12px
+  padding: 11px 16px
+  transition: opacity .2s, background .2s
+
+  &:not(:last-child)
+    border-bottom: 1px solid $border
+
+  &:hover
+    background: $surface-alt
+
+  &.off
+    opacity: .55
+
+  @media (max-width: 760px)
+    grid-template-columns: auto minmax(0, 1fr)
+
+    .cfg-badge, .setting__value
+      grid-column: 2
+
+.setting__check
+  width: 17px
+  height: 17px
+  accent-color: $yellow
+
+.setting__name
+  font-size: 13px
+  font-weight: 650
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+  word-break: break-all
+
+.setting__desc
+  margin-top: 2px
+  font-size: 12px
+  color: $muted
+
+.setting__value
+  display: flex
+  align-items: center
+  gap: 8px
+
+  .select, .field__input
+    width: 100%
+    min-width: 0
+    height: 38px
+
+.setting__current
+  flex: none
+  max-width: 90px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  font-size: 12px
+  color: $muted
+
+// ---------------------------------------------------------------- 5. apply
+
+.sending
+  display: flex
+  justify-content: center
+  gap: 8px
+  height: 60px
+  margin: 10px 0 8px
+  align-items: flex-end
+
+  span
+    width: 10px
+    border-radius: 5px
+    background: $yellow
+    animation: bars 1s ease-in-out infinite
+    animation-delay: calc(var(--i) * 120ms)
+    +reduced-motion
+      animation: none
+      height: 30px
+
+@keyframes bars
+  0%, 100%
+    height: 14px
+    opacity: .5
+  50%
+    height: 56px
+    opacity: 1
+
+.panel_wide .sending + h3, .panel_wide .sending ~ p
+  text-align: center
+
+.meter
+  height: 6px
+  margin: 12px 0 16px
+  border-radius: 6px
+  background: $hover
+  overflow: hidden
+
+  span
+    display: block
+    height: 100%
+    border-radius: 6px
+    background: linear-gradient(90deg, #{$ok}, #{$yellow})
+    transition: width .2s linear
+
+.results
+  display: flex
+  flex-direction: column
+  gap: 6px
+  max-height: 380px
+  margin: 0
+  padding: 0
+  list-style: none
+  overflow-y: auto
+
+.result
+  display: grid
+  grid-template-columns: auto minmax(0, 1fr) auto auto
+  align-items: center
+  gap: 12px
+  padding: 9px 12px
+  border-radius: 10px
+  background: $surface-alt
+  font-size: 13px
+  animation: result-in .35s $ease both
+  +reduced-motion
+    animation: none
+
+.result__icon
+  display: grid
+  place-items: center
+  width: 24px
+  height: 24px
+  border-radius: 50%
+
+  svg
+    width: 14px
+    height: 14px
+    stroke: #fff
+
+.result_ok .result__icon
+  background: $ok
+.result_warn .result__icon
+  background: $warn
+.result_bad .result__icon
+  background: $bad
+
+.result__name
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+  font-size: 12.5px
+  word-break: break-all
+
+.result__value
+  max-width: 140px
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  color: $muted
+
+.result__status
+  font-size: 12px
+  font-weight: 700
+
+.result_ok .result__status
+  color: $ok
+.result_warn .result__status
+  color: $warn
+.result_bad .result__status
+  color: $bad
+
+@keyframes result-in
+  from
+    opacity: 0
+    transform: translateX(-12px)
+
+// ---------------------------------------------------------------- 6. finish
+
+.panel_finish
+  position: relative
+  padding-top: 10px
+
+.big-check
+  position: relative
+  width: 96px
+  height: 96px
+  animation: pop .6s $ease both
+
+  svg
+    width: 100%
+    height: 100%
+
+  circle
+    stroke: $ok
+    fill: $ok-soft
+    stroke-dasharray: 151
+    stroke-dashoffset: 151
+    animation: draw .7s .1s $ease forwards
+
+  path
+    stroke: $ok
+    stroke-dasharray: 36
+    stroke-dashoffset: 36
+    animation: draw .45s .65s $ease forwards
+
+  +reduced-motion
+    animation: none
+
+    circle, path
+      animation: none
+      stroke-dashoffset: 0
+
+.burst
+  position: absolute
+  top: 58px
+  left: 50%
+  width: 0
+  height: 0
+  pointer-events: none
+
+  span
+    position: absolute
+    width: 8px
+    height: 8px
+    border-radius: 2px
+    background: $yellow
+    opacity: 0
+    animation: burst 1.1s .55s cubic-bezier(.1, .7, .3, 1) forwards
+    transform: rotate(calc(var(--p) * 30deg)) translateY(0)
+
+    &:nth-child(3n)
+      background: $ok
+    &:nth-child(4n)
+      border-radius: 50%
+
+    +reduced-motion
+      display: none
+
+@keyframes burst
+  0%
+    opacity: 1
+    transform: rotate(calc(var(--p) * 30deg)) translateY(0) scale(1)
+  100%
+    opacity: 0
+    transform: rotate(calc(var(--p) * 30deg + 90deg)) translateY(-110px) scale(.4)
+
+.failed
+  width: 100%
+  margin-top: 16px
+  padding: 12px 16px
+  border: 1px solid $border
+  border-radius: 12px
+  text-align: left
+  font-size: 13px
+
+  summary
+    font-weight: 650
+    cursor: pointer
+
+  ul
+    margin: 10px 0 0
+    padding-left: 18px
+    color: $muted
+
+  li + li
+    margin-top: 4px

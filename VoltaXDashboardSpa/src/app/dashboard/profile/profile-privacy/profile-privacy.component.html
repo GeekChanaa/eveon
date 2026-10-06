@@ -1,0 +1,90 @@
+<div class="card profile-section">
+  <div class="card-header">
+    <h2>Privacy</h2>
+  </div>
+  <div class="card-content">
+    <div class="form-content">
+      <div class="form-section">
+        <h3 class="section-title">Download my data</h3>
+        <p class="privacy__text">
+          Get a copy of the personal data we hold about you (profile, charging cards, sessions, payments,
+          notifications, reviews and sign-in history) as a ZIP archive.
+        </p>
+
+        <div class="privacy__status" *ngIf="loadingRequest">Loading...</div>
+
+        <ng-container *ngIf="!loadingRequest">
+          <div class="privacy__status" *ngIf="lastRequest">
+            Last request: {{ lastRequest.requestTime | date:'mediumDate' }} &middot;
+            <ng-container [ngSwitch]="lastRequest.status">
+              <span *ngSwitchCase="'Pending'">waiting for review</span>
+              <span *ngSwitchCase="'Approved'">approved, your archive is being prepared</span>
+              <span *ngSwitchCase="'Processing'">your archive is being prepared</span>
+              <span *ngSwitchCase="'Denied'">denied</span>
+              <span *ngSwitchCase="'Failed'">failed, please request it again</span>
+              <span *ngSwitchCase="'Expired'">the download link has expired</span>
+              <span *ngSwitchCase="'Completed'">
+                <ng-container *ngIf="lastRequest.downloaded">downloaded</ng-container>
+                <ng-container *ngIf="!lastRequest.downloaded && !isExpired">ready until {{ lastRequest.expiresAt | date:'medium' }}</ng-container>
+                <ng-container *ngIf="!lastRequest.downloaded && isExpired">the download link has expired</ng-container>
+              </span>
+              <span *ngSwitchDefault>{{ lastRequest.status }}</span>
+            </ng-container>
+          </div>
+
+          <div class="privacy__ready" *ngIf="readyToDownload">
+            <ng-container *ngIf="exportToken; else checkEmail">
+              <button type="button" class="button" [disabled]="downloading" (click)="download()">
+                {{ downloading ? 'Downloading...' : 'Download my data' }}
+              </button>
+              <p class="privacy__hint">The link works once. Keep the archive somewhere safe.</p>
+            </ng-container>
+            <ng-template #checkEmail>
+              <p class="privacy__hint">Your archive is ready. Open the link we sent you by email to download it.</p>
+            </ng-template>
+          </div>
+          <div class="error" *ngIf="downloadError">{{ downloadError }}</div>
+
+          <button type="button" class="button-stroke" *ngIf="canRequestExport" [disabled]="requesting" (click)="requestExport()">
+            {{ requesting ? 'Sending...' : 'Request a copy of my data' }}
+          </button>
+        </ng-container>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Delete my account</h3>
+        <p class="privacy__text">
+          Your account is disabled immediately and your charging cards are blocked. After a 14 day grace period
+          your personal data is anonymized. Invoices and charging records are kept, without your name, as required
+          for accounting. Contact support during the grace period if you change your mind or to request a refund of
+          any remaining card balance.
+        </p>
+        <button type="button" class="button-stroke privacy__delete" (click)="openDelete()">Delete my account</button>
+        <p class="privacy__hint">Read our <a routerLink="/privacy">privacy policy</a> for details.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-content">
+      <h3>Delete your account?</h3>
+      <p>You will be signed out on every device and will not be able to sign in again.</p>
+      <label class="privacy__field">
+        <span>Current password</span>
+        <input type="password" name="deletePassword" autocomplete="current-password" [(ngModel)]="deletePassword">
+        <small>Leave empty only if you always sign in with Google.</small>
+      </label>
+      <label class="privacy__check">
+        <input type="checkbox" name="deleteConfirmed" [(ngModel)]="deleteConfirmed">
+        <span>I understand my account will be deleted.</span>
+      </label>
+      <div class="error" *ngIf="deleteError">{{ deleteError }}</div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeDelete()" class="btn-cancel" [disabled]="deleting">Cancel</button>
+        <button type="button" (click)="confirmDelete()" class="btn-delete" [disabled]="deleting || !deleteConfirmed">
+          {{ deleting ? 'Deleting...' : 'Delete account' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

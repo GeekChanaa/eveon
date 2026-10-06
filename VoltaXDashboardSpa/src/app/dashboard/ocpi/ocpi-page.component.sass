@@ -1,0 +1,158 @@
+.ocpi
+  display: grid
+  gap: 20px
+  color: var(--vx-text, #171b24)
+
+.ocpi__card
+  padding: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+
+.ocpi__summary
+  display: flex
+  flex-wrap: wrap
+  gap: 32px
+  div
+    display: grid
+    gap: 6px
+  code
+    word-break: break-all
+
+.ocpi__label
+  font-size: 12px
+  color: var(--vx-text-muted, #737985)
+
+.ocpi__forms
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+  gap: 20px
+
+.ocpi__form
+  display: grid
+  gap: 12px
+  align-content: start
+  h3
+    margin: 0
+  p
+    margin: 0
+    font-size: 13px
+    color: var(--vx-text-muted, #737985)
+  label
+    display: grid
+    gap: 6px
+    span
+      font-size: 12px
+      color: var(--vx-text-muted, #737985)
+  input
+    height: 40px
+    padding: 0 12px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 8px
+    background: var(--vx-surface, #fff)
+    color: inherit
+  .button
+    justify-self: start
+
+.ocpi__secret
+  display: grid
+  gap: 8px
+  padding: 12px
+  border-radius: 8px
+  background: var(--vx-surface-muted, #f8f9fb)
+  font-size: 13px
+  div
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 8px
+  span
+    min-width: 90px
+    color: var(--vx-text-muted, #737985)
+  code
+    word-break: break-all
+
+.ocpi__title
+  margin: 8px 0 0
+
+.ocpi__error
+  color: #d64545
+
+.ocpi__message
+  color: #1f8a4c
+
+.ocpi__table-wrapper
+  overflow-x: auto
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+
+.ocpi__table
+  width: 100%
+  border-collapse: collapse
+  font-size: 13px
+  th, td
+    padding: 12px 14px
+    text-align: left
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    vertical-align: top
+  th
+    font-size: 12px
+    font-weight: 600
+    color: var(--vx-text-muted, #737985)
+  small
+    color: var(--vx-text-muted, #737985)
+
+.ocpi__empty
+  text-align: center !important
+  color: var(--vx-text-muted, #737985)
+
+.ocpi__badge
+  display: inline-block
+  padding: 2px 8px
+  border-radius: 6px
+  background: var(--vx-surface-muted, #f3f4f6)
+  font-weight: 600
+
+.ocpi__badge--ok
+  background: #e3f5ea
+  color: #1f8a4c
+
+.ocpi__actions
+  white-space: nowrap
+
+.ocpi__link
+  border: none
+  background: none
+  padding: 0 6px
+  color: var(--vx-primary, #2f6bff)
+  cursor: pointer
+  &:disabled
+    opacity: .5
+    cursor: default
+
+.ocpi__link--danger
+  color: #d64545
+
+.ocpi__url
+  display: block
+  word-break: break-all
+
+.ocpi__details td
+  background: var(--vx-surface-muted, #f8f9fb)
+
+.ocpi__endpoints
+  width: 100%
+  margin-top: 8px
+  border-collapse: collapse
+  th, td
+    padding: 6px 8px
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    word-break: break-all
+
+.ocpi__pager
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  gap: 12px
+  font-size: 13px

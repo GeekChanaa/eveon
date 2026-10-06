@@ -1,0 +1,134 @@
+:host
+  display: grid
+  gap: 16px
+  color: var(--vx-text, #171b24)
+
+.section-intro
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 12px
+  h2
+    margin: 0 0 4px
+    font-size: 18px
+  p
+    margin: 0
+    color: var(--vx-text-muted, #737985)
+    font-size: 13px
+
+.device-actions
+  display: flex
+  gap: 8px
+  flex-wrap: wrap
+
+.primary-action, .secondary-action, .edit-button
+  min-height: 36px
+  padding: 0 14px
+  border-radius: 8px
+  font-size: 13px
+  cursor: pointer
+  &:disabled
+    opacity: .6
+    cursor: default
+
+.primary-action
+  background: var(--vx-yellow, #e5b223)
+  color: #171b24
+  font-weight: 600
+
+.secondary-action, .edit-button
+  border: 1px solid var(--vx-border, #ededed)
+  background: var(--vx-surface, #fff)
+  color: inherit
+
+.edit-button
+  min-height: 28px
+  padding: 0 10px
+
+.device-feedback
+  color: #2e7d4f
+  font-size: 13px
+
+.field-error
+  color: #d64545
+  font-size: 13px
+
+.device-muted, small
+  color: var(--vx-text-muted, #737985)
+  font-size: 12px
+
+.device-table
+  overflow-x: auto
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  table
+    width: 100%
+    border-collapse: collapse
+    font-size: 13px
+  th, td
+    padding: 10px 14px
+    text-align: left
+    border-bottom: 1px solid var(--vx-border, #ededed)
+    vertical-align: top
+  th
+    font-size: 12px
+    font-weight: 500
+    color: var(--vx-text-muted, #737985)
+
+.device-empty
+  text-align: center
+  color: var(--vx-text-muted, #737985)
+
+.device-content
+  white-space: pre-wrap
+  word-break: break-word
+
+.device-data
+  margin: 0
+  max-height: 240px
+  max-width: 520px
+  overflow: auto
+  white-space: pre-wrap
+  word-break: break-word
+  font-size: 12px
+
+.device-form
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+  align-items: end
+  gap: 12px
+  padding: 20px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  h3
+    grid-column: 1 / -1
+    margin: 0
+    font-size: 14px
+  label
+    display: grid
+    gap: 6px
+    span
+      font-size: 12px
+      color: var(--vx-text-muted, #737985)
+  input:not([type=checkbox]), select
+    height: 40px
+    padding: 0 12px
+    border: 1px solid var(--vx-border, #ededed)
+    border-radius: 8px
+    background: var(--vx-surface, #fff)
+    color: inherit
+
+.device-check
+  display: flex !important
+  align-items: center
+  height: 40px
+
+.device-pager
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  gap: 12px
+  font-size: 13px

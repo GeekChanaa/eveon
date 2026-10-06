@@ -1,0 +1,118 @@
+@use '../cfg' as *
+
+.o16
+  +card
+  display: flex
+  flex-direction: column
+  gap: 14px
+  padding: 20px 22px
+  color: $text
+  animation: cfg-rise .4s $ease both
+
+.o16-head
+  display: flex
+  flex-wrap: wrap
+  align-items: flex-end
+  justify-content: space-between
+  gap: 14px
+
+  h3
+    display: flex
+    align-items: center
+    gap: 10px
+    margin: 0
+    font-size: 16px
+    font-weight: 700
+
+  p
+    margin: 6px 0 0
+    font-size: 13px
+    color: $muted
+
+.o16-get
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+
+  .field__input
+    min-width: 260px
+
+.o16-table
+  border: 1px solid $border
+  border-radius: 12px
+  overflow: hidden
+
+.o16-row
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 110px
+  align-items: center
+  gap: 14px
+  padding: 9px 16px
+  border-bottom: 1px solid $border
+  font-size: 13.5px
+
+  &:last-child
+    border-bottom: 0
+
+  &.editing
+    background: $yellow-soft
+
+  &.o16-row_head
+    background: $surface-alt
+    font-size: 11.5px
+    font-weight: 700
+    text-transform: uppercase
+    letter-spacing: .04em
+    color: $muted
+
+.o16-key
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 8px
+  font-weight: 650
+  word-break: break-word
+
+.o16-value
+  display: flex
+  align-items: center
+  gap: 8px
+  min-width: 0
+
+.o16-value__text
+  overflow-wrap: anywhere
+
+  &.o16-value__text_empty
+    color: $muted
+
+.o16-edit
+  display: flex
+  flex: 1
+  gap: 6px
+
+  .field__input
+    flex: 1
+    min-width: 0
+
+.cfg-btn.o16-small
+  min-height: 30px
+  padding: 0 10px
+  font-size: 12.5px
+
+.o16-none
+  padding: 24px
+  color: $muted
+  text-align: center
+
+.o16-unknown
+  margin: 0
+  font-size: 12.5px
+  color: $warn
+
+@media (max-width: 720px)
+  .o16-row
+    grid-template-columns: 1fr
+    gap: 6px
+
+    &.o16-row_head
+      display: none

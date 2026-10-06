@@ -1,67 +1,16 @@
-<div class="page__inner">
+<div class="page__inner documentation-page">
   <div class="page__container">
-    <div class="page__title h3">Documentation</div>
-
-    <div class="card">
-      <div class="documentation__links">
-        <div class="documentation__link" routerLink="/dashboard/documentation/components">
-          <div class="documentation__icon">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-          <div class="documentation__footer">
-            <div class="documentation__name">Components</div>
-            <div class="documentation__description">
-              Informations about OCPP Components (EVSEs, Connectors... etc)
-            </div>
-          </div>
-        </div>
-
-        <div class="documentation__link" routerLink="/dashboard/documentation/variables">
-          <div class="documentation__icon">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-          <div class="documentation__footer">
-            <div class="documentation__name">Variables</div>
-            <div class="documentation__description">
-              Informations about OCPP Variables
-            </div>
-          </div>
-        </div>
-        
-        <div class="documentation__link" routerLink="/dashboard/documentation/icons">
-          <div class="documentation__icon">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-          <div class="documentation__footer">
-            <div class="documentation__name">Icons</div>
-            <div class="documentation__description">
-              Icons Documentation for the project
-            </div>
-          </div>
-        </div>
-
-        <div class="documentation__link" routerLink="/dashboard/documentation/buttons">
-          <div class="documentation__icon">
-            <svg class="icon icon-info">
-              <use xlink:href="#icon-info"></use>
-            </svg>
-          </div>
-          <div class="documentation__footer">
-            <div class="documentation__name">Buttons</div>
-            <div class="documentation__description">
-              Buttons Documentation for the project
-            </div>
-          </div>
-        </div>
-      </div>
-      
-    </div>
+    <header class="docs-hero">
+      <span class="docs-hero__eyebrow">VoltaX design system</span>
+      <h1 class="docs-hero__title">Documentation</h1>
+      <p class="docs-hero__description">A practical reference for the OCPP catalogue and the reusable interface elements used throughout VoltaX.</p>
+    </header>
+    <nav class="documentation__links" aria-label="Documentation sections">
+      <a class="documentation__link" routerLink="/dashboard/documentation/components"><span class="documentation__icon"><svg class="icon"><use xlink:href="#icon-grid"></use></svg></span><span class="documentation__content"><span class="documentation__name">Components</span><span class="documentation__description">Browse OCPP components and their available variables.</span></span><svg class="icon documentation__arrow"><use xlink:href="#icon-arrow-right"></use></svg></a>
+      <a class="documentation__link" routerLink="/dashboard/documentation/variables"><span class="documentation__icon"><svg class="icon"><use xlink:href="#icon-list"></use></svg></span><span class="documentation__content"><span class="documentation__name">Variables</span><span class="documentation__description">Look up OCPP variables, data types, units, and related components.</span></span><svg class="icon documentation__arrow"><use xlink:href="#icon-arrow-right"></use></svg></a>
+      <a class="documentation__link" routerLink="/dashboard/documentation/icons"><span class="documentation__icon"><svg class="icon"><use xlink:href="#icon-design"></use></svg></span><span class="documentation__content"><span class="documentation__name">Icons</span><span class="documentation__description">Find an icon name and copy it for use in an SVG reference.</span></span><svg class="icon documentation__arrow"><use xlink:href="#icon-arrow-right"></use></svg></a>
+      <a class="documentation__link" routerLink="/dashboard/documentation/buttons"><span class="documentation__icon"><svg class="icon"><use xlink:href="#icon-mouse"></use></svg></span><span class="documentation__content"><span class="documentation__name">Buttons</span><span class="documentation__description">Explore variants, sizes, states, events, and accessibility options.</span></span><svg class="icon documentation__arrow"><use xlink:href="#icon-arrow-right"></use></svg></a>
+    </nav>
   </div>
 </div>
 

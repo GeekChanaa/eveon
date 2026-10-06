@@ -1,0 +1,45 @@
+<button type="button" class="status-chip" cdkOverlayOrigin #origin="cdkOverlayOrigin"
+  aria-haspopup="dialog" [attr.aria-label]="'Current status: ' + currentStatus.label + '. Open status guide'"
+  (mouseenter)="showLegend()" (mouseleave)="hideLegend()" (focus)="showLegend()" (blur)="hideLegend()"
+  (keydown.escape)="legendOpen = false" (click)="openDetails(details)">
+  <span class="status-dot" [style.background-color]="currentStatus.color" aria-hidden="true"></span>
+  <span>{{ currentStatus.label }}</span>
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v1"/></svg>
+</button>
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="legendOpen"
+  cdkConnectedOverlayPanelClass="vx-status-overlay"
+  [cdkConnectedOverlayPositions]="positions" [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="16"
+  [cdkConnectedOverlayScrollStrategy]="scrollStrategy" (overlayKeydown)="legendOpen = false">
+  <div class="status-legend" role="tooltip" aria-label="Charge point status colors"
+    (mouseenter)="showLegend()" (mouseleave)="hideLegend()">
+    <div class="legend-item" *ngFor="let item of statuses">
+      <span class="status-dot" [style.background-color]="item.color" aria-hidden="true"></span>
+      <span>{{ item.label }}</span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #details>
+  <div class="status-guide">
+    <header class="guide-header">
+      <div>
+        <h2>Charge point statuses</h2>
+        <p>A guide to each color and what it means.</p>
+      </div>
+      <button type="button" class="close-button" mat-dialog-close aria-label="Close status guide">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+    <mat-dialog-content class="guide-content">
+      <div class="current-status"><span class="status-dot" [style.background-color]="currentStatus.color" aria-hidden="true"></span>Current status <strong>{{ currentStatus.label }}</strong></div>
+      <div class="status-grid">
+        <article class="status-card" *ngFor="let item of statuses" [class.is-current]="item.key === currentStatus.key">
+          <div class="card-heading"><span class="status-dot" [style.background-color]="item.color" aria-hidden="true"></span><h3>{{ item.label }}</h3></div>
+          <p>{{ item.description }}</p>
+        </article>
+      </div>
+    </mat-dialog-content>
+    <footer class="guide-footer"><button type="button" class="done-button" mat-dialog-close>Got it</button></footer>
+  </div>
+</ng-template>

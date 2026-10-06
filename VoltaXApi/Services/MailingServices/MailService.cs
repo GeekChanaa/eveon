@@ -174,7 +174,7 @@ namespace VoltaXApi.Services
 			{
 				Name = "System",
 				ToEmails = new List<string> { _supportEmails.Admin },
-				Subject = "System Report"
+				Subject = BuildSystemReportSubject(report)
 			};
 			await SendReportEmail(mailRequest, report);
 		}
@@ -185,7 +185,7 @@ namespace VoltaXApi.Services
 			{
 				Name = "System",
 				ToEmails = new List<string> { email, _supportEmails.Support },
-				Subject = "System Report"
+				Subject = BuildSystemReportSubject(report)
 			};
 			await SendReportEmail(mailRequest, report);
 		}
@@ -203,34 +203,135 @@ namespace VoltaXApi.Services
 
 		public async Task SendReportEmail(MailRequest mailRequest, int reportID)
 		{
-			PrepareEmailElements(mailRequest, out var email, out var builder);
 			var report = await _systemReportRepository.GetByIdAsync(reportID);
-			var template = GetEmailTemplate("system-report");
-			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
-					{
-						{ "IssueDescription", report.IssueDescription },
-						{ "ReportLink", report.ID.ToString() }
-					});
-			builder.HtmlBody = populatedTemplate;
+			if (report == null)
+				throw new InvalidOperationException($"System report {reportID} was not found.");
 
-			email.Body = builder.ToMessageBody();
-			await SendEmailSmtp(email);
+			mailRequest.Subject = BuildSystemReportSubject(report);
+			await SendReportEmail(mailRequest, report);
 		}
 
 		public async Task SendReportEmail(MailRequest mailRequest, SystemReport report)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 			var template = GetEmailTemplate("system-report");
-			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
-					{
-							{ "IssueDescription", report.IssueDescription },
-							{ "ReportLink", report.ID.ToString() }
-					});
+			var (criticalityColor, criticalityBackground) = GetCriticalityColors(report.Criticality);
+			var (headline, overview, responseGuidance) = GetSystemReportCopy(report.Criticality);
+			var spaBaseUrl = (_configuration["SpaLink"] ?? string.Empty).TrimEnd('/');
+			var reportLink = string.IsNullOrWhiteSpace(spaBaseUrl)
+				? "#"
+				: $"{spaBaseUrl}/dashboard/system-reports/{report.ID}";
+
+			var resources = new List<string>();
+			if (report.ChargePointID.HasValue) resources.Add($"Charge point #{report.ChargePointID}");
+			if (report.ConnectorID.HasValue) resources.Add($"Connector #{report.ConnectorID}");
+			if (report.CardID.HasValue) resources.Add($"Charging card #{report.CardID}");
+			if (report.UserID.HasValue) resources.Add($"User #{report.UserID}");
+
+			var issueDescription = System.Net.WebUtility.HtmlEncode(report.IssueDescription ?? "No description was provided.")
+				.Replace("\r\n", "<br>")
+				.Replace("\n", "<br>");
+
+			var placeholders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+			{
+				{ "ReportId", report.ID.ToString() },
+				{ "Criticality", System.Net.WebUtility.HtmlEncode(report.Criticality.ToString()) },
+				{ "CriticalityLower", System.Net.WebUtility.HtmlEncode(report.Criticality.ToString().ToLowerInvariant()) },
+				{ "CriticalityColor", criticalityColor },
+				{ "CriticalityBackground", criticalityBackground },
+				{ "Status", System.Net.WebUtility.HtmlEncode(FormatReportStatus(report.Status)) },
+				{ "Category", System.Net.WebUtility.HtmlEncode(report.ReportCategory.ToString()) },
+				{ "Headline", headline },
+				{ "Overview", overview },
+				{ "ResponseGuidance", responseGuidance },
+				{ "IssueDescription", issueDescription },
+				{ "AffectedResource", System.Net.WebUtility.HtmlEncode(resources.Count > 0 ? string.Join(", ", resources) : "Platform / general") },
+				{ "CreatedAt", System.Net.WebUtility.HtmlEncode(report.CreatedAt.ToString("dd MMM yyyy, HH:mm 'UTC'")) },
+				{ "ReportLink", System.Net.WebUtility.HtmlEncode(reportLink) },
+				{ "CurrentYear", DateTime.UtcNow.Year.ToString() }
+			};
+			var populatedTemplate = PopulateSystemReportTemplate(template, placeholders);
 			builder.HtmlBody = populatedTemplate;
 
 			email.Body = builder.ToMessageBody();
 			await SendEmailSmtp(email);
 		}
+
+		private static string PopulateSystemReportTemplate(
+			string template,
+			IReadOnlyDictionary<string, string> placeholders)
+		{
+			if (string.IsNullOrWhiteSpace(template))
+				throw new InvalidOperationException("The system-report email template is empty.");
+
+			var tokenPattern = new System.Text.RegularExpressions.Regex(
+				@"\{(?<name>[A-Za-z][A-Za-z0-9]*)\}",
+				System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+			var renderedTemplate = tokenPattern.Replace(template, match =>
+			{
+				var name = match.Groups["name"].Value;
+				if (!placeholders.TryGetValue(name, out var value))
+					throw new InvalidOperationException(
+						$"The system-report email template contains an unmapped placeholder: {{{name}}}.");
+
+				return value ?? string.Empty;
+			});
+
+			var unresolvedTokens = tokenPattern.Matches(renderedTemplate)
+				.Select(match => match.Value)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+
+			if (unresolvedTokens.Length > 0)
+				throw new InvalidOperationException(
+					$"The system-report email still contains unresolved placeholders: {string.Join(", ", unresolvedTokens)}.");
+
+			return renderedTemplate;
+		}
+
+		private static string BuildSystemReportSubject(SystemReport report) =>
+			$"[{report.Criticality}] System report #{report.ID} - {report.ReportCategory}";
+
+		private static string FormatReportStatus(ReportStatusEnum status) => status switch
+		{
+			ReportStatusEnum.InProgress => "In progress",
+			_ => status.ToString()
+		};
+
+		private static (string Color, string Background) GetCriticalityColors(ReportCriticality criticality) => criticality switch
+		{
+			ReportCriticality.Critical => ("#b42318", "#fee4e2"),
+			ReportCriticality.High => ("#c4320a", "#ffead5"),
+			ReportCriticality.Medium => ("#b54708", "#fef0c7"),
+			ReportCriticality.Low => ("#175cd3", "#dbeafe"),
+			_ => ("#027a48", "#d1fadf")
+		};
+
+		private static (string Headline, string Overview, string ResponseGuidance) GetSystemReportCopy(
+			ReportCriticality criticality) => criticality switch
+		{
+			ReportCriticality.Critical => (
+				"Immediate attention required",
+				"Volta X detected a critical condition that may interrupt charging operations or affect customers. Please begin triage immediately and keep the report updated as the situation develops.",
+				"If service is affected, escalate through the incident-response path without waiting for the next routine review."),
+			ReportCriticality.High => (
+				"A high-priority issue needs review",
+				"A potentially disruptive condition has been reported. Prompt investigation will help limit operational impact and reduce the chance of customer-facing downtime.",
+				"Escalate promptly if the issue is active, recurring, or affecting more than one charging point."),
+			ReportCriticality.Medium => (
+				"A system issue needs investigation",
+				"Volta X recorded a condition that should be reviewed before it develops into a larger operational problem. The key context is summarized below.",
+				"Prioritize it in the current support queue and monitor for repeated occurrences."),
+			ReportCriticality.Low => (
+				"A low-priority issue was recorded",
+				"A non-urgent condition was reported for follow-up. It is not expected to require immediate intervention, but reviewing it will help keep the platform reliable.",
+				"Address it during routine maintenance unless new evidence indicates wider impact."),
+			_ => (
+				"A system event was recorded",
+				"Volta X generated an informational report to keep the operations team aware of a system condition. Review the details below and document any relevant findings.",
+				"No urgent action is expected unless the event is recurring or connected to another incident.")
+		};
 
 		public async Task SendWarningEmail(MailRequest mailRequest, string userName)
 		{
@@ -246,13 +347,15 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
-		public async Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName)
+		public async Task SendDownloadInfoRequestApproved(MailRequest mailRequest, string userName, string downloadLink, DateTime expiresAt)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 			var template = GetEmailTemplate("download-request-infos-approved");
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{
-							{ "UserName", userName }
+							{ "UserName", System.Net.WebUtility.HtmlEncode(userName) },
+							{ "DownloadLink", System.Net.WebUtility.HtmlEncode(downloadLink) },
+							{ "ExpiresAt", expiresAt.ToString("yyyy-MM-dd HH:mm") + " UTC" }
 					});
 			builder.HtmlBody = populatedTemplate;
 

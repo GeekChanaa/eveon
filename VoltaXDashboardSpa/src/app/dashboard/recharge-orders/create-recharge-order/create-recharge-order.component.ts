@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 import { ActionModalService } from 'src/_services/action-modal.service';
@@ -15,7 +15,8 @@ export class CreateRechargeOrderComponent implements OnInit {
   
     orderForm : FormGroup;
     isLoading : boolean = false;
-    cards : any[] = []
+    cards : { id: number; name: string; userID: number }[] = [];
+    readonly paymentStatuses = ['Completed', 'Pending', 'Processing', 'Failed', 'Canceled', 'Refunded'];
 
     constructor(
       private _cardService: CardService,
@@ -24,9 +25,9 @@ export class CreateRechargeOrderComponent implements OnInit {
       private _router : Router
     ) {
       this.orderForm = new FormGroup({
-        cardID: new FormControl(""),
-        status : new FormControl("Pending"),
-        amount : new FormControl("")
+        cardID: new FormControl("", Validators.required),
+        status : new FormControl("Completed", Validators.required),
+        amount : new FormControl("", [Validators.required, Validators.min(0.01)])
       })
      }
   
@@ -35,11 +36,14 @@ export class CreateRechargeOrderComponent implements OnInit {
     }
   
     onSubmit(){
+      if (this.orderForm.invalid || this.isLoading) { this.orderForm.markAllAsTouched(); return; }
+      const selectedCard = this.cards.find(card => card.id === Number(this.orderForm.value.cardID));
+      if (!selectedCard) return;
       this.isLoading = true;
-      var order = this.orderForm.value;
-      this._orderService.createRechargeOrder(order).subscribe((data) => {
+      const order = this.orderForm.value;
+      this._orderService.rechargeCard({ CardID: selectedCard.id, RechargeAmount: Number(order.amount), UserID: selectedCard.userID, SaveCard: false, MockPaymentStatus: order.status }).subscribe((data: any) => {
         this.isLoading = false;
-        this._modalService.popup(ActionModalStatusEnum.Success, "Success", "The Connector has been added succesfully", 4000);
+        this._modalService.popup(ActionModalStatusEnum.Success, "Payment recorded", data.message || "The recharge payment was recorded.", 4000);
         this._router.navigateByUrl("/dashboard/recharge-orders");
       },(error) => {
         this.isLoading = false;
@@ -51,7 +55,7 @@ export class CreateRechargeOrderComponent implements OnInit {
       this._cardService.getAllCards(-1,-1).subscribe((data) => {
         console.log(data.result);
         if(data.result)
-          this.cards = data.result.map((card) => ({id : card.id, name : card.cardNumber}));
+          this.cards = data.result.map((card: any) => ({ id: card.id, name: card.cardNumber, userID: card.userID }));
       })
     }
   

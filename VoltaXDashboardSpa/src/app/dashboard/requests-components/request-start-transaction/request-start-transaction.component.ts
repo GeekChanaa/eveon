@@ -3,6 +3,7 @@ import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-en
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { CardService } from 'src/_services/card.service';
 import { OcppEvDriverService } from 'src/_services/ocpp-services/ocpp-ev-driver.service';
+import { showOcppCommandFeedback } from 'src/_services/ocpp-services/ocpp-command-feedback';
 
 @Component({
   selector: 'app-request-start-transaction',
@@ -53,10 +54,9 @@ export class RequestStartTransactionComponent implements OnInit {
       }
     };
     this._evDriverService.requestStartTransaction(this.chargePointID, startTransactionRequest).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success","Transaction Started Successfully",4000);
-      this.successEvent.emit()
+      if(showOcppCommandFeedback(this._modalService, data)) this.successEvent.emit()
     },(error)=> {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Something Went Wrong","Something Went wrong please try again later", 4000);
+      showOcppCommandFeedback(this._modalService, error);
     })
   }
 

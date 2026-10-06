@@ -13,80 +13,60 @@
 
   <!-- Content area -->
   <div *ngIf="userLoaded" class="content-area">
-    <!-- Tabs navigation -->
-    <div class="tabs-container">
-      <div class="tabs">
-        <button [ngClass]="{'active': tabsEnum === 'InformationsTab'}" (click)="changeTab('InformationsTab')"
-          class="tab-button">
-          Informations
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'RechargeCardsTab'}" (click)="changeTab('RechargeCardsTab')"
-          class="tab-button">
-          Recharge Cards
-        </button>
-
-        <button [ngClass]="{'active': tabsEnum === 'ChargingSessionsTab'}" (click)="changeTab('ChargingSessionsTab')"
-          class="tab-button">
-          Charging Sessions
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'OrdersTab'}" (click)="changeTab('OrdersTab')" class="tab-button">
-          Orders
-        </button>
-        <button [ngClass]="{'active': tabsEnum === 'ActionsTab'}" (click)="changeTab('ActionsTab')" class="tab-button">
-          Actions
-        </button>
-      </div>
+    <div class="station-tabs" role="tablist" aria-label="User sections">
+      <button type="button" *ngFor="let tab of visibleTabs(); let i = index" role="tab" [id]="'tab-' + tab.id"
+        [attr.aria-controls]="'panel-' + tab.id" [attr.aria-selected]="tabsEnum === tab.id"
+        [attr.tabindex]="tabsEnum === tab.id ? 0 : -1" [class.is-active]="tabsEnum === tab.id"
+        (click)="changeTab(tab.id)" (keydown)="onTabKey($event, i)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path [attr.d]="tab.icon"/></svg>
+        <span class="tab-copy"><strong>{{ tab.label }}</strong><span>{{ tab.description }}</span></span>
+      </button>
     </div>
 
     <!-- Tab content -->
     <div class="tab-content">
+      <app-user-access *ngIf="tabsEnum === 'AccessTab' && access.isAdmin" id="panel-AccessTab" role="tabpanel" aria-labelledby="tab-AccessTab" [userId]="user.id" [roleId]="user.roleID" (roleChanged)="user.roleID = $event.roleId; user.role = $event.role"></app-user-access>
       <!-- Information Tab -->
-      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab">
-        <div class="card profile-section">
-          <div class="card-content">
-
-            <!-- Main details -->
-            <div class="form-content">
+      <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab" id="panel-InformationsTab" role="tabpanel" aria-labelledby="tab-InformationsTab">
+        <div class="section-intro"><div><h2>Information</h2><p>Review profile and account details. Select Edit beside a field to make a change.</p></div></div>
+        <div class="information-layout">
               <!-- Basic Information -->
-              <div class="form-section">
-                <h3 class="section-title">Basic Information</h3>
+              <section class="station-section form-section">
+                <header><h3>Basic information</h3><p>Name and identity details for this account.</p></header>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="firstName" [val]="user.firstName"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="lastName" [val]="user.lastName"></app-display-cell>
-
-
-              </div>
+              </section>
 
               <!-- Contact Information -->
-              <div class="form-section">
-                <h3 class="section-title">Contact Information</h3>
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+              <section class="station-section form-section">
+                <header><h3>Contact information</h3><p>Email and phone information for this account.</p></header>
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="email" [val]="user.email"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
                   title="isEmailVerified" [val]="user.isEmailVerified"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="text"
                   title="phone" [val]="user.phone"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" inpType="checkbox" [object]="user"
                   title="isPhoneNumberVerified" [val]="user.isPhoneNumberVerified"></app-display-cell>
-              </div>
+              </section>
 
               <!-- Address Information -->
-              <div class="form-section">
-                <h3 class="section-title">Business Informations</h3>
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
-                  inpType="select" title="roleID" [options]="rolesOptions" val="{{user.role}}"></app-display-cell>
+              <section class="station-section form-section">
+                <header><h3>Account access</h3><p>Role and partner association for this account.</p></header>
+                <div class="role-value">Role: <strong>{{ user.role }}</strong></div>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user"
                   inpType="select" title="partnerID" [options]="partnersOptions" val="{{user.partner}}"></app-display-cell>
                   
                 <!-- Suspending Account -->
-                <app-display-cell
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')"
                   [updateObservable]="updateUserObservable.bind(this)"
                   [object]="user"
                   inpType="date"
@@ -95,42 +75,38 @@
                   placeholder="Select suspension end date">
                 </app-display-cell>
 
-              </div>
+              </section>
 
               <!-- Additional Information -->
-              <div class="form-section">
-                <h3 class="section-title">Additional Informations</h3>
+              <section class="station-section form-section">
+                <header><h3>Additional information</h3><p>Personal preferences and vehicle details.</p></header>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="date"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user" inpType="date"
                   title="birthday" [val]="user.birthday"></app-display-cell>
 
-                <app-display-cell [updateObservable]="updateUserObservable.bind(this)" [object]="user"
+                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user"
                   inpType="select" title="electricVehicleModelID" [options]="evModels" val="{{user.evModel ?? 'Not Specified'}}"></app-display-cell>
-
-              </div>
-
-            </div>
-          </div>
+              </section>
         </div>
       </div>
 
       <!-- Recharge Cards Tab -->
-      <div *ngIf="tabsEnum === 'RechargeCardsTab'" class="information-tab">
+      <div *ngIf="tabsEnum === 'RechargeCardsTab'" class="information-tab" id="panel-RechargeCardsTab" role="tabpanel" aria-labelledby="tab-RechargeCardsTab">
         <app-user-recharge-cards [userID]="user.id"></app-user-recharge-cards>
       </div>
 
       <!-- Charging Serssions Tab -->
-      <div *ngIf="tabsEnum === 'ChargingSessionsTab'" class="information-tab">
+      <div *ngIf="tabsEnum === 'ChargingSessionsTab'" class="information-tab" id="panel-ChargingSessionsTab" role="tabpanel" aria-labelledby="tab-ChargingSessionsTab">
         <app-user-charging-sessions [userID]="user.id"></app-user-charging-sessions>
       </div>
 
       <!-- Orders Tab -->
-      <div *ngIf="tabsEnum === 'OrdersTab'" class="information-tab">
+      <div *ngIf="tabsEnum === 'OrdersTab'" class="information-tab" id="panel-OrdersTab" role="tabpanel" aria-labelledby="tab-OrdersTab">
           <app-user-orders [userID]="user.id"></app-user-orders>
       </div>
 
       <!-- Actions Tab -->
-      <div *ngIf="tabsEnum === 'ActionsTab'" class="information-tab">
+      <div *ngIf="tabsEnum === 'ActionsTab'" class="information-tab" id="panel-ActionsTab" role="tabpanel" aria-labelledby="tab-ActionsTab">
           <app-user-actions [userEmail]="user.email" [userID]="user.id"></app-user-actions>
       </div>
     </div>

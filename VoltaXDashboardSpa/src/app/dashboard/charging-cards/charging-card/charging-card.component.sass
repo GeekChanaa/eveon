@@ -1,1 +1,38 @@
-@import '../../../../styles/display-page'
+@import '../../../../styles/equipment-details'
+
+.charging-card-page
+  .station-tabs
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+
+  .station-section
+    ::ng-deep .form-field--modern
+      margin: 0
+      padding: 18px 24px
+      & + .form-field--modern
+        border-top: 1px solid var(--vx-border, #ededed)
+      &.form-field--editing
+        padding: 18px 24px
+      .form-field__label
+        min-height: 30px
+        margin-bottom: 3px
+      .form-field__edit-btn
+        margin-left: auto
+      .form-field__display
+        min-height: 24px
+      .form-field__value
+        font-weight: 500
+      .form-field__link
+        color: var(--vx-yellow-ink, #8a6410)
+        font-size: 14px
+        font-weight: 500
+
+.orders-section
+  padding: 0
+  overflow: visible
+  ::ng-deep .page__inner, ::ng-deep .page__container
+    padding: 0
+
+@media (max-width: 420px)
+  .charging-card-page .station-section ::ng-deep .form-field--modern,
+  .charging-card-page .station-section ::ng-deep .form-field--modern.form-field--editing
+    padding: 16px

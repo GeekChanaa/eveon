@@ -8,8 +8,14 @@ namespace VoltaXApi.OCPP.Models
     /// <summary>
     /// Defined OCPP error codes
     /// </summary>
+    /// <remarks>Handlers return one of these; the transport maps it with <see cref="OcppErrors.Parse"/> to the wire name of the connection's protocol version.</remarks>
     public class ErrorCodes
     {
+        /// <summary>
+        /// Requested Action is not known by receiver
+        /// </summary>
+        public static string NotImplemented = "NotImplemented";
+
         /// <summary>
         /// Requested Action is recognized but not supported by the receiver
         /// </summary>
@@ -54,5 +60,11 @@ namespace VoltaXApi.OCPP.Models
         /// Any other error not covered by the previous ones
         /// </summary>
         public static string GenericError = "GenericError";
+
+        public static string OccurrenceConstraintViolation = "OccurrenceConstraintViolation";
+
+        public static string MessageTypeNotSupported = "MessageTypeNotSupported";
+
+        public static string RpcFrameworkError = "RpcFrameworkError";
     }
 }

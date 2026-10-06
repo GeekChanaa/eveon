@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace VoltaXApi.Hubs
 {
-  public class ChargerHub : Hub
+  [Microsoft.AspNetCore.Authorization.Authorize]
+    public class ChargerHub : Hub
   {
       public async Task JoinChargerGroup(string chargerId)
       {

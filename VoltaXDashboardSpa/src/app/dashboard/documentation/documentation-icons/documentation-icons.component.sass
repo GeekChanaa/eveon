@@ -1,26 +1,107 @@
 
+.icons-page
+  color: var(--primary9)
+.docs-back
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin-bottom: 22px
+  color: var(--professional4)
+  font-size: 14px
+  font-weight: 600
+  text-decoration: none
+  .icon
+    width: 16px
+    height: 16px
+    fill: currentColor
+  &:hover
+    color: var(--secondary1)
+.icons-header
+  max-width: 720px
+  margin-bottom: 25px
+  h1
+    margin: 5px 0 10px
+    font-size: clamp(30px, 4vw, 40px)
+  p
+    margin: 0
+    color: var(--professional4)
+    line-height: 1.6
+  code
+    padding: 2px 5px
+    color: var(--professional2)
+    background: var(--primary3)
+    border-radius: 4px
+.icons-header__eyebrow
+  color: var(--secondary1)
+  font-size: 12px
+  font-weight: 700
+  letter-spacing: .1em
+  text-transform: uppercase
+.icons-toolbar
+  display: flex
+  justify-content: space-between
+  gap: 16px
+  margin-bottom: 16px
+  color: var(--professional4)
+  font-size: 13px
+.copy-notice
+  color: var(--secondary1)
+  font-weight: 650
 .icons-container
-    display: flex
-    flex-wrap: wrap
-    background: white
-    align-items: center
-    justify-content: center
-    .icon-container
-        flex: 0 0 12%
-        height: 130px
-        padding: 8px
-        border-radius: 6px
-        background: var(--primary2)
-        margin: 12px
-        text-align: center
-        background: #f4f4ff
-        transition: ease-in-out all .3s
-        cursor: pointer
-        &:hover
-            background: #e2e2ff
-        .icon
-            height: 80px
-            width: 100%
-            svg
-                height: 100%
-                width: 100%
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr))
+  gap: 12px
+.icon-container
+  display: flex
+  flex-direction: column
+  align-items: center
+  min-height: 156px
+  padding: 17px 12px 14px
+  color: var(--primary9)
+  background: var(--primary1)
+  border: 1px solid var(--primary3)
+  border-radius: 12px
+  cursor: pointer
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease
+  &:hover
+    transform: translateY(-2px)
+    border-color: var(--secondary3)
+    box-shadow: 0 8px 18px rgba(26, 29, 31, .08)
+    .icon-container__copy
+      color: var(--secondary1)
+  &:focus-visible
+    outline: 3px solid var(--secondary3)
+    outline-offset: 2px
+.icon-container__preview
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 58px
+  height: 58px
+  margin-bottom: 13px
+  background: var(--secondary5)
+  border-radius: 12px
+  .icon
+    width: 27px
+    height: 27px
+    fill: var(--professional2)
+.icon__label
+  width: 100%
+  overflow: hidden
+  font-size: 12px
+  font-weight: 650
+  text-align: center
+  text-overflow: ellipsis
+  white-space: nowrap
+.icon-container__copy
+  margin-top: auto
+  padding-top: 10px
+  color: var(--professional4)
+  font-size: 11px
+  font-weight: 600
+@media (max-width: 520px)
+  .icons-toolbar
+    flex-direction: column
+    gap: 5px
+  .icons-container
+    grid-template-columns: repeat(2, minmax(0, 1fr))

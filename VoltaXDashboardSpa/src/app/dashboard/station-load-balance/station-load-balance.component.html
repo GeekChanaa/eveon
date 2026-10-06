@@ -1,3 +1,145 @@
-<p>
-  station-load-balance works!
-</p>
+<app-dashboard-details-container
+  [state]="state"
+  [title]="'Station Load Balancing'" [breadcrumbs]="[
+    { label: 'Dashboard', link: '/dashboard' },
+    { label: 'Station Load Balancing' }
+  ]">
+  <div class="sc-page">
+    <div class="sc-layout">
+      <section class="sc-card">
+        <div class="sc-card__head"><h3>Stations</h3></div>
+        <label class="sc-field"><input type="search" placeholder="Filter" [(ngModel)]="stationFilter"></label>
+        <div class="sc-list" style="margin-top: 12px">
+          <button type="button" *ngFor="let s of filteredStations" class="sc-list__item" [class.is-selected]="selected?.id === s.id" (click)="selectStation(s)">
+            <strong>{{ s.name }}</strong>
+            <span class="sc-sub">{{ s.city }} · {{ s.chargePointCount }} charger(s)</span>
+            <span class="sc-sub">
+              <span [class]="s.limit?.enabled ? 'sc-badge sc-badge--ok' : 'sc-badge'">{{ s.limit?.enabled ? 'Balanced' : 'Off' }}</span>
+              <span *ngIf="s.limit?.maxCurrentA"> {{ s.limit?.maxCurrentA }} A</span>
+              <span *ngIf="s.limit?.maxPowerKW"> {{ s.limit?.maxPowerKW }} kW</span>
+            </span>
+          </button>
+          <p class="sc-empty" *ngIf="filteredStations.length === 0">No station.</p>
+        </div>
+      </section>
+
+      <div class="sc-layout__main" *ngIf="selected">
+        <section class="sc-card" *ngIf="limit">
+          <div class="sc-card__head">
+            <h3>{{ selected.name }} · load limit</h3>
+            <label class="sc-check"><input type="checkbox" [(ngModel)]="limit.enabled"> Load balancing enabled</label>
+          </div>
+          <div class="sc-grid">
+            <label class="sc-field">
+              <span>Max current (A per phase)</span>
+              <input type="number" min="0" step="0.1" [(ngModel)]="limit.maxCurrentA" placeholder="—">
+            </label>
+            <label class="sc-field">
+              <span>Max power (kW)</span>
+              <input type="number" min="0" step="0.1" [(ngModel)]="limit.maxPowerKW" placeholder="—">
+            </label>
+            <label class="sc-field">
+              <span>Phases</span>
+              <select [(ngModel)]="limit.phases">
+                <option [ngValue]="1">1</option>
+                <option [ngValue]="3">3</option>
+              </select>
+            </label>
+            <label class="sc-field">
+              <span>Voltage (V, phase-neutral)</span>
+              <input type="number" min="100" max="480" [(ngModel)]="limit.voltage">
+            </label>
+            <label class="sc-field">
+              <span>Minimum per session (A)</span>
+              <input type="number" min="0" step="0.1" [(ngModel)]="limit.minPerSessionA">
+            </label>
+            <label class="sc-field">
+              <span>Strategy</span>
+              <select [(ngModel)]="limit.strategy">
+                <option value="EqualShare">Equal share</option>
+                <option value="FirstComeFirstServed">First come, first served</option>
+              </select>
+            </label>
+            <label class="sc-field">
+              <span>Safety margin (%)</span>
+              <input type="number" min="0" max="50" [(ngModel)]="limit.safetyMarginPercent">
+            </label>
+          </div>
+          <p class="sc-hint">
+            Effective limit: <strong>{{ previewLimitA | number:'1.0-1' }} A</strong> per phase
+            <span *ngIf="previewMaxSessions != null"> · up to {{ previewMaxSessions }} session(s) at the minimum; later ones wait at 0 A</span>
+            <span *ngIf="limit.lastRebalancedAt"> · last rebalanced {{ limit.lastRebalancedAt | date:'medium' }}</span>
+          </p>
+          <div class="sc-actions sc-actions--end">
+            <button class="button-stroke button-small" [disabled]="rebalancing" (click)="rebalance()">{{ rebalancing ? 'Waiting for the chargers…' : 'Rebalance now' }}</button>
+            <button class="button button-small" [disabled]="saving" (click)="save()">Save</button>
+          </div>
+        </section>
+
+        <section class="sc-card">
+          <div class="sc-card__head">
+            <h3>Live allocation</h3>
+            <button class="button-stroke button-small" (click)="loadLive()">Refresh</button>
+          </div>
+          <div class="sc-stats" *ngIf="live">
+            <div class="sc-stat"><div class="sc-stat__label">Station limit</div><div class="sc-stat__value">{{ live.stationLimitA | number:'1.0-1' }} A</div></div>
+            <div class="sc-stat"><div class="sc-stat__label">Allocated</div><div class="sc-stat__value">{{ live.allocatedA | number:'1.0-1' }} A</div></div>
+            <div class="sc-stat"><div class="sc-stat__label">Running sessions</div><div class="sc-stat__value">{{ live.sessions.length }}</div></div>
+            <div class="sc-stat"><div class="sc-stat__label">Status</div><div class="sc-stat__value">{{ live.enabled ? 'Balanced' : 'Off' }}</div></div>
+          </div>
+          <div class="sc-table-wrap">
+            <table class="sc-table">
+              <thead>
+                <tr><th>Session</th><th>Charger</th><th>EVSE / connector</th><th>Started</th><th>EV max</th><th>Allocated</th><th>Power</th><th>Last send</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of live?.sessions">
+                  <td>#{{ s.transactionID }}<div class="sc-sub">{{ s.transactionUid }}</div></td>
+                  <td>{{ s.chargePointIdentity }}</td>
+                  <td>{{ s.evseId }}<span *ngIf="s.connectorId"> / {{ s.connectorId }}</span></td>
+                  <td>{{ s.startedAt | date:'short' }}</td>
+                  <td>{{ s.evMaxCurrentA != null ? s.evMaxCurrentA + ' A' : '—' }}</td>
+                  <td>
+                    <strong>{{ s.allocatedA | number:'1.0-1' }} A</strong>
+                    <span class="sc-badge sc-badge--warn" *ngIf="s.queued" style="margin-left: 6px">Queued</span>
+                  </td>
+                  <td>{{ s.allocatedKW | number:'1.0-2' }} kW</td>
+                  <td>
+                    <span [class]="statusClass(s.sendStatus)">{{ s.sendStatus }}</span>
+                    <div class="sc-sub" *ngIf="s.lastSentAt">{{ s.lastSentAt | date:'mediumTime' }}</div>
+                    <div class="sc-sub" *ngIf="s.reason">{{ s.reason }}</div>
+                  </td>
+                </tr>
+                <tr *ngIf="!live || live.sessions.length === 0"><td colspan="8" class="sc-empty">No running session on this station.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="sc-card">
+          <div class="sc-card__head">
+            <h3>History</h3>
+            <button class="button-stroke button-small" (click)="loadHistory()">Refresh</button>
+          </div>
+          <div class="sc-table-wrap">
+            <table class="sc-table">
+              <thead><tr><th>When</th><th>Session</th><th>EVSE</th><th>Allocated</th><th>Station limit</th><th>Result</th><th>Reason</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let h of history">
+                  <td>{{ h.createdAt | date:'short' }}</td>
+                  <td>#{{ h.transactionID }}</td>
+                  <td>{{ h.evseId }}</td>
+                  <td>{{ h.allocatedA | number:'1.0-1' }} A <span class="sc-sub" *ngIf="h.queued">(queued)</span></td>
+                  <td>{{ h.stationLimitA | number:'1.0-1' }} A</td>
+                  <td><span [class]="statusClass(h.sendStatus)">{{ h.sendStatus }}</span></td>
+                  <td class="sc-sub">{{ h.reason }}</td>
+                </tr>
+                <tr *ngIf="history.length === 0"><td colspan="7" class="sc-empty">No allocation sent yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</app-dashboard-details-container>

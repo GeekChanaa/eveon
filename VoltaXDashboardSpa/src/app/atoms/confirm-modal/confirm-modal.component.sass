@@ -1,4 +1,4 @@
-.modal-backdrop 
+.modal-backdrop
   position: fixed
   top: 0
   left: 0
@@ -7,18 +7,98 @@
   display: flex
   justify-content: center
   align-items: center
-  z-index: 20
-  backdrop-filter: blur(0px)
-  transition: ease-in-out all .8s
-  &.active
-    backdrop-filter: blur(8px)
-
-
-.modal 
-  background: white
+  z-index: 1000
   padding: 20px
-  border-radius: 5px
-  text-align: center
+  background: rgba(15, 17, 20, .42)
+  backdrop-filter: blur(5px)
 
-button 
-  margin: 5px
+.modal
+  width: min(100%, 420px)
+  padding: 28px
+  border: 1px solid var(--vx-border, #e6e7e9)
+  border-radius: 14px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .24)
+  text-align: left
+  h2
+    margin: 18px 0 8px
+    font-size: 20px
+    font-weight: 650
+  p
+    margin: 0
+    color: var(--vx-text-muted, #6f767e)
+    font-size: 14px
+    line-height: 1.55
+
+.modal__icon
+  display: grid
+  place-items: center
+  width: 38px
+  height: 38px
+  border-radius: 50%
+  background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+  color: var(--vx-yellow-ink, #8a6410)
+  font-size: 20px
+  font-weight: 700
+
+.modal--danger .modal__icon
+  background: rgba(214, 67, 67, .12)
+  color: #c53535
+
+body.dark .modal
+  border-color: #2a2e33
+  background: #17191c
+  color: #f4f4f5
+  p
+    color: #a7adb5
+
+body.dark .modal__button--cancel
+  border-color: #343941
+  background: #202328
+  color: #f4f4f5
+
+.modal__actions
+  display: flex
+  justify-content: flex-end
+  gap: 10px
+  margin-top: 24px
+
+.modal__button
+  min-height: 38px
+  padding: 0 14px
+  border: 1px solid var(--vx-border, #e6e7e9)
+  border-radius: 8px
+  font-size: 13px
+  font-weight: 650
+  cursor: pointer
+  &:focus-visible
+    outline: 3px solid var(--vx-yellow, #e5b223)
+    outline-offset: 2px
+
+.modal__button--cancel
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text, #171b24)
+
+.modal__button--confirm
+  border-color: transparent
+  background: var(--vx-yellow, #e5b223)
+  color: #171b24
+
+.modal--danger .modal__button--confirm
+  background: #d64343
+  color: #fff
+  &:hover
+    background: #bd3232
+
+body.dark .modal--danger .modal__icon
+  background: rgba(240, 97, 97, .16)
+  color: #ff8a8a
+
+@media (max-width: 480px)
+  .modal
+    padding: 22px
+  .modal__actions
+    flex-direction: column-reverse
+  .modal__button
+    width: 100%

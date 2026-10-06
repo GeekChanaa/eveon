@@ -1,0 +1,18 @@
+# HTTPS front for the EVEON API. Caddy gets and renews the Let's Encrypt certificate
+# automatically once the DNS record points at this server.
+#   sudo cp Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+# Replace api.eveon.ma with the real API host name (and keep AllowedHosts in api.env in sync).
+
+api.eveon.ma {
+	encode gzip
+
+	# REST API, SignalR hubs and the OCPP websocket (chargers connect with wss://api.eveon.ma/ocpp/...).
+	reverse_proxy 127.0.0.1:8080
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}
+
+# Plain HTTP is only answered with a redirect (Caddy does this by default for the site above).

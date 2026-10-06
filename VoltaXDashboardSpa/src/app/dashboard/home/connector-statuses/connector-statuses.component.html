@@ -1,40 +1,4 @@
-<app-small-card
-  class="connector__status__item"
-  title="Available"
-  [icon]="'icon-check'"
-  description="When a Connector becomes available for a new User (Operative)"
-  [number]="availableConnectors"
-></app-small-card>
-
-<app-small-card
-  class="connector__status__item"
-  title="Unavailable"
-  [icon]="'icon-warning'"
-  description="When a Connector becomes unavailable as the result of a Change Availability command or an event uponwhich the Charging Station transitions to unavailable at its discretion."
-  [number]="unavailableConnectors"
-></app-small-card>
-
-<app-small-card
-  class="connector__status__item"
-  title="Occupied"
-  [icon]="'icon-block'"
-  description="When a Connector becomes occupied, so it is not available for a new EV driver. (Operative)"
-  [number]="occupiedConnectors"
-></app-small-card>
-
-<app-small-card
-  class="connector__status__item"
-  title="Faulted"
-  [icon]="'icon-close'"
-  description="When a Connector (or the EVSE or the entire Charging Station it belongs to) has reported an error and is not
-  available for energy delivery. (Inoperative)"
-  [number]="faultedConnectors"
-></app-small-card>
-
-<app-small-card
-  class="connector__status__item"
-  title="Disconnected"
-  [icon]="'icon-close'"
-  description="Connectors that are not connected to the csms but are in the system."
-  [number]="disconnectedConnectors"
-></app-small-card>
+<div class="status-grid" [attr.aria-busy]="loading">
+<div *ngFor="let status of statuses" class="status-tile" [ngClass]="status.tone"><span class="status-label"><span class="status-dot" aria-hidden="true"></span>{{status.label}}</span><strong>{{loading && !updatedAt ? '…' : status.count === null ? '—' : (status.count | number:'1.0-0')}}</strong><span class="status-detail">{{status.detail}}</span></div>
+</div>
+<div class="status-footer"><span aria-live="polite">{{error ? 'Unable to refresh connector status. Previous values may be out of date.' : loading ? 'Updating connector status…' : updatedAt ? 'Updated at ' + (updatedAt | date:'shortTime') : 'Status not yet available'}}</span><button type="button" (click)="getConnectorStatusNumbers()" [disabled]="loading">↻ Refresh</button></div>

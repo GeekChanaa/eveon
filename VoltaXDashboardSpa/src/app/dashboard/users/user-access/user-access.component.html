@@ -1,0 +1,36 @@
+<section class="access-panel" [class.access-panel--management]="management" *ngIf="access.isAdmin">
+  <header>
+    <div class="access-intro"><span class="access-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/></svg></span><div><h2>{{ management ? 'Manage team access' : 'Roles & permissions' }}</h2><p>{{ management ? 'Define what each role can view, create, edit and delete across your dashboard.' : "Choose this user's role or create a role with the access they need." }}</p></div></div>
+    <button type="button" class="primary-action" [disabled]="saving || loading || dirty" (click)="newRole()">+ Create role</button>
+  </header>
+  <p *ngIf="loading" class="access-notice" role="status">Loading access settings...</p>
+  <div class="field-error" *ngIf="error" role="alert">{{ error }} <button type="button" class="secondary-action" *ngIf="!roles.length" (click)="load()">Try again</button></div>
+  <p class="save-feedback" *ngIf="message" role="status">{{ message }}</p>
+  <div *ngIf="!loading && roles.length" class="access-layout" [class.access-layout--split]="management">
+    <aside class="role-browser" *ngIf="management" aria-label="Available roles">
+      <div class="role-browser__heading"><h3>Roles</h3><span>{{ roles.length }}</span></div>
+      <label class="search-label" for="role-search">Find a role</label><input id="role-search" type="search" [(ngModel)]="roleFilter" placeholder="Search roles">
+      <div class="role-list"><button type="button" *ngFor="let role of filteredRoles" class="role-card" [class.is-active]="!creating && selectedRoleId === role.id" [attr.aria-pressed]="!creating && selectedRoleId === role.id" [disabled]="saving || dirty" (click)="chooseRole(role.id)">
+        <span class="role-card__name">{{ role.name }}<span class="role-badge" *ngIf="role.name === 'Admin'">Full access</span></span>
+        <span class="role-card__detail">{{ role.name === 'Admin' ? 'All permissions, always' : (role.permissionIds?.length || 0) + ' permissions' }}</span>
+      </button></div>
+      <p class="hint" *ngIf="!filteredRoles.length">No roles match your search.</p>
+      <p class="hint">Assign roles from a user's <strong>Roles & permissions</strong> tab.</p>
+    </aside>
+    <div class="permission-editor">
+      <div class="role-selector" *ngIf="!management"><div><label for="user-role">User role</label><select id="user-role" [(ngModel)]="selectedRoleId" (ngModelChange)="selectRole()" [disabled]="saving || dirty"><option [ngValue]="0" disabled>Choose a role</option><option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option></select></div>
+        <button type="button" class="primary-action" [disabled]="saving || dirty || creating || !selectedRoleId || selectedRoleId === roleId || userId === access.current?.userId" (click)="assignRole()">Assign role</button>
+      </div>
+      <p class="hint" *ngIf="!management && userId === access.current?.userId">Another administrator must change your role.</p>
+      <div class="role-name" *ngIf="creating"><label for="role-name">New role name</label><input id="role-name" [(ngModel)]="roleName" maxlength="80" placeholder="e.g. Station operator" [disabled]="saving"></div>
+      <div class="permission-heading"><div><h3>{{ creating ? 'New role permissions' : (selectedRole?.name || 'Role') + ' permissions' }}</h3><p *ngIf="!protectedRole">Changes apply to every user assigned to this role.</p><p *ngIf="protectedRole">Admin always has every permission, including permissions added in the future.</p></div><span class="selection-count">{{ selected.size }} / {{ permissions.length }} selected</span></div>
+      <p class="access-notice" *ngIf="!protectedRole">Selecting an action also enables the access needed to use it. Save or cancel your changes before switching roles.</p>
+      <p class="access-notice" *ngIf="selectedRole?.name === 'Customer' && !creating">Customer is the default role for new registrations. Dashboard permissions granted here also apply to newly registered users.</p>
+      <label class="search-label" for="permission-search">Find a permission</label><input id="permission-search" type="search" [(ngModel)]="filter" placeholder="Search features or actions">
+      <div class="permission-grid"><fieldset *ngFor="let group of groups; trackBy: trackGroup"><legend>{{ group.name }}</legend><label *ngFor="let permission of group.permissions; trackBy: trackPermission" [class.is-selected]="selected.has(permission.id)"><input type="checkbox" [checked]="selected.has(permission.id)" [disabled]="protectedRole || saving || (!creating && !selectedRoleId)" (change)="toggle(permission, $any($event.target).checked)"><span>{{ label(permission.name) }}</span></label></fieldset></div>
+      <p class="hint" *ngIf="!groups.length">No permissions match your search.</p>
+      <div class="edit-actions" *ngIf="!protectedRole"><span class="hint">{{ dirty ? 'You have unsaved changes' : 'All changes saved' }}</span><button type="button" class="secondary-action" [disabled]="saving" (click)="selectRole()">{{ creating ? 'Cancel creation' : 'Cancel changes' }}</button><button type="button" class="primary-action" [disabled]="saving || (creating ? roleName.trim().length < 2 : !selectedRoleId || !dirty)" (click)="savePermissions()">{{ saving ? 'Saving...' : creating ? 'Create role' : 'Save permissions' }}</button></div>
+    </div>
+  </div>
+  <div *ngIf="!loading && !roles.length && !error" class="access-notice">No roles are available.</div>
+</section>

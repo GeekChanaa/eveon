@@ -33,6 +33,45 @@ namespace VoltaXApi.Data
             return connectorsDto;
         }
 
+        public async Task ReconcileChargePointConnectors(int chargePointID, IReadOnlyCollection<(int EvseID, int ConnectorID)> reported)
+        {
+            var keys = reported.ToHashSet();
+            // Include deleted rows: the connector address has a unique index even after soft deletion.
+            var existing = await _context.Connectors.IgnoreQueryFilters()
+                .Where(c => c.ChargePointID == chargePointID).ToListAsync();
+            foreach (var connector in existing)
+            {
+                connector.IsDeleted = !connector.ConnectorID.HasValue ||
+                    !keys.Contains((connector.EvseID, connector.ConnectorID.Value));
+            }
+
+            foreach (var key in keys)
+            {
+                if (existing.Any(c => c.EvseID == key.EvseID && c.ConnectorID == key.ConnectorID)) continue;
+                _context.Connectors.Add(new Connector
+                {
+                    ChargePointID = chargePointID,
+                    EvseID = key.EvseID,
+                    ConnectorID = key.ConnectorID,
+                    PricePerIdleMinute = (double)_globalConfig.DefaultIdleTimePricing,
+                    PricePerKWh = (double)_globalConfig.DefaultPricePerKwh,
+                    CostPerKwh = (double)_globalConfig.DefaultCostPerKwh,
+                    FlatFee = (double)_globalConfig.DefaultFlatFee
+                });
+            }
+
+            // Counts query status rows directly, so retire/revive those alongside their connectors.
+            var ids = existing.Select(c => c.ID).ToList();
+            var statuses = await _context.ConnectorStatuses.IgnoreQueryFilters()
+                .Where(s => s.ConnectorID.HasValue && ids.Contains(s.ConnectorID.Value)).ToListAsync();
+            var byId = existing.ToDictionary(c => c.ID);
+            foreach (var status in statuses)
+                status.IsDeleted = byId[status.ConnectorID!.Value].IsDeleted;
+
+            // One save keeps connector membership and status visibility atomic.
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<ConnectorSelectDto>> GetConnectorsIds()
         {
             return await this._context.Connectors.Include(u => u.ChargePoint).Select(u => new ConnectorSelectDto {

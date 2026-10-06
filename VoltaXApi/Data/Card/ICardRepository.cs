@@ -16,6 +16,7 @@ namespace VoltaXApi.Data
         Task CreateCard(CreateCardDto card);
         Task<CardListDto> GetCardForDisplayByID(int cardID);
         Task<List<Card>> GetAllCards();
-        Task<CardTokenInfoDto> GetCardTokenInfoByUserID(int userID);
+        Task<CardTokenInfoDto?> GetCardTokenInfoByUserID(int userID);
+        Task<Card?> FindCardAsNoTrackingAsync(Expression<Func<Card, bool>> predicate);
     }
 }

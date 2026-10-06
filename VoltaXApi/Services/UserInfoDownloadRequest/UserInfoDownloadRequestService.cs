@@ -1,15 +1,5 @@
-
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using VoltaXApi.Dtos;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
-using OCPP.Core.Server;
-using VoltaXApi.OCPP.Messages;
 using VoltaXApi.Factories;
 
 namespace VoltaXApi.Services
@@ -29,27 +19,32 @@ namespace VoltaXApi.Services
       _userInfoDownloadRequestRepository = userInfoDownloadRequestRepository;
       _mailService = mailService;
       _mailRequestFactory = mailRequestFactory;
-        }
+    }
 
     public async Task<bool> DenyRequest(int requestID)
     {
-      var request = await _userInfoDownloadRequestRepository.GetRequestByID(requestID);
+      var request = await _userInfoDownloadRequestRepository.GetRequestByID(requestID)
+        ?? throw new KeyNotFoundException("Request not found.");
+      if (request.Status != DownloadRequestStatusEnum.Pending)
+        throw new InvalidOperationException("Only pending requests can be denied.");
+
       await this._userInfoDownloadRequestRepository.DenyRequest(requestID);
       MailRequest mailRequest = this._mailRequestFactory.CreateDeniedDownloadInfoRequest(request.Email);
 
-      await _mailService.SendDownloadInfoRequestDenied(mailRequest, request.UserName);
+      await _mailService.SendDownloadInfoRequestDenied(mailRequest, System.Net.WebUtility.HtmlEncode(request.UserName));
       return true;
     }
 
+    // Approval only queues the export: GdprExportWorker builds the archive and emails the link.
     public async Task<bool> ApproveRequest(int requestID)
     {
-      var request = await _userInfoDownloadRequestRepository.GetRequestByID(requestID);
-      await this._userInfoDownloadRequestRepository.ApproveRequest(requestID);
-      MailRequest mailRequest = this._mailRequestFactory.CreateApprovedDownloadInfoRequest(request.Email);
+      var request = await _userInfoDownloadRequestRepository.GetRequestByID(requestID)
+        ?? throw new KeyNotFoundException("Request not found.");
+      if (request.Status != DownloadRequestStatusEnum.Pending)
+        throw new InvalidOperationException("Only pending requests can be approved.");
 
-      await _mailService.SendDownloadInfoRequestApproved(mailRequest, request.UserName);
+      await this._userInfoDownloadRequestRepository.ApproveRequest(requestID);
       return true;
     }
-
   }
 }

@@ -27,13 +27,13 @@ namespace VoltaXApi.Data
             }
             else
             {
-                lastUptime.EndDate = DateTime.Now;
+                lastUptime.EndDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 ConnectorUptime newUptime = new (){
                     TransactionID = transactionID,
                     ConnectorID = connectorID,
                     ConnectorUptimeStatus = ConnectorUptimeStatusEnum.Charging,
-                    StartDate = DateTime.Now
+                    StartDate = DateTime.UtcNow
                 };
                 await this.AddAsync(newUptime);
             }
@@ -47,13 +47,13 @@ namespace VoltaXApi.Data
 
             if(lastUptime.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
             {
-                lastUptime.EndDate = DateTime.Now;
+                lastUptime.EndDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 ConnectorUptime newUptime = new (){
                     TransactionID = transactionID,
                     ConnectorID = connectorID,
                     ConnectorUptimeStatus = ConnectorUptimeStatusEnum.SuspendedEV,
-                    StartDate = DateTime.Now
+                    StartDate = DateTime.UtcNow
                 };
                 await this.AddAsync(newUptime);
             }
@@ -69,7 +69,7 @@ namespace VoltaXApi.Data
                 ConnectorUptime connectorUptime = new ()
                 {
                     ConnectorID = connectorID,
-                    StartDate = DateTime.Now,
+                    StartDate = DateTime.UtcNow,
                     TransactionID = null,
                     ConnectorUptimeStatus = ConnectorStatusHelper.ConvertConnectorStatustoConnectorUptimeStatus(status)
                 };
@@ -77,12 +77,12 @@ namespace VoltaXApi.Data
             }
             else if(lastUptime != null && lastUptime.ConnectorUptimeStatus != ConnectorStatusHelper.ConvertConnectorStatustoConnectorUptimeStatus(status))
             {
-                lastUptime.EndDate = DateTime.Now;
+                lastUptime.EndDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 ConnectorUptime connectorUptime = new ()
                 {
                     ConnectorID = connectorID,
-                    StartDate = DateTime.Now,
+                    StartDate = DateTime.UtcNow,
                     TransactionID = null,
                     ConnectorUptimeStatus = ConnectorStatusHelper.ConvertConnectorStatustoConnectorUptimeStatus(status)
                 };

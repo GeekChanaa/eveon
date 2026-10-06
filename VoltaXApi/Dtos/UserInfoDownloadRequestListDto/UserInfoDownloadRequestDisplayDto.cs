@@ -1,4 +1,3 @@
-
 using VoltaXApi.Models;
 
 namespace VoltaXApi.Dtos;
@@ -11,4 +10,7 @@ public class UserInfoDownloadRequestDisplayDto
     public string Email { get; set; }
     public DateTime RequestTime { get; set; }
     public DownloadRequestStatusEnum Status { get; set; } 
+    public DateTime? CompletedAt { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+    public bool Downloaded { get; set; }
 }

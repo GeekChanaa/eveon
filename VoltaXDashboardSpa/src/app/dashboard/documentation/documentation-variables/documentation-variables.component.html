@@ -1,21 +1,11 @@
-<div class="page__inner">
+<div class="page__inner documentation-list">
   <div class="page__container">
-    <div class="page__title h3">Variables</div>
-
-    <div class="card">
-      List Of Ocpp Variables : 
-      <div class="stats">
-        <div class="stats__table">
-          <div class="stats__row">
-            <div class="stats__col">Variable</div>
-          </div>
-          <div class="stats__row" *ngFor="let variable of variables">
-            <div class="stats__col component__name" [routerLink]="['/dashboard/documentation/variables/'+variable.name]">{{variable.name}}</div>
-          </div>
-          
-        </div>
-      </div>
-    </div>
+    <a class="docs-back" routerLink="/dashboard/documentation"><svg class="icon"><use xlink:href="#icon-arrow-left"></use></svg>Documentation</a>
+    <header class="docs-header"><span class="docs-header__eyebrow">OCPP catalogue</span><h1>Variables</h1><p>Variables describe configuration and telemetry values. Select one to see the components that support it.</p></header>
+    <section class="docs-panel" aria-labelledby="variables-list-title">
+      <div class="docs-panel__heading"><div><h2 id="variables-list-title">Available variables</h2><p>{{variables.length || 0}} entries in the catalogue</p></div></div>
+      <div class="docs-table-wrap"><table class="docs-table"><thead><tr><th scope="col">Variable</th><th scope="col">Explore</th></tr></thead><tbody><tr *ngFor="let variable of variables"><td><a [routerLink]="['/dashboard/documentation/variables/'+variable.name]">{{variable.name}}</a></td><td><a class="docs-table__action" [routerLink]="['/dashboard/documentation/variables/'+variable.name]">View details <svg class="icon"><use xlink:href="#icon-arrow-right"></use></svg></a></td></tr><tr *ngIf="!variables?.length"><td colspan="2" class="docs-empty">No variables are currently available.</td></tr></tbody></table></div>
+    </section>
   </div>
 </div>
 

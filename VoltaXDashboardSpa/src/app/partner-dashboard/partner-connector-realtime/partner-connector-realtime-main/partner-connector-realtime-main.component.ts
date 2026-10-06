@@ -32,7 +32,6 @@ export class PartnerConnectorRealtimeMainComponent implements OnInit {
 
   status : string = "inactive";
 
-  isHovered: boolean = false;
   disabledActions : boolean = true;
   
   chargePoint : any = {};

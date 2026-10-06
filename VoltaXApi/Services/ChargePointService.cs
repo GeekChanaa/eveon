@@ -60,7 +60,7 @@ namespace VoltaXApi.Services
       List<Connector> connectors = await this._chargePointRepository.GetChargePointConnectors(chargePoint.ID);
       foreach (var connector in connectors)
       {
-        await this._connectorStatusService.UpdateConnectorStatus(connector.ConnectorID ?? 0, connector.EvseID, ConnectorStatusEnumType.Disconnected, DateTime.Now, chargePoint.ChargePointId);
+        await this._connectorStatusService.UpdateConnectorStatus(connector.ConnectorID ?? 0, connector.EvseID, ConnectorStatusEnumType.Disconnected, DateTime.UtcNow, chargePoint.ChargePointId);
       }
     }
     

@@ -3,6 +3,7 @@ using OCPP.Core.Server;
 using VoltaXApi.Data;
 using VoltaXApi.OCPP.Helpers;
 using VoltaXApi.OCPP.Messages;
+using VoltaXApi.OCPP.Services;
 using VoltaXApi.OCPP.Models;
 using VoltaXApi.Services;
 
@@ -49,11 +50,11 @@ namespace VoltaXApi.OCPP.Handlers
                 msgWritten = await _msgLogRepo.SaveLogMessage(chargePointStatus.Id, connectorId, msgIn.Action, string.Format("Status={0}", statusNotificationRequest.ConnectorStatus), string.Empty, msgIn, msgOut);
                 ConnectorStatusEnumType newStatus = statusNotificationRequest.ConnectorStatus;
 
-                _logger.LogInformation("StatusNotification => ChargePoint={0} / Connector={1}  / newStatus={2} / EvseID={3}", chargePointStatus?.Id, connectorId, newStatus.ToString(), evseId);
+                _logger.LogInformation("StatusNotification => {ChargePointId} EVSE {EvseId} connector {ConnectorId}: {Status}", chargePointStatus?.Id, evseId, connectorId, newStatus);
 
                 if (connectorId >= 0)
                 {
-                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp), chargePointStatus.Id) == false)
+                    if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp, System.Globalization.CultureInfo.InvariantCulture), chargePointStatus.Id) == false)
                     {
                         errorCode = ErrorCodes.InternalError;
                     }
@@ -69,25 +70,25 @@ namespace VoltaXApi.OCPP.Handlers
                         ocs.Status = newStatus;
                         if (chargePointStatus.OnlineConnectors.TryAdd(connectorId, ocs))
                         {
-                            _logger.LogTrace("StatusNotification => new OnlineConnectorStatus with values: ChargePoint={0} / Connector={1} / newStatus={2}", chargePointStatus?.Id, connectorId, newStatus.ToString());
+                            _logger.LogTrace("StatusNotification => New online connector status {ChargePointId} connector {ConnectorId}: {Status}", chargePointStatus?.Id, connectorId, newStatus);
                         }
                         else
                         {
-                            _logger.LogError("StatusNotification => Error adding new OnlineConnectorStatus for ChargePoint={0} / Connector={1}", chargePointStatus?.Id, connectorId);
+                            _logger.LogError("StatusNotification => Could not add online connector status for {ChargePointId} connector {ConnectorId}", chargePointStatus?.Id, connectorId);
                         }
                     }
                 }
                 else
                 {
-                    _logger.LogWarning("StatusNotification => Status for unexpected ConnectorId={1} on ChargePoint={0}", chargePointStatus?.Id, connectorId);
+                    _logger.LogWarning("StatusNotification => Status for unexpected connector {ConnectorId} on {ChargePointId}", connectorId, chargePointStatus?.Id);
                 }
 
-                msgOut.JsonPayload = JsonConvert.SerializeObject(statusNotificationResponse);
+                msgOut.JsonPayload = JsonConvert.SerializeObject(statusNotificationResponse, OCPPMessageFactory.DefaultSettings);
                 _logger.LogTrace("StatusNotification => Response serialized");
             }
             catch (Exception exp)
             {
-                _logger.LogError(exp, "StatusNotification => ChargePoint={0} / Exception: {1}", chargePointStatus.Id, exp.Message);
+                _logger.LogError(exp, "StatusNotification => Exception processing request from {ChargePointId}", chargePointStatus.Id);
                 errorCode = ErrorCodes.InternalError;
             }
 

@@ -1,3 +1,10 @@
 .artifacts/
 tests/**/bin/
 tests/**/obj/
+
+# Secrets and local environment files
+*.env
+!*.env.example
+secrets.json
+*.pem
+*.log

@@ -1,37 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ConnectorStatusService } from 'src/_services/connector-status.service';
-
+import { ConnectorStatusesDto } from 'src/_models/_dtos/connector-statuses-dto';
 @Component({
   selector: 'app-connector-statuses',
   templateUrl: './connector-statuses.component.html',
   styleUrls: ['./connector-statuses.component.sass']
 })
-export class ConnectorStatusesComponent implements OnInit {
-
-  availableConnectors : number = 0;
-  unavailableConnectors : number = 0;
-  faultedConnectors : number = 0;
-  occupiedConnectors : number = 0;
-  disconnectedConnectors : number = 0;
-  
-  constructor(
-    private _connectorStatusService : ConnectorStatusService
-  ) { }
-
-  ngOnInit() {
-    this.getConnectorStatusNumbers();
-  }
-
-  getConnectorStatusNumbers(){
-    this._connectorStatusService.getNumberOfConnectorsByAllStatus().subscribe((data) => {
-      this.availableConnectors = data.nbrAvailableConnectors;
-      this.unavailableConnectors = data.nbrUnavailableConnectors;
-      this.faultedConnectors = data.nbrFaultedConnectors;
-      this.occupiedConnectors = data.nbrOccupiedConnectors;
-      this.disconnectedConnectors = data.nbrDisconnectedConnectors;	
-
-      console.log(this.faultedConnectors);
+export class ConnectorStatusesComponent implements OnInit, OnDestroy {
+  loading = false;
+  error = false;
+  updatedAt: Date | null = null;
+  private request?: Subscription;
+  statuses = [
+    { key: 'nbrAvailableConnectors', label: 'Available', detail: 'Ready for a new driver', tone: 'available', count: null as number | null },
+    { key: 'nbrOccupiedConnectors', label: 'Occupied', detail: 'Currently in use', tone: 'occupied', count: null as number | null },
+    { key: 'nbrReservedConnectors', label: 'Reserved', detail: 'Held for a driver', tone: 'reserved', count: null as number | null },
+    { key: 'nbrUnavailableConnectors', label: 'Unavailable', detail: 'Out of service', tone: 'unavailable', count: null as number | null },
+    { key: 'nbrFaultedConnectors', label: 'Faulted', detail: 'Reported a connector error', tone: 'faulted', count: null as number | null },
+    { key: 'nbrDisconnectedConnectors', label: 'Disconnected', detail: 'Not connected to the system', tone: 'disconnected', count: null as number | null }
+  ];
+  constructor(private service: ConnectorStatusService) {}
+  ngOnInit() { this.getConnectorStatusNumbers(); }
+  ngOnDestroy() { this.request?.unsubscribe(); }
+  getConnectorStatusNumbers() {
+    if (this.loading) return;
+    this.loading = true;
+    this.error = false;
+    this.request = this.service.getNumberOfConnectorsByAllStatus().subscribe({
+      next: data => {
+        this.statuses.forEach(status => {
+          const value = data?.[status.key as keyof ConnectorStatusesDto];
+          status.count = typeof value === 'number' ? value : null;
+        });
+        this.updatedAt = new Date();
+        this.loading = false;
+      },
+      error: () => { this.loading = false; this.error = true; }
     });
   }
-
 }

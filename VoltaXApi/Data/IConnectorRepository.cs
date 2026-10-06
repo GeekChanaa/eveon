@@ -14,6 +14,7 @@ namespace VoltaXApi.Data
       Task ResetPricingChargePointConnectors(int chargePointID);
       Task ResetPricingConnector(int connectorID);
       Task<List<int>> GetChargePointEvsesIds(int chargePointID);
+      Task ReconcileChargePointConnectors(int chargePointID, IReadOnlyCollection<(int EvseID, int ConnectorID)> reported);
       
     }
 }

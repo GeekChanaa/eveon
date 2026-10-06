@@ -70,6 +70,32 @@ namespace VoltaXApi.Data
             await _context.SaveChangesAsync();
         }
         
+        public override async Task Update(ChargePoint chargePoint)
+        {
+            var entry = _context.Entry(chargePoint);
+            if (entry.State == EntityState.Detached)
+            {
+                // Entities bound from request bodies never carry the password (it is not serialized): keep the stored hash.
+                entry.State = EntityState.Modified;
+                entry.Property(cp => cp.Password).IsModified = false;
+            }
+            else if (entry.State == EntityState.Unchanged)
+            {
+                entry.State = EntityState.Modified;
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> SetPasswordHash(int chargePointID, string passwordHash)
+        {
+            var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargePointID && !u.IsDeleted);
+            if (cp == null) return false;
+            cp.Password = passwordHash;
+            cp.Username = cp.ChargePointId;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         private async Task<string> GenerateChargePointId()
         {
             var latestChargePointNumber = await GetLatestChargePointNumberAsync();
@@ -99,7 +125,7 @@ namespace VoltaXApi.Data
                     Status = u.Status,
                     Comment = u.Comment,
                     Username = u.Username,
-                    Password = u.Password,
+                    HasPassword = u.Password != null && u.Password != "",
                     Latitude = u.ChargingStation.Latitude,
                     Longitude = u.ChargingStation.Longitude,
                     ClientCertThumb = u.ClientCertThumb,
@@ -160,7 +186,7 @@ namespace VoltaXApi.Data
                     Status = u.Status,
                     Comment = u.Comment,
                     Username = u.Username,
-                    Password = u.Password,
+                    HasPassword = u.Password != null && u.Password != "",
                     Address = u.ChargingStation.Address,
                     Latitude = u.ChargingStation.Latitude,
                     Longitude = u.ChargingStation.Longitude,
@@ -182,6 +208,24 @@ namespace VoltaXApi.Data
             await this._context.SaveChangesAsync();
         }
 
+        public async Task<bool> RegenerateQrValue(int chargePointID)
+        {
+            var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargePointID && !u.IsDeleted);
+            if (cp == null) return false;
+            cp.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> RegenerateAllQrValues()
+        {
+            var chargePoints = await _context.ChargePoints.Where(u => !u.IsDeleted).ToListAsync();
+            foreach (var cp in chargePoints)
+                cp.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+            await _context.SaveChangesAsync();
+            return chargePoints.Count;
+        }
+
         public async Task SetHasChargeCable(int chargepointID, bool val)
         {
             var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargepointID);
@@ -199,6 +243,10 @@ namespace VoltaXApi.Data
                 Category = cp.Category,
                 Status = cp.Status,
                 PartnerName = cp.ChargingStation.Partner.Name,
+                IsConfigured = _context.ChargePointProvisionings.Any(p => p.ChargePointID == cp.ID
+                    && (p.Method == ChargePointProvisioningMethodEnum.Automatic || p.Method == ChargePointProvisioningMethodEnum.Manual)),
+                ConfigurationMethod = _context.ChargePointProvisionings.Where(p => p.ChargePointID == cp.ID)
+                    .Select(p => (ChargePointProvisioningMethodEnum?)p.Method).FirstOrDefault(),
             });
             return chargePoints;
         }
@@ -213,6 +261,10 @@ namespace VoltaXApi.Data
                 Category = cp.Category,
                 Status = cp.Status,
                 PartnerName = cp.ChargingStation.Partner.Name,
+                IsConfigured = _context.ChargePointProvisionings.Any(p => p.ChargePointID == cp.ID
+                    && (p.Method == ChargePointProvisioningMethodEnum.Automatic || p.Method == ChargePointProvisioningMethodEnum.Manual)),
+                ConfigurationMethod = _context.ChargePointProvisionings.Where(p => p.ChargePointID == cp.ID)
+                    .Select(p => (ChargePointProvisioningMethodEnum?)p.Method).FirstOrDefault(),
             });
             return chargePoints;
         }

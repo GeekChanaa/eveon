@@ -14,7 +14,7 @@ namespace VoltaXApi.Data
         Task<InvoiceData> GetOrderForInvoice(int orderID);
         Task<DisplayRechargeOrderDto> GetOrder(int orderID);
         IQueryable<Order> GetCardOrders(int cardID);
-        Task CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto);
+        Task<Order> CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto);
         IQueryable<RechargeOrderListDto> GetRechargeOrders(GlobalParams globalParams);
         IQueryable<RechargeOrderListDto> GetUserRechargeOrders(int userID, GlobalParams globalParams);
     }

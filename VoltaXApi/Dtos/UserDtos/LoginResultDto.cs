@@ -20,4 +20,14 @@ public class LoginResultDto
     public int UserId { get; set; }
     public string Email { get; set; }
     public string FullName { get; set; }
+
+    /// <summary>
+    /// True when the password was right but the account uses 2FA: no tokens are issued,
+    /// the client posts <see cref="TwoFactorToken"/> and the code to /api/auth/verify-2fa.
+    /// </summary>
+    public bool RequiresTwoFactor { get; set; }
+    public string? TwoFactorToken { get; set; }
+
+    /// <summary>Auth:RequireTwoFactorForAdmins is on and this admin must enroll before using the dashboard.</summary>
+    public bool TwoFactorEnrollmentRequired { get; set; }
 }

@@ -18,6 +18,9 @@ public class JwtService : IJwtService
         _tokenSettings = tokenSettings.Value;
     }
 
+    public const string DefaultIssuer = "eveon-api";
+    public const string DefaultAudience = "eveon-clients";
+
     public TimeSpan AccessTokenLifetime => _tokenSettings.AccessTokenLifetime;
 
     public string GenerateToken(List<Claim> claims) => GenerateAccessToken(claims).Token;
@@ -35,6 +38,8 @@ public class JwtService : IJwtService
             Subject = new ClaimsIdentity(claims),
             Expires = expires,
             SigningCredentials = creds,
+            Issuer = _config["AppSettings:Issuer"] ?? DefaultIssuer,
+            Audience = _config["AppSettings:Audience"] ?? DefaultAudience,
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();

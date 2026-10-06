@@ -1,6 +1,6 @@
 <app-dashboard-details-container 
   [state]="state"
-  [title]="'Profile Settings'" [breadcrumbs]="[
+  [title]="'My profile'" [breadcrumbs]="[
   { label: 'Dashboard', link: '/dashboard' },
   { label: 'Profile' }
 ]">
@@ -11,29 +11,33 @@
   </div>
 
   <!-- Content area -->
-  <div *ngIf="userLoaded" class="content-area">
+  <div *ngIf="userLoaded" class="content-area profile-settings">
     <!-- Tabs navigation -->
-    <div class="tabs-container">
-      <div class="tabs">
-        <button [ngClass]="{'active': tabsEnum === 'AccountInformationsTab'}"
-          (click)="changeTab('AccountInformationsTab')" class="tab-button">
-          Account Informations
+    <div class="profile-navigation">
+      <div class="station-tabs" aria-label="Profile sections">
+        <button [attr.aria-pressed]="tabsEnum === 'AccountInformationsTab'" [ngClass]="{'is-active': tabsEnum === 'AccountInformationsTab'}"
+          (click)="changeTab('AccountInformationsTab')" type="button" class="tab-button">
+          Personal information
         </button>
-        <button [ngClass]="{'active': tabsEnum === 'SecurityTab'}" (click)="changeTab('SecurityTab')"
-          class="tab-button">
+        <button [attr.aria-pressed]="tabsEnum === 'SecurityTab'" [ngClass]="{'is-active': tabsEnum === 'SecurityTab'}" (click)="changeTab('SecurityTab')"
+          type="button" class="tab-button">
           Security
         </button>
-        <button [ngClass]="{'active': tabsEnum === 'RechargeCardsTab'}" (click)="changeTab('RechargeCardsTab')"
-          class="tab-button">
+        <button [attr.aria-pressed]="tabsEnum === 'RechargeCardsTab'" [ngClass]="{'is-active': tabsEnum === 'RechargeCardsTab'}" (click)="changeTab('RechargeCardsTab')"
+          type="button" class="tab-button">
           Recharge Cards
         </button>
-        <button [ngClass]="{'active': tabsEnum === 'PaymentCardsTab'}" (click)="changeTab('PaymentCardsTab')"
-          class="tab-button">
+        <button [attr.aria-pressed]="tabsEnum === 'PaymentCardsTab'" [ngClass]="{'is-active': tabsEnum === 'PaymentCardsTab'}" (click)="changeTab('PaymentCardsTab')"
+          type="button" class="tab-button">
           Payment Cards
         </button>
-        <button [ngClass]="{'active': tabsEnum === 'NotificationSettingsTab'}"
-          (click)="changeTab('NotificationSettingsTab')" class="tab-button">
-          Notification Settings
+        <button [attr.aria-pressed]="tabsEnum === 'NotificationSettingsTab'" [ngClass]="{'is-active': tabsEnum === 'NotificationSettingsTab'}"
+          (click)="changeTab('NotificationSettingsTab')" type="button" class="tab-button">
+          Notifications
+        </button>
+        <button [attr.aria-pressed]="tabsEnum === 'PrivacyTab'" [ngClass]="{'is-active': tabsEnum === 'PrivacyTab'}"
+          (click)="changeTab('PrivacyTab')" type="button" class="tab-button">
+          Privacy
         </button>
       </div>
     </div>
@@ -41,30 +45,35 @@
     <!-- Tab content -->
     <div class="tab-content">
       <!-- Account informations Tab -->
-      <div *ngIf="tabsEnum === 'AccountInformationsTab'" class="information-tab">
+      <div *ngIf="visitedTabs.has('AccountInformationsTab')" [hidden]="tabsEnum !== 'AccountInformationsTab'" class="information-tab">
         <app-account-informations></app-account-informations>
       </div>
 
       <!-- Account Security Tab -->
-      <div *ngIf="tabsEnum === 'SecurityTab'" class="information-tab">
+      <div *ngIf="visitedTabs.has('SecurityTab')" [hidden]="tabsEnum !== 'SecurityTab'" class="information-tab">
         <app-profile-security [userID]="user.id"></app-profile-security>
       </div>
 
       <!-- User Recharge Cards Tab -->
-      <div *ngIf="tabsEnum === 'RechargeCardsTab'" class="information-tab">
+      <div *ngIf="visitedTabs.has('RechargeCardsTab')" [hidden]="tabsEnum !== 'RechargeCardsTab'" class="information-tab">
         <app-recharge-cards [userID]="user.id"></app-recharge-cards>
       </div>
 
       <!-- Payments Card Tab -->
-      <div *ngIf="tabsEnum === 'PaymentCardsTab'" class="information-tab">
+      <div *ngIf="visitedTabs.has('PaymentCardsTab')" [hidden]="tabsEnum !== 'PaymentCardsTab'" class="information-tab">
         <app-debit-cards [userID]="user.id"></app-debit-cards>
 
       </div>
 
-      <!-- Notification Settings Tab -->
-      <div *ngIf="tabsEnum === 'NotificationSettingsTab'" class="information-tab">
+      <!-- Notifications Tab -->
+      <div *ngIf="visitedTabs.has('NotificationSettingsTab')" [hidden]="tabsEnum !== 'NotificationSettingsTab'" class="information-tab">
         <app-notification-settings></app-notification-settings>
 
+      </div>
+
+      <!-- Privacy Tab -->
+      <div *ngIf="visitedTabs.has('PrivacyTab')" [hidden]="tabsEnum !== 'PrivacyTab'" class="information-tab">
+        <app-profile-privacy [userID]="user.id"></app-profile-privacy>
       </div>
 
 

@@ -20,6 +20,7 @@ using VoltaXApi.Factories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using VoltaXApi.Configurations;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace VoltaXApi.Controllers
 {
@@ -59,15 +60,28 @@ namespace VoltaXApi.Controllers
             _partnerAuthService = partnerAuthService;
         }
 
-        // Function to reset password
-        [HttpGet("ResetPartnerPasswordRequest")]
-        public async Task<IActionResult> ResetPartnerPasswordRequest([FromQuery] string email)
+        /// <summary>
+        /// Emails a single use, 30 minute reset link to a partner account. Always 200, so
+        /// the response never tells whether the address exists.
+        /// </summary>
+        [HttpPost("request-reset")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] EmailRequestDto dto)
         {
-            await _partnerAuthService.PartnerResetPasswordRequest(email);
-            return StatusCode(200);
+            await _partnerAuthService.RequestPasswordReset(dto.Email);
+            return Ok();
         }
-        
+
+        [HttpPost("reset")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
+        public async Task<IActionResult> ResetPassword([FromBody] UserForResetPasswordDto dto)
+        {
+            await _partnerAuthService.ResetPassword(dto.Email, dto.Token, dto.Password);
+            return Ok();
+        }
+
         [HttpPost("Login")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> Login(UserForLoginDto loginDto)
         {
             // The partner portal signs in by email only.
@@ -82,7 +96,7 @@ namespace VoltaXApi.Controllers
             if (result == null)
                 return Unauthorized();
 
-            return Ok(result);
+            return Ok(RefreshTokenCookie.Apply(HttpContext, result));
         }
 
         // -----------------------------------------------------------------
@@ -112,6 +126,7 @@ namespace VoltaXApi.Controllers
         /// Token flow for the partner portal (Google Identity Services button / mobile).
         /// </summary>
         [HttpPost("google")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> GoogleTokenLogin([FromBody] GoogleLoginDto googleLoginDto)
         {
             var externalUser = await _googleAuthProvider.ValidateIdTokenAsync(googleLoginDto.IdToken);
@@ -121,7 +136,7 @@ namespace VoltaXApi.Controllers
                 HttpContext.Connection.RemoteIpAddress?.ToString(),
                 Request.Headers["User-Agent"].ToString());
 
-            return Ok(result);
+            return Ok(RefreshTokenCookie.Apply(HttpContext, result));
         }
 
     }

@@ -17,6 +17,7 @@ export interface SelectOption<T = string> {
 })
 export class DisplayCellComponent implements OnInit, AfterViewInit {
 @Input() title: string = '';
+  @Input() modern = false;
   @Input() val: any = '';
   @Input() object: any = {};
   @Input() inpType: string = 'text';
@@ -51,8 +52,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   ) {}
   
   ngOnInit() {
-    this.updatedValue = this.val ? this.val : '';
-    this.originalValue = this.val ? this.val : '';
+    this.updatedValue = this.val ?? '';
+    this.originalValue = this.val ?? '';
     
     // Use provided FormControl or create internal one
     if (!this.control) {
@@ -130,6 +131,8 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
   
   startEditing() {
+    if (!this.editable || this.isLoading) return;
+    this.originalValue = this.val;
     this.errorMessage = '';
     this.editing = true;
     this.updatedValue = this.val;
@@ -150,6 +153,7 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
   
   cancelEditing() {
+    if (this.isLoading) return;
     this.updatedValue = this.originalValue;
     this.editing = false;
     this.errorMessage = '';
@@ -186,6 +190,7 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
   }
   
   updateVal() {
+    if (this.isLoading || !this.editable) return;
     // Update FormControl and trigger validation
     if(this.updatedValue == this.val)
     {
@@ -208,13 +213,14 @@ export class DisplayCellComponent implements OnInit, AfterViewInit {
     }
     
     // Update the object with new value
-    this.object[this.title] = this.updatedValue;
+    const updatedObject = { ...this.object, [this.title]: this.updatedValue };
     this.isLoading = true;
     
     // Call API to update
-    this.updateObservable(this.object.id, this.object).subscribe(
+    this.updateObservable(this.object.id, updatedObject).subscribe(
       (data) => {
         this.isLoading = false;
+        this.object[this.title] = this.updatedValue;
         this.originalValue = this.updatedValue;
         this.val = this.updatedValue;
         this.editing = false;

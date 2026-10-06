@@ -1,4 +1,6 @@
+import { AccessService } from 'src/_services/access.service';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PageState } from 'src/_models/_enums/page-state.enum';
 import { AuthService } from 'src/_services/auth.service';
 import { UserService } from 'src/_services/user.service';
@@ -9,7 +11,8 @@ enum ProfilePageTabsEnum {
   SecurityTab = "SecurityTab",
   RechargeCardsTab = "RechargeCardsTab",
   PaymentCardsTab = "PaymentCardsTab",
-  NotificationSettingsTab = "NotificationSettingsTab"
+  NotificationSettingsTab = "NotificationSettingsTab",
+  PrivacyTab = "PrivacyTab"
 }
 
 @Component({
@@ -30,13 +33,19 @@ export class ProfileComponent implements OnInit {
   userLoaded : boolean = false;
 
   constructor(
+    private access: AccessService,
     private _userService : UserService,
-    private _authService : AuthService
+    private _authService : AuthService,
+    private _route : ActivatedRoute
   ){
   }
 
 
   ngOnInit() {
+    // Deep link from the data export email: /my-dashboard/profile?tab=privacy&export=...
+    if (this._route.snapshot.queryParamMap.get('tab') === 'privacy') this.changeTab(ProfilePageTabsEnum.PrivacyTab);
+    // Forced 2FA enrollment (Auth:RequireTwoFactorForAdmins) lands here
+    if (this._route.snapshot.queryParamMap.get('tab') === 'security') this.changeTab(ProfilePageTabsEnum.SecurityTab);
     this.getAuthUserInfos();
   }
 
@@ -49,7 +58,7 @@ export class ProfileComponent implements OnInit {
   
   getUserByID(id : number ){
     this.state = PageState.Loading;
-    this._userService.getUserInformations(id).subscribe((data) => {
+    this.access.profile().subscribe((data) => {
       this.state = PageState.Success;
       this.user = data;
       this._userService.setAvatarUrl(this.user.imageUrl);
@@ -57,7 +66,9 @@ export class ProfileComponent implements OnInit {
     })
   }
 
+  visitedTabs = new Set(["AccountInformationsTab"]);
   changeTab(tab : any){
+    this.visitedTabs.add(tab);
     this.tabsEnum = tab;
   }
   

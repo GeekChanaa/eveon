@@ -1,6 +1,7 @@
 using VoltaXApi.Models;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
+using Microsoft.AspNetCore.Http;
 
 namespace VoltaXApi.Services
 {
@@ -10,80 +11,100 @@ namespace VoltaXApi.Services
         private readonly ICardService _cardService;
         private readonly IDebitCardRepository _debitCardRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IMailService _mailService;
+        private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
 
         public OrderService(
             ICardRepository cardRepository,
             IDebitCardRepository debitCardRepository,
             IOrderRepository orderRepository,
-            ICardService cardService)
+            ICardService cardService,
+            IMailService mailService,
+            IInvoiceGeneratorService<InvoiceData> invoiceService)
         {
             _cardRepository = cardRepository;
             _debitCardRepository = debitCardRepository;
             _orderRepository = orderRepository;
             _cardService = cardService;
+            _mailService = mailService;
+            _invoiceService = invoiceService;
         }
 
         public async Task CreateOrder(CreateRechargeOrderDto orderDto)
         {
-            await this._cardService.AddAmountToCard(orderDto.CardID, (double)orderDto.Amount);
-            await this._orderRepository.CreateRechargeOrder(orderDto);
+            var order = await this._orderRepository.CreateRechargeOrder(orderDto);
+            if (order.Status == RechargeOrderStatus.Completed)
+                await this._cardService.AddAmountToCard(orderDto.CardID, orderDto.Amount);
+            var card = (await _cardRepository.GetAllCards()).FirstOrDefault(card => card.ID == order.CardID);
+            if (card?.User != null)
+                await SendQuoteAsync(order, card.User.Email, card.User.FullName);
         }
 
-        public async Task<bool> ProcessPayment(RechargeOrderDto orderDto)
+        public async Task<MockPaymentResultDto> ProcessPayment(RechargeOrderDto orderDto)
         {
-            var debitCard = new DebitCard
+            if (orderDto.RechargeAmount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(orderDto.RechargeAmount), "Recharge amount must be greater than zero.");
+
+            var card = (await _cardRepository.GetAllCards()).FirstOrDefault(card => card.ID == orderDto.CardID);
+            if (card == null || card.User == null)
+                throw new InvalidOperationException("The selected recharge card could not be found.");
+            if (card.UserID != orderDto.UserID)
+                throw new UnauthorizedAccessException("A recharge can only be made for one of the user's own cards.");
+            EmailVerificationGuard.EnsureVerified(card.User);
+
+            var status = orderDto.MockPaymentStatus ?? RechargeOrderStatus.Completed;
+            var order = await _orderRepository.CreateRechargeOrder(new CreateRechargeOrderDto
             {
-                Name = orderDto.CardHolderName,
-                CardNumber = orderDto.CardNumber,
-                CVV = orderDto.CardCVV,
-                ExpirationDate = DateTime.Parse(orderDto.CardExpirationDate),
-                UserID = orderDto.UserID
+                CardID = orderDto.CardID,
+                Amount = orderDto.RechargeAmount,
+                Status = status,
+                RechargeDate = DateTime.UtcNow
+            });
+
+            var credited = status == RechargeOrderStatus.Completed;
+            if (credited)
+                await _cardService.AddAmountToCard(order.CardID, order.Amount);
+
+            await SendQuoteAsync(order, card.User.Email, card.User.FullName);
+
+            return new MockPaymentResultDto
+            {
+                OrderID = order.ID,
+                CardID = order.CardID,
+                Amount = order.Amount,
+                Status = status,
+                BalanceCredited = credited,
+                Message = credited ? "Mock payment completed and the recharge card was credited." : $"Mock payment recorded with status {status}. The recharge card was not credited."
             };
-            // Here you would call your payment API to process the payment
-            // If the payment is successful, you would then add the amount to the user's card balance
-            // and save the debit card information if the user chose to do so
-
-            // Process payment with payment API
-            // This is a placeholder, replace with your actual payment processing code
-            bool paymentSuccessful = true;
-
-            if (paymentSuccessful)
-            {
-                // Add amount to user's card balance
-                var card = await _cardRepository.GetByIdAsync(orderDto.CardID);
-                if (card == null)
-                {
-                    throw new Exception("Card not found");
-                }
-
-                card.Balance += orderDto.RechargeAmount;
-                await _cardRepository.Update(card);
-
-                // Save debit card information if user chose to do so
-                if (orderDto.SaveCard)
-                {
-                    await _debitCardRepository.AddAsync(debitCard);
-                }
-
-                // Create a new order
-                var order = new Order
-                {
-                    CardID = card.ID,
-                    Amount = orderDto.RechargeAmount,
-                    RechargeDate = DateTime.Now
-                };
-
-                await _orderRepository.AddAsync(order);
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
-
+        private async Task SendQuoteAsync(Order order, string email, string userName)
+        {
+            var invoice = await _orderRepository.GetOrderForInvoice(order.ID);
+            var path = Path.Combine(Path.GetTempPath(), $"voltax-recharge-{order.ID}-{Guid.NewGuid():N}.pdf");
+            try
+            {
+                var pdf = _invoiceService.GenerateInvoice(invoice, path);
+                await using var stream = new MemoryStream(pdf);
+                var attachment = new FormFile(stream, 0, pdf.Length, "quote", $"Recharge-quote-{order.ID}.pdf")
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "application/pdf"
+                };
+                await _mailService.SendEmailAsync(new MailRequest
+                {
+                    Email = email,
+                    Name = userName,
+                    ToEmails = new List<string> { email },
+                    Subject = $"Recharge quote #{order.ID}",
+                    Body = $"Your recharge payment is {order.Status}. The quote for {order.Amount:0.00} is attached.",
+                    Attachments = new List<IFormFile> { attachment }
+                });
+            }
+            finally
+            {
+                if (File.Exists(path)) File.Delete(path);
+            }
+        }
     }
-
 }

@@ -7,7 +7,8 @@ namespace VoltaXApi.Services
 {
   public interface IPartnerAuthService
   {
-    Task PartnerResetPasswordRequest(string email);
+    Task RequestPasswordReset(string email);
+    Task ResetPassword(string email, string token, string newPassword);
     Task<LoginResultDto> Login(string email, string password, string ipAddress, string? userAgent = null);
 
     /// <summary>

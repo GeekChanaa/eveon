@@ -34,6 +34,7 @@ namespace VoltaXApi.Data
         Task<int> GetLatestStationNumberAsync();
         Task<List<ChargingStationForSelectDto>> GetChargingStationsForSelect();
         Task<List<ChargingStationForMapDto>> GetChargingStationsForMap();
+        Task<ChargingStationSearchResponseDto> SearchChargingStations(ChargingStationSearchParams searchParams);
         
 
     }
