@@ -50,6 +50,11 @@ public class Program
                     await RefreshTokenSchema.Initialize(db);
                 else
                     await RefreshTokenSchema.Verify(db);
+                if (args.Contains(AdminBootstrap.Flag))
+                {
+                    await AdminBootstrap.Run(db, builder.Configuration);
+                    return;
+                }
             }
             if (initializeRefreshTokens)
                 return;
@@ -88,8 +93,11 @@ public class Program
         ServiceRegistration.ConfigureOCPPServices(builder.Services);
         ServiceRegistration.ConfigureOCPPHandlers(builder.Services);
 
-        // ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
-        ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
+        // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger) or "SqlServer" (default).
+        if (string.Equals(builder.Configuration["Database:Provider"], "MySql", StringComparison.OrdinalIgnoreCase))
+            ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
+        else
+            ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
 
         ServiceRegistration.ConfigureSwagger(builder.Services);
         SecurityConfiguration.AddSecurity(builder.Services, builder.Configuration, builder.Environment);

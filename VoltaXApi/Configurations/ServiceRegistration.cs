@@ -366,7 +366,8 @@ public static class ServiceRegistration
         services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            var serverVersion = new MariaDbServerVersion("10.6.15");
+            // Database:ServerVersion: the server's MariaDB version (SELECT VERSION()), e.g. "10.11.10".
+            var serverVersion = new MariaDbServerVersion(configuration["Database:ServerVersion"] ?? "10.6.15");
             
             options.UseMySql(connectionString, serverVersion)
                 .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>());

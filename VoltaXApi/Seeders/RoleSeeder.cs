@@ -54,6 +54,18 @@ namespace VoltaXApi.Data.Seeders
                 rolesToSeed.Add(customerRole);
             }
 
+            // Partner Role: access is granted by role name and PartnerID, not permissions
+            if (!existingRoles.Contains("Partner"))
+            {
+                rolesToSeed.Add(new Role
+                {
+                    Name = "Partner",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    IsDeleted = false
+                });
+            }
+
             if (rolesToSeed.Any())
             {
                 await _roleRepo.AddRangeAsync(rolesToSeed);

@@ -43,8 +43,11 @@ public static class SecurityConfiguration
         if (!app.Environment.IsDevelopment())
         {
             app.UseHsts();
+            // Health probes (Railway, load balancers) call over plain HTTP from inside the platform
+            // and need a 200, not a redirect.
             if (app.Configuration.GetValue("Security:HttpsRedirection", true))
-                app.UseHttpsRedirection();
+                app.UseWhen(context => !context.Request.Path.StartsWithSegments("/health"),
+                    branch => branch.UseHttpsRedirection());
         }
 
         app.Use(async (context, next) =>
@@ -175,6 +178,15 @@ public static class SecurityConfiguration
             {
                 if (IPAddress.TryParse(proxy, out var address))
                     options.KnownProxies.Add(address);
+            }
+
+            // Managed platforms (Railway) put an edge proxy with no fixed address in front of the
+            // container, and it is the only way in. Trust it; ForwardLimit = 1 still means only the
+            // entry it appended is used, so a client cannot spoof its IP or scheme.
+            if (configuration.GetValue("ReverseProxy:TrustAllProxies", false))
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
             }
 
             var allowedHosts = configuration["AllowedHosts"];
