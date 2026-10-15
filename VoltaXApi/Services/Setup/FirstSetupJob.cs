@@ -230,9 +230,9 @@ public sealed class FirstSetupJob(
         var roles = await db.Roles.Where(r => new[] { AdminRole, PartnerRole, CustomerRole }.Contains(r.Name)).ToDictionaryAsync(r => r.Name, r => r.ID);
         var partner = await EnsureTestPartner(settings.PartnerEmail);
 
-        await EnsureTestUser(step, settings.AdminEmail, AdminRole, roles[AdminRole], null);
-        await EnsureTestUser(step, settings.PartnerEmail, PartnerRole, roles[PartnerRole], partner.ID);
-        await EnsureTestUser(step, settings.CustomerEmail, CustomerRole, roles[CustomerRole], null);
+        await EnsureTestUser(step, settings.AdminEmail, AdminRole, roles[AdminRole], null, settings.AdminPassword);
+        await EnsureTestUser(step, settings.PartnerEmail, PartnerRole, roles[PartnerRole], partner.ID, settings.PartnerPassword);
+        await EnsureTestUser(step, settings.CustomerEmail, CustomerRole, roles[CustomerRole], null, settings.CustomerPassword);
     }
 
     private async Task<Partner> EnsureTestPartner(string email)
@@ -265,7 +265,7 @@ public sealed class FirstSetupJob(
         return partner;
     }
 
-    private async Task EnsureTestUser(string step, string email, string roleName, int roleId, int? partnerId)
+    private async Task EnsureTestUser(string step, string email, string roleName, int roleId, int? partnerId, string? fixedPassword)
     {
         email = email.Trim().ToLowerInvariant();
         var now = DateTime.UtcNow;
@@ -293,10 +293,13 @@ public sealed class FirstSetupJob(
         user.IsEmailVerified = true;
         user.UpdatedAt = now;
 
+        var hasFixedPassword = !string.IsNullOrEmpty(fixedPassword);
         string? password = null;
-        if (created || _options.TestUsers.RotatePasswordsOnStartup || !user.HasPassword)
+        if (hasFixedPassword
+                ? !AuthHelper.VerifyPasswordHash(fixedPassword!, user.PasswordHash, user.PasswordSalt)
+                : created || _options.TestUsers.RotatePasswordsOnStartup || !user.HasPassword)
         {
-            password = GeneratePassword();
+            password = hasFixedPassword ? fixedPassword! : GeneratePassword();
             AuthHelper.CreatePasswordHash(password, out var hash, out var salt);
             user.PasswordHash = hash;
             user.PasswordSalt = salt;
@@ -321,8 +324,10 @@ public sealed class FirstSetupJob(
         if (roleName == CustomerRole && !await db.Cards.IgnoreQueryFilters().AnyAsync(c => c.UserID == user.ID))
             await cards.CreateCardForUser(user);
 
-        _result.Ok(step, $"{email} ({roleName}) {(created ? "created" : "ready")}{(password != null ? ", new password" : "")}");
-        if (password != null)
+        _result.Ok(step, $"{email} ({roleName}) {(created ? "created" : "ready")}" +
+            (hasFixedPassword ? ", fixed password from configuration" : password != null ? ", new password" : ""));
+        // Fixed passwords are already known: only generated ones are mailed.
+        if (password != null && !hasFixedPassword)
             _result.Credentials.Add(new TestCredential(roleName, email, password));
     }
 

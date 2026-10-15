@@ -18,5 +18,10 @@ public sealed class FirstSetupOptions
         public string AdminEmail { get; set; } = "admin@eveon.ma";
         public string CustomerEmail { get; set; } = "customer@eveon.ma";
         public string PartnerEmail { get; set; } = "partner@eveon.ma";
+        // TEMPORARY, testing only: fixed passwords from environment variables (never in appsettings,
+        // the repository is public). A set password is applied on every start and is not rotated or mailed.
+        public string? AdminPassword { get; set; }
+        public string? CustomerPassword { get; set; }
+        public string? PartnerPassword { get; set; }
     }
 }

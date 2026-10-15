@@ -9,3 +9,6 @@ secrets.json
 *.pem
 *.log
 .vercel
+
+# Temporary test account passwords (never commit, the repo is public)
+test-accounts.local.txt
