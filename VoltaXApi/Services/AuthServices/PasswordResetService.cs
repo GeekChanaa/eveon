@@ -78,8 +78,7 @@ public class PasswordResetService : IPasswordResetService
         var raw = IssueToken(user, TokenLifetime);
         await _context.SaveChangesAsync();
 
-        string spaLink = _config["SpaLink"] ?? "";
-        if (!spaLink.EndsWith("/")) spaLink += "/";
+        string spaLink = _config.AuthSite();
         var path = partnerPortal ? "partner-auth/reset-password" : "auth/reset-password";
         return $"{spaLink}{path}?email={Uri.EscapeDataString(user.Email)}&token={Uri.EscapeDataString(raw)}";
     }

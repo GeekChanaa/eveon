@@ -121,7 +121,7 @@ namespace VoltaXApi.Services
       user.EmailVerificationToken = AuthHelper.GenerateVerificationToken();
       await _context.SaveChangesAsync();
 
-      string verificationLink = _config["SpaLink"] + "auth/verify-email?email=" + Uri.EscapeDataString(user.Email) + "&token=" + user.EmailVerificationToken;
+      string verificationLink = _config.AuthSite() + "auth/verify-email?email=" + Uri.EscapeDataString(user.Email) + "&token=" + user.EmailVerificationToken;
       MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
       await _mailService.SendVerificationEmailAsync(requ, verificationLink, user.FullName);
     }
@@ -129,7 +129,7 @@ namespace VoltaXApi.Services
     public async Task<User> Register(UserForRegisterDto userForRegisterDto)
     {
       userForRegisterDto.Email = userForRegisterDto.Email.ToLower();
-      string spaLink = _config["SpaLink"];
+      string spaLink = _config.AuthSite();
 
       if (await _userRepository.UserExists(userForRegisterDto.Email))
       {

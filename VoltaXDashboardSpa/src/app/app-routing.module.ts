@@ -10,7 +10,7 @@ import { GlobalComponent } from './global/global.component';
 import { NotFoundComponent } from './global/error-pages/not-found/not-found.component';
 import { PartnerDashboardComponent } from './partner-dashboard/partner-dashboard.component';
 import { GoodByeComponent } from './good-bye/good-bye.component';
-import { PartnerAuthComponent } from './partner-auth/partner-auth.component';
+import { authSiteRedirect } from 'src/_guards/auth-site.guard';
 
 const routes: Routes = [
   { path: "access-denied", component: AccessDeniedComponent },
@@ -39,11 +39,11 @@ const routes: Routes = [
     loadChildren : () => import('./auth/auth.module')
       .then(m=>m.AuthModule)
   },
+  // Partner sign in pages live on the public site (environment.authUrl)
   {
     path : "partner-auth",
-    component : PartnerAuthComponent,
-    loadChildren : () => import('./partner-auth/partner-auth.module')
-      .then(m=>m.PartnerAuthModule)
+    canActivate : [authSiteRedirect],
+    children : [{ path : "**", children : [] }]
   },
   {
     path : "",

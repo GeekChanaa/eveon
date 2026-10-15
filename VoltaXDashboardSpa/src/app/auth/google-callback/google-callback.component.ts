@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/_services/auth.service';
 import { AccessService } from 'src/_services/access.service';
+import { environment } from 'src/environments/environment';
 
 /**
  * Landing page of the Google redirect flow. The API sends the browser here with
@@ -48,7 +49,8 @@ export class GoogleCallbackComponent implements OnInit {
 
       // Google proved the identity, the account still asks for its second factor.
       if (twoFactorToken) {
-        this._router.navigateByUrl('/auth/login', { state: { twoFactorToken } });
+        // The public site's login page asks for the code; it reads the challenge from the fragment.
+        window.location.replace(environment.authUrl + '/auth/google-callback#twoFactorToken=' + encodeURIComponent(twoFactorToken));
         return;
       }
 

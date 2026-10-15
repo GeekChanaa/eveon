@@ -266,26 +266,36 @@ namespace VoltaXApi.Controllers
             }
         }
 
-        // Verifying the phone number
+        // Verifying the phone number of the signed in account. The address in the body is
+        // ignored: trusting it would let anyone verify a number on someone else's account
+        // and walk away with that account's token.
+        [Authorize]
         [HttpPost("VerifyPhone")]
         [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneDto verifyPhoneDto)
         {
+            verifyPhoneDto.Email = await CurrentUserEmail();
             try
             {
                 var token = await _authService.VerifyPhoneNumber(verifyPhoneDto.Email, verifyPhoneDto.Token);
+                if (token == null)
+                    return BadRequest(new { error = "Phone number or token incorrect" });
                 return Ok(new {token = token});
             }
             catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Phone verification failed");
                 return StatusCode(500, "Phone number or token incorrect");
             }
         }
 
+        // Attaches a phone number to the signed in account (never to an address from the body).
+        [Authorize]
         [HttpPost("SendPhoneVerificationSMS")]
         [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> SendPhoneVerificationSms([FromBody] AddPhoneNumberDto addPhoneNumberDto)
         {
+            addPhoneNumberDto.Email = await CurrentUserEmail();
             await this._authService.SendPhoneVerificationToken(addPhoneNumberDto);
 
             return StatusCode(200);
@@ -512,6 +522,15 @@ namespace VoltaXApi.Controllers
             return userID;
         }
 
+        private async Task<string> CurrentUserEmail()
+        {
+            var user = await _userRepo.GetByIdAsync(GetCurrentUserId());
+            if (user == null)
+                throw new UnauthorizedException("Could not resolve the current user");
+
+            return user.Email;
+        }
+
         private static string GoogleLinkTicketKey(string ticket) => "google-link-ticket:" + AuthHelper.Sha256Hex(ticket);
 
         private async Task<int?> ConsumeGoogleLinkTicket(string ticket)
@@ -530,9 +549,9 @@ namespace VoltaXApi.Controllers
 
         private string BuildSpaRedirect(string portal, string? token = null, string? twoFactorToken = null, string? error = null, bool linked = false, string? returnUrl = null, bool enrollTwoFactor = false)
         {
-            string spaLink = _config["SpaLink"];
-            if (!spaLink.EndsWith("/"))
-                spaLink += "/";
+            // Linking a Google account starts and ends on the dashboard's profile page;
+            // a sign in ends on the public site, which owns the auth pages.
+            string spaLink = linked ? _config.Dashboard() : _config.AuthSite();
 
             string path = portal == ExternalAuthDefaults.PartnerPortal
                 ? "partner-auth/google-callback"

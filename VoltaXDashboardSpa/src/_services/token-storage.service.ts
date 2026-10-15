@@ -57,6 +57,14 @@ export class TokenStorageService {
     this.store({ token: token });
   }
 
+  /**
+   * Records that a refresh cookie probably exists, after a sign in that happened on the
+   * public site: the next refresh then tries it instead of giving up straight away.
+   */
+  assumeSession(): void {
+    this.safeSet(TokenStorageService.SESSION_HINT_KEY, '1');
+  }
+
   clear(): void {
     this._accessToken = null;
     this._generation++;
