@@ -422,6 +422,26 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendSetupCredentialsMail(string recipient, string environment, IReadOnlyList<VoltaXApi.Services.Setup.TestCredential> credentials)
+		{
+			var mailRequest = new MailRequest { ToEmails = new List<string> { recipient }, Subject = $"Eveon {environment}: test account passwords", Email = recipient, Name = "Eveon" };
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+
+			static string Cell(string value) => $"<td style=\"border:1px solid #d9e2ec;\">{System.Net.WebUtility.HtmlEncode(value)}</td>";
+			var rows = string.Concat(credentials.Select(c => $"<tr>{Cell(c.Role)}{Cell(c.Email)}<td style=\"border:1px solid #d9e2ec;font-family:Consolas,monospace;\">{System.Net.WebUtility.HtmlEncode(c.Password)}</td></tr>"));
+			var template = GetEmailTemplate("setup-credentials");
+			builder.HtmlBody = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "environment", System.Net.WebUtility.HtmlEncode(environment) },
+							{ "date", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm") },
+							{ "rows", rows },
+					});
+
+			email.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);

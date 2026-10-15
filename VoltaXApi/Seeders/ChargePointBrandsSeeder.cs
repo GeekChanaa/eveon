@@ -12,9 +12,8 @@ namespace VoltaXApi.Data.Seeders
 {
     public static class ChargePointBrandsSeeder
     {
-        public async static Task Seed(VoltaXApiDbContext dbContext, IMapper mapper)
+        public async static Task Seed(VoltaXApiDbContext dbContext, IMapper mapper, string jsonPath = "sql-scripts/charger-brands.json")
         {
-            var jsonPath = "sql-scripts/charger-brands.json";
             var jsonData = File.ReadAllText(jsonPath);
             var brands = JsonConvert.DeserializeObject<List<ChargePointBrandSeederDto>>(jsonData);
             var brandsConverted = mapper.Map<List<ChargePointBrandSeederDto>, List<ChargePointBrand>>(brands);

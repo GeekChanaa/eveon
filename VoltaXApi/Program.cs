@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using VoltaXApi.Data;
 using VoltaXApi.Data.Seeders;
 using VoltaXApi.Middlewares;
 using VoltaXApi.Models;
+using VoltaXApi.Services;
+using VoltaXApi.Services.Setup;
 
 namespace VoltaXApi.Configurations;
 
@@ -58,6 +61,9 @@ public class Program
             }
             if (initializeRefreshTokens)
                 return;
+
+            // Every start (so every deploy) checks the roles, defaults and test accounts.
+            await RunFirstSetup(app);
 
             // Configure the HTTP request pipeline
             ConfigureApp(app);
@@ -129,6 +135,47 @@ public class Program
         AppConfiguration.ConfigureStaticFiles(app);
         AppConfiguration.ConfigureWebSockets(app);
         AppConfiguration.ConfigureOCPPMiddleware(app);
+    }
+
+    private static async Task RunFirstSetup(WebApplication app)
+    {
+        var options = app.Services.GetRequiredService<IOptions<FirstSetupOptions>>().Value;
+        if (!options.Enabled)
+            return;
+
+        FirstSetupResult result;
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            result = await scope.ServiceProvider.GetRequiredService<FirstSetupJob>().RunAsync();
+        }
+        catch (Exception ex) when (!options.FailStartupOnError)
+        {
+            Log.Error(ex, "First setup check could not run");
+            return;
+        }
+        if (result.HasErrors && options.FailStartupOnError)
+            throw new InvalidOperationException("First setup check failed, see the log above");
+        if (result.Credentials.Count == 0)
+            return;
+
+        // Mailed once the API listens: a slow SMTP server must not hold the health check back.
+        var recipient = options.TestUsers.CredentialsRecipient;
+        var environment = $"{app.Environment.EnvironmentName} ({app.Configuration["SpaLink"]})";
+        app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
+        {
+            try
+            {
+                using var scope = app.Services.CreateScope();
+                await scope.ServiceProvider.GetRequiredService<IMailService>().SendSetupCredentialsMail(recipient, environment, result.Credentials);
+                Log.Information("Test account passwords mailed to {Recipient}", recipient);
+            }
+            catch (Exception ex)
+            {
+                // Never log the passwords: they are only valid until the next start anyway.
+                Log.Error(ex, "Could not mail the test account passwords to {Recipient}", recipient);
+            }
+        }));
     }
 
     private static void SeedDatabase(WebApplication app)

@@ -29,6 +29,7 @@ namespace VoltaXApi.Services
     private readonly ITwoFactorService _twoFactor;
 
     private readonly IAuditLogger _audit;
+    private readonly ILogger<AuthService> _logger;
 
     public AuthService(
       IUserRepository userRepository,
@@ -44,9 +45,11 @@ namespace VoltaXApi.Services
       IUserClaimsFactory claimsFactory,
       IPasswordResetService passwordReset,
       ITwoFactorService twoFactor,
-      IAuditLogger audit
+      IAuditLogger audit,
+      ILogger<AuthService> logger
     )
     {
+      _logger = logger;
       _audit = audit;
       _passwordReset = passwordReset;
       _twoFactor = twoFactor;
@@ -146,13 +149,14 @@ namespace VoltaXApi.Services
 
       await _cardRepository.CreateCardForUser(user);
 
-      MailRequest requ = _mailRequestFactory.CreateVerificationMailRequest(user.Email);
-
-      string verificationLink = spaLink + "auth/verify-email?email=" + user.Email + "&token=" + user.EmailVerificationToken;
-      // Sending Welcome Message
-      var mailRequest = _mailRequestFactory.CreateWelcomeMailRequest(user.Email);
-      await _mailService.SendWelcomeEmail(mailRequest, user.FirstName);
-      await this._mailService.SendVerificationEmailAsync(requ, verificationLink, user.FullName);
+      // The account exists from here on: a mail failure must not turn a successful
+      // registration into an error (the client would retry and hit "Email already exists").
+      // The verification mail can be re-sent through ResendVerificationEmail.
+      string verificationLink = spaLink + "auth/verify-email?email=" + Uri.EscapeDataString(user.Email) + "&token=" + user.EmailVerificationToken;
+      await TrySendMail("welcome", user.ID, () =>
+        _mailService.SendWelcomeEmail(_mailRequestFactory.CreateWelcomeMailRequest(user.Email), user.FirstName));
+      await TrySendMail("verification", user.ID, () =>
+        _mailService.SendVerificationEmailAsync(_mailRequestFactory.CreateVerificationMailRequest(user.Email), verificationLink, user.FullName));
 
       return user;
     }
@@ -470,11 +474,27 @@ namespace VoltaXApi.Services
 
       await _cardRepository.CreateCardForUser(user);
 
-      var mailRequest = _mailRequestFactory.CreateWelcomeMailRequest(user.Email);
-      await _mailService.SendWelcomeEmail(mailRequest, user.FirstName);
+      await TrySendMail("welcome", user.ID, () =>
+        _mailService.SendWelcomeEmail(_mailRequestFactory.CreateWelcomeMailRequest(user.Email), user.FirstName));
 
       // Re-read so Role / RolePermissions are loaded for the claims
       return await GetUserWithClaimsData(u => u.ID == user.ID);
+    }
+
+    /// <summary>
+    /// Sends a non critical mail (welcome, verification after sign up) without letting an
+    /// SMTP failure abort the flow that triggered it.
+    /// </summary>
+    private async Task TrySendMail(string kind, int userId, Func<Task> send)
+    {
+      try
+      {
+        await send();
+      }
+      catch (Exception ex)
+      {
+        _logger.LogWarning(ex, "Failed to send {MailKind} email to user {UserId}", kind, userId);
+      }
     }
 
     /// <summary>

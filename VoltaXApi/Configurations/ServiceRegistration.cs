@@ -142,6 +142,7 @@ public static class ServiceRegistration
         services.Configure<SupportEmails>(configuration.GetSection("SupportEmails"));
         services.Configure<CompanyInformations>(configuration.GetSection("CompanyInformations"));
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<VoltaXApi.Services.Setup.FirstSetupOptions>(configuration.GetSection("FirstSetup"));
         services.Configure<CardExpirationSettings>(configuration.GetSection("CardExpirationSettings"));
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
         services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
@@ -253,6 +254,7 @@ public static class ServiceRegistration
         services.AddScoped<IEmailVerificationGuard, EmailVerificationGuard>();
         services.AddHostedService<RefreshTokenCleanupService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddScoped<VoltaXApi.Services.Setup.FirstSetupJob>();
         services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
         // GDPR, audit and retention

@@ -49,7 +49,12 @@
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.4" />
-    <Content Include="Assets\**\*.*">
+    <!-- Reference data the first setup job imports into an empty database (the .json is content by default). -->
+    <Content Include="sql-scripts\EV-cars.csv">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+  <Content Include="Assets\**\*.*">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
   </Content>

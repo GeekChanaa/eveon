@@ -27,6 +27,7 @@ namespace VoltaXApi.Services
         Task SendPartnerResetPasswordMailRequest(MailRequest mailRequest, string userName, string password);
         Task SendChargingSessionQuoteMailRequest(MailRequest mailRequest, ChargingSessionForMailDto chargingSession);
         Task SendSuspendedAccountMail(MailRequest mailRequest, UserSuspendedForMailDto userDto);
+        Task SendSetupCredentialsMail(string recipient, string environment, IReadOnlyList<VoltaXApi.Services.Setup.TestCredential> credentials);
         // Task SendLoginAttemptEmail()
     }
 }
