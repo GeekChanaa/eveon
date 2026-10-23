@@ -162,15 +162,7 @@ namespace VoltaXApi.Services.CustomerPortal
 
         private string Local(DateTime utc) => _clock.ToLocal(utc).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
 
-        /// <summary>Quotes a value that contains the separator, quotes or a line break; neutralises spreadsheet formulas.</summary>
-        private static string Field(string? value)
-        {
-            if (string.IsNullOrEmpty(value))
-                return "";
-            if (value[0] is '=' or '+' or '-' or '@')
-                value = "'" + value;
-            return value.IndexOfAny(new[] { ';', '"', '\n', '\r' }) >= 0 ? "\"" + value.Replace("\"", "\"\"") + "\"" : value;
-        }
+        private static string Field(string? value) => Helpers.CsvField.Of(value);
 
         private string Period(DateTime? from, DateTime? to) => (from, to) switch
         {

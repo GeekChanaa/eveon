@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -46,17 +47,42 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargingSessionInformations/{chargingSessionID}")]
         public async Task<IActionResult> GetChargingSessionInformations(int chargingSessionID)
         {
-            return Ok(await _repository.GetChargingSessionInformations(chargingSessionID));
+            var session = await _repository.GetChargingSessionInformations(chargingSessionID);
+            return session == null ? NotFound() : Ok(session);
         }
 
         [HttpGet("GetChargingSessionInvoice/{chargingSessionID}")]
         public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID)
         {
             var chargingSession = await _repository.GetChargingSessionInformations(chargingSessionID);
+            if (chargingSession == null)
+                return NotFound();
             var chargingSessionInvoice = ChargingSessionInvoice.From(chargingSession);
             var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
 
-            return File(pdfBytes, "application/pdf", "Invoice.pdf");
+            return File(pdfBytes, "application/pdf", $"eveon-session-{chargingSessionID}-invoice.pdf");
+        }
+
+        /// <summary>Every session of the network with filters (period, status, station, charge point, customer, text), newest first.</summary>
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search([FromQuery] OperatorSessionFilter filter,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search, CancellationToken ct) =>
+            Ok(await search.SessionsAsync(filter, ct));
+
+        /// <summary>The filtered sessions as a CSV file or a printable PDF statement (at most 20,000 sessions).</summary>
+        [HttpGet("Export")]
+        public async Task<IActionResult> Export([FromQuery] OperatorSessionFilter filter, [FromQuery] string format,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search,
+            [FromServices] VoltaXApi.Services.CustomerPortal.SessionStatementExporter exporter,
+            [FromServices] GlobalConfigurations pricing, CancellationToken ct)
+        {
+            if (format is not ("csv" or "pdf"))
+                return BadRequest(new { error = "format must be csv or pdf" });
+            var rows = await search.SessionStatementAsync(filter, ct);
+            var name = $"eveon-sessions-{DateTime.UtcNow:yyyyMMdd}";
+            return format == "csv"
+                ? File(exporter.Csv(rows), "text/csv; charset=utf-8", name + ".csv")
+                : File(exporter.Pdf("EVEON network", filter.From, filter.To, rows, pricing.Vat), "application/pdf", name + ".pdf");
         }
 
         [HttpGet("GetChargePointNbrChargingSessions/{chargePointID}")]
