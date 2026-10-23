@@ -1,9 +1,9 @@
 import { AccessService } from 'src/_services/access.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointService } from 'src/_services/charge-point.service';
-import { SignalRChargerService } from 'src/_services/signalR-charger.service';
-import { WebSocketStatusService } from 'src/_services/websocket-status.service';
+import { ChargerConnectionService } from 'src/_services/charger-connection.service';
 
 export enum ChargerNavbarEnum{
   Overview = 1,
@@ -29,15 +29,21 @@ export class ConnectorRealtimeMainComponent implements OnInit {
 
   selectedMenuItem : ChargerNavbarEnum = ChargerNavbarEnum.Overview;
 
+  /** inactive until the first status is known, then available (connected) or disconnected. */
   status : string = "inactive";
 
-  disabledActions : boolean = true;
-  
+  /** Commands (the Actions tab) can only be sent while the charger is connected. */
+  online : boolean = false;
+
   chargePoint : any = {};
   chargePointID : number = 0
+  loading : boolean = false;
+  loadError : boolean = false;
+
+  private readonly destroyRef = inject(DestroyRef);
 
   selectMenuItem(item: ChargerNavbarEnum): void {
-    if (this.canOpenMenu(item)) this.selectedMenuItem = item;
+    if (this.canOpenMenu(item) && (item !== ChargerNavbarEnum.Actions || this.online)) this.selectedMenuItem = item;
   }
 
   canOpenMenu(item: number): boolean {
@@ -47,10 +53,9 @@ export class ConnectorRealtimeMainComponent implements OnInit {
 
   constructor(
     public access: AccessService,
-    private _wsStatusService : WebSocketStatusService,
     private _route: ActivatedRoute,
     private _chargePointService: ChargePointService,
-    private _signalrChargerService : SignalRChargerService
+    private _connection: ChargerConnectionService
     ) { }
 
   ngOnInit() {
@@ -64,23 +69,26 @@ export class ConnectorRealtimeMainComponent implements OnInit {
   }
 
   getChargePointByID(id : number){
-    this._chargePointService.getChargePointByID(id).subscribe((cp) => {
-      this.chargePoint = cp;
-      this._wsStatusService.startPolling(this.chargePoint.chargePointId);
-      this._wsStatusService.connectionStatus$.subscribe(
-        data => {
-          this.status = data?.isActive ? 'available' : 'disconnected';
-          this.disabledActions = this.status == 'available';
-        },
-        error => console.error('Error receiving status:', error)
-      );
-      this._signalrChargerService.startConnection(this.chargePoint.chargePointId);
-    })
+    this.loading = true;
+    this.loadError = false;
+    this._chargePointService.getChargePointByID(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (cp) => {
+        this.loading = false;
+        this.chargePoint = cp;
+        this.watchConnection(cp.chargePointId);
+      },
+      error: () => { this.loading = false; this.loadError = true; }
+    });
   }
 
-  // Join the group of a specific charger
-  joinCharger(): void {
-    this._signalrChargerService.joinChargerGroup(this.chargePoint.chargePointId);
+  /** Connection status pushed by the API while this page is open (read at once, then on every change). */
+  private watchConnection(chargePointId: string) {
+    this._connection.status(chargePointId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(isActive => {
+      this.status = isActive == null ? 'inactive' : isActive ? 'available' : 'disconnected';
+      this.online = isActive === true;
+      // Commands cannot reach a charger that went offline: leave the Actions tab.
+      if (!this.online && this.selectedMenuItem === ChargerNavbarEnum.Actions) this.selectedMenuItem = ChargerNavbarEnum.Overview;
+    });
   }
 
   getMenu(stepName: string): ChargerNavbarEnum | undefined {

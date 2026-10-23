@@ -12,6 +12,8 @@ import { CamelToKebabPipe } from 'src/_pipes/camel-to-kebab.pipe';
 import { CamelCaseToSpacePipe } from 'src/pipes/camel-case-to-space-case.pipe';
 import { SafeUrlPipe } from 'src/pipes/safe-url.pipe';
 import { TokenStorageService } from 'src/_services/token-storage.service';
+import { HUB_CONNECTION_FACTORY } from 'src/_services/realtime-hub.service';
+import { fakeHubFactory } from './fake-hub-connection';
 
 /** Claims of the signed-in user in unit tests (an administrator, no partner). */
 export const TEST_CLAIMS = { nameid: '1', role: 'Admin', unique_name: 'tester@eveon.test', exp: 4102444800 };
@@ -40,6 +42,8 @@ export function testToken(claims: object = TEST_CLAIMS): string {
     TranslateModule.forRoot(),
     VxI18nModule
   ],
+  // Realtime hubs never open a socket in unit tests.
+  providers: [{ provide: HUB_CONNECTION_FACTORY, useFactory: () => fakeHubFactory() }],
   exports: [
     HttpClientTestingModule,
     RouterTestingModule,

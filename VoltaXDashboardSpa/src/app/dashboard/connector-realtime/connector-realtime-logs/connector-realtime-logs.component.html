@@ -78,7 +78,7 @@
   </ng-container>
   <ng-container *ngIf="messageLogs != null && messageLogs.length != 0 ">
   
-    <div class="stats" *ngIf="!realtimeOn" [class.stats_refreshing]="isRefreshing">
+    <div class="stats" [class.stats_refreshing]="isRefreshing">
       <div class="stats__table">
         <div class="stats__row">
           <div class="stats__col">Message</div>

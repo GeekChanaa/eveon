@@ -1,10 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import * as signalR from '@microsoft/signalr';
-import { environment } from 'src/environments/environment';
-import { TokenStorageService } from 'src/_services/token-storage.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { RealtimeHubService, chargerGroup } from 'src/_services/realtime-hub.service';
 import { ChargerDeviceDataService, ChargerEvent, ChargerEventFilters, VariableMonitor } from 'src/_services/charger-device-data.service';
 
 /** Hub group of the global alarm feed (ChargerAlarmNotifier.AlarmGroup on the API). */
@@ -23,7 +23,7 @@ const SEVERITY_LABELS = ['Danger', 'Hardware failure', 'System failure', 'Critic
   templateUrl: './charger-events.component.html',
   styleUrls: ['./charger-events.component.sass']
 })
-export class ChargerEventsComponent implements OnInit, OnDestroy {
+export class ChargerEventsComponent implements OnInit {
   @Input() chargePointId = '';
   /** Opens the list on active alarms only. */
   @Input() alarmsOnly = false;
@@ -36,20 +36,19 @@ export class ChargerEventsComponent implements OnInit, OnDestroy {
   totalCount = 0;
   loading = false;
   error = '';
-  live = false;
   liveCount = 0;
-  private hub?: signalR.HubConnection;
+  private readonly destroyRef = inject(DestroyRef);
+  /** Live alarms pushed on the shared charger hub connection while the list is shown. */
+  readonly live$ = this.realtime.status$.pipe(map(state => state === 'connected'));
 
-  constructor(private data: ChargerDeviceDataService, private tokens: TokenStorageService) {}
+  constructor(private data: ChargerDeviceDataService, private realtime: RealtimeHubService) {}
 
   ngOnInit(): void {
     this.filters.alarmsOnly = this.alarmsOnly;
     this.load();
-    this.connect();
-  }
-
-  ngOnDestroy(): void {
-    this.hub?.stop().catch(() => undefined);
+    this.realtime.on<ChargerEvent>('charger', 'ChargerEvent', chargerGroup(this.chargePointId || ALARM_GROUP))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => this.onLiveEvent(event));
   }
 
   get totalPages(): number { return Math.max(1, Math.ceil(this.totalCount / this.pageSize)); }
@@ -83,7 +82,7 @@ export class ChargerEventsComponent implements OnInit, OnDestroy {
     const filters: ChargerEventFilters = { ...this.filters, chargePointId: this.chargePointId || undefined };
     if (filters.from) filters.from = new Date(filters.from + 'T00:00:00').toISOString();
     if (filters.to) filters.to = new Date(filters.to + 'T23:59:59').toISOString();
-    this.data.events(this.page, this.pageSize, filters).subscribe({
+    this.data.events(this.page, this.pageSize, filters).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: result => { this.items = result.items; this.totalCount = result.totalCount; this.loading = false; },
       error: () => { this.items = []; this.totalCount = 0; this.loading = false; this.error = 'Could not load the charger events.'; }
     });
@@ -96,18 +95,6 @@ export class ChargerEventsComponent implements OnInit, OnDestroy {
       next: monitors => this.monitors = monitors,
       error: () => { this.monitors = []; this.error = 'Could not load the monitors.'; }
     });
-  }
-
-  private connect(): void {
-    this.hub = new signalR.HubConnectionBuilder()
-      .withUrl(environment.apiUrl + '/chargerHub', { accessTokenFactory: () => this.tokens.accessToken || '' })
-      .withAutomaticReconnect()
-      .build();
-    this.hub.on('ChargerEvent', (event: ChargerEvent) => this.onLiveEvent(event));
-    const join = () => this.hub!.invoke('JoinChargerGroup', this.chargePointId || ALARM_GROUP).then(() => this.live = true);
-    this.hub.onreconnected(() => join().catch(() => this.live = false));
-    this.hub.onclose(() => this.live = false);
-    this.hub.start().then(join).catch(() => this.live = false);
   }
 
   private onLiveEvent(event: ChargerEvent): void {

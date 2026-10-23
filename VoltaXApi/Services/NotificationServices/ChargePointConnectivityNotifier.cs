@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Data;
+using VoltaXApi.Hubs;
 using VoltaXApi.OCPP.Services;
 
 namespace VoltaXApi.Services
@@ -9,9 +11,13 @@ namespace VoltaXApi.Services
     /// <summary>
     /// Notifies on every charge point connection to and disconnection from the CMS, and escalates
     /// with an urgent "offline" notification when a charge point stays disconnected past a grace period.
+    /// Pages watching a charge point get its connection status pushed on the charger hub
+    /// (<see cref="ConnectionEvent"/> to the charge point's group).
     /// </summary>
     public class ChargePointConnectivityNotifier
     {
+        public const string ConnectionEvent = "ChargerConnection";
+
         private static readonly TimeSpan GracePeriod = TimeSpan.FromMinutes(2);
 
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _pendingOffline = new();
@@ -21,16 +27,20 @@ namespace VoltaXApi.Services
         // Open on any instance (scale-out): a charger that moved to another replica is not offline.
         private readonly ChargePointStatusManagerService _chargePoints;
         private readonly ILogger<ChargePointConnectivityNotifier> _logger;
+        private readonly IHubContext<ChargerHub>? _hub;
 
-        public ChargePointConnectivityNotifier(IServiceScopeFactory scopeFactory, ChargePointStatusManagerService chargePoints, ILogger<ChargePointConnectivityNotifier> logger)
+        public ChargePointConnectivityNotifier(IServiceScopeFactory scopeFactory, ChargePointStatusManagerService chargePoints, ILogger<ChargePointConnectivityNotifier> logger,
+            IHubContext<ChargerHub>? hub = null)
         {
             _scopeFactory = scopeFactory;
             _chargePoints = chargePoints;
             _logger = logger;
+            _hub = hub;
         }
 
         public void Connected(string chargePointId)
         {
+            _ = PushStatusAsync(chargePointId, true);
             if (_pendingOffline.TryRemove(chargePointId, out var pending)) pending.Cancel();
             _ = NotifyAsync(chargePointId, _reportedOffline.TryRemove(chargePointId, out _) ? ConnectivityEvent.BackOnline : ConnectivityEvent.Connected);
         }
@@ -39,6 +49,7 @@ namespace VoltaXApi.Services
         {
             // A new connection can open before the old socket's close is processed: nothing was lost.
             if (_chargePoints.ChargePointExists(chargePointId)) return;
+            _ = PushStatusAsync(chargePointId, false);
             _ = NotifyAsync(chargePointId, ConnectivityEvent.Disconnected);
             var cts = new CancellationTokenSource();
             _pendingOffline.AddOrUpdate(chargePointId, cts, (_, previous) => { previous.Cancel(); return cts; });
@@ -58,6 +69,19 @@ namespace VoltaXApi.Services
         }
 
         private enum ConnectivityEvent { Connected, Disconnected, Offline, BackOnline }
+
+        private async Task PushStatusAsync(string chargePointId, bool isActive)
+        {
+            if (_hub == null) return;
+            try
+            {
+                await _hub.Clients.Group(chargePointId).SendAsync(ConnectionEvent, new { chargePointId, isActive });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "ChargePointConnectivityNotifier => Could not push the status of {ChargePointId}", chargePointId);
+            }
+        }
 
         private async Task NotifyAsync(string chargePointId, ConnectivityEvent connectivityEvent)
         {

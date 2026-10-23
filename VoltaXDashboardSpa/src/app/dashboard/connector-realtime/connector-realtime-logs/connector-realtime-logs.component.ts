@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription, debounceTime, merge } from 'rxjs';
 import { MessageLogService } from 'src/_services/message-log.service';
-import { SignalRChargerService } from 'src/_services/signalR-charger.service';
+import { RealtimeHubService, chargerGroup } from 'src/_services/realtime-hub.service';
 import { ActionModalService } from 'src/_services/action-modal.service';
 import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
 
@@ -22,7 +24,10 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
   isLoading : boolean = false;
   isRefreshing : boolean = false;
 
+  /** Live mode: page 1 reloads on every OCPP message of the charger (pushed on the charger hub). */
   realtimeOn : boolean = false;
+  private live?: Subscription;
+  private readonly destroyRef = inject(DestroyRef);
 
   messageTypes : string[] = [
     'BootNotification',
@@ -57,13 +62,13 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
 
   constructor(
     private _messagLogService : MessageLogService,
-    private _sRChargerService : SignalRChargerService,
+    private _realtime : RealtimeHubService,
     private _modalService: ActionModalService
   ) { }
 
   ngOnInit() {
     this.getLogs();
-    this._sRChargerService.addMessageListener(this.messageReceived)
+    this.destroyRef.onDestroy(() => this.live?.unsubscribe());
   }
 
   get hasActiveFilters() : boolean {
@@ -77,7 +82,7 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
     else
       this.isLoading = true;
 
-    this._messagLogService.getChargePointMessageLogs(this.chargePoint.chargePointId, page, this.itemsPerPage, this.buildParams()).subscribe({
+    this._messagLogService.getChargePointMessageLogs(this.chargePoint.chargePointId, page, this.itemsPerPage, this.buildParams()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.isLoading = false;
         this.isRefreshing = false;
@@ -133,11 +138,6 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
     this.applyFilters();
   }
 
-  messageReceived(msg : string){
-    console.log("this is the message received");
-    console.log(msg);
-  }
-
   displayMessage(messageLog : any){
     this.messageLogDisplayed = messageLog;
   }
@@ -148,6 +148,19 @@ export class ConnectorRealtimeLogsComponent implements OnInit {
 
   realtimeOnToggle(rtOn : boolean){
     this.realtimeOn = rtOn;
+    this.live?.unsubscribe();
+    this.live = undefined;
+    if (!rtOn || !this.chargePoint?.chargePointId) return;
+    // Frames from (SentMessage) and to (ReceiveMessage) the charger; a burst reloads once.
+    const group = chargerGroup(this.chargePoint.chargePointId);
+    this.live = merge(
+      this._realtime.on<string>('charger', 'SentMessage', group),
+      this._realtime.on<string>('charger', 'ReceiveMessage', group),
+      this._realtime.reconnected('charger')
+    ).pipe(debounceTime(1000)).subscribe(() => {
+      if (this.page === 1 && !this.isLoading && !this.isRefreshing) this.getLogs(1, true);
+    });
+    this.getLogs(1, true);
   }
 
   private buildParams() : any {

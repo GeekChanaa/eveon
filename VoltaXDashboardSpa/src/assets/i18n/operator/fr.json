@@ -1,0 +1,10 @@
+{
+  "operator": {
+    "realtime": {
+      "reconnecting": "Reconnexion…",
+      "reconnectingHint": "Les mises à jour en direct ont été interrompues, reconnexion en cours.",
+      "disconnected": "Direct en pause",
+      "disconnectedHint": "La connexion en direct est coupée. Cliquez pour réessayer maintenant."
+    }
+  }
+}

@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { DashboardNotification, Notification } from 'src/_models/notification';
 import { AbstractService } from './abstract-service';
-import { TokenStorageService } from './token-storage.service';
-import { TokenRefreshService } from './token-refresh.service';
+import { RealtimeHubService } from './realtime-hub.service';
 
 export interface NotificationState {
   items: DashboardNotification[];
@@ -17,7 +15,6 @@ export interface NotificationState {
 
 const EMPTY_STATE: NotificationState = { items: [], unreadCount: 0, loading: false, error: false };
 const PAGE_SIZE = 20;
-const START_RETRY_MS = 30000;
 
 /**
  * Owns the signed-in user's notification list and the realtime connection that keeps it current.
@@ -28,42 +25,38 @@ const START_RETRY_MS = 30000;
   providedIn: 'root'
 })
 export class NotificationService extends AbstractService<Notification> {
-  constructor(protected http: HttpClient, private tokens: TokenStorageService, private tokenRefresh: TokenRefreshService) {
+  constructor(protected http: HttpClient, private realtime: RealtimeHubService) {
     super(http, environment.apiUrl + "/api/notification/");
   }
 
   // Base URL for the api
   baseUrl = environment.apiUrl + "/api/notification/";
 
-  private hub?: signalR.HubConnection;
-  private retryTimer?: ReturnType<typeof setTimeout>;
+  private live?: Subscription;
   private readonly state = new BehaviorSubject<NotificationState>(EMPTY_STATE);
   private readonly received = new Subject<DashboardNotification>();
   readonly state$: Observable<NotificationState> = this.state.asObservable();
   /** Fires once per notification pushed in realtime (not for reloaded ones). */
   readonly received$: Observable<DashboardNotification> = this.received.asObservable();
 
+  /** Loads the list and follows the pushes (shared hub connection, reconnected automatically). */
   connect(): void {
-    if (this.hub) return;
+    if (this.live) return;
     this.reload();
-    this.hub = new signalR.HubConnectionBuilder()
-      .withUrl(environment.apiUrl + '/notificationHub', { accessTokenFactory: () => this.accessToken() })
-      .withAutomaticReconnect()
-      .build();
-    this.hub.on('NotificationReceived', (notification: DashboardNotification) => {
+    this.live = new Subscription();
+    this.live.add(this.realtime.on<DashboardNotification>('notification', 'NotificationReceived').subscribe(notification => {
       const current = this.state.value;
       if (current.items.some(item => item.id === notification.id)) return;
       this.patch({ items: [notification, ...current.items].slice(0, PAGE_SIZE), unreadCount: current.unreadCount + 1 });
       this.received.next(notification);
-    });
-    this.hub.onreconnected(() => this.reload());
-    this.start();
+    }));
+    // Notifications pushed while disconnected are picked up by reloading the list.
+    this.live.add(this.realtime.reconnected('notification').subscribe(() => this.reload()));
   }
 
   disconnect(): void {
-    clearTimeout(this.retryTimer);
-    this.hub?.stop();
-    this.hub = undefined;
+    this.live?.unsubscribe();
+    this.live = undefined;
     this.state.next(EMPTY_STATE);
   }
 
@@ -108,21 +101,6 @@ export class NotificationService extends AbstractService<Notification> {
     const previous = this.state.value;
     this.patch({ items: [], unreadCount: 0 });
     this._http.delete(this.baseUrl + "DeleteAllMyNotifications").subscribe({ error: () => this.state.next(previous) });
-  }
-
-  private start(): void {
-    const hub = this.hub;
-    hub?.start().catch(() => {
-      // withAutomaticReconnect only covers drops after a successful start.
-      if (this.hub === hub) this.retryTimer = setTimeout(() => this.start(), START_RETRY_MS);
-    });
-  }
-
-  private async accessToken(): Promise<string> {
-    if (this.tokens.isAccessTokenAboutToExpire() && this.tokens.hasRefreshToken()) {
-      try { await firstValueFrom(this.tokenRefresh.refresh()); } catch { }
-    }
-    return this.tokens.accessToken || '';
   }
 
   private patch(changes: Partial<NotificationState>): void {

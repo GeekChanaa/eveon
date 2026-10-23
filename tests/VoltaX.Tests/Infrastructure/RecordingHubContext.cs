@@ -31,6 +31,10 @@ public sealed class RecordingHubContext<THub> : IHubContext<THub> where THub : H
     public IEnumerable<object?[]> ToGroup(string group, string method) =>
         Sent.Where(p => p.Method == method && p.Target is "Group" or "Groups" && p.Recipients.Contains(group)).Select(p => p.Args);
 
+    /// <summary>The first argument of each push of <paramref name="method"/> to <paramref name="group"/>.</summary>
+    public IEnumerable<object?> SentTo(string group, string method) =>
+        ToGroup(group, method).Select(args => args.Length > 0 ? args[0] : null);
+
     internal void Record(Push push)
     {
         lock (_sent) _sent.Add(push);

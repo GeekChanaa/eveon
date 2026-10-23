@@ -38,7 +38,8 @@
   </form>
 
   <div class="events__status">
-    <span class="events__live" [class.is-live]="live" role="status">{{ live ? 'Live: new alarms appear automatically' : 'Live updates unavailable' }}</span>
+    <span class="events__live" *ngIf="live$ | async as live; else offline" [class.is-live]="live" role="status">{{ 'Live: new alarms appear automatically' }}</span>
+    <ng-template #offline><span class="events__live" role="status">{{ 'Live updates unavailable' }}</span></ng-template>
     <button type="button" class="events__link" *ngIf="liveCount" (click)="search()">{{ liveCount }} new alarm(s), refresh</button>
     <button type="button" class="events__link" *ngIf="chargePointId" (click)="toggleMonitors()">{{ showMonitors ? 'Hide monitors' : 'Show configured monitors' }}</button>
   </div>

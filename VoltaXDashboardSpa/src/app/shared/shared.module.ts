@@ -13,6 +13,7 @@ import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navb
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarSearchComponent } from './navbar/navbar-search/navbar-search.component';
 import { VxI18nModule } from './i18n/vx-i18n.module';
+import { RealtimeStatusComponent } from './navbar/realtime-status/realtime-status.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { VxI18nModule } from './i18n/vx-i18n.module';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    VxI18nModule
+    VxI18nModule,
+    RealtimeStatusComponent
   ],
   exports: [
     SidebarComponent,
