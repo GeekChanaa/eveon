@@ -132,6 +132,126 @@ namespace VoltaXApi.Migrations
                     b.ToTable("Administrators");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Alarms.Alarm", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<DateTime?>("AcknowledgedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AcknowledgedByID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AssignedToID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChargePointIdentity")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ClearedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ConnectorNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DedupKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Details")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("EvseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FirstSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OpenKey")
+                        .IsRequired()
+                        .HasMaxLength(230)
+                        .HasColumnType("nvarchar(230)");
+
+                    b.Property<string>("ResolutionComment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ResolvedByID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AcknowledgedByID");
+
+                    b.HasIndex("AssignedToID");
+
+                    b.HasIndex("OpenKey")
+                        .IsUnique();
+
+                    b.HasIndex("ResolvedByID");
+
+                    b.HasIndex("ChargePointID", "Status");
+
+                    b.HasIndex("Status", "LastSeenAt");
+
+                    b.ToTable("Alarms");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.AuditLog", b =>
                 {
                     b.Property<long>("ID")
@@ -5512,6 +5632,38 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("SettlementID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Alarms.Alarm", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.User", "AcknowledgedBy")
+                        .WithMany()
+                        .HasForeignKey("AcknowledgedByID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VoltaXApi.Models.User", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "ResolvedBy")
+                        .WithMany()
+                        .HasForeignKey("ResolvedByID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AcknowledgedBy");
+
+                    b.Navigation("AssignedTo");
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("ResolvedBy");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>

@@ -31,7 +31,9 @@ public sealed class AuthorizedHubFilter(AccessService accessService, VoltaXApiDb
             else if (method is "JoinChargerGroup" or "LeaveChargerGroup")
             {
                 var chargerId = Convert.ToString(context.HubMethodArguments[0]);
-                allowed = access.Can("ViewChargePoints") || access.User.Role.Name == "Partner" && access.User.PartnerID != null &&
+                // The alarm feed is a group of its own, open to whoever may see alarms.
+                if (chargerId == VoltaXApi.Services.Alarms.AlarmNotifier.HubGroup) allowed = access.Can("ViewAlarms");
+                else allowed = access.Can("ViewChargePoints") || access.User.Role.Name == "Partner" && access.User.PartnerID != null &&
                     await db.ChargePoints.AnyAsync(p => p.ChargePointId == chargerId && !p.IsDeleted && p.ChargingStation.PartnerID == access.User.PartnerID);
             }
         }

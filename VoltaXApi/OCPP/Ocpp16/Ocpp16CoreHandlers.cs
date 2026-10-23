@@ -62,14 +62,17 @@ namespace VoltaXApi.OCPP.Ocpp16
         private readonly IConnectorStatusService _connectorStatusService;
         private readonly IChargePointRepository _chargePointRepository;
         private readonly Ocpp16ConnectorResolver _connectors;
+        private readonly VoltaXApi.Services.Alarms.IAlarmService _alarms;
 
         public StatusNotification16Handler(IMessageLogRepository messageLog, ILogger<StatusNotification16Handler> logger,
-            IConnectorStatusService connectorStatusService, IChargePointRepository chargePointRepository, Ocpp16ConnectorResolver connectors)
+            IConnectorStatusService connectorStatusService, IChargePointRepository chargePointRepository, Ocpp16ConnectorResolver connectors,
+            VoltaXApi.Services.Alarms.IAlarmService alarms)
             : base(messageLog, logger)
         {
             _connectorStatusService = connectorStatusService;
             _chargePointRepository = chargePointRepository;
             _connectors = connectors;
+            _alarms = alarms;
         }
 
         protected override async Task<Ocpp16Outcome<Empty16Response>> Process(StatusNotification16Request request, ChargePointStatus chargePointStatus)
@@ -87,6 +90,10 @@ namespace VoltaXApi.OCPP.Ocpp16
                 Logger.LogWarning("StatusNotification (1.6) => Unknown status {Status} from {ChargePointId}", request.Status, chargePointStatus.Id);
                 return new(new Empty16Response(), logResult, request.ConnectorId);
             }
+
+            // Raises (or counts) a fault alarm, or clears the connector's alarms when it reports no error.
+            await _alarms.OnStatus16Async(chargePointStatus.Id, request.ConnectorId, request.Status, request.ErrorCode, request.Info, request.VendorErrorCode,
+                request.Timestamp.HasValue ? Ocpp16Mapping.ToUtc(request.Timestamp.Value) : DateTime.UtcNow);
 
             if (!chargePointStatus.OnlineConnectors.TryGetValue(request.ConnectorId, out var online))
             {

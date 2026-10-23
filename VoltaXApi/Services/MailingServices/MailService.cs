@@ -441,6 +441,28 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendAlarmEmail(MailRequest mailRequest, VoltaXApi.Services.Alarms.AlarmMail alarm)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			static string Html(string? value) => System.Net.WebUtility.HtmlEncode(value ?? "");
+			builder.HtmlBody = PopulateTemplate(GetEmailTemplate("alarm"), new Dictionary<string, string>
+					{
+							{ "id", alarm.Id.ToString() },
+							{ "severity", Html(alarm.Severity) },
+							{ "type", Html(alarm.Type) },
+							{ "code", Html(alarm.Code) },
+							{ "description", Html(alarm.Description) },
+							{ "details", Html(alarm.Details ?? "-") },
+							{ "chargePoint", Html(alarm.ChargePoint) },
+							{ "station", Html(alarm.Station ?? "-") },
+							{ "evse", alarm.EvseId.HasValue ? $"(EVSE {alarm.EvseId})" : "" },
+							{ "firstSeen", alarm.FirstSeenAt.ToString("dd MMM yyyy, HH:mm 'UTC'", System.Globalization.CultureInfo.InvariantCulture) },
+							{ "link", Html(alarm.Link ?? "#") },
+					});
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);

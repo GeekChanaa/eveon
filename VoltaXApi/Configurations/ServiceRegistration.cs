@@ -346,6 +346,13 @@ public static class ServiceRegistration
         services.AddHostedService<CostUpdatedHostedService>();
         services.AddSingleton<StaleTransactionSweeper>();
         services.AddHostedService<StaleTransactionHostedService>();
+        // Charge point alarms: raised from charger messages, offline / boot loop checks, pushed and notified.
+        services.AddSingleton(sp => VoltaXApi.Services.Alarms.AlarmOptions.From(sp.GetRequiredService<IConfiguration>()));
+        services.AddSingleton<VoltaXApi.Services.Alarms.BootHistory>();
+        services.AddSingleton<VoltaXApi.Services.Alarms.AlarmNotifier>();
+        services.AddScoped<VoltaXApi.Services.Alarms.IAlarmService, VoltaXApi.Services.Alarms.AlarmService>();
+        services.AddSingleton<VoltaXApi.Services.Alarms.ChargerAvailabilityMonitor>();
+        services.AddHostedService<VoltaXApi.Services.Alarms.ChargerAvailabilityHostedService>();
         services.AddScoped<ILogUploadUrlFactory, LogUploadUrlFactory>();
         services.AddSingleton(sp => ChargerLogStorage.FromConfiguration(sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<IWebHostEnvironment>()));
     }

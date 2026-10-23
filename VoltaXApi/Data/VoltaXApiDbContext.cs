@@ -315,6 +315,21 @@ namespace VoltaXApi.Data
             });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.VariableMonitor>()
                 .HasIndex(m => new { m.ChargePointID, m.MonitoringId });
+
+            // Charge point alarms: one active row per fault (unique OpenKey), listed by status and time.
+            modelBuilder.Entity<VoltaXApi.Models.Alarms.Alarm>(entity =>
+            {
+                entity.Property(a => a.Type).HasConversion<string>().HasMaxLength(32);
+                entity.Property(a => a.Status).HasConversion<string>().HasMaxLength(16);
+                entity.HasIndex(a => a.OpenKey).IsUnique();
+                entity.HasIndex(a => new { a.Status, a.LastSeenAt });
+                entity.HasIndex(a => new { a.ChargePointID, a.Status });
+                entity.HasIndex(a => a.AssignedToID);
+                entity.HasOne(a => a.ChargePoint).WithMany().HasForeignKey(a => a.ChargePointID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.AcknowledgedBy).WithMany().HasForeignKey(a => a.AcknowledgedByID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.AssignedTo).WithMany().HasForeignKey(a => a.AssignedToID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.ResolvedBy).WithMany().HasForeignKey(a => a.ResolvedByID).OnDelete(DeleteBehavior.Restrict);
+            });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.CustomerInformationReport>()
                 .HasIndex(r => new { r.ChargePointID, r.RequestId });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.DisplayMessageSnapshot>()
@@ -521,6 +536,7 @@ namespace VoltaXApi.Data
         public DbSet<VoltaXApi.Models.Ocpp201.DisplayMessageSnapshot> DisplayMessageSnapshots { get; set; }
         public DbSet<VoltaXApi.Models.Ocpp201.LogUploadTicket> LogUploadTickets { get; set; }
         public DbSet<VoltaXApi.Models.Ocpp201.UploadedChargerLog> UploadedChargerLogs { get; set; }
+        public DbSet<VoltaXApi.Models.Alarms.Alarm> Alarms { get; set; }
         
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

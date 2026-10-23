@@ -30,6 +30,8 @@ namespace VoltaXApi.Services
         Task SendSetupCredentialsMail(string recipient, string environment, IReadOnlyList<VoltaXApi.Services.Setup.TestCredential> credentials);
         /// <summary>Sends <see cref="MailRequest.Body"/> as the complete HTML body (no template around it), with the attachments.</summary>
         Task SendHtmlEmailAsync(MailRequest mailRequest);
+        /// <summary>A new critical charge point alarm, to the alarm recipients (Alarms:EmailRecipients).</summary>
+        Task SendAlarmEmail(MailRequest mailRequest, VoltaXApi.Services.Alarms.AlarmMail alarm);
         // Task SendLoginAttemptEmail()
     }
 }

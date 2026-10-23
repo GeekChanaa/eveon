@@ -114,6 +114,8 @@ public static class PermissionSeeder
             PermissionEnum.DeletePartners => "Can delete partners",
 
             PermissionEnum.ViewStatisticsPage => "Can view statistics page",
+            PermissionEnum.ViewAlarms => "Can view charge point alarms",
+            PermissionEnum.EditAlarms => "Can acknowledge, assign and resolve charge point alarms",
 
             _ => permission.ToString()
         };

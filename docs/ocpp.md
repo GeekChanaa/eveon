@@ -169,3 +169,25 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
 
 Scenario tests: `tests/VoltaX.Tests/Ocpp` (`TransactionScenarioTests`, `FaultScenarioTests`) and
 `tests/VoltaX.Tests/Billing`.
+
+## Alarms
+
+Charge point alarms (`Alarms` table, `api/Alarm`, dashboard page `/dashboard/alarm-management`) are raised from
+what the chargers report and from two background checks. One alarm exists per fault while it is active
+(Open or Acknowledged): the same fault reported again increments its count and last-seen time.
+
+| Source | Alarm | Severity | Cleared automatically when |
+| --- | --- | --- | --- |
+| 1.6 StatusNotification, `errorCode` other than `NoError` or status `Faulted` | `ConnectorFault`, code = error code | Faulted: Critical; GroundFailure, HighTemperature, OverCurrentFailure, OverVoltage, PowerSwitchFailure, InternalError: Major; others: Minor | the connector (or connector 0) reports `NoError` without `Faulted` |
+| 2.0.1 StatusNotification `Faulted` | `ConnectorFault`, code `Faulted` | Critical | the connector reports another status |
+| 2.0.1 NotifyEvent of a monitor of severity 0-3 or of an active fault variable (Problem, Tripped, Fault...) | `DeviceEvent`, code `Component.Variable` | severity 0-1: Critical, 2-3 or hard-wired: Major, other: Minor | the same component/variable is reported `cleared` or back to `false` / `0` |
+| No connection on any instance for `Alarms:OfflineAfterMinutes` (default 15), for chargers seen online once | `Offline` | Critical | the charger is connected again |
+| `Alarms:BootLoopCount` (default 3) accepted boots within `Alarms:BootLoopWindowMinutes` (default 15) | `BootLoop` | Major | the charger stayed up for twice the window |
+
+The availability check runs every `Alarms:MonitorIntervalSeconds` (default 60). Operators with `ViewAlarms` see
+alarms; `EditAlarms` acknowledges, assigns (to administrators or users with `EditAlarms`) and resolves them with a
+comment. Every change is pushed on `/chargerHub` (group `#alarms`, method `AlarmChanged`). A new critical alarm
+notifies the dashboard users who can see alarms and is emailed to `Alarms:EmailRecipients` (comma separated,
+default `SupportEmails:Admin`).
+
+Scenario tests: `tests/VoltaX.Tests/Ocpp/AlarmScenarioTests.cs`, API tests: `tests/VoltaX.Tests/Api/AlarmApiTests.cs`.

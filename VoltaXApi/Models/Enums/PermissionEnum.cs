@@ -82,5 +82,7 @@ public enum PermissionEnum
     CreateOcppLocalLists,
     EditOcppLocalLists,
     DeleteOcppLocalLists,
-    ViewStatisticsPage
+    ViewStatisticsPage,
+    ViewAlarms,
+    EditAlarms
 }
