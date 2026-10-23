@@ -1007,7 +1007,7 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("VatRate")
@@ -5128,9 +5128,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("Card");
 

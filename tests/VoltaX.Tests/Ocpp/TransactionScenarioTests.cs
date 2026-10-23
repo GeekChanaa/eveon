@@ -71,4 +71,22 @@ public class TransactionScenarioTests
         Assert.Equal(0, tx.MeterStop ?? 0);
         Assert.False(await host.Query(db => db.Transactions.AnyAsync(t => t.Uid == "TX-GHOST")));
     }
+
+    [Fact]
+    public async Task A_card_without_owner_charges_without_attributing_the_session_to_anyone()
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        await host.Seed(db => { db.Cards.Add(Seeds.Card("FLEET-1", 50m)); return Task.CompletedTask; });
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+
+        Assert.Equal("Accepted", await charger.Started("TX-F", "FLEET-1", 0, T0));
+        await charger.Ended("TX-F", 3000, T0.AddMinutes(15));
+
+        var session = await host.Query(db => db.ChargingSessions.SingleAsync());
+        Assert.Null(session.UserID);
+        Assert.Equal(6.00m, session.TotalAmount);
+        Assert.Equal(44m, await host.Query(db => db.Cards.Where(c => c.CardNumber == "FLEET-1").Select(c => c.Balance).SingleAsync()));
+    }
 }

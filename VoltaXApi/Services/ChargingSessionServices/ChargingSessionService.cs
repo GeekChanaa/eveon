@@ -115,8 +115,10 @@ namespace VoltaXApi.Services
         {
             try
             {
-                int userID = await _context.ChargingSessions.Where(s => s.ID == chargingSessionID).Select(s => s.UserID).FirstAsync();
-                string userEmail = await _userRepository.GetUserEmailByID(userID);
+                int? userID = await _context.ChargingSessions.Where(s => s.ID == chargingSessionID).Select(s => s.UserID).FirstAsync();
+                if (userID == null)
+                    return; // a card that belongs to nobody (fleet / unassigned card)
+                string userEmail = await _userRepository.GetUserEmailByID(userID.Value);
                 if (string.IsNullOrWhiteSpace(userEmail))
                     return;
                 MailRequest chargingSessionMailRequest = _mailRequestFactory.CreateChargingSessionQuoteMail(userEmail);

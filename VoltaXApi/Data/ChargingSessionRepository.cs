@@ -293,7 +293,7 @@ namespace VoltaXApi.Data
       ChargingSession chargingSession = new()
       {
         ConnectorID = connector.ID,
-        UserID = (int)(card.UserID == null ? 1 : card.UserID),
+        UserID = card.UserID,
         CardID = card.ID,
         StartDate = startDate,
         StoppedReason = ReasonEnumType.Local,

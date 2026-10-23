@@ -8,7 +8,7 @@ namespace VoltaXApi.Models
   {
     public int ID { get; set; }
     public int ConnectorID { get; set; }
-    public int UserID { get; set; }
+    public int? UserID { get; set; }
     public int CardID { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
