@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NamespacedTranslateLoader } from './shared/i18n/namespaced-translate-loader';
 import { LanguageService, initLanguageFactory } from 'src/_services/language.service';
 import { AuthComponent } from './auth/auth.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,9 +36,9 @@ export function restoreSessionFactory(refresh: TokenRefreshService, tokens: Toke
 }
 
 
-/** Translations are static files: src/assets/i18n/{fr,en,ar}.json. */
+/** Translations are static files: src/assets/i18n/{fr,en,ar}.json plus one folder per feature namespace. */
 export function translateLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
+  return new NamespacedTranslateLoader(http);
 }
 
 export function loadMessagesFactory(service: ValidationMessagesService) {
