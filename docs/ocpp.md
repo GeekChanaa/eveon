@@ -18,7 +18,7 @@ Both versions share the same business rules through version-neutral services:
 | Concern | Service |
 |---|---|
 | Boot acceptance (unknown = Rejected, never provisioned = Pending, provisioned = Accepted) | `OCPP.Services/ChargePointBootService` (+ `ChargePointRegistration`) |
-| Token / idTag authorization (card active/blocked/expired, OCPI tokens through `IExternalTokenAuthorizer`) | `OCPP.Services/IdTokenAuthorizationService` |
+| Token / idTag authorization (card active/blocked/expired/without balance = NoCredit, OCPI tokens through `IExternalTokenAuthorizer`) | `OCPP.Services/IdTokenAuthorizationService` |
 | Sessions, billing, customer notifications, SignalR updates, low-balance stop | `Services/TransactionService` fed with `TransactionEventData` |
 | Roaming (OCPI) sessions | `IRoamingTransactionObserver` (1.6 through `Ocpi/Services/RoamingTransactionEvent`) |
 | Connector status model | `Services/ConnectorStatusService` |

@@ -39,6 +39,36 @@ public class SessionLifecycleMatrixTests
         Assert.DoesNotContain("ChargingEndedAbnormally", await ScenarioAssert.Notifications(host));
     }
 
+    public static TheoryData<string, string, string> RefusedTokens => new()
+    {
+        { OcppTestHost.Ocpp16, "BLOCKED", "Blocked" },
+        { OcppTestHost.Ocpp201, "BLOCKED", "Blocked" },
+        { OcppTestHost.Ocpp16, "EXPIRED", "Expired" },
+        { OcppTestHost.Ocpp201, "EXPIRED", "Expired" },
+        { OcppTestHost.Ocpp16, "UNKNOWN-TAG", "Invalid" },
+        { OcppTestHost.Ocpp201, "UNKNOWN-TAG", "Invalid" },
+        { OcppTestHost.Ocpp16, "EMPTY", "Invalid" }, // 1.6 has no NoCredit
+        { OcppTestHost.Ocpp201, "EMPTY", "NoCredit" },
+    };
+
+    [Theory, MemberData(nameof(RefusedTokens))]
+    public async Task A_refused_token_opens_no_session_and_its_stop_is_acknowledged(string protocol, string token, string expected)
+    {
+        var (host, charger, cardId) = await Open(protocol);
+        await using var _ = host;
+        var balances = await host.Query(db => db.Cards.ToDictionaryAsync(c => c.CardNumber!, c => c.Balance));
+
+        Assert.Equal(expected, await charger.Authorize(token));
+        await charger.Plug(T0);
+        var (status, uid) = await charger.Start(token, 1000, T0);
+        Assert.Equal(expected, status);
+        // A 1.6 charger got a transactionId anyway and stops it; a 2.0.1 charger ends the deauthorized transaction.
+        await charger.Stop(uid, 1000, T0.AddMinutes(1), StopKind.DeAuthorized);
+
+        await ScenarioAssert.NothingBilled(host, cardId, 100m);
+        Assert.Equal(balances, await host.Query(db => db.Cards.ToDictionaryAsync(c => c.CardNumber!, c => c.Balance)));
+    }
+
     [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
     public async Task Unplugging_the_car_ends_the_session_normally(string protocol)
     {
