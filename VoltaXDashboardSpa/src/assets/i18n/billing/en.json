@@ -2,6 +2,7 @@
   "billing": {
     "eyebrow": "Billing",
     "nav": {
+      "invoices": "Invoices and credit notes",
       "settlements": "Partner payouts",
       "statements": "Monthly statements"
     },
@@ -117,6 +118,29 @@
       "percent": "Commission (%)",
       "perKwh": "Per kWh (MAD excl. VAT)",
       "termsRange": "The commission must be between 0 and 100% and the amount per kWh between 0 and 100 MAD."
+    },
+    "invoices": {
+      "title": "Invoices and credit notes",
+      "subtitle": "Register of the invoices and credit notes issued, numbered without gaps each year. An issued document never changes.",
+      "journal": "CSV journal",
+      "kind": "Type",
+      "kinds": {
+        "Invoice": "Invoice",
+        "CreditNote": "Credit note"
+      },
+      "searchPlaceholder": "Number, customer, e-mail",
+      "number": "Number",
+      "issued": "Issued",
+      "customer": "Customer",
+      "subject": "Subject",
+      "exclVat": "Excl. VAT",
+      "vat": "VAT",
+      "inclVat": "Incl. VAT",
+      "session": "Session #{{id}}",
+      "order": "Top-up #{{id}}",
+      "credits": "Credit note for {{number}}",
+      "pageTotal": "Page total (credit notes negative)",
+      "empty": "No document for these criteria."
     }
   }
 }

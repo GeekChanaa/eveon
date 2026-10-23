@@ -94,13 +94,15 @@
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders') || access.canUrl('/dashboard/settlements')" iconID="icon-invoice" [title]="'nav.orderManagement'"
-        [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions', '/dashboard/settlements')">
+        [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions', '/dashboard/invoices', '/dashboard/settlements')">
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-sessions')" [title]="'nav.chargingSessions'" [link]="'/dashboard/charging-sessions'"
           [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/transactions')" [title]="'nav.transactions'" [link]="'/dashboard/transactions'"
           [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/recharge-orders')" [title]="'nav.rechargeOrders'" [link]="'/dashboard/recharge-orders'"
           [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/invoices')" [title]="'billing.nav.invoices'" [link]="'/dashboard/invoices'"
+          [active]="isActive('/dashboard/invoices')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/settlements')" [title]="'billing.nav.settlements'" [link]="'/dashboard/settlements'"
           [active]="isActive('/dashboard/settlements')"></app-sidebar-link>
       </app-sidebar-dropdown>

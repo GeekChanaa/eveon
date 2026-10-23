@@ -2,6 +2,7 @@
   "billing": {
     "eyebrow": "Facturation",
     "nav": {
+      "invoices": "Factures et avoirs",
       "settlements": "Reversements partenaires",
       "statements": "Relevés mensuels"
     },
@@ -117,6 +118,29 @@
       "percent": "Commission (%)",
       "perKwh": "Par kWh (MAD HT)",
       "termsRange": "La commission doit être comprise entre 0 et 100 % et le montant par kWh entre 0 et 100 MAD."
+    },
+    "invoices": {
+      "title": "Factures et avoirs",
+      "subtitle": "Registre des factures et avoirs émis, numérotés sans trou par année. Un document émis ne change jamais.",
+      "journal": "Journal CSV",
+      "kind": "Type",
+      "kinds": {
+        "Invoice": "Facture",
+        "CreditNote": "Avoir"
+      },
+      "searchPlaceholder": "Numéro, client, e-mail",
+      "number": "Numéro",
+      "issued": "Émis le",
+      "customer": "Client",
+      "subject": "Objet",
+      "exclVat": "HT",
+      "vat": "TVA",
+      "inclVat": "TTC",
+      "session": "Session #{{id}}",
+      "order": "Rechargement #{{id}}",
+      "credits": "Avoir sur {{number}}",
+      "pageTotal": "Total de la page (avoirs en négatif)",
+      "empty": "Aucun document pour ces critères."
     }
   }
 }

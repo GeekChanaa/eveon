@@ -149,6 +149,7 @@ const routes: Routes = [
   { path: "pki", loadComponent: () => import('./pki/pki-page.component').then(m => m.PkiPageComponent) },
   { path: "charger-events", loadComponent: () => import('./charger-events/charger-events-page.component').then(m => m.ChargerEventsPageComponent) },
   { path: "settlements", loadComponent: () => import('./billing/settlements-page.component').then(m => m.SettlementsPageComponent) },
+  { path: "invoices", loadComponent: () => import('./billing/invoices-page.component').then(m => m.InvoicesPageComponent) },
   {
     path: "statistics",
     component: StatisticsComponent,
