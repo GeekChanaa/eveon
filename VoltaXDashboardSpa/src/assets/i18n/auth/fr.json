@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "session": {
+      "signingIn": "Connexion en cours…",
+      "failed": "Votre session n'a pas pu être ouverte. Retour à la page de connexion…"
+    },
+    "google": {
+      "finishing": "Finalisation de votre connexion Google, un instant.",
+      "failed": "La connexion avec Google a échoué",
+      "noToken": "La connexion avec Google n'a pas abouti. Veuillez réessayer.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "twoFactor": {
+      "title": "Double authentification",
+      "required": "Votre organisation exige la double authentification pour ce compte. Veuillez l'activer maintenant.",
+      "enabled": "Activée : la connexion demande un code de votre application d'authentification ({{count}} codes de secours restants).",
+      "disable": "Désactiver",
+      "currentPassword": "Mot de passe actuel",
+      "codeOrRecovery": "Code d'authentification ou de secours",
+      "confirmDisable": "Désactiver la double authentification",
+      "intro": "Protégez votre compte avec un code issu d'une application d'authentification (Google Authenticator, Microsoft Authenticator, 1Password…).",
+      "setUp": "Activer",
+      "scan": "Scannez ce QR code avec votre application d'authentification, puis saisissez le code à 6 chiffres qu'elle affiche.",
+      "qrAlt": "QR code pour votre application d'authentification",
+      "manualKey": "Impossible de scanner ? Saisissez cette clé à la main :",
+      "setupLink": "Lien de configuration",
+      "code": "Code à 6 chiffres",
+      "verify": "Vérifier et activer",
+      "saveCodes": "Enregistrez ces codes de secours maintenant.",
+      "saveCodesHint": "Chacun fonctionne une seule fois si vous perdez votre appareil. Ils ne seront plus affichés.",
+      "copy": "Copier",
+      "savedThem": "Je les ai enregistrés",
+      "loadFailed": "Vos réglages de double authentification n'ont pas pu être chargés.",
+      "tooManyAttempts": "Trop de tentatives. Patientez une minute.",
+      "failed": "Une erreur est survenue. Veuillez réessayer."
+    }
+  }
+}

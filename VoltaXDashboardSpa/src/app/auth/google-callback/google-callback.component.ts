@@ -37,7 +37,8 @@ export class GoogleCallbackComponent implements OnInit {
       const returnUrl = params['returnUrl'];
 
       if (error) {
-        this.errorMessage = error;
+        // The API's explanation (its own language); the title and the button around it are translated.
+        this.errorMessage = String(error);
         return;
       }
 
@@ -55,7 +56,7 @@ export class GoogleCallbackComponent implements OnInit {
       }
 
       if (!token) {
-        this.errorMessage = "Google sign in did not return a token, please try again.";
+        this.errorMessage = 'auth.google.noToken';
         return;
       }
 

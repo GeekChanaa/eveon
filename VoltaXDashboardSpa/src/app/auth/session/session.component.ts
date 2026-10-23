@@ -14,12 +14,20 @@ import { environment } from 'src/environments/environment';
  */
 @Component({
   selector: 'app-session',
-  template: `<div class="session-handoff" role="status">{{ message }}</div>`,
-  styles: [`.session-handoff { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-size: 15px; }`]
+  template: `
+    <div class="session-handoff" role="status" aria-live="polite">
+      <img class="some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
+      <img class="some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
+      <p>{{ message | translate }}</p>
+    </div>`,
+  styles: [`
+    .session-handoff { min-height: 100vh; display: flex; flex-direction: column; gap: 18px; align-items: center; justify-content: center; font-size: 15px; text-align: center; padding: 16px; }
+    .session-handoff img { height: 30px; }
+    .session-handoff p { margin: 0; }`]
 })
 export class SessionComponent implements OnInit {
 
-  message = 'Signing you in…';
+  message = 'auth.session.signingIn';
 
   constructor(
     private route: ActivatedRoute,
@@ -44,10 +52,15 @@ export class SessionComponent implements OnInit {
       }),
       error: () => {
         this.tokens.clear();
-        this.message = 'Your session could not be opened. Redirecting to sign in…';
-        window.location.replace(environment.authUrl + (partner ? '/partner-auth/login' : '/auth/login'));
+        this.message = 'auth.session.failed';
+        this.redirect(environment.authUrl + (partner ? '/partner-auth/login' : '/auth/login'));
       }
     });
+  }
+
+  /** Leaves the app for the public site's sign in page (a seam for unit tests). */
+  redirect(url: string): void {
+    window.location.replace(url);
   }
 
   private destination(info: AccessInfo, partner: boolean, enroll: boolean, returnUrl: string | null): string {
