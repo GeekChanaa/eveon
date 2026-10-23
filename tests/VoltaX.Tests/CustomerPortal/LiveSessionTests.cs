@@ -76,7 +76,7 @@ public class LiveSessionTests
         await api.Seed(async db => user = await Seeds.User(db, "live@test.ma"));
         await using var scope = api.Services.CreateAsyncScope();
         var groups = Recorder<IGroupManager>.Create();
-        var hub = new ChargingSessionHub(NullLogger<ChargingSessionHub>.Instance, new AccessService(scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>()))
+        var hub = new ChargingSessionHub(NullLogger<ChargingSessionHub>.Instance, scope.ServiceProvider.GetRequiredService<AccessService>())
         {
             Context = new FakeHubCallerContext(FakeHubCallerContext.SignedIn(user.ID), "conn-7"),
             Groups = groups.Proxy
@@ -95,7 +95,7 @@ public class LiveSessionTests
         using var api = new ApiFactory();
         await using var scope = api.Services.CreateAsyncScope();
         var groups = Recorder<IGroupManager>.Create();
-        var hub = new ChargingSessionHub(NullLogger<ChargingSessionHub>.Instance, new AccessService(scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>()))
+        var hub = new ChargingSessionHub(NullLogger<ChargingSessionHub>.Instance, scope.ServiceProvider.GetRequiredService<AccessService>())
         {
             Context = new FakeHubCallerContext(FakeHubCallerContext.SignedIn(424242)),
             Groups = groups.Proxy
