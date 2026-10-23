@@ -37,6 +37,8 @@ namespace VoltaXApi.Controllers
         [HttpPost("SaveUserNotificationSetting")]
         public async Task<IActionResult> SaveUserNotificationSetting(NotificationSetting notificationSetting)
         {
+            // Only the plain fields: a bound entity would also insert nested objects (user, type) and keep the client's id.
+            notificationSetting = VoltaXApi.Helpers.EntityUpdate.NewFromScalars(notificationSetting);
             var ns = await this._repository.GetUserNotificationSetting(notificationSetting.UserID, notificationSetting.NotificationTypeID);
             if(ns == null)
             {
@@ -49,8 +51,6 @@ namespace VoltaXApi.Controllers
                 ns.Email = notificationSetting.Email;
                 ns.Active = notificationSetting.Active;
                 ns.Urgent = notificationSetting.Urgent;
-
-                Console.WriteLine("updating : notificationSetting : "+ns.ID);
                 await this._repository.Update(ns);
             }
             return StatusCode(200);

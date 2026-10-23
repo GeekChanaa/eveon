@@ -42,6 +42,23 @@ public static class EntityUpdate
         property.GetCustomAttribute<NotUpdatableAttribute>() == null &&
         property.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute>() == null;
 
+    /// <summary>
+    /// A new entity with only the plain scalar fields of a bound request body: navigation properties (rows of
+    /// other tables), ids, audit fields and credentials are left out, so saving it inserts exactly one row.
+    /// </summary>
+    public static T NewFromScalars<T>(T source) where T : class
+    {
+        var clean = (T)Activator.CreateInstance(typeof(T))!;
+        foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (!property.CanRead || !property.CanWrite || property.GetIndexParameters().Length > 0 || !IsScalar(property.PropertyType)
+                || property.Name is "ID" or "IsDeleted" or "CreatedAt" or "UpdatedAt" || IsCredential(property.Name))
+                continue;
+            property.SetValue(clean, property.GetValue(source));
+        }
+        return clean;
+    }
+
     /// <returns>The names of the properties that were copied.</returns>
     public static List<string> Apply<T>(T target, JsonElement body, JsonSerializerOptions options) where T : class
     {
