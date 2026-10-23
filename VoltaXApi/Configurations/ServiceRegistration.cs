@@ -241,6 +241,7 @@ public static class ServiceRegistration
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<VoltaXApi.Services.CustomerPortal.CustomerPortalService>();
         services.AddScoped<VoltaXApi.Services.CustomerPortal.SessionStatementExporter>();
+        services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerPortalService>();
         services.AddScoped<IConnectorService, ConnectorService>();
         services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
         services.AddScoped<ISystemReportService, SystemReportService>();
