@@ -59,6 +59,19 @@ public class PaymentFlowTests : IAsyncLifetime
         _api.Client().PostAsync("/api/payments/sandbox/complete", new FormUrlEncodedContent(fields));
 
     [Fact]
+    public async Task The_sandbox_page_lets_its_form_redirect_back_to_the_dashboard()
+    {
+        var (_, url) = await StartTopUp(50m);
+
+        var page = await _api.Client().GetAsync(new Uri(url).PathAndQuery);
+
+        // Browsers check form-action on the redirect that follows the post, which goes to the dashboard.
+        var csp = string.Join(";", page.Headers.GetValues("Content-Security-Policy"));
+        Assert.Contains("form-action 'self' http://spa.test;", csp);
+        Assert.Contains("default-src 'none'", csp);
+    }
+
+    [Fact]
     public async Task An_approved_payment_credits_the_wallet_once()
     {
         var (orderId, url) = await StartTopUp(100m);

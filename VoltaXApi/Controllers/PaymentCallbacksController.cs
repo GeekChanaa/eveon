@@ -104,7 +104,9 @@ namespace VoltaXApi.Controllers
 
         private ContentResult Page(string title, string text, params string[] buttons)
         {
-            Response.Headers.ContentSecurityPolicy = "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'";
+            // Browsers apply form-action to the redirect that follows the post, which lands on the dashboard.
+            var spa = Uri.TryCreate(_payments.Options.SpaUrl, UriKind.Absolute, out var spaUri) ? " " + spaUri.GetLeftPart(UriPartial.Authority) : "";
+            Response.Headers.ContentSecurityPolicy = $"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'{spa}; frame-ancestors 'none'";
             var html = $$"""
                 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
                 <title>EVEON sandbox payment</title>
