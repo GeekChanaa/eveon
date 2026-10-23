@@ -49,19 +49,6 @@ namespace VoltaXApi.Data
             return totalRevenue;
         }
 
-        // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<decimal> GetPartnerChargePointRevenue(int partnerID, string chargePointID)
-        {
-            var revenue = await _context.ChargePoints
-                .Where(cp => cp.ChargingStation.PartnerID == partnerID &&
-                            cp.ChargePointId == chargePointID &&
-                            !cp.IsDeleted)
-                .Select(cp => cp.Connectors.Sum(c => (c.PricePerKWh - c.CostPerKwh) * (decimal)c.Power))
-                .FirstOrDefaultAsync();
-
-            return revenue;
-        }
-
         override public async Task AddAsync(ChargePoint chargePoint)
         {
             chargePoint.ChargePointId = await this.GenerateChargePointId();

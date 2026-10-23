@@ -46,9 +46,6 @@ export class ChargingStationService extends AbstractService<ChargingStation>{
     return super.getAll(page,itemsPerPage,itemParams,"GetPartnerChargingStations/"+partnerID);
   }
 
-  getPartnerChargingStationRevenue(partnerID : number){
-    return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenue/"+partnerID);
-  }
 
   getPartnerChargingStationRevenueLast7Days(partnerID : number){
     return this._http.get(this.baseUrl+"GetPartnerChargingStationRevenueLast7Days/"+partnerID);

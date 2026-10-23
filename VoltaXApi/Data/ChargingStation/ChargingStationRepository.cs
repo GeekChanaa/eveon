@@ -176,60 +176,6 @@ namespace VoltaXApi.Data
 
 
         // PARTNER CHARGING STATIONS FUNCTIONS
-        // Getting charging station revenue
-        public async Task<double> GetPartnerChargingStationRevenue(int partnerID,int chargingStationID, DateTime? start = null, DateTime? end = null)
-        {
-            var chargePoints = (await this._context.ChargingStations.Include(u => u.ChargePoints).Where(c => c.PartnerID == partnerID).FirstOrDefaultAsync(u => u.ID == chargingStationID)).ChargePoints;
-            double total = 0;
-            foreach (ChargePoint chargePoint in chargePoints)
-            {
-                total += (double)await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId);
-            }
-
-            return total;
-        }
-
-        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast7Days(int partnerID,int chargingStationID)
-        {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 7; i++)
-            {
-                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
-                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
-                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
-        }
-
-        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast30Days(int partnerID,int chargingStationID)
-        {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 30; i++)
-            {
-                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
-                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
-                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
-        }
-
-        public async Task<IEnumerable<double>> GetPartnerChargingStationRevenueLast12Months(int partnerID,int chargingStationID)
-        {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 12; i++)
-            {
-                DateTime month = new DateTime(_clock.Today.Year, _clock.Today.Month, 1).AddMonths(-i);
-                DateTime start = _clock.StartOfMonthUtc(month.Year, month.Month);
-                DateTime end = _clock.StartOfDayUtc(month.AddMonths(1));
-                double revenue = await GetPartnerChargingStationRevenue(partnerID,chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
-        }
-
-
         public async Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID, GlobalParams globalParams)
         {
             // Get all ChargingStations
@@ -239,7 +185,8 @@ namespace VoltaXApi.Data
 
             foreach (var cs in chargingStations)
             {
-                var revenue = await GetPartnerChargingStationRevenue(partnerID,cs.ID);
+                // The stations are the partner's: their revenue is what drivers were billed there.
+                var revenue = await GetChargingStationRevenue(cs.ID);
                 revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = (decimal)revenue, ChargingStationName = cs.Name });
             }
 
