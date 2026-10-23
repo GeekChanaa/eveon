@@ -1,5 +1,6 @@
 <div class="page__inner"><main class="page__container">
-  <vx-print-header [title]="'customer.wallet.title' | translate"></vx-print-header>
+  <vx-print-header [title]="'customer.wallet.title' | translate" [holder]="holder"
+    [subtitle]="('customer.overview.balance' | translate) + ' : ' + (balance | vxMoney)"></vx-print-header>
 
   <header class="vx-heading">
     <div>
@@ -8,7 +9,7 @@
       <p>{{ 'customer.wallet.subtitle' | translate }}</p>
     </div>
     <div class="vx-actions no-print">
-      <a class="vx-btn" routerLink="/my-dashboard/payment-methods">{{ 'nav.paymentMethods' | translate }}</a>
+      <a class="vx-btn" routerLink="/my-dashboard/payment-methods"><vx-icon name="lock"></vx-icon>{{ 'nav.paymentMethods' | translate }}</a>
       <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
     </div>
   </header>
@@ -23,6 +24,8 @@
     </div>
     <button type="button" class="vx-btn vx-btn--small" (click)="dismissReturn()">{{ 'common.actions.close' | translate }}</button>
   </div>
+
+  <div class="vx-alert vx-alert--error no-print" *ngIf="invoiceError" role="alert">{{ 'portal.customer.invoiceFailed' | translate }}</div>
 
   <div class="vx-split">
     <section class="vx-panel">
@@ -61,6 +64,7 @@
     </section>
 
     <section class="vx-stat vx-stat--brand" style="align-self: start">
+      <span class="vx-stat__icon"><vx-icon name="payment"></vx-icon></span>
       <div class="vx-stat__label">{{ 'customer.overview.balance' | translate }}</div>
       <div class="vx-stat__value vx-num">{{ balance | vxMoney }}</div>
       <div class="vx-stat__hint" *ngFor="let c of cards"><span class="vx-num">{{ c.maskedNumber }}</span> · {{ c.balance | vxMoney }}</div>
@@ -70,7 +74,7 @@
   <section class="vx-panel">
     <div class="vx-panel__head"><h2>{{ 'customer.wallet.topUps' | translate }}</h2></div>
     <div class="vx-table-wrap" *ngIf="orders?.items?.length; else noOrders">
-      <table class="vx-table">
+      <table class="vx-table vx-table--stack">
         <thead><tr>
           <th>{{ 'common.fields.date' | translate }}</th>
           <th class="num">{{ 'common.fields.amount' | translate }}</th>
@@ -80,11 +84,11 @@
         </tr></thead>
         <tbody>
           <tr *ngFor="let o of orders!.items">
-            <td>{{ o.createdAt | vxDate:'short' }}</td>
-            <td class="num">{{ o.amount | vxMoney }}</td>
-            <td class="vx-num">•••• {{ o.cardLast4 }}</td>
-            <td><span class="vx-badge" [ngClass]="tone(o.status)">{{ ('orderStatus.' + o.status) | translate }}</span></td>
-            <td class="num no-print"><button type="button" class="vx-btn vx-btn--small" *ngIf="o.invoiceAvailable" (click)="invoice(o)">{{ 'customer.wallet.invoice' | translate }}</button></td>
+            <td [attr.data-label]="'common.fields.date' | translate">{{ o.createdAt | vxDate:'short' }}</td>
+            <td class="num" [attr.data-label]="'common.fields.amount' | translate">{{ o.amount | vxMoney }}</td>
+            <td [attr.data-label]="'customer.wallet.card' | translate"><span class="vx-num">•••• {{ o.cardLast4 }}</span></td>
+            <td [attr.data-label]="'common.fields.status' | translate"><span class="vx-badge" [ngClass]="tone(o.status)">{{ ('orderStatus.' + o.status) | translate }}</span></td>
+            <td class="num no-print"><button type="button" class="vx-btn vx-btn--small" *ngIf="o.invoiceAvailable" (click)="invoice(o)"><vx-icon name="download"></vx-icon>{{ 'customer.wallet.invoice' | translate }}</button></td>
           </tr>
         </tbody>
       </table>
@@ -96,7 +100,7 @@
   <section class="vx-panel">
     <div class="vx-panel__head"><div><h2>{{ 'customer.wallet.movements' | translate }}</h2><p>{{ 'customer.wallet.movementsHint' | translate }}</p></div></div>
     <div class="vx-table-wrap" *ngIf="movements?.items?.length; else noMovements">
-      <table class="vx-table">
+      <table class="vx-table vx-table--stack">
         <thead><tr>
           <th>{{ 'common.fields.date' | translate }}</th>
           <th>{{ 'customer.wallet.operation' | translate }}</th>
@@ -105,12 +109,12 @@
         </tr></thead>
         <tbody>
           <tr *ngFor="let m of movements!.items">
-            <td>{{ m.createdAt | vxDate:'short' }}</td>
-            <td>{{ ('walletType.' + m.type) | translate }}
+            <td [attr.data-label]="'common.fields.date' | translate">{{ m.createdAt | vxDate:'short' }}</td>
+            <td [attr.data-label]="'customer.wallet.operation' | translate">{{ ('walletType.' + m.type) | translate }}
               <a *ngIf="m.chargingSessionId" class="muted no-print" [routerLink]="['/my-dashboard/sessions', m.chargingSessionId]"> #{{ m.chargingSessionId }}</a>
             </td>
-            <td class="num" [style.color]="m.amount < 0 ? null : 'var(--vx-brand-ink)'">{{ m.amount > 0 ? '+' : '' }}{{ m.amount | vxMoney }}</td>
-            <td class="num">{{ m.balanceAfter | vxMoney }}</td>
+            <td class="num" [attr.data-label]="'common.fields.amount' | translate" [class.vx-amount--credit]="m.amount > 0"><span class="vx-num">{{ m.amount > 0 ? '+' : '' }}{{ m.amount | vxMoney }}</span></td>
+            <td class="num" [attr.data-label]="'customer.wallet.balanceAfter' | translate">{{ m.balanceAfter | vxMoney }}</td>
           </tr>
         </tbody>
       </table>
@@ -118,4 +122,5 @@
     <ng-template #noMovements><p class="vx-empty">{{ 'customer.wallet.noMovements' | translate }}</p></ng-template>
     <vx-pager *ngIf="movements" [page]="movements.page" [pageSize]="movements.pageSize" [total]="movements.total" (pageChange)="loadMovements($event)"></vx-pager>
   </section>
+  <vx-print-footer></vx-print-footer>
 </main></div>

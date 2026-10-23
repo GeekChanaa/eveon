@@ -4,9 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, interval, startWith, switchMap, take, takeWhile } from 'rxjs';
 import { followCheckout, saveDownload } from 'src/_helpers/download';
 import { MyCard, MyOrder, MyWalletMovement, PagedResult, PaymentConfig, TopUpStatus } from 'src/_models/portal';
+import { AccessService } from 'src/_services/access.service';
 import { CustomerPortalService } from 'src/_services/portal/customer-portal.service';
 import { PaymentsService } from 'src/_services/portal/payments.service';
-import { statusTone } from 'src/app/shared/portal-ui/portal-ui.module';
+import { fullName, statusTone } from 'src/app/shared/portal-ui/portal-ui.module';
 
 /**
  * Wallet: balance, online top-up (the card is typed on the payment provider's page), the result when the
@@ -21,6 +22,7 @@ export class CustomerWalletComponent implements OnInit {
   private readonly payments = inject(PaymentsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly access = inject(AccessService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly presets = [50, 100, 200, 500];
@@ -32,9 +34,12 @@ export class CustomerWalletComponent implements OnInit {
   startError: string | null = null;
   returned: TopUpStatus | null = null;
   returnedCanceled = false;
+  invoiceError = false;
   orders: PagedResult<MyOrder> | null = null;
   movements: PagedResult<MyWalletMovement> | null = null;
   readonly tone = statusTone;
+
+  get holder(): string | null { return fullName(this.access.current); }
 
   get balance(): number { return this.cards.reduce((sum, c) => sum + c.balance, 0); }
   get usableCards(): MyCard[] { return this.cards.filter(c => !c.blocked && !c.expired); }
@@ -97,7 +102,11 @@ export class CustomerWalletComponent implements OnInit {
   }
 
   invoice(order: MyOrder): void {
-    this.portal.orderInvoice(order.id).subscribe(response => saveDownload(response, `eveon-topup-${order.id}.pdf`));
+    this.invoiceError = false;
+    this.portal.orderInvoice(order.id).subscribe({
+      next: response => saveDownload(response, `eveon-topup-${order.id}.pdf`),
+      error: () => this.invoiceError = true
+    });
   }
 
   print(): void { window.print(); }

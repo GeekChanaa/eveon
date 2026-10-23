@@ -6,7 +6,7 @@
       <p>{{ 'customer.methods.subtitle' | translate }}</p>
     </div>
     <div class="vx-actions" *ngIf="config?.supportsSavedCards">
-      <button type="button" class="vx-btn vx-btn--primary" (click)="add()" [disabled]="busy">{{ 'customer.methods.add' | translate }}</button>
+      <button type="button" class="vx-btn vx-btn--primary" (click)="add()" [disabled]="busy"><vx-icon name="plus"></vx-icon>{{ 'customer.methods.add' | translate }}</button>
     </div>
   </header>
 
@@ -28,13 +28,13 @@
         <tbody>
           <tr *ngFor="let m of methods">
             <td><strong>{{ m.brand === 'Generic' ? ('customer.methods.genericCard' | translate) : m.brand }}</strong> <span class="vx-num">•••• {{ m.last4 }}</span></td>
-            <td class="vx-num">{{ m.expiryMonth | number:'2.0-0' }}/{{ m.expiryYear }}
+            <td class="vx-num">{{ m.expiryMonth | vxNumber:'2.0-0' }}/{{ m.expiryYear }}
               <span class="vx-badge vx-badge--danger" *ngIf="expired(m)">{{ 'customer.methods.expired' | translate }}</span></td>
             <td><span class="vx-badge vx-badge--info" *ngIf="m.isDefault">{{ 'customer.methods.default' | translate }}</span></td>
             <td class="num">
               <span class="vx-actions" style="justify-content: flex-end">
                 <button type="button" class="vx-btn vx-btn--small" *ngIf="!m.isDefault" (click)="makeDefault(m)" [disabled]="busy">{{ 'customer.methods.makeDefault' | translate }}</button>
-                <button type="button" class="vx-btn vx-btn--small vx-btn--danger" (click)="remove(m)" [disabled]="busy">{{ 'common.actions.remove' | translate }}</button>
+                <button type="button" class="vx-btn vx-btn--small vx-btn--danger" (click)="askRemove(m)" [disabled]="busy" [attr.aria-label]="('common.actions.remove' | translate) + ' •••• ' + m.last4">{{ 'common.actions.remove' | translate }}</button>
               </span>
             </td>
           </tr>
@@ -44,4 +44,9 @@
     <ng-template #none><p class="vx-empty" *ngIf="!loading">{{ 'customer.methods.empty' | translate }}</p></ng-template>
     <p class="muted" style="margin-block-start: 14px; font-size: 12px">{{ 'customer.wallet.secureNote' | translate }}</p>
   </section>
+
+  <vx-confirm-dialog #removeDialog tone="danger" [title]="'portal.customer.removeCardTitle' | translate" [confirmLabel]="'common.actions.remove' | translate"
+    [message]="pendingRemoval ? ('customer.methods.confirmRemove' | translate:{ last4: pendingRemoval.last4 }) : null" (confirmed)="remove()" (cancelled)="pendingRemoval = null">
+    <p>{{ 'portal.customer.removeCardText' | translate }}</p>
+  </vx-confirm-dialog>
 </main></div>

@@ -60,7 +60,11 @@
       "statementsHint": "Téléchargez vos sessions en CSV ou en PDF",
       "cardsHint": "Vos cartes RFID et leur solde",
       "readOnly": "Votre espace est en lecture seule : pour modifier vos informations ou vos cartes, contactez le support EVEON.",
-      "invoiceFailed": "La facture n'a pas pu être téléchargée. Réessayez."
+      "invoiceFailed": "La facture n'a pas pu être téléchargée. Réessayez.",
+      "exportFailed": "L'export n'a pas pu être préparé. Réessayez.",
+      "noMatch": "Aucune session ne correspond à ces filtres.",
+      "removeCardTitle": "Supprimer cette carte enregistrée ?",
+      "removeCardText": "Vous pourrez l'ajouter de nouveau à tout moment sur la page du prestataire de paiement."
     }
   }
 }

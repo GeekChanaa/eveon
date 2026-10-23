@@ -1,10 +1,10 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { followCheckout } from 'src/_helpers/download';
 import { PaymentConfig, PaymentMethod } from 'src/_models/portal';
-import { LanguageService } from 'src/_services/language.service';
 import { PaymentsService } from 'src/_services/portal/payments.service';
+import { VxConfirmDialogComponent } from 'src/app/shared/portal-ui/portal-ui.module';
 
 /** Saved payment cards: added on the provider's page, chosen as default or removed here. */
 @Component({
@@ -14,7 +14,6 @@ import { PaymentsService } from 'src/_services/portal/payments.service';
 export class CustomerPaymentMethodsComponent implements OnInit {
   private readonly payments = inject(PaymentsService);
   private readonly route = inject(ActivatedRoute);
-  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   config: PaymentConfig | null = null;
@@ -23,6 +22,9 @@ export class CustomerPaymentMethodsComponent implements OnInit {
   busy = false;
   error = false;
   setupResult: 'done' | 'canceled' | null = null;
+  /** The card the user asked to remove, waiting for the confirmation. */
+  pendingRemoval: PaymentMethod | null = null;
+  @ViewChild('removeDialog') removeDialog?: VxConfirmDialogComponent;
 
   ngOnInit(): void {
     this.setupResult = this.route.snapshot.queryParamMap.get('setup') as 'done' | 'canceled' | null;
@@ -50,8 +52,15 @@ export class CustomerPaymentMethodsComponent implements OnInit {
     this.payments.setDefault(method.id).subscribe({ next: () => { this.busy = false; this.load(); }, error: () => { this.busy = false; this.error = true; } });
   }
 
-  remove(method: PaymentMethod): void {
-    if (!confirm(this.language.t('customer.methods.confirmRemove', { last4: method.last4 }))) return;
+  askRemove(method: PaymentMethod): void {
+    this.pendingRemoval = method;
+    this.removeDialog?.open();
+  }
+
+  remove(): void {
+    const method = this.pendingRemoval;
+    this.pendingRemoval = null;
+    if (!method) return;
     this.busy = true;
     this.payments.remove(method.id).subscribe({ next: () => { this.busy = false; this.load(); }, error: () => { this.busy = false; this.error = true; } });
   }

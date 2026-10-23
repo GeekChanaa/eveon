@@ -60,7 +60,11 @@
       "statementsHint": "Download your sessions as CSV or PDF",
       "cardsHint": "Your RFID cards and their balance",
       "readOnly": "Your portal is read only: to change your details or your cards, contact EVEON support.",
-      "invoiceFailed": "The invoice could not be downloaded. Try again."
+      "invoiceFailed": "The invoice could not be downloaded. Try again.",
+      "exportFailed": "The export could not be prepared. Try again.",
+      "noMatch": "No session matches these filters.",
+      "removeCardTitle": "Remove this saved card?",
+      "removeCardText": "You can add it again at any time on the payment provider's page."
     }
   }
 }
