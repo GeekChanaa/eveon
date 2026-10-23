@@ -134,3 +134,24 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
   GetLog) are not implemented for 1.6 yet; signed firmware is refused with 400 for 1.6 chargers.
 - 1.6 chargers boot Pending until provisioned or skipped on the provisioning page; while Pending they may
   not start transactions (Authorize and StartTransaction answer Invalid).
+
+## Faults and transactions that never end
+
+- **Retries and late events.** Events are matched on the transaction id only. An event for a closed or unknown
+  transaction is acknowledged and logged; it never touches another transaction of the connector (a re-sent
+  Ended of the previous transaction used to close the session charging at that moment).
+- **Fault during a session.** A `Faulted` StatusNotification raises a high-criticality system report and, when
+  a transaction is open on the connector, notifies the customer (`ChargerFaultDuringSession`). The session
+  stays open: the charger is expected to end it when it recovers, and the customer pays the energy measured.
+- **Server-side close** (`StaleTransactionSweeper`, every `Ocpp:StaleTransactionSweepMinutes`, default 10).
+  An open transaction is ended by the server, at its last meter reading and on its last meter value, when
+  - its connector is `Faulted` or `Unavailable` and nothing came for `Ocpp:FaultedTransactionMinutes`
+    (default 60): stop reason `ConnectorFaulted`;
+  - nothing at all came for `Ocpp:StaleTransactionHours` (default 12), e.g. a charger that lost the
+    transaction in a power cut: stop reason `StaleTransaction`.
+  The customer is notified and billed like a normal end; a real Ended event that arrives later is not billed
+  again. A charger that keeps sending meter values is never closed this way.
+- **Sessions of unassigned cards** (no owner) are recorded without a user.
+
+Scenario tests: `tests/VoltaX.Tests/Ocpp` (`TransactionScenarioTests`, `FaultScenarioTests`) and
+`tests/VoltaX.Tests/Billing`.

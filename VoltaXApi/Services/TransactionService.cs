@@ -680,6 +680,28 @@ namespace VoltaXApi.Services
       return status;
     }
 
+    public async Task NotifyConnectorFaultAsync(int connectorId, DateTimeOffset? at)
+    {
+      var open = await _context.Transactions.AsNoTracking()
+          .Where(t => t.ConnectorID == connectorId && t.Status == TransactionStatusEnum.Current && t.StopTime == null)
+          .OrderByDescending(t => t.ID)
+          .Select(t => new { t.ID, t.ChargingSessionID, t.StartCardID })
+          .FirstOrDefaultAsync();
+      if (open?.StartCardID == null)
+        return;
+      var card = await _context.Cards.AsNoTracking().FirstOrDefaultAsync(c => c.ID == open.StartCardID);
+      if (card == null)
+        return;
+      _logger.LogWarning("Connector {ConnectorId} faulted during transaction {TransactionId}", connectorId, open.ID);
+      await CreateChargingSessionNotification(
+          card,
+          "ChargerFaultDuringSession",
+          "The charge point reported a fault during your charging session. Charging may have stopped: please check your vehicle. You are only billed for the energy measured.",
+          $"Transaction:{open.ID}:Faulted:{at:o}",
+          urgent: true,
+          chargingSessionId: open.ChargingSessionID);
+    }
+
     #region Private Helpers
 
     /// <summary>Parses an OCPP timestamp as a UTC instant (a timestamp without offset is taken as UTC).</summary>

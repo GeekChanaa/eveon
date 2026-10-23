@@ -324,6 +324,8 @@ public static class ServiceRegistration
         services.AddSingleton<VoltaXApi.Services.ICostCalculator>(VoltaXApi.Services.CostCalculator.Instance);
         services.AddSingleton<ICostUpdatedSender, CostUpdatedSender>();
         services.AddHostedService<CostUpdatedHostedService>();
+        services.AddSingleton<StaleTransactionSweeper>();
+        services.AddHostedService<StaleTransactionHostedService>();
         services.AddScoped<ILogUploadUrlFactory, LogUploadUrlFactory>();
         services.AddSingleton(sp => ChargerLogStorage.FromConfiguration(sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<IWebHostEnvironment>()));
     }

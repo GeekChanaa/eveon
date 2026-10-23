@@ -16,5 +16,8 @@ namespace VoltaXApi.Services
       Task<AuthorizationStatusEnumType?> StartTransaction(TransactionEventData data, Connector? connector, bool validateOnly = false);
       Task<AuthorizationStatusEnumType?> UpdateTransaction(TransactionEventData data, Connector connector);
       Task<AuthorizationStatusEnumType?> EndTransaction(TransactionEventData data, Connector connector);
+
+      /// <summary>Tells the customer charging on <paramref name="connectorId"/> (if any) that the charger reported a fault.</summary>
+      Task NotifyConnectorFaultAsync(int connectorId, DateTimeOffset? at);
     }
 }
