@@ -112,6 +112,24 @@ public class FaultAndOfflineMatrixTests
         await ScenarioAssert.Billed(host, cardId, 100m, 30.00m, 3.00m, 1.00m);
     }
 
+    [Fact]
+    public void The_old_connection_of_a_reconnected_charger_closing_late_does_not_unregister_the_new_one()
+    {
+        var registry = new VoltaXApi.OCPP.Services.WebSocketManagerService();
+        VoltaXApi.OCPP.Models.OcppConnection Connect() => new(Cp, OcppTestHost.Ocpp201, new IdleWebSocket(OcppTestHost.Ocpp201),
+            new OCPP.Core.Server.ChargePointStatus { Id = Cp, Protocol = OcppTestHost.Ocpp201 });
+        var first = Connect();
+        var second = Connect();
+
+        Assert.Null(registry.AddConnection(first));
+        Assert.Same(first, registry.AddConnection(second));   // the handler aborts the previous connection
+        Assert.False(registry.RemoveConnection(first));        // its receive loop ends afterwards
+
+        Assert.Same(second, registry.GetConnection(Cp));
+        Assert.True(registry.RemoveConnection(second));
+        Assert.Null(registry.GetConnection(Cp));
+    }
+
     [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
     public async Task Unknown_and_pending_chargers_cannot_charge(string protocol)
     {
