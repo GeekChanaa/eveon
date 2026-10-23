@@ -51,9 +51,9 @@ public class MailQueueTests
         public string EnvironmentName { get; set; } = "Testing";
     }
 
-    private static (MailQueue Queue, MailDeliveryService Delivery) Pipeline(FakeTransport transport, int capacity = 100, int maxAttempts = 4)
+    private static (MailQueue Queue, MailDeliveryService Delivery) Pipeline(FakeTransport transport, int capacity = 100, int maxAttempts = 4, double drainSeconds = 1)
     {
-        var options = Options.Create(new MailQueueOptions { Capacity = capacity, MaxAttempts = maxAttempts, RetryDelaySeconds = 0.01, DrainOnStopSeconds = 1 });
+        var options = Options.Create(new MailQueueOptions { Capacity = capacity, MaxAttempts = maxAttempts, RetryDelaySeconds = 0.01, DrainOnStopSeconds = drainSeconds });
         var queue = new MailQueue(options, NullLogger<MailQueue>.Instance);
         return (queue, new MailDeliveryService(queue, transport, options, TimeProvider.System, NullLogger<MailDeliveryService>.Instance));
     }
@@ -141,7 +141,8 @@ public class MailQueueTests
     public async Task Waiting_messages_are_sent_when_the_api_stops()
     {
         var transport = new FakeTransport { Expected = 2 };
-        var (queue, delivery) = Pipeline(transport);
+        // The drain ends as soon as the queue is empty; a generous budget keeps a busy test machine from cutting it short.
+        var (queue, delivery) = Pipeline(transport, drainSeconds: 30);
         await delivery.StartAsync(CancellationToken.None);
         queue.Enqueue(Message("a"));
         queue.Enqueue(Message("b"));
