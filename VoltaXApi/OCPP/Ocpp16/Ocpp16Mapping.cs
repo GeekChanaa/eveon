@@ -27,6 +27,15 @@ namespace VoltaXApi.OCPP.Ocpp16
             _ => null
         };
 
+        /// <summary>A 1.6 StopTransaction reason as the 2.0.1 stoppedReason (absent means Local in 1.6).</summary>
+        public static VoltaXApi.OCPP.Messages.ReasonEnumType ToStoppedReason(string? reason) => reason switch
+        {
+            null or "" or "Local" => VoltaXApi.OCPP.Messages.ReasonEnumType.Local,
+            "HardReset" or "SoftReset" => VoltaXApi.OCPP.Messages.ReasonEnumType.ImmediateReset,
+            "UnlockCommand" => VoltaXApi.OCPP.Messages.ReasonEnumType.Remote,
+            _ => Enum.TryParse<VoltaXApi.OCPP.Messages.ReasonEnumType>(reason, out var parsed) ? parsed : VoltaXApi.OCPP.Messages.ReasonEnumType.Other
+        };
+
         /// <summary>1.6 StopTransaction reasons that the customer is told about (as 2.0.1 abnormal stops are).</summary>
         public static bool IsAbnormalStopReason(string? reason) =>
             reason is "EmergencyStop" or "PowerLoss" or "Reboot" or "Other" or "HardReset" or "SoftReset";

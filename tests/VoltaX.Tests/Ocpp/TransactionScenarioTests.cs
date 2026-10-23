@@ -89,4 +89,55 @@ public class TransactionScenarioTests
         Assert.Equal(6.00m, session.TotalAmount);
         Assert.Equal(44m, await host.Query(db => db.Cards.Where(c => c.CardNumber == "FLEET-1").Select(c => c.Balance).SingleAsync()));
     }
+
+    [Fact]
+    public async Task Unplugging_the_car_is_a_normal_end_recorded_as_EV_disconnected()
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+        await charger.Started("TX-U", "TAG-1", 0, T0);
+
+        await charger.Ended("TX-U", 2000, T0.AddMinutes(30), triggerReason: "EVCommunicationLost", stoppedReason: "EVDisconnected");
+
+        var session = await host.Query(db => db.ChargingSessions.SingleAsync());
+        Assert.Equal(VoltaXApi.OCPP.Messages.ReasonEnumType.EVDisconnected, session.StoppedReason);
+        Assert.False(await host.Query(db => db.Notifications.AnyAsync(n => n.Action == "ChargingEndedAbnormally")));
+    }
+
+    [Theory]
+    [InlineData("EmergencyStop", "AbnormalCondition")]
+    [InlineData("PowerLoss", "AbnormalCondition")]
+    [InlineData("GroundFault", "StopAuthorized")]
+    public async Task Fault_stop_reasons_tell_the_driver(string stoppedReason, string trigger)
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+        await charger.Started("TX-A", "TAG-1", 0, T0);
+
+        await charger.Ended("TX-A", 2000, T0.AddMinutes(10), triggerReason: trigger, stoppedReason: stoppedReason);
+
+        var session = await host.Query(db => db.ChargingSessions.SingleAsync());
+        Assert.Equal(stoppedReason, session.StoppedReason.ToString());
+        Assert.True(await host.Query(db => db.Notifications.AnyAsync(n => n.Action == "ChargingEndedAbnormally")));
+    }
+
+    [Fact]
+    public async Task Ocpp16_stop_reasons_are_recorded_in_the_201_vocabulary()
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        host.Sender.Versions[Cp] = OcppTestHost.Ocpp16;
+        var charger = new Charger16(host, Cp);
+        await charger.Boot();
+        var (_, id) = await charger.Start("TAG-1", 0, T0);
+
+        await charger.Stop(id, 1000, T0.AddMinutes(5), reason: "HardReset");
+
+        var session = await host.Query(db => db.ChargingSessions.SingleAsync());
+        Assert.Equal(VoltaXApi.OCPP.Messages.ReasonEnumType.ImmediateReset, session.StoppedReason);
+    }
 }

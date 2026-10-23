@@ -59,7 +59,8 @@ namespace VoltaXApi.Services
             return chargingSession;
         }
 
-        public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate)
+        public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate,
+            ReasonEnumType? stoppedReason = null)
         {
             ChargingSession chargingSession = await _context.ChargingSessions
                 .Include(s => s.Connector)
@@ -71,6 +72,8 @@ namespace VoltaXApi.Services
             chargingSession.ChargedMinutes = minutesCharged;
             chargingSession.ChargedKwhs = chargedKwhs;
             chargingSession.EndDate = endDate;
+            if (stoppedReason.HasValue)
+                chargingSession.StoppedReason = stoppedReason.Value;
             chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.CompletedOccupied;
             if (connectorStatus?.LastStatus == ConnectorStatusEnumType.Available)
             {

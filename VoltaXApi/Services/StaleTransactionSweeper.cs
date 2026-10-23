@@ -66,6 +66,7 @@ namespace VoltaXApi.Services
                         Timestamp = DateTime.SpecifyKind(candidate.LastReading, DateTimeKind.Utc).ToString("o"),
                         MeterKWh = null,
                         TriggerReason = faulted ? "ConnectorFaulted" : "StaleTransaction",
+                        StoppedReason = faulted ? ReasonEnumType.Other : ReasonEnumType.Timeout,
                         AbnormalStop = true,
                         ReasonSuffix = faulted ? " (charger fault)" : " (no news from the charge point)"
                     }, connector);

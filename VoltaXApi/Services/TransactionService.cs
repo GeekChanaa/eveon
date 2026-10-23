@@ -614,7 +614,7 @@ namespace VoltaXApi.Services
         // Ends and bills the session; the ended transaction is saved in the same SaveChanges as the debit.
         var session = await _chargingSessionService.EndChargingSession(
             transaction.ChargingSessionID, minutesCharged, chargedKwhs,
-            endTimestamp);
+            endTimestamp, data.StoppedReason);
         transaction.Amount = session.ChargingPriceWithVAT;
         await _context.SaveChangesAsync();
 

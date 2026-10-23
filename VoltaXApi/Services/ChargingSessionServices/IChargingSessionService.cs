@@ -1,4 +1,5 @@
 using VoltaXApi.Models;
+using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Services
 {
@@ -12,7 +13,8 @@ namespace VoltaXApi.Services
         /// card debit and the wallet movement are committed together with whatever the caller already changed in
         /// the same DbContext (the ended transaction). Ending an already billed session bills nothing again.
         /// </summary>
-        Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate);
+        Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate,
+            ReasonEnumType? stoppedReason = null);
 
         /// <summary>Bills the idle time of the last ended session of a connector when the car leaves it.</summary>
         Task<ChargingSession?> HandleIdleMinutes(int connectorID, DateTimeOffset? statusTime);

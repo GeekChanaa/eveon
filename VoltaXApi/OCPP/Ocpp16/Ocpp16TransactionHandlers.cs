@@ -225,6 +225,7 @@ namespace VoltaXApi.OCPP.Ocpp16
                         IdTag = idTag,
                         MeterKWh = request.MeterStop / 1000.0,
                         TriggerReason = request.Reason ?? "Local",
+                        StoppedReason = Ocpp16Mapping.ToStoppedReason(request.Reason),
                         AbnormalStop = Ocpp16Mapping.IsAbnormalStopReason(request.Reason),
                         ReasonSuffix = TransactionEventData.FormatReason(request.Reason)
                     }, connector);

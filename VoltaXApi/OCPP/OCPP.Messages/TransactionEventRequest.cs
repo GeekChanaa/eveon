@@ -107,11 +107,12 @@ namespace VoltaXApi.OCPP.Messages
         [Required]
         public string TransactionId { get; set; }
 
-        public ChargingStateEnumType ChargingState { get; set; }
+        // Both optional in OCPP 2.0.1: absent must not read as the first enum value.
+        public ChargingStateEnumType? ChargingState { get; set; }
 
         public int? TimeSpentCharging { get; set; }
 
-        public ReasonEnumType StoppedReason { get; set; }
+        public ReasonEnumType? StoppedReason { get; set; }
 
         public int? RemoteStartId { get; set; }
     }
