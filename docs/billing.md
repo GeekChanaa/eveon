@@ -57,7 +57,7 @@ buffer `DefaultLowBalanceThresholdBuffer` to cover the cost of the energy delive
 |---|---|
 | `EnergyAmount`, `TimeAmount`, `FlatFeeAmount` | the transaction ends |
 | `TotalAmount` | the transaction ends; increased by `IdleAmount` when the car leaves |
-| `IdleAmount`, `IdleMinutes` | the connector becomes Available after the session |
+| `IdleAmount`, `IdleMinutes` | the connector stops being Occupied after the session (Available, or Faulted / Unavailable); only the connector's latest session |
 | `BalanceBefore`, `BalanceAfter` | the debit (for the invoice) |
 | `BilledAt` | the debit |
 

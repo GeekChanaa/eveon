@@ -136,7 +136,10 @@ namespace VoltaXApi.Services
           // closes it otherwise).
           await _transactionService.NotifyConnectorFaultAsync(connector.ID, statusTime);
         }
-        if (connectorStatus != null && status == ConnectorStatusEnumType.Available && connectorStatus.LastStatus == ConnectorStatusEnumType.Occupied)
+        // The idle time after the last session ends when the connector stops being occupied: the car left
+        // (Available), or the connector went out of service (Faulted, Unavailable) and its departure can no longer
+        // be seen. Otherwise a later plug-in and unplug would close that idle time days later.
+        if (connectorStatus?.LastStatus == ConnectorStatusEnumType.Occupied && status != ConnectorStatusEnumType.Occupied)
         {
           await _chargingSessionService.HandleIdleMinutes(connector.ID, statusTime);
         }

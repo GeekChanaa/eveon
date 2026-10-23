@@ -141,13 +141,15 @@ namespace VoltaXApi.Services
 
         public async Task<ChargingSession?> HandleIdleMinutes(int connectorID, DateTimeOffset? statusTime)
         {
+            // Only the connector's latest session can be idle: an older one whose idle time was never closed (a status
+            // lost while the charger was offline) must not be billed up to now.
             ChargingSession? chargingSession = await _context.ChargingSessions
                 .Include(s => s.Connector)
-                .Where(c => c.ConnectorID == connectorID && c.EndDate != null)
+                .Where(c => c.ConnectorID == connectorID)
                 .OrderByDescending(c => c.StartDate)
                 .ThenByDescending(c => c.ID)
                 .FirstOrDefaultAsync();
-            if (chargingSession == null || chargingSession.IdleMinutes != null)
+            if (chargingSession == null || chargingSession.EndDate == null || chargingSession.IdleMinutes != null)
                 return chargingSession;
 
             double idleMinutes = Math.Max(0, (statusTime - chargingSession.EndDate)?.TotalMinutes ?? 0);
