@@ -233,9 +233,11 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetOrderInvoice/{orderID}")]
         public async Task<IActionResult> GetOrderInvoice(int orderID)
         {
-            InvoiceData orderInvoiceInformations = await _repository.GetOrderForInvoice(orderID);
-            var pdfBytes = _invoiceService.GenerateInvoice(orderInvoiceInformations, "Invoice Testing.pdf");
-            return File(pdfBytes, "application/pdf", "Invoice.pdf");
+            InvoiceData? orderInvoiceInformations = await _repository.GetOrderForInvoice(orderID);
+            if (orderInvoiceInformations == null)
+                return NotFound();
+            var pdfBytes = _invoiceService.GenerateInvoice(orderInvoiceInformations);
+            return File(pdfBytes, "application/pdf", $"Invoice-{orderID}.pdf");
         }
     }
 }

@@ -18,11 +18,9 @@ public class RechargeOrderInvoiceGenerator : IInvoiceGeneratorService<InvoiceDat
         _webHostEnvironment = webHostEnvironment;
     }
 
-    public byte[] GenerateInvoice(InvoiceData data, string fileName)
+    public byte[] GenerateInvoice(InvoiceData data)
     {
         var document = new InvoiceDocument(data, _companyInformations.Value,_webHostEnvironment);
-        document.GeneratePdf(fileName);
-
-        return File.ReadAllBytes(fileName);
+        return document.GeneratePdf();
     }
 }

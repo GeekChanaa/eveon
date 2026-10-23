@@ -157,7 +157,7 @@ public class InvoiceDocument : IDocument
                     .BorderColor(borderColor)
                     .Padding(cellPadding)
                     .AlignCenter()
-                    .Text($"${_data.AmountHT:N2}");
+                    .Text($"{_data.AmountHT:N2} DH");
 
                 // VAT Cell
                 table.Cell()
@@ -166,7 +166,7 @@ public class InvoiceDocument : IDocument
                     .BorderColor(borderColor)
                     .Padding(cellPadding)
                     .AlignCenter()
-                    .Text($"${_data.VAT:N2}");
+                    .Text($"{_data.VAT:N2} DH");
 
                 // Total Amount Cell
                 table.Cell()
@@ -175,7 +175,7 @@ public class InvoiceDocument : IDocument
                     .BorderColor(borderColor)
                     .Padding(cellPadding)
                     .AlignCenter() 
-                    .Text($"${_data.TotalAmount:N2}"); 
+                    .Text($"{_data.TotalAmount:N2} DH"); 
             });
         });
     }

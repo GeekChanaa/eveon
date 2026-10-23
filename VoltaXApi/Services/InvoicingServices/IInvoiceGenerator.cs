@@ -1,5 +1,6 @@
 namespace VoltaXApi.Services;
 public interface IInvoiceGeneratorService<TData>
 {
-    byte[] GenerateInvoice(TData data, string fileName);
+    /// <summary>Renders the PDF in memory (never through a file: concurrent requests must not share one).</summary>
+    byte[] GenerateInvoice(TData data);
 }

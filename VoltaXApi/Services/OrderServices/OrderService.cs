@@ -81,10 +81,10 @@ namespace VoltaXApi.Services
         private async Task SendQuoteAsync(Order order, string email, string userName)
         {
             var invoice = await _orderRepository.GetOrderForInvoice(order.ID);
-            var path = Path.Combine(Path.GetTempPath(), $"voltax-recharge-{order.ID}-{Guid.NewGuid():N}.pdf");
-            try
+            if (invoice == null)
+                return;
             {
-                var pdf = _invoiceService.GenerateInvoice(invoice, path);
+                var pdf = _invoiceService.GenerateInvoice(invoice);
                 await using var stream = new MemoryStream(pdf);
                 var attachment = new FormFile(stream, 0, pdf.Length, "quote", $"Recharge-quote-{order.ID}.pdf")
                 {
@@ -100,10 +100,6 @@ namespace VoltaXApi.Services
                     Body = $"Your recharge payment is {order.Status}. The quote for {order.Amount:0.00} is attached.",
                     Attachments = new List<IFormFile> { attachment }
                 });
-            }
-            finally
-            {
-                if (File.Exists(path)) File.Delete(path);
             }
         }
     }
