@@ -35,7 +35,8 @@ Both versions share the same business rules through version-neutral services:
   and kept in the MessageLog.
 - **Transactions**: StartTransaction always gets an integer `transactionId` = `Ocpp16Transactions.Id` (even when
   refused, as the charger needs one). The matching `Transactions.Uid` (and OCPI `TransactionUid`) is `ocpp16-{Id}`.
-  `RequestStopTransaction` accepts either form for a 1.6 charger.
+  `RequestStopTransaction` accepts either form for a 1.6 charger. A StartTransaction sent again after a lost answer
+  (same connector, idTag, meterStart and timestamp, not stopped) gets the transactionId already issued.
 - **Meter values**: 1.6 has no multiplier; the unit defaults to `Wh` (energy) / `W` (power); `kWh`/`kW` are converted.
   `SignedData` samples and unknown measurands are ignored. `meterStart`/`meterStop` are Wh.
 - **Authorization statuses**: 2.0.1-only results (NoCredit, NotAtThisLocation, ...) are sent as `Invalid` to 1.6 chargers.
