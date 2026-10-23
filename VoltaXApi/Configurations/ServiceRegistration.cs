@@ -430,6 +430,19 @@ public static class ServiceRegistration
         });
     }
 
+    /// <summary>
+    /// SQLite for local and CI test runs (tools/e2e): no migrations, the schema is created from the model at start
+    /// up. Refused in Production.
+    /// </summary>
+    public static void ConfigureDatabaseSqlite(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    {
+        if (environment.IsProduction())
+            throw new InvalidOperationException("Database:Provider=Sqlite is for local and CI test runs only; use MySql or SqlServer in Production.");
+        services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
+            options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))
+                .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>()));
+    }
+
     public static void ConfigureDatabaseSqlServer(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>

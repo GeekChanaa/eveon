@@ -36,6 +36,9 @@ public class Program
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+                // SQLite (test runs) has no migrations: the schema comes from the model.
+                if (db.Database.IsSqlite())
+                    await db.Database.EnsureCreatedAsync();
                 await PermissionSeeder.Seed(db);
                 try
                 {
@@ -100,9 +103,12 @@ public class Program
         ServiceRegistration.ConfigureOCPPHandlers(builder.Services);
         ServiceRegistration.ConfigurePayments(builder.Services, builder.Configuration, builder.Environment);
 
-        // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger) or "SqlServer" (default).
+        // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger), "Sqlite" (local and CI test runs only)
+        // or "SqlServer" (default).
         if (string.Equals(builder.Configuration["Database:Provider"], "MySql", StringComparison.OrdinalIgnoreCase))
             ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
+        else if (string.Equals(builder.Configuration["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase))
+            ServiceRegistration.ConfigureDatabaseSqlite(builder.Services, builder.Configuration, builder.Environment);
         else
             ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
 

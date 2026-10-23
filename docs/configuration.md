@@ -58,7 +58,7 @@ Extra keys for this setup:
 
 | Key | Notes |
 | --- | --- |
-| `Database__Provider` | `MySql` (MariaDB / MySQL) or `SqlServer` (default) |
+| `Database__Provider` | `MySql` (MariaDB / MySQL) or `SqlServer` (default); `Sqlite` for local and CI test runs only (schema created from the model at start up, refused in Production, see `docs/testing.md`) |
 | `Database__ServerVersion` | MariaDB version of the server (`SELECT VERSION()`), default `10.6.15` |
 | `Database__InitializePhoneLogin` | `true` creates `PhoneLoginChallenges` if missing (no migration creates it) |
 | `ReverseProxy__TrustAllProxies` | `true` on Railway: trust `X-Forwarded-*` from its edge proxy, which has no fixed address |
