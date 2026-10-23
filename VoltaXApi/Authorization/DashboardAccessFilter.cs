@@ -9,8 +9,28 @@ using VoltaXApi.Services.Audit;
 
 namespace VoltaXApi.Authorization;
 
-public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApiDbContext db, HubConnections connections, IAuditLogger audit) : IAsyncActionFilter
+public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApiDbContext db, HubConnections connections, IAuditLogger audit) : IAsyncAuthorizationFilter, IAsyncActionFilter
 {
+    /// <summary>Endpoints anyone may call: sign in flows, provider callbacks, OCPI (own token), charger log uploads.</summary>
+    private static bool IsOpen(ControllerActionDescriptor descriptor, string method, IList<object> metadata) =>
+        descriptor.ControllerTypeInfo.Namespace == "VoltaXApi.Controllers" && EndpointPermissions.IsPublic(descriptor.ControllerName, descriptor.MethodInfo.Name, method)
+        || metadata.OfType<PublicEndpointAttribute>().Any()
+        || descriptor.ControllerTypeInfo.Namespace == "VoltaXApi.Ocpi.Controllers"
+        || descriptor.ControllerTypeInfo == typeof(VoltaXApi.OCPP.Controllers.LogUploadController) && descriptor.MethodInfo.Name == nameof(VoltaXApi.OCPP.Controllers.LogUploadController.UploadChargerLog);
+
+    /// <summary>
+    /// Turns anonymous callers away before the body is read and validated, so they get 401 rather than validation
+    /// details (400 / 415). Permissions are checked in <see cref="OnActionExecutionAsync"/>, once arguments are bound.
+    /// </summary>
+    public Task OnAuthorizationAsync(AuthorizationFilterContext context)
+    {
+        if (context.ActionDescriptor is ControllerActionDescriptor descriptor
+            && !IsOpen(descriptor, context.HttpContext.Request.Method, context.ActionDescriptor.EndpointMetadata)
+            && context.HttpContext.User.Identity?.IsAuthenticated != true)
+            context.Result = new UnauthorizedResult();
+        return Task.CompletedTask;
+    }
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var descriptor = (ControllerActionDescriptor)context.ActionDescriptor;
