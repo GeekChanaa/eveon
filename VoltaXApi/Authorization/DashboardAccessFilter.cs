@@ -18,6 +18,7 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
         var action = descriptor.MethodInfo.Name;
         var method = context.HttpContext.Request.Method;
         if (descriptor.ControllerTypeInfo.Namespace == "VoltaXApi.Controllers" && EndpointPermissions.IsPublic(controller, action, method)) { await next(); return; }
+        if (AccessContext.Marker<PublicEndpointAttribute>(context) != null) { await next(); return; }
         // OCPI roaming partners authenticate with their OCPI token (OcpiAuthFilter), never a user JWT.
         if (descriptor.ControllerTypeInfo.Namespace == "VoltaXApi.Ocpi.Controllers") { await next(); return; }
         // Chargers upload GetLog / GetDiagnostics files without a JWT: the one-time ticket token in the URL authorizes that single upload.
@@ -29,6 +30,15 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
         var allowed = false;
         var sessionId = IntArgument(context, "chargingSessionID");
         var orderId = IntArgument(context, "orderID", "id");
+
+        // Marked endpoints: self-service actions scope every query to the caller, partner portal ones to the partner.
+        if (AccessContext.Marker<SelfServiceAttribute>(context) != null) { await next(); return; }
+        if (AccessContext.Marker<PartnerPortalAttribute>(context) != null)
+        {
+            if (user.Role.Name == "Partner" && user.PartnerID != null) await next();
+            else context.Result = new ForbidResult();
+            return;
+        }
 
         // Raw user CRUD exposes credential material and mass assignment; use DTO endpoints instead.
         if (controller == "User" && new[] { "GetAll", "GetById", "Create", "Update" }.Contains(action))
@@ -62,9 +72,9 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
         else if (controller == "DebitCard")
         {
             var id = IntArgument(context, "id");
-            // AddCard always saves a provider token for the caller; Delete only the caller's own card.
-            allowed = action == "AddCard"
-                || action == "Delete" && await db.DebitCards.AnyAsync(c => c.ID == id && c.UserID == user.ID && !c.IsDeleted);
+            // Customers only delete their own card here (adding goes through the payment provider).
+            allowed = action == "Delete" && await db.DebitCards.AnyAsync(c => c.ID == id && c.UserID == user.ID && !c.IsDeleted)
+                || access.Can(EndpointPermissions.Required(controller, action, method) ?? "__denied");
         }
         else if (controller == "ChargingSession" && action is "GetChargingSessionInformations" or "GetChargingSessionInvoice")
             allowed = access.Can("ViewChargingSessions") || await db.ChargingSessions.AnyAsync(c => c.ID == sessionId && c.UserID == user.ID && !c.IsDeleted);
