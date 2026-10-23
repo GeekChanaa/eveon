@@ -13,9 +13,8 @@
 #   /app/App_Data (charger log uploads, GDPR exports, private files)
 # Logs go to stdout (Serilog console sink); the file sinks write to /app/logs, which is container scratch.
 
-ARG DOTNET_VERSION=9.0
-
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build
+# Literal tags, so Dependabot can follow them (.github/dependabot.yml); 9.0 gets the .NET 9 patches.
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 # Restore first, in its own layer, so code changes do not download the packages again.
 COPY VoltaXApi.csproj ./
@@ -23,7 +22,7 @@ RUN dotnet restore VoltaXApi.csproj
 COPY . ./
 RUN dotnet publish VoltaXApi.csproj --configuration Release --no-restore --output /app/publish -p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 # curl only serves the HEALTHCHECK below.
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends curl \
