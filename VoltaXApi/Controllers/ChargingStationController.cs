@@ -91,7 +91,7 @@ namespace VoltaXApi.Controllers
 
 
         [HttpGet("GetTop10ChargingStationsByRevenue")]
-        public async Task<IActionResult> GetTop10ChargingStationsByRevenue(GlobalParams globalParams)
+        public async Task<IActionResult> GetTop10ChargingStationsByRevenue([FromQuery] GlobalParams globalParams)
         {
             return Ok(await _repository.GetTop10ChargingStationsByRevenue(globalParams));
         }
