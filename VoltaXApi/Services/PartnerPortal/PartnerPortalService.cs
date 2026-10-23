@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
 using VoltaXApi.Models;
+using VoltaXApi.OCPP.Core;
 using VoltaXApi.OCPP.Messages;
 using VoltaXApi.Services.Audit;
 
@@ -21,9 +22,12 @@ namespace VoltaXApi.Services.PartnerPortal
         private readonly IBusinessClock _clock;
         private readonly GlobalConfigurations _pricing;
         private readonly IAuditLogger _audit;
+        private readonly IOcppCommandSender _chargers;
 
-        public PartnerPortalService(VoltaXApiDbContext db, IBusinessClock clock, GlobalConfigurations pricing, IAuditLogger audit)
+        public PartnerPortalService(VoltaXApiDbContext db, IBusinessClock clock, GlobalConfigurations pricing, IAuditLogger audit,
+            IOcppCommandSender chargers)
         {
+            _chargers = chargers;
             _db = db;
             _clock = clock;
             _pricing = pricing;
@@ -77,10 +81,17 @@ namespace VoltaXApi.Services.PartnerPortal
                     Connectors = cp.Connectors!.Where(c => !c.IsDeleted).OrderBy(c => c.EvseID).ThenBy(c => c.ConnectorID)
                         .Select(c => new PartnerConnectorDto(c.ID, c.EvseID, c.ConnectorID, c.ConnectorType, c.Power,
                             _db.ConnectorStatuses.Where(s => s.ConnectorID == c.ID).Select(s => (ConnectorStatusEnumType?)s.LastStatus).FirstOrDefault(),
-                            c.PricePerKWh, c.PricePerMinute, c.PricePerIdleMinute, c.FlatFee)).ToList()
+                            c.PricePerKWh, c.PricePerMinute, c.PricePerIdleMinute, c.FlatFee,
+                            _db.ChargingSessions.Where(s => s.ConnectorID == c.ID && s.EndDate == null && !s.IsDeleted)
+                                .OrderByDescending(s => s.StartDate).Select(s => (int?)s.ID).FirstOrDefault())).ToList()
                 })
                 .ToListAsync(ct);
-            return points.Select(p => new PartnerChargePointDto(p.ID, p.ChargePointId, p.ChargingStationID, p.StationName, p.VendorName, p.Model, p.Status, p.Connectors)).ToList();
+            return points.Select(p =>
+            {
+                var protocol = _chargers.GetProtocolVersion(p.ChargePointId);
+                return new PartnerChargePointDto(p.ID, p.ChargePointId, p.ChargingStationID, p.StationName, p.VendorName, p.Model, p.Status, p.Connectors,
+                    protocol != null, protocol);
+            }).ToList();
         }
 
         public async Task<PartnerChargePointDto?> ChargePointAsync(int partnerId, int chargePointId, CancellationToken ct = default) =>

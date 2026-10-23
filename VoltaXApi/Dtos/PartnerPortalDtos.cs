@@ -13,11 +13,14 @@ namespace VoltaXApi.Dtos
     public sealed record PartnerStationDto(int Id, string Name, string Address, string City, ChargingStationStatusEnum Status,
         int ChargePointCount, int ConnectorCount, string? Latitude, string? Longitude);
 
+    /// <summary>A connector with its live state, prices and the session running on it (what the partner can stop).</summary>
     public sealed record PartnerConnectorDto(int Id, int EvseId, int? ConnectorId, ConnectorEnumType? Type, double PowerKw,
-        ConnectorStatusEnumType? Status, decimal PricePerKWh, decimal PricePerMinute, decimal PricePerIdleMinute, decimal FlatFee);
+        ConnectorStatusEnumType? Status, decimal PricePerKWh, decimal PricePerMinute, decimal PricePerIdleMinute, decimal FlatFee,
+        int? ActiveSessionId);
 
+    /// <summary>A charge point of the partner; <see cref="Protocol"/> is the OCPP version of its live connection, null when offline.</summary>
     public sealed record PartnerChargePointDto(int Id, string ChargePointId, int StationId, string? StationName, string? Vendor,
-        string? Model, ChargePointStatusEnum Status, IReadOnlyList<PartnerConnectorDto> Connectors);
+        string? Model, ChargePointStatusEnum Status, IReadOnlyList<PartnerConnectorDto> Connectors, bool Online, string? Protocol);
 
     /// <summary>A session on one of the partner's stations, without the driver's personal data.</summary>
     public sealed record PartnerSessionDto(int Id, string? StationName, string? ChargePointName, string? Connector, DateTime StartDate,

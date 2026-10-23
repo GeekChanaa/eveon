@@ -249,6 +249,7 @@ public static class ServiceRegistration
         services.AddScoped<VoltaXApi.Services.CustomerPortal.CustomerPortalService>();
         services.AddScoped<VoltaXApi.Services.CustomerPortal.SessionStatementExporter>();
         services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerPortalService>();
+        services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerRemoteCommandService>();
         services.AddScoped<VoltaXApi.Services.Sessions.OperatorSearchService>();
         services.AddScoped<VoltaXApi.Services.Sessions.TransactionCsv>();
         services.AddScoped<IConnectorService, ConnectorService>();
