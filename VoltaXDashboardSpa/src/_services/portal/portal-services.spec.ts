@@ -40,6 +40,18 @@ describe('Portal API services', () => {
       request.flush(new Blob(['%PDF']));
     });
 
+    it('reads the running session, or nothing when no session is charging (204)', () => {
+      const portal = TestBed.inject(CustomerPortalService);
+      const seen: unknown[] = [];
+      portal.activeSession().subscribe(s => seen.push(s));
+      portal.activeSession().subscribe(s => seen.push(s));
+
+      const [first, second] = http.match(`${api}/api/my/sessions/active`);
+      first.flush({ id: 9 });
+      second.flush(null, { status: 204, statusText: 'No Content' });
+      expect(seen).toEqual([{ id: 9 }, null]);
+    });
+
     it('is read only: every call is a GET', () => {
       const portal = TestBed.inject(CustomerPortalService);
       portal.overview().subscribe();

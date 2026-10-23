@@ -8,6 +8,7 @@ import { CustomerSessionDetailComponent } from './portal/customer-session-detail
 import { CustomerWalletComponent } from './portal/customer-wallet.component';
 import { CustomerPaymentMethodsComponent } from './portal/customer-payment-methods.component';
 import { CustomerCardsComponent, CustomerProfileComponent } from './portal/customer-account.component';
+import { CustomerLiveSessionComponent } from './portal/customer-live-session.component';
 
 /** The customer portal: the signed-in customer's own data, read only, plus paying online. */
 @NgModule({
@@ -18,7 +19,8 @@ import { CustomerCardsComponent, CustomerProfileComponent } from './portal/custo
     CustomerWalletComponent,
     CustomerPaymentMethodsComponent,
     CustomerCardsComponent,
-    CustomerProfileComponent
+    CustomerProfileComponent,
+    CustomerLiveSessionComponent
   ],
   imports: [
     SharedModule,

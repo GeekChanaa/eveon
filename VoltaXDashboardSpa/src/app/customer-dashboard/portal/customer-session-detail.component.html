@@ -1,10 +1,11 @@
 <div class="page__inner"><main class="page__container">
-  <a class="vx-btn vx-btn--link no-print" routerLink="/my-dashboard/sessions">← {{ 'customer.sessions.title' | translate }}</a>
+  <a class="vx-btn vx-btn--link no-print" routerLink="/my-dashboard/sessions"><vx-icon class="vx-flip-rtl" name="arrow-left"></vx-icon>{{ 'customer.sessions.title' | translate }}</a>
 
   <div class="vx-alert vx-alert--error" *ngIf="notFound" role="alert">{{ 'customer.session.notFound' | translate }}</div>
 
   <ng-container *ngIf="detail as d">
-    <vx-print-header [title]="('customer.session.title' | translate) + ' #' + d.session.id"></vx-print-header>
+    <vx-print-header [title]="('customer.session.title' | translate) + ' #' + d.session.id" [holder]="holder"
+      [subtitle]="d.session.stationName"></vx-print-header>
 
     <header class="vx-heading">
       <div>
@@ -14,10 +15,14 @@
       </div>
       <div class="vx-actions no-print">
         <button type="button" class="vx-btn vx-btn--primary" *ngIf="d.session.invoiceAvailable" (click)="invoice()" [disabled]="downloading">
-          {{ 'customer.session.downloadInvoice' | translate }}</button>
+          <vx-icon name="download"></vx-icon>{{ 'customer.session.downloadInvoice' | translate }}</button>
         <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
       </div>
     </header>
+
+    <div class="vx-alert vx-alert--error no-print" *ngIf="invoiceError" role="alert">{{ 'portal.customer.invoiceFailed' | translate }}</div>
+
+    <app-customer-live-session *ngIf="live" [session]="live" [compact]="true" (ended)="onEnded()"></app-customer-live-session>
 
     <section class="vx-panel">
       <div class="vx-panel__head">
@@ -30,8 +35,8 @@
         <div><dt>{{ 'customer.session.chargePoint' | translate }}</dt><dd>{{ d.session.chargePointName || '—' }} · {{ d.session.connector }}</dd></div>
         <div><dt>{{ 'customer.session.started' | translate }}</dt><dd>{{ d.session.startDate | vxDate:'medium' }}</dd></div>
         <div><dt>{{ 'customer.session.ended' | translate }}</dt><dd>{{ d.session.endDate ? (d.session.endDate | vxDate:'medium') : ('customer.status.charging' | translate) }}</dd></div>
-        <div><dt>{{ 'customer.session.duration' | translate }}</dt><dd class="vx-num">{{ d.session.chargedMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</dd></div>
-        <div><dt>{{ 'customer.session.idle' | translate }}</dt><dd class="vx-num">{{ d.session.idleMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</dd></div>
+        <div><dt>{{ 'customer.session.duration' | translate }}</dt><dd>{{ d.session.chargedMinutes | vxDuration }}</dd></div>
+        <div><dt>{{ 'customer.session.idle' | translate }}</dt><dd>{{ d.session.idleMinutes | vxDuration }}</dd></div>
         <div><dt>{{ 'customer.session.energy' | translate }}</dt><dd class="vx-num">{{ d.session.chargedKwhs | vxNumber:'1.0-3' }} {{ 'common.units.kwh' | translate }}</dd></div>
         <div *ngIf="!d.session.active"><dt>{{ 'customer.session.stopReason' | translate }}</dt><dd>{{ ('stopReasons.' + d.session.stoppedReason) | translate }}</dd></div>
         <div *ngIf="d.cardLast4"><dt>{{ 'customer.session.card' | translate }}</dt><dd class="vx-num">•••• {{ d.cardLast4 }}</dd></div>
@@ -86,5 +91,6 @@
         <div><dt>{{ 'customer.session.balanceAfter' | translate }}</dt><dd class="vx-num">{{ d.balanceAfter | vxMoney }}</dd></div>
       </dl>
     </section>
+    <vx-print-footer></vx-print-footer>
   </ng-container>
 </main></div>

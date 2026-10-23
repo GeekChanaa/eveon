@@ -1,10 +1,10 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { toParams } from 'src/_helpers/download';
 import {
-  MyCard, MyOrder, MyOverview, MyProfile, MySession, MySessionDetail, MySessionFilter, MyWalletMovement, PagedResult
+  MyActiveSession, MyCard, MyOrder, MyOverview, MyProfile, MySession, MySessionDetail, MySessionFilter, MyWalletMovement, PagedResult
 } from 'src/_models/portal';
 
 /** The customer portal API (api/my): the signed-in customer's own data, read only. */
@@ -20,6 +20,11 @@ export class CustomerPortalService {
 
   sessions(filter: MySessionFilter): Observable<PagedResult<MySession>> {
     return this.http.get<PagedResult<MySession>>(`${this.base}/sessions`, { params: toParams(filter) });
+  }
+
+  /** The running session, or null (204) when nothing is charging. */
+  activeSession(): Observable<MyActiveSession | null> {
+    return this.http.get<MyActiveSession>(`${this.base}/sessions/active`, { observe: 'response' }).pipe(map(r => r.status === 204 ? null : r.body));
   }
 
   session(id: number): Observable<MySessionDetail> { return this.http.get<MySessionDetail>(`${this.base}/sessions/${id}`); }

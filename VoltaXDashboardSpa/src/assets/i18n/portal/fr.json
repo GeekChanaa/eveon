@@ -9,7 +9,38 @@
       "minutes": "{{m}} min",
       "hours": "{{h}} h {{m}} min"
     },
+    "live": {
+      "connection": {
+        "idle": "Non connecté",
+        "connecting": "Connexion…",
+        "live": "En direct",
+        "reconnecting": "Reconnexion…",
+        "offline": "Direct en pause"
+      },
+      "stoppingTitle": "Arrêt de votre session…",
+      "power": "Puissance",
+      "average": "Moyenne de la session",
+      "duration": "Durée",
+      "cost": "Coût actuel",
+      "estimated": "Estimation TTC",
+      "balanceLeft": "Restant sur votre carte après cette session",
+      "balanceUsed": "{{percent}} % de votre solde utilisé",
+      "lowBalance": "Votre solde s'épuise : la borne arrête la session.",
+      "noteLive": "Mis à jour en direct au fil des relevés de la borne. Le montant définitif est facturé à la fin de la session.",
+      "noteOffline": "Le direct est en pause ; les chiffres se mettent à jour toutes les 30 secondes.",
+      "stop": "Arrêter la recharge",
+      "stopping": "Arrêt…",
+      "stopTitle": "Arrêter cette session de recharge ?",
+      "stopConfirm": "Arrêter la recharge",
+      "keepCharging": "Continuer la recharge",
+      "stopText": "La borne s'arrête et libère votre câble. Vous payez ce qui a été rechargé : {{energy}} kWh, environ {{cost}} à ce stade.",
+      "ended": "Votre session est terminée : {{energy}} kWh pour {{cost}}.",
+      "viewReceipt": "Voir le reçu"
+    },
     "command": {
+      "stop": {
+        "done": "Arrêt demandé : la borne termine votre session."
+      },
       "refused": "La borne a refusé la demande ({{status}}).",
       "notRunning": "Cette session est déjà terminée.",
       "offline": "La borne n'est pas connectée pour le moment. Réessayez plus tard.",
@@ -19,6 +50,17 @@
       "unavailable": "Le service est momentanément indisponible. Réessayez dans un instant.",
       "notSupported": "Cette borne ne prend pas en charge cette action.",
       "failed": "La commande n'a pas pu être envoyée. Réessayez."
+    },
+    "customer": {
+      "firstSessionHint": "Démarrez une session depuis l'application EVEON ou avec votre carte de recharge sur n'importe quelle borne EVEON : elle apparaîtra ici.",
+      "shortcuts": "Raccourcis",
+      "walletHint": "Rechargez en ligne et suivez votre solde",
+      "methodsHint": "Cartes enregistrées pour recharger plus vite",
+      "statements": "Relevés et exports",
+      "statementsHint": "Téléchargez vos sessions en CSV ou en PDF",
+      "cardsHint": "Vos cartes RFID et leur solde",
+      "readOnly": "Votre espace est en lecture seule : pour modifier vos informations ou vos cartes, contactez le support EVEON.",
+      "invoiceFailed": "La facture n'a pas pu être téléchargée. Réessayez."
     }
   }
 }

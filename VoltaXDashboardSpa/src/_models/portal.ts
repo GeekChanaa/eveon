@@ -22,12 +22,16 @@ export interface MyProfile {
 export interface MyActiveSession {
   id: number;
   stationName: string | null;
+  /** The charger's OCPP id (with transactionUid, what stopping the session needs). */
   chargePointName: string | null;
   connector: string | null;
   startDate: string;
   chargedMinutes: number;
   chargedKwhs: number;
   currentCost: number;
+  transactionUid: string | null;
+  /** Balance of the card the session is charged to, before this session. */
+  cardBalance: number | null;
 }
 
 export interface MyOverview {

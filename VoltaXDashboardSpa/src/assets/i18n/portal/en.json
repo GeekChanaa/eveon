@@ -9,7 +9,38 @@
       "minutes": "{{m}} min",
       "hours": "{{h}} h {{m}} min"
     },
+    "live": {
+      "connection": {
+        "idle": "Not connected",
+        "connecting": "Connecting…",
+        "live": "Live",
+        "reconnecting": "Reconnecting…",
+        "offline": "Live updates paused"
+      },
+      "stoppingTitle": "Stopping your session…",
+      "power": "Power",
+      "average": "Session average",
+      "duration": "Duration",
+      "cost": "Cost so far",
+      "estimated": "Estimate, VAT included",
+      "balanceLeft": "Left on your card after this session",
+      "balanceUsed": "{{percent}} % of your balance used",
+      "lowBalance": "Your balance is running out: the charger is stopping the session.",
+      "noteLive": "Updated live as the charger reports. The final amount is billed when the session ends.",
+      "noteOffline": "Live updates are paused; the figures refresh every 30 seconds.",
+      "stop": "Stop charging",
+      "stopping": "Stopping…",
+      "stopTitle": "Stop this charging session?",
+      "stopConfirm": "Stop charging",
+      "keepCharging": "Keep charging",
+      "stopText": "The charger stops and releases your cable. You pay for what was charged: {{energy}} kWh, about {{cost}} so far.",
+      "ended": "Your session ended: {{energy}} kWh for {{cost}}.",
+      "viewReceipt": "View the receipt"
+    },
     "command": {
+      "stop": {
+        "done": "Stop requested: the charger is ending your session."
+      },
       "refused": "The charger refused the request ({{status}}).",
       "notRunning": "This session is already over.",
       "offline": "The charger is not connected right now. Try again later.",
@@ -19,6 +50,17 @@
       "unavailable": "The service is temporarily unavailable. Try again in a moment.",
       "notSupported": "This charger does not support this action.",
       "failed": "The command could not be sent. Try again."
+    },
+    "customer": {
+      "firstSessionHint": "Start a session from the EVEON app or with your charging card at any EVEON station: it will show up here.",
+      "shortcuts": "Shortcuts",
+      "walletHint": "Top up online and follow your balance",
+      "methodsHint": "Cards saved for faster top-ups",
+      "statements": "Statements and exports",
+      "statementsHint": "Download your sessions as CSV or PDF",
+      "cardsHint": "Your RFID cards and their balance",
+      "readOnly": "Your portal is read only: to change your details or your cards, contact EVEON support.",
+      "invoiceFailed": "The invoice could not be downloaded. Try again."
     }
   }
 }
