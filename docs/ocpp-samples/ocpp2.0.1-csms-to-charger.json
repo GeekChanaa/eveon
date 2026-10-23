@@ -1,0 +1,11 @@
+{
+  "RequestStartTransaction": [2, "19223204", "RequestStartTransaction", {
+    "evseId": 1,
+    "remoteStartId": 1,
+    "idToken": { "idToken": "SAMPLE-TOKEN-0001", "type": "Central" }
+  }],
+  "RequestStopTransaction": [2, "19223205", "RequestStopTransaction", {
+    "transactionId": "73efaf11-8bbc-4543-b729-6a91e22800b1"
+  }],
+  "BootNotificationResult": [3, "1", { "currentTime": "2026-01-02T12:27:00Z", "interval": 300, "status": "Accepted" }]
+}

@@ -1,0 +1,39 @@
+{
+  "BootNotification": [2, "1", "BootNotification", {
+    "chargingStation": { "model": "NG920-61021", "vendorName": "Alfen BV", "serialNumber": "SAMPLE-0001", "firmwareVersion": "7.0.5-4328" },
+    "reason": "PowerUp"
+  }],
+  "SecurityEventNotification": [2, "2", "SecurityEventNotification", {
+    "timestamp": "2026-01-02T12:27:12Z", "type": "StartupOfTheDevice"
+  }],
+  "StatusNotification": [2, "3", "StatusNotification", {
+    "timestamp": "2026-01-02T12:27:36Z", "connectorStatus": "Available", "evseId": 1, "connectorId": 1
+  }],
+  "Authorize": [2, "4", "Authorize", {
+    "idToken": { "idToken": "SAMPLE-TOKEN-0001", "type": "Central" }
+  }],
+  "TransactionEventStarted": [2, "5", "TransactionEvent", {
+    "eventType": "Started", "timestamp": "2026-01-02T13:51:33Z", "triggerReason": "RemoteStart", "seqNo": 0,
+    "transactionInfo": { "transactionId": "73efaf11-8bbc-4543-b729-6a91e22800b1", "chargingState": "SuspendedEVSE", "remoteStartId": 1 },
+    "meterValue": [{ "timestamp": "2026-01-02T13:51:35Z",
+      "sampledValue": [{ "value": 0.128, "context": "Transaction.Begin", "measurand": "Energy.Active.Import.Register", "unitOfMeasure": { "unit": "kWh" } }] }],
+    "evse": { "id": 1, "connectorId": 1 },
+    "idToken": { "idToken": "SAMPLE-TOKEN-0001", "type": "Central" }
+  }],
+  "TransactionEventUpdated": [2, "6", "TransactionEvent", {
+    "eventType": "Updated", "timestamp": "2026-01-02T14:06:29Z", "triggerReason": "MeterValuePeriodic", "seqNo": 1,
+    "transactionInfo": { "transactionId": "73efaf11-8bbc-4543-b729-6a91e22800b1", "chargingState": "Charging" },
+    "meterValue": [{ "timestamp": "2026-01-02T14:06:29Z",
+      "sampledValue": [{ "value": 2.130, "context": "Sample.Periodic", "measurand": "Energy.Active.Import.Register", "location": "Outlet", "unitOfMeasure": { "unit": "kWh" } }] }],
+    "evse": { "id": 1, "connectorId": 1 }
+  }],
+  "TransactionEventEnded": [2, "7", "TransactionEvent", {
+    "eventType": "Ended", "timestamp": "2026-01-02T14:14:44Z", "triggerReason": "RemoteStop", "seqNo": 2,
+    "transactionInfo": { "transactionId": "73efaf11-8bbc-4543-b729-6a91e22800b1", "chargingState": "Idle", "stoppedReason": "Remote" },
+    "meterValue": [{ "timestamp": "2026-01-02T14:14:44Z",
+      "sampledValue": [{ "value": 5.128, "context": "Transaction.End", "measurand": "Energy.Active.Import.Register", "unitOfMeasure": { "unit": "kWh" } }] }],
+    "evse": { "id": 1, "connectorId": 1 },
+    "idToken": { "idToken": "SAMPLE-TOKEN-0001", "type": "Central" }
+  }],
+  "RequestStartTransactionResult": [3, "19223204", { "status": "Accepted", "transactionId": "73efaf11-8bbc-4543-b729-6a91e22800b1" }]
+}

@@ -1,0 +1,5 @@
+{
+  "RemoteStartTransaction": [2, "123456", "RemoteStartTransaction", { "idTag": "SAMPLE01", "connectorId": 1 }],
+  "RemoteStopTransaction": [2, "654321", "RemoteStopTransaction", { "transactionId": 123456 }],
+  "UnlockConnector": [2, "654322", "UnlockConnector", { "connectorId": 1 }]
+}
