@@ -20,15 +20,18 @@ namespace VoltaXApi.Data
                                                       .OrderByDescending(cu => cu.StartDate)
                                                       .FirstOrDefaultAsync();
 
-            if(lastUptime.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
+            if(lastUptime?.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
             {
                 lastUptime.TransactionID = transactionID;
                 await _context.SaveChangesAsync();
             }
             else
             {
-                lastUptime.EndDate = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                if (lastUptime != null)
+                {
+                    lastUptime.EndDate = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
                 ConnectorUptime newUptime = new (){
                     TransactionID = transactionID,
                     ConnectorID = connectorID,
@@ -45,7 +48,7 @@ namespace VoltaXApi.Data
                                                       .OrderByDescending(cu => cu.StartDate)
                                                       .FirstOrDefaultAsync();
 
-            if(lastUptime.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
+            if(lastUptime?.ConnectorUptimeStatus == ConnectorUptimeStatusEnum.Charging)
             {
                 lastUptime.EndDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
