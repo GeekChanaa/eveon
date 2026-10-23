@@ -1,0 +1,59 @@
+{
+  "billing": {
+    "refunds": {
+      "title": "Remboursements",
+      "orderHint": "Rembourser tout ou partie du rechargement : le montant est rendu au client et retiré de son portefeuille.",
+      "sessionHint": "Rembourser tout ou partie de la session : le montant est crédité sur le portefeuille du client.",
+      "refund": "Rembourser",
+      "paid": "Payé",
+      "refunded": "Déjà remboursé",
+      "refundable": "Remboursable",
+      "walletBalance": "Solde du portefeuille",
+      "amount": "Montant",
+      "all": "Tout",
+      "method": "Mode",
+      "reason": "Motif",
+      "continue": "Continuer",
+      "confirm": "Rembourser {{amount}} ({{method}}) ?",
+      "irreversible": "Un avoir sera émis et le client sera prévenu. Cette opération ne peut pas être annulée.",
+      "refunding": "Remboursement…",
+      "confirmButton": "Confirmer le remboursement",
+      "done": "{{amount}} remboursés – avoir {{creditNote}}.",
+      "date": "Date",
+      "creditNote": "Avoir",
+      "amountRange": "Le montant doit être compris entre 0,01 et {{max}}.",
+      "amountCents": "Le montant s'exprime en dirhams et centimes.",
+      "reasonRequired": "Indiquez le motif du remboursement (3 caractères au moins).",
+      "methods": {
+        "Gateway": "Sur le moyen de paiement ({{provider}})",
+        "Wallet": "Sur le portefeuille EVEON",
+        "External": "Hors plateforme (espèces, virement)"
+      },
+      "status": {
+        "Pending": "En cours",
+        "Succeeded": "Effectué",
+        "Failed": "Échoué"
+      },
+      "notes": {
+        "manual": "Rechargement manuel : remboursez le client hors plateforme (espèces, virement) puis enregistrez-le ici.",
+        "provider": "{{provider}} ne permet pas le remboursement automatique : remboursez dans son back-office puis enregistrez-le ici comme remboursement hors plateforme."
+      },
+      "errors": {
+        "exceeds_paid": "Ce montant dépasse ce qui reste à rembourser.",
+        "insufficient_balance": "Le portefeuille ne contient plus ce montant : le client l'a déjà dépensé en partie.",
+        "refund_not_supported": "Ce paiement ne peut pas être remboursé par le prestataire : choisissez le remboursement hors plateforme.",
+        "key_reused": "Ce remboursement a déjà été enregistré avec d'autres valeurs. Rouvrez le formulaire.",
+        "in_progress": "Ce remboursement est déjà en cours.",
+        "not_paid": "Seul un rechargement payé peut être remboursé.",
+        "not_billed": "Seule une session terminée et facturée peut être remboursée.",
+        "invalid_amount": "Montant invalide.",
+        "invalid_reason": "Indiquez le motif du remboursement.",
+        "invalid_key": "Rouvrez le formulaire de remboursement.",
+        "invalid_method": "Ce mode de remboursement n'est pas possible ici.",
+        "no_card": "La carte de recharge de ce paiement n'existe plus.",
+        "not_found": "Introuvable.",
+        "provider_failed": "Le prestataire de paiement a refusé le remboursement : le montant a été rendu au portefeuille."
+      }
+    }
+  }
+}

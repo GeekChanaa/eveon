@@ -1,0 +1,59 @@
+{
+  "billing": {
+    "refunds": {
+      "title": "Refunds",
+      "orderHint": "Refund all or part of the top-up: the amount goes back to the customer and leaves their wallet.",
+      "sessionHint": "Refund all or part of the session: the amount is credited to the customer's wallet.",
+      "refund": "Refund",
+      "paid": "Paid",
+      "refunded": "Already refunded",
+      "refundable": "Refundable",
+      "walletBalance": "Wallet balance",
+      "amount": "Amount",
+      "all": "All",
+      "method": "Method",
+      "reason": "Reason",
+      "continue": "Continue",
+      "confirm": "Refund {{amount}} ({{method}})?",
+      "irreversible": "A credit note will be issued and the customer notified. This cannot be undone.",
+      "refunding": "Refunding…",
+      "confirmButton": "Confirm the refund",
+      "done": "{{amount}} refunded – credit note {{creditNote}}.",
+      "date": "Date",
+      "creditNote": "Credit note",
+      "amountRange": "The amount must be between 0.01 and {{max}}.",
+      "amountCents": "The amount is in dirhams and cents.",
+      "reasonRequired": "Give the reason for the refund (at least 3 characters).",
+      "methods": {
+        "Gateway": "To the payment method ({{provider}})",
+        "Wallet": "To the EVEON wallet",
+        "External": "Outside the platform (cash, transfer)"
+      },
+      "status": {
+        "Pending": "In progress",
+        "Succeeded": "Done",
+        "Failed": "Failed"
+      },
+      "notes": {
+        "manual": "Manual top-up: refund the customer outside the platform (cash, transfer), then record it here.",
+        "provider": "{{provider}} cannot refund automatically: refund in its back office, then record it here as refunded outside the platform."
+      },
+      "errors": {
+        "exceeds_paid": "This amount is more than what is left to refund.",
+        "insufficient_balance": "The wallet no longer holds this amount: the customer already spent part of it.",
+        "refund_not_supported": "This payment cannot be refunded through the provider: choose refunded outside the platform.",
+        "key_reused": "This refund was already recorded with other values. Open the form again.",
+        "in_progress": "This refund is already in progress.",
+        "not_paid": "Only a paid top-up can be refunded.",
+        "not_billed": "Only an ended, billed session can be refunded.",
+        "invalid_amount": "Invalid amount.",
+        "invalid_reason": "Give the reason for the refund.",
+        "invalid_key": "Open the refund form again.",
+        "invalid_method": "This refund method is not possible here.",
+        "no_card": "The charging card of this payment no longer exists.",
+        "not_found": "Not found.",
+        "provider_failed": "The payment provider refused the refund: the amount was given back to the wallet."
+      }
+    }
+  }
+}

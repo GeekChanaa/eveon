@@ -126,5 +126,7 @@
         </div>
       </div>
     </section>
+
+    <vx-refund-panel *ngIf="!active" target="Session" [targetId]="chargingSessionID"></vx-refund-panel>
   </div>
 </app-dashboard-details-container>
