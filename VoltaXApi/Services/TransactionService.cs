@@ -608,7 +608,7 @@ namespace VoltaXApi.Services
 
         // Deduct amount from card
         if (cardTagID > 0)
-          await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID);
+          await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID, transaction.ChargingSessionID);
 
         await _chargingSessionService.EndChargingSession(
             transaction.ChargingSessionID, minutesCharged, chargedKwhs,

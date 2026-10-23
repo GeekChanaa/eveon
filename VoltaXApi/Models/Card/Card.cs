@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaXApi.Models
@@ -16,6 +17,9 @@ namespace VoltaXApi.Models
         public CardStatusEnum Status { get; set; }
         [Precision(18, 2)]
         public decimal Balance { get; set; }
+        /// <summary>Incremented with every balance change (see IWalletService); concurrent changes retry.</summary>
+        [ConcurrencyCheck]
+        public int BalanceVersion { get; set; }
         public string Note { get; set; }
         public bool? Blocked { get; set; }
         public int? UserID { get; set; }

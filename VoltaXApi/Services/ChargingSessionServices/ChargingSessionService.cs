@@ -89,7 +89,7 @@ namespace VoltaXApi.Services
                 await _chargingSessionRepository.Update(chargingSession);
                 
                 if (_globalConfigurations.GracePeriod < idleMinutes * 60)
-                    await _cardService.SubstractAmountFromCardByIdleMinutes(chargingSession.CardID, idleMinutes, connectorID);
+                    await _cardService.SubstractAmountFromCardByIdleMinutes(chargingSession.CardID, idleMinutes, connectorID, chargingSession.ID);
             }
             return chargingSession;
         }

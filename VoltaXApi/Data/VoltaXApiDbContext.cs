@@ -51,6 +51,19 @@ namespace VoltaXApi.Data
                 .Property(c => c.IsDeleted)
                 .HasDefaultValue(false);
 
+            modelBuilder.Entity<WalletTransaction>(entity =>
+            {
+                entity.Property(w => w.Type).HasConversion<string>().HasMaxLength(32);
+                entity.HasIndex(w => w.Reference).IsUnique();
+                entity.HasIndex(w => new { w.CardID, w.CreatedAt });
+                entity.HasIndex(w => w.ChargingSessionID);
+                entity.HasIndex(w => w.OrderID);
+                entity.HasOne(w => w.Card)
+                    .WithMany()
+                    .HasForeignKey(w => w.CardID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
             modelBuilder.Entity<CardChangeHistory>(entity =>
             {
                 entity.HasIndex(history => new { history.CardID, history.ChangedAtUtc });
@@ -398,6 +411,7 @@ namespace VoltaXApi.Data
         public DbSet<SystemReport> SystemReports { get; set; }
         public DbSet<SystemReportComment> SystemReportComments { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<WalletTransaction> WalletTransactions { get; set; }
         public DbSet<CardChangeHistory> CardChangeHistories { get; set; }
         public DbSet<CardExpirationNotification> CardExpirationNotifications { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
@@ -495,6 +509,7 @@ namespace VoltaXApi.Data
             EnsureCardHistoryIsImmutable();
             UpdateTimestamps();
             SoftDelete();
+            AddOpeningBalanceMovements();
             await AddCardChangeHistoryAsync(cancellationToken);
             return await base.SaveChangesAsync(cancellationToken);
         }
@@ -504,8 +519,30 @@ namespace VoltaXApi.Data
             EnsureCardHistoryIsImmutable();
             UpdateTimestamps();
             SoftDelete();
+            AddOpeningBalanceMovements();
             AddCardChangeHistory();
             return base.SaveChanges();
+        }
+
+        /// <summary>
+        /// A card created with a balance gets its opening movement, so the wallet ledger of every card adds up to
+        /// its balance (later changes go through IWalletService).
+        /// </summary>
+        private void AddOpeningBalanceMovements()
+        {
+            foreach (var entry in ChangeTracker.Entries<Card>().Where(e => e.State == EntityState.Added && e.Entity.Balance != 0).ToList())
+            {
+                WalletTransactions.Add(new WalletTransaction
+                {
+                    Card = entry.Entity,
+                    Type = WalletTransactionType.Adjustment,
+                    Amount = entry.Entity.Balance,
+                    BalanceAfter = entry.Entity.Balance,
+                    Reference = $"opening:{Guid.NewGuid():N}",
+                    Description = "Opening balance",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
         }
 
         private async Task AddCardChangeHistoryAsync(CancellationToken cancellationToken)
@@ -541,7 +578,8 @@ namespace VoltaXApi.Data
             Microsoft.EntityFrameworkCore.ChangeTracking.PropertyValues databaseValues)
         {
             var changes = entry.Properties
-                .Where(property => property.Metadata.Name is not nameof(IEntity.CreatedAt) and not nameof(IEntity.UpdatedAt))
+                .Where(property => property.Metadata.Name is not nameof(IEntity.CreatedAt) and not nameof(IEntity.UpdatedAt)
+                    and not nameof(Card.BalanceVersion))
                 .Select(property => new
                 {
                     property.Metadata.Name,

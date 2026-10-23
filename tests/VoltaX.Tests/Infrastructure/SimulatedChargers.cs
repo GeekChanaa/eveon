@@ -17,10 +17,23 @@ public static class Seeds
         return user;
     }
 
-    /// <summary>A provisioned (bootable as Accepted) charge point, optionally with EVSE 1 / connector 1 priced.</summary>
+    public static async Task<ChargingStation> Station(VoltaXApiDbContext db, int? partnerId = null, string name = "Station")
+    {
+        var station = new ChargingStation { Name = name, Address = "1 Rue de Test", City = "Casablanca", PartnerID = partnerId };
+        db.ChargingStations.Add(station);
+        await db.SaveChangesAsync();
+        return station;
+    }
+
+    /// <summary>
+    /// A provisioned (bootable as Accepted) charge point, optionally with EVSE 1 / connector 1 priced. Without a
+    /// station id a station is created (relational databases enforce the foreign key).
+    /// </summary>
     public static async Task<ChargePoint> ChargePoint(VoltaXApiDbContext db, string chargePointId, Action<Connector>? connector = null,
         int chargingStationId = 0)
     {
+        if (chargingStationId == 0)
+            chargingStationId = (await Station(db)).ID;
         var chargePoint = new ChargePoint { ChargePointId = chargePointId, SerialNumber = "SN-" + chargePointId, ChargingStationID = chargingStationId };
         db.ChargePoints.Add(chargePoint);
         await db.SaveChangesAsync();

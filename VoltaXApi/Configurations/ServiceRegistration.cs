@@ -236,6 +236,7 @@ public static class ServiceRegistration
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<ICardService, CardService>();
+        services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<IConnectorService, ConnectorService>();
         services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
         services.AddScoped<ISystemReportService, SystemReportService>();

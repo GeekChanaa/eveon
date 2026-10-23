@@ -201,6 +201,10 @@ namespace VoltaXApi.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("BalanceVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
                     b.Property<bool?>("Blocked")
                         .HasColumnType("bit");
 
@@ -4408,6 +4412,65 @@ namespace VoltaXApi.Migrations
                     b.ToTable("UserInfoDownloadRequests");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.WalletTransaction", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.HasIndex("CardID", "CreatedAt");
+
+                    b.ToTable("WalletTransactions");
+                });
+
             modelBuilder.Entity("VoltaXApi.OCPP.Ocpp16.Ocpp16Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -5702,6 +5765,17 @@ namespace VoltaXApi.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.WalletTransaction", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("VoltaXApi.Ocpi.Models.OcpiOutboxMessage", b =>

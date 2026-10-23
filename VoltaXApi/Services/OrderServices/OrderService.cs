@@ -34,7 +34,7 @@ namespace VoltaXApi.Services
         {
             var order = await this._orderRepository.CreateRechargeOrder(orderDto);
             if (order.Status == RechargeOrderStatus.Completed)
-                await this._cardService.AddAmountToCard(orderDto.CardID, orderDto.Amount);
+                await this._cardService.AddAmountToCard(order.CardID, order.Amount, order.ID);
             var card = (await _cardRepository.GetAllCards()).FirstOrDefault(card => card.ID == order.CardID);
             if (card?.User != null)
                 await SendQuoteAsync(order, card.User.Email, card.User.FullName);
@@ -63,7 +63,7 @@ namespace VoltaXApi.Services
 
             var credited = status == RechargeOrderStatus.Completed;
             if (credited)
-                await _cardService.AddAmountToCard(order.CardID, order.Amount);
+                await _cardService.AddAmountToCard(order.CardID, order.Amount, order.ID);
 
             await SendQuoteAsync(order, card.User.Email, card.User.FullName);
 
