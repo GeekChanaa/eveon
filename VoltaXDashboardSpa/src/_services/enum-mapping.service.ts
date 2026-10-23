@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { NoticeTypeEnum } from 'src/_models/_enums/notice-type-enum';
-import { PartnerTypeEnum } from 'src/_models/_enums/partner-enum-type';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EnumMappingService {
-  constructor() {}
+  constructor(private translate: TranslateService) {}
 
   private enumMappings: { [key: string]: { [id: number]: string } } = {
     CardStatus: {
@@ -109,5 +108,18 @@ export class EnumMappingService {
 
   getEnumMapping(modelName: string): { [id: number]: string } {
     return this.enumMappings[modelName];
+  }
+
+  /**
+   * The value of an enum in the interface language (operator.enums.<enum>.<name>), from its number or name;
+   * an unknown value is shown as is.
+   */
+  label(modelName: string, value: number | string | null | undefined): string {
+    if (value === null || value === undefined || value === '') return '';
+    const name = typeof value === 'number' ? this.enumMappings[modelName]?.[value] : value;
+    if (name === undefined) return String(value);
+    const key = `operator.enums.${modelName}.${name}`;
+    const text = this.translate.instant(key);
+    return text === key ? name.replace(/([a-z])([A-Z])/g, '$1 $2') : text;
   }
 }

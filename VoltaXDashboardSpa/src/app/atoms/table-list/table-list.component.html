@@ -1,15 +1,16 @@
 <div class="page__title h3">
-  {{name | titlecase}}
+  {{ titleKey ? (titleKey | translate) : (name | titlecase) }}
   <app-breadcrumb  class="breadcrumb" [items]="breadcrumbs"></app-breadcrumb>
 </div>
 <div class="row card">
   <app-progress-bar *ngIf="isLoading"></app-progress-bar>
   <div class="card__head">
 
-    <form class="form" *ngIf="searchable">
-      <input class="form__input" type="text" [(ngModel)]="searchValue" name="search" placeholder="{{searchByPlaceHolder}}" required="required" autocomplete="off" (keyup.enter)="search()" />
+    <form class="form" *ngIf="searchable" role="search" (ngSubmit)="search()">
+      <input class="form__input" type="search" [(ngModel)]="searchValue" name="search" [placeholder]="searchByPlaceHolder | translate"
+        [attr.aria-label]="'operator.table.search' | translate" autocomplete="off" />
 
-      <button class="form__button" (click)="search()">
+      <button class="form__button" type="submit" [attr.aria-label]="'operator.table.search' | translate">
         <svg class="icon icon-search">
           <use xlink:href="#icon-search"></use>
         </svg>
@@ -22,14 +23,14 @@
           <path d="M4 7h9m4 0h3M4 17h3m4 0h9" />
           <circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" />
         </svg>
-        <span>Filters</span>
+        <span>{{ 'operator.table.filters' | translate }}</span>
       </button>
 
 
       <div class="filters__body">
           <div class="filters__top">
-            <div class="title-red filters__title">Filtering {{names}}</div>
-            <button type="button" class="filters__close" aria-label="Close filters" (click)="removeActive(); filterToggle.focus()">
+            <div class="title-red filters__title">{{ filterTitleKey | translate }}</div>
+            <button type="button" class="filters__close" [attr.aria-label]="'operator.table.closeFilters' | translate" (click)="removeActive(); filterToggle.focus()">
               <svg class="icon icon-close">
                 <use xlink:href="#icon-close"></use>
               </svg>
@@ -37,8 +38,8 @@
           </div>
           <ng-content select="[filter__body]"></ng-content>
           <div class="filters__btns">
-            <button class="button-stroke filters__button" (click)="resetFilters()">Reset</button>
-            <button class="button filters__button" (click)="applyFilters()">Apply</button>
+            <button type="button" class="button-stroke filters__button" (click)="resetFilters()">{{ 'common.actions.reset' | translate }}</button>
+            <button type="button" class="button filters__button" (click)="applyFilters()">{{ 'common.actions.apply' | translate }}</button>
           </div>
         </div>
       <div class="filters__overlay" (click)="removeActive()"></div>
@@ -49,19 +50,19 @@
         <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true">
           <rect x="3" y="4" width="18" height="16" rx="3" /><path d="M9 4v16m6-16v16" />
         </svg>
-        <span>Columns</span>
+        <span>{{ 'operator.table.columns' | translate }}</span>
         <svg class="list-tool__icon list-tool__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4" /></svg>
       </button>
       <div class="display__columns" *ngIf="displayMenu">
         <div class="display__columns_options">
-          <div class="filters__label">Visible columns</div>
-          <p class="list-columns-hint">Choose what appears in this table.</p>
+          <div class="filters__label">{{ 'operator.table.visibleColumns' | translate }}</div>
+          <p class="list-columns-hint">{{ 'operator.table.columnsHint' | translate }}</p>
           <div class="filters__list">
             <label class="checkbox checkbox_reverse checkbox__display" *ngFor="let field of fields">
-              <input value="{{fieldShown[field]}}" [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
+              <input [(ngModel)]="fieldShown[field]" class="checkbox__input" type="checkbox">
               <span class="checkbox__inner">
                 <span class="checkbox__tick"></span>
-                <span class="checkbox__text">{{field | camelCaseToSpace}}</span>
+                <span class="checkbox__text">{{ fieldLabel(field) }}</span>
               </span>
             </label>
           </div>
@@ -69,25 +70,34 @@
       </div>
     </div>
     <ng-content select="[list__actions]"></ng-content>
-    <a *ngIf="createLink != '' && access.canUrl(createLink)" [routerLink]="createLink" class="list-tool list-tool--new" [attr.aria-label]="'Create new ' + name">
+    <button *ngIf="exportObservable" type="button" class="list-tool" (click)="export()" [disabled]="exporting">
+      <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" /></svg>
+      <span>{{ 'common.actions.exportCsv' | translate }}</span>
+    </button>
+    <a *ngIf="createLink != '' && access.canUrl(createLink)" [routerLink]="createLink" class="list-tool list-tool--new" [attr.aria-label]="'operator.table.createNew' | translate">
       <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
-      <span>New</span>
+      <span>{{ 'operator.table.new' | translate }}</span>
     </a>
   </div>
 
 
   <div class="row__inner">
 
-    <ng-container *ngIf="data == null || data.length == 0">
+    <div class="vx-alert vx-alert--error table-list__error" *ngIf="loadError && !isLoading" role="alert">
+      {{ 'operator.table.loadError' | translate }}
+      <button type="button" class="vx-btn vx-btn--small" (click)="getAll()">{{ 'common.actions.retry' | translate }}</button>
+    </div>
+    <ng-container *ngIf="!isLoading && !loadError && (data == null || data.length == 0)">
       <app-empty-card></app-empty-card>
     </ng-container>
-    <div class="row__container" *ngIf="!isLoading && data != null && data.length > 0">
+    <div class="row__container" *ngIf="!isLoading && !loadError && data != null && data.length > 0">
       <div class="row__wrapper">
         <div class="row__table">
           <div class="row__row">
             <ng-container *ngFor="let field of fields">
-              <div *ngIf="fieldShown[field]" (click)="sort(field)" class="row__col col_header">
-                {{field | camelCaseToSpace}}
+              <div *ngIf="fieldShown[field]" (click)="sort(field)" (keydown.enter)="sort(field)" class="row__col col_header" tabindex="0" role="button"
+                [attr.aria-label]="'operator.table.sortBy' | translate:{ field: fieldLabel(field) }">
+                {{ fieldLabel(field) }}
                 <ng-container *ngIf="sortedColumn == field && itemParams.reverseOrder == 'n'">
                   <svg  class="icon icon-arrow-down">
                     <use xlink:href="#icon-arrow-down"></use>
@@ -99,36 +109,24 @@
                     <use xlink:href="#icon-arrow-down"></use>
                   </svg>
                 </ng-container>
-
-
-
               </div>
             </ng-container>
-            <div class="row__col">Options</div>
+            <div class="row__col">{{ 'operator.table.options' | translate }}</div>
           </div>
             <div class="row__row" *ngFor="let item of data">
               <ng-container *ngFor="let field of fields">
-                <!-- <div *ngIf="fieldShown[field] && fieldShown[field] instanceof Date" el class="row__col">this date</div> -->
                 <div *ngIf="fieldShown[field]" class="row__col">{{ formatValue(item, field) || '—' }}</div>
               </ng-container>
               <div class="row__col options_col">
                 <div class="actions__container">
-                    <div class="modal-overlay" *ngIf="showDeleteConfirmModal">
-                      <div class="modal-content">
-                        <h3>Confirm Delete</h3>
-                        <p>Are you sure you want to delete this item?</p>
-                        <div class="modal-actions">
-                          <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
-                          <button (click)="proceedWithDelete()" class="btn-delete">Delete</button>
-                        </div>
-                      </div>
-                    </div>
-                    <button *ngIf="deletable && canDelete" (click)="confirmDelete(item.id)" class="table__action delete-btn">
+                    <button *ngIf="deletable && canDelete" type="button" (click)="confirmDelete(item.id)" class="table__action delete-btn"
+                      [attr.aria-label]="'operator.table.delete' | translate" [title]="'operator.table.delete' | translate">
                         <svg class="icon icon-trash">
                             <use xlink:href="#icon-trash"></use>
                         </svg>
                     </button>
-                    <button *ngIf="displayable" (click)="display(item)" class="table__action display-btn">
+                    <button *ngIf="displayable" type="button" (click)="display(item)" class="table__action display-btn"
+                      [attr.aria-label]="'operator.table.open' | translate" [title]="'operator.table.open' | translate">
                         <svg class="icon icon-info">
                             <use xlink:href="#icon-info"></use>
                         </svg>
@@ -139,20 +137,16 @@
                 </div>
             </div>
             </div>
-
-
-
-
-
-
         </div>
       </div>
       <div class="row__foot">
 
         <button
+          type="button"
           class="button-stroke pagination__btn"
           [ngClass]="{'inactive' : currentPage == 1}"
           [disabled]="currentPage == 1"
+          [attr.aria-label]="'operator.table.previousPage' | translate"
           (click)="previousPage()"
           >
           <svg class="icon icon-arrow-next" style="transform: rotate(180deg);">
@@ -172,10 +166,12 @@
         </div>
 
         <button
+          type="button"
           class="button-stroke pagination__btn"
           (click)="nextPage()"
           [disabled]="currentPage == pagination.totalPages"
           [ngClass]="{'inactive' : currentPage == pagination.totalPages}"
+          [attr.aria-label]="'operator.table.nextPage' | translate"
           >
           <svg class="icon icon-arrow-next">
             <use xlink:href="#icon-arrow-next"></use>

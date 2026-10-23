@@ -10,6 +10,132 @@
       "success": "تم",
       "warning": "تنبيه",
       "error": "حدث خطأ ما"
+    },
+    "confirm": {
+      "title": "تأكيد",
+      "message": "هل تريد المتابعة فعلًا؟",
+      "deleteTitle": "حذف هذا العنصر؟",
+      "deleteMessage": "سيُحذف نهائيًا. لا يمكن التراجع عن ذلك.",
+      "deleteNamed": "حذف {{name}}؟"
+    },
+    "table": {
+      "filters": "المرشحات",
+      "filtering": "تصفية القائمة",
+      "closeFilters": "إغلاق المرشحات",
+      "columns": "الأعمدة",
+      "visibleColumns": "الأعمدة الظاهرة",
+      "columnsHint": "اختر ما يظهر في هذا الجدول.",
+      "new": "جديد",
+      "createNew": "إنشاء",
+      "options": "خيارات",
+      "search": "بحث",
+      "searchPlaceholder": "بحث",
+      "delete": "حذف",
+      "open": "فتح",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "loadError": "تعذر تحميل القائمة.",
+      "deleted": "تم الحذف.",
+      "deleteFailed": "تعذر الحذف.",
+      "sortBy": "ترتيب حسب {{field}}"
+    },
+    "enums": {
+      "CardStatus": {
+        "Active": "نشطة",
+        "Inactive": "غير نشطة",
+        "Blocked": "محظورة",
+        "Expired": "منتهية الصلاحية"
+      },
+      "CardType": {
+        "Standard": "عادية",
+        "Premium": "مميزة",
+        "Partner": "شريك"
+      },
+      "ChargePointCategory": {
+        "Single": "مفردة",
+        "Double": "مزدوجة"
+      },
+      "ChargePointStatus": {
+        "Available": "متاحة",
+        "Offline": "غير متصلة",
+        "UnderMaintenance": "قيد الصيانة"
+      },
+      "UserRole": {
+        "Admin": "مسؤول",
+        "Customer": "زبون",
+        "PremiumCustomer": "زبون مميز",
+        "Support": "الدعم"
+      },
+      "ChargingStationCategoryEnum": {
+        "Public": "عامة",
+        "Private": "خاصة",
+        "Partner": "شريك"
+      },
+      "ChargingStationStatusEnum": {
+        "Available": "متاحة",
+        "UnderMaintenance": "قيد الصيانة",
+        "Offline": "غير متصلة"
+      },
+      "ChargingStationNetworkEnum": {
+        "Public": "عامة",
+        "Private": "خاصة"
+      },
+      "ParkingTypeEnum": {
+        "ParallelParking": "ركن موازٍ",
+        "PerpendicularParking": "ركن عمودي",
+        "AngleParking": "ركن مائل"
+      },
+      "ReportStatus": {
+        "Pending": "قيد الانتظار",
+        "InProgress": "قيد المعالجة",
+        "Resolved": "محلول",
+        "Closed": "مغلق"
+      },
+      "ReportStatusEnum": {
+        "Pending": "قيد الانتظار",
+        "InProgress": "قيد المعالجة",
+        "Resolved": "محلول",
+        "Closed": "مغلق"
+      },
+      "ReportType": {
+        "ChargePoint": "نقطة شحن",
+        "Connector": "موصل",
+        "Website": "الموقع",
+        "Other": "أخرى"
+      },
+      "ReportCategory": {
+        "General": "عام",
+        "Technical": "تقني",
+        "Maintenance": "صيانة"
+      },
+      "PartnerTypeEnum": {
+        "Vendor": "مورّد",
+        "ServiceProvider": "مزوّد خدمة",
+        "Reseller": "موزّع",
+        "Affiliate": "منتسب",
+        "Investor": "مستثمر",
+        "Other": "أخرى"
+      },
+      "ReportCriticality": {
+        "Informational": "للعلم",
+        "Low": "منخفضة",
+        "Medium": "متوسطة",
+        "High": "مرتفعة",
+        "Critical": "حرجة"
+      },
+      "RechargeOrderStatus": {
+        "Pending": "قيد الانتظار",
+        "Processing": "قيد المعالجة",
+        "Completed": "مكتمل",
+        "Failed": "فشل",
+        "Canceled": "ملغى",
+        "Refunded": "مسترد"
+      },
+      "NoticeTypeEnum": {
+        "LegalUpdate": "تحديث قانوني",
+        "Marketing": "تسويق",
+        "Maintenance": "صيانة"
+      }
     }
   }
 }

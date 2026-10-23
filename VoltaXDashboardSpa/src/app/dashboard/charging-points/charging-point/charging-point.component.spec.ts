@@ -9,7 +9,7 @@ describe('ChargingPointComponent editing', () => {
   beforeEach(() => {
     response = new Subject();
     service = { edit: jasmine.createSpy('edit').and.returnValue(response) };
-    component = new ChargingPointComponent(service, {} as any, new EnumMappingService(), {} as any, {} as any, {} as any, {} as any, {} as any);
+    component = new ChargingPointComponent(service, {} as any, new EnumMappingService({ instant: (key: string) => key } as any), {} as any, {} as any, {} as any, {} as any, {} as any);
     component.chargePointID = 7;
     component.chargePoint = { id: 7, serialNumber: 'Original', status: 0, chargePointBrandID: 2, make: 'Brand A', password: ' secret ', comment: 'Note' };
     component.brands = [{ value: 2, label: 'Brand A' }, { value: 3, label: 'Brand B' }];

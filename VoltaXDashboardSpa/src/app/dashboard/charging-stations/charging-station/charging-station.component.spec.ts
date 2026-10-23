@@ -10,7 +10,7 @@ describe('ChargingStationComponent editing', () => {
   beforeEach(() => {
     response = new Subject();
     service = { edit: jasmine.createSpy('edit').and.returnValue(response), getChargingStationByID: () => of({}) };
-    component = new ChargingStationComponent(service, { snapshot: { paramMap: { get: () => '7' } } } as any, new EnumMappingService());
+    component = new ChargingStationComponent(service, { snapshot: { paramMap: { get: () => '7' } } } as any, new EnumMappingService({ instant: (key: string) => key } as any));
     component.chargingStationID = 7;
     component.chargingStation = { id: 7, name: 'Station', chargerQuantity: 2, parkingType: 'ParallelParking', city: 'Rabat', category: 0 };
   });

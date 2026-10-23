@@ -52,6 +52,7 @@ import { FieldLabelComponent } from './field-label/field-label.component';
 import { DashboardDetailsContainerComponent } from './dashboard-details-container/dashboard-details-container.component';
 import { InfoItemComponent } from './info-item/info-item.component';
 import { InfoBoxComponent } from './info-box/info-box.component';
+import { VxI18nModule } from '../shared/i18n/vx-i18n.module';
 
 @NgModule({
   declarations: [
@@ -110,7 +111,8 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     FormsModule,
     MatRippleModule,
     MatButtonModule,
-    CalendarModule
+    CalendarModule,
+    VxI18nModule
   ],
   exports: [
     CardComponent,
@@ -157,7 +159,8 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     BreadcrumbComponent,
     FieldLabelComponent,
     DashboardDetailsContainerComponent,
-    InfoBoxComponent
+    InfoBoxComponent,
+    VxI18nModule
   ],
   providers: [],
 })
