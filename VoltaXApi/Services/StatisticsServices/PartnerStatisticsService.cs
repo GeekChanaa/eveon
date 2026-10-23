@@ -94,19 +94,19 @@ namespace VoltaXApi.Services
         private static Task<SessionTotals> Total(IQueryable<ChargingSession> sessions, SessionPricing? pricing) =>
             SessionAggregation.TotalAsync(sessions, pricing);
 
+        // The queries come from Last30Days / LastYear, which start at the first boundary.
         private Task<Dictionary<DateTime, double>> ByDay(IQueryable<ChargingSession> sessions, SessionPricing? pricing, Func<SessionTotals, double> value) =>
-            By(sessions, pricing, local => local.Date, value);
+            By(sessions, BusinessPeriods.DayBoundaries(_clock, _clock.StartOfDayUtc(_clock.Today.AddDays(-30))), pricing, local => local.Date, value);
 
         private Task<Dictionary<string, double>> ByMonth(IQueryable<ChargingSession> sessions, SessionPricing? pricing, Func<SessionTotals, double> value) =>
-            By(sessions, pricing, local => $"{local.Month}-{local.Year}", value);
+            By(sessions, BusinessPeriods.MonthBoundaries(_clock, _clock.StartOfDayUtc(_clock.Today.AddYears(-1))), pricing,
+                local => $"{local.Month}-{local.Year}", value);
 
-        private async Task<Dictionary<TKey, double>> By<TKey>(IQueryable<ChargingSession> sessions, SessionPricing? pricing,
-            Func<DateTime, TKey> key, Func<SessionTotals, double> value) where TKey : notnull
+        private async Task<Dictionary<TKey, double>> By<TKey>(IQueryable<ChargingSession> sessions, IReadOnlyList<DateTime> boundaries,
+            SessionPricing? pricing, Func<DateTime, TKey> key, Func<SessionTotals, double> value) where TKey : notnull
         {
-            var buckets = await SessionAggregation.ByStartAsync(sessions, _clock.TimeZone, pricing);
-            return buckets
-                .GroupBy(b => key(_clock.ToLocal(b.StartUtc)))
-                .ToDictionary(g => g.Key, g => value(g.Select(b => b.Totals).Aggregate(SessionTotals.Empty, (sum, t) => sum.Add(t))));
+            var totals = await SessionAggregation.ByStartAsync(sessions, boundaries, start => key(_clock.ToLocal(start)), pricing);
+            return totals.ToDictionary(t => t.Key, t => value(t.Value));
         }
     }
 }

@@ -44,11 +44,11 @@ namespace VoltaXApi.Data
         public Task<double> GetTotalEnergyConsumedBetween(DateTime dateStart, DateTime dateEnd) =>
             SumEnergy(Completed().Where(t => t.StartTime >= dateStart && t.StartTime <= dateEnd));
 
-        public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync() =>
-            EnergyByDay(await LoadEnergy(Last30Days(Completed())));
+        public Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedLast30DaysAsync() =>
+            EnergyByDay(Last30Days(Completed()));
 
-        public async Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync() =>
-            EnergyByMonth(await LoadEnergy(LastYear(Completed())));
+        public Task<Dictionary<string, double>> GetMonthlyEnergyConsumedLastYearAsync() =>
+            EnergyByMonth(LastYear(Completed()));
 
         // Getting latest Transactions
         public async Task<List<Transaction>> GetLatestTransactions(int nbrTransactions = 20)
@@ -82,11 +82,11 @@ namespace VoltaXApi.Data
         public Task<double> GetPartnerTotalEnergyConsumedBetween(int partnerID, DateTime dateStart, DateTime dateEnd) =>
             SumEnergy(Partner(Completed(), partnerID).Where(t => t.StartTime >= dateStart && t.StartTime <= dateEnd));
 
-        public async Task<Dictionary<DateTime, double>> GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID) =>
-            EnergyByDay(await LoadEnergy(Last30Days(Partner(Completed(), partnerID))));
+        public Task<Dictionary<DateTime, double>> GetPartnerDailyEnergyConsumedLast30DaysAsync(int partnerID) =>
+            EnergyByDay(Last30Days(Partner(Completed(), partnerID)));
 
-        public async Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(int partnerID) =>
-            EnergyByMonth(await LoadEnergy(LastYear(Partner(Completed(), partnerID))));
+        public Task<Dictionary<string, double>> GetPartnerMonthlyEnergyConsumedLastYearAsync(int partnerID) =>
+            EnergyByMonth(LastYear(Partner(Completed(), partnerID)));
 
         #region Energy statistics
 
@@ -119,34 +119,43 @@ namespace VoltaXApi.Data
         private static async Task<double> SumEnergy(IQueryable<Transaction> query) =>
             await query.SumAsync(t => t.MeterStop - t.MeterStart) ?? 0;
 
+        // The queries come from Last30Days / LastYear, which start at the first boundary.
+        private Task<Dictionary<DateTime, double>> EnergyByDay(IQueryable<Transaction> query) =>
+            EnergyBy(query, VoltaXApi.Services.BusinessPeriods.DayBoundaries(_clock, _clock.StartOfDayUtc(_clock.Today.AddDays(-30))),
+                local => local.Date);
+
+        private Task<Dictionary<string, double>> EnergyByMonth(IQueryable<Transaction> query) =>
+            EnergyBy(query, VoltaXApi.Services.BusinessPeriods.MonthBoundaries(_clock, _clock.StartOfDayUtc(_clock.Today.AddYears(-1))),
+                local => $"{local.Month}-{local.Year}");
+
         /// <summary>
-        /// Energy per UTC hour of the transaction start (per minute when the business time zone has an offset that
-        /// is not a whole number of hours), summed by the database: every bucket falls on one business date.
+        /// Energy per business period of the transaction start, summed by the database in one GROUP BY on the period
+        /// (see BusinessPeriods.IndexOf); transactions that start after the last boundary (a charger clock ahead) are
+        /// keyed by their own start. Keys in chronological order, only those with transactions.
         /// </summary>
-        private async Task<List<(DateTime StartTime, double Energy)>> LoadEnergy(IQueryable<Transaction> query)
+        private async Task<Dictionary<TKey, double>> EnergyBy<TKey>(IQueryable<Transaction> query, IReadOnlyList<DateTime> boundaries,
+            Func<DateTime, TKey> key) where TKey : notnull
         {
-            var rows = VoltaXApi.Services.SessionAggregation.HasWholeHourOffsets(_clock.TimeZone)
-                ? await query.GroupBy(t => new { t.StartTime.Year, t.StartTime.Month, t.StartTime.Day, t.StartTime.Hour })
-                    .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, Minute = 0, Energy = g.Sum(t => t.MeterStop!.Value - t.MeterStart) })
-                    .ToListAsync()
-                : await query.GroupBy(t => new { t.StartTime.Year, t.StartTime.Month, t.StartTime.Day, t.StartTime.Hour, t.StartTime.Minute })
-                    .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, g.Key.Minute, Energy = g.Sum(t => t.MeterStop!.Value - t.MeterStart) })
-                    .ToListAsync();
-            return rows
-                .Select(r => (new DateTime(r.Year, r.Month, r.Day, r.Hour, r.Minute, 0, DateTimeKind.Utc), r.Energy))
-                .OrderBy(r => r.Item1)
-                .ToList();
+            var beyond = boundaries[^1];
+            var periods = await query
+                .Where(t => t.StartTime < beyond)
+                .GroupBy(VoltaXApi.Services.BusinessPeriods.IndexOf<Transaction>(t => t.StartTime, boundaries))
+                .Select(g => new { Period = g.Key, Energy = g.Sum(t => t.MeterStop!.Value - t.MeterStart) })
+                .ToListAsync();
+            var later = await query
+                .Where(t => t.StartTime >= beyond)
+                .OrderBy(t => t.StartTime)
+                .Select(t => new { t.StartTime, Energy = t.MeterStop!.Value - t.MeterStart })
+                .ToListAsync();
+
+            var energy = new Dictionary<TKey, double>();
+            void Add(TKey k, double value) => energy[k] = energy.GetValueOrDefault(k) + value;
+            foreach (var period in periods.Where(p => p.Period >= 0).OrderBy(p => p.Period))
+                Add(key(_clock.ToLocal(boundaries[period.Period])), period.Energy);
+            foreach (var row in later)
+                Add(key(_clock.ToLocal(row.StartTime)), row.Energy);
+            return energy;
         }
-
-        private Dictionary<DateTime, double> EnergyByDay(IEnumerable<(DateTime StartTime, double Energy)> rows) =>
-            rows.GroupBy(r => _clock.ToLocal(r.StartTime).Date).ToDictionary(g => g.Key, g => g.Sum(r => r.Energy));
-
-        private Dictionary<string, double> EnergyByMonth(IEnumerable<(DateTime StartTime, double Energy)> rows) =>
-            rows.GroupBy(r =>
-            {
-                var local = _clock.ToLocal(r.StartTime);
-                return $"{local.Month}-{local.Year}";
-            }).ToDictionary(g => g.Key, g => g.Sum(r => r.Energy));
 
         #endregion
 

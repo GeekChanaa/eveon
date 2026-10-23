@@ -54,26 +54,25 @@ namespace VoltaXApi.Services
         public async Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
-            return await RevenueBy(EndedSessions().Where(s => s.StartDate >= from), vatRate, gracePeriodSeconds, local => local.Date);
+            return await RevenueBy(from, BusinessPeriods.DayBoundaries(_clock, from), vatRate, gracePeriodSeconds, local => local.Date);
         }
 
         // Monthly revenue for the last year, keyed "month-year" of the business date
         public async Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddYears(-1));
-            return await RevenueBy(EndedSessions().Where(s => s.StartDate >= from), vatRate, gracePeriodSeconds, local => $"{local.Month}-{local.Year}");
+            return await RevenueBy(from, BusinessPeriods.MonthBoundaries(_clock, from), vatRate, gracePeriodSeconds, local => $"{local.Month}-{local.Year}");
         }
 
         private IQueryable<ChargingSession> EndedSessions() =>
             _context.ChargingSessions.AsNoTracking().Where(s => s.EndDate != null);
 
-        private async Task<Dictionary<TKey, double>> RevenueBy<TKey>(IQueryable<ChargingSession> sessions, decimal vatRate, double gracePeriodSeconds,
-            Func<DateTime, TKey> key) where TKey : notnull
+        private async Task<Dictionary<TKey, double>> RevenueBy<TKey>(DateTime from, IReadOnlyList<DateTime> boundaries, decimal vatRate,
+            double gracePeriodSeconds, Func<DateTime, TKey> key) where TKey : notnull
         {
-            var buckets = await SessionAggregation.ByStartAsync(sessions, _clock.TimeZone, new SessionPricing(vatRate, gracePeriodSeconds));
-            return buckets
-                .GroupBy(b => key(_clock.ToLocal(b.StartUtc)))
-                .ToDictionary(g => g.Key, g => (double)g.Sum(b => b.Totals.Revenue));
+            var totals = await SessionAggregation.ByStartAsync(EndedSessions().Where(s => s.StartDate >= from), boundaries,
+                start => key(_clock.ToLocal(start)), new SessionPricing(vatRate, gracePeriodSeconds));
+            return totals.ToDictionary(t => t.Key, t => (double)t.Value.Revenue);
         }
     }
 }

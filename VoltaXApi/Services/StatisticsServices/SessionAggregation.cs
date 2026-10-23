@@ -26,22 +26,24 @@ namespace VoltaXApi.Services
     /// amounts (billed on time only, before the amounts existed) are read one by one and priced by the model.
     /// </para>
     /// <para>
-    /// <see cref="ByStartAsync"/> groups by the UTC hour of the session start (by minute when the business time
-    /// zone has an offset that is not a whole number of hours), which the caller folds into business days or
-    /// months: every session of a bucket falls on the same business date.
+    /// <see cref="ByStartAsync{TKey}"/> groups by the business period (day, month) of the session start with one
+    /// GROUP BY on a CASE over the periods' UTC boundaries (see <see cref="BusinessPeriods.IndexOf{T}"/>).
     /// </para>
     /// </summary>
     public static class SessionAggregation
     {
-        private sealed record Row(int Year, int Month, int Day, int Hour, int Minute, int Count, double ChargedMinutes, double ChargedKwhs,
-            decimal EnergyAmount, decimal TimeAmount, decimal FlatFeeAmount, decimal IdleAmount);
+        private sealed record Row(int Period, int Count, double ChargedMinutes, double ChargedKwhs,
+            decimal EnergyAmount, decimal TimeAmount, decimal FlatFeeAmount, decimal IdleAmount)
+        {
+            public SessionTotals Totals => new(Count, ChargedMinutes, ChargedKwhs, EnergyAmount + TimeAmount + FlatFeeAmount + IdleAmount);
+        }
 
         public static async Task<SessionTotals> TotalAsync(IQueryable<ChargingSession> sessions, SessionPricing? pricing,
             CancellationToken cancellationToken = default)
         {
             var row = await sessions
                 .GroupBy(s => 1)
-                .Select(g => new Row(0, 0, 0, 0, 0,
+                .Select(g => new Row(0,
                     g.Count(),
                     g.Sum(s => s.ChargedMinutes ?? 0),
                     g.Sum(s => s.ChargedKwhs ?? 0),
@@ -56,50 +58,50 @@ namespace VoltaXApi.Services
             var unbilled = pricing == null
                 ? 0m
                 : (await UnbilledAsync(sessions, cancellationToken)).Sum(s => s.TotalPriceWithVAT(pricing.Value.VatRate, pricing.Value.GracePeriodSeconds));
-            return Totals(row) with { Revenue = BilledRevenue(row) + unbilled };
+            return row.Totals with { Revenue = row.Totals.Revenue + unbilled };
         }
 
-        /// <summary>Totals per start instant bucket (UTC, ascending); see the class remarks.</summary>
-        public static async Task<IReadOnlyList<(DateTime StartUtc, SessionTotals Totals)>> ByStartAsync(IQueryable<ChargingSession> sessions,
-            TimeZoneInfo businessZone, SessionPricing? pricing, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Totals by key of the session start, for sessions that start at or after <c>boundaries[0]</c> (the caller
+        /// filters them). Each period [boundaries[i], boundaries[i + 1]) is keyed by <paramref name="keyOf"/> of its
+        /// start; the rare sessions that start after the last boundary (a charger clock ahead) are read one by one and
+        /// keyed by their own start. Only keys with sessions are returned, in chronological order.
+        /// </summary>
+        public static async Task<Dictionary<TKey, SessionTotals>> ByStartAsync<TKey>(IQueryable<ChargingSession> sessions,
+            IReadOnlyList<DateTime> boundaries, Func<DateTime, TKey> keyOf, SessionPricing? pricing,
+            CancellationToken cancellationToken = default) where TKey : notnull
         {
-            var byMinute = !HasWholeHourOffsets(businessZone);
-            var grouped = byMinute
-                ? sessions.GroupBy(s => new { s.StartDate.Year, s.StartDate.Month, s.StartDate.Day, s.StartDate.Hour, s.StartDate.Minute })
-                    .Select(g => new Row(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, g.Key.Minute,
-                        g.Count(),
-                        g.Sum(s => s.ChargedMinutes ?? 0),
-                        g.Sum(s => s.ChargedKwhs ?? 0),
-                        g.Sum(s => s.TotalAmount != null ? s.EnergyAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.TimeAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.FlatFeeAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.IdleAmount : null) ?? 0))
-                : sessions.GroupBy(s => new { s.StartDate.Year, s.StartDate.Month, s.StartDate.Day, s.StartDate.Hour })
-                    .Select(g => new Row(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, 0,
-                        g.Count(),
-                        g.Sum(s => s.ChargedMinutes ?? 0),
-                        g.Sum(s => s.ChargedKwhs ?? 0),
-                        g.Sum(s => s.TotalAmount != null ? s.EnergyAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.TimeAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.FlatFeeAmount : null) ?? 0,
-                        g.Sum(s => s.TotalAmount != null ? s.IdleAmount : null) ?? 0));
+            var beyond = boundaries[^1];
+            var rows = await sessions
+                .Where(s => s.StartDate < beyond)
+                .GroupBy(BusinessPeriods.IndexOf<ChargingSession>(s => s.StartDate, boundaries))
+                .Select(g => new Row(g.Key,
+                    g.Count(),
+                    g.Sum(s => s.ChargedMinutes ?? 0),
+                    g.Sum(s => s.ChargedKwhs ?? 0),
+                    g.Sum(s => s.TotalAmount != null ? s.EnergyAmount : null) ?? 0,
+                    g.Sum(s => s.TotalAmount != null ? s.TimeAmount : null) ?? 0,
+                    g.Sum(s => s.TotalAmount != null ? s.FlatFeeAmount : null) ?? 0,
+                    g.Sum(s => s.TotalAmount != null ? s.IdleAmount : null) ?? 0))
+                .ToListAsync(cancellationToken);
 
-            var buckets = (await grouped.ToListAsync(cancellationToken))
-                .ToDictionary(r => new DateTime(r.Year, r.Month, r.Day, r.Hour, r.Minute, 0, DateTimeKind.Utc), r => Totals(r) with { Revenue = BilledRevenue(r) });
+            var totals = new Dictionary<TKey, SessionTotals>();
+            void Add(TKey key, SessionTotals value) =>
+                totals[key] = totals.TryGetValue(key, out var sum) ? sum.Add(value) : value;
 
+            foreach (var row in rows.Where(r => r.Period >= 0).OrderBy(r => r.Period))
+                Add(keyOf(boundaries[row.Period]), row.Totals);
             if (pricing != null)
-            {
-                foreach (var session in await UnbilledAsync(sessions, cancellationToken))
+                foreach (var session in await UnbilledAsync(sessions.Where(s => s.StartDate < beyond), cancellationToken))
                 {
-                    var start = session.StartDate;
-                    var key = new DateTime(start.Year, start.Month, start.Day, start.Hour, byMinute ? start.Minute : 0, 0, DateTimeKind.Utc);
-                    // Present: the grouped query counted every session, priced or not.
-                    if (buckets.TryGetValue(key, out var totals))
-                        buckets[key] = totals with { Revenue = totals.Revenue + session.TotalPriceWithVAT(pricing.Value.VatRate, pricing.Value.GracePeriodSeconds) };
+                    var period = BusinessPeriods.IndexOf(boundaries, session.StartDate);
+                    if (period >= 0)
+                        Add(keyOf(boundaries[period]), SessionTotals.Empty with { Revenue = Price(session, pricing.Value) });
                 }
-            }
-
-            return buckets.OrderBy(b => b.Key).Select(b => (b.Key, b.Value)).ToList();
+            foreach (var session in await PricedAsync(sessions.Where(s => s.StartDate >= beyond).OrderBy(s => s.StartDate), cancellationToken))
+                Add(keyOf(session.StartDate), new SessionTotals(1, session.ChargedMinutes ?? 0, session.ChargedKwhs ?? 0,
+                    pricing == null ? 0 : Price(session, pricing.Value)));
+            return totals;
         }
 
         /// <summary>Revenue per charging station of the sessions' charge points (stations without sessions are absent).</summary>
@@ -134,14 +136,13 @@ namespace VoltaXApi.Services
             foreach (var row in billed.Where(r => r.StationId != null))
                 revenue[row.StationId!.Value] = row.EnergyAmount + row.TimeAmount + row.FlatFeeAmount + row.IdleAmount;
             foreach (var row in unbilled.Where(r => r.StationId != null))
-                revenue[row.StationId!.Value] = revenue.GetValueOrDefault(row.StationId!.Value)
-                    + row.Session.TotalPriceWithVAT(pricing.VatRate, pricing.GracePeriodSeconds);
+                revenue[row.StationId!.Value] = revenue.GetValueOrDefault(row.StationId!.Value) + Price(row.Session, pricing);
             return revenue;
         }
 
         /// <summary>
-        /// The sessions with only their dates and the columns their price needs, for callers that bucket them in a way
-        /// a GROUP BY cannot express.
+        /// The sessions with only their dates, charged minutes and energy, and the columns their price needs, for
+        /// callers that bucket them in a way a GROUP BY cannot express.
         /// </summary>
         public static Task<List<ChargingSession>> PricedAsync(IQueryable<ChargingSession> sessions, CancellationToken cancellationToken = default) =>
             sessions
@@ -150,6 +151,7 @@ namespace VoltaXApi.Services
                     StartDate = s.StartDate,
                     EndDate = s.EndDate,
                     ChargedMinutes = s.ChargedMinutes,
+                    ChargedKwhs = s.ChargedKwhs,
                     PricePerMinute = s.PricePerMinute,
                     IdleMinutes = s.IdleMinutes,
                     PricePerIdleMinute = s.PricePerIdleMinute,
@@ -165,14 +167,7 @@ namespace VoltaXApi.Services
         private static Task<List<ChargingSession>> UnbilledAsync(IQueryable<ChargingSession> sessions, CancellationToken cancellationToken) =>
             PricedAsync(sessions.Where(s => s.TotalAmount == null), cancellationToken);
 
-        private static SessionTotals Totals(Row row) => new(row.Count, row.ChargedMinutes, row.ChargedKwhs, 0);
-
-        private static decimal BilledRevenue(Row row) => row.EnergyAmount + row.TimeAmount + row.FlatFeeAmount + row.IdleAmount;
-
-        /// <summary>True when every UTC hour falls on a single business date (no half-hour or 45-minute offsets).</summary>
-        public static bool HasWholeHourOffsets(TimeZoneInfo zone) =>
-            zone.BaseUtcOffset.Ticks % TimeSpan.TicksPerHour == 0
-            && zone.GetAdjustmentRules().All(rule => rule.DaylightDelta.Ticks % TimeSpan.TicksPerHour == 0
-                && rule.BaseUtcOffsetDelta.Ticks % TimeSpan.TicksPerHour == 0);
+        private static decimal Price(ChargingSession session, SessionPricing pricing) =>
+            session.TotalPriceWithVAT(pricing.VatRate, pricing.GracePeriodSeconds);
     }
 }

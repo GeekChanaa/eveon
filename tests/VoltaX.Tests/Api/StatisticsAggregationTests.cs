@@ -76,10 +76,13 @@ public class StatisticsAggregationTests : IAsyncLifetime
             });
         }
         // Sessions just after a business midnight that is not on a whole UTC hour (Kolkata, UTC+5:30: 18:30 UTC),
-        // one of them on the first day of a month, and one just after midnight in Casablanca (UTC+1: 23:00 UTC).
+        // one of them on the first day of a month, one just after midnight in Casablanca (UTC+1: 23:00 UTC), and
+        // two from a charger whose clock is ahead (tomorrow, next month).
         var afterMidnight = Enumerable.Range(1, 4).Select(d => Now.Date.AddDays(-d).AddHours(18).AddMinutes(40))
             .Append(new DateTime(2026, 9, 30, 18, 45, 0, DateTimeKind.Utc))
-            .Append(Now.Date.AddDays(-3).AddMinutes(-10));
+            .Append(Now.Date.AddDays(-3).AddMinutes(-10))
+            .Append(Now.AddDays(1))
+            .Append(Now.AddDays(15));
         foreach (var start in afterMidnight)
             sessions.Add(new ChargingSession { ConnectorID = connectors[0], CardID = card.ID, StartDate = start, EndDate = start.AddMinutes(40),
                 ChargedMinutes = 40, ChargedKwhs = 9, PricePerMinute = 0.5m, EnergyAmount = 18, TimeAmount = 2, FlatFeeAmount = 0, TotalAmount = 20 });
@@ -261,12 +264,26 @@ public class StatisticsAggregationTests : IAsyncLifetime
             Assert.Equal(e[i], a[i], 6);
     }
 
-    [Fact]
-    public void Half_hour_time_zones_are_grouped_by_minute()
+    [Theory]
+    [InlineData("Africa/Casablanca")]
+    [InlineData("Asia/Kolkata")]
+    public void Period_boundaries_follow_business_days_and_months(string zone)
     {
-        Assert.True(SessionAggregation.HasWholeHourOffsets(BusinessClock.ResolveTimeZone("Africa/Casablanca")));
-        Assert.True(SessionAggregation.HasWholeHourOffsets(TimeZoneInfo.Utc));
-        Assert.False(SessionAggregation.HasWholeHourOffsets(BusinessClock.ResolveTimeZone("Asia/Kolkata")));
+        var clock = Clock(zone);
+        var from = clock.StartOfDayUtc(clock.Today.AddDays(-30));
+
+        var days = BusinessPeriods.DayBoundaries(clock, from);
+        var months = BusinessPeriods.MonthBoundaries(clock, clock.StartOfDayUtc(clock.Today.AddYears(-1)));
+
+        Assert.Equal(32, days.Count);
+        Assert.Equal(Enumerable.Range(-30, 32).Select(d => clock.StartOfDayUtc(clock.Today.AddDays(d))), days);
+        Assert.Equal(14, months.Count);
+        Assert.Equal(clock.StartOfMonthUtc(2025, 11), months[1]);
+        Assert.Equal(clock.StartOfMonthUtc(2026, 11), months[^1]);
+        Assert.Equal(-1, BusinessPeriods.IndexOf(days, from.AddTicks(-1)));
+        Assert.Equal(0, BusinessPeriods.IndexOf(days, from));
+        Assert.Equal(30, BusinessPeriods.IndexOf(days, days[^1].AddTicks(-1)));
+        Assert.Equal(31, BusinessPeriods.IndexOf(days, days[^1]));
     }
 
     [Fact]
@@ -274,9 +291,11 @@ public class StatisticsAggregationTests : IAsyncLifetime
     {
         await using var db = NewContext();
         var none = db.ChargingSessions.Where(s => s.ID < 0);
+        var clock = Clock("Africa/Casablanca");
 
         var totals = await SessionAggregation.TotalAsync(none, new SessionPricing(Vat, Grace));
-        var buckets = await SessionAggregation.ByStartAsync(none, TimeZoneInfo.Utc, new SessionPricing(Vat, Grace));
+        var buckets = await SessionAggregation.ByStartAsync(none, BusinessPeriods.DayBoundaries(clock, clock.StartOfDayUtc(clock.Today)),
+            start => start.Date, new SessionPricing(Vat, Grace));
 
         Assert.Equal(SessionTotals.Empty, totals);
         Assert.Empty(buckets);

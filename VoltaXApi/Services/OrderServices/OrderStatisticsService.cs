@@ -6,8 +6,7 @@ namespace VoltaXApi.Services
 {
     /// <summary>
     /// Counts and recharged amounts of the recharge orders (every status), by business day or month of the recharge
-    /// date. A series is one GROUP BY on the UTC hour (by minute when the business time zone has an offset that is
-    /// not a whole number of hours), folded into the periods.
+    /// date. A series is one GROUP BY on the period of the recharge date (see <see cref="BusinessPeriods.IndexOf{T}"/>).
     /// </summary>
     public interface IOrderStatisticsService
     {
@@ -26,10 +25,7 @@ namespace VoltaXApi.Services
 
     public sealed class OrderStatisticsService : IOrderStatisticsService
     {
-        private sealed record Bucket(int Year, int Month, int Day, int Hour, int Minute, int Count, decimal Amount)
-        {
-            public DateTime StartUtc => new(Year, Month, Day, Hour, Minute, 0, DateTimeKind.Utc);
-        }
+        private sealed record Bucket(int Period, int Count, decimal Amount);
 
         private readonly VoltaXApiDbContext _context;
         private readonly IBusinessClock _clock;
@@ -71,28 +67,22 @@ namespace VoltaXApi.Services
         public async Task<List<double>> CountPerMonthAsync(int months) =>
             await PerPeriod(BusinessPeriods.LastMonths(_clock, months), 0d, (count, bucket) => count + bucket.Count);
 
+        /// <summary>One GROUP BY on the period of the recharge date (a CASE over the periods' boundaries).</summary>
         private async Task<List<T>> PerPeriod<T>(IReadOnlyList<BusinessPeriod> periods, T zero, Func<T, Bucket, T> add)
         {
-            var values = periods.Select(_ => zero).ToList();
-            foreach (var bucket in await Buckets(periods[0].Start, periods[^1].End))
-            {
-                var index = BusinessPeriods.IndexOf(periods, bucket.StartUtc);
-                if (index >= 0)
-                    values[index] = add(values[index], bucket);
-            }
-            return values;
-        }
+            var boundaries = BusinessPeriods.Boundaries(periods);
+            var from = boundaries[0];
+            var to = boundaries[^1];
+            var buckets = await Orders
+                .Where(o => o.RechargeDate >= from && o.RechargeDate < to)
+                .GroupBy(BusinessPeriods.IndexOf<Order>(o => o.RechargeDate, boundaries))
+                .Select(g => new Bucket(g.Key, g.Count(), g.Sum(o => o.Amount)))
+                .ToListAsync();
 
-        private Task<List<Bucket>> Buckets(DateTime from, DateTime to)
-        {
-            var orders = Orders.Where(o => o.RechargeDate >= from && o.RechargeDate < to);
-            return SessionAggregation.HasWholeHourOffsets(_clock.TimeZone)
-                ? orders.GroupBy(o => new { o.RechargeDate.Year, o.RechargeDate.Month, o.RechargeDate.Day, o.RechargeDate.Hour })
-                    .Select(g => new Bucket(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, 0, g.Count(), g.Sum(o => o.Amount)))
-                    .ToListAsync()
-                : orders.GroupBy(o => new { o.RechargeDate.Year, o.RechargeDate.Month, o.RechargeDate.Day, o.RechargeDate.Hour, o.RechargeDate.Minute })
-                    .Select(g => new Bucket(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, g.Key.Minute, g.Count(), g.Sum(o => o.Amount)))
-                    .ToListAsync();
+            var values = periods.Select(_ => zero).ToList();
+            foreach (var bucket in buckets.Where(b => b.Period >= 0 && b.Period < periods.Count))
+                values[bucket.Period] = add(values[bucket.Period], bucket);
+            return values;
         }
     }
 }
