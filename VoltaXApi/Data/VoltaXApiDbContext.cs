@@ -12,13 +12,16 @@ namespace VoltaXApi.Data
         public DbSet<PhoneLoginChallenge> PhoneLoginChallenges { get; set; }
         private IConfiguration _configuration;
         private readonly IHttpContextAccessor? _httpContextAccessor;
+        private readonly IAccessChangeListener? _accessChanges;
 
 
         public VoltaXApiDbContext(
             DbContextOptions<VoltaXApiDbContext> options,
-            IHttpContextAccessor? httpContextAccessor = null) : base(options)
+            IHttpContextAccessor? httpContextAccessor = null,
+            IAccessChangeListener? accessChanges = null) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
+            _accessChanges = accessChanges;
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -523,7 +526,10 @@ namespace VoltaXApi.Data
             SoftDelete();
             AddOpeningBalanceMovements();
             await AddCardChangeHistoryAsync(cancellationToken);
-            return await base.SaveChangesAsync(cancellationToken);
+            var accessChanges = CollectAccessChanges();
+            var saved = await base.SaveChangesAsync(cancellationToken);
+            NotifyAccessChanges(accessChanges);
+            return saved;
         }
 
         public override int SaveChanges()
@@ -533,7 +539,10 @@ namespace VoltaXApi.Data
             SoftDelete();
             AddOpeningBalanceMovements();
             AddCardChangeHistory();
-            return base.SaveChanges();
+            var accessChanges = CollectAccessChanges();
+            var saved = base.SaveChanges();
+            NotifyAccessChanges(accessChanges);
+            return saved;
         }
 
         /// <summary>

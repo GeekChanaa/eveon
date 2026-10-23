@@ -41,6 +41,9 @@ public static class ServiceRegistration
     public static void ConfigureControllers(IServiceCollection services)
     {
         services.AddScoped<VoltaXApi.Authorization.AccessService>();
+        services.AddSingleton<VoltaXApi.Authorization.AccessSnapshotCache>(sp => new VoltaXApi.Authorization.AccessSnapshotCache(
+            sp.GetRequiredService<TimeProvider>(), sp.GetRequiredService<IConfiguration>()));
+        services.AddSingleton<IAccessChangeListener>(sp => sp.GetRequiredService<VoltaXApi.Authorization.AccessSnapshotCache>());
         services.AddSingleton<VoltaXApi.Authorization.HubConnections>();
         services.AddControllers(options =>
         {
