@@ -93,14 +93,16 @@
           [active]="isActive('/dashboard/user-info-download-requests')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders')" iconID="icon-invoice" [title]="'nav.orderManagement'"
-        [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions')">
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders') || access.canUrl('/dashboard/settlements')" iconID="icon-invoice" [title]="'nav.orderManagement'"
+        [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions', '/dashboard/settlements')">
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-sessions')" [title]="'nav.chargingSessions'" [link]="'/dashboard/charging-sessions'"
           [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/transactions')" [title]="'nav.transactions'" [link]="'/dashboard/transactions'"
           [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/recharge-orders')" [title]="'nav.rechargeOrders'" [link]="'/dashboard/recharge-orders'"
           [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/settlements')" [title]="'billing.nav.settlements'" [link]="'/dashboard/settlements'"
+          [active]="isActive('/dashboard/settlements')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
       <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/global-configurations') || access.canUrl('/dashboard/system-reports')" iconID="icon-setting" [title]="'nav.maintenance'"
@@ -154,11 +156,13 @@
           [active]="isActive('/partner-dashboard/charge-points')"></app-sidebar-link>
       </app-sidebar-dropdown>
       <app-sidebar-dropdown iconID="icon-invoice" [title]="'nav.activity'"
-        [active]="isDropdownActive('/partner-dashboard/sessions', '/partner-dashboard/statistics')">
+        [active]="isDropdownActive('/partner-dashboard/sessions', '/partner-dashboard/statistics', '/partner-dashboard/statements')">
         <app-sidebar-link [title]="'nav.chargingSessions'" [link]="'/partner-dashboard/sessions'"
           [active]="isActive('/partner-dashboard/sessions')"></app-sidebar-link>
         <app-sidebar-link [title]="'nav.statistics'" [link]="'/partner-dashboard/statistics'"
           [active]="isActive('/partner-dashboard/statistics')"></app-sidebar-link>
+        <app-sidebar-link [title]="'billing.nav.statements'" [link]="'/partner-dashboard/statements'"
+          [active]="isActive('/partner-dashboard/statements')"></app-sidebar-link>
       </app-sidebar-dropdown>
       <app-sidebar-item [title]="'nav.partnerProfile'" [link]="'/partner-dashboard/profile'"
         [active]="isExactActive('/partner-dashboard/profile')"></app-sidebar-item>

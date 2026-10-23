@@ -14,6 +14,8 @@ const routes: Routes = [
   { path: 'charge-points', component: PartnerChargePointsComponent },
   { path: 'sessions', component: PartnerSessionsComponent },
   { path: 'statistics', component: PartnerStatisticsComponent },
+  { path: 'statements', loadComponent: () => import('./portal/partner-statements.component').then(m => m.PartnerStatementsComponent) },
+  { path: 'statements/:id', loadComponent: () => import('./portal/partner-statements.component').then(m => m.PartnerStatementsComponent) },
   { path: 'profile', component: PartnerProfileComponent },
   { path: 'security', component: TwoFactorSettingsComponent },
   // Former pages

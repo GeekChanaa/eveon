@@ -1,5 +1,10 @@
 {
   "billing": {
+    "eyebrow": "Billing",
+    "nav": {
+      "settlements": "Partner payouts",
+      "statements": "Monthly statements"
+    },
     "refunds": {
       "title": "Refunds",
       "orderHint": "Refund all or part of the top-up: the amount goes back to the customer and leaves their wallet.",
@@ -54,6 +59,64 @@
         "not_found": "Not found.",
         "provider_failed": "The payment provider refused the refund: the amount was given back to the wallet."
       }
+    },
+    "settlementStatus": {
+      "Pending": "To pay",
+      "Paid": "Paid"
+    },
+    "statements": {
+      "title": "Monthly statements",
+      "subtitle": "What EVEON collected on your stations each month, its commission and the amount paid out to you.",
+      "year": "Year",
+      "allYears": "All years",
+      "period": "Month",
+      "sessions": "Sessions",
+      "energy": "Energy",
+      "gross": "Collected incl. VAT",
+      "commission": "Commission incl. VAT",
+      "netPayout": "Net payout",
+      "empty": "No statement yet. A month's statement is made at the beginning of the next month.",
+      "howItWorks": "Every session ended on your stations is in exactly one statement. A session a charger reports late appears in the next statement; a refund granted to a driver is deducted from the statement of the month it was made.",
+      "statementOf": "Statement for {{period}}",
+      "paidOn": "on {{date}} (ref. {{reference}})",
+      "netExclVat": "Revenue excl. VAT",
+      "terms": "Commission: {{percent}}% of revenue excl. VAT + {{perKwh}} excl. VAT per kWh",
+      "commissionVat": "including VAT on commission",
+      "date": "Date",
+      "session": "Session",
+      "refundOf": "Refund of session #{{id}}",
+      "noLines": "This statement has no session.",
+      "vatNote": "Amounts in dirhams, VAT included. The VAT on your sales is yours; EVEON's commission is invoiced with VAT.",
+      "revenueVat": "VAT on sales",
+      "commissionExclVat": "Commission excl. VAT",
+      "refund": "refund"
+    },
+    "settlements": {
+      "title": "Partner payouts",
+      "subtitle": "Each partner's monthly statements: collections, EVEON commission, VAT and net payout.",
+      "month": "Month",
+      "year": "Year",
+      "partner": "Partner",
+      "allPartners": "All partners",
+      "generate": "Make statements",
+      "generating": "Computing…",
+      "generateHint": "A statement to pay is recomputed (new sessions, current terms); a paid statement never changes. Last month is made automatically at the beginning of each month.",
+      "generated": "{{count}} statement(s) made.",
+      "markPaid": "Mark paid",
+      "pageTotal": "Page total",
+      "empty": "No statement for these criteria.",
+      "payTitle": "Payout to {{partner}} for {{period}}: {{amount}}",
+      "paidAt": "Payment date",
+      "reference": "Reference",
+      "referencePlaceholder": "Bank transfer, cheque…",
+      "confirmPaid": "Record the payout",
+      "referenceRequired": "Give the payment reference.",
+      "paidSaved": "Payout recorded: the statement is frozen.",
+      "termsTitle": "Commission terms",
+      "termsHint": "Share of the revenue excl. VAT EVEON keeps and fixed amount excl. VAT per kWh. Applies to statements made afterwards.",
+      "percent": "Commission (%)",
+      "perKwh": "Per kWh (MAD excl. VAT)",
+      "termsRange": "The commission must be between 0 and 100% and the amount per kWh between 0 and 100 MAD."
     }
   }
 }

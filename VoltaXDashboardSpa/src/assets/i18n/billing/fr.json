@@ -1,5 +1,10 @@
 {
   "billing": {
+    "eyebrow": "Facturation",
+    "nav": {
+      "settlements": "Reversements partenaires",
+      "statements": "Relevés mensuels"
+    },
     "refunds": {
       "title": "Remboursements",
       "orderHint": "Rembourser tout ou partie du rechargement : le montant est rendu au client et retiré de son portefeuille.",
@@ -54,6 +59,64 @@
         "not_found": "Introuvable.",
         "provider_failed": "Le prestataire de paiement a refusé le remboursement : le montant a été rendu au portefeuille."
       }
+    },
+    "settlementStatus": {
+      "Pending": "À payer",
+      "Paid": "Payé"
+    },
+    "statements": {
+      "title": "Relevés mensuels",
+      "subtitle": "Ce qu'EVEON a encaissé sur vos stations chaque mois, sa commission et le montant qui vous est reversé.",
+      "year": "Année",
+      "allYears": "Toutes les années",
+      "period": "Mois",
+      "sessions": "Sessions",
+      "energy": "Énergie",
+      "gross": "Encaissé TTC",
+      "commission": "Commission TTC",
+      "netPayout": "Net reversé",
+      "empty": "Aucun relevé pour le moment. Le relevé d'un mois est établi au début du mois suivant.",
+      "howItWorks": "Chaque session terminée sur vos stations figure dans un seul relevé. Une session remontée en retard par une borne apparaît dans le relevé suivant ; un remboursement accordé à un client est déduit du relevé du mois où il a été fait.",
+      "statementOf": "Relevé de {{period}}",
+      "paidOn": "le {{date}} (réf. {{reference}})",
+      "netExclVat": "CA HT",
+      "terms": "Commission : {{percent}} % du CA HT + {{perKwh}} HT par kWh",
+      "commissionVat": "dont TVA sur commission",
+      "date": "Date",
+      "session": "Session",
+      "refundOf": "Remboursement de la session #{{id}}",
+      "noLines": "Ce relevé ne contient aucune session.",
+      "vatNote": "Montants en dirhams TTC. La TVA de vos ventes vous revient ; la commission EVEON est facturée avec TVA.",
+      "revenueVat": "TVA sur ventes",
+      "commissionExclVat": "Commission HT",
+      "refund": "remboursement"
+    },
+    "settlements": {
+      "title": "Reversements partenaires",
+      "subtitle": "Relevés mensuels de chaque partenaire : encaissements, commission EVEON, TVA et net à reverser.",
+      "month": "Mois",
+      "year": "Année",
+      "partner": "Partenaire",
+      "allPartners": "Tous les partenaires",
+      "generate": "Établir les relevés",
+      "generating": "Calcul…",
+      "generateHint": "Un relevé à payer est recalculé (nouvelles sessions, conditions actuelles) ; un relevé payé n'est jamais modifié. Le mois précédent est établi automatiquement au début de chaque mois.",
+      "generated": "{{count}} relevé(s) établi(s).",
+      "markPaid": "Marquer payé",
+      "pageTotal": "Total de la page",
+      "empty": "Aucun relevé pour ces critères.",
+      "payTitle": "Paiement à {{partner}} pour {{period}} : {{amount}}",
+      "paidAt": "Date du paiement",
+      "reference": "Référence",
+      "referencePlaceholder": "Virement, chèque…",
+      "confirmPaid": "Enregistrer le paiement",
+      "referenceRequired": "Indiquez la référence du paiement.",
+      "paidSaved": "Paiement enregistré : le relevé est figé.",
+      "termsTitle": "Conditions de commission",
+      "termsHint": "Part du CA HT conservée par EVEON et montant fixe HT par kWh. S'applique aux relevés établis ensuite.",
+      "percent": "Commission (%)",
+      "perKwh": "Par kWh (MAD HT)",
+      "termsRange": "La commission doit être comprise entre 0 et 100 % et le montant par kWh entre 0 et 100 MAD."
     }
   }
 }
