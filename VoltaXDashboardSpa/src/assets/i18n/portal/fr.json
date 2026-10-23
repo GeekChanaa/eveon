@@ -1,0 +1,24 @@
+{
+  "portal": {
+    "print": {
+      "printedAt": "Imprimé le {{date}}",
+      "footer": "Document issu de votre espace EVEON. Montants TTC.",
+      "period": "Du {{from}} au {{to}}"
+    },
+    "duration": {
+      "minutes": "{{m}} min",
+      "hours": "{{h}} h {{m}} min"
+    },
+    "command": {
+      "refused": "La borne a refusé la demande ({{status}}).",
+      "notRunning": "Cette session est déjà terminée.",
+      "offline": "La borne n'est pas connectée pour le moment. Réessayez plus tard.",
+      "notFound": "Cette session ou cette borne n'est pas disponible.",
+      "timeout": "La borne n'a pas répondu à temps. Réessayez.",
+      "callError": "La borne n'a pas pu exécuter la commande ({{code}}).",
+      "unavailable": "Le service est momentanément indisponible. Réessayez dans un instant.",
+      "notSupported": "Cette borne ne prend pas en charge cette action.",
+      "failed": "La commande n'a pas pu être envoyée. Réessayez."
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "portal": {
+    "print": {
+      "printedAt": "Printed on {{date}}",
+      "footer": "Document from your EVEON portal. Amounts include VAT.",
+      "period": "From {{from}} to {{to}}"
+    },
+    "duration": {
+      "minutes": "{{m}} min",
+      "hours": "{{h}} h {{m}} min"
+    },
+    "command": {
+      "refused": "The charger refused the request ({{status}}).",
+      "notRunning": "This session is already over.",
+      "offline": "The charger is not connected right now. Try again later.",
+      "notFound": "This session or charger is not available.",
+      "timeout": "The charger did not answer in time. Try again.",
+      "callError": "The charger could not carry out the command ({{code}}).",
+      "unavailable": "The service is temporarily unavailable. Try again in a moment.",
+      "notSupported": "This charger does not support this action.",
+      "failed": "The command could not be sent. Try again."
+    }
+  }
+}
