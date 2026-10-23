@@ -9,8 +9,13 @@ namespace VoltaXApi.Dtos
     public sealed record MyProfileDto(string FirstName, string LastName, string Email, string? Phone, DateTime? Birthday,
         string? ImageUrl, bool IsEmailVerified, bool IsPhoneNumberVerified, DateTime MemberSince);
 
+    /// <summary>
+    /// The caller's running session. <see cref="ChargePointName"/> is the charger's OCPP id and <see cref="TransactionUid"/>
+    /// its transaction id: together they let the owner stop the session (EVDriver/RequestStopTransactionMobile, which
+    /// checks ownership again). Live updates arrive on the charging session hub.
+    /// </summary>
     public sealed record MyActiveSessionDto(int Id, string? StationName, string? ChargePointName, string? Connector,
-        DateTime StartDate, double ChargedMinutes, double ChargedKwhs, decimal CurrentCost);
+        DateTime StartDate, double ChargedMinutes, double ChargedKwhs, decimal CurrentCost, string? TransactionUid, decimal? CardBalance);
 
     public sealed record MyOverviewDto(string FirstName, decimal WalletBalance, int CardCount, MyActiveSessionDto? ActiveSession,
         int SessionsThisMonth, double KwhThisMonth, decimal SpentThisMonth, int SessionsTotal, double KwhTotal, decimal SpentTotal,

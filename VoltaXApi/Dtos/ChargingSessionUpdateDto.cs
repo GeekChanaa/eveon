@@ -19,6 +19,11 @@ namespace VoltaXApi.Dtos
         public double EnergyKWh { get; set; }
 
         /// <summary>
+        /// Average power since the previous meter reading (kW); null when it cannot be measured yet.
+        /// </summary>
+        public double? PowerKw { get; set; }
+
+        /// <summary>
         /// Duration of the session in minutes.
         /// </summary>
         public double DurationMinutes { get; set; }

@@ -69,8 +69,12 @@ namespace VoltaXApi.Services.CustomerPortal
             var minutes = session.ChargedMinutes ?? 0;
             var kwh = session.ChargedKwhs ?? 0;
             var cost = CostCalculator.Instance.RunningCost(Tariff.Of(session, session.Connector, _pricing.Vat), kwh, minutes);
+            var transactionUid = await _db.Transactions.AsNoTracking()
+                .Where(t => t.ChargingSessionID == session.ID && t.StopTime == null && t.Status == TransactionStatusEnum.Current)
+                .OrderByDescending(t => t.ID).Select(t => t.Uid).FirstOrDefaultAsync(ct);
+            var balance = await _db.Cards.AsNoTracking().Where(c => c.ID == session.CardID).Select(c => (decimal?)c.Balance).FirstOrDefaultAsync(ct);
             return new MyActiveSessionDto(session.ID, session.Connector?.ChargePoint?.ChargingStation?.Name, session.Connector?.ChargePoint?.ChargePointId,
-                ConnectorLabel(session.Connector?.EvseID, session.Connector?.ConnectorID), session.StartDate, minutes, kwh, cost);
+                ConnectorLabel(session.Connector?.EvseID, session.Connector?.ConnectorID), session.StartDate, minutes, kwh, cost, transactionUid, balance);
         }
 
         public async Task<PagedResult<MySessionDto>> SessionsAsync(int userId, MySessionFilter filter, CancellationToken ct = default)

@@ -25,12 +25,15 @@ public sealed class ApiFactory : WebApplicationFactory<VoltaXApi.Configurations.
 
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
     private readonly Dictionary<string, string?> _settings;
+    private readonly Action<IServiceCollection>? _services;
 
     public Recorder<IMailService> Mail { get; }
     private readonly IMailService _mailProxy;
 
-    public ApiFactory(IDictionary<string, string?>? settings = null)
+    /// <param name="services">Extra test replacements (e.g. a fake OCPP command sender), applied after the defaults.</param>
+    public ApiFactory(IDictionary<string, string?>? settings = null, Action<IServiceCollection>? services = null)
     {
+        _services = services;
         _settings = new Dictionary<string, string?>
         {
             ["ConnectionStrings:DefaultConnection"] = "Data Source=in-memory-tests",
@@ -77,6 +80,7 @@ public sealed class ApiFactory : WebApplicationFactory<VoltaXApi.Configurations.
             services.RemoveAll<IHostedService>();
             services.RemoveAll<IMailService>();
             services.AddSingleton(_mailProxy);
+            _services?.Invoke(services);
         });
     }
 

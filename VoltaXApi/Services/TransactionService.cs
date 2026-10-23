@@ -233,7 +233,7 @@ namespace VoltaXApi.Services
               transaction.Uid, card.ID, connector.ID);
 
           // Notify connected clients about session start
-          await NotifySessionUpdate(chargingSession.ID, new ChargingSessionUpdateDto
+          await NotifySessionUpdate(chargingSession.ID, chargingSession.UserID, new ChargingSessionUpdateDto
           {
             SessionId = chargingSession.ID,
             TransactionUid = transaction.Uid,
@@ -404,11 +404,17 @@ namespace VoltaXApi.Services
               chargingSessionId: transaction.ChargingSessionID);
         }
 
+        // The previous reading, for the power drawn since then (shown live to the driver).
+        double previousMeter = transaction.MeterStop ?? transaction.MeterStart;
+        double previousMinutes = await _context.ChargingSessions.AsNoTracking()
+            .Where(s => s.ID == transaction.ChargingSessionID).Select(s => s.ChargedMinutes).FirstOrDefaultAsync() ?? 0;
+
         transaction.MeterStop = currentMeter;
         await _context.SaveChangesAsync();
 
           double chargedKwhs = (transaction.MeterStop ?? 0) - transaction.MeterStart;
           double elapsedMinutes = (updateTimestamp - transaction.StartTime).TotalMinutes;
+          double? powerKw = meterKWH.HasValue ? AveragePowerKw(previousMeter, previousMinutes, currentMeter, elapsedMinutes) : null;
 
           // Update the charging session with latest meter data
           var session = await _chargingSessionService.UpdateChargingSession(
@@ -441,12 +447,13 @@ namespace VoltaXApi.Services
                 services => services.GetRequiredService<IEVDriverService>().RequestStopTransaction(chargePoint.ChargePointId, stopRequest));
 
             // Notify client about low balance
-            await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+            await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
             {
               SessionId = transaction.ChargingSessionID,
               TransactionUid = transaction.Uid,
               Status = "StoppingLowBalance",
               EnergyKWh = chargedKwhs,
+              PowerKw = powerKw,
               DurationMinutes = elapsedMinutes,
               CurrentCost = currentCost,
               CardBalance = remainingBalance,
@@ -457,12 +464,13 @@ namespace VoltaXApi.Services
           }
 
           // Notify connected clients about session update
-          await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+          await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
           {
             SessionId = transaction.ChargingSessionID,
             TransactionUid = transaction.Uid,
             Status = "Charging",
             EnergyKWh = chargedKwhs,
+            PowerKw = powerKw,
             DurationMinutes = elapsedMinutes,
             CurrentCost = currentCost,
             CardBalance = remainingBalance,
@@ -672,7 +680,7 @@ namespace VoltaXApi.Services
         }
 
         // Notify connected clients about session end, with the amount actually billed.
-        await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+        await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
         {
           SessionId = transaction.ChargingSessionID,
           TransactionUid = transaction.Uid,
@@ -805,20 +813,32 @@ namespace VoltaXApi.Services
     }
 
     /// <summary>
-    /// Send a real-time update to all clients subscribed to the given charging session.
+    /// Sends a real-time update to the clients following the charging session and to the session owner's own
+    /// connections (customer portal live widget: every connection joins its user's group on connect).
     /// </summary>
-    private async Task NotifySessionUpdate(int chargingSessionId, ChargingSessionUpdateDto update)
+    private async Task NotifySessionUpdate(int chargingSessionId, int? ownerUserId, ChargingSessionUpdateDto update)
     {
       try
       {
-        string groupName = ChargingSessionHub.GetSessionGroupName(chargingSessionId);
-        await _chargingSessionHub.Clients.Group(groupName).SendAsync("SessionUpdate", update);
-        _logger.LogDebug("NotifySessionUpdate => Sent update to session group {GroupName}", groupName);
+        var groups = new List<string> { ChargingSessionHub.GetSessionGroupName(chargingSessionId) };
+        if (ownerUserId.HasValue)
+          groups.Add(ChargingSessionHub.GetUserGroupName(ownerUserId.Value));
+        await _chargingSessionHub.Clients.Groups(groups).SendAsync("SessionUpdate", update);
+        _logger.LogDebug("NotifySessionUpdate => Sent update to {Groups}", string.Join(", ", groups));
       }
       catch (Exception ex)
       {
         _logger.LogWarning(ex, "NotifySessionUpdate => Failed to send SignalR update for session {SessionId}", chargingSessionId);
       }
+    }
+
+    /// <summary>Average power (kW) between two meter readings; null when they are less than 3 seconds apart or the meter went back.</summary>
+    public static double? AveragePowerKw(double fromKWh, double fromMinutes, double toKWh, double toMinutes)
+    {
+      var hours = (toMinutes - fromMinutes) / 60.0;
+      if (hours < 3.0 / 3600 || toKWh < fromKWh)
+        return null;
+      return Math.Round((toKWh - fromKWh) / hours, 2);
     }
 
     /// <summary>
