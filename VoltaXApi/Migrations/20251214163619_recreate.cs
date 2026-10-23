@@ -2499,6 +2499,9 @@ namespace VoltaXApi.Migrations
                 name: "IX_Users_RoleID",
                 table: "Users",
                 column: "RoleID");
+
+            // Scaffolded against MySQL: other providers (SQL Server) get provider neutral columns.
+            MySqlScaffoldedOperations.AdaptToActiveProvider(migrationBuilder);
         }
 
         /// <inheritdoc />

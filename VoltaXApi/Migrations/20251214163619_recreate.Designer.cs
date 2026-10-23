@@ -18,6 +18,15 @@ namespace VoltaXApi.Migrations
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
+            // This target model is MySQL typed. The SQL generator prefers a target model column's store
+            // type over the provider's own mapping, so other providers only get the version (which keeps
+            // SQL Server from adding legacy NULL filters to every unique index); see MySqlScaffoldedOperations.
+            if (!MySqlScaffoldedOperations.AppliesAsGenerated(ActiveProvider))
+            {
+                modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
+                return;
+            }
+
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.0")
