@@ -112,6 +112,16 @@ public sealed class OcppTestHost : IAsyncDisposable
         return connection;
     }
 
+    /// <summary>
+    /// The charger reconnects: later calls arrive on a new connection with a fresh in-memory charger status, as after
+    /// a new WebSocket handshake.
+    /// </summary>
+    public OcppConnection Reconnect(string chargePointId, string protocol = Ocpp201)
+    {
+        _connections.Remove(chargePointId);
+        return Connection(chargePointId, protocol);
+    }
+
     /// <summary>Sends a CALL and returns the raw reply frame (CALLRESULT or CALLERROR).</summary>
     public async Task<string> CallRaw(string chargePointId, string action, object payload, string protocol = Ocpp201)
     {
