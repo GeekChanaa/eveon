@@ -435,5 +435,47 @@
       "tooBig": "The image is larger than 5 MB.",
       "uploadFailed": "The logo could not be uploaded. Check the file and try again."
     }
+  },
+  "ops": {
+    "fields": {
+      "started": "Started",
+      "stopped": "Stopped",
+      "chargePoint": "Charge point",
+      "connector": "Connector",
+      "customer": "Customer",
+      "duration": "Charging time",
+      "energy": "Energy",
+      "transaction": "Transaction",
+      "session": "Session",
+      "idTag": "Id tag",
+      "meter": "Meter",
+      "meterStart": "Meter at start",
+      "meterStop": "Meter at stop",
+      "startResult": "Start result",
+      "stopReason": "Stop reason"
+    },
+    "sessions": {
+      "title": "Charging sessions",
+      "subtitle": "Every session of the network with what the customer was billed. Filter, export or print.",
+      "searchPlaceholder": "#id, charge point, station, card, customer or email",
+      "scoped": "Showing the sessions of one charge point, station or customer.",
+      "showAll": "Show all sessions",
+      "pageTotal": "Total on this page (ended sessions)",
+      "empty": "No session for these filters.",
+      "note": "Amounts include VAT. * Running cost of a session still in progress; it is billed when it ends."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "subtitle": "OCPP transactions as reported by the chargers, with their meter readings (Wh). Open a row to see the billed session.",
+      "searchPlaceholder": "Transaction id, charge point, id tag or stop reason",
+      "empty": "No transaction for these filters.",
+      "openSession": "Open the session",
+      "notFound": "This transaction does not exist."
+    },
+    "transactionStatus": {
+      "Current": "In progress",
+      "Ended": "Ended",
+      "Forbidden": "Refused"
+    }
   }
 }

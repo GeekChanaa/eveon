@@ -435,5 +435,47 @@
       "tooBig": "L’image dépasse 5 Mo.",
       "uploadFailed": "Le logo n’a pas pu être envoyé. Vérifiez le fichier et réessayez."
     }
+  },
+  "ops": {
+    "fields": {
+      "started": "Début",
+      "stopped": "Fin",
+      "chargePoint": "Borne",
+      "connector": "Connecteur",
+      "customer": "Client",
+      "duration": "Durée de charge",
+      "energy": "Énergie",
+      "transaction": "Transaction",
+      "session": "Session",
+      "idTag": "Badge",
+      "meter": "Compteur",
+      "meterStart": "Compteur au début",
+      "meterStop": "Compteur à la fin",
+      "startResult": "Résultat du démarrage",
+      "stopReason": "Motif d’arrêt"
+    },
+    "sessions": {
+      "title": "Sessions de recharge",
+      "subtitle": "Toutes les sessions du réseau avec le montant facturé au client. Filtrez, exportez ou imprimez.",
+      "searchPlaceholder": "#id, borne, station, carte, client ou e-mail",
+      "scoped": "Sessions d’une borne, d’une station ou d’un client.",
+      "showAll": "Afficher toutes les sessions",
+      "pageTotal": "Total de la page (sessions terminées)",
+      "empty": "Aucune session pour ces filtres.",
+      "note": "Montants TTC. * Coût en cours d’une session non terminée ; elle est facturée à la fin."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "subtitle": "Les transactions OCPP telles que remontées par les bornes, avec leurs relevés de compteur (Wh). Ouvrez une ligne pour voir la session facturée.",
+      "searchPlaceholder": "Identifiant, borne, badge ou motif d’arrêt",
+      "empty": "Aucune transaction pour ces filtres.",
+      "openSession": "Ouvrir la session",
+      "notFound": "Cette transaction n’existe pas."
+    },
+    "transactionStatus": {
+      "Current": "En cours",
+      "Ended": "Terminée",
+      "Forbidden": "Refusée"
+    }
   }
 }

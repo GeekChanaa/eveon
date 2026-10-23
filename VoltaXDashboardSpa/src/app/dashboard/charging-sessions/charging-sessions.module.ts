@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ChargingSessionsListComponent } from './charging-sessions-list/charging-sessions-list.component';
 import { ChargingSessionDetailModule } from './charging-session-detail/charging-session-detail.module';
 import { ChargingSessionsRoutingModule } from './charging-sessions-routing.module';
+import { PortalUiModule } from 'src/app/shared/portal-ui/portal-ui.module';
 @NgModule({
     declarations: [
       ChargingSessionsListComponent
@@ -15,6 +16,7 @@ import { ChargingSessionsRoutingModule } from './charging-sessions-routing.modul
         ReactiveFormsModule,
         CommonModule,
         SharedModule,
+        PortalUiModule,
         FormsModule,
         ChargingSessionDetailModule,
         ChargingSessionsRoutingModule

@@ -1,59 +1,69 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { TransactionListDto } from 'src/_models/_dtos/transaction-dtos/transaction-list-dto';
-import { TransactionService } from 'src/_services/transaction.service';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { saveDownload } from 'src/_helpers/download';
+import { OperatorTransaction, OperatorTransactionFilter } from 'src/_models/operator';
+import { PagedResult } from 'src/_models/portal';
+import { OperatorSearchService } from 'src/_services/operator-search.service';
 
+const EMPTY: OperatorTransactionFilter = { from: null, to: null, status: '', search: '', page: 1, pageSize: 25 };
+
+/** Every OCPP transaction of the network with its meter readings: filters, paging, CSV export and print. */
 @Component({
   selector: 'app-transactions-list',
-  templateUrl: './transactions-list.component.html',
-  styleUrls: ['./transactions-list.component.sass']
+  templateUrl: './transactions-list.component.html'
 })
 export class TransactionsListComponent implements OnInit {
+  private readonly search = inject(OperatorSearchService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
-  transaction: TransactionListDto = {
-    connectorID: 0,
-    connectorName: '',
-    chargingSessionID: 0,
-    startTime: new Date(),
-    meterStart: 0,
-    amount: 0
-  };
+  filter: OperatorTransactionFilter = { ...EMPTY };
+  result: PagedResult<OperatorTransaction> | null = null;
+  loading = false;
+  error = false;
+  exporting = false;
 
-  fields: string[] = [];
-  filters : any = {
-    status : ""
-  };
-
-  // Constructor
-  constructor(
-    private _transactionService: TransactionService,
-    private _router : Router
-  ) { }
-
-  ngOnInit() {
-    this._getItemFields();
+  ngOnInit(): void {
+    const chargePoint = Number(this.route.snapshot.queryParamMap.get('chargePoint'));
+    this.filter.chargePointId = Number.isInteger(chargePoint) && chargePoint > 0 ? chargePoint : null;
+    this.load();
   }
 
-  getTransactionsObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._transactionService.getAllTransactions(currentPage, itemsPerPage, itemParams);
-  deleteTransactionObservable = (id : number) => this._transactionService.deleteById(id);
-  updateTransactionObservable = (id : number, model : any) => this._transactionService.edit(id, model);
-
-  private _getItemFields() {
-    if (!this.transaction || this.transaction == undefined) {
-      return;
-    }
-    Object.keys(this.transaction ?? {}).forEach((element: string) => {
-      if (typeof this.transaction?.[element] == "object" && this.transaction?.[element] != null && this.transaction?.[element].constructor.name == "Date")
-        this.fields.push(element);
-      if (typeof this.transaction?.[element] != "object") this.fields.push(element);
+  load(page = 1): void {
+    this.filter.page = page;
+    this.loading = true;
+    this.search.transactions(this.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: result => { this.result = result; this.loading = false; this.error = false; },
+      error: () => { this.loading = false; this.error = true; }
     });
   }
-  
 
-  resetFilters(){
-    this.filters = {
-      status : ""
-    }
+  reset(): void {
+    this.filter = { ...EMPTY };
+    this.load();
   }
 
+  /** Energy of the transaction in kWh (meters are in Wh), null while it runs. */
+  energy(t: OperatorTransaction): number | null {
+    return t.meterStop == null ? null : Math.max(0, t.meterStop - t.meterStart) / 1000;
+  }
+
+  tone(status: string | null): string {
+    return status === 'Current' ? 'vx-badge--success' : status === 'Forbidden' ? 'vx-badge--danger' : 'vx-badge--info';
+  }
+
+  get period(): string | null {
+    return this.filter.from || this.filter.to ? `${this.filter.from || '…'} → ${this.filter.to || '…'}` : null;
+  }
+
+  export(): void {
+    this.exporting = true;
+    this.search.exportTransactions(this.filter).subscribe({
+      next: response => { saveDownload(response, 'eveon-transactions.csv'); this.exporting = false; },
+      error: () => { this.exporting = false; this.error = true; }
+    });
+  }
+
+  print(): void { window.print(); }
 }
