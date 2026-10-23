@@ -210,7 +210,8 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("CardNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<int>("CardType")
                         .HasColumnType("int");
@@ -243,6 +244,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CardNumber");
 
                     b.HasIndex("UserID");
 
@@ -1018,9 +1021,11 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("CardID");
 
-                    b.HasIndex("ConnectorID");
+                    b.HasIndex("StartDate");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ConnectorID", "StartDate");
+
+                    b.HasIndex("UserID", "EndDate");
 
                     b.ToTable("ChargingSessions");
                 });
@@ -1967,7 +1972,8 @@ namespace VoltaXApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("ChargePointId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("ConnectorId")
                         .HasColumnType("int");
@@ -2006,6 +2012,8 @@ namespace VoltaXApi.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("LogTime");
+
+                    b.HasIndex("ChargePointId", "LogTime");
 
                     b.ToTable("MessageLogs");
                 });
@@ -3252,6 +3260,8 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("CardID");
 
+                    b.HasIndex("RechargeDate");
+
                     b.HasIndex("UserID");
 
                     b.HasIndex("Provider", "ProviderReference");
@@ -4293,7 +4303,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Uid")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -4308,7 +4319,11 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("StartCardID");
 
+                    b.HasIndex("StartTime");
+
                     b.HasIndex("StopCardID");
+
+                    b.HasIndex("Uid");
 
                     b.ToTable("Transactions");
                 });

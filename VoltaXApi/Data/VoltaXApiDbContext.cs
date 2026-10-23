@@ -5,7 +5,7 @@ using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
 {
-    public class VoltaXApiDbContext : DbContext, Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.IDataProtectionKeyContext
+    public partial class VoltaXApiDbContext : DbContext, Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.IDataProtectionKeyContext
     {
         // Data Protection key ring (protects TOTP secrets); persisted so restarts / instances share it.
         public DbSet<Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey> DataProtectionKeys { get; set; }
@@ -388,6 +388,8 @@ namespace VoltaXApi.Data
                 entity.HasIndex(a => new { a.ChargingStationID, a.CreatedAt });
                 entity.HasIndex(a => new { a.TransactionID, a.CreatedAt });
             });
+
+            ConfigureQueryIndexes(modelBuilder);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
