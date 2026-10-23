@@ -157,7 +157,12 @@ public class Program
         if (result.HasErrors && options.FailStartupOnError)
             throw new InvalidOperationException("First setup check failed, see the log above");
         if (result.Credentials.Count == 0)
+        {
+            // Fixed passwords from configuration, or rotation off: nothing new to tell anyone.
+            if (options.TestUsers.Enabled)
+                Log.Information("No test account passwords mailed: no password changed on this start");
             return;
+        }
 
         // Mailed once the API listens: a slow SMTP server must not hold the health check back.
         var recipient = options.TestUsers.CredentialsRecipient;

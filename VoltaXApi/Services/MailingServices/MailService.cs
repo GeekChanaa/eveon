@@ -531,7 +531,16 @@ namespace VoltaXApi.Services
 		{
 			// Fail in 30 s instead of MailKit's 2 min when the host or port is unreachable.
 			using var smtp = new SmtpClient { Timeout = 30_000 };
-			await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+			// Port 465 (Hostinger's default) speaks TLS from the first byte; 587 / 2525 upgrade with STARTTLS.
+			var security = _mailSettings.Port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
+			try
+			{
+				await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, security);
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidOperationException($"Could not connect to SMTP server {_mailSettings.Host}:{_mailSettings.Port}", ex);
+			}
 			var username = string.IsNullOrWhiteSpace(_mailSettings.Username) ? _mailSettings.Mail : _mailSettings.Username;
 			await smtp.AuthenticateAsync(username, _mailSettings.Password);
 			await smtp.SendAsync(email);
