@@ -1,5 +1,5 @@
 <div class="page__inner"><main class="page__container">
-  <vx-print-header [title]="profile?.name ?? ('partner.overview.title' | translate)" [partnerLogo]="fileUrl(profile?.logoUrl)"></vx-print-header>
+  <app-partner-print-header [title]="'partner.overview.title' | translate"></app-partner-print-header>
 
   <header class="vx-heading">
     <div class="vx-partner-brand">
@@ -18,28 +18,49 @@
   </header>
 
   <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
-  <p class="vx-empty" *ngIf="loading">{{ 'common.state.loading' | translate }}</p>
+
+  <section class="vx-stats" *ngIf="loading && !overview" aria-busy="true" [attr.aria-label]="'common.state.loading' | translate">
+    <div class="vx-stat vx-skeleton-tile" *ngFor="let i of [1, 2, 3, 4]"><span class="vx-skeleton" style="width: 50%"></span><span class="vx-skeleton" style="width: 70%; height: 22px"></span></div>
+  </section>
 
   <section class="vx-stats" *ngIf="overview as o">
     <div class="vx-stat vx-stat--brand">
+      <span class="vx-stat__icon"><vx-icon name="money-bill"></vx-icon></span>
       <div class="vx-stat__label">{{ 'partner.overview.revenueMonth' | translate }}</div>
       <div class="vx-stat__value vx-num">{{ o.revenueMonth | vxMoney }}</div>
       <div class="vx-stat__hint">{{ 'partner.overview.today' | translate:{ value: (o.revenueToday | vxMoney) } }}</div>
     </div>
     <div class="vx-stat">
+      <span class="vx-stat__icon"><vx-icon name="plugged-car"></vx-icon></span>
       <div class="vx-stat__label">{{ 'partner.overview.sessionsMonth' | translate }}</div>
       <div class="vx-stat__value vx-num">{{ o.sessionsMonth | vxNumber:'1.0-0' }}</div>
-      <div class="vx-stat__hint">{{ o.energyMonth | vxNumber:'1.0-1' }} {{ 'common.units.kwh' | translate }}</div>
+      <div class="vx-stat__hint"><span class="vx-num">{{ o.energyMonth | vxNumber:'1.0-1' }}</span> {{ 'common.units.kwh' | translate }}</div>
     </div>
     <div class="vx-stat">
+      <span class="vx-stat__icon"><vx-icon name="lightning"></vx-icon></span>
       <div class="vx-stat__label">{{ 'partner.overview.chargingNow' | translate }}</div>
       <div class="vx-stat__value vx-num">{{ o.activeSessions | vxNumber:'1.0-0' }}</div>
       <div class="vx-stat__hint">{{ 'partner.overview.network' | translate:{ stations: o.stations, chargePoints: o.chargePoints, connectors: o.connectors } }}</div>
     </div>
     <div class="vx-stat">
+      <span class="vx-stat__icon"><vx-icon name="bar-chart"></vx-icon></span>
       <div class="vx-stat__label">{{ 'partner.overview.revenueTotal' | translate }}</div>
       <div class="vx-stat__value vx-num">{{ o.revenueTotal | vxMoney }}</div>
       <div class="vx-stat__hint">{{ 'partner.overview.vatIncluded' | translate }}</div>
+    </div>
+  </section>
+
+  <section class="vx-panel" *ngIf="trend" aria-labelledby="trend-title">
+    <div class="vx-panel__head">
+      <div>
+        <h2 id="trend-title">{{ 'portal.partner.trendTitle' | translate }}</h2>
+        <p>{{ 'portal.partner.trendHint' | translate:{ total: (revenue30 | vxMoney) } }}</p>
+      </div>
+      <a class="vx-btn vx-btn--small no-print" routerLink="/partner-dashboard/statistics">{{ 'nav.statistics' | translate }}</a>
+    </div>
+    <div class="no-print" role="img" [attr.aria-label]="'portal.partner.trendHint' | translate:{ total: (revenue30 | vxMoney) }">
+      <apx-chart [series]="trend.series" [chart]="trend.chart" [xaxis]="trend.xaxis" [yaxis]="trend.yaxis" [colors]="trend.colors"
+        [stroke]="trend.stroke" [fill]="trend.fill" [dataLabels]="trend.dataLabels" [grid]="trend.grid" [tooltip]="trend.tooltip"></apx-chart>
     </div>
   </section>
 
@@ -50,19 +71,19 @@
         <a class="vx-btn vx-btn--small no-print" routerLink="/partner-dashboard/sessions">{{ 'common.actions.viewAll' | translate }}</a>
       </div>
       <div class="vx-table-wrap" *ngIf="recent.length; else noSessions">
-        <table class="vx-table">
+        <table class="vx-table vx-table--stack">
           <thead><tr>
-            <th>{{ 'common.fields.date' | translate }}</th>
-            <th>{{ 'partner.fields.chargePoint' | translate }}</th>
-            <th class="num">{{ 'partner.fields.energy' | translate }}</th>
-            <th class="num">{{ 'partner.fields.revenue' | translate }}</th>
+            <th scope="col">{{ 'common.fields.date' | translate }}</th>
+            <th scope="col">{{ 'partner.fields.chargePoint' | translate }}</th>
+            <th scope="col" class="num">{{ 'partner.fields.energy' | translate }}</th>
+            <th scope="col" class="num">{{ 'partner.fields.revenue' | translate }}</th>
           </tr></thead>
           <tbody>
             <tr *ngFor="let s of recent">
-              <td>{{ s.startDate | vxDate:'short' }}</td>
-              <td>{{ s.stationName || '—' }}<div class="muted">{{ s.chargePointName }} · {{ s.connector }}</div></td>
-              <td class="num">{{ s.chargedKwhs | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</td>
-              <td class="num">
+              <td [attr.data-label]="'common.fields.date' | translate">{{ s.startDate | vxDate:'short' }}</td>
+              <td [attr.data-label]="'partner.fields.chargePoint' | translate"><span>{{ s.stationName || '—' }}<div class="muted">{{ s.chargePointName }} · {{ s.connector }}</div></span></td>
+              <td class="num" [attr.data-label]="'partner.fields.energy' | translate"><span class="vx-num">{{ s.chargedKwhs | vxNumber:'1.0-2' }}</span> {{ 'common.units.kwh' | translate }}</td>
+              <td class="num" [attr.data-label]="'partner.fields.revenue' | translate">
                 <span *ngIf="s.active; else billed" class="vx-badge vx-badge--success vx-badge--live">{{ 'partner.status.charging' | translate }}</span>
                 <ng-template #billed>{{ s.total | vxMoney }}</ng-template>
               </td>
@@ -70,7 +91,12 @@
           </tbody>
         </table>
       </div>
-      <ng-template #noSessions><p class="vx-empty">{{ 'partner.sessions.empty' | translate }}</p></ng-template>
+      <ng-template #noSessions>
+        <div class="vx-empty-state">
+          <span class="vx-empty-state__icon"><vx-icon name="plugged-car"></vx-icon></span>
+          <strong>{{ 'partner.sessions.empty' | translate }}</strong>
+        </div>
+      </ng-template>
     </section>
 
     <div>
@@ -99,7 +125,7 @@
         </div>
         <ul class="vx-list" *ngIf="stations.length; else noStations">
           <li *ngFor="let st of stations.slice(0, 5)">
-            <a [routerLink]="['/partner-dashboard/charge-points']" [queryParams]="{ station: st.id }">
+            <a [routerLink]="['/partner-dashboard/stations', st.id]">
               <strong>{{ st.name }}</strong>
               <span class="muted">{{ st.city }} · {{ 'partner.stations.points' | translate:{ count: st.chargePointCount } }}</span>
             </a>
@@ -110,4 +136,5 @@
       </section>
     </div>
   </div>
+  <vx-print-footer [note]="'portal.partner.printNote' | translate"></vx-print-footer>
 </main></div>

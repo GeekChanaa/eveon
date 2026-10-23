@@ -49,7 +49,20 @@
       "callError": "La borne n'a pas pu exécuter la commande ({{code}}).",
       "unavailable": "Le service est momentanément indisponible. Réessayez dans un instant.",
       "notSupported": "Cette borne ne prend pas en charge cette action.",
-      "failed": "La commande n'a pas pu être envoyée. Réessayez."
+      "failed": "La commande n'a pas pu être envoyée. Réessayez.",
+      "reset": {
+        "done": "La borne a accepté le redémarrage.",
+        "scheduled": "La borne redémarrera dès que ses sessions seront terminées."
+      },
+      "refresh": {
+        "done": "La borne envoie l'état de ses connecteurs."
+      },
+      "unlock": {
+        "done": "Le connecteur est déverrouillé."
+      },
+      "sessionStop": {
+        "done": "Arrêt demandé : la borne termine la session."
+      }
     },
     "customer": {
       "firstSessionHint": "Démarrez une session depuis l'application EVEON ou avec votre carte de recharge sur n'importe quelle borne EVEON : elle apparaîtra ici.",
@@ -65,6 +78,138 @@
       "noMatch": "Aucune session ne correspond à ces filtres.",
       "removeCardTitle": "Supprimer cette carte enregistrée ?",
       "removeCardText": "Vous pourrez l'ajouter de nouveau à tout moment sur la page du prestataire de paiement."
+    },
+    "partner": {
+      "chargePointsSubtitle": "Connexion, état des connecteurs en direct et prix payés par les conducteurs. Redémarrez une borne, déverrouillez un connecteur ou arrêtez une session à distance.",
+      "connected": "Connectée",
+      "notConnected": "Non connectée",
+      "actions": {
+        "title": "Actions à distance sur {{id}}",
+        "column": "Actions",
+        "refresh": "Actualiser l'état",
+        "refreshHint": "Demander à la borne l'état de ses connecteurs",
+        "softReset": "Redémarrer",
+        "softResetHint": "Redémarrer une fois les sessions en cours terminées",
+        "hardReset": "Forcer le redémarrage",
+        "hardResetHint": "Redémarrer tout de suite : les sessions en cours s'arrêtent",
+        "offlineHint": "La borne n'est pas connectée : les actions à distance sont indisponibles",
+        "sending": "Envoi de la commande…",
+        "unlock": "Déverrouiller",
+        "stop": "Arrêter la session",
+        "auditNote": "Chaque action à distance est enregistrée à votre nom."
+      },
+      "confirm": {
+        "softResetTitle": "Redémarrer {{id}} ?",
+        "softResetText": "La borne redémarre dès qu'aucune session n'est en cours ; les sessions en cours continuent jusqu'à leur fin.",
+        "softResetConfirm": "Redémarrer",
+        "hardResetTitle": "Forcer le redémarrage de {{id}} ?",
+        "hardResetText": "La borne redémarre immédiatement et reste indisponible quelques minutes.",
+        "hardResetConfirm": "Forcer le redémarrage",
+        "runningWarning": "{{count}} session(s) en cours vont s'arrêter ; les conducteurs paient ce qui a été rechargé.",
+        "unlockTitle": "Déverrouiller un connecteur de {{id}} ?",
+        "unlockText": "Le câble verrouillé dans {{connector}} est libéré. À utiliser quand un conducteur ne peut pas débrancher ; une session en cours peut s'arrêter.",
+        "unlockConfirm": "Déverrouiller",
+        "stopTitle": "Arrêter la session sur {{id}} ?",
+        "stopText": "La session sur {{connector}} s'arrête ; le conducteur paie ce qui a été rechargé et en est informé.",
+        "stopSessionText": "La session n°{{id}} à {{station}} s'arrête ({{energy}} kWh à ce stade) ; le conducteur paie ce qui a été rechargé et en est informé.",
+        "stopConfirm": "Arrêter la session"
+      },
+      "printNote": "Document issu de votre espace partenaire EVEON. Montants facturés aux conducteurs, TTC.",
+      "exportFailed": "Le relevé n'a pas pu être préparé. Réessayez.",
+      "stationsSubtitle": "Vos stations telles que les voient les conducteurs. Ouvrez-en une pour mettre à jour ses informations, ses horaires et ses photos.",
+      "trendTitle": "Chiffre d'affaires des 30 derniers jours",
+      "trendHint": "{{total}} facturés aux conducteurs sur les 30 derniers jours.",
+      "securitySubtitle": "Protégez votre compte partenaire avec la double authentification.",
+      "securityNote": "La double authentification s'applique à chaque personne qui se connecte avec ce compte partenaire."
+    },
+    "station": {
+      "eyebrow": "Station de recharge",
+      "open": "Détails et modification",
+      "notFound": "Cette station n'existe pas ou ne vous appartient pas.",
+      "updatedAt": "mise à jour le {{date}}",
+      "edit": "Modifier les informations",
+      "editTitle": "Informations publiques",
+      "editHint": "Ce que voient les conducteurs dans l'application EVEON et sur la carte. Le statut et les équipements sont gérés par EVEON.",
+      "saved": "Les informations de la station ont été enregistrées.",
+      "nameTaken": "Une autre station porte déjà ce nom.",
+      "invalid": "Certaines informations ont été refusées. Vérifiez les champs et réessayez.",
+      "saveFailed": "Les informations n'ont pas pu être enregistrées. Réessayez.",
+      "fields": {
+        "name": "Nom de la station",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "location": "Emplacement",
+        "access": "Accès",
+        "parkingType": "Stationnement",
+        "description": "Description",
+        "amenities": "Services"
+      },
+      "errors": {
+        "name": "Saisissez un nom de 2 à 100 caractères.",
+        "address": "Saisissez une adresse de 3 à 200 caractères.",
+        "city": "Saisissez la ville.",
+        "coordinates": "Indiquez la latitude (−90 à 90) et la longitude (−180 à 180), ou aucune des deux."
+      },
+      "access": {
+        "Public": "Accès public",
+        "Private": "Accès privé"
+      },
+      "accessHint": {
+        "Public": "Tous les conducteurs EVEON peuvent recharger ici.",
+        "Private": "Seuls les conducteurs autorisés peuvent recharger ici (résidence, entreprise, flotte)."
+      },
+      "parking": {
+        "ParallelParking": "Stationnement en créneau",
+        "PerpendicularParking": "Stationnement en bataille",
+        "AngleParking": "Stationnement en épi"
+      },
+      "amenity": {
+        "wifi": "Wi-Fi",
+        "parking": "Parking",
+        "restaurants": "Restaurants",
+        "washroom": "Toilettes",
+        "sittingArea": "Espace d'attente"
+      },
+      "descriptionPlaceholder": "Consignes d'accès, niveau du parking, services à proximité…",
+      "characters": "{{count}} / {{max}} caractères",
+      "publicInfo": "Ce que voient les conducteurs",
+      "publicInfoHint": "Affiché dans l'application EVEON et sur la carte.",
+      "noDescription": "Pas encore de description.",
+      "noAmenities": "Aucun service indiqué.",
+      "equipment": "Bornes et prix",
+      "auditNote": "Chaque modification est enregistrée à votre nom.",
+      "hours": {
+        "title": "Horaires d'ouverture",
+        "alwaysOpen": "Ouvert 24 h/24, 7 j/7",
+        "regular": "Horaires par jour",
+        "hint": "Heure locale. Une plage qui se termine à 00:00 se termine à minuit.",
+        "closed": "Fermé",
+        "from": "Ouvre à",
+        "to": "Ferme à",
+        "removePeriod": "Supprimer cette plage",
+        "addPeriod": "Ajouter une plage",
+        "copyToAll": "Copier sur tous les jours",
+        "noneOpen": "Ouvrez au moins un jour, ou choisissez 24 h/24.",
+        "endAfterStart": "Chaque plage doit se terminer après son début.",
+        "overlap": "Les plages d'une même journée ne doivent pas se chevaucher."
+      },
+      "photos": {
+        "title": "Photos",
+        "hint": "{{count}} photo(s) sur {{max}}. PNG, JPEG ou WebP, 5 Mo chacune.",
+        "add": "Ajouter des photos",
+        "badType": "Choisissez des images PNG, JPEG ou WebP.",
+        "tooBig": "Chaque photo doit faire 5 Mo au plus.",
+        "tooManyAtOnce": "Ajoutez au plus 5 photos à la fois.",
+        "tooMany": "Une station compte au plus {{max}} photos.",
+        "uploadFailed": "Les photos n'ont pas pu être envoyées. Vérifiez les fichiers et réessayez.",
+        "removeFailed": "La photo n'a pas pu être supprimée. Réessayez.",
+        "alt": "{{name}}, photo {{index}}",
+        "remove": "Supprimer la photo {{index}}",
+        "empty": "Pas encore de photo",
+        "emptyHint": "Les photos aident les conducteurs à trouver les bornes : l'entrée, la place, les bornes.",
+        "removeTitle": "Supprimer cette photo ?",
+        "removeText": "Les conducteurs ne la verront plus."
+      }
     }
   }
 }

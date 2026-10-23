@@ -204,6 +204,9 @@ export interface PartnerStation {
   connectorCount: number;
   latitude: string | null;
   longitude: string | null;
+  /** Public or Private. */
+  access: string;
+  photoUrl: string | null;
 }
 
 export interface PartnerConnector {
@@ -217,6 +220,8 @@ export interface PartnerConnector {
   pricePerMinute: number;
   pricePerIdleMinute: number;
   flatFee: number;
+  /** The session charging on this connector now, which the partner can stop. */
+  activeSessionId: number | null;
 }
 
 export interface PartnerChargePoint {
@@ -228,6 +233,73 @@ export interface PartnerChargePoint {
   model: string | null;
   status: string;
   connectors: PartnerConnector[];
+  /** Connected to EVEON right now (remote actions need it). */
+  online: boolean;
+  /** OCPP version of the live connection (ocpp1.6, ocpp2.0.1). */
+  protocol: string | null;
+}
+
+export type PartnerResetType = 'Soft' | 'Hard';
+
+/** One opening period: weekday 1 (Monday) to 7 (Sunday), local times HH:mm (the end may be 24:00). */
+export interface StationOpeningPeriod {
+  weekday: number;
+  periodBegin: string;
+  periodEnd: string;
+}
+
+export interface StationOpeningHours {
+  twentyFourSeven: boolean;
+  regular: StationOpeningPeriod[];
+}
+
+export interface StationAmenities {
+  wifi: boolean;
+  parking: boolean;
+  restaurants: boolean;
+  washroom: boolean;
+  sittingArea: boolean;
+}
+
+export interface PartnerStationPhoto {
+  id: number;
+  url: string | null;
+}
+
+export type StationAccess = 'Public' | 'Private';
+export type StationParkingType = 'ParallelParking' | 'PerpendicularParking' | 'AngleParking';
+
+/** A partner station with what drivers see of it (api/partner-portal/stations/{id}). */
+export interface PartnerStationDetail {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  latitude: number | null;
+  longitude: number | null;
+  status: string;
+  access: StationAccess;
+  parkingType: StationParkingType;
+  description: string | null;
+  openingHours: StationOpeningHours;
+  amenities: StationAmenities;
+  photos: PartnerStationPhoto[];
+  chargePointCount: number;
+  connectorCount: number;
+  updatedAt: string;
+}
+
+export interface UpdatePartnerStation {
+  name: string;
+  address: string;
+  city: string;
+  latitude: number | null;
+  longitude: number | null;
+  access: StationAccess;
+  parkingType: StationParkingType;
+  description: string | null;
+  openingHours: StationOpeningHours;
+  amenities: StationAmenities;
 }
 
 export interface ConnectorPricing {

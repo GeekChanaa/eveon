@@ -1,0 +1,213 @@
+<div class="page__inner"><main class="page__container">
+  <a class="vx-btn vx-btn--link no-print" routerLink="/partner-dashboard/stations"><vx-icon class="vx-flip-rtl" name="arrow-left"></vx-icon>{{ 'partner.stations.title' | translate }}</a>
+
+  <div class="vx-alert vx-alert--error" *ngIf="notFound" role="alert">{{ 'portal.station.notFound' | translate }}</div>
+
+  <ng-container *ngIf="station as s">
+    <app-partner-print-header [title]="s.name" [subtitle]="s.address + ', ' + s.city"></app-partner-print-header>
+
+    <header class="vx-heading">
+      <div>
+        <span class="vx-eyebrow">{{ 'portal.station.eyebrow' | translate }}</span>
+        <h1>{{ s.name }}</h1>
+        <p>{{ s.address }}, {{ s.city }} · {{ 'portal.station.updatedAt' | translate:{ date: (s.updatedAt | vxDate:'medium') } }}</p>
+      </div>
+      <div class="vx-actions no-print">
+        <button type="button" class="vx-btn vx-btn--primary" *ngIf="!editing" (click)="startEditing()"><vx-icon name="edit"></vx-icon>{{ 'portal.station.edit' | translate }}</button>
+        <a class="vx-btn" [routerLink]="['/partner-dashboard/charge-points']" [queryParams]="{ station: s.id }">{{ 'partner.stations.pricesLink' | translate }}</a>
+        <a class="vx-btn" [routerLink]="['/partner-dashboard/sessions']" [queryParams]="{ station: s.id }">{{ 'partner.stations.sessionsLink' | translate }}</a>
+        <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+      </div>
+    </header>
+
+    <div class="vx-alert vx-alert--success no-print" *ngIf="saved" role="status">
+      <span style="flex: 1">{{ 'portal.station.saved' | translate }}</span>
+      <button type="button" class="vx-btn vx-btn--small" (click)="saved = false">{{ 'common.actions.close' | translate }}</button>
+    </div>
+
+    <!-- Editing the public information -->
+    <form *ngIf="editing" class="vx-panel no-print" [formGroup]="form" (ngSubmit)="save()" novalidate aria-labelledby="edit-title">
+      <div class="vx-panel__head"><div><h2 id="edit-title">{{ 'portal.station.editTitle' | translate }}</h2><p>{{ 'portal.station.editHint' | translate }}</p></div></div>
+      <div class="vx-alert vx-alert--error" *ngIf="saveError" role="alert">{{ saveError | translate }}</div>
+
+      <div class="vx-form-grid">
+        <div class="vx-field vx-field--full">
+          <label for="station-name">{{ 'portal.station.fields.name' | translate }}</label>
+          <input id="station-name" formControlName="name" autocomplete="off" maxlength="100" [attr.aria-invalid]="nameTaken || (form.controls.name.touched && form.controls.name.invalid)"
+            aria-describedby="station-name-error">
+          <span id="station-name-error" class="vx-field__error" *ngIf="nameTaken || (form.controls.name.touched && form.controls.name.invalid)">
+            {{ (nameTaken ? 'portal.station.nameTaken' : 'portal.station.errors.name') | translate }}</span>
+        </div>
+        <div class="vx-field">
+          <label for="station-address">{{ 'partner.fields.address' | translate }}</label>
+          <input id="station-address" formControlName="address" autocomplete="street-address" maxlength="200">
+          <span class="vx-field__error" *ngIf="form.controls.address.touched && form.controls.address.invalid">{{ 'portal.station.errors.address' | translate }}</span>
+        </div>
+        <div class="vx-field">
+          <label for="station-city">{{ 'partner.profile.city' | translate }}</label>
+          <input id="station-city" formControlName="city" autocomplete="address-level2" maxlength="100">
+          <span class="vx-field__error" *ngIf="form.controls.city.touched && form.controls.city.invalid">{{ 'portal.station.errors.city' | translate }}</span>
+        </div>
+        <div class="vx-field">
+          <label for="station-lat">{{ 'portal.station.fields.latitude' | translate }}</label>
+          <input id="station-lat" type="number" step="0.000001" formControlName="latitude" inputmode="decimal">
+        </div>
+        <div class="vx-field">
+          <label for="station-lng">{{ 'portal.station.fields.longitude' | translate }}</label>
+          <input id="station-lng" type="number" step="0.000001" formControlName="longitude" inputmode="decimal">
+        </div>
+        <p class="vx-field__error vx-field--full" *ngIf="form.errors?.['coordinates'] || form.controls.latitude.invalid || form.controls.longitude.invalid">
+          {{ 'portal.station.errors.coordinates' | translate }}</p>
+        <div class="vx-field">
+          <label for="station-access">{{ 'portal.station.fields.access' | translate }}</label>
+          <select id="station-access" formControlName="access">
+            <option value="Public">{{ 'portal.station.access.Public' | translate }}</option>
+            <option value="Private">{{ 'portal.station.access.Private' | translate }}</option>
+          </select>
+          <span class="vx-field__hint">{{ 'portal.station.accessHint.' + form.controls.access.value | translate }}</span>
+        </div>
+        <div class="vx-field">
+          <label for="station-parking">{{ 'portal.station.fields.parkingType' | translate }}</label>
+          <select id="station-parking" formControlName="parkingType">
+            <option *ngFor="let p of parkingTypes" [value]="p">{{ 'portal.station.parking.' + p | translate }}</option>
+          </select>
+        </div>
+        <div class="vx-field vx-field--full">
+          <label for="station-description">{{ 'portal.station.fields.description' | translate }}</label>
+          <textarea id="station-description" formControlName="description" maxlength="1000" aria-describedby="station-description-count"
+            [placeholder]="'portal.station.descriptionPlaceholder' | translate"></textarea>
+          <span id="station-description-count" class="vx-field__hint">{{ 'portal.station.characters' | translate:{ count: descriptionLength, max: 1000 } }}</span>
+        </div>
+        <fieldset class="vx-field vx-field--full" style="border: 0; padding: 0; margin: 0">
+          <legend style="font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--vx-text-muted); margin-block-end: 6px">
+            {{ 'portal.station.fields.amenities' | translate }}</legend>
+          <div class="vx-checks">
+            <label class="vx-check" *ngFor="let a of amenities"><input type="checkbox" [formControlName]="a"> {{ 'portal.station.amenity.' + a | translate }}</label>
+          </div>
+        </fieldset>
+        <div class="vx-field vx-field--full">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--vx-text-muted)">
+            {{ 'portal.station.hours.title' | translate }}</span>
+          <app-opening-hours-editor [hours]="s.openingHours" (hoursChange)="hours = $event"></app-opening-hours-editor>
+        </div>
+      </div>
+
+      <div class="vx-actions" style="justify-content: flex-end; margin-block-start: 18px">
+        <button type="button" class="vx-btn" (click)="cancel()" [disabled]="saving">{{ 'common.actions.cancel' | translate }}</button>
+        <button type="submit" class="vx-btn vx-btn--primary" [disabled]="saving" [attr.aria-busy]="saving">
+          {{ (saving ? 'partner.pricing.saving' : 'common.actions.save') | translate }}</button>
+      </div>
+    </form>
+
+    <!-- What drivers see -->
+    <div class="vx-split" *ngIf="!editing">
+      <section class="vx-panel" aria-labelledby="info-title">
+        <div class="vx-panel__head">
+          <div><h2 id="info-title">{{ 'portal.station.publicInfo' | translate }}</h2><p>{{ 'portal.station.publicInfoHint' | translate }}</p></div>
+          <span class="vx-badge" [ngClass]="tone(s.status)">{{ 'partner.stationStatus.' + s.status | translate }}</span>
+        </div>
+        <dl class="vx-kv">
+          <div><dt>{{ 'partner.fields.address' | translate }}</dt><dd>{{ s.address }}<br><small class="muted">{{ s.city }}</small></dd></div>
+          <div><dt>{{ 'portal.station.fields.location' | translate }}</dt>
+            <dd *ngIf="mapUrl(s) as url; else noLocation"><span class="vx-num">{{ s.latitude }}, {{ s.longitude }}</span><br>
+              <a class="no-print" [href]="url" target="_blank" rel="noopener">{{ 'partner.stations.map' | translate }}</a></dd>
+            <ng-template #noLocation><dd>—</dd></ng-template></div>
+          <div><dt>{{ 'portal.station.fields.access' | translate }}</dt><dd>{{ 'portal.station.access.' + s.access | translate }}</dd></div>
+          <div><dt>{{ 'portal.station.fields.parkingType' | translate }}</dt><dd>{{ 'portal.station.parking.' + s.parkingType | translate }}</dd></div>
+          <div><dt>{{ 'partner.stations.chargePoints' | translate }}</dt><dd class="vx-num">{{ s.chargePointCount }}</dd></div>
+          <div><dt>{{ 'partner.stations.connectors' | translate }}</dt><dd class="vx-num">{{ s.connectorCount }}</dd></div>
+        </dl>
+        <h3 style="font-size: 13px; margin: 20px 0 6px">{{ 'portal.station.fields.description' | translate }}</h3>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-line" [class.muted]="!s.description">{{ s.description || ('portal.station.noDescription' | translate) }}</p>
+        <h3 style="font-size: 13px; margin: 20px 0 8px">{{ 'portal.station.fields.amenities' | translate }}</h3>
+        <div class="vx-checks">
+          <ng-container *ngFor="let a of amenities"><span class="vx-badge" *ngIf="s.amenities[a]">{{ 'portal.station.amenity.' + a | translate }}</span></ng-container>
+          <span class="muted" style="font-size: 13px" *ngIf="!(s.amenities.wifi || s.amenities.parking || s.amenities.restaurants || s.amenities.washroom || s.amenities.sittingArea)">
+            {{ 'portal.station.noAmenities' | translate }}</span>
+        </div>
+      </section>
+
+      <section class="vx-panel" aria-labelledby="hours-title">
+        <div class="vx-panel__head"><div><h2 id="hours-title">{{ 'portal.station.hours.title' | translate }}</h2></div></div>
+        <p *ngIf="s.openingHours.twentyFourSeven; else regularHours" class="vx-badge vx-badge--success">{{ 'portal.station.hours.alwaysOpen' | translate }}</p>
+        <ng-template #regularHours>
+          <ul class="vx-hours-list">
+            <li *ngFor="let d of days">
+              <span>{{ dayName(d.weekday) }}</span>
+              <span *ngIf="d.periods.length; else closed" class="vx-num">
+                <ng-container *ngFor="let p of d.periods; let last = last">{{ p.periodBegin }}–{{ p.periodEnd }}<ng-container *ngIf="!last">, </ng-container></ng-container>
+              </span>
+              <ng-template #closed><span class="muted">{{ 'portal.station.hours.closed' | translate }}</span></ng-template>
+            </li>
+          </ul>
+        </ng-template>
+      </section>
+    </div>
+
+    <!-- Photos -->
+    <section class="vx-panel" aria-labelledby="photos-title">
+      <div class="vx-panel__head">
+        <div><h2 id="photos-title">{{ 'portal.station.photos.title' | translate }}</h2>
+          <p>{{ 'portal.station.photos.hint' | translate:{ count: s.photos.length, max: maxPhotos } }}</p></div>
+        <div class="vx-actions no-print" *ngIf="s.photos.length < maxPhotos">
+          <input #photoInput type="file" id="station-photos" class="vx-sr-only" tabindex="-1" aria-hidden="true" multiple accept="image/png,image/jpeg,image/webp"
+            (change)="addPhotos($any($event.target).files); photoInput.value = ''">
+          <button type="button" class="vx-btn" (click)="photoInput.click()" [disabled]="uploading" [attr.aria-busy]="uploading">
+            <vx-icon name="upload"></vx-icon>{{ (uploading ? 'partner.profile.uploading' : 'portal.station.photos.add') | translate }}</button>
+        </div>
+      </div>
+      <div class="vx-alert vx-alert--error" *ngIf="photoError" role="alert">{{ photoError | translate:{ max: maxPhotos } }}</div>
+      <ul class="vx-photo-grid" *ngIf="s.photos.length; else noPhotos">
+        <li *ngFor="let photo of s.photos; let i = index">
+          <img [src]="fileUrl(photo.url)" [alt]="('portal.station.photos.alt' | translate:{ name: s.name, index: i + 1 })" loading="lazy">
+          <button type="button" class="vx-btn vx-btn--small vx-btn--danger" (click)="askRemovePhoto(photo)"
+            [attr.aria-label]="'portal.station.photos.remove' | translate:{ index: i + 1 }"><vx-icon name="trash"></vx-icon></button>
+        </li>
+      </ul>
+      <ng-template #noPhotos>
+        <div class="vx-empty-state">
+          <span class="vx-empty-state__icon"><vx-icon name="photos"></vx-icon></span>
+          <strong>{{ 'portal.station.photos.empty' | translate }}</strong>
+          <p>{{ 'portal.station.photos.emptyHint' | translate }}</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Equipment and prices (printed with the station) -->
+    <section class="vx-panel" aria-labelledby="equipment-title" *ngIf="chargePoints.length">
+      <div class="vx-panel__head"><div><h2 id="equipment-title">{{ 'portal.station.equipment' | translate }}</h2><p>{{ 'partner.overview.vatIncluded' | translate }}</p></div></div>
+      <div class="vx-table-wrap">
+        <table class="vx-table vx-table--stack">
+          <thead><tr>
+            <th scope="col">{{ 'partner.fields.chargePoint' | translate }}</th>
+            <th scope="col">{{ 'partner.fields.connector' | translate }}</th>
+            <th scope="col">{{ 'common.fields.status' | translate }}</th>
+            <th scope="col" class="num">{{ 'partner.pricing.perKwh' | translate }}</th>
+            <th scope="col" class="num">{{ 'partner.pricing.perMinute' | translate }}</th>
+            <th scope="col" class="num">{{ 'partner.pricing.flatFee' | translate }}</th>
+          </tr></thead>
+          <tbody>
+            <ng-container *ngFor="let cp of chargePoints">
+              <tr *ngFor="let c of cp.connectors">
+                <td [attr.data-label]="'partner.fields.chargePoint' | translate"><strong>{{ cp.chargePointId }}</strong></td>
+                <td [attr.data-label]="'partner.fields.connector' | translate">
+                  <span>{{ connectorLabel(c.evseId, c.connectorId) }}<div class="muted">{{ typeLabel(c.type) }} · <span class="vx-num">{{ c.powerKw | vxNumber:'1.0-1' }}</span> {{ 'common.units.kw' | translate }}</div></span></td>
+                <td [attr.data-label]="'common.fields.status' | translate"><span class="vx-badge" [ngClass]="tone(c.status)">{{ 'partner.connectorStatus.' + (c.status ?? 'Unknown') | translate }}</span></td>
+                <td class="num" [attr.data-label]="'partner.pricing.perKwh' | translate">{{ c.pricePerKWh | vxMoney }}</td>
+                <td class="num" [attr.data-label]="'partner.pricing.perMinute' | translate">{{ c.pricePerMinute | vxMoney }}</td>
+                <td class="num" [attr.data-label]="'partner.pricing.flatFee' | translate">{{ c.flatFee | vxMoney }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="vx-footnote">{{ 'portal.station.auditNote' | translate }}</p>
+    <vx-print-footer [note]="'portal.partner.printNote' | translate"></vx-print-footer>
+
+    <vx-confirm-dialog #removePhotoDialog tone="danger" [title]="'portal.station.photos.removeTitle' | translate"
+      [confirmLabel]="'common.actions.remove' | translate" [message]="'portal.station.photos.removeText' | translate"
+      (confirmed)="removePhoto()" (cancelled)="photoToRemove = null"></vx-confirm-dialog>
+  </ng-container>
+</main></div>

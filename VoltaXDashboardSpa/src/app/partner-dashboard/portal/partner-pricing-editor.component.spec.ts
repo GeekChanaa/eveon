@@ -5,7 +5,7 @@ import { PartnerPricingEditorComponent, PricingChange } from './partner-pricing-
 
 const connector: PartnerConnector = {
   id: 4, evseId: 1, connectorId: 1, type: 'cCCS2', powerKw: 50, status: 'Available',
-  pricePerKWh: 3.5, pricePerMinute: 0.1, pricePerIdleMinute: 0.5, flatFee: 2
+  pricePerKWh: 3.5, pricePerMinute: 0.1, pricePerIdleMinute: 0.5, flatFee: 2, activeSessionId: null
 };
 
 describe('PartnerPricingEditorComponent', () => {

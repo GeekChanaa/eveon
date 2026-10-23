@@ -104,6 +104,43 @@ describe('Portal API services', () => {
       expect(seen).toEqual([undefined, '/files/a.png', '/files/b.png']);
     });
 
+    it('sends the remote actions to the partner portal, scoped by id', () => {
+      const service = TestBed.inject(PartnerPortalService);
+      service.reset(3, 'Hard').subscribe();
+      service.refreshStatus(3).subscribe();
+      service.unlock(12).subscribe();
+      service.stopSession(77).subscribe();
+
+      const reset = http.expectOne(`${api}/api/partner-portal/charge-points/3/reset`);
+      expect(reset.request.method).toBe('POST');
+      expect(reset.request.body).toEqual({ type: 'Hard' });
+      reset.flush({ message: '', status: 'Accepted' });
+      http.expectOne(`${api}/api/partner-portal/charge-points/3/refresh-status`).flush({ status: 'Accepted' });
+      http.expectOne(`${api}/api/partner-portal/connectors/12/unlock`).flush({ status: 'Unlocked' });
+      http.expectOne(`${api}/api/partner-portal/sessions/77/stop`).flush({ status: 'Accepted' });
+    });
+
+    it('edits a station and uploads its photos as form data', () => {
+      const service = TestBed.inject(PartnerPortalService);
+      const hours = { twentyFourSeven: true, regular: [] };
+      const amenities = { wifi: true, parking: false, restaurants: false, washroom: false, sittingArea: false };
+      service.updateStation(4, { name: 'A', address: 'B', city: 'C', latitude: null, longitude: null, access: 'Public', parkingType: 'AngleParking',
+        description: null, openingHours: hours, amenities }).subscribe();
+      service.addStationPhotos(4, [new File(['x'], 'a.png', { type: 'image/png' }), new File(['y'], 'b.png', { type: 'image/png' })]).subscribe();
+      service.removeStationPhoto(4, 9).subscribe();
+
+      const put = http.expectOne(`${api}/api/partner-portal/stations/4`);
+      expect(put.request.method).toBe('PUT');
+      expect(put.request.body.openingHours).toEqual(hours);
+      put.flush({});
+      const upload = http.expectOne(`${api}/api/partner-portal/stations/4/photos`);
+      expect((upload.request.body as FormData).getAll('photos').length).toBe(2);
+      upload.flush({});
+      const remove = http.expectOne(`${api}/api/partner-portal/stations/4/photos/9`);
+      expect(remove.request.method).toBe('DELETE');
+      remove.flush(null);
+    });
+
     it('resolves stored file paths against the static files host', () => {
       expect(PartnerPortalService.fileUrl(null)).toBeNull();
       expect(PartnerPortalService.fileUrl('https://cdn.test/x.png')).toBe('https://cdn.test/x.png');

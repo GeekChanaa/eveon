@@ -49,7 +49,20 @@
       "callError": "The charger could not carry out the command ({{code}}).",
       "unavailable": "The service is temporarily unavailable. Try again in a moment.",
       "notSupported": "This charger does not support this action.",
-      "failed": "The command could not be sent. Try again."
+      "failed": "The command could not be sent. Try again.",
+      "reset": {
+        "done": "The charger accepted the restart.",
+        "scheduled": "The charger will restart once its sessions are over."
+      },
+      "refresh": {
+        "done": "The charger is reporting the status of its connectors."
+      },
+      "unlock": {
+        "done": "The connector is unlocked."
+      },
+      "sessionStop": {
+        "done": "Stop requested: the charger is ending the session."
+      }
     },
     "customer": {
       "firstSessionHint": "Start a session from the EVEON app or with your charging card at any EVEON station: it will show up here.",
@@ -65,6 +78,138 @@
       "noMatch": "No session matches these filters.",
       "removeCardTitle": "Remove this saved card?",
       "removeCardText": "You can add it again at any time on the payment provider's page."
+    },
+    "partner": {
+      "chargePointsSubtitle": "Connection, live connector status and the prices drivers pay. Restart a charger, unlock a connector or stop a session remotely.",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "actions": {
+        "title": "Remote actions on {{id}}",
+        "column": "Actions",
+        "refresh": "Refresh status",
+        "refreshHint": "Ask the charger to report the status of its connectors",
+        "softReset": "Restart",
+        "softResetHint": "Restart once the running sessions are over",
+        "hardReset": "Force restart",
+        "hardResetHint": "Restart now: running sessions stop",
+        "offlineHint": "The charger is not connected: remote actions are unavailable",
+        "sending": "Sending the command…",
+        "unlock": "Unlock",
+        "stop": "Stop session",
+        "auditNote": "Every remote action is recorded with your name."
+      },
+      "confirm": {
+        "softResetTitle": "Restart {{id}}?",
+        "softResetText": "The charger restarts as soon as no session is running; sessions in progress go on until they end.",
+        "softResetConfirm": "Restart",
+        "hardResetTitle": "Force the restart of {{id}}?",
+        "hardResetText": "The charger restarts right away and is unavailable for a few minutes.",
+        "hardResetConfirm": "Force restart",
+        "runningWarning": "{{count}} session(s) in progress will stop; drivers pay what was charged.",
+        "unlockTitle": "Unlock a connector of {{id}}?",
+        "unlockText": "The cable locked in {{connector}} is released. Use it when a driver cannot unplug; a session in progress may stop.",
+        "unlockConfirm": "Unlock",
+        "stopTitle": "Stop the session on {{id}}?",
+        "stopText": "The session on {{connector}} stops; the driver pays what was charged and is notified.",
+        "stopSessionText": "Session #{{id}} at {{station}} stops ({{energy}} kWh so far); the driver pays what was charged and is notified.",
+        "stopConfirm": "Stop session"
+      },
+      "printNote": "Document from your EVEON partner portal. Amounts billed to drivers, VAT included.",
+      "exportFailed": "The statement could not be prepared. Try again.",
+      "stationsSubtitle": "Your stations as drivers see them. Open one to update its information, opening hours and photos.",
+      "trendTitle": "Revenue, last 30 days",
+      "trendHint": "{{total}} billed to drivers over the last 30 days.",
+      "securitySubtitle": "Protect your partner account with two-factor authentication.",
+      "securityNote": "Two-factor authentication applies to every person who signs in with this partner account."
+    },
+    "station": {
+      "eyebrow": "Charging station",
+      "open": "Details and editing",
+      "notFound": "This station does not exist or is not yours.",
+      "updatedAt": "updated on {{date}}",
+      "edit": "Edit the information",
+      "editTitle": "Public information",
+      "editHint": "What drivers see in the EVEON app and on the map. The status and the equipment are managed by EVEON.",
+      "saved": "The station information was saved.",
+      "nameTaken": "Another station already has this name.",
+      "invalid": "Some information was refused. Check the fields and try again.",
+      "saveFailed": "The information could not be saved. Try again.",
+      "fields": {
+        "name": "Station name",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "location": "Location",
+        "access": "Access",
+        "parkingType": "Parking",
+        "description": "Description",
+        "amenities": "Amenities"
+      },
+      "errors": {
+        "name": "Enter a name of 2 to 100 characters.",
+        "address": "Enter an address of 3 to 200 characters.",
+        "city": "Enter the city.",
+        "coordinates": "Give both the latitude (−90 to 90) and the longitude (−180 to 180), or neither."
+      },
+      "access": {
+        "Public": "Public access",
+        "Private": "Private access"
+      },
+      "accessHint": {
+        "Public": "Every EVEON driver can charge here.",
+        "Private": "Only authorized drivers can charge here (residence, company, fleet)."
+      },
+      "parking": {
+        "ParallelParking": "Parallel parking",
+        "PerpendicularParking": "Perpendicular parking",
+        "AngleParking": "Angle parking"
+      },
+      "amenity": {
+        "wifi": "Wi-Fi",
+        "parking": "Parking",
+        "restaurants": "Restaurants",
+        "washroom": "Toilets",
+        "sittingArea": "Seating area"
+      },
+      "descriptionPlaceholder": "Access instructions, parking level, nearby services…",
+      "characters": "{{count}} / {{max}} characters",
+      "publicInfo": "What drivers see",
+      "publicInfoHint": "Shown in the EVEON app and on the map.",
+      "noDescription": "No description yet.",
+      "noAmenities": "No amenity listed.",
+      "equipment": "Charge points and prices",
+      "auditNote": "Every change is recorded with your name.",
+      "hours": {
+        "title": "Opening hours",
+        "alwaysOpen": "Open 24/7",
+        "regular": "Opening hours per day",
+        "hint": "Local time. A period ending at 00:00 ends at midnight.",
+        "closed": "Closed",
+        "from": "Opens at",
+        "to": "Closes at",
+        "removePeriod": "Remove this period",
+        "addPeriod": "Add a period",
+        "copyToAll": "Copy to every day",
+        "noneOpen": "Open at least one day, or choose open 24/7.",
+        "endAfterStart": "Each period must end after it starts.",
+        "overlap": "The periods of a day must not overlap."
+      },
+      "photos": {
+        "title": "Photos",
+        "hint": "{{count}} of {{max}} photos. PNG, JPEG or WebP, 5 MB each.",
+        "add": "Add photos",
+        "badType": "Choose PNG, JPEG or WebP images.",
+        "tooBig": "Each photo must be 5 MB at most.",
+        "tooManyAtOnce": "Add at most 5 photos at a time.",
+        "tooMany": "A station has at most {{max}} photos.",
+        "uploadFailed": "The photos could not be uploaded. Check the files and try again.",
+        "removeFailed": "The photo could not be removed. Try again.",
+        "alt": "{{name}}, photo {{index}}",
+        "remove": "Remove photo {{index}}",
+        "empty": "No photo yet",
+        "emptyHint": "Photos help drivers find the chargers: the entrance, the parking spot, the charge points.",
+        "removeTitle": "Remove this photo?",
+        "removeText": "Drivers will no longer see it."
+      }
     }
   }
 }

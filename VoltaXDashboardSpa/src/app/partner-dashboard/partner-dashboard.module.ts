@@ -12,8 +12,15 @@ import { PartnerSessionsComponent } from './portal/partner-sessions.component';
 import { PartnerStatisticsComponent } from './portal/partner-statistics.component';
 import { PartnerProfileComponent } from './portal/partner-profile.component';
 import { PartnerLogoComponent } from './portal/partner-logo.component';
+import { PartnerPrintHeaderComponent } from './portal/partner-print-header.component';
+import { PartnerStationDetailComponent } from './portal/partner-station-detail.component';
+import { OpeningHoursEditorComponent } from './portal/opening-hours';
+import { PartnerSecurityComponent } from './portal/partner-security.component';
 
-/** The partner portal: the partner's own stations, prices, sessions and revenue (api/partner-portal). */
+/**
+ * The partner portal: the partner's own stations (public information, photos), prices, remote actions on its chargers,
+ * sessions and revenue (api/partner-portal).
+ */
 @NgModule({
   declarations: [
     PartnerOverviewComponent,
@@ -23,7 +30,11 @@ import { PartnerLogoComponent } from './portal/partner-logo.component';
     PartnerSessionsComponent,
     PartnerStatisticsComponent,
     PartnerProfileComponent,
-    PartnerLogoComponent
+    PartnerLogoComponent,
+    PartnerPrintHeaderComponent,
+    PartnerStationDetailComponent,
+    OpeningHoursEditorComponent,
+    PartnerSecurityComponent
   ],
   imports: [
     SharedModule,

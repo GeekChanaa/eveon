@@ -4,9 +4,10 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { toParams } from 'src/_helpers/download';
 import {
-  ConnectorPricing, PagedResult, PartnerChargePoint, PartnerConnector, PartnerOverview, PartnerProfile, PartnerSession,
-  PartnerSessionFilter, PartnerStation, PartnerStatistics
+  ConnectorPricing, PagedResult, PartnerChargePoint, PartnerConnector, PartnerOverview, PartnerProfile, PartnerResetType, PartnerSession,
+  PartnerSessionFilter, PartnerStation, PartnerStationDetail, PartnerStatistics, UpdatePartnerStation
 } from 'src/_models/portal';
+import { CommandAnswer } from 'src/app/shared/portal-ui/remote-command';
 
 /** The partner portal API (api/partner-portal): the signed-in partner's own stations, prices, sessions and revenue. */
 @Injectable({ providedIn: 'root' })
@@ -53,6 +54,43 @@ export class PartnerPortalService {
   }
 
   statistics(): Observable<PartnerStatistics> { return this.http.get<PartnerStatistics>(`${this.base}/statistics`); }
+
+  // ------------------------------------------------------------------ the partner's stations
+
+  station(id: number): Observable<PartnerStationDetail> { return this.http.get<PartnerStationDetail>(`${this.base}/stations/${id}`); }
+
+  updateStation(id: number, station: UpdatePartnerStation): Observable<PartnerStationDetail> {
+    return this.http.put<PartnerStationDetail>(`${this.base}/stations/${id}`, station);
+  }
+
+  addStationPhotos(id: number, files: File[]): Observable<PartnerStationDetail> {
+    const form = new FormData();
+    files.forEach(file => form.append('photos', file, file.name));
+    return this.http.post<PartnerStationDetail>(`${this.base}/stations/${id}/photos`, form);
+  }
+
+  removeStationPhoto(id: number, photoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/stations/${id}/photos/${photoId}`);
+  }
+
+  // ------------------------------------------------------------------ remote actions (answers: see CommandAnswer)
+
+  /** Soft: restart once the sessions are over; Hard: restart now (running sessions stop). */
+  reset(chargePointId: number, type: PartnerResetType): Observable<CommandAnswer> {
+    return this.http.post<CommandAnswer>(`${this.base}/charge-points/${chargePointId}/reset`, { type });
+  }
+
+  refreshStatus(chargePointId: number): Observable<CommandAnswer> {
+    return this.http.post<CommandAnswer>(`${this.base}/charge-points/${chargePointId}/refresh-status`, {});
+  }
+
+  unlock(connectorId: number): Observable<CommandAnswer> {
+    return this.http.post<CommandAnswer>(`${this.base}/connectors/${connectorId}/unlock`, {});
+  }
+
+  stopSession(sessionId: number): Observable<CommandAnswer> {
+    return this.http.post<CommandAnswer>(`${this.base}/sessions/${sessionId}/stop`, {});
+  }
 
   statement(filter: PartnerSessionFilter, format: 'csv' | 'pdf'): Observable<HttpResponse<Blob>> {
     const { page, pageSize, ...rest } = filter;
