@@ -76,6 +76,7 @@ fi
 step "Deploying $REF to $DEPLOY_HOST"
 # The remote script is sent as is (quoted heredoc); its inputs are passed as quoted positional arguments.
 remote_args=$(printf '%q ' "$REF" "$CONTAINER" "$ENV_FILE" "$PUBLISH" "$VOLUME_PREFIX" "${SKIP_MIGRATE:-0}")
+# shellcheck disable=SC2029 # expanding remote_args here is the point: they are already quoted for the remote shell
 ssh "${ssh_args[@]}" "$DEPLOY_HOST" "bash -s -- $remote_args" <<'REMOTE'
 set -Eeuo pipefail
 ref=$1 container=$2 env_file=$3 publish=$4 prefix=$5 skip_migrate=$6

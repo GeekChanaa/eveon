@@ -83,8 +83,13 @@ schema `EnsureCreated` builds from the model on the same provider:
 | Provider | Result |
 | --- | --- |
 | MariaDB 10.11.19 (`mariadb:10.11`) | 19 migrations applied (about 6 s), schema check passed. Output of `recreate` byte-identical to before (MySQL path unchanged); the only schema change is `PhoneLoginChallenges`. |
+| MariaDB 11.8 (`mariadb:11.8`, the production major version) | 19 migrations applied, schema check passed, same differences as 10.11. |
 | SQL Server 2022 (16.0, `mcr.microsoft.com/mssql/server:2022-latest`) | 19 migrations applied (about 4 s), schema check passed. Before this change `recreate` failed at its first table (`Cannot find data type longtext`). |
 | Both | A database where the old initializer had already created `PhoneLoginChallenges` migrates without error. |
+
+The CI job `migrations` (`.github/workflows/ci.yml`) repeats the `--migrate` run on every push against
+empty MariaDB 11.8 and SQL Server 2022 databases, and `api` checks that the model has no change without
+a migration (`dotnet ef migrations has-pending-model-changes`).
 
 Known, harmless differences between the migrated schema and the model (left as they are):
 

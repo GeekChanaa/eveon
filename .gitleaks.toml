@@ -1,0 +1,13 @@
+# Secret scanning (CI job "secrets", .github/workflows/ci.yml): gitleaks' default rules, and only the test
+# fixtures allowed. Never add a real secret's path or value here: rotate the secret and remove it instead
+# (docs/security-runbook.md).
+title = "EVEON"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake keys built for the test hosts (signing keys, sandbox secrets)"
+paths = [
+  '''(^|/)tests/VoltaX\.[A-Za-z0-9]+/''',
+]
