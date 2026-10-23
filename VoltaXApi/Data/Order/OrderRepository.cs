@@ -56,15 +56,6 @@ namespace VoltaXApi.Data
         }
 
 
-        public Task<decimal> CountRecharge(Expression<Func<Order, bool>> predicate)
-        {
-            var Amount = _context.Orders
-                .Where(predicate)
-                .SumAsync(t => t.Amount);
-
-            return Amount;
-        }
-
         public async Task<InvoiceData?> GetOrderForInvoice(int orderID)
         {
             var invoice = await _context.Orders.Where(u => u.ID == orderID).Select(o => new InvoiceData{

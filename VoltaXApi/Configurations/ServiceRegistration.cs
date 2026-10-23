@@ -251,6 +251,7 @@ public static class ServiceRegistration
         services.AddScoped<ISystemReportService, SystemReportService>();
         services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderStatisticsService, OrderStatisticsService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuthService, AuthService>();

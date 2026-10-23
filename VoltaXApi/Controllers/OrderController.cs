@@ -23,35 +23,23 @@ namespace VoltaXApi.Controllers
     {
         private readonly IOrderRepository _repository;
         private readonly IOrderService _orderService;
+        private readonly IOrderStatisticsService _statistics;
         private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
-
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
-        private readonly IBusinessClock _clock;
 
         public OrderController(
             IOrderRepository repository,
             IInvoiceGeneratorService<InvoiceData> invoiceService,
             IOrderService orderService,
-            IConfiguration configuration,
-            IWebHostEnvironment environment,
-            IBusinessClock clock) : base(repository)
+            IOrderStatisticsService statistics) : base(repository)
         {
-            _clock = clock;
-            _configuration = configuration;
-            _environment = environment;
             _repository = repository;
             _invoiceService = invoiceService;
             _orderService = orderService;
+            _statistics = statistics;
         }
 
-        // You can override the base methods or add specific methods for this controller
         [HttpGet("countRechargeAmount")]
-        public async Task<IActionResult> CountRecharge()
-        {
-            decimal count = await _repository.CountRecharge(u => true);
-            return Ok(count);
-        }
+        public async Task<IActionResult> CountRecharge() => Ok(await _statistics.RechargedAmountAsync());
 
         [HttpGet("GetRechargeOrders")]
         public async Task<List<RechargeOrderListDto>> GetRechargeOrders([FromQuery] GlobalParams globalParams)
@@ -63,118 +51,28 @@ namespace VoltaXApi.Controllers
         }
 
         [HttpGet("countRechargeAmountToday")]
-        public async Task<IActionResult> CountRechargeToday()
-        {
-            DateTime today = _clock.StartOfDayUtc(_clock.Today);
-            DateTime tomorrow = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
-
-            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
-            return Ok(count);
-        }
+        public async Task<IActionResult> CountRechargeToday() => Ok(await _statistics.RechargedAmountTodayAsync());
 
         [HttpGet("countRechargeAmountBetween")]
-        public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart, [FromQuery] DateTime dateEnd)
-        {
-            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= dateStart && u.RechargeDate <= dateEnd);
-            return Ok(count);
-        }
+        public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart, [FromQuery] DateTime dateEnd) =>
+            Ok(await _statistics.RechargedAmountBetweenAsync(dateStart, dateEnd));
 
+        // The last 30 business days, oldest first.
         [HttpGet("countRechargeAmountByDay")]
-        public async Task<IActionResult> CountRechargeAmountByDay()
-        {
-            DateTime endDate = _clock.Today;
-            DateTime startDate = endDate.AddDays(-29);
-
-            var rechargeAmountByDay = new List<decimal>();
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-            {
-                DateTime currentDay = _clock.StartOfDayUtc(date);
-                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
-
-                decimal rechargeAmount = await _repository
-                    .CountRecharge(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
-
-                rechargeAmountByDay.Add(rechargeAmount);
-            }
-
-            return Ok(rechargeAmountByDay);
-        }
+        public async Task<IActionResult> CountRechargeAmountByDay() => Ok(await _statistics.RechargedAmountPerDayAsync(30));
 
         [HttpGet("countToday")]
-        public async Task<IActionResult> CountToday()
-        {
-            DateTime today = _clock.StartOfDayUtc(_clock.Today);
-            DateTime tomorrow = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
-            double count = await _repository.CountAsync(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
-            return Ok(count);
-        }
+        public async Task<IActionResult> CountToday() => Ok((double)await _statistics.CountTodayAsync());
 
         [HttpGet("countByDay")]
-        public async Task<IActionResult> CountByDay()
-        {
-            DateTime endDate = _clock.Today;
-            DateTime startDate = endDate.AddDays(-29);
-
-            var orderCountByDay = new List<double>();
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-            {
-                DateTime currentDay = _clock.StartOfDayUtc(date);
-                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
-
-                double rechargeAmount = await _repository
-                    .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
-
-                orderCountByDay.Add(rechargeAmount);
-            }
-
-            return Ok(orderCountByDay);
-        }
+        public async Task<IActionResult> CountByDay() => Ok(await _statistics.CountPerDayAsync(30));
 
         [HttpGet("countByLast7Days")]
-        public async Task<IActionResult> CountByLast7Days()
-        {
-            DateTime endDate = _clock.Today;
-            DateTime startDate = endDate.AddDays(-6); // subtract 6 to include today in the 7 day count
+        public async Task<IActionResult> CountByLast7Days() => Ok(await _statistics.CountPerDayAsync(7));
 
-            var orderCountByDay = new List<double>();
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-            {
-                DateTime currentDay = _clock.StartOfDayUtc(date);
-                DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
-
-                double rechargeAmount = await _repository
-                    .CountAsync(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
-
-                orderCountByDay.Add(rechargeAmount);
-            }
-
-            return Ok(orderCountByDay);
-        }
-
+        // The last 12 business months including the current one, oldest first.
         [HttpGet("countByLast12Months")]
-        public async Task<IActionResult> CountByLast12Months()
-        {
-            DateTime endDate = _clock.Today;
-            DateTime startDate = endDate.AddYears(-1).AddMonths(1); // subtract a year and add a month to include the current month in the 12 month count
-
-            var orderCountByMonth = new List<double>();
-
-            for (DateTime month = startDate; month <= endDate; month = month.AddMonths(1))
-            {
-                DateTime currentMonthStart = _clock.StartOfMonthUtc(month.Year, month.Month);
-                DateTime nextMonthStart = _clock.StartOfDayUtc(new DateTime(month.Year, month.Month, 1).AddMonths(1));
-
-                double rechargeAmount = await _repository
-                    .CountAsync(u => u.RechargeDate >= currentMonthStart && u.RechargeDate < nextMonthStart);
-
-                orderCountByMonth.Add(rechargeAmount);
-            }
-
-            return Ok(orderCountByMonth);
-        }
+        public async Task<IActionResult> CountByLast12Months() => Ok(await _statistics.CountPerMonthAsync(12));
 
         /// <summary>
         /// Manual top-up by an operator (cash, bank transfer...): credited at once, with the operator and a
