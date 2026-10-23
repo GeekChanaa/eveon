@@ -124,23 +124,28 @@ namespace VoltaXApi.OCPP.Services
         }
 
         public sealed record ActiveTransaction(string ChargePointId, int ChargePointDbId, string TransactionId, DateTime StartTime,
-            double MeterStart, double? MeterStop, Connector Connector);
+            double MeterStart, double? MeterStop, Tariff Tariff);
 
         /// <summary>Running cost of an active transaction, with the billing formula (see <see cref="ICostCalculator.RunningCost"/>).</summary>
         public static decimal RunningCost(ICostCalculator calculator, ActiveTransaction t, DateTime nowUtc) =>
-            calculator.RunningCost(t.Connector, Math.Max(0, (t.MeterStop ?? t.MeterStart) - t.MeterStart), Math.Max(0, (nowUtc - t.StartTime).TotalMinutes));
+            calculator.RunningCost(t.Tariff, Math.Max(0, (t.MeterStop ?? t.MeterStart) - t.MeterStart), Math.Max(0, (nowUtc - t.StartTime).TotalMinutes));
 
         public async Task RunOnceAsync(CancellationToken cancellationToken)
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
             var calculator = scope.ServiceProvider.GetRequiredService<ICostCalculator>();
+            var vatRate = scope.ServiceProvider.GetRequiredService<GlobalConfigurations>().Vat;
 
-            var active = await db.Transactions.AsNoTracking()
+            // Priced with the tariff frozen on the session, like the final debit.
+            var rows = await db.Transactions.AsNoTracking()
                 .Where(t => t.Status == TransactionStatusEnum.Current && t.Uid != null && t.Connector != null && t.Connector.ChargePoint != null)
-                .Select(t => new ActiveTransaction(t.Connector!.ChargePoint!.ChargePointId, t.Connector.ChargePoint.ID, t.Uid!, t.StartTime,
-                    t.MeterStart, t.MeterStop, t.Connector))
+                .Select(t => new { t.Connector!.ChargePoint!.ChargePointId, ChargePointDbId = t.Connector.ChargePoint.ID, Uid = t.Uid!, t.StartTime,
+                    t.MeterStart, t.MeterStop, t.Connector, t.ChargingSession })
                 .ToListAsync(cancellationToken);
+            var active = rows.Select(t => new ActiveTransaction(t.ChargePointId, t.ChargePointDbId, t.Uid, t.StartTime, t.MeterStart, t.MeterStop,
+                    t.ChargingSession != null ? Tariff.Of(t.ChargingSession, t.Connector, vatRate) : Tariff.Of(t.Connector, vatRate)))
+                .ToList();
             var candidates = active.Where(t => !_sender.IsSuppressed(t.ChargePointId) &&
                                                _commandSender.GetProtocolVersion(t.ChargePointId) == OcppProtocols.Ocpp201).ToList();
             if (candidates.Count == 0) return;

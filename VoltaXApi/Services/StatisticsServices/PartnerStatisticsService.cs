@@ -99,7 +99,12 @@ namespace VoltaXApi.Services
                 ChargedKwhs = s.ChargedKwhs,
                 PricePerMinute = s.PricePerMinute,
                 IdleMinutes = s.IdleMinutes,
-                PricePerIdleMinute = s.PricePerIdleMinute
+                PricePerIdleMinute = s.PricePerIdleMinute,
+                EnergyAmount = s.EnergyAmount,
+                TimeAmount = s.TimeAmount,
+                FlatFeeAmount = s.FlatFeeAmount,
+                IdleAmount = s.IdleAmount,
+                TotalAmount = s.TotalAmount
             }).ToListAsync();
 
         private static double Revenue(ChargingSession session, decimal vatRate, double gracePeriodSeconds) =>

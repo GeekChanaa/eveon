@@ -83,7 +83,12 @@ namespace VoltaXApi.Services
                     ChargedMinutes = s.ChargedMinutes,
                     PricePerMinute = s.PricePerMinute,
                     IdleMinutes = s.IdleMinutes,
-                    PricePerIdleMinute = s.PricePerIdleMinute
+                    PricePerIdleMinute = s.PricePerIdleMinute,
+                    EnergyAmount = s.EnergyAmount,
+                    TimeAmount = s.TimeAmount,
+                    FlatFeeAmount = s.FlatFeeAmount,
+                    IdleAmount = s.IdleAmount,
+                    TotalAmount = s.TotalAmount
                 })
                 .ToListAsync();
     }

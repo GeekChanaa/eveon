@@ -27,6 +27,7 @@ namespace VoltaXApi.Services
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IHubContext<ChargingSessionHub> _chargingSessionHub;
     private readonly GlobalConfigurations _globalConfigurations;
+    private readonly ICostCalculator _costCalculator;
     private readonly ILogger<TransactionService> _logger;
     private readonly VoltaXApiDbContext _context;
 
@@ -42,6 +43,7 @@ namespace VoltaXApi.Services
       IServiceScopeFactory scopeFactory,
       IHubContext<ChargingSessionHub> chargingSessionHub,
       GlobalConfigurations globalConfigurations,
+      ICostCalculator costCalculator,
       ILogger<TransactionService> logger,
       VoltaXApiDbContext context
     )
@@ -58,6 +60,7 @@ namespace VoltaXApi.Services
       _chargingSessionService = chargingSessionService;
       _chargingSessionHub = chargingSessionHub;
       _globalConfigurations = globalConfigurations;
+      _costCalculator = costCalculator;
       _logger = logger;
     }
 
@@ -379,12 +382,14 @@ namespace VoltaXApi.Services
 
           double chargedKwhs = (transaction.MeterStop ?? 0) - transaction.MeterStart;
           double elapsedMinutes = (updateTimestamp - transaction.StartTime).TotalMinutes;
-          decimal currentCost = CostCalculator.Instance.RunningCost(connector, chargedKwhs, elapsedMinutes);
-          decimal remainingBalance = Math.Max(0, card.Balance - currentCost);
 
           // Update the charging session with latest meter data
-          await _chargingSessionService.UpdateChargingSession(
+          var session = await _chargingSessionService.UpdateChargingSession(
               transaction.ChargingSessionID, elapsedMinutes, chargedKwhs);
+
+          // Same formula and tariff as the final debit.
+          decimal currentCost = _costCalculator.RunningCost(Tariff.Of(session, connector, _globalConfigurations.Vat), chargedKwhs, elapsedMinutes);
+          decimal remainingBalance = Math.Max(0, card.Balance - currentCost);
 
           _logger.LogInformation(
               "UpdateTransaction => Transaction {TransactionUid}: {Kwh:0.000} kWh, cost={Cost:0.00}, balance={Balance:0.00}",
@@ -606,31 +611,24 @@ namespace VoltaXApi.Services
             ? transaction.MeterStop.Value - transaction.MeterStart
             : 0;
 
-        // Deduct amount from card
-        if (cardTagID > 0)
-          await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID, transaction.ChargingSessionID);
-
-        await _chargingSessionService.EndChargingSession(
+        // Ends and bills the session; the ended transaction is saved in the same SaveChanges as the debit.
+        var session = await _chargingSessionService.EndChargingSession(
             transaction.ChargingSessionID, minutesCharged, chargedKwhs,
             endTimestamp);
-
+        transaction.Amount = session.ChargingPriceWithVAT;
         await _context.SaveChangesAsync();
 
         _logger.LogInformation(
-            "EndTransaction => Transaction {TransactionUid} ended: {Kwh:0.000} kWh, {Minutes:0.0} minutes",
-            transaction.Uid, chargedKwhs, minutesCharged);
+            "EndTransaction => Transaction {TransactionUid} ended: {Kwh:0.000} kWh, {Minutes:0.0} minutes, billed {Amount:0.00}",
+            transaction.Uid, chargedKwhs, minutesCharged, session.ChargingPriceWithVAT);
 
         // Shows the billed amount on the charger's display (CostUpdated, 2.0.1 only); never blocks this handler.
         CostUpdatedSender.SendFinalInBackground(_scopeFactory, _logger, chargePoint.ChargePointId, transaction.Uid,
-            CostCalculator.Instance.FinalCost(connector, minutesCharged));
+            session.ChargingPriceWithVAT);
 
-        // Reload updated card balance
-        decimal updatedBalance = card?.Balance ?? 0;
+        decimal updatedBalance = session.BalanceAfter ?? card?.Balance ?? 0;
         if (card != null)
         {
-          await _context.Entry(card).ReloadAsync();
-          updatedBalance = card.Balance;
-
           if (updatedBalance <= _globalConfigurations.DefaultLowBalanceThresholdBuffer)
           {
             await CreateChargingSessionNotification(
@@ -646,8 +644,7 @@ namespace VoltaXApi.Services
           }
         }
 
-        // Notify connected clients about session end
-        decimal finalCost = CostCalculator.Instance.EnergyCost(connector, chargedKwhs);
+        // Notify connected clients about session end, with the amount actually billed.
         await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
         {
           SessionId = transaction.ChargingSessionID,
@@ -655,11 +652,13 @@ namespace VoltaXApi.Services
           Status = "Ended",
           EnergyKWh = chargedKwhs,
           DurationMinutes = minutesCharged,
-          CurrentCost = finalCost,
+          CurrentCost = session.ChargingPriceWithVAT,
           CardBalance = updatedBalance,
           StopReason = data.TriggerReason,
           Timestamp = transaction.StopTime ?? DateTime.UtcNow
         });
+
+        await _chargingSessionService.SendSessionQuoteAsync(transaction.ChargingSessionID);
       }
       catch (Exception exp)
       {

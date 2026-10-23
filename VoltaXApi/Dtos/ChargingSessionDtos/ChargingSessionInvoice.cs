@@ -23,6 +23,15 @@ public class ChargingSessionInvoice
     public decimal ChargingPriceWithVAT { get; set; }
     public decimal IdlePriceWithVAT { get; set; }
     public decimal CardBalance { get; set; }
+    public bool IsBilled { get; set; }
+    public decimal PricePerKWh { get; set; }
+    public decimal FlatFee { get; set; }
+    public decimal VatRate { get; set; }
+    public decimal EnergyPriceWithVAT { get; set; }
+    public decimal TimePriceWithVAT { get; set; }
+    public decimal FlatFeeWithVAT { get; set; }
+    public decimal? BalanceBefore { get; set; }
+    public decimal? BalanceAfter { get; set; }
     public double ChargingSessionID { get; set; }
     public List<TransactionItem> Transactions { get; set; }
 }

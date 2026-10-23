@@ -74,7 +74,16 @@ namespace VoltaXApi.Controllers
                 PricePerMinute = chargingSession.PricePerMinute ?? 0,
                 KwhsCharged = chargingSession.KwhCharged ?? 0,
                 CardBalance = chargingSession.CardBalance,
-                ChargingSessionID = chargingSessionID
+                ChargingSessionID = chargingSessionID,
+                IsBilled = chargingSession.IsBilled,
+                PricePerKWh = chargingSession.PricePerKWh ?? 0,
+                FlatFee = chargingSession.FlatFee ?? 0,
+                VatRate = chargingSession.VatRate ?? 0,
+                EnergyPriceWithVAT = chargingSession.EnergyPriceWithVAT ?? 0,
+                TimePriceWithVAT = chargingSession.TimePriceWithVAT ?? 0,
+                FlatFeeWithVAT = chargingSession.FlatFeeWithVAT ?? 0,
+                BalanceBefore = chargingSession.BalanceBefore,
+                BalanceAfter = chargingSession.BalanceAfter
             };
             var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
 

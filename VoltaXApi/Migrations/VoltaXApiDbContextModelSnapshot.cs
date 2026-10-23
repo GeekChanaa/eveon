@@ -917,6 +917,17 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<decimal?>("BalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BalanceBefore")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("BilledAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("CardID")
                         .HasColumnType("int");
 
@@ -945,6 +956,22 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime?>("EndIdleDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("EnergyAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("FlatFeeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("IdleAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<double?>("IdleMinutes")
                         .HasColumnType("float");
 
@@ -952,6 +979,10 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("PricePerKWh")
                         .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
@@ -965,11 +996,23 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("StoppedReason")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("TimeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserID")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
 
                     b.HasKey("ID");
 

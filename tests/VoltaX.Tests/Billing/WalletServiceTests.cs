@@ -102,29 +102,16 @@ public class WalletServiceTests
     }
 
     [Fact]
-    public async Task A_debit_below_zero_is_recorded_and_raises_a_system_report()
+    public async Task A_debit_may_take_the_balance_below_zero_and_is_still_recorded()
     {
-        var host = new OcppTestHost(relational: true);
+        var (host, cardId) = await HostWithCard(5m);
         await using var _ = host;
-        int cardId = 0, connectorId = 0;
-        await host.Seed(async db =>
-        {
-            var chargePoint = await Seeds.ChargePoint(db, "CP-W", c => c.PricePerIdleMinute = 1m);
-            connectorId = (await db.Connectors.SingleAsync(c => c.ChargePointID == chargePoint.ID)).ID;
-            var card = Seeds.Card("W-NEG", 5m);
-            db.Cards.Add(card);
-            await db.SaveChangesAsync();
-            cardId = card.ID;
-        });
 
-        var covered = await host.With<ICardService, bool>(c => c.SubstractAmountFromCardByIdleMinutes(cardId, 8, connectorId, chargingSessionID: 11));
+        var debit = await host.With<IWalletService, WalletTransaction>(w =>
+            w.PostAsync(cardId, new WalletPosting(-8m, WalletTransactionType.IdleFee, "session:11:idle", ChargingSessionID: 11)));
 
-        Assert.False(covered);
+        Assert.Equal(-3m, debit.BalanceAfter);
         Assert.Equal(-3m, await host.Query(db => db.Cards.Where(c => c.ID == cardId).Select(c => c.Balance).SingleAsync()));
-        Assert.Single(host.SystemReports.CallsTo(nameof(ISystemReportService.HandleReport)));
-        var idle = await host.Query(db => db.WalletTransactions.SingleAsync(w => w.Reference == "session:11:idle"));
-        Assert.Equal(WalletTransactionType.IdleFee, idle.Type);
-        Assert.Equal(-8m, idle.Amount);
     }
 
     [Fact]

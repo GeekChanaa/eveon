@@ -48,9 +48,11 @@ public class ChargingSessionInvoiceGeneratorService
 
         var totalMinutes = invoice.ChargedMinutes + invoice.IdleMinutes;
         var vatAmount = invoice.TotalPriceWithVAT - invoice.TotalPriceWithoutVAT;
-        var vatPercent = invoice.TotalPriceWithoutVAT > 0
-            ? Math.Round((invoice.TotalPriceWithVAT / invoice.TotalPriceWithoutVAT - 1) * 100)
-            : 0;
+        var vatPercent = invoice.VatRate > 0
+            ? Math.Round(invoice.VatRate * 100, 1)
+            : invoice.TotalPriceWithoutVAT > 0
+                ? Math.Round((invoice.TotalPriceWithVAT / invoice.TotalPriceWithoutVAT - 1) * 100)
+                : 0;
         var averagePower = invoice.ChargedMinutes > 0
             ? invoice.KwhsCharged / (invoice.ChargedMinutes / 60)
             : 0;
@@ -163,10 +165,36 @@ public class ChargingSessionInvoiceGeneratorService
                                 HeaderCell(header.Cell(), "AMOUNT", alignRight: true);
                             });
 
-                            LineRow(table, "Charging time", "Active charging",
-                                $"{invoice.ChargedMinutes.ToString("0.00", Culture)} min",
-                                $"{Money(invoice.PricePerMinute)} / min",
-                                Money(invoice.ChargingPriceWithVAT));
+                            if (invoice.IsBilled)
+                            {
+                                LineRow(table, "Energy delivered", "Metered by the charge point",
+                                    $"{invoice.KwhsCharged.ToString("0.00", Culture)} kWh",
+                                    $"{Money(invoice.PricePerKWh)} / kWh",
+                                    Money(invoice.EnergyPriceWithVAT));
+
+                                if (invoice.TimePriceWithVAT > 0 || invoice.PricePerMinute > 0)
+                                    LineRow(table, "Charging time", "Active charging",
+                                        $"{invoice.ChargedMinutes.ToString("0.00", Culture)} min",
+                                        $"{Money(invoice.PricePerMinute)} / min",
+                                        Money(invoice.TimePriceWithVAT));
+
+                                if (invoice.FlatFeeWithVAT > 0)
+                                    LineRow(table, "Session fee", "Per charging session",
+                                        "1", Money(invoice.FlatFee), Money(invoice.FlatFeeWithVAT));
+                            }
+                            else
+                            {
+                                // Billed before energy and session fees were part of the price: time only.
+                                LineRow(table, "Charging time", "Active charging",
+                                    $"{invoice.ChargedMinutes.ToString("0.00", Culture)} min",
+                                    $"{Money(invoice.PricePerMinute)} / min",
+                                    Money(invoice.ChargingPriceWithVAT));
+
+                                LineRow(table, "Energy delivered", "Included in time-based pricing",
+                                    $"{invoice.KwhsCharged.ToString("0.00", Culture)} kWh",
+                                    "Included",
+                                    "—");
+                            }
 
                             if (invoice.IdleMinutes > 0)
                             {
@@ -175,11 +203,6 @@ public class ChargingSessionInvoiceGeneratorService
                                     $"{Money(invoice.PricePerIdleMinute)} / min",
                                     Money(invoice.IdlePriceWithVAT));
                             }
-
-                            LineRow(table, "Energy delivered", "Included in time-based pricing",
-                                $"{invoice.KwhsCharged.ToString("0.00", Culture)} kWh",
-                                "Included",
-                                "—");
                         });
 
                         col.Item().PaddingTop(4).Text("Amounts include VAT.").FontSize(8).FontColor(TextMuted);
@@ -193,8 +216,9 @@ public class ChargingSessionInvoiceGeneratorService
                         InfoCard(row.RelativeItem(), "PAYMENT", col =>
                         {
                             KeyValue(col, "Method", "Recharge card");
-                            KeyValue(col, "Balance before", Money(invoice.CardBalance + invoice.TotalPriceWithVAT));
-                            KeyValue(col, "Balance after", Money(invoice.CardBalance), highlight: true);
+                            // Stored at billing time; older sessions only know the current balance.
+                            KeyValue(col, "Balance before", Money(invoice.BalanceBefore ?? invoice.CardBalance + invoice.TotalPriceWithVAT));
+                            KeyValue(col, "Balance after", Money(invoice.BalanceAfter ?? invoice.CardBalance), highlight: true);
                         });
 
                         row.RelativeItem().Column(col =>

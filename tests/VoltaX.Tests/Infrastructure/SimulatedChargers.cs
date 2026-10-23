@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using VoltaXApi.Data;
 using VoltaXApi.Models;
@@ -9,9 +10,20 @@ public static class Seeds
 {
     public static readonly DateTime Now = new(2026, 10, 20, 9, 0, 0, DateTimeKind.Utc);
 
-    public static async Task<User> User(VoltaXApiDbContext db, string email = "driver@example.com")
+    public static async Task<Role> Role(VoltaXApiDbContext db, string name)
     {
-        var user = new User { Email = email, FirstName = "Ev", LastName = "Driver" };
+        var role = await db.Roles.FirstOrDefaultAsync(r => r.Name == name);
+        if (role != null)
+            return role;
+        role = new Role { Name = name };
+        db.Roles.Add(role);
+        await db.SaveChangesAsync();
+        return role;
+    }
+
+    public static async Task<User> User(VoltaXApiDbContext db, string email = "driver@example.com", string role = "Customer", int? partnerId = null)
+    {
+        var user = new User { Email = email, FirstName = "Ev", LastName = "Driver", RoleID = (await Role(db, role)).ID, PartnerID = partnerId };
         db.Users.Add(user);
         await db.SaveChangesAsync();
         return user;

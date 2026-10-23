@@ -148,19 +148,20 @@ finally
 }
 
 // ---------------------------------------------------------------- CostUpdated cost = billing
-var connector = new Connector { PricePerKWh = 3.2m, PricePerMinute = 0.45m, PricePerIdleMinute = 0.1m };
+var connector = new Connector { PricePerKWh = 3.2m, PricePerMinute = 0.45m, PricePerIdleMinute = 0.1m, FlatFee = 1m };
+var tariff = Tariff.Of(connector, 0.2m);
 var calculator = CostCalculator.Instance;
 foreach (var (kwh, minutes) in new[] { (0.0, 0.0), (12.5, 30.0), (40.0, 10.0), (1.0, 300.0) })
 {
-    // The formulas TransactionService (running cost) and CardService (debit) used before the extraction.
-    var billingRunning = Math.Max((decimal)kwh * connector.PricePerKWh, (decimal)minutes * connector.PricePerMinute);
-    Check(calculator.RunningCost(connector, kwh, minutes) == billingRunning, $"cost: running cost {kwh} kWh / {minutes} min equals billing");
-    Check(calculator.FinalCost(connector, minutes) == (decimal)minutes * connector.PricePerMinute, $"cost: final cost {minutes} min equals the card debit");
+    // Flat fee (when energy was delivered) + energy + time, each rounded to the cent.
+    var expected = Math.Round((decimal)kwh * 3.2m, 2, MidpointRounding.AwayFromZero) + Math.Round((decimal)minutes * 0.45m, 2, MidpointRounding.AwayFromZero) + (kwh > 0 ? 1m : 0m);
+    Check(calculator.RunningCost(tariff, kwh, minutes) == expected, $"cost: running cost {kwh} kWh / {minutes} min equals the billed amount");
+    Check(calculator.Charge(tariff, kwh, minutes).Total == expected, $"cost: session charge {kwh} kWh / {minutes} min");
 }
-Check(calculator.EnergyCost(connector, 10) == 10 * 3.2m && calculator.IdleCost(connector, 10) == 10 * 0.1m, "cost: energy and idle prices");
+Check(calculator.IdleFee(tariff, 10, 300) == 1m && calculator.IdleFee(tariff, 4, 300) == 0, "cost: idle fee after the grace period");
 var start = new DateTime(2026, 10, 3, 10, 0, 0, DateTimeKind.Utc);
-var active = new CostUpdatedHostedService.ActiveTransaction("CP-1", 1, "tx-1", start, 1000, 1012.5, connector);
-Check(CostUpdatedHostedService.RunningCost(calculator, active, start.AddMinutes(30)) == calculator.RunningCost(connector, 12.5, 30), "CostUpdated: running cost of an active transaction uses the billing formula");
+var active = new CostUpdatedHostedService.ActiveTransaction("CP-1", 1, "tx-1", start, 1000, 1012.5, tariff);
+Check(CostUpdatedHostedService.RunningCost(calculator, active, start.AddMinutes(30)) == calculator.RunningCost(tariff, 12.5, 30), "CostUpdated: running cost of an active transaction uses the billing formula");
 Check(CostUpdatedHostedService.RunningCost(calculator, active with { MeterStop = null }, start.AddMinutes(-5)) == 0, "CostUpdated: no meter value / clock skew never gives a negative cost");
 Check(CostUpdatedSender.RoundCost(12.345m) == 12.35m && CostUpdatedSender.RoundCost(-1) == 0, "CostUpdated: totalCost rounded to cents");
 

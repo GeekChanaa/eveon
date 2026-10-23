@@ -49,37 +49,6 @@ namespace VoltaXApi.Services
             return AuthorizationStatusEnumType.Accepted;
         }
 
-        public Task<bool> SubstractAmountFromCardByMinutes(int cardTagID, double minutesCharged, int connectorID, int chargingSessionID) =>
-            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.FinalCost(connector, minutesCharged),
-                WalletTransactionType.SessionCharge, $"session:{chargingSessionID}:charge", chargingSessionID, "Charging session");
-
-        public Task<bool> SubstractAmountFromCardByIdleMinutes(int cardTagID, double idleMinutes, int connectorID, int chargingSessionID) =>
-            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.IdleCost(connector, idleMinutes),
-                WalletTransactionType.IdleFee, $"session:{chargingSessionID}:idle", chargingSessionID, "Idle fee");
-
-        /// <summary>Debits the card with the connector-priced amount; false (and a system report) when the balance goes negative.</summary>
-        private async Task<bool> Debit(int cardID, int connectorID, Func<Connector, decimal> price, WalletTransactionType type,
-            string reference, int chargingSessionID, string description)
-        {
-            Connector connector = await _connectorRepository.GetByIdAsync(connectorID)
-                ?? throw new NotFoundException($"There is no connector with the id {connectorID}");
-
-            var amount = price(connector);
-            if (amount <= 0)
-                return true;
-            var movement = await _walletService.PostAsync(cardID,
-                new WalletPosting(-amount, type, reference, description, ChargingSessionID: chargingSessionID));
-
-            if (movement.BalanceAfter < 0)
-            {
-                Card card = await _cardRepository.GetByIdAsync(cardID)
-                    ?? throw new CardNotFoundException($"There is no card with the id {cardID}");
-                await HandleCardNegativeBalance(card, connectorID);
-                return false;
-            }
-            return true;
-        }
-
         public async Task<bool> AddAmountToCard(int cardID, decimal amount, int orderID)
         {
             if (amount <= 0)

@@ -1,3 +1,4 @@
+using VoltaXApi.Services;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +78,15 @@ namespace VoltaXApi.Data
             TotalPriceWithVAT = cs.TotalPriceWithVAT(vatRate,(int) gracePeriodSeconds),
             KwhCharged = cs.ChargedKwhs,
             CostPerKwh = cs.CostPerKwh,
+            PricePerKWh = cs.PricePerKWh,
+            FlatFee = cs.FlatFee,
+            VatRate = cs.VatRate ?? vatRate,
+            EnergyPriceWithVAT = cs.EnergyAmount,
+            TimePriceWithVAT = cs.TimeAmount,
+            FlatFeeWithVAT = cs.FlatFeeAmount,
+            BalanceBefore = cs.BalanceBefore,
+            BalanceAfter = cs.BalanceAfter,
+            IsBilled = cs.TotalAmount != null,
             StartDate = cs.StartDate,
             EndDate = cs.EndDate,
             StoppedReason = cs.StoppedReason,
@@ -288,10 +298,10 @@ namespace VoltaXApi.Data
         StartDate = startDate,
         StoppedReason = ReasonEnumType.Local,
         ChargingSessionStatus = ChargingSessionStatusEnum.Pending,
-        PricePerIdleMinute = connector.PricePerIdleMinute,
-        PricePerMinute = connector.PricePerMinute,
         CostPerKwh = connector.CostPerKwh,
       };
+      // The prices of the session are frozen now: a later price change never alters it.
+      Tariff.Of(connector, _globalConfigurations.Vat).ApplyTo(chargingSession);
 
       await this.AddAsync(chargingSession);
 

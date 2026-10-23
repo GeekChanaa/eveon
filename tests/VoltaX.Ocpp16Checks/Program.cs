@@ -200,7 +200,7 @@ Check(transaction.Status == TransactionStatusEnum.Ended && transaction.MeterStop
 var session = await Query(db => db.ChargingSessions.SingleAsync(s => s.ID == transaction.ChargingSessionID));
 Check(Math.Abs((session.ChargedKwhs ?? 0) - 12.0) < 1e-9 && Math.Abs((session.ChargedMinutes ?? 0) - 30) < 1e-6, "session closed with 12 kWh over 30 minutes");
 var balanceAfter = await Query(db => db.Cards.Where(c => c.CardNumber == "TAG1").Select(c => c.Balance).SingleAsync());
-Check(Math.Abs(balanceBefore - balanceAfter - 15.0m) < 0.000001m, "card billed like 2.0.1 (30 min x 0.5)");
+Check(balanceBefore - balanceAfter == 39.0m, "card billed like 2.0.1 (12 kWh x 2 + 30 min x 0.5)");
 var stopAgain = await Call(Cp16, "StopTransaction", new { transactionId, meterStop = 14000, timestamp = now.AddMinutes(31) });
 Check(!stopAgain.TryGetProperty("idTagInfo", out _), "a repeated StopTransaction is acknowledged without billing again");
 Check(await Query(db => db.Cards.Where(c => c.CardNumber == "TAG1").Select(c => c.Balance).SingleAsync()) == balanceAfter, "no second debit");
