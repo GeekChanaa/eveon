@@ -20,9 +20,10 @@ public static class MatrixStation
     public static TheoryData<string> Protocols => new() { OcppTestHost.Ocpp16, OcppTestHost.Ocpp201 };
 
     /// <summary>The station, booted and Accepted; returns the host, the charger and TAG-1's card id.</summary>
-    public static async Task<(OcppTestHost Host, ScenarioCharger Charger, int CardId)> Open(string protocol, decimal balance = 100m)
+    public static async Task<(OcppTestHost Host, ScenarioCharger Charger, int CardId)> Open(string protocol, decimal balance = 100m,
+        Action<Microsoft.Extensions.DependencyInjection.IServiceCollection>? configure = null)
     {
-        var host = new OcppTestHost(relational: true);
+        var host = new OcppTestHost(configure: configure, relational: true);
         var cardId = 0;
         await host.Seed(async db =>
         {

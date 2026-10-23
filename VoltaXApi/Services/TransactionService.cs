@@ -685,7 +685,11 @@ namespace VoltaXApi.Services
           Timestamp = transaction.StopTime ?? DateTime.UtcNow
         });
 
-        await _chargingSessionService.SendSessionQuoteAsync(transaction.ChargingSessionID);
+        // The quote mail goes out after the charger is answered: a slow or unreachable mail server (30 s timeout)
+        // must not hold up the StopTransaction / Ended answer, or the charger retries the stop.
+        var quotedSessionId = transaction.ChargingSessionID;
+        OcppBackgroundCommand.Run(_scopeFactory, _logger, "Session quote mail", chargePoint.ChargePointId,
+            services => services.GetRequiredService<IChargingSessionService>().SendSessionQuoteAsync(quotedSessionId));
       }
       catch (Exception exp)
       {
