@@ -53,38 +53,7 @@ namespace VoltaXApi.Controllers
         public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID)
         {
             var chargingSession = await _repository.GetChargingSessionInformations(chargingSessionID);
-            var chargingSessionInvoice = new ChargingSessionInvoice
-            {
-                UserName = chargingSession.UserName,
-                SessionDate = chargingSession.StartDate,
-                StartDate = chargingSession.StartDate,
-                EndDate = chargingSession.EndDate,
-                ConnectorID = chargingSession.ConnectorID,
-                ChargePointName = chargingSession.ChargePointName,
-                TotalKwhCharged = chargingSession.KwhCharged ?? 0,
-                TotalPrice = chargingSession.TotalPriceWithVAT ?? 0,
-                TotalPriceWithoutVAT = chargingSession.TotalPriceWithoutVAT ?? 0,
-                TotalPriceWithVAT = chargingSession.TotalPriceWithVAT ?? 0,
-                ChargingPriceWithVAT = chargingSession.ChargingPriceWithVAT ?? 0,
-                IdlePriceWithVAT = chargingSession.IdldePriceWithVAT ?? 0,
-                CardNumber  = chargingSession.CardNumber,
-                ChargedMinutes = chargingSession.ChargedMinutes ?? 0,
-                IdleMinutes = chargingSession.IdleMinutes ?? 0,
-                PricePerIdleMinute = chargingSession.PricePerIdleMinute ?? 0,
-                PricePerMinute = chargingSession.PricePerMinute ?? 0,
-                KwhsCharged = chargingSession.KwhCharged ?? 0,
-                CardBalance = chargingSession.CardBalance,
-                ChargingSessionID = chargingSessionID,
-                IsBilled = chargingSession.IsBilled,
-                PricePerKWh = chargingSession.PricePerKWh ?? 0,
-                FlatFee = chargingSession.FlatFee ?? 0,
-                VatRate = chargingSession.VatRate ?? 0,
-                EnergyPriceWithVAT = chargingSession.EnergyPriceWithVAT ?? 0,
-                TimePriceWithVAT = chargingSession.TimePriceWithVAT ?? 0,
-                FlatFeeWithVAT = chargingSession.FlatFeeWithVAT ?? 0,
-                BalanceBefore = chargingSession.BalanceBefore,
-                BalanceAfter = chargingSession.BalanceAfter
-            };
+            var chargingSessionInvoice = ChargingSessionInvoice.From(chargingSession);
             var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
 
             return File(pdfBytes, "application/pdf", "Invoice.pdf");
