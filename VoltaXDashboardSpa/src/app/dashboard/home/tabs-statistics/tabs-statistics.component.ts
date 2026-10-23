@@ -77,13 +77,13 @@ export class TabsStatisticsComponent implements OnInit, OnDestroy {
     });
     return {
       series: [{ name: metric.label + ' (' + metric.unit + ')', data: entries.map(([, value]) => Number(value.toFixed(2))) }],
-      chart: { type: 'area', height: 280, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#858990', parentHeightOffset: 0, animations: { enabled: false } },
-      colors: ['#D4A321'],
+      chart: { type: 'area', height: 280, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#6B7896', parentHeightOffset: 0, animations: { enabled: false } },
+      colors: [document.body.classList.contains('dark') ? '#7FA2EE' : '#1F3461'],
       stroke: { curve: 'straight', width: 2.5 },
       fill: { type: 'gradient', gradient: { opacityFrom: 0.22, opacityTo: 0.01 } },
       dataLabels: { enabled: false },
-      xaxis: { categories, tickAmount: 6, axisBorder: { show: false }, axisTicks: { show: false }, labels: { hideOverlappingLabels: true, rotate: 0, style: { colors: '#858990', fontSize: '11px' } }, tooltip: { enabled: false } },
-      yaxis: { labels: { formatter: (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: metric.key === 'orders' ? 0 : 1 }), style: { colors: '#858990', fontSize: '11px' } } },
+      xaxis: { categories, tickAmount: 6, axisBorder: { show: false }, axisTicks: { show: false }, labels: { hideOverlappingLabels: true, rotate: 0, style: { colors: '#6B7896', fontSize: '11px' } }, tooltip: { enabled: false } },
+      yaxis: { labels: { formatter: (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: metric.key === 'orders' ? 0 : 1 }), style: { colors: '#6B7896', fontSize: '11px' } } },
       grid: { borderColor: 'rgba(128,128,128,.16)', strokeDashArray: 4, padding: { left: 8, right: 12 } },
       tooltip: { theme: document.body.classList.contains('dark') ? 'dark' : 'light', y: { formatter: (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' ' + metric.unit } },
       empty: entries.length === 0

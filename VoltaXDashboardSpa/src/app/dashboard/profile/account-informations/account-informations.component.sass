@@ -15,7 +15,7 @@
     font-size: 13px
     line-height: 1.6
 .profile-section__eyebrow
-  color: var(--vx-yellow-ink, #8a6410)
+  color: var(--vx-brand-ink, #1F3461)
   font-size: 10px
   font-weight: 700
   letter-spacing: .1em
@@ -49,8 +49,8 @@
   height: 30px
   border: 3px solid var(--vx-surface, #fff)
   border-radius: 50%
-  background: var(--vx-yellow, #e5b223)
-  color: #171b24
+  background: var(--vx-brand, #0A1A3A)
+  color: var(--vx-on-brand, #fff)
   svg
     width: 14px
     height: 14px
@@ -140,7 +140,7 @@
     height: 14px
     fill: currentColor
   &:hover
-    background: var(--vx-hover, #f4f4f4)
+    background: var(--vx-hover, var(--navy-50))
 .account-contact-heading > .account-edit
   margin-left: auto
 .verification-badge
@@ -159,8 +159,8 @@
   background: rgba(44, 164, 120, .12)
   color: #187b5d
 .verification-badge--pending
-  background: var(--vx-yellow-soft, #fcf5df)
-  color: var(--vx-yellow-ink, #8a6410)
+  background: var(--vx-brand-soft, #fcf5df)
+  color: var(--vx-brand-ink, #1F3461)
 :host-context(body.dark) .verification-badge--verified
   color: #71d7b4
 .account-photo-overlay
@@ -263,11 +263,11 @@
   gap: 10px
   margin-top: 24px
 .account-save-photo
-  background: var(--vx-yellow, #e5b223)
-  color: #171b24
+  background: var(--vx-brand, #0A1A3A)
+  color: var(--vx-on-brand, #fff)
   border-color: transparent
 button:focus-visible, .file__wrap:focus-within
-  outline: 2px solid var(--vx-yellow, #e5b223)
+  outline: 2px solid var(--vx-brand, #0A1A3A)
   outline-offset: 3px
 button:disabled
   opacity: .55

@@ -170,7 +170,7 @@ export class StatisticsComponent implements OnInit {
       legend: {
         show: false
       },
-      colors: ['#2A85FF']
+      colors: [document.body.classList.contains('dark') ? '#7FA2EE' : '#1F3461']
     };
   }
 

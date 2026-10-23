@@ -111,7 +111,7 @@ button:focus-visible
   background: transparent
   cursor: pointer
   &:hover
-    background: var(--vx-hover, #f4f4f4)
+    background: var(--vx-hover, var(--navy-50))
 
 .guide-content
   min-height: 0
@@ -140,8 +140,8 @@ button:focus-visible
   border: 1px solid var(--vx-border, #e5e7eb)
   border-radius: 12px
   &.is-current
-    border-color: var(--vx-yellow, #e5b223)
-    background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+    border-color: var(--vx-brand, #0A1A3A)
+    background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
   h3
     margin: 0
     font-size: 13px
@@ -161,8 +161,8 @@ button:focus-visible
 .done-button
   padding: 9px 20px
   border-radius: 8px
-  background: var(--vx-yellow, #e5b223)
-  color: #171b24
+  background: var(--vx-brand, #0A1A3A)
+  color: var(--vx-on-brand, #fff)
   font-size: 13px
   font-weight: 600
   cursor: pointer

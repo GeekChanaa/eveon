@@ -24,3 +24,7 @@
 .next__button{
     margin-left: auto;
 }
+/* eveon wordmark is wide; the template sizes .entry__logo for a square mark. */
+.entry__logo {
+  width: 160px;
+}

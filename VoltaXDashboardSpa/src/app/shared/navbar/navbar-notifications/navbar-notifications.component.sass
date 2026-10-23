@@ -13,7 +13,7 @@
 [data-tone="warning"]
   --tone: #F76B15
 [data-tone="info"]
-  --tone: #2A85FF
+  --tone: var(--accent)
 [data-tone="accent"]
   --tone: #8E59FF
 [data-tone="neutral"]
@@ -68,7 +68,7 @@
   padding: 0
   border: 0
   background: none
-  color: var(--vx-yellow-ink, #8a6410)
+  color: var(--vx-brand-ink, #1F3461)
   font-family: inherit
   font-size: 12px
   font-weight: 600
@@ -81,7 +81,7 @@
     opacity: .5
     cursor: default
   &:focus-visible
-    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: 2px
 
 .notif-link--muted:not(:disabled)
@@ -113,15 +113,15 @@
       background: var(--vx-surface-alt, #f7f7f8)
       color: var(--vx-text, #171b24)
     &:focus-visible
-      outline: 2px solid var(--vx-yellow, #e5b223)
+      outline: 2px solid var(--vx-brand, #0A1A3A)
       outline-offset: 2px
 
 .notif-count
   min-width: 18px
   padding: 1px 5px
   border-radius: 999px
-  background: var(--vx-yellow, #e5b223)
-  color: #171717
+  background: var(--vx-brand, #0A1A3A)
+  color: var(--vx-on-brand, #fff)
   font-size: 10px
   line-height: 16px
   text-align: center
@@ -165,7 +165,7 @@
   text-align: left
   cursor: pointer
   &:focus-visible
-    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: -2px
 
 .notif-icon
@@ -241,7 +241,7 @@
   width: 8px
   height: 8px
   border-radius: 50%
-  background: var(--vx-yellow, #e5b223)
+  background: var(--vx-brand, #0A1A3A)
 
 .notif-remove
   position: absolute
@@ -271,7 +271,7 @@
     color: var(--vx-text, #171b24)
   &:focus-visible
     opacity: 1
-    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
 
 // Touch screens have no hover to reveal the remove button.
 @media (hover: none)

@@ -2,7 +2,7 @@
 .metric-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
 .metric { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 18px; text-align: left; border: 1px solid var(--vx-border); border-radius: 10px; color: var(--vx-text); background: var(--vx-surface-alt); transition: border-color .15s, background .15s; }
 .metric:hover { background: var(--vx-hover); }
-.metric.selected { border-color: var(--vx-yellow); background: var(--vx-yellow-soft); box-shadow: inset 0 2px var(--vx-yellow); }
+.metric.selected { border-color: var(--vx-brand); background: var(--vx-brand-soft); box-shadow: inset 0 2px var(--vx-brand); }
 .metric-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
 .metric-label svg { width: 19px; height: 19px; fill: currentColor; flex-shrink: 0; }
 .metric-value { font-size: clamp(23px,2.4vw,32px); font-weight: 600; line-height: 1.25; letter-spacing: -.035em; overflow-wrap: anywhere; }
@@ -20,10 +20,10 @@ apx-chart { display: block; min-width: 0; }
 :host ::ng-deep .chart-panel .apexcharts-tooltip,
 :host ::ng-deep .chart-panel .apexcharts-tooltip-title { background: var(--vx-surface) !important; color: var(--vx-text) !important; border-color: var(--vx-border) !important; }
 .chart-message { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; min-height: 280px; color: var(--vx-text-muted); font-size: 13px; background: var(--vx-surface-alt); border-radius: 10px; text-align: center; padding: 20px; }
-.loading-mark { height: 3px; width: 60px; background: var(--vx-yellow); border-radius: 4px; }
-.metric-notice { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 12px; background: var(--vx-yellow-soft); border-radius: 8px; font-size: 12px; color: var(--vx-text); }
-.metric-notice button { color: var(--vx-yellow-ink); font-size: 12px; font-weight: 650; white-space: nowrap; }
-button:focus-visible, .chart-panel:focus-visible { outline: 3px solid var(--vx-yellow); outline-offset: 3px; }
+.loading-mark { height: 3px; width: 60px; background: var(--vx-brand); border-radius: 4px; }
+.metric-notice { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 12px; background: var(--vx-brand-soft); border-radius: 8px; font-size: 12px; color: var(--vx-text); }
+.metric-notice button { color: var(--vx-brand-ink); font-size: 12px; font-weight: 650; white-space: nowrap; }
+button:focus-visible, .chart-panel:focus-visible { outline: 3px solid var(--vx-brand); outline-offset: 3px; }
 @media (max-width: 1100px) { .metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 480px) { .metric { padding: 13px; gap: 12px; } .metric-label { font-size: 11px; gap: 5px; } .metric-label svg { display: none; } .metric-value { font-size: 23px; } }
   

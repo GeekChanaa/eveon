@@ -51,7 +51,7 @@
     transition: color .2s
 
 .row__item:hover 
-    color: #2A85FF
+    color: var(--accent)
 
 .row__item .row__email 
     display: none
@@ -83,7 +83,7 @@
 
 
 body.dark .row__login 
-    color: #9A9FA5
+    color: var(--navy-350)
 
 .row__email 
     font-size: 14px
@@ -101,11 +101,11 @@ body.dark .row__login
     display: inline-block
     padding: 0 8px
     border-radius: 6px
-    background: #EFEFEF
+    background: var(--navy-100)
     transition: backround .2s
 
 body.dark .row__price 
-    background: #272B30
+    background: var(--navy-800)
 
 .row .balance 
     margin-left: 8px
@@ -164,7 +164,7 @@ body.dark .row.active .row__row:hover
 
 
 body.dark .row__row:not(:first-child) 
-    border-color: #272B30
+    border-color: var(--navy-800)
 
 
 
@@ -172,10 +172,10 @@ body.dark .row__row:not(:first-child)
     display: none
 
 .row__row.active 
-    background: #EFEFEF !important
+    background: var(--navy-100) !important
 
 body.dark .row__row.active 
-    background: #272B30 !important
+    background: var(--navy-800) !important
     box-shadow: inset 0px -2px 1px rgba(0, 0, 0, 0.05), inset 0px 1px 1px rgba(255, 255, 255, 0.08)
 
 .row__row.active .row__col:first-child 
@@ -215,12 +215,12 @@ body.dark .row__col
     bottom: 0
     right: 0
     height: 1px
-    background: #EFEFEF
+    background: var(--navy-100)
 
 
 
 body.dark .row__col:after 
-    background: #272B30
+    background: var(--navy-800)
 
 .row__col:first-child 
     width: 56px
@@ -361,7 +361,7 @@ body.dark .row__col:after
   display: flex 
   .checkbox__inner
     &:hover .checkbox__tick 
-      border-color: #2A85FF 
+      border-color: var(--accent) 
 .checkbox__tick 
   position: relative
   flex-shrink: 0

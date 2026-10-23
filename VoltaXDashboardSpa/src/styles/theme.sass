@@ -1,52 +1,60 @@
 @import ./helpers/variables
 
 // ---------------------------------------------------------------------------
-// VoltaX dashboard theme — white / black / yellow.
+// VoltaX dashboard theme — navy blue.
 //
 // Everything here is scoped under `.vx`, the class carried by the admin and
 // partner dashboard shells. The customer dashboard reuses the same navbar and
 // sidebar components but never gets the class, so it keeps its current look.
+// Raw palette values (--navy-*) live in app.sass.
 // ---------------------------------------------------------------------------
 
 // Status overlays are attached to body, outside the dashboard shell.
 .page.vx, .vx-status-overlay, .vx-account-overlay, .vx-action-modal, .vx-provisioning
-  // brand
-  --vx-yellow: #E5B223
-  --vx-yellow-hover: #D0A01B
-  --vx-yellow-soft: rgba(229, 178, 35, .14)
-  // Text-safe yellow. The brand yellow is only 1.96:1 on white — fine as a
-  // fill or a 3px rail, unreadable as small text. This one is 5.37:1.
-  --vx-yellow-ink: #8A6410
-  --vx-yellow-ink-strong: #6E4F0C
+  // brand — navy fill with white content.
+  --vx-brand: var(--navy-900)
+  --vx-brand-hover: var(--navy-700)
+  // RGB triplet of the brand, for rgba() tints: rgba(var(--vx-brand-rgb), .12)
+  --vx-brand-rgb: 10, 26, 58
+  --vx-brand-soft: rgba(10, 26, 58, .08)
+  // Brand used as text/icon colour on surfaces.
+  --vx-brand-ink: var(--navy-700)
+  --vx-brand-ink-strong: var(--navy-900)
+  // Text/icons placed on a brand fill.
+  --vx-on-brand: #FFFFFF
 
   // surfaces
+  --vx-page: var(--navy-50)
   --vx-surface: #FFFFFF
-  --vx-surface-alt: #FAFAFA
-  --vx-hover: #F4F4F4
-  --vx-border: #EDEDED
+  --vx-surface-alt: #F5F7FB
+  --vx-hover: var(--navy-50)
+  --vx-border: #DFE5F0
 
   // text
-  --vx-text: #0B0B0B
-  --vx-text-muted: #7A7C80
+  --vx-text: var(--navy-900)
+  --vx-text-muted: var(--navy-500)
 
   --vx-radius: 10px
 
 body.dark .vx, body.dark .vx-status-overlay, body.dark .vx-account-overlay, body.dark .vx-action-modal, body.dark .vx-provisioning
-  --vx-yellow: #F0BE3C
-  --vx-yellow-hover: #FFD05C
-  --vx-yellow-soft: rgba(240, 190, 60, .16)
-  // Inverted on dark: the darkened ink drops to 3.4:1 there, the bright
-  // brand yellow gets 9.3:1.
-  --vx-yellow-ink: #F0BE3C
-  --vx-yellow-ink-strong: #FFD05C
+  // Inverted on dark: navy as a fill disappears into navy surfaces, so the
+  // brand becomes a bright navy tint carrying dark navy content (6.4:1).
+  --vx-brand: var(--navy-sky-400)
+  --vx-brand-hover: var(--navy-sky-300)
+  --vx-brand-rgb: 127, 162, 238
+  --vx-brand-soft: rgba(127, 162, 238, .16)
+  --vx-brand-ink: var(--navy-sky-300)
+  --vx-brand-ink-strong: #C2D4F7
+  --vx-on-brand: var(--navy-900)
 
-  --vx-surface: #141517
-  --vx-surface-alt: #0D0E0F
-  --vx-hover: #1F2123
-  --vx-border: #262A2E
+  --vx-page: var(--navy-950)
+  --vx-surface: var(--navy-900)
+  --vx-surface-alt: var(--navy-950)
+  --vx-hover: var(--navy-800)
+  --vx-border: var(--navy-700)
 
-  --vx-text: #FAFAFA
-  --vx-text-muted: #8B9095
+  --vx-text: #FFFFFF
+  --vx-text-muted: var(--navy-300)
 
 .vx-status-overlay
   color-scheme: light
@@ -99,6 +107,16 @@ body.dark .vx .sidebar
     height: 100%
     object-fit: contain
 
+  // The eveon wordmark is wide and short — size it by height so it reads at
+  // the same weight as the menu labels.
+  img.sidebar__logo-full
+    height: 22px
+    max-width: 140px
+
+  // The "e" mark only shows in the collapsed rail (see below).
+  img.sidebar__logo-mark
+    display: none
+
 .vx .sidebar__brand
   display: flex
   align-items: center
@@ -136,11 +154,11 @@ body.dark .vx .sidebar
     transition: fill .2s
 
   &:hover
-    background: var(--vx-yellow-soft)
-    border-color: var(--vx-yellow)
+    background: var(--vx-brand-soft)
+    border-color: var(--vx-brand)
 
     .icon
-      fill: var(--vx-yellow)
+      fill: var(--vx-brand)
 
   +m
     display: none
@@ -186,18 +204,18 @@ body.dark .vx .sidebar
     .icon
       fill: var(--vx-text)
 
-// Active states: yellow tint + yellow rail + black label.
+// Active states: navy tint + navy rail + strong label.
 .page.vx
   .sidebar__item[href].active,
   .sidebar__help.active,
   .sidebar__top.active .sidebar__head
-    background: var(--vx-yellow-soft)
+    background: var(--vx-brand-soft)
     box-shadow: none
     color: var(--vx-text)
     font-weight: 600
 
     .icon
-      fill: var(--vx-yellow)
+      fill: var(--vx-brand)
 
   .sidebar__item[href].active:before,
   .sidebar__top.active .sidebar__head:before
@@ -208,14 +226,14 @@ body.dark .vx .sidebar
     width: 3px
     height: 18px
     border-radius: 0 3px 3px 0
-    background: var(--vx-yellow)
+    background: var(--vx-brand)
     transform: translateY(-50%)
 
 body.dark .vx
   .sidebar__item[href].active,
   .sidebar__help.active,
   .sidebar__top.active .sidebar__head
-    background: var(--vx-yellow-soft)
+    background: var(--vx-brand-soft)
     box-shadow: none
     color: var(--vx-text)
 
@@ -263,11 +281,11 @@ body.dark .vx .sidebar__body:before
 body.dark .vx .sidebar__link.active
   background: transparent
   box-shadow: none
-  color: var(--vx-yellow-ink)
+  color: var(--vx-brand-ink)
   font-weight: 600
 
   &:before
-    background: var(--vx-yellow)
+    background: var(--vx-brand)
     width: 8px
     height: 8px
 
@@ -288,14 +306,14 @@ body.dark .vx .sidebar__foot
 .vx .sidebar__counter
   min-width: 22px
   border-radius: 999px
-  background: var(--vx-yellow)
+  background: var(--vx-brand)
   font-size: 12px
   font-weight: 700
   line-height: 22px
-  color: #0B0B0B
+  color: var(--vx-on-brand)
 
 .vx .sidebar__help .sidebar__counter
-  background: var(--vx-yellow)
+  background: var(--vx-brand)
 
 // Theme switch ---------------------------------------------------------------
 
@@ -397,6 +415,15 @@ body.dark .vx .sidebar__foot
       img
         max-width: 48px
 
+      // Swap the wordmark for the "e" mark; .some-icon / .some-icon-dark
+      // still pick the light or dark file.
+      img.sidebar__logo-full
+        display: none
+
+      img.sidebar__logo-mark.some-icon
+        display: block
+        height: 28px
+
     .sidebar__item[href],
     .sidebar__help,
     .sidebar__head,
@@ -420,7 +447,7 @@ body.dark .vx .sidebar__foot
     .sidebar__add
       display: none
 
-    // The yellow pill alone carries the active state in the rail; the edge bar
+    // The tinted pill alone carries the active state in the rail; the edge bar
     // would sit out in the sidebar padding with nothing to anchor it.
     .sidebar__item[href].active:before,
     .sidebar__top.active .sidebar__head:before
@@ -436,6 +463,14 @@ body.dark .vx .sidebar__foot
 
     .header
       left: 88px
+
+  body.sidebar-collapsed.dark .page.vx .sidebar__logo
+    img.sidebar__logo-mark.some-icon
+      display: none
+
+    img.sidebar__logo-mark.some-icon-dark
+      display: block
+      height: 28px
 
   // .vx sits on the .page shell itself, so the gutter is set on it directly.
   body.sidebar-collapsed .page.vx
@@ -552,21 +587,21 @@ body.dark .vx .header
 .vx .header__item_notifications .header__head:hover .icon
   fill: var(--vx-text)
 
-// Unread dot — yellow, ringed so it stays visible on both surfaces.
+// Unread dot — brand colour, ringed so it stays visible on both surfaces.
 .vx .header__item_notifications .header__head.active:before
   width: 10px
   height: 10px
   top: 12px
   right: 12px
-  background: var(--vx-yellow)
+  background: var(--vx-brand)
   border: 2px solid var(--vx-surface)
 
 body.dark .vx .header__item_notifications .header__head.active:before
   border-color: var(--vx-surface)
 
 .vx .header .header__head.profile
-  background: var(--vx-yellow)
-  color: #0B0B0B
+  background: var(--vx-brand)
+  color: var(--vx-on-brand)
 
 .vx .header__body
   border-radius: 12px
@@ -585,7 +620,7 @@ body.dark .vx .header__body
   transition: color .18s
 
   &:hover
-    color: var(--vx-yellow)
+    color: var(--vx-brand)
 
 .vx-account-overlay.mat-mdc-menu-panel
   min-width: 300px
@@ -633,7 +668,7 @@ body.dark .vx .header__body
       border-radius: 0 3px 3px 0
       background: transparent
     &:hover::before, &:focus::before
-      background: var(--vx-yellow)
+      background: var(--vx-brand)
   .signout-action
     color: #d64343
     .icon

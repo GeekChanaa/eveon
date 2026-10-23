@@ -21,13 +21,13 @@
 .add-images-btn, .retry-button
   padding: 11px 16px
   border-radius: 8px
-  background: var(--vx-yellow, #e5b223)
-  color: #171b24
+  background: var(--vx-brand, #0A1A3A)
+  color: var(--vx-on-brand, #fff)
   font-size: 13px
   font-weight: 600
   cursor: pointer
   &:hover
-    background: var(--vx-yellow-hover, #d0a01b)
+    background: var(--vx-brand-hover, #1F3461)
 
 .images-container
   display: grid
@@ -103,8 +103,8 @@
   background: var(--vx-surface-alt, #fafafa)
   border-radius: 12px
   &:hover, &:focus-within, &.drag-over
-    border-color: var(--vx-yellow, #e5b223)
-    background: var(--vx-yellow-soft, #e5b22314)
+    border-color: var(--vx-brand, #0A1A3A)
+    background: var(--vx-brand-soft, rgba(10, 26, 58, .08))
 
 .upload-input
   position: absolute
@@ -123,7 +123,7 @@
   padding: 44px 20px
   text-align: center
   .icon
-    color: var(--vx-yellow-ink, #8a6410)
+    color: var(--vx-brand-ink, #1F3461)
 
 .upload-text
   font-size: 14px
@@ -152,7 +152,7 @@
   color: #d64343
 
 button:focus-visible
-  outline: 2px solid var(--vx-yellow, #e5b223)
+  outline: 2px solid var(--vx-brand, #0A1A3A)
   outline-offset: 3px
 
 button:disabled

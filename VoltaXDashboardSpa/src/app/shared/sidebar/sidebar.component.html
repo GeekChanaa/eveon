@@ -8,7 +8,10 @@
   <div class="sidebar__brand">
     <a class="sidebar__logo" *ngIf="partnerID == 0" routerLink="/dashboard">
       <ng-container>
-        <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+        <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
+        <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
+        <img class="sidebar__logo-mark some-icon" src="/assets/images/logos/logo-mark.svg" alt="eveon">
+        <img class="sidebar__logo-mark some-icon-dark" src="/assets/images/logos/logo-mark-white.svg" alt="eveon">
       </ng-container>
     </a>
 
@@ -16,8 +19,11 @@
       <ng-container *ngIf="partnerImageUrl != '' && partnerImageUrl != null ">
         <img src="{{partnerImageUrl}}" alt="Partner Logo">
       </ng-container>
-      <ng-container *ngIf="partnerImageUrl == '' && partnerImageUrl == null ">
-        <img src="/assets/images/logos/logo.svg" alt="VoltaX">
+      <ng-container *ngIf="partnerImageUrl == '' || partnerImageUrl == null">
+        <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
+        <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
+        <img class="sidebar__logo-mark some-icon" src="/assets/images/logos/logo-mark.svg" alt="eveon">
+        <img class="sidebar__logo-mark some-icon-dark" src="/assets/images/logos/logo-mark-white.svg" alt="eveon">
       </ng-container>
     </a>
 

@@ -129,8 +129,8 @@
     color: $warn
 
   &.dm-banner_pending
-    background: $yellow-soft
-    color: $yellow-ink
+    background: $brand-soft
+    color: $brand-ink
 
 // ---------------------------------------------------------------- empty
 
@@ -170,7 +170,7 @@
 
 @keyframes blink
   50%
-    background: $yellow-soft
+    background: $brand-soft
 
 // ---------------------------------------------------------------- layout
 
@@ -248,13 +248,13 @@
   transition: transform .25s $ease
 
 .dm-switch input:checked + .dm-switch__track
-  background: $yellow
+  background: $brand
 
   .dm-switch__thumb
     transform: translateX(14px)
 
 .dm-switch input:focus-visible + .dm-switch__track
-  outline: 2px solid $yellow
+  outline: 2px solid $brand
   outline-offset: 2px
 
 .dm-components
@@ -287,18 +287,18 @@
     background: $hover
 
   &:focus-visible
-    outline: 2px solid $yellow
+    outline: 2px solid $brand
     outline-offset: -2px
 
   &.active
-    background: $yellow-soft
+    background: $brand-soft
 
     .dm-component__name
-      color: $yellow-ink
+      color: $brand-ink
 
     .dm-component__count
-      background: $yellow
-      color: #0B0B0B
+      background: $brand
+      color: var(--vx-on-brand, #fff)
 
 .dm-component__text
   display: flex
@@ -397,8 +397,8 @@
       color: $muted
 
   &.edited
-    background: $yellow-soft
-    box-shadow: inset 3px 0 0 $yellow
+    background: $brand-soft
+    box-shadow: inset 3px 0 0 $brand
 
   &.flash
     animation: flash 1.6s $ease
@@ -426,7 +426,7 @@
   font-weight: 500
 
 .dm-var__instance
-  color: $yellow-ink
+  color: $brand-ink
 
 .dm-attr
   margin-left: 6px
@@ -514,8 +514,8 @@
     color: $ok
 
   &.dm-chip_WriteOnly
-    background: $yellow-soft
-    color: $yellow-ink
+    background: $brand-soft
+    color: $brand-ink
 
 .dm-constraint
   width: 100%
@@ -560,8 +560,8 @@
   height: 28px
   padding: 0 8px
   border-radius: 999px
-  background: $yellow
-  color: #0B0B0B
+  background: $brand
+  color: var(--vx-on-brand, #fff)
   font-size: 13px
   font-weight: 800
   animation: pop .3s $ease

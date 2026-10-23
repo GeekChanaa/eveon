@@ -20,7 +20,7 @@ import { OcppConfigurationService, ocppVersionLabel } from 'src/_services/ocpp-s
     .ocpp-badge {
       display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px;
       font-size: 11.5px; font-weight: 700; line-height: 1.4; white-space: nowrap; letter-spacing: .01em;
-      background: var(--vx-yellow-soft, rgba(229, 178, 35, .14)); color: var(--vx-yellow-ink, #8A6410);
+      background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14)); color: var(--vx-brand-ink, #1F3461);
     }
     .ocpp-badge_off { background: var(--vx-hover, #F4F4F4); color: var(--vx-text-muted, #7A7C80); }
   `]

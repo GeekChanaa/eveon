@@ -46,7 +46,7 @@ body.dark .select
 .select.open
   border-color: var(--input-border-focus)
   background: var(--input-bg-focus)
-  box-shadow: 0 0 0 2px rgba(240, 177, 52, .18)
+  box-shadow: 0 0 0 2px rgba(var(--vx-brand-rgb, 10, 26, 58), .18)
   color: var(--input-text)
     
 .select.open:before
@@ -85,17 +85,17 @@ body.dark .select .list
     
 .select .option:hover, .select .option.focus
       font-weight: 600
-      color: #1A1D1F 
+      color: var(--navy-900) 
 
 body.dark  .select .option:hover, body.dark .select .option.focus
   color: #FCFCFC 
     
 .select .option .selected
       font-weight: 600
-      color: #2A85FF 
+      color: var(--accent) 
       body.dark 
 .select .option .selected
-  color: #2A85FF 
+  color: var(--accent) 
   
 .select_small
   height: var(--input-height-small)

@@ -31,7 +31,7 @@
   &.is-error
     --notification-accent: #d64343
   &.is-warning
-    --notification-accent: var(--vx-yellow, #e5b223)
+    --notification-accent: var(--vx-brand, #0A1A3A)
 
 .modal-img
   display: grid
@@ -72,10 +72,10 @@
   font-size: 22px
   line-height: 1
   &:hover
-    background: var(--vx-hover, #f4f4f4)
+    background: var(--vx-hover, var(--navy-50))
     color: var(--vx-text, #171b24)
   &:focus-visible
-    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: 2px
 
 body.dark .action-notification

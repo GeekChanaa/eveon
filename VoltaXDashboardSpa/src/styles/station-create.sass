@@ -6,7 +6,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
   --station-border: var(--vx-border, var(--primary3))
   --station-text: var(--vx-text, var(--primary9))
   --station-muted: var(--professional3)
-  --station-accent: var(--vx-yellow-ink, var(--secondary1))
+  --station-accent: var(--vx-brand-ink, var(--secondary1))
   --input-height: 44px
   --input-radius: 10px
   color: var(--station-text)
@@ -64,11 +64,11 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
     .station-steps__number
       background: var(--secondary2)
       border-color: var(--secondary2)
-      color: #171717
+      color: var(--vx-on-brand, #fff)
 
   .station-steps .is-complete .station-steps__number
     color: var(--station-accent)
-    background: var(--vx-yellow-soft)
+    background: var(--vx-brand-soft)
     border-color: var(--secondary1)
 
   .station-intro
@@ -133,7 +133,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
 
     &:hover
       border-color: var(--secondary1)
-      box-shadow: 0 0 0 3px var(--vx-yellow-soft)
+      box-shadow: 0 0 0 3px var(--vx-brand-soft)
 
   .station-choice__icon
     display: flex
@@ -143,7 +143,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
     height: 48px
     margin-bottom: 12px
     border-radius: 12px
-    background: var(--vx-yellow-soft)
+    background: var(--vx-brand-soft)
     color: var(--station-accent)
 
     svg
@@ -230,7 +230,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
 
       &:has(input:checked)
         border-color: var(--secondary1)
-        background: var(--vx-yellow-soft)
+        background: var(--vx-brand-soft)
 
     .field__error_container
       display: flex
@@ -280,7 +280,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
 
     .ml-auto .btn:not(:disabled)
       background: var(--secondary2)
-      color: #171717
+      color: var(--vx-on-brand, #fff)
       border-color: var(--secondary2)
 
   .station-wizard .charge-points-container,
@@ -333,7 +333,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
     width: 48px
     height: 48px
     border-radius: 12px
-    background: var(--vx-yellow-soft)
+    background: var(--vx-brand-soft)
     color: var(--station-accent)
     font-size: 28px
 
@@ -409,7 +409,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
 
     &:hover:not(:disabled)
       border-color: var(--secondary1)
-      background: var(--vx-yellow-soft)
+      background: var(--vx-brand-soft)
 
     &.btn-danger
       color: var(--danger1)
@@ -460,7 +460,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
     .modal-footer .button-primary
       background: var(--secondary2)
       border-color: var(--secondary2)
-      color: #171717
+      color: var(--vx-on-brand, #fff)
       border-radius: 8px
 
   .station-wizard app-create-charging-station-images .create__card.card
@@ -501,7 +501,7 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
       line-height: 1.6
 
     &:hover, &.dragover
-      background: var(--vx-yellow-soft)
+      background: var(--vx-brand-soft)
 
   .station-wizard .files__box
     position: static
@@ -625,7 +625,7 @@ body.dark .page :is(app-create-charging-station, app-create-charge-point, app-cr
     color: #82D8A3
 
   .status-occupied, .status-maintenance
-    color: #F0BE3C
+    color: var(--vx-brand-ink)
 
   .status-unavailable
     color: var(--danger1)

@@ -54,13 +54,13 @@
 
   &:hover
     background: $crt-hover
-    border-color: $crt-yellow
+    border-color: $crt-brand
 
     svg
       stroke: $crt-text
 
   &:focus-visible
-    outline: 2px solid $crt-yellow
+    outline: 2px solid $crt-brand
     outline-offset: 2px
 
 .message__body
@@ -129,8 +129,8 @@
   letter-spacing: .06em
 
 .direction_in
-  background: rgba(229, 178, 35, .16)
-  color: var(--vx-yellow-ink, #8A6410)
+  background: rgba(var(--vx-brand-rgb, 10, 26, 58), .16)
+  color: var(--vx-brand-ink, #1F3461)
 
 .direction_out
   background: $crt-hover
@@ -169,7 +169,7 @@
     background: none
 
   .token.property
-    color: #F0BE3C
+    color: var(--vx-brand-ink)
 
   .token.string
     color: #8FD18F
