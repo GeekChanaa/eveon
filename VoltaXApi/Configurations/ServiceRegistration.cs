@@ -149,6 +149,7 @@ public static class ServiceRegistration
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
         services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
         services.Configure<AuthTokenSettings>(configuration.GetSection(AuthTokenSettings.SectionName));
+        Paging.MaxPageSize = configuration.GetValue(Paging.MaxPageSizeKey, Paging.DefaultMaxPageSize);
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Lax;
