@@ -408,3 +408,213 @@ body.dark
     display: block
     font-size: 16px
     color: #0A1A3A
+.vx-print-header__partner
+  max-width: 120px
+  object-fit: contain
+  margin-inline-end: auto
+  margin-inline-start: 16px
+@media print
+  .vx-print-header.print-only
+    display: flex !important
+
+// ---------------------------------------------------------------------------
+// Partner portal
+// ---------------------------------------------------------------------------
+.vx-sr-only
+  position: absolute
+  width: 1px
+  height: 1px
+  padding: 0
+  margin: -1px
+  overflow: hidden
+  clip: rect(0, 0, 0, 0)
+  white-space: nowrap
+  border: 0
+
+.vx-footnote
+  margin: 4px 0 20px
+  font-size: 12px
+  line-height: 1.5
+  color: var(--vx-text-muted)
+  a
+    color: var(--vx-brand-ink)
+    font-weight: 650
+
+.vx-stats--three
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+  +t
+    grid-template-columns: minmax(0, 1fr)
+
+.vx-chips + .vx-stats
+  margin-block-start: 16px
+
+.vx-partner-brand
+  display: flex
+  align-items: center
+  gap: 16px
+  min-width: 0
+
+.vx-partner-logo
+  display: inline-flex
+  flex: none
+  align-items: center
+  justify-content: center
+  width: 64px
+  height: 64px
+  padding: 8px
+  overflow: hidden
+  border: 1px solid var(--vx-border)
+  border-radius: 16px
+  background: #fff
+  color: var(--vx-brand)
+  font-size: 22px
+  font-weight: 750
+  letter-spacing: -.02em
+  img
+    max-width: 100%
+    max-height: 100%
+    object-fit: contain
+  +m
+    width: 52px
+    height: 52px
+.vx-partner-logo--large
+  width: 160px
+  height: 160px
+  padding: 16px
+  font-size: 44px
+  +m
+    width: 120px
+    height: 120px
+body.dark .vx-partner-logo span
+  color: #0A1A3A
+
+.vx-logo-upload
+  display: grid
+  justify-items: center
+  gap: 16px
+  padding-block: 8px
+  label.vx-btn
+    cursor: pointer
+
+// Stacked bar of connector states
+.vx-meter
+  display: flex
+  height: 10px
+  margin-block-end: 16px
+  overflow: hidden
+  border-radius: 999px
+  background: var(--vx-hover)
+  span
+    height: 100%
+.vx-meter__Available
+  background: #12B76A
+.vx-meter__Occupied, .vx-meter__Reserved
+  background: #F79009
+.vx-meter__Faulted
+  background: #F04438
+.vx-meter__Unavailable, .vx-meter__Disconnected
+  background: #98A2B3
+
+.vx-legend, .vx-list
+  display: grid
+  gap: 10px
+  margin: 0
+  padding: 0
+  list-style: none
+  li
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 12px
+.vx-list
+  li
+    padding-block: 10px
+    border-block-end: 1px solid var(--vx-border)
+    &:last-child
+      border-block-end: 0
+  a
+    display: grid
+    gap: 2px
+    min-width: 0
+    color: var(--vx-text)
+    text-decoration: none
+    &:hover strong
+      color: var(--vx-brand-ink)
+  .muted
+    font-size: 12px
+    color: var(--vx-text-muted)
+
+// Connector prices
+.vx-cp .vx-table td
+  vertical-align: middle
+.vx-row-editor > td
+  padding: 18px !important
+  background: var(--vx-surface-alt)
+.vx-row-saved > td
+  animation: vx-saved 2.4s ease-out
+@keyframes vx-saved
+  0%
+    background: rgba(18, 183, 106, .16)
+  100%
+    background: transparent
+
+.vx-pricing
+  display: grid
+  gap: 14px
+.vx-pricing__fields
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 12px
+  +t
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  +m
+    grid-template-columns: minmax(0, 1fr)
+  .vx-field
+    min-width: 0
+.vx-input-unit
+  display: flex
+  align-items: center
+  border: 1px solid var(--vx-border)
+  border-radius: 10px
+  background: var(--vx-surface)
+  &:focus-within
+    border-color: var(--vx-brand)
+    box-shadow: 0 0 0 3px var(--vx-brand-soft)
+  input
+    flex: 1
+    min-width: 0
+    border: 0 !important
+    box-shadow: none !important
+    background: transparent !important
+    text-align: end
+  span
+    padding-inline: 4px 12px
+    font-size: 12px
+    white-space: nowrap
+    color: var(--vx-text-muted)
+.vx-pricing__example
+  margin: 0
+  font-size: 13px
+  font-weight: 650
+  color: var(--vx-text)
+.vx-pricing__note
+  margin: 0
+  font-size: 12px
+  color: var(--vx-text-muted)
+.vx-pricing__actions
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 12px
+.vx-check
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  font-size: 13px
+  color: var(--vx-text)
+  cursor: pointer
+  input
+    width: 16px
+    height: 16px
+    accent-color: var(--vx-brand)

@@ -1,0 +1,84 @@
+<div class="page__inner"><main class="page__container">
+  <vx-print-header [title]="'partner.chargePoints.title' | translate"></vx-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'partner.eyebrow' | translate }}</span>
+      <h1>{{ 'partner.chargePoints.title' | translate }}</h1>
+      <p>{{ 'partner.chargePoints.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="load()" [disabled]="loading">{{ 'common.actions.refresh' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-panel vx-filters no-print" *ngIf="stations.length > 1">
+    <div class="vx-field vx-field--grow">
+      <label for="station">{{ 'partner.fields.station' | translate }}</label>
+      <select id="station" [value]="stationId ?? ''" (change)="selectStation($any($event.target).value)">
+        <option value="">{{ 'partner.chargePoints.allStations' | translate }}</option>
+        <option *ngFor="let st of stations" [value]="st.id">{{ st.name }} · {{ st.city }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+  <p class="vx-empty" *ngIf="loading && !chargePoints.length">{{ 'common.state.loading' | translate }}</p>
+  <section class="vx-panel" *ngIf="!loading && !error && !chargePoints.length"><p class="vx-empty">{{ 'partner.chargePoints.empty' | translate }}</p></section>
+
+  <section class="vx-panel vx-cp" *ngFor="let cp of chargePoints">
+    <div class="vx-panel__head">
+      <div>
+        <h2>{{ cp.chargePointId }}</h2>
+        <p>{{ cp.stationName }}<ng-container *ngIf="cp.vendor || cp.model"> · {{ cp.vendor }} {{ cp.model }}</ng-container></p>
+      </div>
+      <span class="vx-actions">
+        <span class="vx-badge" [ngClass]="tone(cp.status)">{{ 'partner.chargePointStatus.' + cp.status | translate }}</span>
+        <a class="vx-btn vx-btn--small no-print" [routerLink]="['/partner-dashboard/sessions']" [queryParams]="{ chargePoint: cp.id }">{{ 'partner.chargePoints.sessions' | translate }}</a>
+      </span>
+    </div>
+
+    <div class="vx-table-wrap" *ngIf="cp.connectors.length; else noConnectors">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'partner.fields.connector' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+          <th class="num">{{ 'partner.pricing.perKwh' | translate }}</th>
+          <th class="num">{{ 'partner.pricing.perMinute' | translate }}</th>
+          <th class="num">{{ 'partner.pricing.perIdleMinute' | translate }}</th>
+          <th class="num">{{ 'partner.pricing.flatFee' | translate }}</th>
+          <th class="no-print"><span class="vx-sr-only">{{ 'common.actions.edit' | translate }}</span></th>
+        </tr></thead>
+        <tbody>
+          <ng-container *ngFor="let c of cp.connectors">
+            <tr [class.vx-row-saved]="savedConnectors.has(c.id)">
+              <td>
+                <strong>{{ connectorLabel(c) }}</strong>
+                <div class="muted">{{ typeLabel(c.type) }} · {{ c.powerKw | vxNumber:'1.0-1' }} {{ 'common.units.kw' | translate }}</div>
+              </td>
+              <td><span class="vx-badge" [ngClass]="tone(c.status)">{{ 'partner.connectorStatus.' + (c.status ?? 'Unknown') | translate }}</span></td>
+              <td class="num">{{ c.pricePerKWh | vxMoney }}</td>
+              <td class="num">{{ c.pricePerMinute | vxMoney }}</td>
+              <td class="num">{{ c.pricePerIdleMinute | vxMoney }}</td>
+              <td class="num">{{ c.flatFee | vxMoney }}</td>
+              <td class="no-print num">
+                <button type="button" class="vx-btn vx-btn--small" *ngIf="editing !== c.id" (click)="edit(c)">{{ 'partner.pricing.edit' | translate }}</button>
+              </td>
+            </tr>
+            <tr *ngIf="editing === c.id" class="vx-row-editor no-print">
+              <td colspan="7">
+                <div class="vx-alert vx-alert--error" *ngIf="saveError" role="alert">{{ saveError | translate }}</div>
+                <app-partner-pricing-editor [connector]="c" [siblings]="cp.connectors.length - 1" [saving]="saving"
+                  (save)="save(cp, c, $event)" (cancel)="editing = null"></app-partner-pricing-editor>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noConnectors><p class="vx-empty">{{ 'partner.chargePoints.noConnectors' | translate }}</p></ng-template>
+  </section>
+
+  <p class="vx-footnote">{{ 'partner.chargePoints.pricingNote' | translate }}</p>
+</main></div>

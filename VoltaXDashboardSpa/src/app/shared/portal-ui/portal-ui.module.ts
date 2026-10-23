@@ -35,12 +35,15 @@ export class VxPagerComponent {
   template: `
     <header class="vx-print-header print-only">
       <img src="/assets/images/logos/logo.svg" alt="eveon">
+      <img *ngIf="partnerLogo" class="vx-print-header__partner" [src]="partnerLogo" alt="">
       <div><strong>{{ title }}</strong><span *ngIf="subtitle">{{ subtitle }} · </span>{{ printedAt | vxDate:'medium' }}</div>
     </header>`
 })
 export class VxPrintHeaderComponent {
   @Input() title = '';
   @Input() subtitle: string | null = null;
+  /** A partner's logo, printed next to eveon's on partner portal pages. */
+  @Input() partnerLogo: string | null = null;
   readonly printedAt = new Date();
 }
 
@@ -60,4 +63,16 @@ export function statusTone(status: string | null | undefined): string {
     case 'Failed': case 'Faulted': case 'Canceled': case 'Blocked': case 'Expired': case 'Unavailable': return 'vx-badge--danger';
     default: return 'vx-badge--info';
   }
+}
+
+const CONNECTOR_TYPES: Record<string, string> = {
+  cCCS1: 'CCS1', cCCS2: 'CCS2', cG105: 'CHAdeMO', cTesla: 'Tesla', cType1: 'Type 1', cType2: 'Type 2',
+  s309_1P_16A: 'IEC 60309 1P 16A', s309_1P_32A: 'IEC 60309 1P 32A', s309_3P_16A: 'IEC 60309 3P 16A', s309_3P_32A: 'IEC 60309 3P 32A',
+  sBS1361: 'BS 1361', sCEE_7_7: 'Schuko', sType2: 'Type 2 (socket)', sType3: 'Type 3', Pan: 'Pantograph', wInductive: 'Inductive',
+  wResonant: 'Wireless', Undetermined: '—', Unknown: '—'
+};
+
+/** Human name of an OCPP connector type (cCCS2 → CCS2). */
+export function connectorTypeLabel(type: string | null | undefined): string {
+  return type ? CONNECTOR_TYPES[type] ?? type : '—';
 }

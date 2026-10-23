@@ -16,10 +16,10 @@
     </a>
 
     <a class="sidebar__logo" *ngIf="partnerID != 0" routerLink="/partner-dashboard">
-      <ng-container *ngIf="partnerImageUrl != '' && partnerImageUrl != null ">
-        <img src="{{partnerImageUrl}}" alt="Partner Logo">
+      <ng-container *ngIf="partnerImageUrl">
+        <img class="sidebar__partner-logo" [src]="partnerImageUrl" [alt]="partnerName">
       </ng-container>
-      <ng-container *ngIf="partnerImageUrl == '' || partnerImageUrl == null">
+      <ng-container *ngIf="!partnerImageUrl">
         <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
         <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
         <img class="sidebar__logo-mark some-icon" src="/assets/images/logos/logo-mark.svg" alt="eveon">
@@ -142,26 +142,26 @@
 
     </ng-container>
 
-    <!-- Partner menu -->
+    <!-- Partner portal menu -->
     <ng-container *ngIf="partnerID != 0">
       <app-sidebar-item [title]="'nav.home'" [link]="'/partner-dashboard'"
         [active]="isExactActive('/partner-dashboard')"></app-sidebar-item>
-
-
-      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'nav.operationMonitoring'"
-        [active]="isDropdownActive('/partner-dashboard/connector-realtime', '/partner-dashboard/statistics')">
-        <app-sidebar-link [title]="'nav.connectorRealtime'" [link]="'/partner-dashboard/connector-realtime'"
-          [active]="isActive('/partner-dashboard/connector-realtime')"></app-sidebar-link>
+      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'nav.myNetwork'"
+        [active]="isDropdownActive('/partner-dashboard/stations', '/partner-dashboard/charge-points')">
+        <app-sidebar-link [title]="'nav.chargingStations'" [link]="'/partner-dashboard/stations'"
+          [active]="isActive('/partner-dashboard/stations')"></app-sidebar-link>
+        <app-sidebar-link [title]="'nav.chargePointsPrices'" [link]="'/partner-dashboard/charge-points'"
+          [active]="isActive('/partner-dashboard/charge-points')"></app-sidebar-link>
+      </app-sidebar-dropdown>
+      <app-sidebar-dropdown iconID="icon-invoice" [title]="'nav.activity'"
+        [active]="isDropdownActive('/partner-dashboard/sessions', '/partner-dashboard/statistics')">
+        <app-sidebar-link [title]="'nav.chargingSessions'" [link]="'/partner-dashboard/sessions'"
+          [active]="isActive('/partner-dashboard/sessions')"></app-sidebar-link>
         <app-sidebar-link [title]="'nav.statistics'" [link]="'/partner-dashboard/statistics'"
           [active]="isActive('/partner-dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
-
-      <app-sidebar-dropdown iconID="icon-invoice" [title]="'nav.orderManagement'"
-        [active]="isDropdownActive('/partner-dashboard/charging-sessions')">
-        <app-sidebar-link [title]="'nav.chargingSessions'" [link]="'/partner-dashboard/charging-sessions'"
-          [active]="isActive('/partner-dashboard/charging-sessions')"></app-sidebar-link>
-      </app-sidebar-dropdown>
-
+      <app-sidebar-item [title]="'nav.partnerProfile'" [link]="'/partner-dashboard/profile'"
+        [active]="isExactActive('/partner-dashboard/profile')"></app-sidebar-item>
       <app-sidebar-item [title]="'nav.security'" [link]="'/partner-dashboard/security'"
         [active]="isExactActive('/partner-dashboard/security')"></app-sidebar-item>
     </ng-container>

@@ -1,38 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PartnerHomeComponent } from './partner-home/partner-home.component';
-import { PartnerConnectorRealtimeComponent } from './partner-connector-realtime/partner-connector-realtime.component';
-import { StatisticsComponent } from '../dashboard/statistics/statistics.component';
-import { PartnerStatisticsComponent } from './partner-statistics/partner-statistics.component';
 import { TwoFactorSettingsComponent } from '../dashboard/profile/profile-security/two-factor-settings/two-factor-settings.component';
+import { PartnerOverviewComponent } from './portal/partner-overview.component';
+import { PartnerStationsComponent } from './portal/partner-stations.component';
+import { PartnerChargePointsComponent } from './portal/partner-charge-points.component';
+import { PartnerSessionsComponent } from './portal/partner-sessions.component';
+import { PartnerStatisticsComponent } from './portal/partner-statistics.component';
+import { PartnerProfileComponent } from './portal/partner-profile.component';
+
 const routes: Routes = [
-  {
-    path: "",
-    component: PartnerHomeComponent,
-    loadChildren : () => import('./partner-home/partner-home.module')
-      .then(m=>m.PartnerHomeModule)
-  },
-  {
-    path: "security",
-    component: TwoFactorSettingsComponent
-  },
-  {
-    path: "statistics",
-    component: PartnerStatisticsComponent
-  },
-  {
-    path: "connector-realtime",
-    component: PartnerConnectorRealtimeComponent,
-    loadChildren : () => import('./partner-connector-realtime/partner-connector-realtime.module')
-      .then(m=>m.PartnerConnectorRealtimeModule)
-  },
-  {
-    path: "charging-sessions",
-    component: PartnerConnectorRealtimeComponent,
-    loadChildren : () => import('./partner-charging-sessions/partner-charging-sessions.module')
-      .then(m=>m.PartnerChargingSessionsModule)
-  },
-  
+  { path: '', component: PartnerOverviewComponent },
+  { path: 'stations', component: PartnerStationsComponent },
+  { path: 'charge-points', component: PartnerChargePointsComponent },
+  { path: 'sessions', component: PartnerSessionsComponent },
+  { path: 'statistics', component: PartnerStatisticsComponent },
+  { path: 'profile', component: PartnerProfileComponent },
+  { path: 'security', component: TwoFactorSettingsComponent },
+  // Former pages
+  { path: 'connector-realtime', redirectTo: 'charge-points' },
+  { path: 'charging-sessions', redirectTo: 'sessions' },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

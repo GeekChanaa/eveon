@@ -99,7 +99,11 @@
     "myCards": "My cards",
     "payments": "Payments",
     "wallet": "Wallet & top-up",
-    "paymentMethods": "Payment methods"
+    "paymentMethods": "Payment methods",
+    "myNetwork": "My network",
+    "chargePointsPrices": "Charge points & prices",
+    "activity": "Activity",
+    "partnerProfile": "Profile & logo"
   },
   "header": {
     "openMenu": "Open menu",
@@ -299,5 +303,137 @@
     "IdleFee": "Idle fee",
     "Refund": "Refund",
     "Adjustment": "Adjustment"
+  },
+  "partner": {
+    "eyebrow": "Partner portal",
+    "actions": {
+      "prices": "Manage prices",
+      "statement": "Statement"
+    },
+    "overview": {
+      "title": "Partner portal",
+      "subtitle": "Your stations, their activity and your revenue at a glance.",
+      "revenueMonth": "Revenue this month",
+      "today": "Today: {{value}}",
+      "sessionsMonth": "Sessions this month",
+      "chargingNow": "Charging now",
+      "network": "{{stations}} stations · {{chargePoints}} charge points · {{connectors}} connectors",
+      "revenueTotal": "Revenue since the start",
+      "vatIncluded": "Amounts billed to drivers, VAT included.",
+      "recent": "Latest sessions",
+      "connectors": "Connector status",
+      "refreshed": "Updated at {{time}}, refreshed every minute"
+    },
+    "fields": {
+      "chargePoint": "Charge point",
+      "energy": "Energy",
+      "revenue": "Revenue",
+      "station": "Station",
+      "connector": "Connector",
+      "address": "Address",
+      "started": "Started",
+      "duration": "Charging time",
+      "stoppedBy": "Stopped by"
+    },
+    "status": {
+      "charging": "Charging",
+      "completed": "Completed"
+    },
+    "connectorStatus": {
+      "Available": "Available",
+      "Occupied": "Occupied",
+      "Reserved": "Reserved",
+      "Faulted": "Faulted",
+      "Unavailable": "Unavailable",
+      "Disconnected": "Disconnected",
+      "Unknown": "Unknown"
+    },
+    "stationStatus": {
+      "Available": "Open",
+      "UnderMaintenance": "Under maintenance",
+      "Offline": "Offline"
+    },
+    "chargePointStatus": {
+      "Available": "Online",
+      "Offline": "Offline",
+      "UnderMaintenance": "Under maintenance"
+    },
+    "stations": {
+      "title": "Charging stations",
+      "subtitle": "Your stations, their charge points and connectors.",
+      "empty": "No station is linked to your account yet.",
+      "points": "{{count}} charge point(s)",
+      "chargePoints": "Charge points",
+      "connectors": "Connectors",
+      "pricesLink": "Prices",
+      "sessionsLink": "Sessions",
+      "map": "Map"
+    },
+    "chargePoints": {
+      "title": "Charge points & prices",
+      "subtitle": "Live connector status and the prices drivers pay on each connector. Change them at any time.",
+      "allStations": "All stations",
+      "empty": "No charge point to show.",
+      "sessions": "Sessions",
+      "noConnectors": "This charge point has no connector yet.",
+      "pricingNote": "Prices include VAT. New sessions use the new prices at once; sessions already started keep the prices they started with. Every change is logged."
+    },
+    "pricing": {
+      "perKwh": "Energy",
+      "perMinute": "Charging time",
+      "perIdleMinute": "Idle time",
+      "flatFee": "Session fee",
+      "range": "Enter a price between 0 and {{max}} with at most 4 decimals.",
+      "example": "Example: {{kwh}} kWh charged in {{minutes}} minutes = {{amount}} (idle fee aside).",
+      "note": "Idle time is billed after the grace period, once charging has ended and the car is still plugged in. The session fee only applies when energy was delivered.",
+      "applyToAll": "Apply to the {{count}} connectors of this charge point",
+      "save": "Save prices",
+      "saving": "Saving…",
+      "edit": "Edit prices",
+      "invalid": "These prices were refused. Check the values and try again.",
+      "failed": "The prices could not be saved. Please try again."
+    },
+    "sessions": {
+      "title": "Charging sessions",
+      "subtitle": "Every session on your stations with its energy and revenue. Download the statement for your accounting.",
+      "statementPdf": "Statement (PDF)",
+      "pageTotal": "Total on this page",
+      "empty": "No session for these filters.",
+      "privacy": "Drivers' personal data is not shared with partners."
+    },
+    "statistics": {
+      "title": "Statistics",
+      "subtitle": "Revenue, energy and sessions on your stations over the last 30 days and 12 months.",
+      "metric": "Metric",
+      "revenue": "Revenue",
+      "energy": "Energy",
+      "sessions": "Sessions",
+      "revenue12": "Revenue, last 12 months",
+      "energy12": "Energy, last 12 months",
+      "sessions12": "Sessions, last 12 months",
+      "last30": "Last 30 days",
+      "daily": "Last 30 days",
+      "monthly": "Last 12 months",
+      "byMonth": "Month by month",
+      "month": "Month"
+    },
+    "profile": {
+      "title": "Profile & logo",
+      "subtitle": "Your company details and the logo shown in your portal and on printed documents.",
+      "readOnly": "To change these details, contact EVEON.",
+      "email": "Email",
+      "phone": "Phone",
+      "city": "City",
+      "security": "Two-factor authentication and security",
+      "logo": "Logo",
+      "logoHint": "PNG, JPEG or WebP, 5 MB at most. A square or wide logo on a transparent background works best.",
+      "choose": "Choose an image",
+      "upload": "Upload the logo",
+      "uploading": "Uploading…",
+      "logoSaved": "Your logo was updated.",
+      "badType": "Choose a PNG, JPEG or WebP image.",
+      "tooBig": "The image is larger than 5 MB.",
+      "uploadFailed": "The logo could not be uploaded. Check the file and try again."
+    }
   }
 }

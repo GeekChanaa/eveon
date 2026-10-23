@@ -99,7 +99,11 @@
     "myCards": "Mes cartes",
     "payments": "Paiements",
     "wallet": "Porte-monnaie et recharge",
-    "paymentMethods": "Moyens de paiement"
+    "paymentMethods": "Moyens de paiement",
+    "myNetwork": "Mon réseau",
+    "chargePointsPrices": "Bornes et tarifs",
+    "activity": "Activité",
+    "partnerProfile": "Profil et logo"
   },
   "header": {
     "openMenu": "Ouvrir le menu",
@@ -299,5 +303,137 @@
     "IdleFee": "Frais d’occupation",
     "Refund": "Remboursement",
     "Adjustment": "Ajustement"
+  },
+  "partner": {
+    "eyebrow": "Espace partenaire",
+    "actions": {
+      "prices": "Gérer les tarifs",
+      "statement": "Relevé"
+    },
+    "overview": {
+      "title": "Espace partenaire",
+      "subtitle": "Vos stations, leur activité et votre chiffre d’affaires en un coup d’œil.",
+      "revenueMonth": "Chiffre d’affaires du mois",
+      "today": "Aujourd’hui : {{value}}",
+      "sessionsMonth": "Sessions ce mois-ci",
+      "chargingNow": "En charge maintenant",
+      "network": "{{stations}} stations · {{chargePoints}} bornes · {{connectors}} connecteurs",
+      "revenueTotal": "Chiffre d’affaires depuis le début",
+      "vatIncluded": "Montants facturés aux conducteurs, TTC.",
+      "recent": "Dernières sessions",
+      "connectors": "État des connecteurs",
+      "refreshed": "Mis à jour à {{time}}, actualisé chaque minute"
+    },
+    "fields": {
+      "chargePoint": "Borne",
+      "energy": "Énergie",
+      "revenue": "Chiffre d’affaires",
+      "station": "Station",
+      "connector": "Connecteur",
+      "address": "Adresse",
+      "started": "Début",
+      "duration": "Durée de charge",
+      "stoppedBy": "Arrêtée par"
+    },
+    "status": {
+      "charging": "En charge",
+      "completed": "Terminée"
+    },
+    "connectorStatus": {
+      "Available": "Disponible",
+      "Occupied": "Occupé",
+      "Reserved": "Réservé",
+      "Faulted": "En défaut",
+      "Unavailable": "Indisponible",
+      "Disconnected": "Déconnecté",
+      "Unknown": "Inconnu"
+    },
+    "stationStatus": {
+      "Available": "Ouverte",
+      "UnderMaintenance": "En maintenance",
+      "Offline": "Hors ligne"
+    },
+    "chargePointStatus": {
+      "Available": "En ligne",
+      "Offline": "Hors ligne",
+      "UnderMaintenance": "En maintenance"
+    },
+    "stations": {
+      "title": "Stations de recharge",
+      "subtitle": "Vos stations, leurs bornes et leurs connecteurs.",
+      "empty": "Aucune station n’est encore rattachée à votre compte.",
+      "points": "{{count}} borne(s)",
+      "chargePoints": "Bornes",
+      "connectors": "Connecteurs",
+      "pricesLink": "Tarifs",
+      "sessionsLink": "Sessions",
+      "map": "Carte"
+    },
+    "chargePoints": {
+      "title": "Bornes et tarifs",
+      "subtitle": "L’état des connecteurs en direct et les tarifs payés par les conducteurs sur chaque connecteur. Modifiez-les à tout moment.",
+      "allStations": "Toutes les stations",
+      "empty": "Aucune borne à afficher.",
+      "sessions": "Sessions",
+      "noConnectors": "Cette borne n’a pas encore de connecteur.",
+      "pricingNote": "Les tarifs sont TTC. Les nouvelles sessions utilisent immédiatement les nouveaux tarifs ; les sessions déjà commencées gardent leurs tarifs de départ. Chaque modification est journalisée."
+    },
+    "pricing": {
+      "perKwh": "Énergie",
+      "perMinute": "Durée de charge",
+      "perIdleMinute": "Occupation",
+      "flatFee": "Frais de session",
+      "range": "Saisissez un tarif entre 0 et {{max}}, avec 4 décimales au maximum.",
+      "example": "Exemple : {{kwh}} kWh chargés en {{minutes}} minutes = {{amount}} (hors frais d’occupation).",
+      "note": "L’occupation est facturée après le délai de grâce, une fois la charge terminée si le véhicule reste branché. Les frais de session ne s’appliquent que si de l’énergie a été délivrée.",
+      "applyToAll": "Appliquer aux {{count}} connecteurs de cette borne",
+      "save": "Enregistrer les tarifs",
+      "saving": "Enregistrement…",
+      "edit": "Modifier les tarifs",
+      "invalid": "Ces tarifs ont été refusés. Vérifiez les valeurs et réessayez.",
+      "failed": "Les tarifs n’ont pas pu être enregistrés. Veuillez réessayer."
+    },
+    "sessions": {
+      "title": "Sessions de recharge",
+      "subtitle": "Toutes les sessions sur vos stations avec leur énergie et leur chiffre d’affaires. Téléchargez le relevé pour votre comptabilité.",
+      "statementPdf": "Relevé (PDF)",
+      "pageTotal": "Total de la page",
+      "empty": "Aucune session pour ces filtres.",
+      "privacy": "Les données personnelles des conducteurs ne sont pas partagées avec les partenaires."
+    },
+    "statistics": {
+      "title": "Statistiques",
+      "subtitle": "Chiffre d’affaires, énergie et sessions sur vos stations ces 30 derniers jours et 12 derniers mois.",
+      "metric": "Indicateur",
+      "revenue": "Chiffre d’affaires",
+      "energy": "Énergie",
+      "sessions": "Sessions",
+      "revenue12": "Chiffre d’affaires, 12 derniers mois",
+      "energy12": "Énergie, 12 derniers mois",
+      "sessions12": "Sessions, 12 derniers mois",
+      "last30": "30 derniers jours",
+      "daily": "30 derniers jours",
+      "monthly": "12 derniers mois",
+      "byMonth": "Mois par mois",
+      "month": "Mois"
+    },
+    "profile": {
+      "title": "Profil et logo",
+      "subtitle": "Les informations de votre société et le logo affiché dans votre espace et sur les documents imprimés.",
+      "readOnly": "Pour modifier ces informations, contactez EVEON.",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "city": "Ville",
+      "security": "Double authentification et sécurité",
+      "logo": "Logo",
+      "logoHint": "PNG, JPEG ou WebP, 5 Mo maximum. Un logo carré ou horizontal sur fond transparent rend le mieux.",
+      "choose": "Choisir une image",
+      "upload": "Envoyer le logo",
+      "uploading": "Envoi…",
+      "logoSaved": "Votre logo a été mis à jour.",
+      "badType": "Choisissez une image PNG, JPEG ou WebP.",
+      "tooBig": "L’image dépasse 5 Mo.",
+      "uploadFailed": "Le logo n’a pas pu être envoyé. Vérifiez le fichier et réessayez."
+    }
   }
 }
