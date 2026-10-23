@@ -31,8 +31,10 @@ namespace VoltaXApi.Data
 
     public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams)
     {
+      // Explicit order: OFFSET / FETCH over an unordered query follows whichever index the database picks.
       var chargingSessions = _context.ChargingSessions.Include(u => u.User).Include(u => u.Connector)
-          .Where(cs => cs.Connector.ChargePointID == chargePointID).AsQueryable().ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
+          .Where(cs => cs.Connector.ChargePointID == chargePointID).OrderBy(cs => cs.ID)
+          .ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
       return chargingSessions;
     }
 
@@ -175,7 +177,7 @@ namespace VoltaXApi.Data
 
     public IQueryable<PartnerChargingSessionListDto> GetPartnerChargingSessions(int partnerID)
     {
-      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).Select(cs => new PartnerChargingSessionListDto
+      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).OrderBy(cs => cs.ID).Select(cs => new PartnerChargingSessionListDto
       {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
@@ -198,8 +200,10 @@ namespace VoltaXApi.Data
     public async Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
     {
       var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
+      // In date order, whatever index the database reads them with.
       var startDates = await _context.ChargingSessions.AsNoTracking()
           .Where(cs => cs.StartDate >= from && cs.Connector!.ChargePointID == chargePointID)
+          .OrderBy(cs => cs.StartDate)
           .Select(cs => cs.StartDate)
           .ToListAsync();
 
