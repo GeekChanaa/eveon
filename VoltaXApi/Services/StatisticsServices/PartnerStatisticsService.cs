@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace VoltaXApi.Services
 {
     /// <summary>
-    /// Statistics of the ended charging sessions on a partner's stations. "Today", daily and monthly figures
-    /// use business-time-zone calendar days (see <see cref="IBusinessClock"/>).
+    /// Statistics of the ended charging sessions on a partner's stations, aggregated by the database (see
+    /// <see cref="SessionAggregation"/>). "Today", daily and monthly figures use business-time-zone calendar days
+    /// (see <see cref="IBusinessClock"/>).
     /// </summary>
     public class PartnerStatisticsService : IPartnerStatisticsService
     {
@@ -20,16 +21,16 @@ namespace VoltaXApi.Services
         }
 
         public async Task<double> GetTotalRevenueForPartnerAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
-            (await Load(Sessions(partnerID))).Sum(s => Revenue(s, vatRate, gracePeriodSeconds));
+            (double)(await Total(Sessions(partnerID), new SessionPricing(vatRate, gracePeriodSeconds))).Revenue;
 
         public async Task<double> GetTotalRevenueForPartnerTodayAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
-            (await Load(Today(Sessions(partnerID)))).Sum(s => Revenue(s, vatRate, gracePeriodSeconds));
+            (double)(await Total(Today(Sessions(partnerID)), new SessionPricing(vatRate, gracePeriodSeconds))).Revenue;
 
-        public async Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
-            ByDay(await Load(Last30Days(Sessions(partnerID))), s => Revenue(s, vatRate, gracePeriodSeconds));
+        public Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
+            ByDay(Last30Days(Sessions(partnerID)), new SessionPricing(vatRate, gracePeriodSeconds), t => (double)t.Revenue);
 
-        public async Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
-            ByMonth(await Load(LastYear(Sessions(partnerID))), s => Revenue(s, vatRate, gracePeriodSeconds));
+        public Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
+            ByMonth(LastYear(Sessions(partnerID)), new SessionPricing(vatRate, gracePeriodSeconds), t => (double)t.Revenue);
 
         public async Task<double> GetTotalChargingSessionsForPartnerAsync(int partnerID) =>
             await Sessions(partnerID).CountAsync();
@@ -37,11 +38,11 @@ namespace VoltaXApi.Services
         public async Task<double> GetTotalChargingSessionsForPartnerTodayAsync(int partnerID) =>
             await Today(Sessions(partnerID)).CountAsync();
 
-        public async Task<Dictionary<DateTime, double>> GetDailyChargingSessionsForPartnerLast30DaysAsync(int partnerID) =>
-            ByDay(await Load(Last30Days(Sessions(partnerID))), _ => 1);
+        public Task<Dictionary<DateTime, double>> GetDailyChargingSessionsForPartnerLast30DaysAsync(int partnerID) =>
+            ByDay(Last30Days(Sessions(partnerID)), null, t => t.Count);
 
-        public async Task<Dictionary<string, double>> GetMonthlyChargingSessionsForPartnerLastYearAsync(int partnerID) =>
-            ByMonth(await Load(LastYear(Sessions(partnerID))), _ => 1);
+        public Task<Dictionary<string, double>> GetMonthlyChargingSessionsForPartnerLastYearAsync(int partnerID) =>
+            ByMonth(LastYear(Sessions(partnerID)), null, t => t.Count);
 
         public async Task<double> GetTotalChargedMinutesForPartnerAsync(int partnerID) =>
             await Sessions(partnerID).SumAsync(s => s.ChargedMinutes ?? 0);
@@ -49,11 +50,11 @@ namespace VoltaXApi.Services
         public async Task<double> GetTotalChargedMinutesForPartnerTodayAsync(int partnerID) =>
             await Today(Sessions(partnerID)).SumAsync(s => s.ChargedMinutes ?? 0);
 
-        public async Task<Dictionary<DateTime, double>> GetDailyChargedMinutesForPartnerLast30DaysAsync(int partnerID) =>
-            ByDay(await Load(Last30Days(Sessions(partnerID))), s => s.ChargedMinutes ?? 0);
+        public Task<Dictionary<DateTime, double>> GetDailyChargedMinutesForPartnerLast30DaysAsync(int partnerID) =>
+            ByDay(Last30Days(Sessions(partnerID)), null, t => t.ChargedMinutes);
 
-        public async Task<Dictionary<string, double>> GetMonthlyChargedMinutesForPartnerLastYearAsync(int partnerID) =>
-            ByMonth(await Load(LastYear(Sessions(partnerID))), s => s.ChargedMinutes ?? 0);
+        public Task<Dictionary<string, double>> GetMonthlyChargedMinutesForPartnerLastYearAsync(int partnerID) =>
+            ByMonth(LastYear(Sessions(partnerID)), null, t => t.ChargedMinutes);
 
         public async Task<double> GetTotalEnergyConsumedForPartnerAsync(int partnerID) =>
             await Sessions(partnerID).SumAsync(s => s.ChargedKwhs ?? 0);
@@ -61,11 +62,11 @@ namespace VoltaXApi.Services
         public async Task<double> GetTotalEnergyConsumedForPartnerTodayAsync(int partnerID) =>
             await Today(Sessions(partnerID)).SumAsync(s => s.ChargedKwhs ?? 0);
 
-        public async Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedForPartnerLast30DaysAsync(int partnerID) =>
-            ByDay(await Load(Last30Days(Sessions(partnerID))), s => s.ChargedKwhs ?? 0);
+        public Task<Dictionary<DateTime, double>> GetDailyEnergyConsumedForPartnerLast30DaysAsync(int partnerID) =>
+            ByDay(Last30Days(Sessions(partnerID)), null, t => t.ChargedKwhs);
 
-        public async Task<Dictionary<string, double>> GetMonthlyEnergyConsumedForPartnerLastYearAsync(int partnerID) =>
-            ByMonth(await Load(LastYear(Sessions(partnerID))), s => s.ChargedKwhs ?? 0);
+        public Task<Dictionary<string, double>> GetMonthlyEnergyConsumedForPartnerLastYearAsync(int partnerID) =>
+            ByMonth(LastYear(Sessions(partnerID)), null, t => t.ChargedKwhs);
 
         private IQueryable<ChargingSession> Sessions(int partnerID) =>
             _context.ChargingSessions.AsNoTracking()
@@ -90,34 +91,22 @@ namespace VoltaXApi.Services
             return query.Where(s => s.StartDate >= from);
         }
 
-        /// <summary>Loads only the columns the statistics need.</summary>
-        private static Task<List<ChargingSession>> Load(IQueryable<ChargingSession> query) =>
-            query.Select(s => new ChargingSession
-            {
-                StartDate = s.StartDate,
-                ChargedMinutes = s.ChargedMinutes,
-                ChargedKwhs = s.ChargedKwhs,
-                PricePerMinute = s.PricePerMinute,
-                IdleMinutes = s.IdleMinutes,
-                PricePerIdleMinute = s.PricePerIdleMinute,
-                EnergyAmount = s.EnergyAmount,
-                TimeAmount = s.TimeAmount,
-                FlatFeeAmount = s.FlatFeeAmount,
-                IdleAmount = s.IdleAmount,
-                TotalAmount = s.TotalAmount
-            }).ToListAsync();
+        private static Task<SessionTotals> Total(IQueryable<ChargingSession> sessions, SessionPricing? pricing) =>
+            SessionAggregation.TotalAsync(sessions, pricing);
 
-        private static double Revenue(ChargingSession session, decimal vatRate, double gracePeriodSeconds) =>
-            (double)session.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds);
+        private Task<Dictionary<DateTime, double>> ByDay(IQueryable<ChargingSession> sessions, SessionPricing? pricing, Func<SessionTotals, double> value) =>
+            By(sessions, pricing, local => local.Date, value);
 
-        private Dictionary<DateTime, double> ByDay(IEnumerable<ChargingSession> sessions, Func<ChargingSession, double> value) =>
-            sessions.GroupBy(s => _clock.ToLocal(s.StartDate).Date).ToDictionary(g => g.Key, g => g.Sum(value));
+        private Task<Dictionary<string, double>> ByMonth(IQueryable<ChargingSession> sessions, SessionPricing? pricing, Func<SessionTotals, double> value) =>
+            By(sessions, pricing, local => $"{local.Month}-{local.Year}", value);
 
-        private Dictionary<string, double> ByMonth(IEnumerable<ChargingSession> sessions, Func<ChargingSession, double> value) =>
-            sessions.GroupBy(s =>
-            {
-                var local = _clock.ToLocal(s.StartDate);
-                return $"{local.Month}-{local.Year}";
-            }).ToDictionary(g => g.Key, g => g.Sum(value));
+        private async Task<Dictionary<TKey, double>> By<TKey>(IQueryable<ChargingSession> sessions, SessionPricing? pricing,
+            Func<DateTime, TKey> key, Func<SessionTotals, double> value) where TKey : notnull
+        {
+            var buckets = await SessionAggregation.ByStartAsync(sessions, _clock.TimeZone, pricing);
+            return buckets
+                .GroupBy(b => key(_clock.ToLocal(b.StartUtc)))
+                .ToDictionary(g => g.Key, g => value(g.Select(b => b.Totals).Aggregate(SessionTotals.Empty, (sum, t) => sum.Add(t))));
+        }
     }
 }
