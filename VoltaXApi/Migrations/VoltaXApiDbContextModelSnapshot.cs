@@ -1474,6 +1474,10 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -1491,6 +1495,10 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("Network")
                         .HasColumnType("int");
+
+                    b.Property<string>("OpeningHours")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Organisation")
                         .HasColumnType("nvarchar(max)");

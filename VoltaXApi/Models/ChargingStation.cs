@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -34,6 +35,15 @@ namespace VoltaXApi.Models
         public bool RestaurantsAmenity { get; set; }
         public bool WashroomAmenity { get; set; }
         public bool SittingAreaAmenity { get; set; }
+
+        /// <summary>What drivers should know about the station (access, parking, nearby services), shown publicly.</summary>
+        [MaxLength(1000)]
+        public string? Description { get; set; }
+
+        /// <summary>Weekly opening hours as JSON (see <see cref="Dtos.StationOpeningHours"/>); null when unknown (treated as always open).</summary>
+        [MaxLength(2000)]
+        public string? OpeningHours { get; set; }
+
         public int? PartnerID { get; set; }
         public ICollection<ChargePoint>? ChargePoints { get; set; }
         public ICollection<ChargingStationImage>? ChargingStationImages {get; set;}

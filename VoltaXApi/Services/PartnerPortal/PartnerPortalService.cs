@@ -65,7 +65,8 @@ namespace VoltaXApi.Services.PartnerPortal
                 .Select(s => new PartnerStationDto(s.ID, s.Name, s.Address, s.City, s.Status,
                     s.ChargePoints!.Count(cp => !cp.IsDeleted),
                     s.ChargePoints!.Where(cp => !cp.IsDeleted).SelectMany(cp => cp.Connectors!).Count(c => !c.IsDeleted),
-                    s.Latitude, s.Longitude))
+                    s.Latitude, s.Longitude, s.Network,
+                    s.ChargingStationImages!.Where(i => !i.IsDeleted).OrderBy(i => i.ID).Select(i => i.Image!.Url).FirstOrDefault()))
                 .ToListAsync(ct);
 
         public async Task<List<PartnerChargePointDto>> ChargePointsAsync(int partnerId, int? stationId = null, CancellationToken ct = default)
