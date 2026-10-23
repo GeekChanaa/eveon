@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace VoltaXApi.Models
 {
     public class Order : IEntity
@@ -6,7 +8,8 @@ namespace VoltaXApi.Models
         [NotUpdatable]
         public int CardID { get; set; }
         [NotUpdatable]
-        public double Amount { get; set; }
+        [Precision(18, 2)]
+        public decimal Amount { get; set; }
         [NotUpdatable]
         public RechargeOrderStatus Status { get; set; }
         public DateTime RechargeDate { get; set; }

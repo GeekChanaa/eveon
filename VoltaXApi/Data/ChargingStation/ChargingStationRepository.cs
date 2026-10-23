@@ -143,7 +143,7 @@ namespace VoltaXApi.Data
             foreach (var cs in chargingStations)
             {
                 var revenue = await GetChargingStationRevenue(cs.ID);
-                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = revenue });
+                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = (decimal)revenue });
             }
 
             // Order by revenue and take top 10
@@ -183,7 +183,7 @@ namespace VoltaXApi.Data
             double total = 0;
             foreach (ChargePoint chargePoint in chargePoints)
             {
-                total += await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId);
+                total += (double)await _chargePointRepo.GetPartnerChargePointRevenue(partnerID,chargePoint.ChargePointId);
             }
 
             return total;
@@ -240,7 +240,7 @@ namespace VoltaXApi.Data
             foreach (var cs in chargingStations)
             {
                 var revenue = await GetPartnerChargingStationRevenue(partnerID,cs.ID);
-                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = revenue, ChargingStationName = cs.Name });
+                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = (decimal)revenue, ChargingStationName = cs.Name });
             }
 
             // Order by revenue and take top 10

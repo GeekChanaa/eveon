@@ -10,7 +10,7 @@ namespace VoltaXApi.Dtos
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }
         public CardStatusEnum Status { get; set; }
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
         public string Note { get; set; }
         public int? UserID { get; set; }
         public string UserName {get; set;}

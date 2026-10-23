@@ -198,7 +198,7 @@ public sealed class FirstSetupJob(
 
     private Task CheckPricing(string step)
     {
-        void Positive(string name, double value)
+        void Positive(string name, decimal value)
         {
             if (value <= 0) _result.Error(step, $"GlobalConfigurations:{name} is {value}, expected a value above 0");
         }
@@ -206,7 +206,7 @@ public sealed class FirstSetupJob(
         Positive(nameof(pricing.DefaultPricePerKwh), pricing.DefaultPricePerKwh);
         Positive(nameof(pricing.DefaultCostPerKwh), pricing.DefaultCostPerKwh);
         Positive(nameof(pricing.DefaultMinimumRequiredBalance), pricing.DefaultMinimumRequiredBalance);
-        Positive(nameof(pricing.GracePeriod), pricing.GracePeriod);
+        Positive(nameof(pricing.GracePeriod), (decimal)pricing.GracePeriod);
         if (pricing.Vat <= 0 || pricing.Vat >= 1)
             _result.Error(step, $"GlobalConfigurations:Vat is {pricing.Vat}, expected a rate such as 0.2");
         if (pricing.DefaultPricePerKwh > 0 && pricing.DefaultPricePerKwh < pricing.DefaultCostPerKwh)

@@ -8,7 +8,7 @@ namespace VoltaXApi.Dtos
         [Range(1, int.MaxValue)]
         public int CardID { get; set; }
         [Range(0.01, 100000)]
-        public double RechargeAmount { get; set; }
+        public decimal RechargeAmount { get; set; }
         // Raw card data (PAN/CVV) is never accepted here: pay with a saved, tokenized DebitCardID.
         [Range(1, int.MaxValue)]
         public int? DebitCardID { get; set; }

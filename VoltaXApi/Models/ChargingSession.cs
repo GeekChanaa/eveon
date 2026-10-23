@@ -1,6 +1,7 @@
 
 
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Models
@@ -17,9 +18,12 @@ namespace VoltaXApi.Models
     public double? ChargedMinutes { get; set; }
     public double? IdleMinutes { get; set; }
     public double? ChargedKwhs { get; set; }
-    public double? PricePerMinute { get; set; }
-    public double? CostPerKwh { get; set; }
-    public double? PricePerIdleMinute { get; set; }
+    [Precision(18, 4)]
+    public decimal? PricePerMinute { get; set; }
+    [Precision(18, 4)]
+    public decimal? CostPerKwh { get; set; }
+    [Precision(18, 4)]
+    public decimal? PricePerIdleMinute { get; set; }
     public ReasonEnumType StoppedReason { get; set; }
     public Connector? Connector { get; set; }
       public ChargingSessionStatusEnum ChargingSessionStatus { get; set; }
@@ -30,35 +34,35 @@ namespace VoltaXApi.Models
     public Card? Card { get; set; }
     public ICollection<Transaction>? Transactions { get; set; }
 
-    public double ChargingPriceWithVAT { get { return Math.Round((ChargedMinutes ?? 0) * (PricePerMinute ?? 0), 2); } }
-    public double? PricePerHour { get { return PricePerMinute == null ? 0 : PricePerMinute * 60; } }
+    public decimal ChargingPriceWithVAT { get { return Math.Round((decimal)(ChargedMinutes ?? 0) * (PricePerMinute ?? 0), 2); } }
+    public decimal? PricePerHour { get { return PricePerMinute == null ? 0 : PricePerMinute * 60; } }
 
-    public double ChargingPriceWithoutVAT(double vatRate)
+    public decimal ChargingPriceWithoutVAT(decimal vatRate)
         => Math.Round(ChargingPriceWithVAT / (1 + vatRate), 2);
 
-    public double VATChargingPrice(double vatRate)
+    public decimal VATChargingPrice(decimal vatRate)
         => Math.Round(ChargingPriceWithVAT * vatRate, 2);
 
-    public double IdleChargingPriceWithVAT(int gracePeriodSeconds)
+    public decimal IdleChargingPriceWithVAT(int gracePeriodSeconds)
     {
       double idleMinutes = IdleMinutes ?? 0;
       double graceMinutes = (double) (gracePeriodSeconds / 60.0);
 
       if (idleMinutes <= graceMinutes) return 0; // Grace period check
 
-      return Math.Round(idleMinutes * (PricePerIdleMinute ?? 0), 2);
+      return Math.Round((decimal)idleMinutes * (PricePerIdleMinute ?? 0), 2);
     }
 
-    public double IdleChargingPriceWithoutVAT(double vatRate, int gracePeriodSeconds)
+    public decimal IdleChargingPriceWithoutVAT(decimal vatRate, int gracePeriodSeconds)
         => Math.Round(IdleChargingPriceWithVAT(gracePeriodSeconds) / (1 + vatRate), 2);
 
-    public double VATIdleChargingPrice(double vatRate, int gracePeriodSeconds)
+    public decimal VATIdleChargingPrice(decimal vatRate, int gracePeriodSeconds)
         => Math.Round(IdleChargingPriceWithVAT(gracePeriodSeconds) * vatRate, 2);
 
-    public double TotalPriceWithoutVAT(double vatRate, int gracePeriodSeconds)
+    public decimal TotalPriceWithoutVAT(decimal vatRate, int gracePeriodSeconds)
         => ChargingPriceWithoutVAT(vatRate) + IdleChargingPriceWithoutVAT(vatRate, gracePeriodSeconds);
 
-    public double TotalPriceWithVAT(double vatRate, int gracePeriodSeconds)
+    public decimal TotalPriceWithVAT(decimal vatRate, int gracePeriodSeconds)
         => ChargingPriceWithVAT + IdleChargingPriceWithVAT(gracePeriodSeconds);
   }
 }

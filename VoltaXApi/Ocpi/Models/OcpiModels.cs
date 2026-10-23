@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.Ocpi.Models
@@ -119,11 +120,16 @@ namespace VoltaXApi.Ocpi.Models
         public double? MeterStartKwh { get; set; }
         public double Kwh { get; set; }
         // Tariff snapshot taken at start (prices include VAT, as in the rest of EVEON).
-        public double PricePerKWh { get; set; }
-        public double PricePerMinute { get; set; }
-        public double PricePerIdleMinute { get; set; }
-        public double FlatFee { get; set; }
-        public double VatRate { get; set; }
+        [Precision(18, 4)]
+        public decimal PricePerKWh { get; set; }
+        [Precision(18, 4)]
+        public decimal PricePerMinute { get; set; }
+        [Precision(18, 4)]
+        public decimal PricePerIdleMinute { get; set; }
+        [Precision(18, 4)]
+        public decimal FlatFee { get; set; }
+        [Precision(5, 4)]
+        public decimal VatRate { get; set; }
         public DateTime? CdrQueuedAt { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime CreatedAt { get; set; }

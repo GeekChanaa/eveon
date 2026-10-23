@@ -6,7 +6,7 @@ using VoltaXApi.OCPP.Messages;
 
 namespace VoltaXApi.Ocpi.Services
 {
-    public sealed record OcpiIdentity(string CountryCode, string PartyId, string OperatorName, double VatRate);
+    public sealed record OcpiIdentity(string CountryCode, string PartyId, string OperatorName, decimal VatRate);
 
     public sealed record OcpiCost(decimal Energy, decimal Time, decimal Fixed, decimal TotalInclVat, decimal TotalExclVat);
 
@@ -200,13 +200,13 @@ namespace VoltaXApi.Ocpi.Services
             };
         }
 
-        public static decimal ExclVat(double priceInclVat, double vatRate) =>
-            Math.Round((decimal)priceInclVat / (1 + (decimal)vatRate), 4, MidpointRounding.AwayFromZero);
+        public static decimal ExclVat(decimal priceInclVat, decimal vatRate) =>
+            Math.Round(priceInclVat / (1 + vatRate), 4, MidpointRounding.AwayFromZero);
 
         // EVEON prices include VAT; OCPI prices exclude it and carry the VAT percentage.
         public static TariffDto ToTariff(OcpiIdentity id, Connector connector)
         {
-            var vat = Math.Round((decimal)id.VatRate * 100, 2);
+            var vat = Math.Round(id.VatRate * 100, 2);
             var components = new List<PriceComponentDto>();
             if (connector.FlatFee > 0)
                 components.Add(new PriceComponentDto { Type = "FLAT", Price = ExclVat(connector.FlatFee, id.VatRate), Vat = vat, StepSize = 1 });
@@ -234,17 +234,17 @@ namespace VoltaXApi.Ocpi.Services
         {
             var stop = session.EndDateTime ?? end ?? DateTime.UtcNow;
             var minutes = Math.Max(0, (OcpiJson.ToUtc(stop) - OcpiJson.ToUtc(session.StartDateTime)).TotalMinutes);
-            var energy = (decimal)(session.Kwh * session.PricePerKWh);
-            var time = (decimal)(Math.Ceiling(minutes) * session.PricePerMinute);
-            var fixedFee = (decimal)session.FlatFee;
+            var energy = (decimal)session.Kwh * session.PricePerKWh;
+            var time = (decimal)Math.Ceiling(minutes) * session.PricePerMinute;
+            var fixedFee = session.FlatFee;
             var incl = Math.Round(energy + time + fixedFee, 2, MidpointRounding.AwayFromZero);
-            var excl = Math.Round(incl / (1 + (decimal)session.VatRate), 2, MidpointRounding.AwayFromZero);
+            var excl = Math.Round(incl / (1 + session.VatRate), 2, MidpointRounding.AwayFromZero);
             return new OcpiCost(energy, time, fixedFee, incl, excl);
         }
 
-        public static PriceDto Price(decimal inclVat, double vatRate) => new()
+        public static PriceDto Price(decimal inclVat, decimal vatRate) => new()
         {
-            ExclVat = Math.Round(inclVat / (1 + (decimal)vatRate), 2, MidpointRounding.AwayFromZero),
+            ExclVat = Math.Round(inclVat / (1 + vatRate), 2, MidpointRounding.AwayFromZero),
             InclVat = Math.Round(inclVat, 2, MidpointRounding.AwayFromZero)
         };
 

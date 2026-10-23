@@ -52,7 +52,7 @@ namespace VoltaXApi.Data
         }
 
 
-        public Task<double> CountRecharge(Expression<Func<Order, bool>> predicate)
+        public Task<decimal> CountRecharge(Expression<Func<Order, bool>> predicate)
         {
             var Amount = _context.Orders
                 .Where(predicate)
@@ -69,8 +69,8 @@ namespace VoltaXApi.Data
                 CardNumber = o.Card.CardNumber,
                 BilledTo = $"{o.Card.User.FirstName} {o.Card.User.LastName}",
                 TotalAmount = o.Amount,
-                AmountHT = o.Amount - o.Amount*0.8,
-                VAT = o.Amount - o.Amount*0.2
+                AmountHT = o.Amount - o.Amount*0.8m,
+                VAT = o.Amount - o.Amount*0.2m
             }).FirstOrDefaultAsync();
         }
 

@@ -17,7 +17,7 @@ namespace VoltaXApi.Dtos
         [EnumDataType(typeof(CardStatusEnum))]
         public CardStatusEnum Status { get; set; }
         [Range(0, 1000000)]
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
         [StringLength(500)]
         public string Note { get; set; }
         public int? UserID { get; set; }

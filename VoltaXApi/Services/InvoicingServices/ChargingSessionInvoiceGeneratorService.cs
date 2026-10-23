@@ -327,7 +327,7 @@ public class ChargingSessionInvoiceGeneratorService
         });
     }
 
-    private static string Money(double amount) => $"{amount.ToString("N2", Culture)} {Currency}";
+    private static string Money(decimal amount) => $"{amount.ToString("N2", Culture)} {Currency}";
 
     // Stored instants are UTC; invoices show business-time-zone wall-clock time.
     private string FormatDate(DateTime date, string format) =>

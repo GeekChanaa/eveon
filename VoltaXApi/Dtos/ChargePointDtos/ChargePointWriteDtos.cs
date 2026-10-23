@@ -60,11 +60,11 @@ namespace VoltaXApi.Dtos
 
         [Range(0, 1000)] public double? Power { get; set; }
         [Range(0, 1000)] public double? MaxPower { get; set; }
-        [Range(0, 10000)] public double? PricePerKWh { get; set; }
-        [Range(0, 10000)] public double? PricePerMinute { get; set; }
-        [Range(0, 10000)] public double? PricePerIdleMinute { get; set; }
-        [Range(0, 10000)] public double? CostPerKwh { get; set; }
-        [Range(0, 10000)] public double? FlatFee { get; set; }
+        [Range(0, 10000)] public decimal? PricePerKWh { get; set; }
+        [Range(0, 10000)] public decimal? PricePerMinute { get; set; }
+        [Range(0, 10000)] public decimal? PricePerIdleMinute { get; set; }
+        [Range(0, 10000)] public decimal? CostPerKwh { get; set; }
+        [Range(0, 10000)] public decimal? FlatFee { get; set; }
     }
 
     /// <summary>PUT api/ChargePoint/{id}: only the fields present (non-null) are changed.</summary>

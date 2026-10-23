@@ -8,8 +8,8 @@ public class InvoiceData
     public string BilledTo { get; set; }
     public string CardNumber { get; set; }
     public string Date { get; set; }
-    public double TotalAmount { get; set; }
-    public double AmountHT { get; set; }
-    public double VAT { get; set; }
+    public decimal TotalAmount { get; set; }
+    public decimal AmountHT { get; set; }
+    public decimal VAT { get; set; }
 
 }

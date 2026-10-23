@@ -379,8 +379,8 @@ namespace VoltaXApi.Services
 
           double chargedKwhs = (transaction.MeterStop ?? 0) - transaction.MeterStart;
           double elapsedMinutes = (updateTimestamp - transaction.StartTime).TotalMinutes;
-          double currentCost = CostCalculator.Instance.RunningCost(connector, chargedKwhs, elapsedMinutes);
-          double remainingBalance = Math.Max(0, card.Balance - currentCost);
+          decimal currentCost = CostCalculator.Instance.RunningCost(connector, chargedKwhs, elapsedMinutes);
+          decimal remainingBalance = Math.Max(0, card.Balance - currentCost);
 
           // Update the charging session with latest meter data
           await _chargingSessionService.UpdateChargingSession(
@@ -625,7 +625,7 @@ namespace VoltaXApi.Services
             CostCalculator.Instance.FinalCost(connector, minutesCharged));
 
         // Reload updated card balance
-        double updatedBalance = card?.Balance ?? 0;
+        decimal updatedBalance = card?.Balance ?? 0;
         if (card != null)
         {
           await _context.Entry(card).ReloadAsync();
@@ -647,7 +647,7 @@ namespace VoltaXApi.Services
         }
 
         // Notify connected clients about session end
-        double finalCost = CostCalculator.Instance.EnergyCost(connector, chargedKwhs);
+        decimal finalCost = CostCalculator.Instance.EnergyCost(connector, chargedKwhs);
         await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
         {
           SessionId = transaction.ChargingSessionID,
@@ -757,7 +757,7 @@ namespace VoltaXApi.Services
     private async Task CreateLowBalanceNotification(
         Card card,
         Transaction transaction,
-        double remainingBalance)
+        decimal remainingBalance)
     {
       await CreateChargingSessionNotification(
           card,

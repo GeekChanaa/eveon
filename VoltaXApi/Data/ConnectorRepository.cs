@@ -53,10 +53,10 @@ namespace VoltaXApi.Data
                     ChargePointID = chargePointID,
                     EvseID = key.EvseID,
                     ConnectorID = key.ConnectorID,
-                    PricePerIdleMinute = (double)_globalConfig.DefaultIdleTimePricing,
-                    PricePerKWh = (double)_globalConfig.DefaultPricePerKwh,
-                    CostPerKwh = (double)_globalConfig.DefaultCostPerKwh,
-                    FlatFee = (double)_globalConfig.DefaultFlatFee
+                    PricePerIdleMinute = _globalConfig.DefaultIdleTimePricing,
+                    PricePerKWh = _globalConfig.DefaultPricePerKwh,
+                    CostPerKwh = _globalConfig.DefaultCostPerKwh,
+                    FlatFee = _globalConfig.DefaultFlatFee
                 });
             }
 
@@ -109,7 +109,7 @@ namespace VoltaXApi.Data
             return changes > 0;
         }
 
-        public async Task<bool> UpdateConnectorFlatFee(int connectorID, double flatFee)
+        public async Task<bool> UpdateConnectorFlatFee(int connectorID, decimal flatFee)
         {
             var connector = await _context.Connectors.FirstOrDefaultAsync(c => c.ID == connectorID);
 
@@ -137,10 +137,10 @@ namespace VoltaXApi.Data
             var connectors = await _context.Connectors.Where(c => c.ChargePointID == chargePointID).ToListAsync();
             foreach(var connector in connectors)
             {
-                connector.PricePerKWh = (double) _globalConfig.DefaultPricePerKwh;
-                connector.PricePerIdleMinute = (double) _globalConfig.DefaultIdleTimePricing;
-                connector.CostPerKwh = (double) _globalConfig.DefaultCostPerKwh ;
-                connector.FlatFee = (double) _globalConfig.DefaultFlatFee;
+                connector.PricePerKWh = _globalConfig.DefaultPricePerKwh;
+                connector.PricePerIdleMinute = _globalConfig.DefaultIdleTimePricing;
+                connector.CostPerKwh = _globalConfig.DefaultCostPerKwh ;
+                connector.FlatFee = _globalConfig.DefaultFlatFee;
             }
 
             await _context.SaveChangesAsync();
@@ -151,10 +151,10 @@ namespace VoltaXApi.Data
             var connector = await _context.Connectors.Where(c => c.ID == connectorID).FirstOrDefaultAsync();
             if(connector == null) 
                 throw new NotFoundException("No connector with this ID exists");
-            connector.PricePerKWh = (double) _globalConfig.DefaultPricePerKwh;
-            connector.PricePerIdleMinute = (double) _globalConfig.DefaultIdleTimePricing;
-            connector.CostPerKwh = (double) _globalConfig.DefaultCostPerKwh ;
-            connector.FlatFee = (double) _globalConfig.DefaultFlatFee;
+            connector.PricePerKWh = _globalConfig.DefaultPricePerKwh;
+            connector.PricePerIdleMinute = _globalConfig.DefaultIdleTimePricing;
+            connector.CostPerKwh = _globalConfig.DefaultCostPerKwh ;
+            connector.FlatFee = _globalConfig.DefaultFlatFee;
 
             await _context.SaveChangesAsync();
         }

@@ -22,7 +22,7 @@ namespace VoltaXApi.Ocpi.Services
             _options = options.Value;
         }
 
-        public OcpiIdentity Identity(double vatRate) => new(_options.CountryCode, _options.PartyId, _options.BusinessName, vatRate);
+        public OcpiIdentity Identity(decimal vatRate) => new(_options.CountryCode, _options.PartyId, _options.BusinessName, vatRate);
 
         public string Protect(string token) => _protector.Protect(token);
 

@@ -35,7 +35,7 @@ public static class Seeds
         return chargePoint;
     }
 
-    public static Card Card(string number, double balance, int? userId = null, bool blocked = false, DateTime? expires = null) => new()
+    public static Card Card(string number, decimal balance, int? userId = null, bool blocked = false, DateTime? expires = null) => new()
     {
         CardNumber = number,
         Balance = balance,

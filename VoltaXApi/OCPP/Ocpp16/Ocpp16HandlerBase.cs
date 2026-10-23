@@ -96,10 +96,10 @@ namespace VoltaXApi.OCPP.Ocpp16
                     ChargePointID = chargePoint.ID,
                     EvseID = connectorId,
                     ConnectorID = 1,
-                    PricePerIdleMinute = (double)_globalConfigurations.DefaultIdleTimePricing,
-                    PricePerKWh = (double)_globalConfigurations.DefaultPricePerKwh,
-                    CostPerKwh = (double)_globalConfigurations.DefaultCostPerKwh,
-                    FlatFee = (double)_globalConfigurations.DefaultFlatFee
+                    PricePerIdleMinute = _globalConfigurations.DefaultIdleTimePricing,
+                    PricePerKWh = _globalConfigurations.DefaultPricePerKwh,
+                    CostPerKwh = _globalConfigurations.DefaultCostPerKwh,
+                    FlatFee = _globalConfigurations.DefaultFlatFee
                 };
                 _db.Connectors.Add(connector);
             }

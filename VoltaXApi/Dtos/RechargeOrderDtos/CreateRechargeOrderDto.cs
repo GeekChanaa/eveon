@@ -10,7 +10,7 @@ namespace VoltaXApi.Dtos
         [EnumDataType(typeof(RechargeOrderStatus))]
         public RechargeOrderStatus Status { get; set; }
         [Range(0.01, 100000)]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
         public DateTime? RechargeDate { get; set; } = DateTime.UtcNow;
     }
 }

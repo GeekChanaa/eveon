@@ -58,7 +58,7 @@ Check(await mobile.Wallet() is Microsoft.AspNetCore.Mvc.UnauthorizedResult, "ano
 Check(await mobile.Orders() is Microsoft.AspNetCore.Mvc.UnauthorizedResult, "anonymous orders rejected");
 Check(await mobile.Reviews(1, 0) is Microsoft.AspNetCore.Mvc.BadRequestResult, "invalid review pagination rejected");
 mobile.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()) }, "test"));
-var ownCard = new Card { UserID = user.ID, CardNumber = "mobile-check-1234", Note = "test", Balance = 93.4, ExpirationDate = now.AddYears(1) };
+var ownCard = new Card { UserID = user.ID, CardNumber = "mobile-check-1234", Note = "test", Balance = 93.4m, ExpirationDate = now.AddYears(1) };
 var otherCard = new Card { CardNumber = "mobile-check-5678", Note = "test", Balance = 999, ExpirationDate = now.AddYears(1) };
 db.Cards.AddRange(ownCard, otherCard);
 await db.SaveChangesAsync();

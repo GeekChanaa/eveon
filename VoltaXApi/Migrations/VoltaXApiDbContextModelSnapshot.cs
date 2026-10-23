@@ -90,8 +90,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<double>("WalletBalance")
-                        .HasColumnType("float");
+                    b.Property<decimal>("WalletBalance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -196,8 +197,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Balance")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Balance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool?>("Blocked")
                         .HasColumnType("bit");
@@ -926,8 +928,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ConnectorID")
                         .HasColumnType("int");
 
-                    b.Property<double?>("CostPerKwh")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("CostPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -944,11 +947,13 @@ namespace VoltaXApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<double?>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double?>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -1379,8 +1384,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorType")
                         .HasColumnType("int");
 
-                    b.Property<double>("CostPerKwh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("CostPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1391,8 +1397,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseID")
                         .HasColumnType("int");
 
-                    b.Property<double>("FlatFee")
-                        .HasColumnType("float");
+                    b.Property<decimal>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -1405,14 +1412,17 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Power")
                         .HasColumnType("float");
 
-                    b.Property<double>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerKWh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerKWh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -3139,8 +3149,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CardID")
                         .HasColumnType("int");
@@ -4117,8 +4128,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("ChargePointID")
                         .HasColumnType("int");
@@ -4667,8 +4679,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseId")
                         .HasColumnType("int");
 
-                    b.Property<double>("FlatFee")
-                        .HasColumnType("float");
+                    b.Property<decimal>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<double>("Kwh")
                         .HasColumnType("float");
@@ -4682,14 +4695,17 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("OcpiPartyID")
                         .HasColumnType("int");
 
-                    b.Property<double>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerKWh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerKWh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
@@ -4721,8 +4737,9 @@ namespace VoltaXApi.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<double>("VatRate")
-                        .HasColumnType("float");
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
 
                     b.HasKey("ID");
 

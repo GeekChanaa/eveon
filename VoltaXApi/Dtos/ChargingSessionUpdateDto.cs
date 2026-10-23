@@ -26,12 +26,12 @@ namespace VoltaXApi.Dtos
         /// <summary>
         /// Estimated cost so far.
         /// </summary>
-        public double CurrentCost { get; set; }
+        public decimal CurrentCost { get; set; }
 
         /// <summary>
         /// Remaining card balance.
         /// </summary>
-        public double CardBalance { get; set; }
+        public decimal CardBalance { get; set; }
 
         /// <summary>
         /// Reason for stopping (only on End).

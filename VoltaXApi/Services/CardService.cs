@@ -56,7 +56,7 @@ namespace VoltaXApi.Services
             Debit(cardTagID, connectorID, connector => CostCalculator.Instance.IdleCost(connector, idleMinutes));
 
         /// <summary>Debits the card with the connector-priced amount; false (and a system report) when the balance goes negative.</summary>
-        private async Task<bool> Debit(int cardID, int connectorID, Func<Connector, double> price)
+        private async Task<bool> Debit(int cardID, int connectorID, Func<Connector, decimal> price)
         {
             Card card = await _cardRepository.GetByIdAsync(cardID)
                 ?? throw new CardNotFoundException($"There is no card with the id {cardID}");
@@ -74,7 +74,7 @@ namespace VoltaXApi.Services
             return true;
         }
         
-        public async Task<bool> AddAmountToCard(int cardID, double amount)
+        public async Task<bool> AddAmountToCard(int cardID, decimal amount)
         {
             Card? card = await _cardRepository.GetByIdAsync(cardID);
 

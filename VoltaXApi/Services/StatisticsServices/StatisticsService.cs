@@ -34,42 +34,42 @@ namespace VoltaXApi.Services
             };
         }
 
-        public async Task<double> GetTotalRevenueAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<double> GetTotalRevenueAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null));
-            return sessions.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
+            return sessions.Sum(s => (double)s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
         }
 
         // Total revenue for the current business day
-        public async Task<double> GetTotalRevenueTodayAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<double> GetTotalRevenueTodayAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today);
             var to = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
             var sessions = await PricedSessions(_context.ChargingSessions
                 .Where(s => s.EndDate != null && s.StartDate >= from && s.StartDate < to));
-            return sessions.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
+            return sessions.Sum(s => (double)s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
         }
 
         // Daily revenue for the last 30 business days, keyed by business date
-        public async Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
             var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null && s.StartDate >= from));
 
             return sessions
                 .GroupBy(s => _clock.ToLocal(s.StartDate).Date)
-                .ToDictionary(g => g.Key, g => g.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
+                .ToDictionary(g => g.Key, g => g.Sum(s => (double)s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
         }
 
         // Monthly revenue for the last year, keyed "month-year" of the business date
-        public async Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddYears(-1));
             var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null && s.StartDate >= from));
 
             return sessions
                 .GroupBy(s => MonthKey(_clock.ToLocal(s.StartDate)))
-                .ToDictionary(g => g.Key, g => g.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
+                .ToDictionary(g => g.Key, g => g.Sum(s => (double)s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
         }
 
         private static string MonthKey(DateTime local) => $"{local.Month}-{local.Year}";

@@ -19,16 +19,16 @@ namespace VoltaXApi.Services
             _clock = clock;
         }
 
-        public async Task<double> GetTotalRevenueForPartnerAsync(int partnerID, double vatRate, double gracePeriodSeconds) =>
+        public async Task<double> GetTotalRevenueForPartnerAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
             (await Load(Sessions(partnerID))).Sum(s => Revenue(s, vatRate, gracePeriodSeconds));
 
-        public async Task<double> GetTotalRevenueForPartnerTodayAsync(int partnerID, double vatRate, double gracePeriodSeconds) =>
+        public async Task<double> GetTotalRevenueForPartnerTodayAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
             (await Load(Today(Sessions(partnerID)))).Sum(s => Revenue(s, vatRate, gracePeriodSeconds));
 
-        public async Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, double vatRate, double gracePeriodSeconds) =>
+        public async Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
             ByDay(await Load(Last30Days(Sessions(partnerID))), s => Revenue(s, vatRate, gracePeriodSeconds));
 
-        public async Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, double vatRate, double gracePeriodSeconds) =>
+        public async Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, decimal vatRate, double gracePeriodSeconds) =>
             ByMonth(await Load(LastYear(Sessions(partnerID))), s => Revenue(s, vatRate, gracePeriodSeconds));
 
         public async Task<double> GetTotalChargingSessionsForPartnerAsync(int partnerID) =>
@@ -102,8 +102,8 @@ namespace VoltaXApi.Services
                 PricePerIdleMinute = s.PricePerIdleMinute
             }).ToListAsync();
 
-        private static double Revenue(ChargingSession session, double vatRate, double gracePeriodSeconds) =>
-            session.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds);
+        private static double Revenue(ChargingSession session, decimal vatRate, double gracePeriodSeconds) =>
+            (double)session.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds);
 
         private Dictionary<DateTime, double> ByDay(IEnumerable<ChargingSession> sessions, Func<ChargingSession, double> value) =>
             sessions.GroupBy(s => _clock.ToLocal(s.StartDate).Date).ToDictionary(g => g.Key, g => g.Sum(value));

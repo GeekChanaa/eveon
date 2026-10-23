@@ -3,14 +3,14 @@ namespace VoltaXApi.Models;
 
 public class GlobalConfigurations
 {
-    public double DefaultPricePerKwh { get; set; }
-    public double DefaultCostPerKwh { get; set; }
-    public double DefaultFlatFee { get; set; }
-    public double DefaultPricePerMinute { get; set; }
-    public double DefaultIdleTimePricing { get; set; }
-    public double DefaultMinimumRequiredBalance { get; set; }
-    public double DefaultLowBalanceThresholdBuffer { get; set; }
+    public decimal DefaultPricePerKwh { get; set; }
+    public decimal DefaultCostPerKwh { get; set; }
+    public decimal DefaultFlatFee { get; set; }
+    public decimal DefaultPricePerMinute { get; set; }
+    public decimal DefaultIdleTimePricing { get; set; }
+    public decimal DefaultMinimumRequiredBalance { get; set; }
+    public decimal DefaultLowBalanceThresholdBuffer { get; set; }
     public double GracePeriod { get; set; }
-    public double GraceAmount { get; set; }
-    public double Vat { get; set; }
+    public decimal GraceAmount { get; set; }
+    public decimal Vat { get; set; }
 }

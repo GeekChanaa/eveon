@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.Models
@@ -16,7 +17,8 @@ namespace VoltaXApi.Models
         public DateTime? StopTime { get; set; }
         public double? MeterStop { get; set; }
         public string? StopReason { get; set; }
-        public double Amount { get; set; }
+        [Precision(18, 2)]
+        public decimal Amount { get; set; }
         public TransactionStatusEnum? Status { get; set; } = TransactionStatusEnum.Current;
         public Card? StartCard { get; set; }
         public Card? StopCard { get; set; }

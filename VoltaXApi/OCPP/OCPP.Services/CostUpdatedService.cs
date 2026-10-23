@@ -20,7 +20,7 @@ namespace VoltaXApi.OCPP.Services
     {
         bool IsSuppressed(string chargePointId);
         /// <summary>Sends the cost; false when the charger is skipped (offline, not 2.0.1, rejected before) or rejects it now.</summary>
-        Task<bool> SendAsync(string chargePointId, string transactionId, double totalCost, CancellationToken cancellationToken = default);
+        Task<bool> SendAsync(string chargePointId, string transactionId, decimal totalCost, CancellationToken cancellationToken = default);
     }
 
     public sealed class CostUpdatedSender : ICostUpdatedSender
@@ -39,9 +39,9 @@ namespace VoltaXApi.OCPP.Services
         public bool IsSuppressed(string chargePointId) => _rejected.ContainsKey(chargePointId);
 
         /// <summary>The 2.0.1 totalCost is a decimal amount; billing amounts are rounded to cents.</summary>
-        public static double RoundCost(double cost) => Math.Round(Math.Max(0, cost), 2, MidpointRounding.AwayFromZero);
+        public static decimal RoundCost(decimal cost) => Math.Round(Math.Max(0, cost), 2, MidpointRounding.AwayFromZero);
 
-        public async Task<bool> SendAsync(string chargePointId, string transactionId, double totalCost, CancellationToken cancellationToken = default)
+        public async Task<bool> SendAsync(string chargePointId, string transactionId, decimal totalCost, CancellationToken cancellationToken = default)
         {
             if (IsSuppressed(chargePointId) || _commandSender.GetProtocolVersion(chargePointId) != OcppProtocols.Ocpp201) return false;
             var request = new CostUpdatedRequest { TotalCost = RoundCost(totalCost), TransactionId = transactionId };
@@ -60,7 +60,7 @@ namespace VoltaXApi.OCPP.Services
         }
 
         /// <summary>Sends the final cost of a transaction that just ended without blocking the caller (e.g. a TransactionEvent handler).</summary>
-        public static void SendFinalInBackground(IServiceScopeFactory scopeFactory, ILogger logger, string chargePointId, string? transactionId, double finalCost)
+        public static void SendFinalInBackground(IServiceScopeFactory scopeFactory, ILogger logger, string chargePointId, string? transactionId, decimal finalCost)
         {
             if (string.IsNullOrEmpty(transactionId)) return;
             OcppBackgroundCommand.Run(scopeFactory, logger, "CostUpdated (final)", chargePointId,
@@ -127,7 +127,7 @@ namespace VoltaXApi.OCPP.Services
             double MeterStart, double? MeterStop, Connector Connector);
 
         /// <summary>Running cost of an active transaction, with the billing formula (see <see cref="ICostCalculator.RunningCost"/>).</summary>
-        public static double RunningCost(ICostCalculator calculator, ActiveTransaction t, DateTime nowUtc) =>
+        public static decimal RunningCost(ICostCalculator calculator, ActiveTransaction t, DateTime nowUtc) =>
             calculator.RunningCost(t.Connector, Math.Max(0, (t.MeterStop ?? t.MeterStart) - t.MeterStart), Math.Max(0, (nowUtc - t.StartTime).TotalMinutes));
 
         public async Task RunOnceAsync(CancellationToken cancellationToken)

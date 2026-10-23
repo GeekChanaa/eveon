@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaXApi.Models
@@ -13,7 +14,8 @@ namespace VoltaXApi.Models
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }
         public CardStatusEnum Status { get; set; }
-        public double Balance { get; set; }
+        [Precision(18, 2)]
+        public decimal Balance { get; set; }
         public string Note { get; set; }
         public bool? Blocked { get; set; }
         public int? UserID { get; set; }

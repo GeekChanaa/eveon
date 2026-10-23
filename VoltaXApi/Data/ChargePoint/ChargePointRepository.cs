@@ -43,20 +43,20 @@ namespace VoltaXApi.Data
             double totalRevenue = 0;
             foreach (var session in sessions)
             {
-                totalRevenue += session.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod);
+                totalRevenue += (double)session.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod);
             }
 
             return totalRevenue;
         }
 
         // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<double> GetPartnerChargePointRevenue(int partnerID, string chargePointID)
+        public async Task<decimal> GetPartnerChargePointRevenue(int partnerID, string chargePointID)
         {
             var revenue = await _context.ChargePoints
                 .Where(cp => cp.ChargingStation.PartnerID == partnerID &&
                             cp.ChargePointId == chargePointID &&
                             !cp.IsDeleted)
-                .Select(cp => cp.Connectors.Sum(c => (c.PricePerKWh - c.CostPerKwh) * c.Power))
+                .Select(cp => cp.Connectors.Sum(c => (c.PricePerKWh - c.CostPerKwh) * (decimal)c.Power))
                 .FirstOrDefaultAsync();
 
             return revenue;

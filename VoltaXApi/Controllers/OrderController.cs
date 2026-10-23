@@ -49,7 +49,7 @@ namespace VoltaXApi.Controllers
         [HttpGet("countRechargeAmount")]
         public async Task<IActionResult> CountRecharge()
         {
-            double count = await _repository.CountRecharge(u => true);
+            decimal count = await _repository.CountRecharge(u => true);
             return Ok(count);
         }
 
@@ -68,14 +68,14 @@ namespace VoltaXApi.Controllers
             DateTime today = _clock.StartOfDayUtc(_clock.Today);
             DateTime tomorrow = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
 
-            double count = await _repository.CountRecharge(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
+            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= today && u.RechargeDate < tomorrow);
             return Ok(count);
         }
 
         [HttpGet("countRechargeAmountBetween")]
         public async Task<IActionResult> CountRechargeBetween([FromQuery] DateTime dateStart, [FromQuery] DateTime dateEnd)
         {
-            double count = await _repository.CountRecharge(u => u.RechargeDate >= dateStart && u.RechargeDate <= dateEnd);
+            decimal count = await _repository.CountRecharge(u => u.RechargeDate >= dateStart && u.RechargeDate <= dateEnd);
             return Ok(count);
         }
 
@@ -85,14 +85,14 @@ namespace VoltaXApi.Controllers
             DateTime endDate = _clock.Today;
             DateTime startDate = endDate.AddDays(-29);
 
-            var rechargeAmountByDay = new List<double>();
+            var rechargeAmountByDay = new List<decimal>();
 
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 DateTime currentDay = _clock.StartOfDayUtc(date);
                 DateTime nextDay = _clock.StartOfDayUtc(date.AddDays(1));
 
-                double rechargeAmount = await _repository
+                decimal rechargeAmount = await _repository
                     .CountRecharge(u => u.RechargeDate >= currentDay && u.RechargeDate < nextDay);
 
                 rechargeAmountByDay.Add(rechargeAmount);
