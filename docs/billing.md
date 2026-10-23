@@ -138,10 +138,41 @@ Code: `Services/Billing/RefundService.cs`, `Controllers/RefundController.cs`. Op
   (`POST /v1/refunds`); `Cmi` and `None` answer "not supported": refund in the CMI back office, then record the
   refund as `External`.
 
+## Partner commission and settlements
+
+Code: `Services/Billing/PartnerSettlementService.cs`, `Controllers/SettlementController.cs` (operators),
+`Controllers/PartnerPortal/PartnerStatementsController.cs` (partners).
+
+EVEON collects what drivers pay on partner stations and pays each partner monthly, minus its commission:
+
+- **Terms** per partner (`Partners.CommissionRate`, a fraction, and `Partners.CommissionPerKwh`, MAD excl. VAT),
+  set by an operator (`PUT api/Settlement/Commissions/{partnerId}` `{commissionPercent, commissionPerKwh}`,
+  EditPartners, audited like every partner change). New partners start at 0.
+- **Per line** (one per session, one negative line per session refund):
+  `net = round(gross / (1 + session VAT))`, `VAT = gross − net`,
+  `commission = round(net × rate) + round(kWh × fee per kWh)`, `commission VAT = round(commission × Vat)`,
+  `payout = gross − commission − commission VAT`. The settlement totals are the sums of its lines.
+- **Which sessions**: final sessions (car left, or ended more than `Invoicing:UnsettledSessionDelayHours` ago)
+  on the partner's stations that ended before the month's end and are in no other settlement
+  (`PartnerSettlementLines.SourceKey` is unique). A session reported late goes to the next settlement; nothing
+  older than the partner's first settled month is taken. Refunds of settled sessions are deducted from the
+  settlement of the month they were made.
+- **Status**: `Pending` settlements are recomputed when generated again (current terms, new sessions); an operator
+  records the payout (`POST api/Settlement/{id}/Paid` `{reference, paidAt?}`), after which the settlement is
+  frozen.
+- **When**: on demand (`POST api/Settlement/Generate` `{year, month, partnerId?}`, EditPartners) and by the
+  monthly job, which settles the previous month for every partner without a settlement from day
+  `Settlements:GenerateOnDay` (2) of the month, business time zone.
+- Exports: `GET api/Settlement/{id}/Export?format=csv|pdf&language=fr|en|ar`; partners read theirs under
+  `api/partner-portal/statements`.
+
+The model assumes EVEON collects as the partner's agent: the partner declares the VAT of its sales and EVEON
+invoices its commission with VAT. Check it with the accountant before the first payout.
+
 ## Deploying
 
 Migrations: `MoneyAsDecimal`, `WalletLedger` (adds the ledger and an opening movement for every existing
-balance), `SessionBilling`, `LegalInvoices` and `Refunds`. Apply them before starting the new build:
+balance), `SessionBilling`, `LegalInvoices`, `Refunds` and `PartnerSettlements`. Apply them before starting the new build:
 
 ```
 dotnet ef database update --project VoltaXApi

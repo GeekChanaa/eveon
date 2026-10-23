@@ -33,6 +33,21 @@ namespace VoltaXApi.Data
                 entity.HasIndex(r => r.ChargingSessionID);
                 entity.HasIndex(r => r.CreatedAt);
             });
+
+            modelBuilder.Entity<PartnerSettlement>(entity =>
+            {
+                entity.ToTable("PartnerSettlements");
+                entity.Property(s => s.Status).HasConversion<string>().HasMaxLength(16);
+                entity.HasIndex(s => new { s.PartnerID, s.Year, s.Month }).IsUnique();
+                entity.HasIndex(s => new { s.Year, s.Month });
+                entity.HasMany(s => s.Lines).WithOne().HasForeignKey(l => l.SettlementID).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<PartnerSettlementLine>(entity =>
+            {
+                entity.ToTable("PartnerSettlementLines");
+                entity.HasIndex(l => l.SourceKey).IsUnique();
+                entity.HasIndex(l => l.ChargingSessionID);
+            });
         }
     }
 }

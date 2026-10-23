@@ -20,6 +20,12 @@ public class Partner : IEntity
     public string PartnerIdentificationNumber { get; set; }
     public string? RegistrationNumber { get; set; }
     public string? BankAccountNumber { get; set; }
+    /// <summary>Share of the partner's net revenue (excl. VAT) EVEON keeps, as a fraction (0.15 = 15 %). Set through api/Settlement.</summary>
+    [NotUpdatable, Microsoft.EntityFrameworkCore.Precision(5, 4)]
+    public decimal CommissionRate { get; set; }
+    /// <summary>Commission per kWh delivered on the partner's stations, MAD excl. VAT. Set through api/Settlement.</summary>
+    [NotUpdatable, Microsoft.EntityFrameworkCore.Precision(18, 4)]
+    public decimal CommissionPerKwh { get; set; }
     public int? ImageID { get; set; }
     public Image? Image { get; set; }
     public ICollection<ChargingStation>? ChargingStations { get; set; }

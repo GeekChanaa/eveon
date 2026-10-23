@@ -6,6 +6,7 @@ namespace VoltaXApi.Services.Billing
         public static void AddBillingOptions(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<InvoicingOptions>(configuration.GetSection("Invoicing"));
+            services.Configure<SettlementOptions>(configuration.GetSection("Settlements"));
         }
 
         public static void AddBilling(IServiceCollection services)
@@ -17,6 +18,9 @@ namespace VoltaXApi.Services.Billing
             // Needs the payment gateway (ServiceRegistration.ConfigurePayments).
             services.AddScoped<RefundService>();
             services.AddHostedService<InvoiceSweeper>();
+            services.AddScoped<PartnerSettlementService>();
+            services.AddScoped<SettlementDocuments>();
+            services.AddHostedService<PartnerSettlementJob>();
         }
     }
 }
