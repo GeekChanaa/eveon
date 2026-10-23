@@ -21,9 +21,11 @@ namespace VoltaXApi.Data
     public class MessageLogRepository : Repository<MessageLog>,IMessageLogRepository
     {
         private readonly IMapper _mapper;
-        public MessageLogRepository(VoltaXApiDbContext context, IMapper mapper) : base(context)
+        private readonly Microsoft.Extensions.Logging.ILogger<MessageLogRepository> _logger;
+        public MessageLogRepository(VoltaXApiDbContext context, IMapper mapper, Microsoft.Extensions.Logging.ILogger<MessageLogRepository> logger) : base(context)
         {
             _mapper = mapper;
+            _logger = logger;
         }
         
         public async Task<bool> SaveLogMessage(string chargePointId, 
@@ -58,12 +60,8 @@ namespace VoltaXApi.Data
                 {
                     Converters = new List<JsonConverter> { new StringEnumConverter() }
                 };
-                Console.WriteLine("this is the msgout jsonpayload : ");
-                Console.WriteLine(received.JsonPayload);
                 
                 string serializedMessage = JsonConvert.SerializeObject(ocppArrayMessage,settings);
-                Console.WriteLine("this is the ocppArrayMessage : ");
-                Console.WriteLine(serializedMessage);
                 received.RawMessage = serializedMessage;
                 if (!string.IsNullOrWhiteSpace(chargePointId))
                 {
@@ -83,8 +81,7 @@ namespace VoltaXApi.Data
             }
             catch (Exception exp)
             {
-                Console.WriteLine(exp.Message);
-                Console.WriteLine(exp.StackTrace);
+                Microsoft.Extensions.Logging.LoggerExtensions.LogError(_logger, exp, "Could not save the OCPP message log of {ChargePointId}", chargePointId);
             }
             return false;
         }
