@@ -5,6 +5,11 @@
       "reconnectingHint": "Live updates were interrupted, reconnecting.",
       "disconnected": "Live updates paused",
       "disconnectedHint": "The live connection is down. Click to try again now."
+    },
+    "toast": {
+      "success": "Done",
+      "warning": "Attention",
+      "error": "Something went wrong"
     }
   }
 }

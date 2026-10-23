@@ -17,6 +17,6 @@ import { ChargerEventsComponent } from './charger-events.component';
 })
 export class ChargerEventsPageComponent {
   readonly ready = PageState.Success;
-  /** ?alarms=1 (also where /dashboard/alarm-management leads). */
+  /** ?alarms=1 opens the feed on active alarm events. */
   readonly alarms = inject(ActivatedRoute).snapshot.queryParamMap.get('alarms') === '1';
 }

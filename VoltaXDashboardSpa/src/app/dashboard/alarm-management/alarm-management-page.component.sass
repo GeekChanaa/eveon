@@ -1,0 +1,95 @@
+.alarms__stat
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  text-align: start
+  cursor: pointer
+  font: inherit
+  &:hover
+    border-color: var(--vx-brand)
+  &:focus-visible
+    outline: 2px solid var(--vx-brand)
+    outline-offset: 2px
+.alarms__stat--critical
+  border-color: #e0a3a3
+  background: #fdf1f1
+  .vx-stat__value
+    color: #b42318
+
+.alarms__row--selected > td
+  background: var(--vx-surface-muted, rgba(11, 31, 58, .04))
+
+.alarms__overlay
+  position: fixed
+  inset: 0
+  z-index: 40
+  background: rgba(11, 31, 58, .32)
+
+.alarms__drawer
+  position: fixed
+  inset-block: 0
+  inset-inline-end: 0
+  z-index: 41
+  width: min(520px, 100vw)
+  overflow-y: auto
+  padding: 22px
+  background: var(--vx-surface, #fff)
+  color: var(--vx-text)
+  box-shadow: -12px 0 32px rgba(11, 31, 58, .18)
+
+.alarms__drawer-head
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: 12px
+  margin-block-end: 14px
+  h2
+    margin: 6px 0 0
+    font-size: 18px
+    font-weight: 650
+    letter-spacing: -.02em
+
+.alarms__badges
+  display: flex
+  flex-wrap: wrap
+  gap: 6px
+  margin-block-end: 16px
+
+.alarms__kv
+  margin: 0 0 18px
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  dd a
+    color: var(--vx-brand)
+.alarms__wide
+  grid-column: 1 / -1
+
+.alarms__hint
+  font-size: 13px
+  color: var(--vx-text-muted)
+
+.alarms__action
+  margin-block-start: 18px
+  padding-block-start: 16px
+  border-block-start: 1px solid var(--vx-border)
+  h3
+    margin: 0 0 12px
+    font-size: 14px
+    font-weight: 650
+  .vx-field
+    margin-block: 12px
+  textarea
+    width: 100%
+    resize: vertical
+
+.alarms__inline
+  display: flex
+  gap: 8px
+  select
+    flex: 1
+    min-width: 0
+
+.alarms__error
+  display: block
+  margin-block-start: 4px
+  color: #b42318
+  font-size: 12px

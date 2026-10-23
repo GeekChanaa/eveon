@@ -31,8 +31,7 @@ const routes: Routes = [
     path: "",
     component: HomeComponent,
   },
-  // Alarms are the charger events filtered on active faults.
-  { path: "alarm-management", redirectTo: "/dashboard/charger-events?alarms=1", pathMatch: "full" },
+  { path: "alarm-management", loadComponent: () => import('./alarm-management/alarm-management-page.component').then(m => m.AlarmManagementPageComponent) },
   {
     path: "charging-cards",
     component: ChargingCardsComponent,

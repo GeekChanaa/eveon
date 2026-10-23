@@ -1,0 +1,114 @@
+{
+  "alarms": {
+    "nav": "الإنذارات",
+    "title": "الإنذارات",
+    "subtitle": "أعطال تبلغ عنها الشواحن، شواحن غير متصلة وإعادة تشغيل متكررة. أكّد ما تعالجه، وعيّنه، وأغلقه بتعليق.",
+    "searchPlaceholder": "نقطة الشحن أو المحطة أو الرمز أو الوصف",
+    "scopedToChargePoint": "إنذارات نقطة شحن واحدة.",
+    "showAll": "عرض كل الإنذارات",
+    "pending": "{{count}} تغيير(ات) في الإنذارات منذ تحميل الصفحة.",
+    "showLatest": "عرض الأحدث",
+    "loadError": "تعذر تحميل الإنذارات.",
+    "emptyActive": "لا يوجد إنذار نشط. كل الشواحن تعمل جيدًا.",
+    "empty": "لا يوجد إنذار لهذه المرشحات.",
+    "since": "منذ {{date}}",
+    "summary": {
+      "label": "الإنذارات النشطة",
+      "active": "نشطة",
+      "bySeverity": "{{major}} كبيرة · {{minor}} صغيرة",
+      "criticalHint": "تحتاج إلى تدخل فوري",
+      "unassigned": "غير معيّنة",
+      "unassignedHint": "لم يتكفل بها أحد بعد",
+      "mine": "المعيّنة لي",
+      "mineHint": "إنذاراتك"
+    },
+    "severity": {
+      "Critical": "حرج",
+      "Major": "كبير",
+      "Minor": "صغير",
+      "Warning": "تحذير"
+    },
+    "status": {
+      "Open": "مفتوح",
+      "Acknowledged": "مؤكَّد",
+      "Resolved": "محلول",
+      "Cleared": "مرفوع"
+    },
+    "statusFilter": {
+      "active": "نشطة (مفتوحة أو مؤكَّدة)",
+      "open": "مفتوحة",
+      "acknowledged": "مؤكَّدة",
+      "resolved": "محلولة",
+      "cleared": "رفعها الشاحن",
+      "closed": "مغلقة",
+      "all": "الكل"
+    },
+    "type": {
+      "ConnectorFault": "عطل في الموصل",
+      "DeviceEvent": "حدث من الشاحن",
+      "Offline": "شاحن غير متصل",
+      "BootLoop": "إعادة تشغيل متكررة"
+    },
+    "assigned": {
+      "anyone": "الجميع",
+      "me": "أنا",
+      "none": "غير معيّنة",
+      "nobody": "لا أحد"
+    },
+    "sort": {
+      "lastSeen": "الأحدث أولًا",
+      "severity": "الأخطر أولًا",
+      "firstSeen": "الإنذارات الجديدة أولًا",
+      "count": "الأكثر تكرارًا أولًا"
+    },
+    "scope": {
+      "chargePoint": "نقطة الشحن كاملة",
+      "evse": "EVSE {{evse}}",
+      "connector": "EVSE {{evse}} · الموصل {{connector}}"
+    },
+    "fields": {
+      "severity": "الخطورة",
+      "type": "النوع",
+      "station": "المحطة",
+      "assignedTo": "معيّن إلى",
+      "sort": "الترتيب",
+      "alarm": "الإنذار",
+      "where": "المكان",
+      "lastSeen": "آخر ظهور",
+      "firstSeen": "أول ظهور",
+      "count": "عدد المرات",
+      "code": "الرمز",
+      "details": "تفاصيل من الشاحن",
+      "acknowledged": "تم التأكيد",
+      "resolved": "تم الحل",
+      "resolution": "الحل",
+      "cleared": "رفعه الشاحن",
+      "comment": "ما الذي تم"
+    },
+    "detail": {
+      "title": "إنذار",
+      "loadError": "تعذر تحميل هذا الإنذار.",
+      "clearedHint": "أبلغ الشاحن بزوال العطل؛ أُغلق الإنذار تلقائيًا.",
+      "resolvedHint": "حلّ أحد المشغلين هذا الإنذار.",
+      "readOnly": "يمكنك عرض الإنذارات دون معالجتها.",
+      "handle": "معالجة الإنذار",
+      "resolveTitle": "الحل",
+      "commentPlaceholder": "السبب والإصلاح، مثل إعادة ضبط القاطع في الموقع أو استبدال الموصِّل…",
+      "commentRequired": "صف ما تم القيام به (3 أحرف على الأقل)."
+    },
+    "actions": {
+      "acknowledge": "تأكيد",
+      "takeIt": "سأتكفل به",
+      "assign": "تعيين",
+      "resolve": "حل الإنذار"
+    },
+    "toast": {
+      "acknowledged": "تم تأكيد الإنذار.",
+      "assigned": "تم تعيين الإنذار.",
+      "unassigned": "تم إلغاء تعيين الإنذار.",
+      "resolved": "تم حل الإنذار.",
+      "actionFailed": "تعذر تحديث الإنذار.",
+      "exportFailed": "فشل التصدير."
+    }
+  }
+}

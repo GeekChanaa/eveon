@@ -5,6 +5,11 @@
       "reconnectingHint": "Les mises à jour en direct ont été interrompues, reconnexion en cours.",
       "disconnected": "Direct en pause",
       "disconnectedHint": "La connexion en direct est coupée. Cliquez pour réessayer maintenant."
+    },
+    "toast": {
+      "success": "C'est fait",
+      "warning": "Attention",
+      "error": "Une erreur est survenue"
     }
   }
 }

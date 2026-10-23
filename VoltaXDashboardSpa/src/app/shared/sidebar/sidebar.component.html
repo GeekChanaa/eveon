@@ -62,10 +62,12 @@
       <!-- Admin/Operator menu -->
       <app-sidebar-item *ngIf="access.canUrl('/dashboard')" [title]="'nav.home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/connector-realtime') || access.canUrl('/dashboard/statistics')" iconID="icon-type2-charger" [title]="'nav.operationMonitoring'"
-        [active]="isDropdownActive('/dashboard/connector-realtime', '/dashboard/statistics')">
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/connector-realtime') || access.canUrl('/dashboard/statistics') || access.canUrl('/dashboard/alarm-management')" iconID="icon-type2-charger" [title]="'nav.operationMonitoring'"
+        [active]="isDropdownActive('/dashboard/connector-realtime', '/dashboard/statistics', '/dashboard/alarm-management')">
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/connector-realtime')" [title]="'nav.connectorRealtime'" [link]="'/dashboard/connector-realtime'"
           [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/alarm-management')" [title]="'alarms.nav'" [link]="'/dashboard/alarm-management'"
+          [active]="isActive('/dashboard/alarm-management')"></app-sidebar-link>
         <app-sidebar-link *ngIf="access.canUrl('/dashboard/statistics')" [title]="'nav.statistics'" [link]="'/dashboard/statistics'"
           [active]="isActive('/dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>

@@ -1,0 +1,237 @@
+<div class="page__inner"><main class="page__container alarms">
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'nav.operationMonitoring' | translate }}</span>
+      <h1>{{ 'alarms.title' | translate }}</h1>
+      <p>{{ 'alarms.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions">
+      <button type="button" class="vx-btn" (click)="load(filter.page)" [disabled]="loading">{{ 'common.actions.refresh' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="export()" [disabled]="exporting">{{ 'common.actions.exportCsv' | translate }}</button>
+    </div>
+  </header>
+
+  <section class="vx-stats alarms__stats" *ngIf="summary" [attr.aria-label]="'alarms.summary.label' | translate">
+    <button type="button" class="vx-stat alarms__stat" (click)="quickFilter('active')">
+      <span class="vx-stat__label">{{ 'alarms.summary.active' | translate }}</span>
+      <span class="vx-stat__value">{{ summary.active | vxNumber:'1.0-0' }}</span>
+      <span class="vx-stat__hint">{{ 'alarms.summary.bySeverity' | translate:{ major: summary.major, minor: summary.minor + summary.warning } }}</span>
+    </button>
+    <button type="button" class="vx-stat alarms__stat" [class.alarms__stat--critical]="summary.critical > 0" (click)="quickFilter('critical')">
+      <span class="vx-stat__label">{{ 'alarms.severity.Critical' | translate }}</span>
+      <span class="vx-stat__value">{{ summary.critical | vxNumber:'1.0-0' }}</span>
+      <span class="vx-stat__hint">{{ 'alarms.summary.criticalHint' | translate }}</span>
+    </button>
+    <button type="button" class="vx-stat alarms__stat" (click)="quickFilter('unassigned')">
+      <span class="vx-stat__label">{{ 'alarms.summary.unassigned' | translate }}</span>
+      <span class="vx-stat__value">{{ summary.unassigned | vxNumber:'1.0-0' }}</span>
+      <span class="vx-stat__hint">{{ 'alarms.summary.unassignedHint' | translate }}</span>
+    </button>
+    <button type="button" class="vx-stat alarms__stat" (click)="quickFilter('mine')">
+      <span class="vx-stat__label">{{ 'alarms.summary.mine' | translate }}</span>
+      <span class="vx-stat__value">{{ summary.assignedToMe | vxNumber:'1.0-0' }}</span>
+      <span class="vx-stat__hint">{{ 'alarms.summary.mineHint' | translate }}</span>
+    </button>
+  </section>
+
+  <form class="vx-panel vx-filters" (ngSubmit)="search()">
+    <div class="vx-field">
+      <label for="alarm-status">{{ 'common.fields.status' | translate }}</label>
+      <select id="alarm-status" name="status" [(ngModel)]="filter.status">
+        <option *ngFor="let s of statuses" [value]="s">{{ 'alarms.statusFilter.' + s | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="alarm-severity">{{ 'alarms.fields.severity' | translate }}</label>
+      <select id="alarm-severity" name="severity" [(ngModel)]="filter.severity">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let s of severities" [value]="s">{{ 'alarms.severity.' + s | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="alarm-type">{{ 'alarms.fields.type' | translate }}</label>
+      <select id="alarm-type" name="type" [(ngModel)]="filter.type">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let t of types" [value]="t">{{ 'alarms.type.' + t | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field" *ngIf="stations.length">
+      <label for="alarm-station">{{ 'alarms.fields.station' | translate }}</label>
+      <select id="alarm-station" name="station" [(ngModel)]="filter.chargingStationID">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let s of stations" [ngValue]="s.id">{{ s.name }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="alarm-assigned">{{ 'alarms.fields.assignedTo' | translate }}</label>
+      <select id="alarm-assigned" name="assigned" [(ngModel)]="filter.assigned">
+        <option value="">{{ 'alarms.assigned.anyone' | translate }}</option>
+        <option value="me">{{ 'alarms.assigned.me' | translate }}</option>
+        <option value="none">{{ 'alarms.assigned.none' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="alarm-from">{{ 'common.fields.from' | translate }}</label>
+      <input id="alarm-from" type="date" name="from" [(ngModel)]="filter.from">
+    </div>
+    <div class="vx-field">
+      <label for="alarm-to">{{ 'common.fields.to' | translate }}</label>
+      <input id="alarm-to" type="date" name="to" [(ngModel)]="filter.to">
+    </div>
+    <div class="vx-field">
+      <label for="alarm-sort">{{ 'alarms.fields.sort' | translate }}</label>
+      <select id="alarm-sort" name="sort" [(ngModel)]="filter.sort">
+        <option value="">{{ 'alarms.sort.lastSeen' | translate }}</option>
+        <option value="severity">{{ 'alarms.sort.severity' | translate }}</option>
+        <option value="firstSeen">{{ 'alarms.sort.firstSeen' | translate }}</option>
+        <option value="count">{{ 'alarms.sort.count' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field vx-field--grow">
+      <label for="alarm-search">{{ 'common.fields.search' | translate }}</label>
+      <input id="alarm-search" type="search" name="search" [(ngModel)]="filter.search" [placeholder]="'alarms.searchPlaceholder' | translate">
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary">{{ 'common.actions.filter' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
+    </div>
+  </form>
+
+  <div class="vx-alert" *ngIf="filter.chargePointID" role="status">
+    {{ 'alarms.scopedToChargePoint' | translate }}
+    <button type="button" class="vx-btn vx-btn--small vx-btn--link" (click)="reset()">{{ 'alarms.showAll' | translate }}</button>
+  </div>
+  <div class="vx-alert" *ngIf="pendingChanges" role="status">
+    {{ 'alarms.pending' | translate:{ count: pendingChanges } }}
+    <button type="button" class="vx-btn vx-btn--small vx-btn--link" (click)="load(1)">{{ 'alarms.showLatest' | translate }}</button>
+  </div>
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">
+    {{ 'alarms.loadError' | translate }}
+    <button type="button" class="vx-btn vx-btn--small" (click)="load(filter.page)">{{ 'common.actions.retry' | translate }}</button>
+  </div>
+
+  <section class="vx-panel">
+    <p class="vx-empty" *ngIf="loading && !page" role="status">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="page?.items?.length; else empty">
+      <table class="vx-table alarms__table">
+        <thead><tr>
+          <th>{{ 'alarms.fields.severity' | translate }}</th>
+          <th>{{ 'alarms.fields.alarm' | translate }}</th>
+          <th>{{ 'alarms.fields.where' | translate }}</th>
+          <th>{{ 'alarms.fields.lastSeen' | translate }}</th>
+          <th class="num">{{ 'alarms.fields.count' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let a of page!.items" class="vx-row-link" tabindex="0" [class.alarms__row--selected]="selected?.id === a.id"
+            (click)="open(a.id)" (keydown.enter)="open(a.id)">
+            <td><span class="vx-badge" [ngClass]="severityTone(a)">{{ 'alarms.severity.' + a.severity | translate }}</span></td>
+            <td>
+              <strong>{{ a.description }}</strong>
+              <div class="muted">{{ 'alarms.type.' + a.type | translate }} · <span class="vx-mono">{{ a.code }}</span></div>
+            </td>
+            <td>
+              {{ a.stationName || '—' }}
+              <div class="muted">{{ a.chargePointIdentity }} · {{ scope(a).key | translate:scope(a).params }}</div>
+            </td>
+            <td>
+              {{ a.lastSeenAt | vxDate:'short' }}
+              <div class="muted" *ngIf="a.firstSeenAt !== a.lastSeenAt">{{ 'alarms.since' | translate:{ date: (a.firstSeenAt | vxDate:'short') } }}</div>
+            </td>
+            <td class="num">{{ a.count | vxNumber:'1.0-0' }}</td>
+            <td>
+              <span class="vx-badge" [ngClass]="statusTone(a)">{{ 'alarms.status.' + a.status | translate }}</span>
+              <div class="muted" *ngIf="a.assignedTo">{{ a.assignedTo }}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #empty>
+      <p class="vx-empty" *ngIf="!loading && !error">{{ (filter.status === 'active' ? 'alarms.emptyActive' : 'alarms.empty') | translate }}</p>
+    </ng-template>
+    <vx-pager *ngIf="page" [page]="page.page" [pageSize]="page.pageSize" [total]="page.totalCount" (pageChange)="load($event)"></vx-pager>
+  </section>
+</main></div>
+
+<ng-container *ngIf="selected || detailLoading || detailError">
+  <div class="alarms__overlay" (click)="close()"></div>
+  <aside class="alarms__drawer" role="dialog" aria-modal="true" [attr.aria-label]="'alarms.detail.title' | translate" (keydown.escape)="close()">
+    <header class="alarms__drawer-head">
+      <div>
+        <span class="vx-eyebrow">{{ 'alarms.detail.title' | translate }} <ng-container *ngIf="selected">#{{ selected.id }}</ng-container></span>
+        <h2 *ngIf="selected">{{ selected.description }}</h2>
+      </div>
+      <button type="button" class="vx-btn vx-btn--small" (click)="close()" [attr.aria-label]="'common.actions.close' | translate">✕</button>
+    </header>
+
+    <p class="vx-empty" *ngIf="detailLoading && !selected" role="status">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-alert vx-alert--error" *ngIf="detailError" role="alert">{{ 'alarms.detail.loadError' | translate }}</div>
+
+    <ng-container *ngIf="selected as a">
+      <div class="alarms__badges">
+        <span class="vx-badge" [ngClass]="severityTone(a)">{{ 'alarms.severity.' + a.severity | translate }}</span>
+        <span class="vx-badge" [ngClass]="statusTone(a)">{{ 'alarms.status.' + a.status | translate }}</span>
+        <span class="vx-badge vx-badge--info">{{ 'alarms.type.' + a.type | translate }}</span>
+      </div>
+
+      <dl class="vx-kv alarms__kv">
+        <div><dt>{{ 'alarms.fields.code' | translate }}</dt><dd class="vx-mono">{{ a.code }}</dd></div>
+        <div><dt>{{ 'alarms.fields.station' | translate }}</dt><dd>{{ a.stationName || '—' }}</dd></div>
+        <div>
+          <dt>{{ 'ops.fields.chargePoint' | translate }}</dt>
+          <dd><a [routerLink]="['/dashboard/connector-realtime', a.chargePointID]">{{ a.chargePointIdentity }}</a> · {{ scope(a).key | translate:scope(a).params }}</dd>
+        </div>
+        <div><dt>{{ 'alarms.fields.count' | translate }}</dt><dd>{{ a.count | vxNumber:'1.0-0' }}</dd></div>
+        <div><dt>{{ 'alarms.fields.firstSeen' | translate }}</dt><dd>{{ a.firstSeenAt | vxDate:'medium' }}</dd></div>
+        <div><dt>{{ 'alarms.fields.lastSeen' | translate }}</dt><dd>{{ a.lastSeenAt | vxDate:'medium' }}</dd></div>
+        <div *ngIf="a.details" class="alarms__wide"><dt>{{ 'alarms.fields.details' | translate }}</dt><dd>{{ a.details }}</dd></div>
+        <div *ngIf="a.acknowledgedAt">
+          <dt>{{ 'alarms.fields.acknowledged' | translate }}</dt>
+          <dd>{{ a.acknowledgedAt | vxDate:'short' }}<span *ngIf="a.acknowledgedBy"> · {{ a.acknowledgedBy }}</span></dd>
+        </div>
+        <div *ngIf="a.assignedTo"><dt>{{ 'alarms.fields.assignedTo' | translate }}</dt><dd>{{ a.assignedTo }}</dd></div>
+        <div *ngIf="a.resolvedAt">
+          <dt>{{ 'alarms.fields.resolved' | translate }}</dt>
+          <dd>{{ a.resolvedAt | vxDate:'short' }}<span *ngIf="a.resolvedBy"> · {{ a.resolvedBy }}</span></dd>
+        </div>
+        <div *ngIf="a.resolutionComment" class="alarms__wide"><dt>{{ 'alarms.fields.resolution' | translate }}</dt><dd>{{ a.resolutionComment }}</dd></div>
+        <div *ngIf="a.clearedAt"><dt>{{ 'alarms.fields.cleared' | translate }}</dt><dd>{{ a.clearedAt | vxDate:'short' }}</dd></div>
+      </dl>
+
+      <p class="alarms__hint" *ngIf="!isActive(a)">{{ (a.status === 'Cleared' ? 'alarms.detail.clearedHint' : 'alarms.detail.resolvedHint') | translate }}</p>
+      <p class="alarms__hint" *ngIf="isActive(a) && !canEdit">{{ 'alarms.detail.readOnly' | translate }}</p>
+
+      <ng-container *ngIf="isActive(a) && canEdit">
+        <section class="alarms__action">
+          <h3>{{ 'alarms.detail.handle' | translate }}</h3>
+          <div class="vx-actions">
+            <button type="button" class="vx-btn" *ngIf="a.status === 'Open'" (click)="acknowledge(a)" [disabled]="busy">{{ 'alarms.actions.acknowledge' | translate }}</button>
+            <button type="button" class="vx-btn" *ngIf="a.assignedToID !== myId && myId" (click)="takeIt(a)" [disabled]="busy">{{ 'alarms.actions.takeIt' | translate }}</button>
+          </div>
+          <div class="vx-field alarms__assign" *ngIf="assignees?.length">
+            <label for="alarm-assignee">{{ 'alarms.fields.assignedTo' | translate }}</label>
+            <div class="alarms__inline">
+              <select id="alarm-assignee" name="assignee" [(ngModel)]="assignTo">
+                <option [ngValue]="null">{{ 'alarms.assigned.nobody' | translate }}</option>
+                <option *ngFor="let u of assignees" [ngValue]="u.id">{{ u.name }} ({{ u.email }})</option>
+              </select>
+              <button type="button" class="vx-btn" (click)="assign(a)" [disabled]="busy || assignTo === a.assignedToID">{{ 'alarms.actions.assign' | translate }}</button>
+            </div>
+          </div>
+        </section>
+
+        <form class="alarms__action" (ngSubmit)="resolve(a)" novalidate>
+          <h3>{{ 'alarms.detail.resolveTitle' | translate }}</h3>
+          <div class="vx-field">
+            <label for="alarm-comment">{{ 'alarms.fields.comment' | translate }}</label>
+            <textarea id="alarm-comment" name="comment" rows="3" maxlength="1000" [(ngModel)]="comment" (blur)="commentTouched = true"
+              [attr.aria-invalid]="commentTouched && commentInvalid" aria-describedby="alarm-comment-hint" [placeholder]="'alarms.detail.commentPlaceholder' | translate"></textarea>
+            <small id="alarm-comment-hint" class="alarms__error" *ngIf="commentTouched && commentInvalid" role="alert">{{ 'alarms.detail.commentRequired' | translate }}</small>
+          </div>
+          <button type="submit" class="vx-btn vx-btn--primary" [disabled]="busy">{{ 'alarms.actions.resolve' | translate }}</button>
+        </form>
+      </ng-container>
+    </ng-container>
+  </aside>
+</ng-container>

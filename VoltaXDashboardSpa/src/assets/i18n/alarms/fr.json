@@ -1,0 +1,114 @@
+{
+  "alarms": {
+    "nav": "Alarmes",
+    "title": "Alarmes",
+    "subtitle": "Défauts signalés par les bornes, bornes hors ligne et redémarrages en boucle. Acquittez ce que vous traitez, assignez-le, résolvez-le avec un commentaire.",
+    "searchPlaceholder": "Point de charge, station, code ou description",
+    "scopedToChargePoint": "Alarmes d'un seul point de charge.",
+    "showAll": "Voir toutes les alarmes",
+    "pending": "{{count}} changement(s) d'alarme depuis le chargement de la page.",
+    "showLatest": "Afficher les dernières",
+    "loadError": "Impossible de charger les alarmes.",
+    "emptyActive": "Aucune alarme active. Toutes les bornes vont bien.",
+    "empty": "Aucune alarme pour ces filtres.",
+    "since": "depuis le {{date}}",
+    "summary": {
+      "label": "Alarmes actives",
+      "active": "Actives",
+      "bySeverity": "{{major}} majeures · {{minor}} mineures",
+      "criticalHint": "À traiter maintenant",
+      "unassigned": "Non assignées",
+      "unassignedHint": "Personne ne les a prises",
+      "mine": "Assignées à moi",
+      "mineHint": "Vos alarmes"
+    },
+    "severity": {
+      "Critical": "Critique",
+      "Major": "Majeure",
+      "Minor": "Mineure",
+      "Warning": "Avertissement"
+    },
+    "status": {
+      "Open": "Ouverte",
+      "Acknowledged": "Acquittée",
+      "Resolved": "Résolue",
+      "Cleared": "Levée"
+    },
+    "statusFilter": {
+      "active": "Actives (ouvertes ou acquittées)",
+      "open": "Ouvertes",
+      "acknowledged": "Acquittées",
+      "resolved": "Résolues",
+      "cleared": "Levées par la borne",
+      "closed": "Fermées",
+      "all": "Toutes"
+    },
+    "type": {
+      "ConnectorFault": "Défaut de connecteur",
+      "DeviceEvent": "Événement de borne",
+      "Offline": "Borne hors ligne",
+      "BootLoop": "Redémarrages en boucle"
+    },
+    "assigned": {
+      "anyone": "Tout le monde",
+      "me": "Moi",
+      "none": "Non assignées",
+      "nobody": "Personne"
+    },
+    "sort": {
+      "lastSeen": "Les plus récentes",
+      "severity": "Les plus graves",
+      "firstSeen": "Nouvelles alarmes d'abord",
+      "count": "Les plus répétées"
+    },
+    "scope": {
+      "chargePoint": "tout le point de charge",
+      "evse": "EVSE {{evse}}",
+      "connector": "EVSE {{evse}} · connecteur {{connector}}"
+    },
+    "fields": {
+      "severity": "Gravité",
+      "type": "Type",
+      "station": "Station",
+      "assignedTo": "Assignée à",
+      "sort": "Ordre",
+      "alarm": "Alarme",
+      "where": "Où",
+      "lastSeen": "Dernière fois",
+      "firstSeen": "Première fois",
+      "count": "Occurrences",
+      "code": "Code",
+      "details": "Détails de la borne",
+      "acknowledged": "Acquittée",
+      "resolved": "Résolue",
+      "resolution": "Résolution",
+      "cleared": "Levée par la borne",
+      "comment": "Ce qui a été fait"
+    },
+    "detail": {
+      "title": "Alarme",
+      "loadError": "Impossible de charger cette alarme.",
+      "clearedHint": "La borne a signalé la fin du défaut ; l'alarme s'est fermée d'elle-même.",
+      "resolvedHint": "Cette alarme a été résolue par un opérateur.",
+      "readOnly": "Vous pouvez voir les alarmes mais pas les traiter.",
+      "handle": "Traiter l'alarme",
+      "resolveTitle": "Résoudre",
+      "commentPlaceholder": "Cause et correction, par ex. différentiel réarmé sur site, contacteur remplacé…",
+      "commentRequired": "Décrivez ce qui a été fait (3 caractères au moins)."
+    },
+    "actions": {
+      "acknowledge": "Acquitter",
+      "takeIt": "Je la prends",
+      "assign": "Assigner",
+      "resolve": "Résoudre l'alarme"
+    },
+    "toast": {
+      "acknowledged": "Alarme acquittée.",
+      "assigned": "Alarme assignée.",
+      "unassigned": "Alarme désassignée.",
+      "resolved": "Alarme résolue.",
+      "actionFailed": "Impossible de mettre à jour l'alarme.",
+      "exportFailed": "L'export a échoué."
+    }
+  }
+}
