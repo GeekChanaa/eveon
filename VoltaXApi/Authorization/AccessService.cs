@@ -15,7 +15,7 @@ public sealed record AccessSnapshot(User User, HashSet<string> Permissions)
 /// <summary>
 /// Resolves the caller's access from the database, so a still-valid JWT never keeps revoked access. Granted access is
 /// kept a few seconds in <see cref="AccessSnapshotCache"/>, which drops it as soon as the user, a role or a permission
-/// changes.
+/// changes; the account's suspension state is checked on every request.
 /// </summary>
 public sealed class AccessService(VoltaXApiDbContext db, AccessSnapshotCache cache)
 {
@@ -24,7 +24,17 @@ public sealed class AccessService(VoltaXApiDbContext db, AccessSnapshotCache cac
     {
         if (principal.Identity?.IsAuthenticated != true ||
             !int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var id)) return null;
-        if (cache.TryGet(id, out var cached)) return cached;
+        if (cache.TryGet(id, out var cached))
+        {
+            // A cached grant still re-reads the account state (one primary-key lookup), so a suspension or deletion
+            // written outside this instance's DbContext (SQL, another server) applies on the very next request.
+            var now = DateTime.UtcNow;
+            if (await db.Users.AnyAsync(u => u.ID == id && !u.IsDeleted && (u.SuspendedAt == null || u.SuspendedAt <= now)
+                    && u.DeletionRequestedAt == null && u.DeletedAt == null))
+                return cached;
+            cache.Invalidate(new[] { id });
+            return null;
+        }
         var stamp = cache.Current(id);
         var user = await db.Users.AsNoTracking().Include(u => u.Role).ThenInclude(r => r.RolePermissions)
             .ThenInclude(rp => rp.Permission).Include(u => u.Image).SingleOrDefaultAsync(u => u.ID == id);
