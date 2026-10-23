@@ -118,15 +118,19 @@ namespace VoltaXApi.Services
           return status;
         }
 
-        // Check if the card has sufficient balance before starting
-        if (card.Balance <= 0)
+        // A session needs a positive balance of at least GlobalConfigurations:DefaultMinimumRequiredBalance,
+        // as a start from the app does (EVDriverService); otherwise the charger is told NoCredit.
+        if (!IdTokenAuthorizationService.HasCredit(card, _globalConfigurations))
         {
-          _logger.LogWarning("StartTransaction => Card {CardId} has no balance ({Balance}), rejecting start", card.ID, card.Balance);
+          _logger.LogWarning("StartTransaction => Card {CardId} balance {Balance} is below the minimum {Minimum}, rejecting start",
+              card.ID, card.Balance, _globalConfigurations.DefaultMinimumRequiredBalance);
           status = AuthorizationStatusEnumType.NoCredit;
           await CreateChargingSessionNotification(
               card,
               "ChargingStartRejectedNoCredit",
-              "Your charging session could not start because your charging card has no available balance. Please top up your card and try again.",
+              card.Balance <= 0
+                  ? "Your charging session could not start because your charging card has no available balance. Please top up your card and try again."
+                  : $"Your charging session could not start because your charging card balance ({card.Balance:0.00} MAD) is below the minimum of {_globalConfigurations.DefaultMinimumRequiredBalance:0.00} MAD needed to start. Please top up your card and try again.",
               data.EventKey(card),
               urgent: true);
           return status;

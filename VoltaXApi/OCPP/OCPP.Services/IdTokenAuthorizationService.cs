@@ -8,7 +8,8 @@ namespace VoltaXApi.OCPP.Services
 {
     /// <summary>
     /// Authorize of an id token / idTag for any OCPP version: refused while the charge point is not Accepted,
-    /// EVEON cards are checked locally (blocked, expired), other tokens go to the external (OCPI) authorizer.
+    /// EVEON cards are checked locally (blocked, expired, balance below the minimum to start: NoCredit), other tokens
+    /// go to the external (OCPI) authorizer.
     /// </summary>
     public class IdTokenAuthorizationService
     {
@@ -16,15 +17,21 @@ namespace VoltaXApi.OCPP.Services
         private readonly IExternalTokenAuthorizer _externalTokenAuthorizer;
         private readonly VoltaXApiDbContext _db;
         private readonly ILogger<IdTokenAuthorizationService> _logger;
+        private readonly GlobalConfigurations _pricing;
 
         public IdTokenAuthorizationService(ICardRepository cardRepository, IExternalTokenAuthorizer externalTokenAuthorizer,
-            VoltaXApiDbContext db, ILogger<IdTokenAuthorizationService> logger)
+            VoltaXApiDbContext db, ILogger<IdTokenAuthorizationService> logger, GlobalConfigurations pricing)
         {
             _cardRepository = cardRepository;
             _externalTokenAuthorizer = externalTokenAuthorizer;
             _db = db;
             _logger = logger;
+            _pricing = pricing;
         }
+
+        /// <summary>A card may start a session: positive balance, at least DefaultMinimumRequiredBalance.</summary>
+        public static bool HasCredit(Card card, GlobalConfigurations pricing) =>
+            card.Balance > 0 && card.Balance >= pricing.DefaultMinimumRequiredBalance;
 
         /// <summary>Never throws: a token that cannot be verified is Invalid.</summary>
         public async Task<AuthorizationStatusEnumType> AuthorizeAsync(string? idTag, string chargePointId, CancellationToken cancellationToken = default)
@@ -58,6 +65,8 @@ namespace VoltaXApi.OCPP.Services
                 return AuthorizationStatusEnumType.Blocked;
             if (card.ExpirationDate < DateTime.UtcNow)
                 return AuthorizationStatusEnumType.Expired;
+            if (!HasCredit(card, _pricing))
+                return AuthorizationStatusEnumType.NoCredit;
             return AuthorizationStatusEnumType.Accepted;
         }
     }

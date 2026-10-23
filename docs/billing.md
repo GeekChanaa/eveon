@@ -38,10 +38,18 @@ The same formula gives:
 
 - the live cost sent to the dashboard / app (SignalR `SessionUpdate`) and to the charger screen (OCPP 2.0.1
   `CostUpdated`), using the session's frozen tariff;
-- the low-balance stop: when `balance − running cost ≤ DefaultLowBalanceThresholdBuffer`, the customer is
-  notified and `RequestStopTransaction` is sent;
+- the low-balance stop: on every meter reading (2.0.1 `TransactionEvent Updated`, 1.6 `MeterValues`), when
+  `balance − running cost ≤ DefaultLowBalanceThresholdBuffer`, the customer is notified (`LowBalance`) and the
+  charger is told to stop (`RequestStopTransaction` / 1.6 `RemoteStopTransaction`);
 - the debit when the transaction ends (`TransactionEvent Ended` or 1.6 `StopTransaction`);
 - the invoice, the session lists and the revenue statistics, which read the stored amounts.
+
+## Minimum balance
+
+A card needs a positive balance of at least `GlobalConfigurations:DefaultMinimumRequiredBalance` to start: a start
+from the app is refused (402), a badge at the charger gets `NoCredit` on `Authorize` and on the transaction start
+(1.6: `Invalid`), no session is opened and the customer is notified (`ChargingStartRejectedNoCredit`). Set the
+buffer `DefaultLowBalanceThresholdBuffer` to cover the cost of the energy delivered between two meter readings.
 
 ## What a session stores
 
