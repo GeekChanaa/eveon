@@ -16,7 +16,7 @@ export class SetNetworkProfileRequestComponent implements OnInit {
   @Input() cpID! : number;
 
   request : any = {
-    conectionData : {}
+    connectionData : {}
   } ;
   isLoading : boolean = false;
 
