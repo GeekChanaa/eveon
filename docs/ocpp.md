@@ -138,7 +138,8 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
 
 ## Faults and transactions that never end
 
-- **Retries and late events.** Events are matched on the transaction id only. An event for a closed or unknown
+- **Retries and late events.** Events are matched on the transaction id within the charge point (2.0.1 ids are
+  only unique per charging station; many chargers count from 1). An event for a closed or unknown
   transaction is acknowledged and logged; it never touches another transaction of the connector (a re-sent
   Ended of the previous transaction used to close the session charging at that moment). A meter reading older than
   the last one applied to the transaction (a retried sample, an offline queue flushed out of order) is ignored, so

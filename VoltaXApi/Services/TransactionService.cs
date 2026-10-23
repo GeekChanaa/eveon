@@ -767,9 +767,10 @@ namespace VoltaXApi.Services
             System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out utc);
 
     /// <summary>
-    /// The open transaction with this charger transaction id, or null. There is no fallback on another open
-    /// transaction of the connector: a retried or late Ended event for a transaction already closed would then
-    /// close (and bill) the session that is charging now.
+    /// The open transaction with this charger transaction id on the connector's charge point, or null. There is no
+    /// fallback on another open transaction of the connector: a retried or late Ended event for a transaction
+    /// already closed would then close (and bill) the session that is charging now. The charge point is part of the
+    /// key because 2.0.1 transaction ids are only unique per charging station (many chargers count from 1).
     /// </summary>
     private async Task<Transaction?> FindActiveTransaction(
         string transactionUid,
@@ -777,8 +778,9 @@ namespace VoltaXApi.Services
         string chargePointStatusId,
         Connector? connector)
     {
+      var chargePointDbId = connector?.ChargePointID;
       var transaction = (await _transactionRepository
-          .FindAsync(t => t.Uid == transactionUid))
+          .FindAsync(t => t.Uid == transactionUid && (chargePointDbId == null || t.Connector!.ChargePointID == chargePointDbId)))
           .OrderByDescending(t => t.ID)
           .FirstOrDefault();
 
