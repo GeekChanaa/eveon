@@ -191,11 +191,20 @@ namespace VoltaXApi.Services
         if (validateOnly || connector == null)
           return status;
 
+        // A Started event re-sent after a lost CALLRESULT: the transaction exists already.
+        if (await _context.Transactions.AnyAsync(t => t.Uid == data.TransactionUid && t.ConnectorID == connector.ID))
+        {
+          _logger.LogInformation("StartTransaction => Transaction {TransactionUid} already started; repeated event acknowledged", data.TransactionUid);
+          return status;
+        }
+
         if (!TryParseUtc(data.Timestamp, out var startTimestamp))
         {
           _logger.LogWarning("StartTransaction => Invalid timestamp {Timestamp}; server time used", data.Timestamp);
           startTimestamp = DateTime.UtcNow;
         }
+
+        await CloseSupersededTransactions(data.ChargePointId, connector, data.TransactionUid);
 
         chargingSession = await _chargingSessionService.StartChargingSession(connector, card, startTimestamp);
 
@@ -678,6 +687,36 @@ namespace VoltaXApi.Services
         }
       }
       return status;
+    }
+
+    /// <summary>
+    /// A connector charges one transaction at a time: when a new one starts, an older one still open there was
+    /// forgotten by the charger (power cut, reboot). It is ended at its last meter reading so it stops blocking
+    /// the connector and the customer pays what was measured.
+    /// </summary>
+    private async Task CloseSupersededTransactions(string chargePointId, Connector connector, string newTransactionUid)
+    {
+      var superseded = await _context.Transactions.AsNoTracking()
+          .Where(t => t.ConnectorID == connector.ID && t.Status == TransactionStatusEnum.Current && t.StopTime == null
+                      && t.Uid != null && t.Uid != newTransactionUid)
+          .Select(t => new { Uid = t.Uid!, t.StartTime, t.ChargingSession!.ChargedMinutes })
+          .ToListAsync();
+      foreach (var old in superseded)
+      {
+        _logger.LogWarning("StartTransaction => {NewUid} starts on connector {ConnectorId} while {OldUid} is still open; closing {OldUid}",
+            newTransactionUid, connector.ID, old.Uid, old.Uid);
+        await EndTransaction(new TransactionEventData
+        {
+          ChargePointId = chargePointId,
+          TransactionUid = old.Uid,
+          EventType = TransactionEventEnumType.Ended,
+          Timestamp = DateTime.SpecifyKind(old.StartTime.AddMinutes(Math.Max(0, old.ChargedMinutes ?? 0)), DateTimeKind.Utc).ToString("o"),
+          TriggerReason = "Superseded",
+          StoppedReason = ReasonEnumType.Other,
+          AbnormalStop = true,
+          ReasonSuffix = " (a new session started on this connector)"
+        }, connector);
+      }
     }
 
     public async Task NotifyConnectorFaultAsync(int connectorId, DateTimeOffset? at)

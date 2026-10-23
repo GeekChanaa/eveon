@@ -140,4 +140,97 @@ public class TransactionScenarioTests
         var session = await host.Query(db => db.ChargingSessions.SingleAsync());
         Assert.Equal(VoltaXApi.OCPP.Messages.ReasonEnumType.ImmediateReset, session.StoppedReason);
     }
+
+    [Fact]
+    public async Task A_repeated_Started_event_does_not_open_a_second_session()
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+
+        await charger.Started("TX-1", "TAG-1", 0, T0);
+        Assert.Equal("Accepted", await charger.Started("TX-1", "TAG-1", 0, T0));
+
+        Assert.Equal(1, await host.Query(db => db.ChargingSessions.CountAsync()));
+        Assert.Equal(1, await host.Query(db => db.Transactions.CountAsync()));
+    }
+
+    [Fact]
+    public async Task A_new_transaction_on_a_connector_closes_the_one_the_charger_forgot()
+    {
+        var (host, cardId) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+        await charger.Started("TX-GHOST", "TAG-1", 0, T0);
+        await charger.Updated("TX-GHOST", 3000, T0.AddMinutes(10));
+        // Reboot: the charger lost TX-GHOST and starts afresh on the same connector.
+        await charger.Boot("PowerUp");
+
+        await charger.Started("TX-NEXT", "TAG-1", 3000, T0.AddMinutes(30));
+
+        var ghost = await Tx(host, "TX-GHOST");
+        Assert.Equal(TransactionStatusEnum.Ended, ghost.Status);
+        Assert.Equal("Superseded", ghost.StopReason);
+        Assert.Equal(T0.AddMinutes(10), ghost.StopTime);
+        Assert.Equal(TransactionStatusEnum.Current, (await Tx(host, "TX-NEXT")).Status);
+        Assert.Equal(200m - 6m, await host.Query(db => db.Cards.Where(c => c.ID == cardId).Select(c => c.Balance).SingleAsync()));
+    }
+
+    [Fact]
+    public async Task A_late_Updated_after_Ended_is_ignored()
+    {
+        var (host, cardId) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+        await charger.Started("TX-1", "TAG-1", 0, T0);
+        await charger.Ended("TX-1", 2000, T0.AddMinutes(10));
+        var balance = await host.Query(db => db.Cards.Where(c => c.ID == cardId).Select(c => c.Balance).SingleAsync());
+
+        // Offline buffer flushed out of order.
+        await charger.Updated("TX-1", 1500, T0.AddMinutes(8), offline: true);
+
+        Assert.Equal(2.0, (await Tx(host, "TX-1")).MeterStop);
+        Assert.Equal(balance, await host.Query(db => db.Cards.Where(c => c.ID == cardId).Select(c => c.Balance).SingleAsync()));
+    }
+
+    [Fact]
+    public async Task An_offline_transaction_reported_after_reconnection_is_billed_on_charger_time()
+    {
+        var (host, cardId) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+
+        // The whole transaction happened while the charger was offline; it is reported in one burst.
+        await charger.Started("TX-OFF", "TAG-1", 10000, T0, offline: true);
+        await charger.Updated("TX-OFF", 15000, T0.AddMinutes(20), offline: true);
+        await charger.Ended("TX-OFF", 22000, T0.AddMinutes(45), offline: true);
+
+        var tx = await Tx(host, "TX-OFF");
+        Assert.Equal(T0, tx.StartTime);
+        Assert.Equal(T0.AddMinutes(45), tx.StopTime);
+        Assert.Equal(200m - 24m, await host.Query(db => db.Cards.Where(c => c.ID == cardId).Select(c => c.Balance).SingleAsync()));
+    }
+
+    [Fact]
+    public async Task Suspended_charging_keeps_the_session_open_until_the_end()
+    {
+        var (host, _) = await Station();
+        await using var __ = host;
+        var charger = new Charger201(host, Cp);
+        await charger.Boot();
+        await charger.Started("TX-S", "TAG-1", 0, T0);
+
+        await charger.Updated("TX-S", 8000, T0.AddMinutes(60), triggerReason: "ChargingStateChanged", chargingState: "SuspendedEV");
+        await charger.Updated("TX-S", 8000, T0.AddMinutes(90), triggerReason: "MeterValuePeriodic", chargingState: "SuspendedEV");
+
+        var tx = await Tx(host, "TX-S");
+        Assert.Equal(TransactionStatusEnum.Current, tx.Status);
+        Assert.Equal(8.0, tx.MeterStop);
+        var session = await host.Query(db => db.ChargingSessions.SingleAsync());
+        Assert.Equal(90, session.ChargedMinutes!.Value, 6);
+    }
 }
