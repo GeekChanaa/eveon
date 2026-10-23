@@ -10,7 +10,7 @@ namespace VoltaXApi.Models
         [NotUpdatable]
         public string CardNumber { get; set; }
         [NotMapped]
-        public string LastFourDigits { get { return CardNumber.Substring(CardNumber.Length - 4);} }
+        public string LastFourDigits => CardNumber is { Length: >= 4 } ? CardNumber[^4..] : CardNumber ?? "";
         public CardTypeEnum CardType { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }
