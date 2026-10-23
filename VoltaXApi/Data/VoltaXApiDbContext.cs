@@ -393,6 +393,7 @@ namespace VoltaXApi.Data
             });
 
             ConfigureQueryIndexes(modelBuilder);
+            BillingModel.Configure(modelBuilder);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -441,6 +442,9 @@ namespace VoltaXApi.Data
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<PaymentEvent> PaymentEvents { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.Invoice> Invoices { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.InvoiceFile> InvoiceFiles { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.InvoiceSequence> InvoiceSequences { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<MessageLog> MessageLogs { get; set; }

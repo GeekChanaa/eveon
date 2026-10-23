@@ -50,17 +50,15 @@ namespace VoltaXApi.Controllers.SelfService
         public async Task<IActionResult> Session(int id, CancellationToken ct) =>
             await _portal.SessionAsync(Me, id, ct) is { } session ? Ok(session) : NotFound();
 
-        /// <summary>The invoice of one ended session (PDF).</summary>
+        /// <summary>The legal invoice of one ended session (PDF, stored at issue).</summary>
         [HttpGet("sessions/{id:int}/invoice")]
-        public async Task<IActionResult> SessionInvoice(int id, [FromServices] IChargingSessionRepository sessions,
-            [FromServices] ChargingSessionInvoiceGeneratorService invoices, CancellationToken ct)
+        public async Task<IActionResult> SessionInvoice(int id, [FromServices] VoltaXApi.Services.Billing.IInvoiceService invoices, CancellationToken ct)
         {
             if (!await _portal.OwnsSessionAsync(Me, id, ct))
                 return NotFound();
-            var session = await sessions.GetChargingSessionInformations(id);
-            if (session?.EndDate == null)
-                return NotFound();
-            return File(invoices.GenerateInvoice(ChargingSessionInvoice.From(session)), "application/pdf", $"eveon-session-{id}.pdf");
+            var invoice = await invoices.IssueForSessionAsync(id, ct);
+            var file = invoice == null ? null : await invoices.GetFileAsync(invoice.ID, ct);
+            return file == null ? NotFound() : File(file.Content, file.ContentType, file.FileName);
         }
 
         /// <summary>The filtered sessions as a CSV file (spreadsheets) or a PDF statement (printing).</summary>
@@ -87,15 +85,16 @@ namespace VoltaXApi.Controllers.SelfService
         public async Task<IActionResult> Orders([FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default) =>
             Ok(await _portal.OrdersAsync(Me, page, pageSize, ct));
 
-        /// <summary>The invoice of a paid top-up (PDF).</summary>
+        /// <summary>The legal invoice of a paid (possibly since refunded) top-up (PDF, stored at issue).</summary>
         [HttpGet("orders/{id:int}/invoice")]
-        public async Task<IActionResult> OrderInvoice(int id, [FromServices] IOrderRepository orders,
-            [FromServices] IInvoiceGeneratorService<InvoiceData> invoices, CancellationToken ct)
+        public async Task<IActionResult> OrderInvoice(int id, [FromServices] VoltaXApi.Services.Billing.IInvoiceService invoices,
+            [FromServices] VoltaXApi.Services.Billing.InvoiceQueries mine, CancellationToken ct)
         {
-            if (!await _portal.OwnsCompletedOrderAsync(Me, id, ct))
+            if (!await mine.OwnsOrderAsync(Me, id, ct))
                 return NotFound();
-            var data = await orders.GetOrderForInvoice(id);
-            return data == null ? NotFound() : File(invoices.GenerateInvoice(data), "application/pdf", $"eveon-topup-{id}.pdf");
+            var invoice = await invoices.IssueForOrderAsync(id, ct);
+            var file = invoice == null ? null : await invoices.GetFileAsync(invoice.ID, ct);
+            return file == null ? NotFound() : File(file.Content, file.ContentType, file.FileName);
         }
     }
 }

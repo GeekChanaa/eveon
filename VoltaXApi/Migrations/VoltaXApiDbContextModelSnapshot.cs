@@ -189,6 +189,161 @@ namespace VoltaXApi.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Billing.Invoice", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("AmountExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("AmountInclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreditedInvoiceID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RefundID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Series")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("SourceReference")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("VatAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("IssuedAt");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("SourceReference")
+                        .IsUnique();
+
+                    b.HasIndex("UserID", "IssuedAt");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceFile", b =>
+                {
+                    b.Property<int>("InvoiceID")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("InvoiceID");
+
+                    b.ToTable("InvoiceFiles");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceSequence", b =>
+                {
+                    b.Property<string>("Series")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LastNumber")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Series", "Year");
+
+                    b.ToTable("InvoiceSequences");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
                 {
                     b.Property<int>("ID")
@@ -5059,6 +5214,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceFile", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Billing.Invoice", "Invoice")
+                        .WithOne("File")
+                        .HasForeignKey("VoltaXApi.Models.Billing.InvoiceFile", "InvoiceID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
                 {
                     b.HasOne("VoltaXApi.Models.User", "User")
@@ -5938,6 +6104,11 @@ namespace VoltaXApi.Migrations
                         .IsRequired();
 
                     b.Navigation("OcpiParty");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.Invoice", b =>
+                {
+                    b.Navigation("File");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>

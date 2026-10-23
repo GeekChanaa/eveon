@@ -592,6 +592,14 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 		
+		public async Task SendHtmlEmailAsync(MailRequest mailRequest)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			builder.HtmlBody = mailRequest.Body ?? "";
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendDebitCardRemovedEmail(MailRequest mailRequest, string userName)
         {
             PrepareEmailElements(mailRequest, out var email, out var builder);

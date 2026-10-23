@@ -19,6 +19,7 @@ namespace VoltaXApi.Services
         private readonly ICostCalculator _costCalculator;
         private readonly VoltaXApiDbContext _context;
         private readonly ILogger<ChargingSessionService> _logger;
+        private readonly VoltaXApi.Services.Billing.IBillingEvents _billing;
 
         public ChargingSessionService(
           IChargingSessionRepository chargingSessionRepository,
@@ -30,7 +31,8 @@ namespace VoltaXApi.Services
           IWalletService walletService,
           ICostCalculator costCalculator,
           VoltaXApiDbContext context,
-          ILogger<ChargingSessionService> logger
+          ILogger<ChargingSessionService> logger,
+          VoltaXApi.Services.Billing.IBillingEvents billing
         )
         {
             _chargingSessionRepository = chargingSessionRepository;
@@ -43,6 +45,7 @@ namespace VoltaXApi.Services
             _costCalculator = costCalculator;
             _context = context;
             _logger = logger;
+            _billing = billing;
         }
 
         public async Task<ChargingSession> StartChargingSession(Connector connector, Card card, DateTime startDate)
@@ -111,6 +114,8 @@ namespace VoltaXApi.Services
             if (chargingSession.BalanceAfter < 0)
                 await ReportNegativeBalance(chargingSession);
 
+            // The car already left: the bill is final, issue the invoice.
+            await _billing.SessionBilledAsync(chargingSession.ID);
             return chargingSession;
         }
 
@@ -170,6 +175,7 @@ namespace VoltaXApi.Services
 
             if (chargingSession.BalanceAfter < 0)
                 await ReportNegativeBalance(chargingSession);
+            await _billing.SessionBilledAsync(chargingSession.ID);
             return chargingSession;
         }
 

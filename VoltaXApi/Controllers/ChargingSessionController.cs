@@ -25,14 +25,10 @@ namespace VoltaXApi.Controllers
     public class ChargingSessionController : GenericController<ChargingSession>
     {
         private readonly IChargingSessionRepository _repository;
-        private readonly ChargingSessionInvoiceGeneratorService _invoiceGenerator;
 
-        public ChargingSessionController(
-            IChargingSessionRepository repository,
-            ChargingSessionInvoiceGeneratorService invoiceGeneratorService) : base(repository)
+        public ChargingSessionController(IChargingSessionRepository repository) : base(repository)
         {
             _repository = repository;
-            _invoiceGenerator = invoiceGeneratorService;
         }
 
         [HttpGet("GetChargePointChargingSessions/{chargePointID}")]
@@ -51,16 +47,14 @@ namespace VoltaXApi.Controllers
             return session == null ? NotFound() : Ok(session);
         }
 
+        /// <summary>The legal invoice of an ended, billed session (issued on first request, then always the stored PDF).</summary>
         [HttpGet("GetChargingSessionInvoice/{chargingSessionID}")]
-        public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID)
+        public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID,
+            [FromServices] VoltaXApi.Services.Billing.IInvoiceService invoices, CancellationToken ct)
         {
-            var chargingSession = await _repository.GetChargingSessionInformations(chargingSessionID);
-            if (chargingSession == null)
-                return NotFound();
-            var chargingSessionInvoice = ChargingSessionInvoice.From(chargingSession);
-            var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
-
-            return File(pdfBytes, "application/pdf", $"eveon-session-{chargingSessionID}-invoice.pdf");
+            var invoice = await invoices.IssueForSessionAsync(chargingSessionID, ct);
+            var file = invoice == null ? null : await invoices.GetFileAsync(invoice.ID, ct);
+            return file == null ? NotFound() : File(file.Content, file.ContentType, file.FileName);
         }
 
         /// <summary>Every session of the network with filters (period, status, station, charge point, customer, text), newest first.</summary>

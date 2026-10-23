@@ -154,6 +154,7 @@ public static class ServiceRegistration
         services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
         services.Configure<AuthTokenSettings>(configuration.GetSection(AuthTokenSettings.SectionName));
         Paging.MaxPageSize = configuration.GetValue(Paging.MaxPageSizeKey, Paging.DefaultMaxPageSize);
+        VoltaXApi.Services.Billing.BillingRegistration.AddBillingOptions(services, configuration);
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -302,6 +303,7 @@ public static class ServiceRegistration
         services.AddScoped<IChargingSessionService, ChargingSessionService>();
         services.AddScoped<ChargingSessionInvoiceGeneratorService>();
         services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
+        VoltaXApi.Services.Billing.BillingRegistration.AddBilling(services);
         services.AddSingleton<WebSocketSubProtocolMatcher>();
         
         // Singletons

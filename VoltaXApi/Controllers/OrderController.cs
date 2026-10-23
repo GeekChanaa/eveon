@@ -24,16 +24,13 @@ namespace VoltaXApi.Controllers
         private readonly IOrderRepository _repository;
         private readonly IOrderService _orderService;
         private readonly IOrderStatisticsService _statistics;
-        private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
 
         public OrderController(
             IOrderRepository repository,
-            IInvoiceGeneratorService<InvoiceData> invoiceService,
             IOrderService orderService,
             IOrderStatisticsService statistics) : base(repository)
         {
             _repository = repository;
-            _invoiceService = invoiceService;
             _orderService = orderService;
             _statistics = statistics;
         }
@@ -119,14 +116,14 @@ namespace VoltaXApi.Controllers
             return ordersList;
         }
 
+        /// <summary>The legal invoice of a paid top-up (issued on first request, then always the stored PDF).</summary>
         [HttpGet("GetOrderInvoice/{orderID}")]
-        public async Task<IActionResult> GetOrderInvoice(int orderID)
+        public async Task<IActionResult> GetOrderInvoice(int orderID,
+            [FromServices] VoltaXApi.Services.Billing.IInvoiceService invoices, CancellationToken ct)
         {
-            InvoiceData? orderInvoiceInformations = await _repository.GetOrderForInvoice(orderID);
-            if (orderInvoiceInformations == null)
-                return NotFound();
-            var pdfBytes = _invoiceService.GenerateInvoice(orderInvoiceInformations);
-            return File(pdfBytes, "application/pdf", $"Invoice-{orderID}.pdf");
+            var invoice = await invoices.IssueForOrderAsync(orderID, ct);
+            var file = invoice == null ? null : await invoices.GetFileAsync(invoice.ID, ct);
+            return file == null ? NotFound() : File(file.Content, file.ContentType, file.FileName);
         }
     }
 }

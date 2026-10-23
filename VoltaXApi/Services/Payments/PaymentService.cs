@@ -25,10 +25,12 @@ namespace VoltaXApi.Services.Payments
         private readonly IWalletService _wallet;
         private readonly PaymentOptions _options;
         private readonly ILogger<PaymentService> _logger;
+        private readonly VoltaXApi.Services.Billing.IBillingEvents _billing;
 
         public PaymentService(VoltaXApiDbContext db, IPaymentGateway gateway, IWalletService wallet, IOptions<PaymentOptions> options,
-            ILogger<PaymentService> logger)
+            ILogger<PaymentService> logger, VoltaXApi.Services.Billing.IBillingEvents billing)
         {
+            _billing = billing;
             _db = db;
             _gateway = gateway;
             _wallet = wallet;
@@ -117,6 +119,8 @@ namespace VoltaXApi.Services.Payments
                     throw;
             }
             _logger.LogInformation("Payment notification {EventId} ({Type}) from {Provider}: {Result}", notification.EventId, notification.Type, _gateway.Name, result);
+            if (result == "credited" && notification.OrderId.HasValue)
+                await _billing.TopUpCompletedAsync(notification.OrderId.Value, cancellationToken);
             return !result.StartsWith("refused", StringComparison.Ordinal);
         }
 

@@ -87,10 +87,34 @@ immutable `WalletTransactions` row per change in the same `SaveChanges` as the n
 A debit is applied even when it takes the balance below zero (the energy was delivered); a high-criticality
 system report is then raised.
 
+## Invoices and credit notes
+
+Code: `VoltaXApi/Services/Billing` (`InvoiceService`, `InvoicePdf`, `BillingEvents`, `InvoiceSweeper`).
+
+- **When**: a top-up is invoiced when it is credited (online payment confirmed or manual top-up) and the invoice
+  is emailed to the card owner; a session is invoiced once its bill is final (the car left the charger). A session
+  whose charger never reports the connector free is invoiced `Invoicing:UnsettledSessionDelayHours` (24) after it
+  ended; an idle fee billed after that gets its own invoice (`session:{id}:idle`). Anything a hook missed is
+  issued by the sweeper (every 30 minutes, last 7 days) or on first download. Totals of 0 are not invoiced.
+- **Numbers**: `EV-{year}-{000001}` for invoices and `AV-{year}-{000001}` for credit notes (prefixes
+  `Invoicing:InvoicePrefix` / `CreditNotePrefix`), restarting each business-time-zone year. The next number comes
+  from `InvoiceSequences` (concurrency token `LastNumber`) and is committed in the same `SaveChanges` as the invoice
+  and its PDF: a failure rolls the number back, two issuers never get the same one, so the series has no gaps.
+- **Once**: `Invoices.SourceReference` (`session:12`, `order:5`, `refund:3`) is unique; issuing again returns the
+  stored document.
+- **Content**: seller with its legal identifiers from the `CompanyInformations` section (name, address, ICE, IF,
+  RC, TP, CNSS, phone, e-mail), customer, lines (amounts VAT included), VAT summary (rate, base HT, VAT, TTC),
+  payment method. The PDF rendered at issue time is stored in `InvoiceFiles` and served by every download:
+  `GET api/my/sessions/{id}/invoice`, `api/my/orders/{id}/invoice`, `api/my/invoices[/{id}/pdf]`,
+  `api/ChargingSession/GetChargingSessionInvoice/{id}`, `api/Order/GetOrderInvoice/{id}`, and the register
+  `api/Invoice/Search`, `api/Invoice/{id}/Pdf`, `api/Invoice/Journal` (CSV, credit notes negative; permission
+  ViewRechargeOrders).
+- **Language**: French, English or Arabic (right to left, Noto Sans Arabic, SIL OFL licence in `Assets/Fonts`).
+
 ## Deploying
 
-Three migrations implement this: `MoneyAsDecimal`, `WalletLedger` (adds the ledger and an opening movement
-for every existing balance) and `SessionBilling`. Apply them before starting the new build:
+Migrations: `MoneyAsDecimal`, `WalletLedger` (adds the ledger and an opening movement for every existing
+balance), `SessionBilling` and `LegalInvoices`. Apply them before starting the new build:
 
 ```
 dotnet ef database update --project VoltaXApi

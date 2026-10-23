@@ -28,6 +28,8 @@ namespace VoltaXApi.Services
         Task SendChargingSessionQuoteMailRequest(MailRequest mailRequest, ChargingSessionForMailDto chargingSession);
         Task SendSuspendedAccountMail(MailRequest mailRequest, UserSuspendedForMailDto userDto);
         Task SendSetupCredentialsMail(string recipient, string environment, IReadOnlyList<VoltaXApi.Services.Setup.TestCredential> credentials);
+        /// <summary>Sends <see cref="MailRequest.Body"/> as the complete HTML body (no template around it), with the attachments.</summary>
+        Task SendHtmlEmailAsync(MailRequest mailRequest);
         // Task SendLoginAttemptEmail()
     }
 }
