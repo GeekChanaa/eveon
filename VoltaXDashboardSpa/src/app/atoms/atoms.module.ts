@@ -15,7 +15,6 @@ import { RechargeCardComponent } from './recharge-card/recharge-card.component';
 import { MatRippleModule } from '@angular/material/core';
 import { SelectFormFieldComponent } from './select-form-field/select-form-field.component';
 import { DebitCardComponent } from './debit-card/debit-card.component';
-import { InvoiceComponent } from './invoice/invoice.component';
 import { EmptyCardComponent } from './empty-card/empty-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { ActionModalComponent } from './action-modal/action-modal.component';
@@ -67,7 +66,6 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     RechargeCardComponent,
     SelectFormFieldComponent,
     DebitCardComponent,
-    InvoiceComponent,
     InfoItemComponent,
     EmptyCardComponent,
     ActionModalComponent,
@@ -125,7 +123,6 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     RechargeCardComponent,
     SelectFormFieldComponent,
     DebitCardComponent,
-    InvoiceComponent,
     EmptyCardComponent,
     ActionModalComponent,
     SvgSpinnerComponent,
