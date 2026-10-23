@@ -124,46 +124,44 @@ namespace VoltaXApi.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            // Sends in progress are only cancelled once the drain time after the stop request is over.
+            using var sending = new CancellationTokenSource(Timeout.InfiniteTimeSpan, _time);
+            using var stop = stoppingToken.Register(() => sending.CancelAfter(TimeSpan.FromSeconds(Math.Max(0, _options.DrainOnStopSeconds))));
             try
             {
                 while (await _queue.Reader.WaitToReadAsync(stoppingToken))
-                    while (_queue.Reader.TryRead(out var message))
-                        await DeliverAsync(message, Math.Max(1, _options.MaxAttempts), stoppingToken);
+                    while (!stoppingToken.IsCancellationRequested && _queue.Reader.TryRead(out var message))
+                        await DeliverAsync(message, Math.Max(1, _options.MaxAttempts), stoppingToken, sending.Token);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
             }
-            await DrainAsync();
-        }
 
-        /// <summary>On stop: no new messages, one attempt each for those still waiting, within DrainOnStopSeconds.</summary>
-        private async Task DrainAsync()
-        {
+            // Stopping: no new messages; the waiting ones get one attempt each until the drain time is over.
             _queue.Close();
-            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(Math.Max(0, _options.DrainOnStopSeconds)), _time);
-            while (!budget.IsCancellationRequested && _queue.Reader.TryRead(out var message))
-                await DeliverAsync(message, 1, budget.Token);
+            while (!sending.IsCancellationRequested && _queue.Reader.TryRead(out var waiting))
+                await DeliverAsync(waiting, 1, stoppingToken, sending.Token);
             if (_queue.Count > 0)
                 _logger.LogWarning("{Count} queued mail(s) were not sent before the API stopped", _queue.Count);
         }
 
-        private async Task DeliverAsync(MimeMessage message, int maxAttempts, CancellationToken cancellationToken)
+        private async Task DeliverAsync(MimeMessage message, int maxAttempts, CancellationToken stopping, CancellationToken sending)
         {
             for (var attempt = 1; ; attempt++)
             {
                 try
                 {
-                    await _transport.SendAsync(message, cancellationToken);
+                    await _transport.SendAsync(message, sending);
                     if (attempt > 1)
                         _logger.LogInformation("Mail {MessageId} sent on attempt {Attempt}", message.MessageId, attempt);
                     return;
                 }
-                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                catch (OperationCanceledException) when (sending.IsCancellationRequested)
                 {
-                    _logger.LogWarning("Mail {MessageId} was not sent: the API is stopping", message.MessageId);
+                    _logger.LogWarning("Mail {MessageId} was not sent: the API stopped", message.MessageId);
                     return;
                 }
-                catch (Exception ex) when (IsPermanent(ex) || attempt >= maxAttempts)
+                catch (Exception ex) when (IsPermanent(ex) || attempt >= maxAttempts || stopping.IsCancellationRequested)
                 {
                     _logger.LogError(ex, "Mail {MessageId} to {RecipientCount} recipient(s) could not be sent after {Attempt} attempt(s); it is dropped",
                         message.MessageId, message.To.Count + message.Cc.Count + message.Bcc.Count, attempt);
@@ -176,11 +174,11 @@ namespace VoltaXApi.Services
                         message.MessageId, attempt, maxAttempts, delay);
                     try
                     {
-                        await Task.Delay(delay, _time, cancellationToken);
+                        await Task.Delay(delay, _time, stopping);
                     }
                     catch (OperationCanceledException)
                     {
-                        _logger.LogWarning("Mail {MessageId} was not sent: the API is stopping", message.MessageId);
+                        _logger.LogWarning("Mail {MessageId} was not sent: the API stopped while it waited for a retry", message.MessageId);
                         return;
                     }
                 }

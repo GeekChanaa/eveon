@@ -18,6 +18,7 @@ public class MailQueueTests
     private sealed class FakeTransport : IMailTransport
     {
         public TaskCompletionSource Gate { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Sending { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public Queue<Exception> Failures { get; } = new();
         public List<(string? MessageId, string Subject)> Attempts { get; } = new();
         public List<string> Delivered { get; } = new();
@@ -26,6 +27,7 @@ public class MailQueueTests
 
         public async Task SendAsync(MimeMessage message, CancellationToken cancellationToken)
         {
+            Sending.TrySetResult();
             await Gate.Task.WaitAsync(cancellationToken);
             lock (Attempts) Attempts.Add((message.MessageId, message.Subject));
             if (Failures.TryDequeue(out var failure))
@@ -144,6 +146,7 @@ public class MailQueueTests
         queue.Enqueue(Message("a"));
         queue.Enqueue(Message("b"));
 
+        await transport.Sending.Task.WaitAsync(TimeSpan.FromSeconds(10)); // "a" is being sent when the stop comes
         var stop = delivery.StopAsync(CancellationToken.None);
         transport.Gate.SetResult();
         await stop;
