@@ -8,7 +8,6 @@ namespace VoltaXApi.Data
     public interface IChargePointRepository : IRepository<ChargePoint>
     {
         Task<List<Connector>> GetChargePointConnectors(int ChargePointID);
-        Task<double> GetChargePointRevenue(string chargePointID, DateTime? startTime = null, DateTime? endTime= null);
         Task AddAsync(ChargePoint chargePoint);
         Task<ChargePointDisplayDto> GetChargePointByIdAsync(int id);
         Task<List<ChargePointListDto>> GetChargingStationChargePoints(int chargingStationID);

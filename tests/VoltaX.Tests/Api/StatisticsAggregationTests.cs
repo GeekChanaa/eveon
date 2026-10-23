@@ -171,6 +171,61 @@ public class StatisticsAggregationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Station_revenue_matches_pricing_every_session()
+    {
+        var clock = Clock("Africa/Casablanca");
+        await using var db = NewContext();
+        var config = new GlobalConfigurations { Vat = Vat, GracePeriod = Grace };
+        var stations = new ChargingStationRepository(db, null!, clock, config);
+        var all = (await db.ChargingSessions.AsNoTracking()
+                .Select(s => new { s, s.Connector!.ChargePoint!.ChargingStationID, s.Connector.ChargePoint.ChargingStation!.PartnerID }).ToListAsync())
+            .Where(x => x.s.EndDate != null).ToList();
+        var stationIds = await db.ChargingStations.OrderBy(s => s.ID).Select(s => s.ID).ToListAsync();
+        double Revenue(int station, DateTime? start = null, DateTime? end = null) => all
+            .Where(x => x.ChargingStationID == station && (start == null || x.s.StartDate >= start) && (end == null || x.s.EndDate <= end))
+            .Sum(x => Price(x.s));
+
+        foreach (var station in stationIds)
+        {
+            Assert.Equal(Revenue(station), await stations.GetChargingStationRevenue(station), 6);
+            var from = Now.AddDays(-40);
+            Assert.Equal(Revenue(station, from, Now), await stations.GetChargingStationRevenue(station, from, Now), 6);
+
+            var days = Enumerable.Range(0, 30).Select(i => Revenue(station, clock.StartOfDayUtc(clock.Today.AddDays(-i)), clock.StartOfDayUtc(clock.Today.AddDays(1 - i)))).ToList();
+            AssertClose(days, await stations.GetChargingStationRevenueLast30Days(station));
+            AssertClose(days.Take(7), await stations.GetChargingStationRevenueLast7Days(station));
+            var months = Enumerable.Range(0, 12).Select(i =>
+            {
+                var month = new DateTime(clock.Today.Year, clock.Today.Month, 1).AddMonths(-i);
+                return Revenue(station, clock.StartOfMonthUtc(month.Year, month.Month), clock.StartOfDayUtc(month.AddMonths(1)));
+            }).ToList();
+            AssertClose(months, await stations.GetChargingStationRevenueLast12Months(station));
+        }
+        Assert.Contains(stationIds, s => Revenue(s, clock.StartOfDayUtc(clock.Today.AddDays(-29)), Now) > 0);
+
+        var top = (await stations.GetTop10ChargingStationsByRevenue(new VoltaXApi.Helpers.GlobalParams())).ToList();
+        Assert.Equal(stationIds.Select(s => (s, Revenue(s))).OrderByDescending(x => x.Item2).Select(x => x.s), top.Select(t => t.ChargingStationID));
+        foreach (var row in top)
+            Assert.Equal(Revenue(row.ChargingStationID), (double)row.Revenue, 6);
+
+        var partnerTop = (await stations.GetPartnerTop10ChargingStationsByRevenue(_partnerId, new VoltaXApi.Helpers.GlobalParams())).ToList();
+        Assert.Equal(2, partnerTop.Count);
+        Assert.All(partnerTop, row => Assert.Equal(Revenue(row.ChargingStationID), (double)row.Revenue, 6));
+        Assert.Equal(new[] { "S1", "S2" }, partnerTop.Select(t => t.ChargingStationName).Order());
+
+        await Assert.ThrowsAsync<VoltaXApi.Exceptions.NotFoundException>(() => stations.GetChargingStationRevenue(987654));
+    }
+
+    private static void AssertClose(IEnumerable<double> expected, IEnumerable<double> actual)
+    {
+        var e = expected.ToList();
+        var a = actual.ToList();
+        Assert.Equal(e.Count, a.Count);
+        for (var i = 0; i < e.Count; i++)
+            Assert.Equal(e[i], a[i], 6);
+    }
+
+    [Fact]
     public void Half_hour_time_zones_are_grouped_by_minute()
     {
         Assert.True(SessionAggregation.HasWholeHourOffsets(BusinessClock.ResolveTimeZone("Africa/Casablanca")));

@@ -19,18 +19,20 @@ namespace VoltaXApi.Data
     public class ChargingStationRepository : Repository<ChargingStation>, IChargingStationRepository
     {
         private readonly IMapper _mapper;
-        private readonly IChargePointRepository _chargePointRepo;
         private readonly VoltaXApi.Services.IBusinessClock _clock;
+        private readonly GlobalConfigurations _globalConfigurations;
         public ChargingStationRepository(
             VoltaXApiDbContext context,
             IMapper mapper,
-            IChargePointRepository chargePointRepository,
-            VoltaXApi.Services.IBusinessClock clock) : base(context)
+            VoltaXApi.Services.IBusinessClock clock,
+            GlobalConfigurations globalConfigurations) : base(context)
         {
             _mapper = mapper;
-            _chargePointRepo = chargePointRepository;
             _clock = clock;
+            _globalConfigurations = globalConfigurations;
         }
+
+        private VoltaXApi.Services.SessionPricing Pricing => new(_globalConfigurations.Vat, _globalConfigurations.GracePeriod);
 
         public async Task<ChargingStationDisplayDto> GetChargingStationByIdAsync(int chargingStationID, ChargingStationIncludableHelper includableHelper)
         {
@@ -79,77 +81,77 @@ namespace VoltaXApi.Data
             return chargingStationDto;
         }
 
-        // Getting charging station revenue
+        /// <summary>Ended sessions on the station's (live) charge points.</summary>
+        private IQueryable<ChargingSession> EndedSessionsAt(int chargingStationID) =>
+            _context.ChargingSessions.AsNoTracking()
+                .Where(s => s.EndDate != null && s.Connector!.ChargePoint!.ChargingStationID == chargingStationID);
+
+        /// <summary>
+        /// What drivers were billed (VAT included) for the station's ended sessions that started at or after
+        /// <paramref name="start"/> and ended at or before <paramref name="end"/>.
+        /// </summary>
         public async Task<double> GetChargingStationRevenue(int chargingStationID, DateTime? start = null, DateTime? end = null)
         {
-            var chargePoints = (await this._context.ChargingStations.Include(u => u.ChargePoints).FirstOrDefaultAsync(u => u.ID == chargingStationID)).ChargePoints;
-            double total = 0;
-            foreach (ChargePoint chargePoint in chargePoints)
-            {
-                total += await _chargePointRepo.GetChargePointRevenue(chargePoint.ChargePointId, start, end);
-            }
+            if (!await _context.ChargingStations.AnyAsync(s => s.ID == chargingStationID))
+                throw new VoltaXApi.Exceptions.NotFoundException($"There is no charging station with the id {chargingStationID}");
 
-            return total;
+            var sessions = EndedSessionsAt(chargingStationID);
+            if (start != null)
+                sessions = sessions.Where(s => s.StartDate >= start);
+            if (end != null)
+                sessions = sessions.Where(s => s.EndDate <= end);
+            return (double)(await VoltaXApi.Services.SessionAggregation.TotalAsync(sessions, Pricing)).Revenue;
         }
 
-        public async Task<IEnumerable<double>> GetChargingStationRevenueLast7Days(int chargingStationID)
+        // Today first, then the days (or months) before it.
+        public Task<IEnumerable<double>> GetChargingStationRevenueLast7Days(int chargingStationID) =>
+            RevenuePerPeriod(chargingStationID, Enumerable.Range(0, 7)
+                .Select(i => (_clock.StartOfDayUtc(_clock.Today.AddDays(-i)), _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i)))));
+
+        public Task<IEnumerable<double>> GetChargingStationRevenueLast30Days(int chargingStationID) =>
+            RevenuePerPeriod(chargingStationID, Enumerable.Range(0, 30)
+                .Select(i => (_clock.StartOfDayUtc(_clock.Today.AddDays(-i)), _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i)))));
+
+        public Task<IEnumerable<double>> GetChargingStationRevenueLast12Months(int chargingStationID) =>
+            RevenuePerPeriod(chargingStationID, Enumerable.Range(0, 12).Select(i =>
+            {
+                var month = new DateTime(_clock.Today.Year, _clock.Today.Month, 1).AddMonths(-i);
+                return (_clock.StartOfMonthUtc(month.Year, month.Month), _clock.StartOfDayUtc(month.AddMonths(1)));
+            }));
+
+        /// <summary>
+        /// Revenue of the sessions that started and ended inside each period, read in one query (a session that runs
+        /// past the end of its period counts in none, as with <see cref="GetChargingStationRevenue"/>).
+        /// </summary>
+        private async Task<IEnumerable<double>> RevenuePerPeriod(int chargingStationID, IEnumerable<(DateTime Start, DateTime End)> periods)
         {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 7; i++)
-            {
-                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
-                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
-                double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
-        }
+            var list = periods.ToList();
+            var from = list.Min(p => p.Start);
+            var to = list.Max(p => p.End);
+            if (!await _context.ChargingStations.AnyAsync(s => s.ID == chargingStationID))
+                throw new VoltaXApi.Exceptions.NotFoundException($"There is no charging station with the id {chargingStationID}");
 
-        public async Task<IEnumerable<double>> GetChargingStationRevenueLast30Days(int chargingStationID)
-        {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 30; i++)
-            {
-                DateTime start = _clock.StartOfDayUtc(_clock.Today.AddDays(-i));
-                DateTime end = _clock.StartOfDayUtc(_clock.Today.AddDays(1 - i));
-                double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
+            var sessions = await VoltaXApi.Services.SessionAggregation.PricedAsync(
+                EndedSessionsAt(chargingStationID).Where(s => s.StartDate >= from && s.EndDate <= to));
+            var pricing = Pricing;
+            return list.Select(p => sessions
+                    .Where(s => s.StartDate >= p.Start && s.EndDate <= p.End)
+                    .Sum(s => (double)s.TotalPriceWithVAT(pricing.VatRate, pricing.GracePeriodSeconds)))
+                .ToList();
         }
-
-        public async Task<IEnumerable<double>> GetChargingStationRevenueLast12Months(int chargingStationID)
-        {
-            List<double> revenueList = new List<double>();
-            for (int i = 0; i < 12; i++)
-            {
-                DateTime month = new DateTime(_clock.Today.Year, _clock.Today.Month, 1).AddMonths(-i);
-                DateTime start = _clock.StartOfMonthUtc(month.Year, month.Month);
-                DateTime end = _clock.StartOfDayUtc(month.AddMonths(1));
-                double revenue = await GetChargingStationRevenue(chargingStationID, start, end);
-                revenueList.Add(revenue);
-            }
-            return revenueList;
-        }
-
 
         public async Task<IEnumerable<ChargingStationRevenue>> GetTop10ChargingStationsByRevenue(GlobalParams globalParams)
         {
-            // Get all ChargingStations
-            var chargingStations = await GetAllAsync(globalParams).ToListAsync();
+            var stations = await GetAllAsync(globalParams).Select(s => new { s.ID, s.Name }).ToListAsync();
+            var revenue = await VoltaXApi.Services.SessionAggregation.RevenueByStationAsync(
+                _context.ChargingSessions.AsNoTracking().Where(s => s.EndDate != null), Pricing);
 
-            var revenues = new List<ChargingStationRevenue>();
-
-            foreach (var cs in chargingStations)
-            {
-                var revenue = await GetChargingStationRevenue(cs.ID);
-                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = (decimal)revenue });
-            }
-
-            // Order by revenue and take top 10
-            var top10Stations = revenues.OrderByDescending(r => r.Revenue).Take(10);
-
-            return top10Stations;
+            // Stable sort: equal revenues keep the order of the station list.
+            return stations
+                .Select(s => new ChargingStationRevenue { ChargingStationID = s.ID, Revenue = revenue.GetValueOrDefault(s.ID) })
+                .OrderByDescending(r => r.Revenue)
+                .Take(10)
+                .ToList();
         }
 
         public override async Task AddAsync(ChargingStation chargingStation)
@@ -178,22 +180,18 @@ namespace VoltaXApi.Data
         // PARTNER CHARGING STATIONS FUNCTIONS
         public async Task<IEnumerable<ChargingStationRevenue>> GetPartnerTop10ChargingStationsByRevenue(int partnerID, GlobalParams globalParams)
         {
-            // Get all ChargingStations
-            var chargingStations = await GetAllAsync(globalParams).Where(c => c.PartnerID == partnerID).Include(u => u.ChargePoints).ToListAsync();
+            var stations = await GetAllAsync(globalParams).Where(c => c.PartnerID == partnerID).Select(s => new { s.ID, s.Name }).ToListAsync();
+            // The stations are the partner's: their revenue is what drivers were billed there.
+            var revenue = await VoltaXApi.Services.SessionAggregation.RevenueByStationAsync(
+                _context.ChargingSessions.AsNoTracking()
+                    .Where(s => s.EndDate != null && s.Connector!.ChargePoint!.ChargingStation!.PartnerID == partnerID), Pricing);
 
-            var revenues = new List<ChargingStationRevenue>();
-
-            foreach (var cs in chargingStations)
-            {
-                // The stations are the partner's: their revenue is what drivers were billed there.
-                var revenue = await GetChargingStationRevenue(cs.ID);
-                revenues.Add(new ChargingStationRevenue { ChargingStationID = cs.ID, Revenue = (decimal)revenue, ChargingStationName = cs.Name });
-            }
-
-            // Order by revenue and take top 10
-            var top10Stations = revenues.OrderByDescending(r => r.Revenue).Take(10);
-
-            return top10Stations;
+            // Stable sort: equal revenues keep the order of the station list.
+            return stations
+                .Select(s => new ChargingStationRevenue { ChargingStationID = s.ID, Revenue = revenue.GetValueOrDefault(s.ID), ChargingStationName = s.Name })
+                .OrderByDescending(r => r.Revenue)
+                .Take(10)
+                .ToList();
         }
 
         public async Task<ChargingStation> CreateChargingStation(ChargingStationCreateDto chargingStationCreateDto)

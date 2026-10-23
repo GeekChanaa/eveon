@@ -102,19 +102,68 @@ namespace VoltaXApi.Services
             return buckets.OrderBy(b => b.Key).Select(b => (b.Key, b.Value)).ToList();
         }
 
-        /// <summary>Sessions without stored amounts, with only the columns their price needs.</summary>
-        private static Task<List<ChargingSession>> UnbilledAsync(IQueryable<ChargingSession> sessions, CancellationToken cancellationToken) =>
-            sessions.Where(s => s.TotalAmount == null)
-                .Select(s => new ChargingSession
+        /// <summary>Revenue per charging station of the sessions' charge points (stations without sessions are absent).</summary>
+        public static async Task<Dictionary<int, decimal>> RevenueByStationAsync(IQueryable<ChargingSession> sessions, SessionPricing pricing,
+            CancellationToken cancellationToken = default)
+        {
+            var billed = await sessions
+                .Where(s => s.TotalAmount != null)
+                .GroupBy(s => (int?)s.Connector!.ChargePoint!.ChargingStationID)
+                .Select(g => new
                 {
-                    StartDate = s.StartDate,
+                    StationId = g.Key,
+                    EnergyAmount = g.Sum(s => s.EnergyAmount) ?? 0,
+                    TimeAmount = g.Sum(s => s.TimeAmount) ?? 0,
+                    FlatFeeAmount = g.Sum(s => s.FlatFeeAmount) ?? 0,
+                    IdleAmount = g.Sum(s => s.IdleAmount) ?? 0
+                })
+                .ToListAsync(cancellationToken);
+            var unbilled = await sessions
+                .Where(s => s.TotalAmount == null)
+                .Select(s => new { StationId = (int?)s.Connector!.ChargePoint!.ChargingStationID, Session = new ChargingSession
+                {
                     ChargedMinutes = s.ChargedMinutes,
                     PricePerMinute = s.PricePerMinute,
                     IdleMinutes = s.IdleMinutes,
                     PricePerIdleMinute = s.PricePerIdleMinute,
                     IdleAmount = s.IdleAmount
+                } })
+                .ToListAsync(cancellationToken);
+
+            var revenue = new Dictionary<int, decimal>();
+            foreach (var row in billed.Where(r => r.StationId != null))
+                revenue[row.StationId!.Value] = row.EnergyAmount + row.TimeAmount + row.FlatFeeAmount + row.IdleAmount;
+            foreach (var row in unbilled.Where(r => r.StationId != null))
+                revenue[row.StationId!.Value] = revenue.GetValueOrDefault(row.StationId!.Value)
+                    + row.Session.TotalPriceWithVAT(pricing.VatRate, pricing.GracePeriodSeconds);
+            return revenue;
+        }
+
+        /// <summary>
+        /// The sessions with only their dates and the columns their price needs, for callers that bucket them in a way
+        /// a GROUP BY cannot express.
+        /// </summary>
+        public static Task<List<ChargingSession>> PricedAsync(IQueryable<ChargingSession> sessions, CancellationToken cancellationToken = default) =>
+            sessions
+                .Select(s => new ChargingSession
+                {
+                    StartDate = s.StartDate,
+                    EndDate = s.EndDate,
+                    ChargedMinutes = s.ChargedMinutes,
+                    PricePerMinute = s.PricePerMinute,
+                    IdleMinutes = s.IdleMinutes,
+                    PricePerIdleMinute = s.PricePerIdleMinute,
+                    EnergyAmount = s.EnergyAmount,
+                    TimeAmount = s.TimeAmount,
+                    FlatFeeAmount = s.FlatFeeAmount,
+                    IdleAmount = s.IdleAmount,
+                    TotalAmount = s.TotalAmount
                 })
                 .ToListAsync(cancellationToken);
+
+        /// <summary>Sessions without stored amounts, with only the columns their price needs.</summary>
+        private static Task<List<ChargingSession>> UnbilledAsync(IQueryable<ChargingSession> sessions, CancellationToken cancellationToken) =>
+            PricedAsync(sessions.Where(s => s.TotalAmount == null), cancellationToken);
 
         private static SessionTotals Totals(Row row) => new(row.Count, row.ChargedMinutes, row.ChargedKwhs, 0);
 
