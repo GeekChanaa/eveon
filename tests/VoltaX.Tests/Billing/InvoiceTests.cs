@@ -1,29 +1,27 @@
 using System.Text;
-using Microsoft.Extensions.Options;
-using QuestPDF.Infrastructure;
 using VoltaX.Tests.Infrastructure;
 using VoltaXApi.Models;
+using VoltaXApi.Models.Billing;
 using VoltaXApi.Services;
+using VoltaXApi.Services.Billing;
 
 namespace VoltaX.Tests.Billing;
 
 public class InvoiceTests
 {
-    public InvoiceTests() => QuestPDF.Settings.License = LicenseType.Community;
-
-    private static RechargeOrderInvoiceGenerator OrderInvoices() => new(
-        Options.Create(new CompanyInformations { CompanyName = "EVEON", Address = "Casablanca", EmailContactAddress = "contact@eveon.ma" }),
-        new ApiHostEnvironment());
+    private static InvoicePdfModel Model(string number, string customer, decimal total) => new(InvoiceKind.Invoice, number, Seeds.Now, "fr", "MAD",
+        customer, null, "1111", Array.Empty<string>(), new[] { new InvoiceLine("Rechargement", null, "1", null, total) }, 0.2m,
+        CostCalculator.SplitVat(total, 0.2m).ExclVat, CostCalculator.SplitVat(total, 0.2m).Vat, total, null);
 
     [Fact]
-    public async Task Order_invoices_are_rendered_in_memory_per_request()
+    public async Task Invoices_are_rendered_in_memory_per_request()
     {
-        var generator = OrderInvoices();
-        var a = new InvoiceData { InvoiceNumber = "1", BilledTo = "Alice", CardNumber = "1111", Date = "20 Oct 2026", TotalAmount = 120m, AmountHT = 100m, VAT = 20m };
-        var b = new InvoiceData { InvoiceNumber = "2", BilledTo = "Bob", CardNumber = "2222", Date = "20 Oct 2026", TotalAmount = 60m, AmountHT = 50m, VAT = 10m };
+        var company = new CompanyInformations { CompanyName = "EVEON", Address = "Casablanca", EmailContactAddress = "contact@eveon.ma" };
         var before = Directory.GetFiles(Environment.CurrentDirectory, "*.pdf").Length;
 
-        var pdfs = await Task.WhenAll(Task.Run(() => generator.GenerateInvoice(a)), Task.Run(() => generator.GenerateInvoice(b)));
+        var pdfs = await Task.WhenAll(
+            Task.Run(() => InvoicePdf.Render(Model("EV-2026-000001", "Alice", 120m), company)),
+            Task.Run(() => InvoicePdf.Render(Model("EV-2026-000002", "Bob", 60m), company)));
 
         Assert.All(pdfs, pdf => Assert.Equal("%PDF", Encoding.ASCII.GetString(pdf, 0, 4)));
         Assert.NotEqual(pdfs[0], pdfs[1]);

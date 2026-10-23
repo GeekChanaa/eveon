@@ -301,8 +301,6 @@ public static class ServiceRegistration
         services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
         services.AddScoped<INoticeService, NoticeService>();
         services.AddScoped<IChargingSessionService, ChargingSessionService>();
-        services.AddScoped<ChargingSessionInvoiceGeneratorService>();
-        services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
         VoltaXApi.Services.Billing.BillingRegistration.AddBilling(services);
         services.AddSingleton<WebSocketSubProtocolMatcher>();
         

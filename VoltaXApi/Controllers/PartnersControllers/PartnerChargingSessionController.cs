@@ -23,9 +23,7 @@ namespace VoltaXApi.Controllers
     {
         private readonly IChargingSessionRepository _repository;
 
-        public PartnerChargingSessionController(
-            IChargingSessionRepository repository,
-            ChargingSessionInvoiceGeneratorService invoiceGeneratorService) : base(repository)
+        public PartnerChargingSessionController(IChargingSessionRepository repository) : base(repository)
         {
             _repository = repository;
         }
