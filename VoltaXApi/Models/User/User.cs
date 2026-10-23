@@ -37,7 +37,6 @@ namespace VoltaXApi.Models
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public string? PaymentCustomerId { get; set; }
-        [MaxLength(32)]
         public AuthProviderEnum AuthProvider { get; set; } = AuthProviderEnum.Local;
         [MaxLength(512)]
         public string? ExternalPictureUrl { get; set; }

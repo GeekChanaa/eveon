@@ -205,6 +205,7 @@ namespace VoltaXApi.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.AuthProvider)
                 .HasConversion<string>()
+                .HasMaxLength(32)
                 .HasDefaultValue(AuthProviderEnum.Local);
 
             // Unique only across the rows that actually carry a Google identity.
