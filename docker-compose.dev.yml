@@ -1,0 +1,51 @@
+# Local databases for development (never for production). The API itself runs with `dotnet run`, see README.md.
+#
+#   docker compose -f docker-compose.dev.yml up -d                       MariaDB 11.8 (production's engine)
+#   docker compose -f docker-compose.dev.yml --profile sqlserver up -d   + SQL Server 2022
+#   docker compose -f docker-compose.dev.yml --profile scaleout up -d    + Redis (docs/scale-out.md)
+#   docker compose -f docker-compose.dev.yml down                        stop (add -v to delete the data)
+#
+# Ports and passwords can be changed with environment variables (or a .env file next to this one).
+name: eveon-dev
+
+services:
+  mariadb:
+    image: mariadb:11.8
+    environment:
+      MARIADB_ROOT_PASSWORD: ${EVEON_DB_PASSWORD:-eveon-dev}
+      MARIADB_DATABASE: eveon
+    ports:
+      - "127.0.0.1:${EVEON_DB_PORT:-3306}:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  sqlserver:
+    profiles: [sqlserver]
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${EVEON_SQLSERVER_PASSWORD:-Eveon-dev-1}
+    ports:
+      - "127.0.0.1:${EVEON_SQLSERVER_PORT:-1433}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  redis:
+    profiles: [scaleout]
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:${EVEON_REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  mariadb-data:
+  sqlserver-data:
