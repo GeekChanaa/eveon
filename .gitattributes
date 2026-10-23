@@ -1,0 +1,4 @@
+# Scripts run by bash on Linux hosts and in containers: never check them out with CRLF, even on Windows.
+*.sh text eol=lf
+Dockerfile text eol=lf
+Caddyfile* text eol=lf
