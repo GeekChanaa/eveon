@@ -50,6 +50,9 @@
   &[data-status='CompletedOccupied']
     background: #dbeafe
     color: #175cd3
+  &[data-status='Charging']
+    background: #d1fadf
+    color: #027a48
   &[data-status='NotStarted']
     background: #f2f4f7
     color: #475467
@@ -215,3 +218,27 @@ button:disabled
     padding: 18px
   .billing-total
     padding: 18px
+
+.summary-actions
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+  .secondary-action
+    display: inline-flex
+    align-items: center
+    gap: 8px
+    svg
+      width: 16px
+      height: 16px
+
+.detail-row a
+  color: var(--vx-brand-ink, #1F3461)
+  text-decoration: none
+  &:hover
+    text-decoration: underline
+
+@media print
+  .metrics-grid
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+  .metric-card, .station-section, .billing-section
+    break-inside: avoid

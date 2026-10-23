@@ -26,7 +26,7 @@ import { ConnectorRealtimeTransactionsComponent } from './connector-realtime-tra
 import { RequestsComponentsModule } from '../requests-components/requests-components.module';
 import { ConnectorRealtimeMessageLogComponent } from './connector-realtime-logs/connector-realtime-message-log/connector-realtime-message-log.component';
 import { ConnectorRealtimeConfigurationsComponent } from './connector-realtime-configurations/connector-realtime-configurations.component';
-import { ConnectorRealtimeChargingSessionInformationsComponent } from './connector-realtime-charging-session-informations/connector-realtime-charging-session-informations.component';
+import { ChargingSessionDetailModule } from '../charging-sessions/charging-session-detail/charging-session-detail.module';
 import { ConnectorRealtimeOverviewStatisticsComponent } from './connector-realtime-overview/connector-realtime-overview-statistics/connector-realtime-overview-statistics.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ratings/connector-realtime-ratings-report/connector-realtime-ratings-report.component';
@@ -51,7 +51,6 @@ import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ra
       ConnectorRealtimeTransactionsComponent,
       ConnectorRealtimeMessageLogComponent,
       ConnectorRealtimeConfigurationsComponent,
-      ConnectorRealtimeChargingSessionInformationsComponent,
       ConnectorRealtimeOverviewStatisticsComponent,
       ConnectorRealtimeRatingsReportComponent
   ],
@@ -65,6 +64,7 @@ import { ConnectorRealtimeRatingsReportComponent } from './connector-realtime-ra
         FormsModule,
         ConnectorRealtimeRoutingModule,
         RequestsComponentsModule,
+        ChargingSessionDetailModule,
         NgApexchartsModule
     ],
   })
