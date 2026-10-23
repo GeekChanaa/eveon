@@ -39,6 +39,57 @@ public class SessionLifecycleMatrixTests
         Assert.DoesNotContain("ChargingEndedAbnormally", await ScenarioAssert.Notifications(host));
     }
 
+    [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
+    public async Task Remote_start_and_remote_stop_reach_the_charger_in_its_protocol(string protocol)
+    {
+        var (host, charger, cardId) = await Open(protocol);
+        await using var _ = host;
+        await charger.Plug(T0);
+
+        var started = await host.With<IEVDriverService, RequestStartTransactionResponse>(s => s.RequestStartTransaction(Cp,
+            new RequestStartTransactionRequest { IdToken = new IdTokenType { IdToken = "TAG-1", Type = IdTokenEnumType.Central }, EvseId = 1, RemoteStartId = 42 }));
+
+        Assert.Equal(RequestStartStopStatusEnum.Accepted, started.Status);
+        var start = Assert.Single(host.Sender.Sent);
+        if (protocol == OcppTestHost.Ocpp16)
+        {
+            Assert.Equal("RemoteStartTransaction", start.Action);
+            Assert.Contains("\"idTag\":\"TAG-1\"", start.Payload);
+            Assert.Contains("\"connectorId\":1", start.Payload);
+        }
+        else
+        {
+            Assert.Equal("RequestStartTransaction", start.Action);
+            Assert.Contains("\"remoteStartId\":42", start.Payload);
+            ((ScenarioCharger201)charger).RemoteStartId = 42;
+        }
+
+        var (status, uid) = await charger.Start("TAG-1", 1000, T0, remote: true);
+        Assert.Equal("Accepted", status);
+        await charger.Meter(uid, 7000, T0.AddMinutes(15));
+
+        var stopped = await host.With<IEVDriverService, RequestStopTransactionResponse>(s =>
+            s.RequestStopTransaction(Cp, new RequestStopTransactionRequest { TransactionId = uid }));
+
+        Assert.Equal(RequestStartStopStatusEnum.Accepted, stopped.Status);
+        var stop = host.Sender.Sent.Last();
+        if (protocol == OcppTestHost.Ocpp16)
+        {
+            Assert.Equal("RemoteStopTransaction", stop.Action);
+            Assert.Contains($"\"transactionId\":{ScenarioCharger16.TransactionId(uid)}", stop.Payload);
+        }
+        else
+        {
+            Assert.Equal("RequestStopTransaction", stop.Action);
+            Assert.Contains(uid, stop.Payload);
+        }
+
+        // No token in the stop message: the answer carries no token information either.
+        Assert.Null(await charger.Stop(uid, 13000, T0.AddMinutes(30), StopKind.Remote));
+        var session = await ScenarioAssert.Billed(host, cardId, 100m, 30.00m, 3.00m, 1.00m);
+        Assert.Equal(ReasonEnumType.Remote, session.StoppedReason);
+    }
+
     public static TheoryData<string, string, string> RefusedTokens => new()
     {
         { OcppTestHost.Ocpp16, "BLOCKED", "Blocked" },

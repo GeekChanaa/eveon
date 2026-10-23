@@ -111,6 +111,10 @@ namespace VoltaXApi.OCPP.Handlers
                         }
                     }
 
+                    // idTokenInfo answers the idToken of the request: an event without one gets none, so the charger
+                    // never acts on a status ("Accepted" by default, "Invalid" for a start) for a token it did not send.
+                    if (transactionEventRequest.IdToken == null)
+                        transactionEventResponse.IdTokenInfo = null!;
                     msgOut.JsonPayload = JsonConvert.SerializeObject(transactionEventResponse, OCPPMessageFactory.DefaultSettings);
                     _logger.LogInformation("TransactionEvent => Response serialized for {EventType}", transactionEventRequest.EventType);
                 }
