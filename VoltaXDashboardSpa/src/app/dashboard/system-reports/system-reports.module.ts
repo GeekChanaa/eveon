@@ -11,6 +11,8 @@ import { SystemReportsRoutingModule } from './system-reports-routing.module';
 import { SystemReportEditComponent } from './system-report-edit/system-report-edit.component';
 import { SystemReportCommentsComponent } from './system-report/system-report-comments/system-report-comments.component';
 
+import { PortalUiModule } from 'src/app/shared/portal-ui/portal-ui.module';
+
 @NgModule({
     declarations: [
       SystemReportsComponent,
@@ -25,6 +27,7 @@ import { SystemReportCommentsComponent } from './system-report/system-report-com
         ReactiveFormsModule,
         CommonModule,
         SharedModule,
+        PortalUiModule,
         FormsModule,
         SystemReportsRoutingModule
     ],

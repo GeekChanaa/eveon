@@ -25,6 +25,8 @@ const SEVERITY_LABELS = ['Danger', 'Hardware failure', 'System failure', 'Critic
 })
 export class ChargerEventsComponent implements OnInit, OnDestroy {
   @Input() chargePointId = '';
+  /** Opens the list on active alarms only. */
+  @Input() alarmsOnly = false;
   readonly pageSize = 25;
   filters: ChargerEventFilters = { alarmsOnly: false, maxSeverity: null, from: '', to: '', search: '', component: '', variable: '' };
   items: ChargerEvent[] = [];
@@ -41,6 +43,7 @@ export class ChargerEventsComponent implements OnInit, OnDestroy {
   constructor(private data: ChargerDeviceDataService, private tokens: TokenStorageService) {}
 
   ngOnInit(): void {
+    this.filters.alarmsOnly = this.alarmsOnly;
     this.load();
     this.connect();
   }

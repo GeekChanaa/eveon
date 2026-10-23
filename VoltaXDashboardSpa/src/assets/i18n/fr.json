@@ -476,6 +476,12 @@
       "Current": "En cours",
       "Ended": "Terminée",
       "Forbidden": "Refusée"
+    },
+    "reports": {
+      "noComments": "Aucun commentaire pour le moment.",
+      "comment": "Commentaire",
+      "placeholder": "Écrivez un commentaire pour l’équipe…",
+      "post": "Publier le commentaire"
     }
   }
 }

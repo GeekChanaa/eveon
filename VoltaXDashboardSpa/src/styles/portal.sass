@@ -623,3 +623,57 @@ body.dark .vx-partner-logo span
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
   font-size: .92em
   overflow-wrap: anywhere
+
+// Comment threads (system reports)
+.vx-comment-list
+  display: grid
+  gap: 12px
+  margin: 0 0 16px
+  padding: 0
+  list-style: none
+  li
+    padding: 14px 16px
+    border: 1px solid var(--vx-border)
+    border-radius: 12px
+    background: var(--vx-surface-alt)
+.vx-comment__head
+  display: flex
+  flex-wrap: wrap
+  justify-content: space-between
+  gap: 8px
+  font-size: 12px
+  .muted
+    color: var(--vx-text-muted)
+.vx-comment__body
+  margin: 8px 0 0
+  font-size: 13px
+  line-height: 1.55
+  white-space: pre-wrap
+  overflow-wrap: anywhere
+.vx-comment__images
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+  margin-top: 10px
+  img
+    width: 96px
+    height: 72px
+    object-fit: cover
+    border-radius: 8px
+.vx-comment-form
+  display: grid
+  gap: 10px
+  textarea
+    width: 100%
+    padding: 12px
+    border: 1px solid var(--vx-border)
+    border-radius: 10px
+    background: var(--vx-surface)
+    color: var(--vx-text)
+    font: inherit
+    font-size: 13px
+    resize: vertical
+    &:focus
+      outline: none
+      border-color: var(--vx-brand)
+      box-shadow: 0 0 0 3px var(--vx-brand-soft)

@@ -1,85 +1,65 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActionModalStatusEnum } from 'src/_models/_enums/action-modal-status-enum';
-import { ActionModalService } from 'src/_services/action-modal.service';
+import { Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { environment } from 'src/environments/environment';
 import { SystemReportCommentService } from 'src/_services/system-report-comment.service';
 
+interface ReportComment { id: number; content: string; userName: string; createdAt: string; images?: string[]; }
+
+/** The operators' discussion on a system report: comments in order and a box to add one. */
 @Component({
   selector: 'app-system-report-comments',
-  templateUrl: './system-report-comments.component.html',
-  styleUrls: ['./system-report-comments.component.sass']
+  template: `
+    <section class="vx-comments">
+      <p class="vx-empty" *ngIf="loading">{{ 'common.state.loading' | translate }}</p>
+      <p class="vx-empty" *ngIf="!loading && !comments.length">{{ 'ops.reports.noComments' | translate }}</p>
+      <ol class="vx-comment-list" *ngIf="comments.length">
+        <li *ngFor="let c of comments">
+          <div class="vx-comment__head"><strong>{{ c.userName }}</strong><span class="muted">{{ c.createdAt | vxDate:'medium' }}</span></div>
+          <p class="vx-comment__body">{{ c.content }}</p>
+          <div class="vx-comment__images" *ngIf="c.images?.length">
+            <a *ngFor="let image of c.images" [href]="staticUrl + image" target="_blank" rel="noopener"><img [src]="staticUrl + image" alt=""></a>
+          </div>
+        </li>
+      </ol>
+      <form class="vx-comment-form" (ngSubmit)="save()">
+        <label for="comment" class="vx-sr-only">{{ 'ops.reports.comment' | translate }}</label>
+        <textarea id="comment" name="comment" rows="3" maxlength="2000" [(ngModel)]="draft" [placeholder]="'ops.reports.placeholder' | translate"></textarea>
+        <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+        <div class="vx-actions">
+          <button type="submit" class="vx-btn vx-btn--primary" [disabled]="saving || !draft.trim()">{{ 'ops.reports.post' | translate }}</button>
+        </div>
+      </form>
+    </section>`
 })
 export class SystemReportCommentsComponent implements OnInit {
+  private readonly service = inject(SystemReportCommentService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  commentsLoaded = false;
-  systemReportComments : any = [];
-  systemReportComment : any = {};
-  isLoadingCreatingComment : boolean = false;
-  @Input() systemReportID : number = 0;
-  uploadedImages: File[] = []; 
+  @Input() systemReportID = 0;
+  comments: ReportComment[] = [];
+  draft = '';
+  loading = true;
+  saving = false;
+  error = false;
+  readonly staticUrl = environment.apiStaticFilesUrl;
 
-  constructor(
-    private _systemReportCommentService : SystemReportCommentService,
-    private _modalService : ActionModalService
-  ) { }
+  ngOnInit(): void { this.load(); }
 
-  ngOnInit() {
-    this.getSystemReportComments();
+  load(): void {
+    this.service.getSystemReportComments(this.systemReportID, 1, 100).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => { this.comments = (data.result ?? []) as unknown as ReportComment[]; this.loading = false; },
+      error: () => { this.loading = false; this.error = true; }
+    });
   }
 
-  getSystemReportComments(){
-    this._systemReportCommentService.getSystemReportComments(this.systemReportID).subscribe((data) => {
-      this.commentsLoaded = true;
-      if(data.result)
-        this.systemReportComments = data.result;
-    })
+  save(): void {
+    const content = this.draft.trim();
+    if (!content) return;
+    this.saving = true;
+    this.error = false;
+    this.service.createComment(this.systemReportID, content).subscribe({
+      next: () => { this.saving = false; this.draft = ''; this.load(); },
+      error: () => { this.saving = false; this.error = true; }
+    });
   }
-
-  saveComment(){
-    this.isLoadingCreatingComment = true;
-    this._systemReportCommentService.create(this.systemReportComment).subscribe((data) => {
-      this.isLoadingCreatingComment = false;
-      this.getSystemReportComments();
-      this.resetCommentInput();
-    }, (error) => {
-      this._modalService.popup(ActionModalStatusEnum.Error,"Erro","Something Went wrong please contact your system administrator",4000);
-    })
-  }
-
-  resetCommentInput(){
-    this.systemReportComment.content = "";
-  }
-
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    if (event.dataTransfer && event.dataTransfer.files) {
-      const files = Array.from(event.dataTransfer.files);
-
-      files.forEach((file) => {
-        if (file.type.startsWith('image/')) {
-          this.uploadedImages.push(file);
-
-          this.systemReportComment.content += `\n[Image: ${file.name}]`;
-        }
-      });
-    }
-  }
-
-  onFilesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      const files = Array.from(input.files);
-
-      files.forEach((file) => {
-        if (file.type.startsWith('image/')) {
-          this.uploadedImages.push(file);
-          this.systemReportComment.content += `\n[Image: ${file.name}]`;
-        }
-      });
-    }
-  }
-
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AtomsModule } from '../../atoms/atoms.module';
 import { PageState } from 'src/_models/_enums/page-state.enum';
 import { ChargerEventsComponent } from './charger-events.component';
@@ -9,11 +10,13 @@ import { ChargerEventsComponent } from './charger-events.component';
   standalone: true,
   imports: [AtomsModule, ChargerEventsComponent],
   template: `
-    <app-dashboard-details-container [state]="ready" title="Charger events"
-      [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Charger events' }]">
-      <app-charger-events></app-charger-events>
+    <app-dashboard-details-container [state]="ready" [title]="alarms ? 'Alarms' : 'Charger events'"
+      [breadcrumbs]="[{ label: 'Dashboard', link: '/dashboard' }, { label: alarms ? 'Alarms' : 'Charger events' }]">
+      <app-charger-events [alarmsOnly]="alarms"></app-charger-events>
     </app-dashboard-details-container>`
 })
 export class ChargerEventsPageComponent {
   readonly ready = PageState.Success;
+  /** ?alarms=1 (also where /dashboard/alarm-management leads). */
+  readonly alarms = inject(ActivatedRoute).snapshot.queryParamMap.get('alarms') === '1';
 }

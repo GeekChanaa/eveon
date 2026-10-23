@@ -1,31 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserRole } from 'src/_models/_enums/user-role';
+import { AccessService } from 'src/_services/access.service';
 import { AuthService } from 'src/_services/auth.service';
-import { UserService } from 'src/_services/user.service';
+
+/** "/" sends each account to its own space: partner portal, operator dashboard or customer portal. */
 @Component({
   selector: 'app-index',
-  templateUrl: './index.component.html',
-  styleUrls: ['./index.component.css']
+  template: `<p class="vx-empty" role="status">{{ 'common.state.loading' | translate }}</p>`
 })
 export class IndexComponent implements OnInit {
 
   constructor(
-    private _userService : UserService,
-    private _authService : AuthService,
-    private _router : Router
+    private _access: AccessService,
+    private _auth: AuthService,
+    private _router: Router
   ) { }
 
-  ngOnInit() {
-    var userID = parseInt(this._authService.getAuthInformation().nameid);
-    this._userService.getById(userID).subscribe((u) => {
-      if(u.role == "Admin")
-      this._router.navigate(['/dashboard']);
-      else if(u.role == "Customer")
-      this._router.navigate(['/my-dashboard']);
-      else if(u.role == "Partner")
-      this._router.navigate(['/partner-dashboard']);
+  ngOnInit(): void {
+    if (!this._auth.loggedIn()) {
+      this._router.navigateByUrl('/auth/login', { replaceUrl: true });
+      return;
+    }
+    this._access.load().subscribe({
+      next: info => this._router.navigateByUrl(IndexComponent.home(info.role, !!info.partnerId, this._access.canUrl('/dashboard')), { replaceUrl: true }),
+      error: () => this._router.navigateByUrl('/auth/login', { replaceUrl: true })
     });
   }
 
+  /** The landing page of an account. */
+  static home(role: string, hasPartner: boolean, canUseDashboard: boolean): string {
+    if (role === 'Partner' && hasPartner) return '/partner-dashboard';
+    return canUseDashboard ? '/dashboard' : '/my-dashboard';
+  }
 }

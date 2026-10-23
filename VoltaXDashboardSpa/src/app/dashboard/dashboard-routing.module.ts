@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AlarmManagementComponent } from './alarm-management/alarm-management.component';
 import { ChargingCardsComponent } from './charging-cards/charging-cards.component';
 import { ChargingPointsComponent } from './charging-points/charging-points.component';
 import { ChargingProfileComponent } from './charging-profile/charging-profile.component';
 import { ChargingStationsComponent } from './charging-stations/charging-stations.component';
 import { ChargingStrategiesComponent } from './charging-strategies/charging-strategies.component';
-import { HomeChargerBindListComponent } from './home-charger-bind-list/home-charger-bind-list.component';
 import { HomeComponent } from './home/home.component';
 import { OcppConfigurationComponent } from './ocpp-configuration/ocpp-configuration.component';
 import { OcppLocalListComponent } from './ocpp-local-list/ocpp-local-list.component';
@@ -33,10 +31,8 @@ const routes: Routes = [
     path: "",
     component: HomeComponent,
   },
-  {
-    path: "alarm-management",
-    component: AlarmManagementComponent,
-  },
+  // Alarms are the charger events filtered on active faults.
+  { path: "alarm-management", redirectTo: "/dashboard/charger-events?alarms=1", pathMatch: "full" },
   {
     path: "charging-cards",
     component: ChargingCardsComponent,
@@ -155,10 +151,6 @@ const routes: Routes = [
   {
     path: "statistics",
     component: StatisticsComponent,
-  },
-  {
-    path: "home-charger-bind-list",
-    component: HomeChargerBindListComponent,
   },
   {
     path: "ocpp-configuration",

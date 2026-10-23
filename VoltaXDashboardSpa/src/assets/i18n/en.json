@@ -476,6 +476,12 @@
       "Current": "In progress",
       "Ended": "Ended",
       "Forbidden": "Refused"
+    },
+    "reports": {
+      "noComments": "No comment yet.",
+      "comment": "Comment",
+      "placeholder": "Write a comment for the team…",
+      "post": "Post the comment"
     }
   }
 }
