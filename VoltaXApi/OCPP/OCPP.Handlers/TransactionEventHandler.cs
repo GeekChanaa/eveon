@@ -82,17 +82,25 @@ namespace VoltaXApi.OCPP.Handlers
                     {
                         Refuse(transactionEventRequest, transactionEventResponse);
                     }
-                    else if (transactionEventRequest.EVSE == null && transactionEventRequest.EventType == TransactionEventEnumType.Started)
+                    else if (transactionEventRequest.EventType == TransactionEventEnumType.Started
+                             && (transactionEventRequest.EVSE == null || transactionEventRequest.IdToken == null))
                     {
-                        // Authorization before plug-in: the EVSE arrives with a later event.
-                        await StartPending(transactionEventRequest, transactionEventResponse, chargePointStatus, chargePoint);
+                        // Authorization before plug-in (no EVSE yet) or plug-in before authorization (no token yet).
+                        connectorId = await StartPending(transactionEventRequest, transactionEventResponse, chargePointStatus, chargePoint);
+                    }
+                    else if (await FindPending(transactionEventRequest, chargePoint) is { } pending)
+                    {
+                        connectorId = await ContinuePending(pending, transactionEventRequest, transactionEventResponse, chargePointStatus, chargePoint);
                     }
                     else
                     {
                         var connector = await ResolveConnector(transactionEventRequest, chargePoint);
                         if (connector == null)
                         {
-                            await HandleWithoutConnector(transactionEventRequest, transactionEventResponse, chargePoint);
+                            if (transactionEventRequest.EVSE == null)
+                                _logger.LogWarning("TransactionEvent => {EventType} without EVSE for unknown transaction {TransactionId} from {ChargePointId}",
+                                    transactionEventRequest.EventType, transactionEventRequest.TransactionInfo?.TransactionId, chargePoint.ChargePointId);
+                            Refuse(transactionEventRequest, transactionEventResponse);
                         }
                         else
                         {
@@ -104,7 +112,6 @@ namespace VoltaXApi.OCPP.Handlers
                             }
                             else
                             {
-                                await StartIfPending(transactionEventRequest, chargePointStatus, chargePoint, connector);
                                 await Process(transactionEventRequest, transactionEventResponse, chargePointStatus, connector);
                             }
                             await MarkReservationUsed(transactionEventRequest, transactionEventResponse, chargePointStatus.Id);
@@ -219,35 +226,56 @@ namespace VoltaXApi.OCPP.Handlers
         }
 
         /// <summary>
-        /// Started event without EVSE: the token is checked like a regular start (same answer and customer
-        /// notifications), and an accepted transaction waits for its connector without being billed.
+        /// Started event without EVSE (authorization before plug-in) or without idToken (plug-in before authorization,
+        /// TxStartPoint EVConnected): a token is checked like a regular start (same answer and customer notifications),
+        /// and the transaction waits in <see cref="OcppPendingTransaction"/> for the part it lacks, without being billed.
+        /// Returns the connector id (0 when unknown) for the message log.
         /// </summary>
-        private async Task StartPending(TransactionEventRequest request, TransactionEventResponse response, ChargePointStatus chargePointStatus, ChargePoint chargePoint)
+        private async Task<int> StartPending(TransactionEventRequest request, TransactionEventResponse response, ChargePointStatus chargePointStatus, ChargePoint chargePoint)
         {
+            var transactionUid = request.TransactionInfo?.TransactionId ?? "";
+            if (string.IsNullOrEmpty(transactionUid))
+            {
+                Refuse(request, response);
+                return 0;
+            }
+
+            // A Started event sent again after its transaction started (lost CALLRESULT): acknowledged as is.
+            if (await _db.Transactions.AnyAsync(t => t.Uid == transactionUid && t.Connector!.ChargePointID == chargePoint.ID))
+            {
+                _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} already started; repeated Started acknowledged",
+                    transactionUid, chargePointStatus.Id);
+                return 0;
+            }
+
             var roaming = await _roamingObserver.OnTransactionEventAsync(chargePointStatus.Id, request);
             if (roaming.HasValue)
             {
                 response.IdTokenInfo.Status = roaming.Value;
                 await MarkReservationUsed(request, response, chargePointStatus.Id);
-                return;
+                return 0;
             }
 
-            var idTag = request.IdToken != null ? CleanChargeTagId(request.IdToken.IdToken) : string.Empty;
+            var connector = request.EVSE != null ? await ResolveConnector(request, chargePoint) : null;
+            var idTag = request.IdToken != null ? CleanChargeTagId(request.IdToken.IdToken) : null;
             var meter = MeterValueNormalizer.Extract(request.MeterValue);
             var data = TransactionEventData.FromTransactionEvent(request, chargePointStatus.Id, idTag, meter.EnergyKWh);
-            var status = await _transactionService.StartTransaction(data, null, validateOnly: true) ?? AuthorizationStatusEnumType.Invalid;
-            response.IdTokenInfo = request.IdToken != null ? new IdTokenInfoType { Status = status } : null!;
-            if (status != AuthorizationStatusEnumType.Accepted)
-                return;
+            if (request.IdToken != null)
+            {
+                var status = await _transactionService.StartTransaction(data, null, validateOnly: true) ?? AuthorizationStatusEnumType.Invalid;
+                response.IdTokenInfo = new IdTokenInfoType { Status = status };
+                if (status != AuthorizationStatusEnumType.Accepted)
+                    return connector?.ID ?? 0;
+            }
 
-            var transactionUid = data.TransactionUid;
             if (!await _db.OcppPendingTransactions.AnyAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid))
             {
                 _db.OcppPendingTransactions.Add(new OcppPendingTransaction
                 {
                     ChargePointID = chargePoint.ID,
                     TransactionUid = transactionUid,
-                    IdTag = idTag,
+                    IdTag = string.IsNullOrEmpty(idTag) ? null : idTag,
+                    ConnectorID = connector?.ID,
                     Timestamp = request.Timestamp,
                     MeterStartKWh = meter.EnergyKWh,
                     TriggerReason = data.TriggerReason,
@@ -256,65 +284,102 @@ namespace VoltaXApi.OCPP.Handlers
                 });
                 await _db.SaveChangesAsync();
             }
-            _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} authorized; waiting for its EVSE",
-                transactionUid, chargePointStatus.Id);
+            _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} started by the charger; waiting for its {Missing}",
+                transactionUid, chargePointStatus.Id, request.IdToken == null ? "authorization" : "EVSE");
             await MarkReservationUsed(request, response, chargePointStatus.Id);
+            return connector?.ID ?? 0;
         }
 
-        /// <summary>First event carrying the EVSE of a pending transaction: the session starts with the data of its Started event.</summary>
-        private async Task StartIfPending(TransactionEventRequest request, ChargePointStatus chargePointStatus, ChargePoint chargePoint, Connector connector)
+        /// <summary>The pending transaction a later event (Updated, Ended) belongs to, if any.</summary>
+        private async Task<OcppPendingTransaction?> FindPending(TransactionEventRequest request, ChargePoint chargePoint)
         {
             var transactionUid = request.TransactionInfo?.TransactionId;
             if (request.EventType == TransactionEventEnumType.Started || string.IsNullOrEmpty(transactionUid))
-                return;
-
-            var pending = await _db.OcppPendingTransactions.FirstOrDefaultAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid);
-            if (pending == null)
-                return;
-
-            var status = await _transactionService.StartTransaction(new TransactionEventData
-            {
-                ChargePointId = chargePointStatus.Id,
-                TransactionUid = pending.TransactionUid,
-                EventType = TransactionEventEnumType.Started,
-                Timestamp = pending.Timestamp,
-                IdTag = pending.IdTag,
-                MeterKWh = pending.MeterStartKWh,
-                TriggerReason = pending.TriggerReason
-            }, connector);
-            _db.OcppPendingTransactions.Remove(pending);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("TransactionEvent => Pending transaction {TransactionId} of {ChargePointId} attached to connector {ConnectorId}: {Status}",
-                transactionUid, chargePointStatus.Id, connector.ID, status);
+                return null;
+            return await _db.OcppPendingTransactions.FirstOrDefaultAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid);
         }
 
         /// <summary>
-        /// Event whose connector is unknown: a transaction still waiting for its EVSE is acknowledged (and dropped
-        /// when it ends, nothing having been billed); anything else is refused.
+        /// An event of a pending transaction. It may bring the missing EVSE or, in an Updated event (triggerReason
+        /// Authorized), the missing token, which is checked like a start. Once both are known the session starts and the
+        /// event itself is applied: after authorization before plug-in with the Started event's time and meter, after
+        /// plug-in before authorization at the authorization (the driver pays from the moment they authorized). A
+        /// transaction that ends while still pending is dropped: nothing was billed. Returns the connector id (0 when
+        /// unknown) for the message log.
         /// </summary>
-        private async Task HandleWithoutConnector(TransactionEventRequest request, TransactionEventResponse response, ChargePoint chargePoint)
+        private async Task<int> ContinuePending(OcppPendingTransaction pending, TransactionEventRequest request, TransactionEventResponse response,
+            ChargePointStatus chargePointStatus, ChargePoint chargePoint)
         {
-            var transactionUid = request.TransactionInfo?.TransactionId;
-            var pending = request.EVSE == null && !string.IsNullOrEmpty(transactionUid)
-                ? await _db.OcppPendingTransactions.FirstOrDefaultAsync(p => p.ChargePointID == chargePoint.ID && p.TransactionUid == transactionUid)
-                : null;
-            if (pending == null)
+            var connector = request.EVSE != null ? await ResolveConnector(request, chargePoint) : null;
+            if (connector == null && pending.ConnectorID.HasValue)
+                connector = await _connectorRepository.GetByIdAsync(pending.ConnectorID.Value);
+            if (connector != null)
+                pending.ConnectorID = connector.ID;
+
+            var idTag = request.IdToken != null ? CleanChargeTagId(request.IdToken.IdToken) : null;
+            if (request.IdToken != null)
+                response.IdTokenInfo = new IdTokenInfoType { Status = AuthorizationStatusEnumType.Accepted };
+
+            if (string.IsNullOrEmpty(pending.IdTag) && !string.IsNullOrEmpty(idTag) && request.EventType == TransactionEventEnumType.Updated)
             {
-                if (request.EVSE == null)
-                    _logger.LogWarning("TransactionEvent => {EventType} without EVSE for unknown transaction {TransactionId} from {ChargePointId}",
-                        request.EventType, transactionUid, chargePoint.ChargePointId);
-                Refuse(request, response);
-                return;
+                var roaming = await _roamingObserver.OnTransactionEventAsync(chargePointStatus.Id, request);
+                if (roaming.HasValue)
+                {
+                    response.IdTokenInfo.Status = roaming.Value;
+                    _db.OcppPendingTransactions.Remove(pending);
+                    await _db.SaveChangesAsync();
+                    return connector?.ID ?? 0;
+                }
+
+                var meter = MeterValueNormalizer.Extract(request.MeterValue);
+                var status = await _transactionService.StartTransaction(
+                    TransactionEventData.FromTransactionEvent(request, chargePointStatus.Id, idTag, meter.EnergyKWh), null, validateOnly: true)
+                    ?? AuthorizationStatusEnumType.Invalid;
+                response.IdTokenInfo.Status = status;
+                if (status != AuthorizationStatusEnumType.Accepted)
+                {
+                    // Still waiting for a valid token; the charger deauthorizes and ends the transaction.
+                    await _db.SaveChangesAsync();
+                    return connector?.ID ?? 0;
+                }
+
+                pending.IdTag = idTag;
+                pending.Timestamp = request.Timestamp;
+                pending.MeterStartKWh = meter.EnergyKWh ?? pending.MeterStartKWh;
+                pending.TriggerReason = request.TriggerReason.ToString();
+                if (pending.ReservationId.HasValue)
+                    await _reservations.MarkUsedAsync(chargePointStatus.Id, pending.ReservationId.Value, pending.TransactionUid);
             }
 
-            response.IdTokenInfo = request.IdToken != null ? new IdTokenInfoType { Status = AuthorizationStatusEnumType.Accepted } : null!;
+            if (!string.IsNullOrEmpty(pending.IdTag) && connector != null)
+            {
+                var status = await _transactionService.StartTransaction(new TransactionEventData
+                {
+                    ChargePointId = chargePointStatus.Id,
+                    TransactionUid = pending.TransactionUid,
+                    EventType = TransactionEventEnumType.Started,
+                    Timestamp = pending.Timestamp,
+                    IdTag = pending.IdTag,
+                    MeterKWh = pending.MeterStartKWh,
+                    TriggerReason = pending.TriggerReason
+                }, connector);
+                _db.OcppPendingTransactions.Remove(pending);
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("TransactionEvent => Pending transaction {TransactionId} of {ChargePointId} started on connector {ConnectorId}: {Status}",
+                    pending.TransactionUid, chargePointStatus.Id, connector.ID, status);
+                if (status == AuthorizationStatusEnumType.Accepted)
+                    await Process(request, response, chargePointStatus, connector);
+                return connector.ID;
+            }
+
             if (request.EventType == TransactionEventEnumType.Ended)
             {
                 _db.OcppPendingTransactions.Remove(pending);
-                await _db.SaveChangesAsync();
-                _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} ended before any EVSE was known; nothing billed",
-                    transactionUid, chargePoint.ChargePointId);
+                _logger.LogInformation("TransactionEvent => Transaction {TransactionId} of {ChargePointId} ended before it was authorized and plugged in; nothing billed",
+                    pending.TransactionUid, chargePoint.ChargePointId);
             }
+            await _db.SaveChangesAsync();
+            return connector?.ID ?? 0;
         }
 
         private async Task MarkReservationUsed(TransactionEventRequest request, TransactionEventResponse response, string chargePointId)

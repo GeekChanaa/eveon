@@ -3515,6 +3515,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ChargePointID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 

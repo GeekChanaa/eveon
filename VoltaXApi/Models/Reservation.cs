@@ -36,8 +36,8 @@ namespace VoltaXApi.Models
     }
 
     /// <summary>
-    /// An OCPP 2.0.1 transaction whose Started event arrived without EVSE (authorization before plug-in).
-    /// It becomes a <see cref="Transaction"/> when the first event carrying the EVSE arrives.
+    /// An OCPP 2.0.1 transaction whose Started event arrived without EVSE (authorization before plug-in) or without
+    /// idToken (plug-in before authorization). It becomes a <see cref="Transaction"/> once both are known.
     /// </summary>
     public class OcppPendingTransaction
     {
@@ -45,8 +45,11 @@ namespace VoltaXApi.Models
         public int ChargePointID { get; set; }
         [MaxLength(36)]
         public string TransactionUid { get; set; } = "";
+        /// <summary>The accepted token; null while the transaction waits for its authorization.</summary>
         [MaxLength(36)]
         public string? IdTag { get; set; }
+        /// <summary>Connectors.ID once an event carried the EVSE; null while it is unknown.</summary>
+        public int? ConnectorID { get; set; }
         [MaxLength(40)]
         public string? Timestamp { get; set; }
         public double? MeterStartKWh { get; set; }

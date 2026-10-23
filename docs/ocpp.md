@@ -103,12 +103,20 @@ or does not answer, Used when a transaction starts with it (1.6 `StartTransactio
 `TransactionEvent.reservationId`), Cancelled after an accepted CancelReservation or a 2.0.1
 `ReservationStatusUpdate(Removed)`, and Expired from `ReservationStatusUpdate(Expired)` or the sweeper.
 
-## OCPP 2.0.1: authorization before plug-in
+## OCPP 2.0.1: authorization before plug-in, plug-in before authorization
 
 A `TransactionEvent(Started)` without EVSE is accepted: the token is checked like any start (same answer and
 customer notifications) and the transaction is kept in `OcppPendingTransactions`. The first later event carrying the
 EVSE starts the session with the Started event's timestamp and meter, then is applied itself. Nothing is billed
 before a connector is known; a transaction that ends without ever reporting an EVSE is dropped.
+
+A `TransactionEvent(Started)` without idToken (TxStartPoint `EVConnected`: the transaction starts at plug-in,
+triggerReason `CablePluggedIn`) is acknowledged without `idTokenInfo` and kept pending with its connector
+(`OcppPendingTransactions.ConnectorID`, as later events may omit the EVSE). The `Updated` event that brings the token
+(triggerReason `Authorized`) is checked like a start and answered with its `idTokenInfo`; once accepted the session
+starts at that event, with its meter value (or the Started one): the driver pays from the moment they authorized.
+A transaction that ends without an accepted token is dropped, nothing billed. A `Started` repeated after the session
+started is acknowledged and ignored. `idTokenInfo` is only ever sent in answer to an event that carried an idToken.
 
 ## Adding an inbound handler
 
