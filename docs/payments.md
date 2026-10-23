@@ -68,6 +68,18 @@ cards are offered on the next checkout.
 Operators credit cash or bank transfers with `POST /api/Order/CreateRechargeOrder {cardID, amount, note}`
 (permission EditRechargeOrders): the order is `Manual`, the operator and the reason are on record.
 
+## Refunds
+
+Operators refund a paid top-up from the order page (`POST api/Refund/Order/{id}`, see [billing.md](billing.md)).
+`IPaymentGateway.RefundAsync` gives the money back through the provider when it can:
+
+| Provider | Refund through the API |
+|---|---|
+| `Sandbox` | yes (no money moves) |
+| `Stripe` | yes: the Checkout session's payment intent is refunded (`POST /v1/refunds`, idempotency key `refund-{id}`) with the existing secret key |
+| `Cmi` | no: refund in the CMI merchant back office, then record the refund as made outside the platform |
+| `None` | no |
+
 ## Registering the callbacks
 
 - **CMI**: the callback URL is sent with every payment (`callbackUrl` field); CMI must allow it for the

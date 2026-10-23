@@ -14,6 +14,8 @@ namespace VoltaXApi.Services.Billing
             services.AddScoped<InvoiceQueries>();
             services.AddScoped<BillingMailer>();
             services.AddScoped<IBillingEvents, BillingEvents>();
+            // Needs the payment gateway (ServiceRegistration.ConfigurePayments).
+            services.AddScoped<RefundService>();
             services.AddHostedService<InvoiceSweeper>();
         }
     }

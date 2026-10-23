@@ -21,6 +21,18 @@ namespace VoltaXApi.Data
             });
             modelBuilder.Entity<InvoiceFile>().HasKey(f => f.InvoiceID);
             modelBuilder.Entity<InvoiceSequence>().HasKey(s => new { s.Series, s.Year });
+
+            modelBuilder.Entity<Refund>(entity =>
+            {
+                entity.ToTable("Refunds");
+                entity.Property(r => r.Target).HasConversion<string>().HasMaxLength(16);
+                entity.Property(r => r.Method).HasConversion<string>().HasMaxLength(16);
+                entity.Property(r => r.Status).HasConversion<string>().HasMaxLength(16);
+                entity.HasIndex(r => r.IdempotencyKey).IsUnique();
+                entity.HasIndex(r => r.OrderID);
+                entity.HasIndex(r => r.ChargingSessionID);
+                entity.HasIndex(r => r.CreatedAt);
+            });
         }
     }
 }

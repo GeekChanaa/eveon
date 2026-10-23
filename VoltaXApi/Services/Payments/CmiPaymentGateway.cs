@@ -91,6 +91,17 @@ namespace VoltaXApi.Services.Payments
                 Type: "callback");
         }
 
+        public bool SupportsRefunds => false;
+
+        /// <summary>
+        /// CMI refunds ("remboursement" / credit) go through the CMI merchant back office or its back-office API,
+        /// which needs API credentials this integration does not have yet: the operator refunds there and records
+        /// the refund as made outside the platform.
+        /// </summary>
+        public Task<GatewayRefundResult> RefundAsync(Order order, decimal amount, string refundReference, CancellationToken cancellationToken = default) =>
+            Task.FromResult(GatewayRefundResult.NotSupported(
+                "CMI refunds are made in the CMI merchant back office. Refund there, then record the refund as made outside the platform."));
+
         /// <summary>CMI captures an approved PreAuth when the merchant answers ACTION=POSTAUTH.</summary>
         public string Acknowledge(PaymentNotification? notification, bool accepted) =>
             !accepted ? "FAILURE" : notification?.Outcome == PaymentOutcome.Paid ? "ACTION=POSTAUTH" : "APPROVED";

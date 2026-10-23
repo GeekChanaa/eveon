@@ -112,6 +112,41 @@ namespace VoltaXApi.Services.Payments
 
         public string Acknowledge(PaymentNotification? notification, bool accepted) => accepted ? "{\"received\":true}" : "";
 
+        public bool SupportsRefunds => true;
+
+        /// <summary>
+        /// Refunds the payment intent of the order's Checkout session (POST /v1/refunds, idempotency key = the refund
+        /// reference). Stripe answers succeeded or pending (accepted, on its way); failed and canceled are failures.
+        /// </summary>
+        public async Task<GatewayRefundResult> RefundAsync(Order order, decimal amount, string refundReference, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(order.ProviderReference))
+                return new GatewayRefundResult(GatewayRefundOutcome.Failed, Message: "The order has no Stripe Checkout session.");
+            try
+            {
+                var session = await GetAsync($"/v1/checkout/sessions/{Uri.EscapeDataString(order.ProviderReference)}", cancellationToken);
+                var intent = session.TryGetProperty("payment_intent", out var pi) && pi.ValueKind == JsonValueKind.String ? pi.GetString() : null;
+                if (string.IsNullOrEmpty(intent))
+                    return new GatewayRefundResult(GatewayRefundOutcome.Failed, Message: "The Checkout session has no payment intent.");
+                var refund = await PostAsync("/v1/refunds", new Dictionary<string, string>
+                {
+                    ["payment_intent"] = intent,
+                    ["amount"] = Cents(amount).ToString(CultureInfo.InvariantCulture),
+                    ["metadata[order_id]"] = order.ID.ToString(CultureInfo.InvariantCulture),
+                    ["metadata[refund]"] = refundReference
+                }, refundReference, cancellationToken);
+                var status = refund.TryGetProperty("status", out var s) ? s.GetString() : null;
+                var id = refund.TryGetProperty("id", out var r) ? r.GetString() : null;
+                return status is "succeeded" or "pending" or "requires_action"
+                    ? new GatewayRefundResult(GatewayRefundOutcome.Succeeded, id, status)
+                    : new GatewayRefundResult(GatewayRefundOutcome.Failed, id, status, $"Stripe refused the refund ({status}).");
+            }
+            catch (HttpRequestException ex)
+            {
+                return new GatewayRefundResult(GatewayRefundOutcome.Failed, Message: ex.Message.Length > 250 ? ex.Message[..250] : ex.Message);
+            }
+        }
+
         /// <summary>Stripe-Signature: t=timestamp,v1=hex(HMAC-SHA256(secret, "t.body")), possibly several v1 values.</summary>
         public static bool VerifySignature(string body, string header, string secret, DateTimeOffset now, int toleranceSeconds)
         {

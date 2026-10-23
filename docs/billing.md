@@ -111,10 +111,37 @@ Code: `VoltaXApi/Services/Billing` (`InvoiceService`, `InvoicePdf`, `BillingEven
   ViewRechargeOrders).
 - **Language**: French, English or Arabic (right to left, Noto Sans Arabic, SIL OFL licence in `Assets/Fonts`).
 
+## Refunds
+
+Code: `Services/Billing/RefundService.cs`, `Controllers/RefundController.cs`. Operators with **EditRechargeOrders**
+(the permission that credits wallets) refund from the order and session pages; `GET api/Refund/Order/{id}` and
+`api/Refund/Session/{id}` (ViewRechargeOrders) tell what is left to refund and how.
+
+| Refund of | Method | Money | Wallet movement |
+|---|---|---|---|
+| a top-up paid online | `Gateway` (default when the provider can refund) | back to the card through the provider | `Refund`, − |
+| any paid top-up | `External` (cash, transfer, the provider's back office) | recorded only | `Refund`, − |
+| a billed session | `Wallet` | credited to the wallet | `Refund`, + |
+
+- `POST api/Refund/Order/{id}` / `api/Refund/Session/{id}` `{amount, reason, idempotencyKey, method?}`. The
+  dashboard sends a new key per confirmed refund: the same request sent again answers the same refund; the key
+  reused for a different refund is refused (409).
+- **Never more than paid**: pending and succeeded refunds of an order or session stay within what was paid. The
+  check runs again inside the card's optimistic-lock retry, so two concurrent refunds cannot both pass. A top-up
+  refund also needs the wallet to still hold the amount (the customer may have spent it).
+- **Top-up through the provider**: the refund and the wallet debit are committed first (reserved), then the
+  provider is called with the idempotency key `refund-{id}`. If it fails, the refund is `Failed` and the amount is
+  given back to the wallet (`refund:{key}:reversal`). Fully refunded orders become `Refunded`.
+- Every succeeded refund gets a credit note (`AV-…`) against the invoice of the order or session, and the
+  customer gets a notification and an e-mail with the credit note.
+- Providers: `Sandbox` refunds at once; `Stripe` refunds the payment intent of the Checkout session
+  (`POST /v1/refunds`); `Cmi` and `None` answer "not supported": refund in the CMI back office, then record the
+  refund as `External`.
+
 ## Deploying
 
 Migrations: `MoneyAsDecimal`, `WalletLedger` (adds the ledger and an opening movement for every existing
-balance), `SessionBilling` and `LegalInvoices`. Apply them before starting the new build:
+balance), `SessionBilling`, `LegalInvoices` and `Refunds`. Apply them before starting the new build:
 
 ```
 dotnet ef database update --project VoltaXApi

@@ -79,6 +79,14 @@ namespace VoltaXApi.Services.Payments
 
         public string Acknowledge(PaymentNotification? notification, bool accepted) => accepted ? "OK" : "REJECTED";
 
+        public bool SupportsRefunds => true;
+
+        /// <summary>Accepts every refund of a sandbox payment (no money moves).</summary>
+        public Task<GatewayRefundResult> RefundAsync(Order order, decimal amount, string refundReference, CancellationToken cancellationToken = default) =>
+            Task.FromResult(amount > 0 && amount <= order.Amount
+                ? new GatewayRefundResult(GatewayRefundOutcome.Succeeded, $"sandbox-{refundReference}", "succeeded")
+                : new GatewayRefundResult(GatewayRefundOutcome.Failed, Message: "The amount exceeds the payment."));
+
         public static string Amount(decimal amount) => amount.ToString("0.00", CultureInfo.InvariantCulture);
 
         private string Sign(params string[] parts)

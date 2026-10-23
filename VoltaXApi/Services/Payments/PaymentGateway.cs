@@ -68,6 +68,21 @@ namespace VoltaXApi.Services.Payments
         Ignored
     }
 
+    public enum GatewayRefundOutcome
+    {
+        /// <summary>The provider accepted the refund (it may still be on its way to the customer's bank).</summary>
+        Succeeded,
+        Failed,
+        /// <summary>This provider cannot refund through the API: refund in its back office and record it as external.</summary>
+        NotSupported
+    }
+
+    /// <summary>Answer of a provider to a refund request.</summary>
+    public sealed record GatewayRefundResult(GatewayRefundOutcome Outcome, string? ProviderReference = null, string? ProviderStatus = null, string? Message = null)
+    {
+        public static GatewayRefundResult NotSupported(string message) => new(GatewayRefundOutcome.NotSupported, Message: message);
+    }
+
     public sealed record SavedCardInfo(string Token, DebitCardTypeEnum Brand, string Last4, int ExpiryMonth, int ExpiryYear);
 
     /// <summary>A verified provider notification, in provider-neutral form.</summary>
@@ -98,6 +113,15 @@ namespace VoltaXApi.Services.Payments
 
         /// <summary>The body the provider expects in answer to a notification.</summary>
         string Acknowledge(PaymentNotification? notification, bool accepted);
+
+        /// <summary>True when <see cref="RefundAsync"/> can give money back through the provider.</summary>
+        bool SupportsRefunds { get; }
+
+        /// <summary>
+        /// Gives <paramref name="amount"/> of the paid <paramref name="order"/> back to the customer's payment method.
+        /// <paramref name="refundReference"/> is sent as the provider's idempotency key: a retried call refunds once.
+        /// </summary>
+        Task<GatewayRefundResult> RefundAsync(Order order, decimal amount, string refundReference, CancellationToken cancellationToken = default);
     }
 
     /// <summary>Online payment is not configured: every attempt is refused with a clear message.</summary>
@@ -116,6 +140,11 @@ namespace VoltaXApi.Services.Payments
             Task.FromResult<PaymentNotification?>(null);
 
         public string Acknowledge(PaymentNotification? notification, bool accepted) => "";
+
+        public bool SupportsRefunds => false;
+
+        public Task<GatewayRefundResult> RefundAsync(Order order, decimal amount, string refundReference, CancellationToken cancellationToken = default) =>
+            Task.FromResult(GatewayRefundResult.NotSupported("Online payment is not configured."));
     }
 
     public sealed class PaymentUnavailableException() : Exception("Online payment is not available yet. Please contact support to top up your wallet.");
