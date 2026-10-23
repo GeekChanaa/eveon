@@ -1,0 +1,81 @@
+<div class="page__inner"><main class="page__container">
+  <vx-print-header [title]="'customer.sessions.title' | translate"
+    [subtitle]="(filter.from || filter.to) ? ((filter.from || '…') + ' → ' + (filter.to || '…')) : null"></vx-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'customer.eyebrow' | translate }}</span>
+      <h1>{{ 'customer.sessions.title' | translate }}</h1>
+      <p>{{ 'customer.sessions.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="export('csv')" [disabled]="exporting">{{ 'common.actions.exportCsv' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="export('pdf')" [disabled]="exporting">{{ 'common.actions.exportPdf' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <form class="vx-panel vx-filters no-print" (ngSubmit)="load()">
+    <div class="vx-field">
+      <label for="from">{{ 'common.fields.from' | translate }}</label>
+      <input id="from" type="date" name="from" [(ngModel)]="filter.from">
+    </div>
+    <div class="vx-field">
+      <label for="to">{{ 'common.fields.to' | translate }}</label>
+      <input id="to" type="date" name="to" [(ngModel)]="filter.to">
+    </div>
+    <div class="vx-field">
+      <label for="status">{{ 'common.fields.status' | translate }}</label>
+      <select id="status" name="status" [(ngModel)]="filter.status">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option value="active">{{ 'customer.status.charging' | translate }}</option>
+        <option value="completed">{{ 'customer.status.Completed' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field vx-field--grow">
+      <label for="search">{{ 'customer.session.station' | translate }}</label>
+      <input id="search" type="search" name="search" [(ngModel)]="filter.search" [placeholder]="'customer.sessions.searchPlaceholder' | translate">
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary">{{ 'common.actions.filter' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
+    </div>
+  </form>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+
+  <section class="vx-panel">
+    <p class="vx-empty" *ngIf="loading && !result">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="result?.items?.length; else empty">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'common.fields.date' | translate }}</th>
+          <th>{{ 'customer.session.station' | translate }}</th>
+          <th class="num">{{ 'customer.session.duration' | translate }}</th>
+          <th class="num">{{ 'customer.session.energy' | translate }}</th>
+          <th class="num">{{ 'common.fields.total' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let s of result!.items" class="vx-row-link" tabindex="0" [routerLink]="['/my-dashboard/sessions', s.id]"
+            (keydown.enter)="$any($event.target).click()">
+            <td>{{ s.startDate | vxDate:'short' }}</td>
+            <td>{{ s.stationName || s.chargePointName || '—' }}<div class="muted">{{ s.chargePointName }} · {{ s.connector }}</div></td>
+            <td class="num">{{ s.chargedMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</td>
+            <td class="num">{{ s.chargedKwhs | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</td>
+            <td class="num">{{ s.active ? '—' : (s.total | vxMoney) }}</td>
+            <td><span class="vx-badge" [ngClass]="s.active ? 'vx-badge--success' : tone(s.status)">{{ (s.active ? 'customer.status.charging' : 'customer.status.' + s.status) | translate }}</span></td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">{{ 'customer.sessions.pageTotal' | translate }}</td>
+          <td class="num">{{ totals.kwh | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</td>
+          <td class="num">{{ totals.amount | vxMoney }}</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <ng-template #empty><p class="vx-empty" *ngIf="!loading">{{ 'customer.sessions.empty' | translate }}</p></ng-template>
+    <vx-pager *ngIf="result" [page]="result.page" [pageSize]="result.pageSize" [total]="result.total" (pageChange)="load($event)"></vx-pager>
+  </section>
+</main></div>

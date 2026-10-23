@@ -6,7 +6,7 @@
   </button>
 
   <div class="sidebar__brand">
-    <a class="sidebar__logo" *ngIf="partnerID == 0" routerLink="/dashboard">
+    <a class="sidebar__logo" *ngIf="partnerID == 0" [routerLink]="customerShell ? '/my-dashboard' : '/dashboard'">
       <ng-container>
         <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
         <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
@@ -41,7 +41,23 @@
   </div>
 
   <div class="sidebar__menu">
-    <ng-container *ngIf="partnerID == 0">
+    <!-- Customer portal menu -->
+    <ng-container *ngIf="customerShell">
+      <app-sidebar-item [title]="'nav.home'" [link]="'/my-dashboard'" [active]="isExactActive('/my-dashboard')"></app-sidebar-item>
+      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'nav.myCharging'"
+        [active]="isDropdownActive('/my-dashboard/sessions', '/my-dashboard/cards')">
+        <app-sidebar-link [title]="'nav.chargingSessions'" [link]="'/my-dashboard/sessions'" [active]="isActive('/my-dashboard/sessions')"></app-sidebar-link>
+        <app-sidebar-link [title]="'nav.myCards'" [link]="'/my-dashboard/cards'" [active]="isActive('/my-dashboard/cards')"></app-sidebar-link>
+      </app-sidebar-dropdown>
+      <app-sidebar-dropdown iconID="icon-money-bill" [title]="'nav.payments'"
+        [active]="isDropdownActive('/my-dashboard/wallet', '/my-dashboard/payment-methods')">
+        <app-sidebar-link [title]="'nav.wallet'" [link]="'/my-dashboard/wallet'" [active]="isActive('/my-dashboard/wallet')"></app-sidebar-link>
+        <app-sidebar-link [title]="'nav.paymentMethods'" [link]="'/my-dashboard/payment-methods'" [active]="isActive('/my-dashboard/payment-methods')"></app-sidebar-link>
+      </app-sidebar-dropdown>
+      <app-sidebar-item [title]="'header.myProfile'" [link]="'/my-dashboard/profile'" [active]="isExactActive('/my-dashboard/profile')"></app-sidebar-item>
+    </ng-container>
+
+    <ng-container *ngIf="partnerID == 0 && !customerShell">
       <!-- Admin/Operator menu -->
       <app-sidebar-item *ngIf="access.canUrl('/dashboard')" [title]="'nav.home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
 
@@ -152,7 +168,7 @@
   </div>
 
   <div class="sidebar__foot">
-  <button *ngIf="access.canUrl('/dashboard/documentation')" class="sidebar__help" routerLink="/dashboard/documentation">
+  <button *ngIf="!customerShell && access.canUrl('/dashboard/documentation')" class="sidebar__help" routerLink="/dashboard/documentation">
     <svg class="icon icon-help">
       <use xlink:href="#icon-help"></use>
     </svg>

@@ -1,0 +1,47 @@
+<div class="page__inner"><main class="page__container">
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'customer.eyebrow' | translate }}</span>
+      <h1>{{ 'nav.paymentMethods' | translate }}</h1>
+      <p>{{ 'customer.methods.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions" *ngIf="config?.supportsSavedCards">
+      <button type="button" class="vx-btn vx-btn--primary" (click)="add()" [disabled]="busy">{{ 'customer.methods.add' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-alert vx-alert--success" *ngIf="setupResult === 'done'" role="status">{{ 'customer.methods.added' | translate }}</div>
+  <div class="vx-alert" *ngIf="setupResult === 'canceled'" role="status">{{ 'customer.methods.canceled' | translate }}</div>
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+  <div class="vx-alert" *ngIf="config && !config.supportsSavedCards">{{ 'customer.methods.notSupported' | translate }}</div>
+
+  <section class="vx-panel">
+    <p class="vx-empty" *ngIf="loading">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="methods.length; else none">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'customer.methods.card' | translate }}</th>
+          <th>{{ 'customer.methods.expires' | translate }}</th>
+          <th></th>
+          <th class="num"></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let m of methods">
+            <td><strong>{{ m.brand === 'Generic' ? ('customer.methods.genericCard' | translate) : m.brand }}</strong> <span class="vx-num">•••• {{ m.last4 }}</span></td>
+            <td class="vx-num">{{ m.expiryMonth | number:'2.0-0' }}/{{ m.expiryYear }}
+              <span class="vx-badge vx-badge--danger" *ngIf="expired(m)">{{ 'customer.methods.expired' | translate }}</span></td>
+            <td><span class="vx-badge vx-badge--info" *ngIf="m.isDefault">{{ 'customer.methods.default' | translate }}</span></td>
+            <td class="num">
+              <span class="vx-actions" style="justify-content: flex-end">
+                <button type="button" class="vx-btn vx-btn--small" *ngIf="!m.isDefault" (click)="makeDefault(m)" [disabled]="busy">{{ 'customer.methods.makeDefault' | translate }}</button>
+                <button type="button" class="vx-btn vx-btn--small vx-btn--danger" (click)="remove(m)" [disabled]="busy">{{ 'common.actions.remove' | translate }}</button>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #none><p class="vx-empty" *ngIf="!loading">{{ 'customer.methods.empty' | translate }}</p></ng-template>
+    <p class="muted" style="margin-block-start: 14px; font-size: 12px">{{ 'customer.wallet.secureNote' | translate }}</p>
+  </section>
+</main></div>

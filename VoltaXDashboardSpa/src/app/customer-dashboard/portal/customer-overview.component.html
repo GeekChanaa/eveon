@@ -1,0 +1,87 @@
+<div class="page__inner"><main class="page__container">
+  <vx-print-header [title]="'customer.overview.title' | translate"></vx-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'customer.eyebrow' | translate }}</span>
+      <h1>{{ 'customer.overview.hello' | translate:{ name: overview?.firstName ?? '' } }}</h1>
+      <p>{{ 'customer.overview.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <a class="vx-btn vx-btn--primary" routerLink="/my-dashboard/wallet">{{ 'customer.actions.topUp' | translate }}</a>
+      <a class="vx-btn" routerLink="/my-dashboard/sessions">{{ 'customer.actions.sessions' | translate }}</a>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+  <p class="vx-empty" *ngIf="loading">{{ 'common.state.loading' | translate }}</p>
+
+  <section class="vx-stats" *ngIf="overview">
+    <div class="vx-stat vx-stat--brand">
+      <div class="vx-stat__label">{{ 'customer.overview.balance' | translate }}</div>
+      <div class="vx-stat__value vx-num">{{ overview.walletBalance | vxMoney }}</div>
+      <div class="vx-stat__hint">{{ 'customer.overview.cards' | translate:{ count: overview.cardCount } }}</div>
+    </div>
+    <div class="vx-stat">
+      <div class="vx-stat__label">{{ 'customer.overview.sessionsMonth' | translate }}</div>
+      <div class="vx-stat__value vx-num">{{ overview.sessionsThisMonth | vxNumber:'1.0-0' }}</div>
+      <div class="vx-stat__hint">{{ 'customer.overview.allTime' | translate:{ value: (overview.sessionsTotal | vxNumber:'1.0-0') } }}</div>
+    </div>
+    <div class="vx-stat">
+      <div class="vx-stat__label">{{ 'customer.overview.energyMonth' | translate }}</div>
+      <div class="vx-stat__value vx-num">{{ overview.kwhThisMonth | vxNumber:'1.0-1' }} {{ 'common.units.kwh' | translate }}</div>
+      <div class="vx-stat__hint">{{ 'customer.overview.allTime' | translate:{ value: (overview.kwhTotal | vxNumber:'1.0-1') } }}</div>
+    </div>
+    <div class="vx-stat">
+      <div class="vx-stat__label">{{ 'customer.overview.spentMonth' | translate }}</div>
+      <div class="vx-stat__value vx-num">{{ overview.spentThisMonth | vxMoney }}</div>
+      <div class="vx-stat__hint">{{ 'customer.overview.allTime' | translate:{ value: (overview.spentTotal | vxMoney) } }}</div>
+    </div>
+  </section>
+
+  <section class="vx-panel" *ngIf="overview?.activeSession as live" aria-live="polite">
+    <div class="vx-panel__head">
+      <div>
+        <h2>{{ 'customer.overview.liveTitle' | translate }}</h2>
+        <p>{{ live.stationName || live.chargePointName }} · {{ live.connector }}</p>
+      </div>
+      <span class="vx-badge vx-badge--success vx-badge--live">{{ 'customer.status.charging' | translate }}</span>
+    </div>
+    <dl class="vx-kv">
+      <div><dt>{{ 'customer.session.started' | translate }}</dt><dd>{{ live.startDate | vxDate:'short' }}</dd></div>
+      <div><dt>{{ 'customer.session.duration' | translate }}</dt><dd class="vx-num">{{ live.chargedMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</dd></div>
+      <div><dt>{{ 'customer.session.energy' | translate }}</dt><dd class="vx-num">{{ live.chargedKwhs | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</dd></div>
+      <div><dt>{{ 'customer.session.costSoFar' | translate }}</dt><dd class="vx-num">{{ live.currentCost | vxMoney }}</dd></div>
+    </dl>
+    <p class="vx-stat__hint">{{ 'customer.overview.liveHint' | translate }}</p>
+  </section>
+
+  <section class="vx-panel">
+    <div class="vx-panel__head">
+      <div><h2>{{ 'customer.overview.recent' | translate }}</h2></div>
+      <a class="vx-btn vx-btn--small no-print" routerLink="/my-dashboard/sessions">{{ 'common.actions.viewAll' | translate }}</a>
+    </div>
+    <div class="vx-table-wrap" *ngIf="recent.length; else noSessions">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'common.fields.date' | translate }}</th>
+          <th>{{ 'customer.session.station' | translate }}</th>
+          <th class="num">{{ 'customer.session.energy' | translate }}</th>
+          <th class="num">{{ 'common.fields.total' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let s of recent" class="vx-row-link" tabindex="0" [routerLink]="['/my-dashboard/sessions', s.id]">
+            <td>{{ s.startDate | vxDate:'short' }}</td>
+            <td>{{ s.stationName || s.chargePointName || '—' }}<div class="muted">{{ s.connector }}</div></td>
+            <td class="num">{{ s.chargedKwhs | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</td>
+            <td class="num">{{ s.active ? '—' : (s.total | vxMoney) }}</td>
+            <td><span class="vx-badge" [ngClass]="s.active ? 'vx-badge--success' : tone(s.status)">{{ (s.active ? 'customer.status.charging' : 'customer.status.' + s.status) | translate }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noSessions><p class="vx-empty">{{ 'customer.sessions.empty' | translate }}</p></ng-template>
+  </section>
+</main></div>

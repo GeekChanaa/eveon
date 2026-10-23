@@ -1,0 +1,90 @@
+<div class="page__inner"><main class="page__container">
+  <a class="vx-btn vx-btn--link no-print" routerLink="/my-dashboard/sessions">← {{ 'customer.sessions.title' | translate }}</a>
+
+  <div class="vx-alert vx-alert--error" *ngIf="notFound" role="alert">{{ 'customer.session.notFound' | translate }}</div>
+
+  <ng-container *ngIf="detail as d">
+    <vx-print-header [title]="('customer.session.title' | translate) + ' #' + d.session.id"></vx-print-header>
+
+    <header class="vx-heading">
+      <div>
+        <span class="vx-eyebrow">{{ 'customer.session.title' | translate }} #{{ d.session.id }}</span>
+        <h1>{{ d.session.stationName || d.session.chargePointName || ('customer.session.title' | translate) }}</h1>
+        <p>{{ d.session.startDate | vxDate:'fullDate' }}</p>
+      </div>
+      <div class="vx-actions no-print">
+        <button type="button" class="vx-btn vx-btn--primary" *ngIf="d.session.invoiceAvailable" (click)="invoice()" [disabled]="downloading">
+          {{ 'customer.session.downloadInvoice' | translate }}</button>
+        <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+      </div>
+    </header>
+
+    <section class="vx-panel">
+      <div class="vx-panel__head">
+        <h2>{{ 'customer.session.details' | translate }}</h2>
+        <span class="vx-badge" [ngClass]="d.session.active ? 'vx-badge--success vx-badge--live' : tone(d.session.status)">
+          {{ (d.session.active ? 'customer.status.charging' : 'customer.status.' + d.session.status) | translate }}</span>
+      </div>
+      <dl class="vx-kv">
+        <div><dt>{{ 'customer.session.station' | translate }}</dt><dd>{{ d.session.stationName || '—' }}<br><small class="muted">{{ d.session.stationAddress }}</small></dd></div>
+        <div><dt>{{ 'customer.session.chargePoint' | translate }}</dt><dd>{{ d.session.chargePointName || '—' }} · {{ d.session.connector }}</dd></div>
+        <div><dt>{{ 'customer.session.started' | translate }}</dt><dd>{{ d.session.startDate | vxDate:'medium' }}</dd></div>
+        <div><dt>{{ 'customer.session.ended' | translate }}</dt><dd>{{ d.session.endDate ? (d.session.endDate | vxDate:'medium') : ('customer.status.charging' | translate) }}</dd></div>
+        <div><dt>{{ 'customer.session.duration' | translate }}</dt><dd class="vx-num">{{ d.session.chargedMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</dd></div>
+        <div><dt>{{ 'customer.session.idle' | translate }}</dt><dd class="vx-num">{{ d.session.idleMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</dd></div>
+        <div><dt>{{ 'customer.session.energy' | translate }}</dt><dd class="vx-num">{{ d.session.chargedKwhs | vxNumber:'1.0-3' }} {{ 'common.units.kwh' | translate }}</dd></div>
+        <div *ngIf="!d.session.active"><dt>{{ 'customer.session.stopReason' | translate }}</dt><dd>{{ ('stopReasons.' + d.session.stoppedReason) | translate }}</dd></div>
+        <div *ngIf="d.cardLast4"><dt>{{ 'customer.session.card' | translate }}</dt><dd class="vx-num">•••• {{ d.cardLast4 }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="vx-panel" *ngIf="!d.session.active">
+      <div class="vx-panel__head"><h2>{{ 'customer.session.breakdown' | translate }}</h2><p>{{ 'customer.session.vatIncluded' | translate }}</p></div>
+      <div class="vx-table-wrap">
+        <table class="vx-table">
+          <thead><tr>
+            <th>{{ 'customer.session.item' | translate }}</th>
+            <th class="num">{{ 'customer.session.quantity' | translate }}</th>
+            <th class="num">{{ 'customer.session.rate' | translate }}</th>
+            <th class="num">{{ 'common.fields.amount' | translate }}</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td>{{ 'customer.session.energyItem' | translate }}</td>
+              <td class="num">{{ d.session.chargedKwhs | vxNumber:'1.0-3' }} {{ 'common.units.kwh' | translate }}</td>
+              <td class="num">{{ d.pricePerKWh != null ? (d.pricePerKWh | vxMoney) + ' ' + ('common.units.perKwh' | translate) : '—' }}</td>
+              <td class="num">{{ d.session.energyAmount | vxMoney }}</td>
+            </tr>
+            <tr>
+              <td>{{ 'customer.session.timeItem' | translate }}</td>
+              <td class="num">{{ d.session.chargedMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</td>
+              <td class="num">{{ d.pricePerMinute != null ? (d.pricePerMinute | vxMoney) + ' ' + ('common.units.perMin' | translate) : '—' }}</td>
+              <td class="num">{{ d.session.timeAmount | vxMoney }}</td>
+            </tr>
+            <tr *ngIf="d.session.flatFeeAmount > 0">
+              <td>{{ 'customer.session.feeItem' | translate }}</td>
+              <td class="num">1</td>
+              <td class="num">{{ d.flatFee | vxMoney }}</td>
+              <td class="num">{{ d.session.flatFeeAmount | vxMoney }}</td>
+            </tr>
+            <tr *ngIf="d.session.idleAmount > 0">
+              <td>{{ 'customer.session.idleItem' | translate }}</td>
+              <td class="num">{{ d.session.idleMinutes | vxNumber:'1.0-0' }} {{ 'common.units.min' | translate }}</td>
+              <td class="num">{{ d.pricePerIdleMinute | vxMoney }} {{ 'common.units.perMin' | translate }}</td>
+              <td class="num">{{ d.session.idleAmount | vxMoney }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="3">{{ 'customer.session.exclVat' | translate }}</td><td class="num">{{ d.totalExclVat | vxMoney }}</td></tr>
+            <tr><td colspan="3">{{ 'customer.session.vat' | translate:{ rate: (d.vatRate * 100 | vxNumber:'1.0-1') } }}</td><td class="num">{{ d.vat | vxMoney }}</td></tr>
+            <tr><td colspan="3">{{ 'customer.session.totalPaid' | translate }}</td><td class="num">{{ d.session.total | vxMoney }}</td></tr>
+          </tfoot>
+        </table>
+      </div>
+      <dl class="vx-kv" style="margin-block-start: 16px" *ngIf="d.balanceBefore != null">
+        <div><dt>{{ 'customer.session.balanceBefore' | translate }}</dt><dd class="vx-num">{{ d.balanceBefore | vxMoney }}</dd></div>
+        <div><dt>{{ 'customer.session.balanceAfter' | translate }}</dt><dd class="vx-num">{{ d.balanceAfter | vxMoney }}</dd></div>
+      </dl>
+    </section>
+  </ng-container>
+</main></div>

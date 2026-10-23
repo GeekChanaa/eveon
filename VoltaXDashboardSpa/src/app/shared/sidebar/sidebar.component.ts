@@ -129,6 +129,11 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     return current === target || current.startsWith(target + '/');
   }
 
+  /** The customer portal has its own menu (customers never see dashboard features). */
+  get customerShell(): boolean {
+    return this.normalize(this.currentUrl).startsWith('/my-dashboard');
+  }
+
   /** Home links have children everywhere, so they only light up on an exact match. */
   isExactActive(link: string): boolean {
     return this.normalize(this.currentUrl) === this.normalize(link);

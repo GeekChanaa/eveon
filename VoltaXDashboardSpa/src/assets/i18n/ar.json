@@ -1,40 +1,303 @@
 {
   "common": {
-    "currency": { "mad": "درهم" },
-    "units": { "kwh": "ك.و.س", "min": "د", "kw": "ك.و", "perKwh": "/ ك.و.س", "perMin": "/ دقيقة" },
+    "currency": {
+      "mad": "درهم"
+    },
+    "units": {
+      "kwh": "ك.و.س",
+      "min": "د",
+      "kw": "ك.و",
+      "perKwh": "/ ك.و.س",
+      "perMin": "/ دقيقة"
+    },
     "actions": {
-      "save": "حفظ", "cancel": "إلغاء", "close": "إغلاق", "edit": "تعديل", "delete": "حذف", "remove": "إزالة",
-      "confirm": "تأكيد", "download": "تحميل", "print": "طباعة", "exportCsv": "تصدير CSV", "exportPdf": "تصدير PDF",
-      "filter": "تصفية", "reset": "إعادة تعيين", "search": "بحث", "back": "رجوع", "next": "التالي", "previous": "السابق",
-      "retry": "إعادة المحاولة", "viewAll": "عرض الكل", "details": "التفاصيل", "apply": "تطبيق", "refresh": "تحديث"
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "close": "إغلاق",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "remove": "إزالة",
+      "confirm": "تأكيد",
+      "download": "تحميل",
+      "print": "طباعة",
+      "exportCsv": "تصدير CSV",
+      "exportPdf": "تصدير PDF",
+      "filter": "تصفية",
+      "reset": "إعادة تعيين",
+      "search": "بحث",
+      "back": "رجوع",
+      "next": "التالي",
+      "previous": "السابق",
+      "retry": "إعادة المحاولة",
+      "viewAll": "عرض الكل",
+      "details": "التفاصيل",
+      "apply": "تطبيق",
+      "refresh": "تحديث"
     },
     "state": {
-      "loading": "جارٍ التحميل…", "empty": "لا يوجد ما يُعرض حاليًا.", "error": "حدث خطأ. يرجى المحاولة مرة أخرى.",
-      "saved": "تم الحفظ", "yes": "نعم", "no": "لا", "all": "الكل", "none": "لا شيء"
+      "loading": "جارٍ التحميل…",
+      "empty": "لا يوجد ما يُعرض حاليًا.",
+      "error": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+      "saved": "تم الحفظ",
+      "yes": "نعم",
+      "no": "لا",
+      "all": "الكل",
+      "none": "لا شيء"
     },
-    "fields": { "from": "من", "to": "إلى", "status": "الحالة", "date": "التاريخ", "amount": "المبلغ", "total": "المجموع", "search": "بحث" },
-    "pager": { "page": "الصفحة {{page}} من {{pages}}", "results": "{{total}} نتيجة" }
+    "fields": {
+      "from": "من",
+      "to": "إلى",
+      "status": "الحالة",
+      "date": "التاريخ",
+      "amount": "المبلغ",
+      "total": "المجموع",
+      "search": "بحث"
+    },
+    "pager": {
+      "page": "الصفحة {{page}} من {{pages}}",
+      "results": "{{total}} نتيجة"
+    }
   },
   "nav": {
-    "home": "الرئيسية", "operationMonitoring": "المراقبة التشغيلية", "connectorRealtime": "الموصلات في الوقت الفعلي", "statistics": "الإحصائيات",
-    "stationManagement": "إدارة المحطات", "chargingStations": "محطات الشحن", "chargePoints": "نقاط الشحن",
-    "businessManagement": "الإدارة التجارية", "chargingCards": "بطاقات الشحن", "appManagement": "إدارة التطبيق",
-    "notices": "الإعلانات", "reports": "البلاغات", "dataRequests": "طلبات تنزيل البيانات", "orderManagement": "إدارة الطلبات",
-    "chargingSessions": "جلسات الشحن", "transactions": "المعاملات", "rechargeOrders": "عمليات التعبئة",
-    "maintenance": "الصيانة", "globalConfigurations": "الإعدادات العامة", "systemReports": "تقارير النظام",
-    "ocppOperation": "تشغيل OCPP", "chargerEvents": "أحداث الشواحن", "chargePointConfigurations": "إعدادات نقاط الشحن",
-    "defaultConfiguration": "الإعدادات الافتراضية", "localList": "القائمة المحلية", "account": "الحسابات", "users": "المستخدمون",
-    "partners": "الشركاء", "roles": "الأدوار والصلاحيات", "auditLog": "سجل التدقيق", "roaming": "التجوال (OCPI)", "pki": "شهادات الشواحن",
-    "security": "الأمان", "help": "المساعدة والتوثيق", "expand": "توسيع القائمة", "collapse": "طي القائمة"
+    "home": "الرئيسية",
+    "operationMonitoring": "المراقبة التشغيلية",
+    "connectorRealtime": "الموصلات في الوقت الفعلي",
+    "statistics": "الإحصائيات",
+    "stationManagement": "إدارة المحطات",
+    "chargingStations": "محطات الشحن",
+    "chargePoints": "نقاط الشحن",
+    "businessManagement": "الإدارة التجارية",
+    "chargingCards": "بطاقات الشحن",
+    "appManagement": "إدارة التطبيق",
+    "notices": "الإعلانات",
+    "reports": "البلاغات",
+    "dataRequests": "طلبات تنزيل البيانات",
+    "orderManagement": "إدارة الطلبات",
+    "chargingSessions": "جلسات الشحن",
+    "transactions": "المعاملات",
+    "rechargeOrders": "عمليات التعبئة",
+    "maintenance": "الصيانة",
+    "globalConfigurations": "الإعدادات العامة",
+    "systemReports": "تقارير النظام",
+    "ocppOperation": "تشغيل OCPP",
+    "chargerEvents": "أحداث الشواحن",
+    "chargePointConfigurations": "إعدادات نقاط الشحن",
+    "defaultConfiguration": "الإعدادات الافتراضية",
+    "localList": "القائمة المحلية",
+    "account": "الحسابات",
+    "users": "المستخدمون",
+    "partners": "الشركاء",
+    "roles": "الأدوار والصلاحيات",
+    "auditLog": "سجل التدقيق",
+    "roaming": "التجوال (OCPI)",
+    "pki": "شهادات الشواحن",
+    "security": "الأمان",
+    "help": "المساعدة والتوثيق",
+    "expand": "توسيع القائمة",
+    "collapse": "طي القائمة",
+    "myCharging": "شحناتي",
+    "myCards": "بطاقاتي",
+    "payments": "المدفوعات",
+    "wallet": "المحفظة والتعبئة",
+    "paymentMethods": "وسائل الدفع"
   },
   "header": {
-    "openMenu": "فتح القائمة", "language": "اللغة", "accountMenu": "فتح قائمة الحساب", "profilePhoto": "صورة ملفك الشخصي",
-    "signedInAs": "تم تسجيل الدخول باسم", "myProfile": "ملفي الشخصي", "manageUsers": "إدارة المستخدمين والصلاحيات", "signOut": "تسجيل الخروج"
+    "openMenu": "فتح القائمة",
+    "language": "اللغة",
+    "accountMenu": "فتح قائمة الحساب",
+    "profilePhoto": "صورة ملفك الشخصي",
+    "signedInAs": "تم تسجيل الدخول باسم",
+    "myProfile": "ملفي الشخصي",
+    "manageUsers": "إدارة المستخدمين والصلاحيات",
+    "signOut": "تسجيل الخروج"
   },
-  "theme": { "light": "فاتح", "dark": "داكن" },
-  "roles": { "Admin": "مسؤول", "Customer": "عميل", "PremiumCustomer": "عميل مميز", "Support": "الدعم", "Partner": "شريك", "undefined": "" },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن"
+  },
+  "roles": {
+    "Admin": "مسؤول",
+    "Customer": "عميل",
+    "PremiumCustomer": "عميل مميز",
+    "Support": "الدعم",
+    "Partner": "شريك",
+    "undefined": ""
+  },
   "errors": {
-    "notFound": { "title": "الصفحة غير موجودة", "text": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها." },
-    "accessDenied": { "title": "وصول مقيّد", "text": "دورك لا يمنحك الوصول إلى هذه الصفحة. اطلب الوصول من المسؤول إذا لزم الأمر.", "home": "العودة إلى الرئيسية" }
+    "notFound": {
+      "title": "الصفحة غير موجودة",
+      "text": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها."
+    },
+    "accessDenied": {
+      "title": "وصول مقيّد",
+      "text": "دورك لا يمنحك الوصول إلى هذه الصفحة. اطلب الوصول من المسؤول إذا لزم الأمر.",
+      "home": "العودة إلى الرئيسية"
+    }
+  },
+  "customer": {
+    "eyebrow": "حسابي في EVEON",
+    "actions": {
+      "topUp": "تعبئة الرصيد",
+      "sessions": "جلساتي"
+    },
+    "overview": {
+      "title": "حسابي",
+      "hello": "مرحبًا {{name}}",
+      "subtitle": "شحناتك ومحفظتك وفواتيرك في مكان واحد.",
+      "balance": "رصيد المحفظة",
+      "cards": "{{count}} بطاقة شحن",
+      "sessionsMonth": "جلسات هذا الشهر",
+      "allTime": "{{value}} في المجموع",
+      "energyMonth": "الطاقة هذا الشهر",
+      "spentMonth": "المصروف هذا الشهر",
+      "liveTitle": "شحن جارٍ",
+      "liveHint": "يُحدَّث كل 30 ثانية. يُفوتَر المبلغ النهائي عند انتهاء الجلسة.",
+      "recent": "آخر الجلسات"
+    },
+    "status": {
+      "charging": "قيد الشحن",
+      "Completed": "مكتملة",
+      "CompletedOccupied": "مكتملة (ما زالت موصولة)",
+      "Pending": "جارية",
+      "NotStarted": "لم تبدأ"
+    },
+    "session": {
+      "title": "جلسة شحن",
+      "notFound": "هذه الجلسة غير موجودة أو لا تخصك.",
+      "downloadInvoice": "تحميل الفاتورة",
+      "details": "التفاصيل",
+      "station": "المحطة",
+      "chargePoint": "نقطة الشحن",
+      "started": "البداية",
+      "ended": "النهاية",
+      "duration": "مدة الشحن",
+      "idle": "مدة الانتظار",
+      "energy": "الطاقة",
+      "stopReason": "سبب التوقف",
+      "card": "البطاقة",
+      "costSoFar": "التكلفة حتى الآن",
+      "breakdown": "ما دفعته",
+      "vatIncluded": "المبالغ شاملة للضريبة.",
+      "item": "البند",
+      "quantity": "الكمية",
+      "rate": "السعر",
+      "energyItem": "الطاقة المُسلَّمة",
+      "timeItem": "مدة الشحن",
+      "feeItem": "رسوم الجلسة",
+      "idleItem": "الانتظار بعد الشحن",
+      "exclVat": "المجموع دون ضريبة",
+      "vat": "الضريبة على القيمة المضافة ({{rate}} %)",
+      "totalPaid": "المبلغ المدفوع",
+      "balanceBefore": "الرصيد قبل",
+      "balanceAfter": "الرصيد بعد"
+    },
+    "sessions": {
+      "title": "جلسات الشحن",
+      "subtitle": "كل جلساتك مع الطاقة والتكلفة. صفِّها أو صدِّرها أو اطبعها.",
+      "searchPlaceholder": "المحطة أو نقطة الشحن",
+      "pageTotal": "مجموع هذه الصفحة",
+      "empty": "لا توجد جلسة شحن بعد."
+    },
+    "wallet": {
+      "title": "المحفظة",
+      "subtitle": "عبِّئ بطاقة الشحن عبر الإنترنت وتابع كل حركة في رصيدك.",
+      "returnPaid": "تم استلام الدفع: أُضيف {{amount}} إلى محفظتك.",
+      "returnPending": "في انتظار تأكيد البنك…",
+      "returnCanceled": "تم إلغاء الدفع. لم يُقتطع أي مبلغ.",
+      "returnFailed": "لم تتم عملية الدفع. لم يُقتطع أي مبلغ.",
+      "topUpTitle": "تعبئة الرصيد",
+      "topUpHint": "اختر مبلغًا؛ ستدفع على الصفحة الآمنة لمزوّد الدفع.",
+      "unavailable": "التعبئة عبر الإنترنت غير متاحة بعد. يرجى التواصل مع الدعم لتعبئة محفظتك.",
+      "sandbox": "وضع تجريبي: لا يتم أي دفع حقيقي.",
+      "otherAmount": "مبلغ آخر",
+      "amountRange": "أدخل مبلغًا بين {{min}} و{{max}}.",
+      "amountDecimals": "رقمان عشريان كحد أقصى.",
+      "card": "بطاقة الشحن",
+      "noUsableCard": "لا يمكن تعبئة أي من بطاقاتك (موقوفة أو منتهية الصلاحية). يرجى التواصل مع الدعم.",
+      "pay": "ادفع {{amount}}",
+      "redirecting": "جارٍ التحويل إلى صفحة الدفع…",
+      "secureNote": "تُدخَل بيانات بطاقتك على الصفحة الآمنة لمزوّد الدفع؛ لا يطّلع EVEON على رقم بطاقتك أبدًا.",
+      "topUps": "عمليات التعبئة",
+      "invoice": "الفاتورة",
+      "noTopUps": "لا توجد عملية تعبئة بعد.",
+      "movements": "حركات الرصيد",
+      "movementsHint": "كل إيداع وخصم على بطاقات الشحن الخاصة بك.",
+      "operation": "العملية",
+      "balanceAfter": "الرصيد بعد",
+      "noMovements": "لا توجد حركة بعد."
+    },
+    "methods": {
+      "subtitle": "بطاقات محفوظة لدى مزوّد الدفع لتعبئة أسرع.",
+      "add": "إضافة بطاقة",
+      "added": "تم حفظ بطاقتك.",
+      "canceled": "تم إلغاء إضافة البطاقة.",
+      "notSupported": "حفظ البطاقات غير متاح مع مزوّد الدفع الحالي: تُدخل بطاقتك في كل عملية دفع.",
+      "card": "البطاقة",
+      "expires": "تاريخ الانتهاء",
+      "genericCard": "بطاقة",
+      "expired": "منتهية",
+      "default": "افتراضية",
+      "makeDefault": "جعلها افتراضية",
+      "empty": "لا توجد بطاقة محفوظة.",
+      "confirmRemove": "إزالة البطاقة المنتهية بـ {{last4}}؟"
+    },
+    "cards": {
+      "subtitle": "بطاقات الشحن RFID الخاصة بك ورصيدها.",
+      "number": "البطاقة",
+      "expires": "صالحة حتى",
+      "state": {
+        "Active": "نشطة",
+        "Blocked": "موقوفة",
+        "Expired": "منتهية الصلاحية"
+      },
+      "empty": "لا توجد بطاقة شحن.",
+      "lostCard": "بطاقة ضائعة أو مسروقة؟ تواصل فورًا مع الدعم لإيقافها."
+    },
+    "profile": {
+      "subtitle": "معلوماتك الشخصية.",
+      "memberSince": "عضو منذ {{date}}",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "birthday": "تاريخ الميلاد",
+      "verified": "موثَّق",
+      "notVerified": "غير موثَّق",
+      "readOnly": "لتغيير هذه المعلومات، تواصل مع دعم EVEON."
+    }
+  },
+  "stopReasons": {
+    "DeAuthorized": "رفض البطاقة",
+    "EmergencyStop": "توقف طارئ",
+    "EnergyLimitReached": "بلوغ حد الطاقة",
+    "EVDisconnected": "فصل السيارة",
+    "GroundFault": "عطل أرضي",
+    "ImmediateReset": "إعادة تشغيل الشاحن",
+    "Local": "إيقاف من الشاحن",
+    "LocalOutOfCredit": "نفاد الرصيد",
+    "MasterPass": "بطاقة المشغّل",
+    "Other": "سبب آخر",
+    "OvercurrentFault": "تيار زائد",
+    "PowerLoss": "انقطاع الكهرباء",
+    "PowerQuality": "جودة الشبكة",
+    "Reboot": "إعادة تشغيل الشاحن",
+    "Remote": "إيقاف عن بُعد",
+    "SOCLimitReached": "بلوغ مستوى البطارية",
+    "StoppedByEV": "إيقاف من السيارة",
+    "TimeLimitReached": "بلوغ الحد الزمني",
+    "Timeout": "انتهاء المهلة"
+  },
+  "orderStatus": {
+    "Pending": "قيد الانتظار",
+    "Processing": "قيد المعالجة",
+    "Completed": "مدفوع",
+    "Failed": "فشل",
+    "Canceled": "ملغى",
+    "Refunded": "مسترد"
+  },
+  "walletType": {
+    "TopUp": "تعبئة",
+    "SessionCharge": "جلسة شحن",
+    "IdleFee": "رسوم الانتظار",
+    "Refund": "استرداد",
+    "Adjustment": "تسوية"
   }
 }

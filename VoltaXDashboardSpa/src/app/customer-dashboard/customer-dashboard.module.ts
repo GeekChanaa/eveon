@@ -1,36 +1,29 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import { AtomsModule } from '../atoms/atoms.module';
 import { SharedModule } from '../shared/shared.module';
-import { CommonModule } from '@angular/common';
+import { PortalUiModule } from '../shared/portal-ui/portal-ui.module';
 import { CustomerDashboardRoutingModule } from './customer-dashboard-routing.module';
-import { CustomerHomeComponent } from './customer-home/customer-home.component';
-import { SlickCarouselModule } from 'ngx-slick-carousel';
-import { MatRippleModule } from '@angular/material/core';
-import {MatTabsModule} from '@angular/material/tabs'; 
-import { CustomerHomeEmailVerificationComponent } from './customer-home/customer-home-email-verification/customer-home-email-verification.component';
-import { CustomerHomePhoneVerificationComponent } from './customer-home/customer-home-phone-verification/customer-home-phone-verification.component';
-import { CustomerHomeAdditionalInformationsComponent } from './customer-home/customer-home-additional-informations/customer-home-additional-informations.component';
+import { CustomerOverviewComponent } from './portal/customer-overview.component';
+import { CustomerSessionsComponent } from './portal/customer-sessions.component';
+import { CustomerSessionDetailComponent } from './portal/customer-session-detail.component';
+import { CustomerWalletComponent } from './portal/customer-wallet.component';
+import { CustomerPaymentMethodsComponent } from './portal/customer-payment-methods.component';
+import { CustomerCardsComponent, CustomerProfileComponent } from './portal/customer-account.component';
+
+/** The customer portal: the signed-in customer's own data, read only, plus paying online. */
 @NgModule({
-    declarations: [
-        CustomerHomeComponent,
-        CustomerHomeEmailVerificationComponent,
-        CustomerHomePhoneVerificationComponent, 
-        CustomerHomeAdditionalInformationsComponent
-    ],
-    imports: [
-        AtomsModule,
-        NgApexchartsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        SharedModule,
-        FormsModule,
-        CustomerDashboardRoutingModule,
-        SlickCarouselModule,
-        MatRippleModule,
-        MatTabsModule
-    ],
-  })
-  export class CustomerDashboardModule { }
-  
+  declarations: [
+    CustomerOverviewComponent,
+    CustomerSessionsComponent,
+    CustomerSessionDetailComponent,
+    CustomerWalletComponent,
+    CustomerPaymentMethodsComponent,
+    CustomerCardsComponent,
+    CustomerProfileComponent
+  ],
+  imports: [
+    SharedModule,
+    PortalUiModule,
+    CustomerDashboardRoutingModule
+  ]
+})
+export class CustomerDashboardModule { }

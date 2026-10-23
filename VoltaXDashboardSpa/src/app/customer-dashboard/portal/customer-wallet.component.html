@@ -1,0 +1,121 @@
+<div class="page__inner"><main class="page__container">
+  <vx-print-header [title]="'customer.wallet.title' | translate"></vx-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'customer.eyebrow' | translate }}</span>
+      <h1>{{ 'customer.wallet.title' | translate }}</h1>
+      <p>{{ 'customer.wallet.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <a class="vx-btn" routerLink="/my-dashboard/payment-methods">{{ 'nav.paymentMethods' | translate }}</a>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div *ngIf="returned as r" class="vx-alert no-print" role="status"
+    [ngClass]="r.status === 'Completed' ? 'vx-alert--success' : (r.status === 'Pending' || r.status === 'Processing') ? '' : 'vx-alert--error'">
+    <div style="flex: 1">
+      <strong *ngIf="r.status === 'Completed'">{{ 'customer.wallet.returnPaid' | translate:{ amount: (r.amount | vxMoney) } }}</strong>
+      <strong *ngIf="r.status === 'Pending' || r.status === 'Processing'">{{ (returnedCanceled ? 'customer.wallet.returnCanceled' : 'customer.wallet.returnPending') | translate }}</strong>
+      <strong *ngIf="r.status === 'Failed' || r.status === 'Canceled'">{{ 'customer.wallet.returnFailed' | translate }}</strong>
+      <div *ngIf="r.failureReason" class="muted">{{ r.failureReason }}</div>
+    </div>
+    <button type="button" class="vx-btn vx-btn--small" (click)="dismissReturn()">{{ 'common.actions.close' | translate }}</button>
+  </div>
+
+  <div class="vx-split">
+    <section class="vx-panel">
+      <div class="vx-panel__head"><div><h2>{{ 'customer.wallet.topUpTitle' | translate }}</h2><p>{{ 'customer.wallet.topUpHint' | translate }}</p></div></div>
+
+      <div class="vx-alert" *ngIf="config && !config.enabled">{{ 'customer.wallet.unavailable' | translate }}</div>
+      <div class="vx-alert" *ngIf="config?.provider === 'Sandbox'">{{ 'customer.wallet.sandbox' | translate }}</div>
+
+      <form *ngIf="config?.enabled" (ngSubmit)="topUp()" class="no-print">
+        <div class="vx-field" style="margin-block-end: 14px">
+          <label>{{ 'common.fields.amount' | translate }}</label>
+          <div class="vx-chips" role="group">
+            <button type="button" class="vx-chip" *ngFor="let preset of presets" [class.active]="amount === preset" (click)="amount = preset">
+              <span class="vx-num">{{ preset | vxMoney }}</span></button>
+          </div>
+        </div>
+        <div class="vx-filters">
+          <div class="vx-field">
+            <label for="amount">{{ 'customer.wallet.otherAmount' | translate }}</label>
+            <input id="amount" type="number" name="amount" [(ngModel)]="amount" [min]="config!.minTopUp" [max]="config!.maxTopUp" step="0.01" required>
+            <span class="vx-field__error" *ngIf="amountError">{{ amountError | translate:{ min: (config!.minTopUp | vxMoney), max: (config!.maxTopUp | vxMoney) } }}</span>
+          </div>
+          <div class="vx-field" *ngIf="usableCards.length > 1">
+            <label for="card">{{ 'customer.wallet.card' | translate }}</label>
+            <select id="card" name="card" [(ngModel)]="cardId">
+              <option *ngFor="let c of usableCards" [ngValue]="c.id">{{ c.maskedNumber }} · {{ c.balance | vxMoney }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="vx-alert vx-alert--error" *ngIf="startError" role="alert">{{ startError | translate }}</div>
+        <div class="vx-alert vx-alert--error" *ngIf="!usableCards.length && cards.length">{{ 'customer.wallet.noUsableCard' | translate }}</div>
+        <button type="submit" class="vx-btn vx-btn--primary" [disabled]="starting || !amount || !!amountError || !usableCards.length">
+          {{ (starting ? 'customer.wallet.redirecting' : 'customer.wallet.pay') | translate:{ amount: (amount ?? 0 | vxMoney) } }}</button>
+        <p class="muted" style="margin-block-start: 10px; font-size: 12px">{{ 'customer.wallet.secureNote' | translate }}</p>
+      </form>
+    </section>
+
+    <section class="vx-stat vx-stat--brand" style="align-self: start">
+      <div class="vx-stat__label">{{ 'customer.overview.balance' | translate }}</div>
+      <div class="vx-stat__value vx-num">{{ balance | vxMoney }}</div>
+      <div class="vx-stat__hint" *ngFor="let c of cards"><span class="vx-num">{{ c.maskedNumber }}</span> · {{ c.balance | vxMoney }}</div>
+    </section>
+  </div>
+
+  <section class="vx-panel">
+    <div class="vx-panel__head"><h2>{{ 'customer.wallet.topUps' | translate }}</h2></div>
+    <div class="vx-table-wrap" *ngIf="orders?.items?.length; else noOrders">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'common.fields.date' | translate }}</th>
+          <th class="num">{{ 'common.fields.amount' | translate }}</th>
+          <th>{{ 'customer.wallet.card' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let o of orders!.items">
+            <td>{{ o.createdAt | vxDate:'short' }}</td>
+            <td class="num">{{ o.amount | vxMoney }}</td>
+            <td class="vx-num">•••• {{ o.cardLast4 }}</td>
+            <td><span class="vx-badge" [ngClass]="tone(o.status)">{{ ('orderStatus.' + o.status) | translate }}</span></td>
+            <td class="num no-print"><button type="button" class="vx-btn vx-btn--small" *ngIf="o.invoiceAvailable" (click)="invoice(o)">{{ 'customer.wallet.invoice' | translate }}</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noOrders><p class="vx-empty">{{ 'customer.wallet.noTopUps' | translate }}</p></ng-template>
+    <vx-pager *ngIf="orders" [page]="orders.page" [pageSize]="orders.pageSize" [total]="orders.total" (pageChange)="loadOrders($event)"></vx-pager>
+  </section>
+
+  <section class="vx-panel">
+    <div class="vx-panel__head"><div><h2>{{ 'customer.wallet.movements' | translate }}</h2><p>{{ 'customer.wallet.movementsHint' | translate }}</p></div></div>
+    <div class="vx-table-wrap" *ngIf="movements?.items?.length; else noMovements">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'common.fields.date' | translate }}</th>
+          <th>{{ 'customer.wallet.operation' | translate }}</th>
+          <th class="num">{{ 'common.fields.amount' | translate }}</th>
+          <th class="num">{{ 'customer.wallet.balanceAfter' | translate }}</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let m of movements!.items">
+            <td>{{ m.createdAt | vxDate:'short' }}</td>
+            <td>{{ ('walletType.' + m.type) | translate }}
+              <a *ngIf="m.chargingSessionId" class="muted no-print" [routerLink]="['/my-dashboard/sessions', m.chargingSessionId]"> #{{ m.chargingSessionId }}</a>
+            </td>
+            <td class="num" [style.color]="m.amount < 0 ? null : 'var(--vx-brand-ink)'">{{ m.amount > 0 ? '+' : '' }}{{ m.amount | vxMoney }}</td>
+            <td class="num">{{ m.balanceAfter | vxMoney }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noMovements><p class="vx-empty">{{ 'customer.wallet.noMovements' | translate }}</p></ng-template>
+    <vx-pager *ngIf="movements" [page]="movements.page" [pageSize]="movements.pageSize" [total]="movements.total" (pageChange)="loadMovements($event)"></vx-pager>
+  </section>
+</main></div>

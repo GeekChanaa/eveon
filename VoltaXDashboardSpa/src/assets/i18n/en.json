@@ -1,40 +1,303 @@
 {
   "common": {
-    "currency": { "mad": "MAD" },
-    "units": { "kwh": "kWh", "min": "min", "kw": "kW", "perKwh": "/ kWh", "perMin": "/ min" },
+    "currency": {
+      "mad": "MAD"
+    },
+    "units": {
+      "kwh": "kWh",
+      "min": "min",
+      "kw": "kW",
+      "perKwh": "/ kWh",
+      "perMin": "/ min"
+    },
     "actions": {
-      "save": "Save", "cancel": "Cancel", "close": "Close", "edit": "Edit", "delete": "Delete", "remove": "Remove",
-      "confirm": "Confirm", "download": "Download", "print": "Print", "exportCsv": "Export CSV", "exportPdf": "Export PDF",
-      "filter": "Filter", "reset": "Reset", "search": "Search", "back": "Back", "next": "Next", "previous": "Previous",
-      "retry": "Try again", "viewAll": "View all", "details": "Details", "apply": "Apply", "refresh": "Refresh"
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "edit": "Edit",
+      "delete": "Delete",
+      "remove": "Remove",
+      "confirm": "Confirm",
+      "download": "Download",
+      "print": "Print",
+      "exportCsv": "Export CSV",
+      "exportPdf": "Export PDF",
+      "filter": "Filter",
+      "reset": "Reset",
+      "search": "Search",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "retry": "Try again",
+      "viewAll": "View all",
+      "details": "Details",
+      "apply": "Apply",
+      "refresh": "Refresh"
     },
     "state": {
-      "loading": "Loading…", "empty": "Nothing to show yet.", "error": "Something went wrong. Please try again.",
-      "saved": "Saved", "yes": "Yes", "no": "No", "all": "All", "none": "None"
+      "loading": "Loading…",
+      "empty": "Nothing to show yet.",
+      "error": "Something went wrong. Please try again.",
+      "saved": "Saved",
+      "yes": "Yes",
+      "no": "No",
+      "all": "All",
+      "none": "None"
     },
-    "fields": { "from": "From", "to": "To", "status": "Status", "date": "Date", "amount": "Amount", "total": "Total", "search": "Search" },
-    "pager": { "page": "Page {{page}} of {{pages}}", "results": "{{total}} results" }
+    "fields": {
+      "from": "From",
+      "to": "To",
+      "status": "Status",
+      "date": "Date",
+      "amount": "Amount",
+      "total": "Total",
+      "search": "Search"
+    },
+    "pager": {
+      "page": "Page {{page}} of {{pages}}",
+      "results": "{{total}} results"
+    }
   },
   "nav": {
-    "home": "Home", "operationMonitoring": "Operation monitoring", "connectorRealtime": "Connector real-time", "statistics": "Statistics",
-    "stationManagement": "Station management", "chargingStations": "Charging stations", "chargePoints": "Charge points",
-    "businessManagement": "Business management", "chargingCards": "Charging cards", "appManagement": "App management",
-    "notices": "Notices", "reports": "Reports", "dataRequests": "Data download requests", "orderManagement": "Order management",
-    "chargingSessions": "Charging sessions", "transactions": "Transactions", "rechargeOrders": "Recharge orders",
-    "maintenance": "Maintenance", "globalConfigurations": "Global configurations", "systemReports": "System reports",
-    "ocppOperation": "OCPP operation", "chargerEvents": "Charger events", "chargePointConfigurations": "Charge point configurations",
-    "defaultConfiguration": "Default configuration", "localList": "Local list", "account": "Account", "users": "Users",
-    "partners": "Partners", "roles": "Roles & permissions", "auditLog": "Audit log", "roaming": "Roaming (OCPI)", "pki": "Charger PKI",
-    "security": "Security", "help": "Help & documentation", "expand": "Expand sidebar", "collapse": "Collapse sidebar"
+    "home": "Home",
+    "operationMonitoring": "Operation monitoring",
+    "connectorRealtime": "Connector real-time",
+    "statistics": "Statistics",
+    "stationManagement": "Station management",
+    "chargingStations": "Charging stations",
+    "chargePoints": "Charge points",
+    "businessManagement": "Business management",
+    "chargingCards": "Charging cards",
+    "appManagement": "App management",
+    "notices": "Notices",
+    "reports": "Reports",
+    "dataRequests": "Data download requests",
+    "orderManagement": "Order management",
+    "chargingSessions": "Charging sessions",
+    "transactions": "Transactions",
+    "rechargeOrders": "Recharge orders",
+    "maintenance": "Maintenance",
+    "globalConfigurations": "Global configurations",
+    "systemReports": "System reports",
+    "ocppOperation": "OCPP operation",
+    "chargerEvents": "Charger events",
+    "chargePointConfigurations": "Charge point configurations",
+    "defaultConfiguration": "Default configuration",
+    "localList": "Local list",
+    "account": "Account",
+    "users": "Users",
+    "partners": "Partners",
+    "roles": "Roles & permissions",
+    "auditLog": "Audit log",
+    "roaming": "Roaming (OCPI)",
+    "pki": "Charger PKI",
+    "security": "Security",
+    "help": "Help & documentation",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "myCharging": "My charging",
+    "myCards": "My cards",
+    "payments": "Payments",
+    "wallet": "Wallet & top-up",
+    "paymentMethods": "Payment methods"
   },
   "header": {
-    "openMenu": "Open menu", "language": "Language", "accountMenu": "Open account menu", "profilePhoto": "Your profile photo",
-    "signedInAs": "Signed in as", "myProfile": "My profile", "manageUsers": "Manage users & access", "signOut": "Sign out"
+    "openMenu": "Open menu",
+    "language": "Language",
+    "accountMenu": "Open account menu",
+    "profilePhoto": "Your profile photo",
+    "signedInAs": "Signed in as",
+    "myProfile": "My profile",
+    "manageUsers": "Manage users & access",
+    "signOut": "Sign out"
   },
-  "theme": { "light": "Light", "dark": "Dark" },
-  "roles": { "Admin": "Administrator", "Customer": "Customer", "PremiumCustomer": "Premium customer", "Support": "Support", "Partner": "Partner", "undefined": "" },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "roles": {
+    "Admin": "Administrator",
+    "Customer": "Customer",
+    "PremiumCustomer": "Premium customer",
+    "Support": "Support",
+    "Partner": "Partner",
+    "undefined": ""
+  },
   "errors": {
-    "notFound": { "title": "Page not found", "text": "The page you are looking for does not exist or has moved." },
-    "accessDenied": { "title": "Access restricted", "text": "Your role does not grant access to this page. Ask an administrator if you need access.", "home": "Return home" }
+    "notFound": {
+      "title": "Page not found",
+      "text": "The page you are looking for does not exist or has moved."
+    },
+    "accessDenied": {
+      "title": "Access restricted",
+      "text": "Your role does not grant access to this page. Ask an administrator if you need access.",
+      "home": "Return home"
+    }
+  },
+  "customer": {
+    "eyebrow": "My EVEON",
+    "actions": {
+      "topUp": "Top up",
+      "sessions": "My sessions"
+    },
+    "overview": {
+      "title": "My account",
+      "hello": "Hello {{name}}",
+      "subtitle": "Your charging, your wallet and your invoices in one place.",
+      "balance": "Wallet balance",
+      "cards": "{{count}} charging card(s)",
+      "sessionsMonth": "Sessions this month",
+      "allTime": "{{value}} in total",
+      "energyMonth": "Energy this month",
+      "spentMonth": "Spent this month",
+      "liveTitle": "Charging now",
+      "liveHint": "Updated every 30 seconds. The final amount is billed when the session ends.",
+      "recent": "Latest sessions"
+    },
+    "status": {
+      "charging": "Charging",
+      "Completed": "Completed",
+      "CompletedOccupied": "Completed (still plugged in)",
+      "Pending": "In progress",
+      "NotStarted": "Not started"
+    },
+    "session": {
+      "title": "Charging session",
+      "notFound": "This session does not exist or is not yours.",
+      "downloadInvoice": "Download invoice",
+      "details": "Details",
+      "station": "Station",
+      "chargePoint": "Charge point",
+      "started": "Started",
+      "ended": "Ended",
+      "duration": "Charging time",
+      "idle": "Idle time",
+      "energy": "Energy",
+      "stopReason": "Stopped by",
+      "card": "Card",
+      "costSoFar": "Cost so far",
+      "breakdown": "What you paid",
+      "vatIncluded": "Amounts include VAT.",
+      "item": "Item",
+      "quantity": "Quantity",
+      "rate": "Rate",
+      "energyItem": "Energy delivered",
+      "timeItem": "Charging time",
+      "feeItem": "Session fee",
+      "idleItem": "Idle time after charging",
+      "exclVat": "Total excluding VAT",
+      "vat": "VAT ({{rate}} %)",
+      "totalPaid": "Total paid",
+      "balanceBefore": "Balance before",
+      "balanceAfter": "Balance after"
+    },
+    "sessions": {
+      "title": "Charging sessions",
+      "subtitle": "Every session with its energy and cost. Filter, export or print them.",
+      "searchPlaceholder": "Station or charge point",
+      "pageTotal": "Total on this page",
+      "empty": "No charging session yet."
+    },
+    "wallet": {
+      "title": "Wallet",
+      "subtitle": "Top up your charging card online and follow every movement of your balance.",
+      "returnPaid": "Payment received: {{amount}} were added to your wallet.",
+      "returnPending": "Waiting for the bank's confirmation…",
+      "returnCanceled": "The payment was canceled. Nothing was charged.",
+      "returnFailed": "The payment did not go through. Nothing was charged.",
+      "topUpTitle": "Top up",
+      "topUpHint": "Choose an amount; you will pay on the secure page of our payment provider.",
+      "unavailable": "Online top-up is not available yet. Please contact support to top up your wallet.",
+      "sandbox": "Test mode: no real payment is made.",
+      "otherAmount": "Other amount",
+      "amountRange": "Enter an amount between {{min}} and {{max}}.",
+      "amountDecimals": "Use at most two decimals.",
+      "card": "Charging card",
+      "noUsableCard": "None of your charging cards can be topped up (blocked or expired). Please contact support.",
+      "pay": "Pay {{amount}}",
+      "redirecting": "Redirecting to the payment page…",
+      "secureNote": "Your card details are entered on the payment provider's secure page; EVEON never sees your card number.",
+      "topUps": "Top-ups",
+      "invoice": "Invoice",
+      "noTopUps": "No top-up yet.",
+      "movements": "Balance movements",
+      "movementsHint": "Every credit and debit of your charging cards.",
+      "operation": "Operation",
+      "balanceAfter": "Balance after",
+      "noMovements": "No movement yet."
+    },
+    "methods": {
+      "subtitle": "Cards saved with our payment provider for faster top-ups.",
+      "add": "Add a card",
+      "added": "Your card was saved.",
+      "canceled": "Adding the card was canceled.",
+      "notSupported": "Saving cards is not available with the current payment provider: you enter your card on each payment.",
+      "card": "Card",
+      "expires": "Expires",
+      "genericCard": "Card",
+      "expired": "Expired",
+      "default": "Default",
+      "makeDefault": "Make default",
+      "empty": "No saved card.",
+      "confirmRemove": "Remove the card ending in {{last4}}?"
+    },
+    "cards": {
+      "subtitle": "Your RFID charging cards and their balance.",
+      "number": "Card",
+      "expires": "Valid until",
+      "state": {
+        "Active": "Active",
+        "Blocked": "Blocked",
+        "Expired": "Expired"
+      },
+      "empty": "No charging card.",
+      "lostCard": "Lost or stolen card? Contact support right away so we can block it."
+    },
+    "profile": {
+      "subtitle": "Your personal details.",
+      "memberSince": "Member since {{date}}",
+      "email": "Email",
+      "phone": "Phone",
+      "birthday": "Date of birth",
+      "verified": "Verified",
+      "notVerified": "Not verified",
+      "readOnly": "To change these details, contact EVEON support."
+    }
+  },
+  "stopReasons": {
+    "DeAuthorized": "Card refused",
+    "EmergencyStop": "Emergency stop",
+    "EnergyLimitReached": "Energy limit reached",
+    "EVDisconnected": "Car unplugged",
+    "GroundFault": "Ground fault",
+    "ImmediateReset": "Charger restart",
+    "Local": "Stopped at the charger",
+    "LocalOutOfCredit": "Out of credit",
+    "MasterPass": "Operator card",
+    "Other": "Other",
+    "OvercurrentFault": "Overcurrent",
+    "PowerLoss": "Power cut",
+    "PowerQuality": "Power quality",
+    "Reboot": "Charger reboot",
+    "Remote": "Stopped remotely",
+    "SOCLimitReached": "Battery level reached",
+    "StoppedByEV": "Stopped by the car",
+    "TimeLimitReached": "Time limit reached",
+    "Timeout": "Timeout"
+  },
+  "orderStatus": {
+    "Pending": "Pending",
+    "Processing": "Processing",
+    "Completed": "Paid",
+    "Failed": "Failed",
+    "Canceled": "Canceled",
+    "Refunded": "Refunded"
+  },
+  "walletType": {
+    "TopUp": "Top-up",
+    "SessionCharge": "Charging session",
+    "IdleFee": "Idle fee",
+    "Refund": "Refund",
+    "Adjustment": "Adjustment"
   }
 }
