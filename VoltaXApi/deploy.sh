@@ -1,166 +1,124 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Build and push the API image, apply the database migrations, then replace the container on a Docker
+# host reached over SSH (the EC2 host). Railway does not use this script: it builds the Dockerfile itself.
+#
+#   cd VoltaXApi
+#   IMAGE=docker.io/<account>/voltax-api DEPLOY_HOST=ec2-user@<host> SSH_KEY=~/.ssh/eveon.pem ./deploy.sh
+#
+# Required
+#   IMAGE         image repository to push and pull, e.g. docker.io/<account>/voltax-api or ghcr.io/<owner>/eveon-api
+#   DEPLOY_HOST   SSH target, user@host
+# Optional
+#   TAG           image tag (default: short git commit, "-dirty" when the tree has uncommitted changes)
+#   PUSH_LATEST   also push and tag :latest (default true)
+#   PLATFORM      docker build platform (default linux/amd64)
+#   SSH_KEY       private key file for ssh (default: ssh config / agent)
+#   SSH_PORT      default 22
+#   CONTAINER     container name on the host (default voltax-api)
+#   ENV_FILE      settings file on the host, see deploy/api.env.example (default /etc/eveon/api.env)
+#   PUBLISH       docker -p value (default 127.0.0.1:8080:8080: Caddy, deploy/Caddyfile, terminates TLS)
+#   VOLUME_PREFIX prefix of the named volumes that keep uploads across deploys (default eveon)
+#   SKIP_BUILD=1  deploy an already pushed TAG without building
+#   SKIP_MIGRATE=1  do not run the migrations first (only if they were applied another way)
+#
+# The database is never dropped or reset here. Migrations go forward only, through the image's --migrate
+# (docs/database.md); take a backup first when a release contains migrations.
+set -Eeuo pipefail
 
-# Color codes for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-BLUE='\033[0;34m'
-# Project and Docker configuration
-PROJECT_NAME="voltax-api"
-DOCKER_REGISTRY="jaberfeka"
-# AWS_MACHINE_IP="51.20.70.166" ## this is for voltaxcharging
-AWS_MACHINE_IP="56.228.5.143" ## this is for eveon
-AWS_USER="ec2-user"
+RED='\033[0;31m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; YELLOW='\033[1;33m'; NC='\033[0m'
+step() { echo -e "${BLUE}==> $*${NC}"; }
+warn() { echo -e "${YELLOW}$*${NC}" >&2; }
+fail() { echo -e "${RED}ERROR: $*${NC}" >&2; exit 1; }
+trap 'fail "deploy failed at line $LINENO"' ERR
 
-# Function to handle errors
-error_exit() {
-    echo -e "${RED}ERROR: $1${NC}" >&2
-    exit 1
-}
+cd "$(dirname "$0")"
 
-# Function to modify Program.cs for Kestrel configuration
-modify_kestrel_config() {
-    local file="Program.cs"
-    
-    # Check if the modification already exists
-    if grep -q "options.ListenAnyIP(5000)" "$file"; then
-        echo -e "${YELLOW}Kestrel configuration already exists.${NC}"
-        return
+: "${IMAGE:?set IMAGE, e.g. IMAGE=docker.io/<account>/voltax-api}"
+: "${DEPLOY_HOST:?set DEPLOY_HOST, e.g. DEPLOY_HOST=ec2-user@<host>}"
+PUSH_LATEST="${PUSH_LATEST:-true}"
+PLATFORM="${PLATFORM:-linux/amd64}"
+SSH_PORT="${SSH_PORT:-22}"
+CONTAINER="${CONTAINER:-voltax-api}"
+ENV_FILE="${ENV_FILE:-/etc/eveon/api.env}"
+PUBLISH="${PUBLISH:-127.0.0.1:8080:8080}"
+VOLUME_PREFIX="${VOLUME_PREFIX:-eveon}"
+
+if [[ -z "${TAG:-}" ]]; then
+    TAG="$(git rev-parse --short HEAD)"
+    if [[ -n "$(git status --porcelain -- .)" ]]; then
+        TAG="$TAG-dirty"
+        warn "Uncommitted changes in VoltaXApi: the image is tagged $TAG"
     fi
+fi
+REF="$IMAGE:$TAG"
 
-    # Backup the original file
-    cp "$file" "$file.bak"
+command -v docker >/dev/null || fail "docker is not installed"
+command -v ssh >/dev/null || fail "ssh is not installed"
+ssh_args=(-p "$SSH_PORT" -o BatchMode=yes -o ConnectTimeout=15)
+if [[ -n "${SSH_KEY:-}" ]]; then
+    ssh_args+=(-i "$SSH_KEY")
+fi
 
-    # Use sed to insert the Kestrel configuration
-    sed -i '/var builder = WebApplication.CreateBuilder(args);/a\
-builder.WebHost.ConfigureKestrel(options =>\
-{\
-    options.ListenAnyIP(5000);\
-});' "$file" || error_exit "Failed to modify Kestrel configuration"
+step "Checking SSH access to $DEPLOY_HOST"
+ssh "${ssh_args[@]}" "$DEPLOY_HOST" true || fail "cannot reach $DEPLOY_HOST over SSH"
 
-    echo -e "${GREEN}Kestrel configuration added successfully.${NC}"
-}
-
-# Function to update database context configuration
-update_db_context() {
-    local file="Program.cs"
-    
-    # Ensure the file exists
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}Error: $file not found!${NC}"
-        return 1
+if [[ "${SKIP_BUILD:-}" != 1 ]]; then
+    step "Building $REF ($PLATFORM)"
+    docker build --platform "$PLATFORM" --pull --tag "$REF" .
+    step "Pushing $REF"
+    docker push "$REF"
+    if [[ "$PUSH_LATEST" == true ]]; then
+        docker tag "$REF" "$IMAGE:latest"
+        docker push "$IMAGE:latest"
     fi
+fi
 
-    # Backup the original file
-    cp "$file" "$file.bak" || { echo -e "${RED}Failed to create backup.${NC}"; return 1; }
+step "Deploying $REF to $DEPLOY_HOST"
+# The remote script is sent as is (quoted heredoc); its inputs are passed as quoted positional arguments.
+remote_args=$(printf '%q ' "$REF" "$CONTAINER" "$ENV_FILE" "$PUBLISH" "$VOLUME_PREFIX" "${SKIP_MIGRATE:-0}")
+ssh "${ssh_args[@]}" "$DEPLOY_HOST" "bash -s -- $remote_args" <<'REMOTE'
+set -Eeuo pipefail
+ref=$1 container=$2 env_file=$3 publish=$4 prefix=$5 skip_migrate=$6
 
-    # Define the replacement text
-    replacement='builder.Services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) => {\
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");\
-    var serverVersion = new MariaDbServerVersion("10.6.15");\
-    options.UseMySql(connectionString, serverVersion);\
-});'
+[[ -f "$env_file" ]] || { echo "ERROR: $env_file is missing on $(hostname) (template: deploy/api.env.example)" >&2; exit 1; }
 
-    # Use sed to replace the old context definition
-    sed -i.bak "s|// builder\.Services\.AddDbContext<VoltaXApiDbContext>(options =>\
-//         options\.UseSqlServer(builder\.Configuration\.GetConnectionString(\"DefaultConnection\")));|$replacement|" "$file"
+docker pull "$ref"
 
-    # Check if replacement was successful
-    if grep -q "UseMySql" "$file"; then
-        echo -e "${GREEN}Database context configuration updated successfully.${NC}"
-    else
-        echo -e "${RED}Error: Failed to update database context configuration.${NC}"
-        mv "$file.bak" "$file"  # Restore the backup if the replacement failed
-        return 1
-    fi
-}
+if [[ "$skip_migrate" != 1 ]]; then
+    echo "==> Applying database migrations"
+    # Same image and settings as the API; exits non-zero (and stops the deploy) if a migration fails.
+    docker run --rm --name "$container-migrate" --env-file "$env_file" "$ref" --migrate
+fi
 
+previous=$(docker inspect --format '{{.Config.Image}}' "$container" 2>/dev/null || true)
+echo "==> Replacing container $container (previous image: ${previous:-none})"
+docker stop --time 30 "$container" >/dev/null 2>&1 || true
+docker rm "$container" >/dev/null 2>&1 || true
+docker run --detach --name "$container" --restart unless-stopped \
+    --env-file "$env_file" \
+    --publish "$publish" \
+    --volume "$prefix-profile-pictures:/app/wwwroot/ProfilePictures" \
+    --volume "$prefix-partner-logos:/app/wwwroot/PartnersLogos" \
+    --volume "$prefix-station-images:/app/wwwroot/images/charging-stations" \
+    --volume "$prefix-app-data:/app/App_Data" \
+    "$ref" >/dev/null
 
-# Function to handle database migrations
-handle_database_migrations() {
-    read -p "Do you want to reset database migrations? (y/n): " reset_migrations
+echo "==> Waiting for the container health check"
+for _ in $(seq 1 40); do
+    status=$(docker inspect --format '{{.State.Health.Status}}' "$container" 2>/dev/null || echo missing)
+    case "$status" in
+        healthy) echo "==> $container is healthy"; docker image prune --force >/dev/null; exit 0 ;;
+        unhealthy|missing) break ;;
+    esac
+    sleep 5
+done
+echo "ERROR: $container did not become healthy (status: ${status:-unknown}). Last log lines:" >&2
+docker logs --tail 50 "$container" >&2 || true
+if [[ -n "$previous" ]]; then
+    echo "To roll back, run deploy.sh again with SKIP_BUILD=1 SKIP_MIGRATE=1 and the previous TAG ($previous)" >&2
+fi
+exit 1
+REMOTE
 
-    if [[ $reset_migrations == "y" || $reset_migrations == "Y" ]]; then
-        # Remove migrations folder
-        rm -rf Migrations || error_exit "Failed to remove Migrations folder"
-        
-        # Drop database
-        dotnet ef database drop -f || error_exit "Failed to drop database"
-        
-        # Create new migrations
-        dotnet ef migrations add InitialCreate || error_exit "Failed to create migrations"
-        
-        # Update database
-        dotnet ef database update || error_exit "Failed to update database"
-
-        echo -e "${GREEN}Database migrations reset successfully.${NC}"
-    else
-        echo -e "${YELLOW}Skipping database migrations reset.${NC}"
-    fi
-}
-
-# Function to build Docker image
-build_docker_image() {
-    # Build Docker image
-    docker build -t "$PROJECT_NAME:latest" . || error_exit "Docker image build failed"
-    
-    # Tag Docker image
-    docker tag "$PROJECT_NAME:latest" "$DOCKER_REGISTRY/$PROJECT_NAME:latest" || error_exit "Docker image tagging failed"
-    
-    # Push Docker image
-    docker push "$DOCKER_REGISTRY/$PROJECT_NAME:latest" || error_exit "Docker image push failed"
-    
-    echo -e "${GREEN}Docker image built, tagged, and pushed successfully.${NC}"
-}
-
-# Function to deploy to AWS machine
-deploy_to_aws() {
-    # SSH into AWS machine and perform deployment
-    ssh -i "/mnt/c/Users/bcg-d/OneDrive/Bureau/voltax.pem" "$AWS_USER@$AWS_MACHINE_IP" << EOSSH
-        # Stop running container
-        docker stop "$PROJECT_NAME" || true
-        
-        # Remove existing container
-        docker rm "$PROJECT_NAME" || true
-        
-        # Pull latest image
-        docker pull "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
-        #docker pull "jaberfeka/voltax-api:latest"
-        
-        # Run new container
-        # Secrets live only on the server in /etc/eveon/api.env (see deploy/api.env.example).
-        # The API listens on localhost only; Caddy (deploy/Caddyfile) terminates HTTPS in front of it.
-        docker run -d --name "$PROJECT_NAME" --restart unless-stopped --env-file /etc/eveon/api.env -p 127.0.0.1:8080:8080 "$DOCKER_REGISTRY/$PROJECT_NAME:latest"
-        # docker run -d --name "voltax-api" -p 80:5000 "jaberfeka/voltax-api:latest"
-EOSSH
-
-    echo -e "${GREEN}Deployment to AWS machine completed successfully.${NC}"
-}
-
-# Main script execution
-main() {
-    
-    # Modify Kestrel configuration
-    echo -e "${BLUE}modifying the kestrel config${NC}"
-    modify_kestrel_config
-
-    # # Update database context configuration
-    echo -e "${BLUE}modifying the db context${NC}"
-    update_db_context
-
-    # # Handle database migrations
-    echo -e "${BLUE}updating remote database${NC}"
-    handle_database_migrations
-
-    # # Build and push Docker image
-    build_docker_image
-
-    # Deploy to AWS
-    deploy_to_aws
-
-    echo -e "${GREEN}CI/CD process completed successfully!${NC}"
-}
-
-# Run the main script
-main
+trap - ERR
+echo -e "${GREEN}Deployed $REF to $DEPLOY_HOST${NC}"
