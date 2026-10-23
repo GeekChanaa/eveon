@@ -1,6 +1,6 @@
 <a class="sidebar__item" routerLink="{{link}}" [ngClass]="{'active' : active}">
-  <svg class="icon icon-home">
-    <use xlink:href="#icon-home"></use>
+  <svg class="icon" [ngClass]="icon" aria-hidden="true">
+    <use [attr.xlink:href]="'#' + icon"></use>
   </svg>
   {{ title | translate }}
 </a>

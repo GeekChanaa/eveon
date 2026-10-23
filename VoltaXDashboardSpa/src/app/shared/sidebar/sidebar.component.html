@@ -6,7 +6,7 @@
   </button>
 
   <div class="sidebar__brand">
-    <a class="sidebar__logo" *ngIf="partnerID == 0" [routerLink]="customerShell ? '/my-dashboard' : '/dashboard'">
+    <a class="sidebar__logo" *ngIf="partnerID == 0 || customerShell" [routerLink]="customerShell ? '/my-dashboard' : '/dashboard'">
       <ng-container>
         <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
         <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
@@ -15,16 +15,17 @@
       </ng-container>
     </a>
 
-    <a class="sidebar__logo" *ngIf="partnerID != 0" routerLink="/partner-dashboard">
-      <ng-container *ngIf="partnerImageUrl">
-        <img class="sidebar__partner-logo" [src]="partnerImageUrl" [alt]="partnerName">
-      </ng-container>
-      <ng-container *ngIf="!partnerImageUrl">
-        <img class="sidebar__logo-full some-icon" src="/assets/images/logos/logo.svg" alt="eveon">
-        <img class="sidebar__logo-full some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
-        <img class="sidebar__logo-mark some-icon" src="/assets/images/logos/logo-mark.svg" alt="eveon">
-        <img class="sidebar__logo-mark some-icon-dark" src="/assets/images/logos/logo-mark-white.svg" alt="eveon">
-      </ng-container>
+    <!-- Partner portal: the partner's logo, or its initials, with its name -->
+    <a class="sidebar__logo sidebar__partner-brand" *ngIf="partnerID != 0 && !customerShell" routerLink="/partner-dashboard"
+      [attr.aria-label]="partnerName || ('partner.eyebrow' | translate)">
+      <span class="vx-partner-logo" aria-hidden="true">
+        <img *ngIf="partnerImageUrl; else partnerInitialsTpl" [src]="partnerImageUrl" alt="" (error)="partnerImageUrl = null">
+        <ng-template #partnerInitialsTpl><span>{{ partnerInitials }}</span></ng-template>
+      </span>
+      <span class="sidebar__partner-brand-text">
+        <strong>{{ partnerName || ('partner.eyebrow' | translate) }}</strong>
+        <small>{{ 'partner.eyebrow' | translate }}</small>
+      </span>
     </a>
 
     <button
@@ -54,7 +55,7 @@
         <app-sidebar-link [title]="'nav.wallet'" [link]="'/my-dashboard/wallet'" [active]="isActive('/my-dashboard/wallet')"></app-sidebar-link>
         <app-sidebar-link [title]="'nav.paymentMethods'" [link]="'/my-dashboard/payment-methods'" [active]="isActive('/my-dashboard/payment-methods')"></app-sidebar-link>
       </app-sidebar-dropdown>
-      <app-sidebar-item [title]="'header.myProfile'" [link]="'/my-dashboard/profile'" [active]="isExactActive('/my-dashboard/profile')"></app-sidebar-item>
+      <app-sidebar-item [title]="'header.myProfile'" icon="icon-profile-circle" [link]="'/my-dashboard/profile'" [active]="isExactActive('/my-dashboard/profile')"></app-sidebar-item>
     </ng-container>
 
     <ng-container *ngIf="partnerID == 0 && !customerShell">
@@ -147,7 +148,7 @@
     </ng-container>
 
     <!-- Partner portal menu -->
-    <ng-container *ngIf="partnerID != 0">
+    <ng-container *ngIf="partnerID != 0 && !customerShell">
       <app-sidebar-item [title]="'nav.home'" [link]="'/partner-dashboard'"
         [active]="isExactActive('/partner-dashboard')"></app-sidebar-item>
       <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'nav.myNetwork'"
@@ -166,9 +167,9 @@
         <app-sidebar-link [title]="'billing.nav.statements'" [link]="'/partner-dashboard/statements'"
           [active]="isActive('/partner-dashboard/statements')"></app-sidebar-link>
       </app-sidebar-dropdown>
-      <app-sidebar-item [title]="'nav.partnerProfile'" [link]="'/partner-dashboard/profile'"
+      <app-sidebar-item [title]="'nav.partnerProfile'" icon="icon-profile-circle" [link]="'/partner-dashboard/profile'"
         [active]="isExactActive('/partner-dashboard/profile')"></app-sidebar-item>
-      <app-sidebar-item [title]="'nav.security'" [link]="'/partner-dashboard/security'"
+      <app-sidebar-item [title]="'nav.security'" icon="icon-lock" [link]="'/partner-dashboard/security'"
         [active]="isExactActive('/partner-dashboard/security')"></app-sidebar-item>
     </ng-container>
   </div>

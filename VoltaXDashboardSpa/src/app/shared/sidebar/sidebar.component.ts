@@ -130,6 +130,12 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     return current === target || current.startsWith(target + '/');
   }
 
+  /** Up to two initials of the partner, shown when it has no logo. */
+  get partnerInitials(): string {
+    const words = (this.partnerName || '').trim().split(/\s+/).filter(Boolean);
+    return words.slice(0, 2).map(w => w[0].toUpperCase()).join('') || '·';
+  }
+
   /** The customer portal has its own menu (customers never see dashboard features). */
   get customerShell(): boolean {
     return this.normalize(this.currentUrl).startsWith('/my-dashboard');
