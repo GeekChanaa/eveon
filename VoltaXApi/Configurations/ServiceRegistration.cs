@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using VoltaXApi.Services.Payments;
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.DataProtection;
 using AutoMapper;
@@ -270,7 +272,6 @@ public static class ServiceRegistration
         VoltaXApi.Ocpi.OcpiRegistration.AddOcpi(services);
         services.AddScoped<IFileManagementService, FileManagementService>();
         // Only implementation until a real payment provider is integrated; it refuses every call outside Development.
-        services.AddSingleton<VoltaXApi.Services.Payments.IPaymentCardTokenizer, VoltaXApi.Services.Payments.DevelopmentFakeCardTokenizer>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IWebSocketRequestsHandler, WebSocketRequestsHandler>();
         // Connection-level OCPP objects are singletons; every incoming CALL gets its own DI scope.
@@ -366,6 +367,39 @@ public static class ServiceRegistration
         services.AddOcppInboundHandler<NotifyDisplayMessagesHandler>(OcppProtocols.Ocpp201, "NotifyDisplayMessages");
     }
     
+    /// <summary>
+    /// Online payments (section "Payments"): Provider None (default, off), Sandbox (test page, no money; refused
+    /// in Production unless Payments:Sandbox:AllowInProduction), Cmi or Stripe. See docs/payments.md.
+    /// </summary>
+    public static void ConfigurePayments(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    {
+        services.Configure<PaymentOptions>(configuration.GetSection("Payments"));
+        var options = configuration.GetSection("Payments").Get<PaymentOptions>() ?? new PaymentOptions();
+        var provider = options.Provider;
+        if (string.Equals(provider, SandboxPaymentGateway.ProviderName, StringComparison.OrdinalIgnoreCase))
+        {
+            if (environment.IsProduction() && !options.Sandbox.AllowInProduction)
+                throw new InvalidOperationException("Payments:Provider=Sandbox credits wallets without money and is refused in Production. " +
+                    "Configure Cmi or Stripe, or set Payments:Sandbox:AllowInProduction=true for a test environment.");
+            if (string.IsNullOrEmpty(options.Sandbox.Secret))
+                throw new InvalidOperationException("Payments:Sandbox:Secret is required with the sandbox provider.");
+        }
+
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddHttpClient(StripePaymentGateway.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(30));
+        services.AddScoped<SandboxPaymentGateway>();
+        services.AddScoped<CmiPaymentGateway>();
+        services.AddScoped<StripePaymentGateway>();
+        services.AddScoped<IPaymentGateway>(sp => provider?.ToLowerInvariant() switch
+        {
+            "sandbox" => sp.GetRequiredService<SandboxPaymentGateway>(),
+            "cmi" => sp.GetRequiredService<CmiPaymentGateway>(),
+            "stripe" => sp.GetRequiredService<StripePaymentGateway>(),
+            _ => new DisabledPaymentGateway()
+        });
+        services.AddScoped<PaymentService>();
+    }
+
     public static void ConfigureDatabaseMySql(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>

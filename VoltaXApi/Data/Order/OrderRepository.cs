@@ -88,6 +88,8 @@ namespace VoltaXApi.Data
         public async Task<Order> CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
         {
             Order order = _mapper.Map<CreateRechargeOrderDto,Order>(rechargeOrderDto);
+            order.Status = RechargeOrderStatus.Pending;
+            order.RechargeDate = DateTime.UtcNow;
             await AddAsync(order);
             return order;
         }

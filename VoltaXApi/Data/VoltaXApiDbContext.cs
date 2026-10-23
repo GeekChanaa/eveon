@@ -51,6 +51,14 @@ namespace VoltaXApi.Data
                 .Property(c => c.IsDeleted)
                 .HasDefaultValue(false);
 
+            modelBuilder.Entity<PaymentEvent>(entity =>
+            {
+                entity.HasIndex(e => new { e.Provider, e.EventId }).IsUnique();
+                entity.HasIndex(e => e.OrderID);
+            });
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => new { o.Provider, o.ProviderReference });
+
             modelBuilder.Entity<WalletTransaction>(entity =>
             {
                 entity.Property(w => w.Type).HasConversion<string>().HasMaxLength(32);
@@ -426,6 +434,7 @@ namespace VoltaXApi.Data
         public DbSet<Connector> Connectors { get; set; }
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<PaymentEvent> PaymentEvents { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<MessageLog> MessageLogs { get; set; }

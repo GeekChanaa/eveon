@@ -98,6 +98,7 @@ public class Program
         ServiceRegistration.ConfigureApplicationServices(builder.Services);
         ServiceRegistration.ConfigureOCPPServices(builder.Services);
         ServiceRegistration.ConfigureOCPPHandlers(builder.Services);
+        ServiceRegistration.ConfigurePayments(builder.Services, builder.Configuration, builder.Environment);
 
         // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger) or "SqlServer" (default).
         if (string.Equals(builder.Configuration["Database:Provider"], "MySql", StringComparison.OrdinalIgnoreCase))

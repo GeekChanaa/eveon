@@ -5,7 +5,6 @@ namespace VoltaXApi.Services
 {
     public interface IOrderService
     {
-        Task<MockPaymentResultDto> ProcessPayment(RechargeOrderDto orderDto);
-        Task CreateOrder(CreateRechargeOrderDto orderDto);
+        Task<Order> CreateManualTopUp(CreateRechargeOrderDto orderDto, int operatorUserId);
     }
 }

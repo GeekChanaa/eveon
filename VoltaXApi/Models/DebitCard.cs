@@ -26,6 +26,8 @@ namespace VoltaXApi.Models
         public string? ProviderToken { get; set; }
         [NotUpdatable, StringLength(50)]
         public string? Provider { get; set; }
+        /// <summary>The card offered first when the user pays.</summary>
+        public bool IsDefault { get; set; }
         public User? User { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }

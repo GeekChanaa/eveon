@@ -176,26 +176,17 @@ namespace VoltaXApi.Controllers
             return Ok(orderCountByMonth);
         }
 
-        [HttpPost("RechargeCard")]
-        public async Task<IActionResult> RechargeCard([FromBody] RechargeOrderDto rechargeOrderDto)
-        {
-            // No payment provider yet: the mock flow credits a card without taking money, so it
-            // only runs in development or where Payments:AllowMockPayments is set explicitly.
-            if (!_environment.IsDevelopment() && !_configuration.GetValue<bool>("Payments:AllowMockPayments"))
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Online payment is not available yet." });
-
-            // The owner always comes from the token, never from the request body.
-            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-                return Unauthorized();
-            rechargeOrderDto.UserID = userId;
-            return Ok(await _orderService.ProcessPayment(rechargeOrderDto));
-        }
-
+        /// <summary>
+        /// Manual top-up by an operator (cash, bank transfer...): credited at once, with the operator and a
+        /// reason on record. Customers pay online through api/payments.
+        /// </summary>
         [HttpPost("CreateRechargeOrder")]
-        public async Task<IActionResult> RechargeCard(CreateRechargeOrderDto rechargeOrderDto)
+        public async Task<IActionResult> CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
         {
-            await this._orderService.CreateOrder(rechargeOrderDto);
-            return StatusCode(200);
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var operatorId))
+                return Unauthorized();
+            var order = await this._orderService.CreateManualTopUp(rechargeOrderDto, operatorId);
+            return Ok(new { orderId = order.ID });
         }
 
 

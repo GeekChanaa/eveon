@@ -44,6 +44,7 @@ public class GlobalExceptionFilter : IExceptionFilter
             LoginAttemptFailedException => StatusCodes.Status429TooManyRequests,
             EmailNotVerifiedException => StatusCodes.Status403Forbidden,
             OcppServerException => StatusCodes.Status500InternalServerError,
+            VoltaXApi.Services.Payments.PaymentUnavailableException => StatusCodes.Status503ServiceUnavailable,
 
             _ => StatusCodes.Status500InternalServerError
         };
@@ -69,7 +70,7 @@ public class GlobalExceptionFilter : IExceptionFilter
             {
                 // A 5xx message can carry SQL, paths or library internals, so outside
                 // development the caller only gets a generic text and the id to quote.
-                error = statusCode >= StatusCodes.Status500InternalServerError && !_environment.IsDevelopment()
+                error = statusCode == StatusCodes.Status500InternalServerError && !_environment.IsDevelopment()
                     ? "An unexpected error occurred."
                     : context.Exception.Message,
                 correlationId = context.HttpContext.Response.Headers["X-Correlation-ID"].FirstOrDefault()

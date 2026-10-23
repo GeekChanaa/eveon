@@ -1,3 +1,4 @@
+using VoltaXApi.Exceptions;
 using VoltaXApi.Models;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
@@ -13,6 +14,8 @@ namespace VoltaXApi.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IMailService _mailService;
         private readonly IInvoiceGeneratorService<InvoiceData> _invoiceService;
+        private readonly IWalletService _walletService;
+        private readonly IUserRepository _userRepository;
 
         public OrderService(
             ICardRepository cardRepository,
@@ -20,8 +23,12 @@ namespace VoltaXApi.Services
             IOrderRepository orderRepository,
             ICardService cardService,
             IMailService mailService,
-            IInvoiceGeneratorService<InvoiceData> invoiceService)
+            IInvoiceGeneratorService<InvoiceData> invoiceService,
+            IWalletService walletService,
+            IUserRepository userRepository)
         {
+            _walletService = walletService;
+            _userRepository = userRepository;
             _cardRepository = cardRepository;
             _debitCardRepository = debitCardRepository;
             _orderRepository = orderRepository;
@@ -30,52 +37,23 @@ namespace VoltaXApi.Services
             _invoiceService = invoiceService;
         }
 
-        public async Task CreateOrder(CreateRechargeOrderDto orderDto)
+        public async Task<Order> CreateManualTopUp(CreateRechargeOrderDto orderDto, int operatorUserId)
         {
-            var order = await this._orderRepository.CreateRechargeOrder(orderDto);
-            if (order.Status == RechargeOrderStatus.Completed)
-                await this._cardService.AddAmountToCard(order.CardID, order.Amount, order.ID);
-            var card = (await _cardRepository.GetAllCards()).FirstOrDefault(card => card.ID == order.CardID);
-            if (card?.User != null)
-                await SendQuoteAsync(order, card.User.Email, card.User.FullName);
-        }
+            var card = await _cardRepository.GetByIdAsync(orderDto.CardID)
+                ?? throw new CardNotFoundException($"There is no card with the id {orderDto.CardID}");
+            var order = await _orderRepository.CreateRechargeOrder(orderDto);
+            order.Status = RechargeOrderStatus.Completed;
+            order.Provider = "Manual";
+            order.PaidAt = DateTime.UtcNow;
+            order.CreatedByUserID = operatorUserId;
+            await _orderRepository.Update(order);
+            await _walletService.PostAsync(order.CardID, new WalletPosting(order.Amount, WalletTransactionType.TopUp, $"order:{order.ID}:topup",
+                $"Manual top-up: {orderDto.Note}", OrderID: order.ID, CreatedByUserID: operatorUserId));
 
-        public async Task<MockPaymentResultDto> ProcessPayment(RechargeOrderDto orderDto)
-        {
-            if (orderDto.RechargeAmount <= 0)
-                throw new ArgumentOutOfRangeException(nameof(orderDto.RechargeAmount), "Recharge amount must be greater than zero.");
-
-            var card = (await _cardRepository.GetAllCards()).FirstOrDefault(card => card.ID == orderDto.CardID);
-            if (card == null || card.User == null)
-                throw new InvalidOperationException("The selected recharge card could not be found.");
-            if (card.UserID != orderDto.UserID)
-                throw new UnauthorizedAccessException("A recharge can only be made for one of the user's own cards.");
-            EmailVerificationGuard.EnsureVerified(card.User);
-
-            var status = orderDto.MockPaymentStatus ?? RechargeOrderStatus.Completed;
-            var order = await _orderRepository.CreateRechargeOrder(new CreateRechargeOrderDto
-            {
-                CardID = orderDto.CardID,
-                Amount = orderDto.RechargeAmount,
-                Status = status,
-                RechargeDate = DateTime.UtcNow
-            });
-
-            var credited = status == RechargeOrderStatus.Completed;
-            if (credited)
-                await _cardService.AddAmountToCard(order.CardID, order.Amount, order.ID);
-
-            await SendQuoteAsync(order, card.User.Email, card.User.FullName);
-
-            return new MockPaymentResultDto
-            {
-                OrderID = order.ID,
-                CardID = order.CardID,
-                Amount = order.Amount,
-                Status = status,
-                BalanceCredited = credited,
-                Message = credited ? "Mock payment completed and the recharge card was credited." : $"Mock payment recorded with status {status}. The recharge card was not credited."
-            };
+            var owner = card.UserID == null ? null : await _userRepository.GetByIdAsync(card.UserID.Value);
+            if (owner != null)
+                await SendQuoteAsync(order, owner.Email, owner.FullName);
+            return order;
         }
 
         private async Task SendQuoteAsync(Order order, string email, string userName)
