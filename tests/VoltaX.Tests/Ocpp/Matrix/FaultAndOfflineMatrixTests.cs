@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using VoltaX.Tests.Infrastructure;
 using VoltaXApi.Models;
+using VoltaXApi.OCPP.Messages;
 using static VoltaX.Tests.Ocpp.Matrix.MatrixStation;
 
 namespace VoltaX.Tests.Ocpp.Matrix;
@@ -8,6 +9,55 @@ namespace VoltaX.Tests.Ocpp.Matrix;
 /// <summary>Faults, power cuts, offline periods, reboots, reconnections and chargers that may not charge, for both protocols.</summary>
 public class FaultAndOfflineMatrixTests
 {
+    [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
+    public async Task A_fault_mid_session_bills_only_the_measured_energy_and_no_idle_time(string protocol)
+    {
+        var (host, charger, cardId) = await Open(protocol);
+        await using var _ = host;
+        await charger.Plug(T0);
+        var (_, uid) = await charger.Start("TAG-1", 1000, T0);
+        await charger.Meter(uid, 6000, T0.AddMinutes(10));
+
+        await charger.Fault(T0.AddMinutes(11));
+        Assert.Equal(ConnectorStatusEnumType.Faulted, await ScenarioAssert.ConnectorStatus(host, Cp));
+        Assert.Equal(TransactionStatusEnum.Current, (await Tx(host)).Status);
+        await charger.Stop(uid, 7000, T0.AddMinutes(12), StopKind.Fault);
+        // The fault clears; the driver comes back and unplugs much later.
+        await charger.Recover(T0.AddMinutes(20));
+        await charger.Unplug(T0.AddMinutes(90));
+
+        var session = await ScenarioAssert.Billed(host, cardId, 100m, energy: 15.00m, time: 1.20m, flatFee: 1.00m);
+        Assert.Equal(charger.StoredReason(StopKind.Fault), session.StoppedReason);
+        Assert.Equal(ChargingSessionStatusEnum.Completed, session.ChargingSessionStatus);
+        var notifications = await ScenarioAssert.Notifications(host);
+        Assert.Contains("ChargerFaultDuringSession", notifications);
+        Assert.Contains("ChargingEndedAbnormally", notifications);
+        Assert.Single(host.SystemReports.CallsTo(nameof(VoltaXApi.Services.ISystemReportService.HandleReport)));
+    }
+
+    [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
+    public async Task A_power_loss_reported_after_the_reboot_is_billed_on_charger_time(string protocol)
+    {
+        var (host, charger, cardId) = await Open(protocol);
+        await using var _ = host;
+        await charger.Plug(T0);
+        var (_, uid) = await charger.Start("TAG-1", 1000, T0);
+        await charger.Meter(uid, 6000, T0.AddMinutes(10));
+
+        // Power cut at T0+15. The charger comes back an hour later and sends what it queued, with past timestamps.
+        Assert.Equal("Accepted", await charger.Boot());
+        await charger.Meter(uid, 9000, T0.AddMinutes(14), offline: true);
+        await charger.Stop(uid, 9500, T0.AddMinutes(15), StopKind.PowerLoss, offline: true);
+        await charger.Unplug(T0.AddMinutes(75));
+
+        // 8.5 kWh = 21.25, 15 minutes = 1.50, flat fee 1.00; no idle fee for the outage.
+        var session = await ScenarioAssert.Billed(host, cardId, 100m, energy: 21.25m, time: 1.50m, flatFee: 1.00m);
+        Assert.Equal(ReasonEnumType.PowerLoss, session.StoppedReason);
+        Assert.Equal(T0.AddMinutes(15), (await Tx(host)).StopTime);
+        Assert.Contains("ChargingEndedAbnormally", await ScenarioAssert.Notifications(host));
+        Assert.Equal(ConnectorStatusEnumType.Available, await ScenarioAssert.ConnectorStatus(host, Cp));
+    }
+
     [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
     public async Task A_transaction_that_happened_entirely_offline_is_billed_when_it_is_reported(string protocol)
     {

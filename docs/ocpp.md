@@ -146,6 +146,8 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
 - **Fault during a session.** A `Faulted` StatusNotification raises a high-criticality system report and, when
   a transaction is open on the connector, notifies the customer (`ChargerFaultDuringSession`). The session
   stays open: the charger is expected to end it when it recovers, and the customer pays the energy measured.
+  A session ended by the charger or the server (fault, power loss, reboot, reset, stale or superseded
+  transaction) or while the connector is not Occupied accrues no idle fee.
 - **Server-side close** (`StaleTransactionSweeper`, every `Ocpp:StaleTransactionSweepMinutes`, default 10).
   An open transaction is ended by the server, at its last meter reading and on its last meter value, when
   - its connector is `Faulted` or `Unavailable` and nothing came for `Ocpp:FaultedTransactionMinutes`

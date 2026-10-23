@@ -78,9 +78,11 @@ namespace VoltaXApi.Services
             if (stoppedReason.HasValue)
                 chargingSession.StoppedReason = stoppedReason.Value;
             chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.CompletedOccupied;
-            if (connectorStatus?.LastStatus == ConnectorStatusEnumType.Available)
+            if (connectorStatus?.LastStatus != ConnectorStatusEnumType.Occupied || EndedByChargerOrServer(stoppedReason))
             {
-                // The car already left: no idle time.
+                // No idle time: the car already left, the connector is out of service (its departure cannot be
+                // seen), or the charger or the server ended the session (fault, power loss, reboot, reset, stale
+                // transaction), when the driver is told that only the measured energy is billed.
                 chargingSession.IdleMinutes = 0;
                 chargingSession.EndIdleDate = endDate;
                 chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.Completed;
@@ -180,6 +182,12 @@ namespace VoltaXApi.Services
             await _billing.SessionBilledAsync(chargingSession.ID);
             return chargingSession;
         }
+
+        /// <summary>Stop reasons that are not the driver's doing (2.0.1 vocabulary, 1.6 reasons are mapped to it).</summary>
+        private static bool EndedByChargerOrServer(ReasonEnumType? reason) => reason is
+            ReasonEnumType.EmergencyStop or ReasonEnumType.GroundFault or ReasonEnumType.OvercurrentFault or
+            ReasonEnumType.PowerLoss or ReasonEnumType.PowerQuality or ReasonEnumType.Reboot or
+            ReasonEnumType.ImmediateReset or ReasonEnumType.Other or ReasonEnumType.Timeout;
 
         private async Task ReportNegativeBalance(ChargingSession chargingSession)
         {
