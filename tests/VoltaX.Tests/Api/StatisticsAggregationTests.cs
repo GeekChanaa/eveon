@@ -85,6 +85,17 @@ public class StatisticsAggregationTests : IAsyncLifetime
                 ChargedMinutes = 40, ChargedKwhs = 9, PricePerMinute = 0.5m, EnergyAmount = 18, TimeAmount = 2, FlatFeeAmount = 0, TotalAmount = 20 });
         db.ChargingSessions.AddRange(sessions);
         await db.SaveChangesAsync();
+
+        // One transaction per session, started a few minutes after it; running ones have no stop meter value.
+        db.Transactions.AddRange(sessions.Select((s, i) => new Transaction
+        {
+            ChargingSessionID = s.ID,
+            ConnectorID = s.ConnectorID,
+            StartTime = s.StartDate.AddMinutes(i % 9),
+            MeterStart = 1000 + i,
+            MeterStop = i % 11 == 0 ? null : 1000 + i + random.NextDouble() * 50000
+        }));
+        await db.SaveChangesAsync();
     }
 
     public async Task DisposeAsync() => await _connection.DisposeAsync();
@@ -168,6 +179,31 @@ public class StatisticsAggregationTests : IAsyncLifetime
         Assert.Equal(mine.Sum(s => s.ChargedKwhs ?? 0), await service.GetTotalEnergyConsumedForPartnerAsync(_partnerId), 6);
         Same(Daily(s => s.ChargedKwhs ?? 0), await service.GetDailyEnergyConsumedForPartnerLast30DaysAsync(_partnerId));
         Same(Monthly(s => s.ChargedKwhs ?? 0), await service.GetMonthlyEnergyConsumedForPartnerLastYearAsync(_partnerId));
+    }
+
+    [Theory]
+    [InlineData("Africa/Casablanca")]
+    [InlineData("Asia/Kolkata")]
+    public async Task Energy_series_match_every_transaction(string zone)
+    {
+        var clock = Clock(zone);
+        await using var db = NewContext();
+        var transactions = new TransactionRepository(db, null!, clock);
+        var rows = (await db.Transactions.AsNoTracking()
+                .Select(t => new { t, t.Connector!.ChargePoint!.ChargingStation!.PartnerID }).ToListAsync())
+            .Where(x => x.t.MeterStop != null).ToList();
+        Dictionary<DateTime, double> Daily(IEnumerable<Transaction> list) => list
+            .Where(t => t.StartTime >= clock.StartOfDayUtc(clock.Today.AddDays(-30)))
+            .GroupBy(t => clock.ToLocal(t.StartTime).Date).ToDictionary(g => g.Key, g => g.Sum(t => t.MeterStop!.Value - t.MeterStart));
+        Dictionary<string, double> Monthly(IEnumerable<Transaction> list) => list
+            .Where(t => t.StartTime >= clock.StartOfDayUtc(clock.Today.AddYears(-1)))
+            .GroupBy(t => $"{clock.ToLocal(t.StartTime).Month}-{clock.ToLocal(t.StartTime).Year}").ToDictionary(g => g.Key, g => g.Sum(t => t.MeterStop!.Value - t.MeterStart));
+
+        Same(Daily(rows.Select(x => x.t)), await transactions.GetDailyEnergyConsumedLast30DaysAsync());
+        Same(Monthly(rows.Select(x => x.t)), await transactions.GetMonthlyEnergyConsumedLastYearAsync());
+        var mine = rows.Where(x => x.PartnerID == _partnerId).Select(x => x.t).ToList();
+        Same(Daily(mine), await transactions.GetPartnerDailyEnergyConsumedLast30DaysAsync(_partnerId));
+        Same(Monthly(mine), await transactions.GetPartnerMonthlyEnergyConsumedLastYearAsync(_partnerId));
     }
 
     [Fact]

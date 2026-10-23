@@ -119,10 +119,23 @@ namespace VoltaXApi.Data
         private static async Task<double> SumEnergy(IQueryable<Transaction> query) =>
             await query.SumAsync(t => t.MeterStop - t.MeterStart) ?? 0;
 
-        private static async Task<List<(DateTime StartTime, double Energy)>> LoadEnergy(IQueryable<Transaction> query)
+        /// <summary>
+        /// Energy per UTC hour of the transaction start (per minute when the business time zone has an offset that
+        /// is not a whole number of hours), summed by the database: every bucket falls on one business date.
+        /// </summary>
+        private async Task<List<(DateTime StartTime, double Energy)>> LoadEnergy(IQueryable<Transaction> query)
         {
-            var rows = await query.Select(t => new { t.StartTime, Energy = t.MeterStop!.Value - t.MeterStart }).ToListAsync();
-            return rows.Select(r => (r.StartTime, r.Energy)).ToList();
+            var rows = VoltaXApi.Services.SessionAggregation.HasWholeHourOffsets(_clock.TimeZone)
+                ? await query.GroupBy(t => new { t.StartTime.Year, t.StartTime.Month, t.StartTime.Day, t.StartTime.Hour })
+                    .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, Minute = 0, Energy = g.Sum(t => t.MeterStop!.Value - t.MeterStart) })
+                    .ToListAsync()
+                : await query.GroupBy(t => new { t.StartTime.Year, t.StartTime.Month, t.StartTime.Day, t.StartTime.Hour, t.StartTime.Minute })
+                    .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, g.Key.Minute, Energy = g.Sum(t => t.MeterStop!.Value - t.MeterStart) })
+                    .ToListAsync();
+            return rows
+                .Select(r => (new DateTime(r.Year, r.Month, r.Day, r.Hour, r.Minute, 0, DateTimeKind.Utc), r.Energy))
+                .OrderBy(r => r.Item1)
+                .ToList();
         }
 
         private Dictionary<DateTime, double> EnergyByDay(IEnumerable<(DateTime StartTime, double Energy)> rows) =>
