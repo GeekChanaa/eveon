@@ -3,6 +3,10 @@
 `appsettings.json` and `appsettings.production.json` hold **no secrets**. The API refuses to start
 when a required secret is missing (`Configurations/SecurityConfiguration.cs`).
 
+The Docker image contains `appsettings.json` only: in a container every production value comes from
+environment variables (`VoltaXApi/deploy/railway.env.example`, `VoltaXApi/deploy/api.env.example`).
+`appsettings.production.json` is kept for running the API locally with `--environment Production`.
+
 ## Local development
 
 Secrets live in .NET user-secrets (stored in your user profile, outside the repo):
