@@ -12,6 +12,7 @@ import { SidebarLinkComponent } from './sidebar/sidebar-link/sidebar-link.compon
 import { NavbarNotificationsComponent } from './navbar/navbar-notifications/navbar-notifications.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavbarSearchComponent } from './navbar/navbar-search/navbar-search.component';
+import { VxI18nModule } from './i18n/vx-i18n.module';
 
 @NgModule({
   declarations: [
@@ -29,11 +30,13 @@ import { NavbarSearchComponent } from './navbar/navbar-search/navbar-search.comp
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    VxI18nModule
   ],
   exports: [
     SidebarComponent,
-    NavbarComponent
+    NavbarComponent,
+    VxI18nModule
   ],
   providers: [],
 })

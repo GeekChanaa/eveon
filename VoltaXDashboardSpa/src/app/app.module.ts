@@ -4,7 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { LanguageService, initLanguageFactory } from 'src/_services/language.service';
 import { AuthComponent } from './auth/auth.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -33,6 +36,11 @@ export function restoreSessionFactory(refresh: TokenRefreshService, tokens: Toke
 }
 
 
+/** Translations are static files: src/assets/i18n/{fr,en,ar}.json. */
+export function translateLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
+}
+
 export function loadMessagesFactory(service: ValidationMessagesService) {
   return () => service.loadMessages().toPromise().then(messages => service.setMessages(messages));
 }
@@ -55,8 +63,12 @@ export function loadMessagesFactory(service: ValidationMessagesService) {
     MatRippleModule,
     MatButtonModule,
     CalendarModule,
-    CookieNoticeComponent
-    
+    CookieNoticeComponent,
+    TranslateModule.forRoot({
+      defaultLanguage: 'fr',
+      loader: { provide: TranslateLoader, useFactory: translateLoaderFactory, deps: [HttpClient] }
+    })
+
   ],
   providers: [
     {
@@ -68,6 +80,12 @@ export function loadMessagesFactory(service: ValidationMessagesService) {
       provide: APP_INITIALIZER,
       useFactory: loadMessagesFactory,
       deps: [ValidationMessagesService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initLanguageFactory,
+      deps: [LanguageService],
       multi: true
     },
     {

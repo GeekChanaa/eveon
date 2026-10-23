@@ -1,0 +1,40 @@
+{
+  "common": {
+    "currency": { "mad": "درهم" },
+    "units": { "kwh": "ك.و.س", "min": "د", "kw": "ك.و", "perKwh": "/ ك.و.س", "perMin": "/ دقيقة" },
+    "actions": {
+      "save": "حفظ", "cancel": "إلغاء", "close": "إغلاق", "edit": "تعديل", "delete": "حذف", "remove": "إزالة",
+      "confirm": "تأكيد", "download": "تحميل", "print": "طباعة", "exportCsv": "تصدير CSV", "exportPdf": "تصدير PDF",
+      "filter": "تصفية", "reset": "إعادة تعيين", "search": "بحث", "back": "رجوع", "next": "التالي", "previous": "السابق",
+      "retry": "إعادة المحاولة", "viewAll": "عرض الكل", "details": "التفاصيل", "apply": "تطبيق", "refresh": "تحديث"
+    },
+    "state": {
+      "loading": "جارٍ التحميل…", "empty": "لا يوجد ما يُعرض حاليًا.", "error": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+      "saved": "تم الحفظ", "yes": "نعم", "no": "لا", "all": "الكل", "none": "لا شيء"
+    },
+    "fields": { "from": "من", "to": "إلى", "status": "الحالة", "date": "التاريخ", "amount": "المبلغ", "total": "المجموع", "search": "بحث" },
+    "pager": { "page": "الصفحة {{page}} من {{pages}}", "results": "{{total}} نتيجة" }
+  },
+  "nav": {
+    "home": "الرئيسية", "operationMonitoring": "المراقبة التشغيلية", "connectorRealtime": "الموصلات في الوقت الفعلي", "statistics": "الإحصائيات",
+    "stationManagement": "إدارة المحطات", "chargingStations": "محطات الشحن", "chargePoints": "نقاط الشحن",
+    "businessManagement": "الإدارة التجارية", "chargingCards": "بطاقات الشحن", "appManagement": "إدارة التطبيق",
+    "notices": "الإعلانات", "reports": "البلاغات", "dataRequests": "طلبات تنزيل البيانات", "orderManagement": "إدارة الطلبات",
+    "chargingSessions": "جلسات الشحن", "transactions": "المعاملات", "rechargeOrders": "عمليات التعبئة",
+    "maintenance": "الصيانة", "globalConfigurations": "الإعدادات العامة", "systemReports": "تقارير النظام",
+    "ocppOperation": "تشغيل OCPP", "chargerEvents": "أحداث الشواحن", "chargePointConfigurations": "إعدادات نقاط الشحن",
+    "defaultConfiguration": "الإعدادات الافتراضية", "localList": "القائمة المحلية", "account": "الحسابات", "users": "المستخدمون",
+    "partners": "الشركاء", "roles": "الأدوار والصلاحيات", "auditLog": "سجل التدقيق", "roaming": "التجوال (OCPI)", "pki": "شهادات الشواحن",
+    "security": "الأمان", "help": "المساعدة والتوثيق", "expand": "توسيع القائمة", "collapse": "طي القائمة"
+  },
+  "header": {
+    "openMenu": "فتح القائمة", "language": "اللغة", "accountMenu": "فتح قائمة الحساب", "profilePhoto": "صورة ملفك الشخصي",
+    "signedInAs": "تم تسجيل الدخول باسم", "myProfile": "ملفي الشخصي", "manageUsers": "إدارة المستخدمين والصلاحيات", "signOut": "تسجيل الخروج"
+  },
+  "theme": { "light": "فاتح", "dark": "داكن" },
+  "roles": { "Admin": "مسؤول", "Customer": "عميل", "PremiumCustomer": "عميل مميز", "Support": "الدعم", "Partner": "شريك", "undefined": "" },
+  "errors": {
+    "notFound": { "title": "الصفحة غير موجودة", "text": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها." },
+    "accessDenied": { "title": "وصول مقيّد", "text": "دورك لا يمنحك الوصول إلى هذه الصفحة. اطلب الوصول من المسؤول إذا لزم الأمر.", "home": "العودة إلى الرئيسية" }
+  }
+}

@@ -32,8 +32,8 @@
       class="sidebar__toggle-btn"
       (click)="toggleCollapsed()"
       [attr.aria-expanded]="!collapsed"
-      [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-      [title]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+      [attr.aria-label]="(collapsed ? 'nav.expand' : 'nav.collapse') | translate"
+      [title]="(collapsed ? 'nav.expand' : 'nav.collapse') | translate">
       <svg class="icon icon-list">
         <use xlink:href="#icon-list"></use>
       </svg>
@@ -43,83 +43,83 @@
   <div class="sidebar__menu">
     <ng-container *ngIf="partnerID == 0">
       <!-- Admin/Operator menu -->
-      <app-sidebar-item *ngIf="access.canUrl('/dashboard')" [title]="'home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
+      <app-sidebar-item *ngIf="access.canUrl('/dashboard')" [title]="'nav.home'" [link]="'/dashboard'" [active]="isExactActive('/dashboard')"></app-sidebar-item>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/connector-realtime') || access.canUrl('/dashboard/statistics')" iconID="icon-type2-charger" [title]="'Operation Monitoring'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/connector-realtime') || access.canUrl('/dashboard/statistics')" iconID="icon-type2-charger" [title]="'nav.operationMonitoring'"
         [active]="isDropdownActive('/dashboard/connector-realtime', '/dashboard/statistics')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/connector-realtime')" [title]="'Connector real-time'" [link]="'/dashboard/connector-realtime'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/connector-realtime')" [title]="'nav.connectorRealtime'" [link]="'/dashboard/connector-realtime'"
           [active]="isActive('/dashboard/connector-realtime')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/statistics')" [title]="'statistics'" [link]="'/dashboard/statistics'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/statistics')" [title]="'nav.statistics'" [link]="'/dashboard/statistics'"
           [active]="isActive('/dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-stations') || access.canUrl('/dashboard/charging-points')" iconID="icon-charging-station" [title]="'Station Management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-stations') || access.canUrl('/dashboard/charging-points')" iconID="icon-charging-station" [title]="'nav.stationManagement'"
         [active]="isDropdownActive('/dashboard/charging-stations', '/dashboard/charging-points')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-stations')" [title]="'charging station'" [link]="'/dashboard/charging-stations'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-stations')" [title]="'nav.chargingStations'" [link]="'/dashboard/charging-stations'"
           [active]="isActive('/dashboard/charging-stations')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-points')" [title]="'charge point'" [link]="'/dashboard/charging-points'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-points')" [title]="'nav.chargePoints'" [link]="'/dashboard/charging-points'"
           [active]="isActive('/dashboard/charging-points')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-cards')" iconID="icon-money-bill" [title]="'business management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-cards')" iconID="icon-money-bill" [title]="'nav.businessManagement'"
         [active]="isDropdownActive('/dashboard/charging-cards')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-cards')" [title]="'charging cards'" [link]="'/dashboard/charging-cards'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-cards')" [title]="'nav.chargingCards'" [link]="'/dashboard/charging-cards'"
           [active]="isActive('/dashboard/charging-cards')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/notices') || access.canUrl('/dashboard/reports') || access.canUrl('/dashboard/user-info-download-requests')" iconID="icon-comment" [title]="'app management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/notices') || access.canUrl('/dashboard/reports') || access.canUrl('/dashboard/user-info-download-requests')" iconID="icon-comment" [title]="'nav.appManagement'"
         [active]="isDropdownActive('/dashboard/reports', '/dashboard/notices', '/dashboard/user-info-download-requests')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/notices')" [title]="'notices'" [link]="'/dashboard/notices'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/notices')" [title]="'nav.notices'" [link]="'/dashboard/notices'"
           [active]="isActive('/dashboard/notices')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/reports')" [title]="'reports management'" [link]="'/dashboard/reports'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/reports')" [title]="'nav.reports'" [link]="'/dashboard/reports'"
           [active]="isActive('/dashboard/reports')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/user-info-download-requests')" [title]="'user info download requests'" [link]="'/dashboard/user-info-download-requests'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/user-info-download-requests')" [title]="'nav.dataRequests'" [link]="'/dashboard/user-info-download-requests'"
           [active]="isActive('/dashboard/user-info-download-requests')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders')" iconID="icon-invoice" [title]="'order management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/charging-sessions') || access.canUrl('/dashboard/transactions') || access.canUrl('/dashboard/recharge-orders')" iconID="icon-invoice" [title]="'nav.orderManagement'"
         [active]="isDropdownActive('/dashboard/transactions', '/dashboard/recharge-orders', '/dashboard/charging-sessions')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-sessions')" [title]="'Charging Sessions'" [link]="'/dashboard/charging-sessions'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charging-sessions')" [title]="'nav.chargingSessions'" [link]="'/dashboard/charging-sessions'"
           [active]="isActive('/dashboard/charging-sessions')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/transactions')" [title]="'transactions'" [link]="'/dashboard/transactions'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/transactions')" [title]="'nav.transactions'" [link]="'/dashboard/transactions'"
           [active]="isActive('/dashboard/transactions')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/recharge-orders')" [title]="'recharge orders'" [link]="'/dashboard/recharge-orders'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/recharge-orders')" [title]="'nav.rechargeOrders'" [link]="'/dashboard/recharge-orders'"
           [active]="isActive('/dashboard/recharge-orders')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/global-configurations') || access.canUrl('/dashboard/system-reports')" iconID="icon-setting" [title]="'maintenance management'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/global-configurations') || access.canUrl('/dashboard/system-reports')" iconID="icon-setting" [title]="'nav.maintenance'"
         [active]="isDropdownActive('/dashboard/global-configurations', '/dashboard/system-reports')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/global-configurations')" [title]="'Global Configurations'" [link]="'/dashboard/global-configurations'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/global-configurations')" [title]="'nav.globalConfigurations'" [link]="'/dashboard/global-configurations'"
           [active]="isActive('/dashboard/global-configurations')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/system-reports')" [title]="'System Reports'" [link]="'/dashboard/system-reports'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/system-reports')" [title]="'nav.systemReports'" [link]="'/dashboard/system-reports'"
           [active]="isActive('/dashboard/system-reports')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/ocpp-local-list') || access.canUrl('/dashboard/ocpp-configuration') || access.canUrl('/dashboard/charge-point-configurations') || access.canUrl('/dashboard/charger-events')" iconID="icon-maintenance" [title]="'ocpp operation'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/ocpp-local-list') || access.canUrl('/dashboard/ocpp-configuration') || access.canUrl('/dashboard/charge-point-configurations') || access.canUrl('/dashboard/charger-events')" iconID="icon-maintenance" [title]="'nav.ocppOperation'"
         [icon]="'/assets/images/icons/updated/bolt.svg'" [active]="isDropdownActive('/dashboard/ocpp-local-list', '/dashboard/ocpp-configuration', '/dashboard/charge-point-configurations', '/dashboard/charger-events')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charger-events')" [title]="'charger events'" [link]="'/dashboard/charger-events'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charger-events')" [title]="'nav.chargerEvents'" [link]="'/dashboard/charger-events'"
           [active]="isActive('/dashboard/charger-events')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charge-point-configurations')" [title]="'charge points configurations'" [link]="'/dashboard/charge-point-configurations'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/charge-point-configurations')" [title]="'nav.chargePointConfigurations'" [link]="'/dashboard/charge-point-configurations'"
           [active]="isActive('/dashboard/charge-point-configurations')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-configuration')" [title]="'default configuration'" [link]="'/dashboard/ocpp-configuration'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-configuration')" [title]="'nav.defaultConfiguration'" [link]="'/dashboard/ocpp-configuration'"
           [active]="isActive('/dashboard/ocpp-configuration')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-local-list')" [title]="'local list'" [link]="'/dashboard/ocpp-local-list'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/ocpp-local-list')" [title]="'nav.localList'" [link]="'/dashboard/ocpp-local-list'"
           [active]="isActive('/dashboard/ocpp-local-list')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/users') || access.canUrl('/dashboard/partners')" iconID="icon-account-setting" [title]="'Account'"
+      <app-sidebar-dropdown *ngIf="access.canUrl('/dashboard/users') || access.canUrl('/dashboard/partners')" iconID="icon-account-setting" [title]="'nav.account'"
         [active]="isDropdownActive('/dashboard/users', '/dashboard/partners', '/dashboard/roles', '/dashboard/audit-logs', '/dashboard/ocpi', '/dashboard/pki')">
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/users')" [title]="'users'" [link]="'/dashboard/users'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/users')" [title]="'nav.users'" [link]="'/dashboard/users'"
           [active]="isActive('/dashboard/users')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.canUrl('/dashboard/partners')" [title]="'partners'" [link]="'/dashboard/partners'"
+        <app-sidebar-link *ngIf="access.canUrl('/dashboard/partners')" [title]="'nav.partners'" [link]="'/dashboard/partners'"
           [active]="isActive('/dashboard/partners')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Roles & permissions'" [link]="'/dashboard/roles'"
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'nav.roles'" [link]="'/dashboard/roles'"
           [active]="isActive('/dashboard/roles')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Audit log'" [link]="'/dashboard/audit-logs'"
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'nav.auditLog'" [link]="'/dashboard/audit-logs'"
           [active]="isActive('/dashboard/audit-logs')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Roaming (OCPI)'" [link]="'/dashboard/ocpi'"
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'nav.roaming'" [link]="'/dashboard/ocpi'"
           [active]="isActive('/dashboard/ocpi')"></app-sidebar-link>
-        <app-sidebar-link *ngIf="access.isAdmin" [title]="'Charger PKI'" [link]="'/dashboard/pki'"
+        <app-sidebar-link *ngIf="access.isAdmin" [title]="'nav.pki'" [link]="'/dashboard/pki'"
           [active]="isActive('/dashboard/pki')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
@@ -128,25 +128,25 @@
 
     <!-- Partner menu -->
     <ng-container *ngIf="partnerID != 0">
-      <app-sidebar-item [title]="'home'" [link]="'/partner-dashboard'"
+      <app-sidebar-item [title]="'nav.home'" [link]="'/partner-dashboard'"
         [active]="isExactActive('/partner-dashboard')"></app-sidebar-item>
 
 
-      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'Operation Monitoring'"
+      <app-sidebar-dropdown iconID="icon-type2-charger" [title]="'nav.operationMonitoring'"
         [active]="isDropdownActive('/partner-dashboard/connector-realtime', '/partner-dashboard/statistics')">
-        <app-sidebar-link [title]="'Connector real-time'" [link]="'/partner-dashboard/connector-realtime'"
+        <app-sidebar-link [title]="'nav.connectorRealtime'" [link]="'/partner-dashboard/connector-realtime'"
           [active]="isActive('/partner-dashboard/connector-realtime')"></app-sidebar-link>
-        <app-sidebar-link [title]="'statistics'" [link]="'/partner-dashboard/statistics'"
+        <app-sidebar-link [title]="'nav.statistics'" [link]="'/partner-dashboard/statistics'"
           [active]="isActive('/partner-dashboard/statistics')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-dropdown iconID="icon-invoice" [title]="'order management'"
+      <app-sidebar-dropdown iconID="icon-invoice" [title]="'nav.orderManagement'"
         [active]="isDropdownActive('/partner-dashboard/charging-sessions')">
-        <app-sidebar-link [title]="'Charging Sessions'" [link]="'/partner-dashboard/charging-sessions'"
+        <app-sidebar-link [title]="'nav.chargingSessions'" [link]="'/partner-dashboard/charging-sessions'"
           [active]="isActive('/partner-dashboard/charging-sessions')"></app-sidebar-link>
       </app-sidebar-dropdown>
 
-      <app-sidebar-item [title]="'security'" [link]="'/partner-dashboard/security'"
+      <app-sidebar-item [title]="'nav.security'" [link]="'/partner-dashboard/security'"
         [active]="isExactActive('/partner-dashboard/security')"></app-sidebar-item>
     </ng-container>
   </div>
@@ -156,8 +156,7 @@
     <svg class="icon icon-help">
       <use xlink:href="#icon-help"></use>
     </svg>
-    Help & Documentation
-    <div class="sidebar__counter">8</div>
+    {{ 'nav.help' | translate }}
   </button>
 
   <label class="theme js-theme">
@@ -171,13 +170,13 @@
         <svg class="icon icon-sun">
           <use xlink:href="#icon-sun"></use>
         </svg>
-        Light
+        {{ 'theme.light' | translate }}
       </span>
       <span class="theme__box">
         <svg class="icon icon-moon">
           <use xlink:href="#icon-moon"></use>
         </svg>
-        Dark
+        {{ 'theme.dark' | translate }}
       </span>
     </span>
   </label>
@@ -185,105 +184,9 @@
 
 
   <div #helpOverlay class="overlay"></div>
-
   <div #help class="help">
-    <div class="help__head">
-      <svg class="icon icon-help">
-        <use xlink:href="#icon-help"></use>
-      </svg>Help & getting started
-      <button #helpClose class="help__close">
-        <svg class="icon icon-close">
-          <use xlink:href="#icon-close"></use>
-        </svg>
-      </button>
-    </div>
-    <div class="help__list"><a class="help__item" data-fancybox href="https://www.youtube.com/watch?v=_sI_Ps7JSEk"
-        data-caption="Use guidelines">
-        <div class="help__preview"><img srcSet="img/content/product-pic-1@2x.jpg 2x" src="img/content/product-pic-1.jpg"
-            alt="Exclusive downloads"></div>
-        <div class="help__details">
-          <div class="help__title">Exclusive downloads</div>
-          <div class="help__line">
-            <div class="status-purple help__status">New</div>
-            <div class="help__user">
-              <div class="help__avatar"><img src="img/content/avatar-1.jpg" alt="Avatar"></div>
-              <div class="help__time">3 mins</div>
-            </div>
-          </div>
-        </div>
-      </a><a class="help__item" data-fancybox href="https://www.youtube.com/watch?v=_sI_Ps7JSEk"
-        data-caption="Use guidelines">
-        <div class="help__preview"><img srcSet="img/content/product-pic-2@2x.jpg 2x" src="img/content/product-pic-2.jpg"
-            alt="Behind the scenes"></div>
-        <div class="help__details">
-          <div class="help__title">Behind the scenes</div>
-          <div class="help__line">
-            <div class="status-purple help__status">New</div>
-            <div class="help__user">
-              <div class="help__avatar"><img src="img/content/avatar-2.jpg" alt="Avatar"></div>
-              <div class="help__time">5 mins</div>
-            </div>
-          </div>
-        </div>
-      </a><a class="help__item" data-fancybox href="https://www.youtube.com/watch?v=_sI_Ps7JSEk"
-        data-caption="Use guidelines">
-        <div class="help__preview"><img srcSet="img/content/product-pic-3@2x.jpg 2x" src="img/content/product-pic-3.jpg"
-            alt="Use guidelines"></div>
-        <div class="help__details">
-          <div class="help__title">Use guidelines</div>
-          <div class="help__line">
-            <div class="help__user">
-              <div class="help__avatar"><img src="img/content/avatar-3.jpg" alt="Avatar"></div>
-              <div class="help__time">8 mins</div>
-            </div>
-          </div>
-        </div>
-      </a><a class="help__item" data-fancybox href="https://www.youtube.com/watch?v=_sI_Ps7JSEk"
-        data-caption="Use guidelines">
-        <div class="help__preview"><img srcSet="img/content/product-pic-4@2x.jpg 2x" src="img/content/product-pic-4.jpg"
-            alt="Life &amp; work update"></div>
-        <div class="help__details">
-          <div class="help__title">Life &amp; work update</div>
-          <div class="help__line">
-            <div class="help__user">
-              <div class="help__avatar"><img src="img/content/avatar-4.jpg" alt="Avatar"></div>
-              <div class="help__time">12 mins</div>
-            </div>
-          </div>
-        </div>
-      </a><a class="help__item" data-fancybox href="https://www.youtube.com/watch?v=_sI_Ps7JSEk"
-        data-caption="Use guidelines">
-        <div class="help__preview"><img srcSet="img/content/product-pic-5@2x.jpg 2x" src="img/content/product-pic-5.jpg"
-            alt="Promote your product"></div>
-        <div class="help__details">
-          <div class="help__title">Promote your product</div>
-          <div class="help__line">
-            <div class="help__user">
-              <div class="help__avatar"><img src="img/content/avatar-5.jpg" alt="Avatar"></div>
-              <div class="help__time">33 mins</div>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-    <div class="help__menu"><a class="help__link" href="upgrade-to-pro.html">
-        <svg class="icon icon-lightning">
-          <use xlink:href="#icon-lightning"></use>
-        </svg>Upgrade to Pro
-        <div class="help__arrow">
-          <svg class="icon icon-arrow-next">
-            <use xlink:href="#icon-arrow-next"></use>
-          </svg>
-        </div>
-      </a><a class="help__link" href="index.html">
-        <svg class="icon icon-download">
-          <use xlink:href="#icon-download"></use>
-        </svg>Download desktop app</a><a class="help__link" href="message-center.html">
-        <svg class="icon icon-message">
-          <use xlink:href="#icon-message"></use>
-        </svg>Message center
-        <div class="help__counter">8</div>
-      </a></div>
-  </div></div>
+    <button #helpClose class="help__close" type="button"></button>
+  </div>
+</div>
 
 <div class="sidebar__backdrop" [class.active]="opened" (click)="closeDrawer()"></div>

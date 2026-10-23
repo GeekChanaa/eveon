@@ -1,0 +1,40 @@
+{
+  "common": {
+    "currency": { "mad": "MAD" },
+    "units": { "kwh": "kWh", "min": "min", "kw": "kW", "perKwh": "/ kWh", "perMin": "/ min" },
+    "actions": {
+      "save": "Save", "cancel": "Cancel", "close": "Close", "edit": "Edit", "delete": "Delete", "remove": "Remove",
+      "confirm": "Confirm", "download": "Download", "print": "Print", "exportCsv": "Export CSV", "exportPdf": "Export PDF",
+      "filter": "Filter", "reset": "Reset", "search": "Search", "back": "Back", "next": "Next", "previous": "Previous",
+      "retry": "Try again", "viewAll": "View all", "details": "Details", "apply": "Apply", "refresh": "Refresh"
+    },
+    "state": {
+      "loading": "Loading…", "empty": "Nothing to show yet.", "error": "Something went wrong. Please try again.",
+      "saved": "Saved", "yes": "Yes", "no": "No", "all": "All", "none": "None"
+    },
+    "fields": { "from": "From", "to": "To", "status": "Status", "date": "Date", "amount": "Amount", "total": "Total", "search": "Search" },
+    "pager": { "page": "Page {{page}} of {{pages}}", "results": "{{total}} results" }
+  },
+  "nav": {
+    "home": "Home", "operationMonitoring": "Operation monitoring", "connectorRealtime": "Connector real-time", "statistics": "Statistics",
+    "stationManagement": "Station management", "chargingStations": "Charging stations", "chargePoints": "Charge points",
+    "businessManagement": "Business management", "chargingCards": "Charging cards", "appManagement": "App management",
+    "notices": "Notices", "reports": "Reports", "dataRequests": "Data download requests", "orderManagement": "Order management",
+    "chargingSessions": "Charging sessions", "transactions": "Transactions", "rechargeOrders": "Recharge orders",
+    "maintenance": "Maintenance", "globalConfigurations": "Global configurations", "systemReports": "System reports",
+    "ocppOperation": "OCPP operation", "chargerEvents": "Charger events", "chargePointConfigurations": "Charge point configurations",
+    "defaultConfiguration": "Default configuration", "localList": "Local list", "account": "Account", "users": "Users",
+    "partners": "Partners", "roles": "Roles & permissions", "auditLog": "Audit log", "roaming": "Roaming (OCPI)", "pki": "Charger PKI",
+    "security": "Security", "help": "Help & documentation", "expand": "Expand sidebar", "collapse": "Collapse sidebar"
+  },
+  "header": {
+    "openMenu": "Open menu", "language": "Language", "accountMenu": "Open account menu", "profilePhoto": "Your profile photo",
+    "signedInAs": "Signed in as", "myProfile": "My profile", "manageUsers": "Manage users & access", "signOut": "Sign out"
+  },
+  "theme": { "light": "Light", "dark": "Dark" },
+  "roles": { "Admin": "Administrator", "Customer": "Customer", "PremiumCustomer": "Premium customer", "Support": "Support", "Partner": "Partner", "undefined": "" },
+  "errors": {
+    "notFound": { "title": "Page not found", "text": "The page you are looking for does not exist or has moved." },
+    "accessDenied": { "title": "Access restricted", "text": "Your role does not grant access to this page. Ask an administrator if you need access.", "home": "Return home" }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "common": {
+    "currency": { "mad": "MAD" },
+    "units": { "kwh": "kWh", "min": "min", "kw": "kW", "perKwh": "/ kWh", "perMin": "/ min" },
+    "actions": {
+      "save": "Enregistrer", "cancel": "Annuler", "close": "Fermer", "edit": "Modifier", "delete": "Supprimer", "remove": "Retirer",
+      "confirm": "Confirmer", "download": "Télécharger", "print": "Imprimer", "exportCsv": "Exporter en CSV", "exportPdf": "Exporter en PDF",
+      "filter": "Filtrer", "reset": "Réinitialiser", "search": "Rechercher", "back": "Retour", "next": "Suivant", "previous": "Précédent",
+      "retry": "Réessayer", "viewAll": "Tout voir", "details": "Détails", "apply": "Appliquer", "refresh": "Actualiser"
+    },
+    "state": {
+      "loading": "Chargement…", "empty": "Rien à afficher pour le moment.", "error": "Une erreur est survenue. Veuillez réessayer.",
+      "saved": "Enregistré", "yes": "Oui", "no": "Non", "all": "Tous", "none": "Aucun"
+    },
+    "fields": { "from": "Du", "to": "Au", "status": "Statut", "date": "Date", "amount": "Montant", "total": "Total", "search": "Recherche" },
+    "pager": { "page": "Page {{page}} sur {{pages}}", "results": "{{total}} résultats" }
+  },
+  "nav": {
+    "home": "Accueil", "operationMonitoring": "Supervision", "connectorRealtime": "Connecteurs en temps réel", "statistics": "Statistiques",
+    "stationManagement": "Gestion des stations", "chargingStations": "Stations de recharge", "chargePoints": "Bornes",
+    "businessManagement": "Gestion commerciale", "chargingCards": "Cartes de recharge", "appManagement": "Gestion de l’application",
+    "notices": "Annonces", "reports": "Signalements", "dataRequests": "Demandes de données", "orderManagement": "Gestion des commandes",
+    "chargingSessions": "Sessions de recharge", "transactions": "Transactions", "rechargeOrders": "Rechargements",
+    "maintenance": "Maintenance", "globalConfigurations": "Configuration générale", "systemReports": "Rapports système",
+    "ocppOperation": "Exploitation OCPP", "chargerEvents": "Événements des bornes", "chargePointConfigurations": "Configuration des bornes",
+    "defaultConfiguration": "Configuration par défaut", "localList": "Liste locale", "account": "Comptes", "users": "Utilisateurs",
+    "partners": "Partenaires", "roles": "Rôles et permissions", "auditLog": "Journal d’audit", "roaming": "Itinérance (OCPI)", "pki": "PKI des bornes",
+    "security": "Sécurité", "help": "Aide et documentation", "expand": "Déplier le menu", "collapse": "Replier le menu"
+  },
+  "header": {
+    "openMenu": "Ouvrir le menu", "language": "Langue", "accountMenu": "Ouvrir le menu du compte", "profilePhoto": "Votre photo de profil",
+    "signedInAs": "Connecté en tant que", "myProfile": "Mon profil", "manageUsers": "Gérer les utilisateurs et les accès", "signOut": "Se déconnecter"
+  },
+  "theme": { "light": "Clair", "dark": "Sombre" },
+  "roles": { "Admin": "Administrateur", "Customer": "Client", "PremiumCustomer": "Client premium", "Support": "Support", "Partner": "Partenaire", "undefined": "" },
+  "errors": {
+    "notFound": { "title": "Page introuvable", "text": "La page que vous cherchez n’existe pas ou a été déplacée." },
+    "accessDenied": { "title": "Accès restreint", "text": "Votre rôle ne donne pas accès à cette page. Demandez l’accès à un administrateur si nécessaire.", "home": "Retour à l’accueil" }
+  }
+}
