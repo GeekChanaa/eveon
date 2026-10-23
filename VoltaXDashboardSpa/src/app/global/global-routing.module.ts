@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RechargeCardOrderComponent } from './recharge-card-order/recharge-card-order.component';
 import { ServerErrorComponent } from './error-pages/server-error/server-error.component';
 import { NotAuthorizedComponent } from './error-pages/not-authorized/not-authorized.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
@@ -9,10 +8,8 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.component';
 const routes: Routes = [
-  {
-    path: "checkout",
-    component: RechargeCardOrderComponent,
-  },
+  // Old mock checkout; top-ups are paid online from the customer wallet.
+  { path: "checkout", redirectTo: "/my-dashboard/wallet", pathMatch: "full" },
   { path: "privacy", component: PrivacyPolicyComponent, title: "Privacy policy" },
   { path: "terms", component: TermsConditionsComponent, title: "Terms of use" },
   { path: "cookies", component: CookiesPolicyComponent, title: "Cookie policy" },

@@ -1,13 +1,17 @@
-<app-dashboard-form-container title="New recharge order" [items]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Recharge orders', link: '/dashboard/recharge-orders' }, { label: 'New order' }]">
+<app-dashboard-form-container title="Manual top-up" [items]="[{ label: 'Dashboard', link: '/dashboard' }, { label: 'Recharge orders', link: '/dashboard/recharge-orders' }, { label: 'Manual top-up' }]">
   <div form class="recharge-order-create">
-    <div class="station-intro"><h2>Mock payment</h2><p>Choose a card, amount, and payment outcome. Only completed payments credit the card balance.</p></div>
+    <div class="station-intro"><h2>Credit a charging card</h2><p>For money received outside the online payment (cash, bank transfer) or a commercial gesture. The card is credited at once, the operation is logged with your name and the note, and the customer gets the invoice by email. Customers top up online from their portal.</p></div>
     <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" novalidate>
-      <section class="order-section"><header><h3>Recharge details</h3><p>Select the target card and amount.</p></header><div class="order-fields">
-        <label><span>Recharge card</span><select formControlName="cardID"><option value="">Select a card</option><option *ngFor="let card of cards" [value]="card.id">{{ card.name }}</option></select><small *ngIf="getControl('cardID').touched && getControl('cardID').invalid">Select a recharge card.</small></label>
-        <label><span>Amount</span><div class="amount-input"><input formControlName="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00"><span>MAD</span></div><small *ngIf="getControl('amount').touched && getControl('amount').invalid">Enter an amount greater than zero.</small></label>
+      <section class="order-section"><header><h3>Top-up</h3><p>Select the card and the amount received.</p></header><div class="order-fields">
+        <label><span>Charging card</span><select formControlName="cardID"><option value="">Select a card</option><option *ngFor="let card of cards" [value]="card.id">{{ card.name }}{{ card.status && card.status !== 'Active' ? ' (' + card.status + ')' : '' }}</option></select><small *ngIf="getControl('cardID').touched && getControl('cardID').invalid">Select a charging card.</small></label>
+        <label><span>Amount</span><div class="amount-input"><input formControlName="amount" type="number" min="0.01" max="100000" step="0.01" inputmode="decimal" placeholder="0.00"><span>MAD</span></div><small *ngIf="getControl('amount').touched && getControl('amount').invalid">Enter an amount between 0.01 and 100,000.</small></label>
       </div></section>
-      <section class="order-section"><header><h3>Mock payment outcome</h3><p>Every attempt gets a quote email; only Completed updates the balance.</p></header><div class="status-options"><label *ngFor="let status of paymentStatuses" [class.selected]="orderForm.value.status === status"><input type="radio" formControlName="status" [value]="status"><span>{{ status }}</span></label></div></section>
-      <div class="form-actions"><button type="button" class="secondary-action" [routerLink]="['/dashboard/recharge-orders']">Cancel</button><button type="submit" class="primary-action" [disabled]="isLoading">{{ isLoading ? 'Processing...' : 'Create payment' }}</button></div>
+      <section class="order-section"><header><h3>Reason</h3><p>Required: it is kept on the order and in the wallet history.</p></header><div class="note-field">
+        <div class="note-presets"><button type="button" *ngFor="let preset of notePresets" (click)="useNote(preset)" [class.selected]="orderForm.value.note === preset">{{ preset }}</button></div>
+        <label><span>Note</span><input formControlName="note" maxlength="256" placeholder="e.g. Cash received at the agency, receipt #1234"></label>
+        <small *ngIf="getControl('note').touched && getControl('note').invalid">Write a reason of 3 to 256 characters.</small>
+      </div></section>
+      <div class="form-actions"><button type="button" class="secondary-action" [routerLink]="['/dashboard/recharge-orders']">Cancel</button><button type="submit" class="primary-action" [disabled]="isLoading">{{ isLoading ? 'Crediting...' : 'Credit the card' }}</button></div>
     </form>
   </div>
 </app-dashboard-form-container>

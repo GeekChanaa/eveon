@@ -7,7 +7,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { GlobalRoutingModule } from './global-routing.module';
-import { RechargeCardOrderComponent } from './recharge-card-order/recharge-card-order.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
@@ -21,7 +20,6 @@ import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.componen
 
 @NgModule({
     declarations: [
-      RechargeCardOrderComponent,
       AboutUsComponent,
       ContactUsComponent,
       NotFoundComponent,
