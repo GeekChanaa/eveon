@@ -688,7 +688,9 @@ namespace VoltaXApi.Services
             System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out utc);
 
     /// <summary>
-    /// Finds an active (non-closed) transaction by UID first, then falls back to the latest on the connector.
+    /// The open transaction with this charger transaction id, or null. There is no fallback on another open
+    /// transaction of the connector: a retried or late Ended event for a transaction already closed would then
+    /// close (and bill) the session that is charging now.
     /// </summary>
     private async Task<Transaction?> FindActiveTransaction(
         string transactionUid,
@@ -696,39 +698,25 @@ namespace VoltaXApi.Services
         string chargePointStatusId,
         Connector? connector)
     {
-      // First try: find by transaction UID
       var transaction = (await _transactionRepository
           .FindAsync(t => t.Uid == transactionUid))
           .OrderByDescending(t => t.ID)
           .FirstOrDefault();
 
-      if (transaction != null && !transaction.StopTime.HasValue)
-        return transaction;
-
-      if (transaction != null && transaction.StopTime.HasValue)
-        _logger.LogDebug("FindActiveTransaction => Transaction {Uid} is already closed", transactionUid);
-
-      // Fallback: find latest open transaction on this connector
-      if (connector == null)
+      if (transaction == null)
       {
-        _logger.LogDebug("FindActiveTransaction => No connector provided, cannot find fallback transaction");
+        _logger.LogWarning("FindActiveTransaction => Unknown transaction {Uid} from {ChargePointId} (connector {ConnectorId})",
+            transactionUid, chargePointStatusId, connector?.ID);
         return null;
       }
 
-      transaction = (await _transactionRepository
-          .FindAsync(t => t.ConnectorID == connector.ID && !t.StopTime.HasValue))
-          .OrderByDescending(t => t.ID)
-          .FirstOrDefault();
-
-      if (transaction != null)
+      if (transaction.StopTime.HasValue || transaction.Status == TransactionStatusEnum.Ended)
       {
-        _logger.LogDebug("FindActiveTransaction => Found fallback transaction {TransactionId} on connector {ConnectorId}",
-            transaction.ID, connector.ID);
-        return transaction;
+        _logger.LogInformation("FindActiveTransaction => Transaction {Uid} is already closed; event ignored", transactionUid);
+        return null;
       }
 
-      _logger.LogDebug("FindActiveTransaction => No active transaction found for connector {ConnectorId}", connector.ID);
-      return null;
+      return transaction;
     }
 
     /// <summary>
