@@ -32,7 +32,7 @@ public sealed class OcppTestHost : IAsyncDisposable
     public const string Ocpp201 = OcppProtocols.Ocpp201;
 
     private readonly Dictionary<string, OcppConnection> _connections = new();
-    private readonly SqliteConnection? _sqlite;
+    private readonly string? _databaseFile;
     private int _messageCounter;
 
     public ServiceProvider Provider { get; }
@@ -68,9 +68,11 @@ public sealed class OcppTestHost : IAsyncDisposable
         services.AddHttpContextAccessor();
         if (relational)
         {
-            _sqlite = new SqliteConnection("DataSource=:memory:");
-            _sqlite.Open();
-            services.AddDbContext<VoltaXApiDbContext>(o => o.UseSqlite(_sqlite));
+            // A temporary database file: each DbContext opens its own connection, as on a real server, so a
+            // background command (the low-balance stop) can run beside the request that started it.
+            _databaseFile = Path.Combine(Path.GetTempPath(), $"voltax-ocpp-{Guid.NewGuid():N}.db");
+            var connectionString = new SqliteConnectionStringBuilder { DataSource = _databaseFile, Pooling = false, DefaultTimeout = 30 }.ToString();
+            services.AddDbContext<VoltaXApiDbContext>(o => o.UseSqlite(connectionString));
         }
         else
         {
@@ -162,7 +164,7 @@ public sealed class OcppTestHost : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await Provider.DisposeAsync();
-        if (_sqlite != null)
-            await _sqlite.DisposeAsync();
+        if (_databaseFile != null)
+            try { File.Delete(_databaseFile); } catch (IOException) { /* still held by a finishing background task */ }
     }
 }
