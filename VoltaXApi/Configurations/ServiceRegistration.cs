@@ -435,6 +435,9 @@ public static class ServiceRegistration
             var serverVersion = new MariaDbServerVersion(configuration["Database:ServerVersion"] ?? "10.6.15");
             
             options.UseMySql(connectionString, serverVersion)
+                // The migration snapshot is SQL Server typed (docs/database.md), so on MySQL the
+                // "pending model changes" check before migrating always fires: keep it out of the error log.
+                .ConfigureWarnings(w => w.Log((Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning, LogLevel.Debug)))
                 .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>());
         });
     }

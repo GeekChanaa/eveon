@@ -32,13 +32,32 @@ public class Program
 
             var app = builder.Build();
 
-            var initializeRefreshTokens = args.Contains("--initialize-refresh-tokens");
+            var migrateOnly = args.Contains(DatabaseMigrations.Flag);
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+
+                // Schema first, through migrations only (docs/database.md): the seeders below need it.
                 // SQLite (test runs) has no migrations: the schema comes from the model.
+                var migrations = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(DatabaseMigrations));
                 if (db.Database.IsSqlite())
+                {
                     await db.Database.EnsureCreatedAsync();
+                    if (migrateOnly)
+                        return;
+                }
+                else if (migrateOnly || builder.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+                {
+                    await DatabaseMigrations.MigrateAsync(db, migrations);
+                    await DatabaseMigrations.VerifySchemaAsync(db, migrations);
+                    if (migrateOnly)
+                        return;
+                }
+                else
+                    await DatabaseMigrations.CheckNothingPendingAsync(db,
+                        builder.Configuration.GetValue<bool?>("Database:FailOnPendingMigrations") ?? app.Environment.IsProduction(),
+                        migrations);
+
                 await PermissionSeeder.Seed(db);
                 try
                 {
@@ -49,21 +68,12 @@ public class Program
                     // Table missing until AddChargePointProvisioning is applied; the API still starts.
                     Log.Warning(ex, "Could not seed the default OCPP provisioning profile");
                 }
-                if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Database:InitializePhoneLogin"))
-                    await PhoneLoginSchema.Initialize(db);
-                if (initializeRefreshTokens || builder.Configuration.GetValue<bool?>("Database:InitializeRefreshTokens")
-                    == true || (app.Environment.IsDevelopment() && builder.Configuration["Database:InitializeRefreshTokens"] == null))
-                    await RefreshTokenSchema.Initialize(db);
-                else
-                    await RefreshTokenSchema.Verify(db);
                 if (args.Contains(AdminBootstrap.Flag))
                 {
                     await AdminBootstrap.Run(db, builder.Configuration);
                     return;
                 }
             }
-            if (initializeRefreshTokens)
-                return;
 
             // Every start (so every deploy) checks the roles, defaults and test accounts.
             await RunFirstSetup(app);

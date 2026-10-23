@@ -18,7 +18,7 @@ var configuration = new ConfigurationBuilder()
 var options = new DbContextOptionsBuilder<VoltaXApiDbContext>()
     .UseSqlServer(configuration.GetConnectionString("DefaultConnection")).Options;
 await using var db = new VoltaXApiDbContext(options);
-await RefreshTokenSchema.Verify(db);
+await DatabaseMigrations.VerifySchemaAsync(db, NullLogger.Instance);
 await using var transaction = await db.Database.BeginTransactionAsync();
 var now = DateTime.UtcNow;
 var user = new User
