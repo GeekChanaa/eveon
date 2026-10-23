@@ -4024,6 +4024,9 @@ namespace VoltaXApi.Migrations
 
                     b.HasKey("Phone");
 
+                    b.HasIndex("IpAddress", "WindowStart")
+                        .HasDatabaseName("IX_PhoneLoginChallenges_IpAddress");
+
                     b.ToTable("PhoneLoginChallenges");
                 });
 
