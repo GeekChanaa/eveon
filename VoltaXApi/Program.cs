@@ -165,23 +165,20 @@ public class Program
             return;
         }
 
-        // Mailed once the API listens: a slow SMTP server must not hold the health check back.
+        // Queued: MailDeliveryService sends it once the API runs, so a slow SMTP server never holds the start back.
         var recipient = options.TestUsers.CredentialsRecipient;
         var environment = $"{app.Environment.EnvironmentName} ({app.Configuration["SpaLink"]})";
-        app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
+        try
         {
-            try
-            {
-                using var scope = app.Services.CreateScope();
-                await scope.ServiceProvider.GetRequiredService<IMailService>().SendSetupCredentialsMail(recipient, environment, result.Credentials);
-                Log.Information("Test account passwords mailed to {Recipient}", recipient);
-            }
-            catch (Exception ex)
-            {
-                // Never log the passwords: they are only valid until the next start anyway.
-                Log.Error(ex, "Could not mail the test account passwords to {Recipient}", recipient);
-            }
-        }));
+            using var scope = app.Services.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IMailService>().SendSetupCredentialsMail(recipient, environment, result.Credentials);
+            Log.Information("Test account passwords queued for {Recipient}", recipient);
+        }
+        catch (Exception ex)
+        {
+            // Never log the passwords: they are only valid until the next start anyway.
+            Log.Error(ex, "Could not mail the test account passwords to {Recipient}", recipient);
+        }
     }
 
     private static void SeedDatabase(WebApplication app)

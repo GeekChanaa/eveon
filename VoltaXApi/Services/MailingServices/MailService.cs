@@ -2,22 +2,25 @@ using VoltaXApi.Settings;
 using VoltaXApi.Models;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using MimeKit;
 using System.IO;
 using System;
-using MailKit;
 using VoltaxApi.Helpers;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Services
 {
+	/// <summary>
+	/// Builds the platform's emails from the templates in Assets/EmailTemplates and hands them to <see cref="IMailQueue"/>:
+	/// the caller never waits for the mail server (see <see cref="MailDeliveryService"/>).
+	/// </summary>
 	public class MailService : IMailService
 	{
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Templates = new();
+
 		private readonly MailSettings _mailSettings;
-		private readonly IEmailTemplateService _emailTemplateService;
+		private readonly IMailQueue _mailQueue;
 		private readonly IConfiguration _configuration;
 		private readonly SupportEmails _supportEmails;
 		private readonly IWebHostEnvironment _env;
@@ -25,14 +28,14 @@ namespace VoltaXApi.Services
 
 		public MailService(
 					IOptions<MailSettings> mailSettings,
-					IEmailTemplateService emailTemplateService,
+					IMailQueue mailQueue,
 					IConfiguration config,
 					IOptions<SupportEmails> supportEmails,
 					IWebHostEnvironment env,
 					ISystemReportRepository SystemReportRepository)
 		{
 			_mailSettings = mailSettings.Value;
-			_emailTemplateService = emailTemplateService;
+			_mailQueue = mailQueue;
 			_configuration = config;
 			_supportEmails = supportEmails.Value;
 			_env = env;
@@ -463,10 +466,11 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		// Templates ship with the build: read once per process.
 		private string GetEmailTemplate(string templateName)
 		{
 			var path = Path.Combine(_env.ContentRootPath, "Assets", "EmailTemplates", $"{templateName}.html");
-			return File.ReadAllText(path);
+			return Templates.GetOrAdd(path, File.ReadAllText);
 		}
 
 		private string PopulateTemplate(string template, Dictionary<string, string> placeholders)
@@ -527,24 +531,14 @@ namespace VoltaXApi.Services
 
 
 
-		public async Task SendEmailSmtp(MimeMessage email)
+		/// <summary>
+		/// Queues the message and returns at once; <see cref="MailDeliveryService"/> sends it over SMTP with retries
+		/// (see <see cref="SmtpMailTransport"/>).
+		/// </summary>
+		public Task SendEmailSmtp(MimeMessage email)
 		{
-			// Fail in 30 s instead of MailKit's 2 min when the host or port is unreachable.
-			using var smtp = new SmtpClient { Timeout = 30_000 };
-			// Port 465 (Hostinger's default) speaks TLS from the first byte; 587 / 2525 upgrade with STARTTLS.
-			var security = _mailSettings.Port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
-			try
-			{
-				await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, security);
-			}
-			catch (Exception ex)
-			{
-				throw new InvalidOperationException($"Could not connect to SMTP server {_mailSettings.Host}:{_mailSettings.Port}", ex);
-			}
-			var username = string.IsNullOrWhiteSpace(_mailSettings.Username) ? _mailSettings.Mail : _mailSettings.Username;
-			await smtp.AuthenticateAsync(username, _mailSettings.Password);
-			await smtp.SendAsync(email);
-			await smtp.DisconnectAsync(true);
+			_mailQueue.Enqueue(email);
+			return Task.CompletedTask;
 		}
 
 		public async Task SendPasswordChangedMail(MailRequest mailRequest, string userName)

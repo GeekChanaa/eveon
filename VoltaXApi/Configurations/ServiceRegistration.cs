@@ -147,6 +147,7 @@ public static class ServiceRegistration
         services.Configure<SupportEmails>(configuration.GetSection("SupportEmails"));
         services.Configure<CompanyInformations>(configuration.GetSection("CompanyInformations"));
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<MailQueueOptions>(configuration.GetSection(MailQueueOptions.SectionName));
         services.Configure<VoltaXApi.Services.Setup.FirstSetupOptions>(configuration.GetSection("FirstSetup"));
         services.Configure<CardExpirationSettings>(configuration.GetSection("CardExpirationSettings"));
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
@@ -268,6 +269,11 @@ public static class ServiceRegistration
         services.AddScoped<IEmailVerificationGuard, EmailVerificationGuard>();
         services.AddHostedService<RefreshTokenCleanupService>();
         services.AddScoped<IMailService, MailService>();
+        // Mail is queued and sent in the background, so no request or OCPP handler waits for the SMTP server.
+        services.AddSingleton<MailQueue>();
+        services.AddSingleton<IMailQueue>(sp => sp.GetRequiredService<MailQueue>());
+        services.AddSingleton<IMailTransport, SmtpMailTransport>();
+        services.AddHostedService<MailDeliveryService>();
         services.AddScoped<VoltaXApi.Services.Setup.FirstSetupJob>();
         services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
