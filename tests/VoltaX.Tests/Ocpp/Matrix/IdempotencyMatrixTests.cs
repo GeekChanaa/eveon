@@ -28,4 +28,26 @@ public class IdempotencyMatrixTests
         await ScenarioAssert.Billed(host, cardId, 100m, 30.00m, 3.00m, 1.00m);
         Assert.DoesNotContain("ChargingEndedAbnormally", await ScenarioAssert.Notifications(host));
     }
+
+    [Theory, MemberData(nameof(Protocols), MemberType = typeof(MatrixStation))]
+    public async Task A_meter_value_delivered_late_never_moves_the_session_backwards(string protocol)
+    {
+        var (host, charger, cardId) = await Open(protocol);
+        await using var _ = host;
+        await charger.Plug(T0);
+        var (_, uid) = await charger.Start("TAG-1", 1000, T0);
+        await charger.Meter(uid, 5000, T0.AddMinutes(10));
+        await charger.Meter(uid, 9000, T0.AddMinutes(30));
+
+        // The 20-minute sample timed out and is retried after the 30-minute one.
+        await charger.Meter(uid, 7000, T0.AddMinutes(20));
+
+        Assert.Equal(9.0, (await Tx(host)).MeterStop);
+        var session = await Session(host);
+        Assert.Equal(8, session.ChargedKwhs!.Value, 6);
+        Assert.Equal(30, session.ChargedMinutes!.Value, 6);
+
+        await charger.Stop(uid, 13000, T0.AddMinutes(30), StopKind.LocalCard, idTag: "TAG-1");
+        await ScenarioAssert.Billed(host, cardId, 100m, 30.00m, 3.00m, 1.00m);
+    }
 }

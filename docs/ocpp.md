@@ -140,7 +140,9 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
 
 - **Retries and late events.** Events are matched on the transaction id only. An event for a closed or unknown
   transaction is acknowledged and logged; it never touches another transaction of the connector (a re-sent
-  Ended of the previous transaction used to close the session charging at that moment).
+  Ended of the previous transaction used to close the session charging at that moment). A meter reading older than
+  the last one applied to the transaction (a retried sample, an offline queue flushed out of order) is ignored, so
+  the session's energy and duration never move backwards.
 - **Fault during a session.** A `Faulted` StatusNotification raises a high-criticality system report and, when
   a transaction is open on the connector, notifies the customer (`ChargerFaultDuringSession`). The session
   stays open: the charger is expected to end it when it recovers, and the customer pays the energy measured.

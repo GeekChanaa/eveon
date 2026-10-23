@@ -379,6 +379,20 @@ namespace VoltaXApi.Services
           return status;
         }
 
+        // A reading older than the last one applied (a retried sample, an offline queue flushed out of order) is
+        // stale: applying it would move the meter and the duration of the session backwards.
+        var lastAppliedMinutes = await _context.ChargingSessions.AsNoTracking()
+            .Where(s => s.ID == transaction.ChargingSessionID)
+            .Select(s => s.ChargedMinutes)
+            .FirstOrDefaultAsync();
+        if (lastAppliedMinutes > 0 && updateTimestamp < transaction.StartTime.AddMinutes(lastAppliedMinutes.Value))
+        {
+          _logger.LogInformation(
+              "UpdateTransaction => Reading of {Timestamp} for transaction {TransactionUid} is older than the last one applied; ignored",
+              data.Timestamp, transaction.Uid);
+          return status;
+        }
+
         if (data.AbnormalCondition)
         {
           await CreateChargingSessionNotification(
