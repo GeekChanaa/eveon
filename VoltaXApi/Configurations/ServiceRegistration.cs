@@ -203,6 +203,7 @@ public static class ServiceRegistration
         services.AddScoped<IOCPPLocalListItemRepository, OCPPLocalListItemRepository>();
         services.AddScoped<IOCPPLocalListVersionRepository, OCPPLocalListVersionRepository>();
         services.AddScoped<IOCPPConfigurationItemRepository, OCPPConfigurationItemRepository>();
+        services.AddScoped<IOCPPDisplayMessageInfoRepository, OCPPDisplayMessageInfoRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
