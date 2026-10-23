@@ -1,16 +1,18 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
-import { WebsocketStatusService } from './websocket-status.service';
+import { TestBed, waitForAsync, inject } from '@angular/core/testing';
+import { WebSocketStatusService } from './websocket-status.service';
 
+import { VxTestingModule } from 'src/testing/vx-testing.module';
 describe('Service: WebsocketStatus', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [WebsocketStatusService]
+      imports: [VxTestingModule],
+      providers: [WebSocketStatusService]
     });
   });
 
-  it('should ...', inject([WebsocketStatusService], (service: WebsocketStatusService) => {
+  it('should ...', inject([WebSocketStatusService], (service: WebSocketStatusService) => {
     expect(service).toBeTruthy();
   }));
 });
