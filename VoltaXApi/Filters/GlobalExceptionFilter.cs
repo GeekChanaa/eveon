@@ -39,6 +39,8 @@ public class GlobalExceptionFilter : IExceptionFilter
             CardNotFoundException => StatusCodes.Status404NotFound,
             PriceExceedsCardBalance => StatusCodes.Status402PaymentRequired,
             ConnectorUnavailableException => StatusCodes.Status409Conflict,
+            // Remote start from the app before the car is plugged in: the driver plugs in and tries again.
+            NoEVConnectedException => StatusCodes.Status409Conflict,
             AuthorizationFailedException => StatusCodes.Status401Unauthorized,
             RateLimitExceededException => StatusCodes.Status429TooManyRequests,
             LoginAttemptFailedException => StatusCodes.Status429TooManyRequests,
