@@ -27,6 +27,8 @@ coverage/
 coverage*.xml
 coverage*.json
 *.coverage
+# Simulator end-to-end and load runs (database, logs, reports)
+tools/e2e/out/
 
 # Logs and runtime data written by the API (logs/, App_Data/: charger log uploads, GDPR exports)
 *.log
