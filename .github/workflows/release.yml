@@ -29,13 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Image name (registry paths are lower case)
         id: name
         run: echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/eveon-api" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - uses: docker/login-action@v3
         with:
@@ -45,7 +45,7 @@ jobs:
 
       - name: Tags and labels
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ steps.name.outputs.image }}
           tags: |
@@ -57,7 +57,7 @@ jobs:
             org.opencontainers.image.description=EVEON API: OCPP CSMS, REST and SignalR for the dashboard and mobile app
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: VoltaXApi
           push: true
