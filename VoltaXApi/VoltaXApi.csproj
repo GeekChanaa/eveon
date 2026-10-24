@@ -53,7 +53,7 @@
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.4" />
     <!-- Transitive packages pinned to versions without known advisories (see "dotnet list package" with the vulnerable flag). -->
     <PackageReference Include="AWSSDK.Core" Version="4.0.3.3" />
-    <PackageReference Include="MessagePack" Version="2.5.303" />
+    <PackageReference Include="MessagePack" Version="3.1.12" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.21" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.21" />
     <!-- Reference data the first setup job imports into an empty database (the .json is content by default).
