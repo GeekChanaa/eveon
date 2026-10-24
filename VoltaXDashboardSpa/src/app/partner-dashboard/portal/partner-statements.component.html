@@ -1,0 +1,152 @@
+<div class="page__inner"><main class="page__container">
+  <!-- List of statements -->
+  <ng-container *ngIf="!detail">
+    <vx-print-header [title]="(profile?.name ? profile!.name + ' · ' : '') + ('billing.statements.title' | translate)"
+      [partnerLogo]="fileUrl(profile?.logoUrl)"></vx-print-header>
+
+    <header class="vx-heading">
+      <div>
+        <span class="vx-eyebrow">{{ 'partner.eyebrow' | translate }}</span>
+        <h1>{{ 'billing.statements.title' | translate }}</h1>
+        <p>{{ 'billing.statements.subtitle' | translate }}</p>
+      </div>
+      <div class="vx-actions no-print">
+        <div class="vx-field">
+          <label for="year" class="vx-sr-only">{{ 'billing.statements.year' | translate }}</label>
+          <select id="year" name="year" [(ngModel)]="year" (ngModelChange)="load()">
+            <option [ngValue]="null">{{ 'billing.statements.allYears' | translate }}</option>
+            <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+          </select>
+        </div>
+        <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+      </div>
+    </header>
+
+    <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+
+    <section class="vx-panel">
+      <p class="vx-empty" *ngIf="loading && !result">{{ 'common.state.loading' | translate }}</p>
+      <div class="vx-table-wrap" *ngIf="result?.items?.length; else empty">
+        <table class="vx-table">
+          <thead><tr>
+            <th>{{ 'billing.statements.period' | translate }}</th>
+            <th class="num">{{ 'billing.statements.sessions' | translate }}</th>
+            <th class="num">{{ 'billing.statements.energy' | translate }}</th>
+            <th class="num">{{ 'billing.statements.gross' | translate }}</th>
+            <th class="num">{{ 'billing.statements.commission' | translate }}</th>
+            <th class="num">{{ 'billing.statements.netPayout' | translate }}</th>
+            <th>{{ 'common.fields.status' | translate }}</th>
+            <th class="no-print"></th>
+          </tr></thead>
+          <tbody>
+            <tr *ngFor="let s of result!.items">
+              <td><a [routerLink]="['/partner-dashboard/statements', s.id]">{{ period(s) | vxDate:'MMMM y' }}</a></td>
+              <td class="num">{{ s.sessionCount | vxNumber:'1.0-0' }}</td>
+              <td class="num">{{ s.energyKwh | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</td>
+              <td class="num">{{ s.grossAmount | vxMoney }}</td>
+              <td class="num">{{ commission(s) | vxMoney }}</td>
+              <td class="num"><strong>{{ s.netPayout | vxMoney }}</strong></td>
+              <td>
+                <span class="vx-badge" [ngClass]="s.status === 'Paid' ? 'vx-badge--success' : 'vx-badge--warning'">{{ 'billing.settlementStatus.' + s.status | translate }}</span>
+                <div class="muted" *ngIf="s.paidAt">{{ s.paidAt | vxDate:'shortDate' }} · {{ s.paymentReference }}</div>
+              </td>
+              <td class="no-print">
+                <span class="vx-actions">
+                  <button type="button" class="vx-btn vx-btn--small" (click)="export(s, 'csv')" [disabled]="exporting">CSV</button>
+                  <button type="button" class="vx-btn vx-btn--small" (click)="export(s, 'pdf')" [disabled]="exporting">PDF</button>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #empty><p class="vx-empty" *ngIf="!loading">{{ 'billing.statements.empty' | translate }}</p></ng-template>
+      <vx-pager *ngIf="result" [page]="result.page" [pageSize]="result.pageSize" [total]="result.total" (pageChange)="load($event)"></vx-pager>
+    </section>
+    <p class="vx-footnote">{{ 'billing.statements.howItWorks' | translate }}</p>
+  </ng-container>
+
+  <!-- One statement -->
+  <ng-container *ngIf="detail as d">
+    <vx-print-header [title]="(profile?.name ? profile!.name + ' · ' : '') + ('billing.statements.statementOf' | translate:{ period: (period(d.settlement) | vxDate:'MMMM y') })"
+      [partnerLogo]="fileUrl(profile?.logoUrl)"></vx-print-header>
+
+    <header class="vx-heading">
+      <div>
+        <span class="vx-eyebrow">{{ 'billing.statements.title' | translate }}</span>
+        <h1>{{ period(d.settlement) | vxDate:'MMMM y' }}</h1>
+        <p>
+          <span class="vx-badge" [ngClass]="d.settlement.status === 'Paid' ? 'vx-badge--success' : 'vx-badge--warning'">{{ 'billing.settlementStatus.' + d.settlement.status | translate }}</span>
+          <ng-container *ngIf="d.settlement.paidAt"> {{ 'billing.statements.paidOn' | translate:{ date: (d.settlement.paidAt | vxDate:'longDate'), reference: d.settlement.paymentReference } }}</ng-container>
+        </p>
+      </div>
+      <div class="vx-actions no-print">
+        <button type="button" class="vx-btn" (click)="back()">{{ 'common.actions.back' | translate }}</button>
+        <button type="button" class="vx-btn" (click)="export(d.settlement, 'csv')" [disabled]="exporting">{{ 'common.actions.exportCsv' | translate }}</button>
+        <button type="button" class="vx-btn vx-btn--primary" (click)="export(d.settlement, 'pdf')" [disabled]="exporting">{{ 'common.actions.exportPdf' | translate }}</button>
+        <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+      </div>
+    </header>
+
+    <section class="vx-stats">
+      <div class="vx-stat">
+        <div class="vx-stat__label">{{ 'billing.statements.gross' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ d.settlement.grossAmount | vxMoney }}</div>
+        <div class="vx-stat__hint">{{ 'billing.statements.netExclVat' | translate }} {{ d.settlement.netExclVat | vxMoney }}</div>
+      </div>
+      <div class="vx-stat">
+        <div class="vx-stat__label">{{ 'billing.statements.commission' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ commission(d.settlement) | vxMoney }}</div>
+        <div class="vx-stat__hint">{{ 'billing.statements.terms' | translate:{ percent: (d.settlement.commissionPercent | vxNumber:'1.0-2'), perKwh: (d.settlement.commissionPerKwh | vxMoney) } }}</div>
+      </div>
+      <div class="vx-stat">
+        <div class="vx-stat__label">{{ 'billing.statements.sessions' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ d.settlement.sessionCount | vxNumber:'1.0-0' }}</div>
+        <div class="vx-stat__hint">{{ d.settlement.energyKwh | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</div>
+      </div>
+      <div class="vx-stat vx-stat--brand">
+        <div class="vx-stat__label">{{ 'billing.statements.netPayout' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ d.settlement.netPayout | vxMoney }}</div>
+        <div class="vx-stat__hint">{{ 'billing.statements.commissionVat' | translate }} {{ d.settlement.commissionVat | vxMoney }}</div>
+      </div>
+    </section>
+
+    <section class="vx-panel">
+      <div class="vx-table-wrap" *ngIf="d.lines.length; else noLines">
+        <table class="vx-table">
+          <thead><tr>
+            <th>{{ 'billing.statements.date' | translate }}</th>
+            <th>{{ 'billing.statements.session' | translate }}</th>
+            <th class="num">{{ 'billing.statements.energy' | translate }}</th>
+            <th class="num">{{ 'billing.statements.gross' | translate }}</th>
+            <th class="num">{{ 'billing.statements.netExclVat' | translate }}</th>
+            <th class="num">{{ 'billing.statements.commission' | translate }}</th>
+            <th class="num">{{ 'billing.statements.netPayout' | translate }}</th>
+          </tr></thead>
+          <tbody>
+            <tr *ngFor="let l of d.lines">
+              <td>{{ l.date | vxDate:'short' }}</td>
+              <td *ngIf="!isRefund(l)">#{{ l.chargingSessionId }}<div class="muted">{{ l.station || '—' }}<ng-container *ngIf="l.chargePoint"> · {{ l.chargePoint }}</ng-container></div></td>
+              <td *ngIf="isRefund(l)">{{ 'billing.statements.refundOf' | translate:{ id: l.chargingSessionId } }}</td>
+              <td class="num">{{ l.kwh | vxNumber:'1.0-3' }}</td>
+              <td class="num">{{ l.gross | vxMoney }}</td>
+              <td class="num">{{ l.netExclVat | vxMoney }}</td>
+              <td class="num">{{ l.commissionExclVat + l.commissionVat | vxMoney }}</td>
+              <td class="num"><strong>{{ l.netPayout | vxMoney }}</strong></td>
+            </tr>
+          </tbody>
+          <tfoot><tr>
+            <td colspan="2">{{ 'common.fields.total' | translate }}</td>
+            <td class="num">{{ lineTotals.kwh | vxNumber:'1.0-3' }}</td>
+            <td class="num">{{ lineTotals.gross | vxMoney }}</td>
+            <td class="num">{{ d.settlement.netExclVat | vxMoney }}</td>
+            <td class="num">{{ lineTotals.commission | vxMoney }}</td>
+            <td class="num">{{ lineTotals.payout | vxMoney }}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <ng-template #noLines><p class="vx-empty">{{ 'billing.statements.noLines' | translate }}</p></ng-template>
+    </section>
+    <p class="vx-footnote">{{ 'billing.statements.vatNote' | translate }}</p>
+  </ng-container>
+</main></div>

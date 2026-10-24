@@ -4,6 +4,7 @@
 @import ./form
 @import ./request
 @import ./theme
+@import ./rtl
 body
   overflow-x: hidden
   margin: 0
@@ -12,30 +13,59 @@ body
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
 
+// ---------------------------------------------------------------------------
+// Navy theme palette. Fixed values, shared by both modes — the template CSS
+// (assets/css/app.min.css) and the dashboard tokens below pick from it.
+// ---------------------------------------------------------------------------
 :root
-  --primary1: #ffffff  
-  --primary2: #f2f2f2  
-  --primary3: #e6e6e6  
-  --primary4: #d9d9d9  
-  --primary5: #cccccc  
-  --primary6: #bfbfbf  
-  --primary7: #b3b3b3  
-  --primary8: #a6a6a6   
-  --primary9: black
+  --navy-950: #040C1F
+  --navy-900: #0A1A3A
+  --navy-850: #0F2045
+  --navy-800: #12264D
+  --navy-750: #1A2E58
+  --navy-700: #1F3461
+  --navy-600: #2D4577
+  --navy-550: #3B5385
+  --navy-500: #4A5878
+  --navy-450: #6B7896
+  --navy-400: #7D89A3
+  --navy-350: #8D99B3
+  --navy-300: #A8B3CB
+  --navy-200: #C3CDDF
+  --navy-150: #D5DCE9
+  --navy-100: #E3E8F1
+  --navy-50: #EEF2F9
+  // Bright navy tints — carry the brand on dark navy surfaces.
+  --navy-sky-500: #5B85E0
+  --navy-sky-400: #7FA2EE
+  --navy-sky-300: #A3BEF5
 
-  --secondary1: #cd9a35  
-  --secondary2: #f0b134  
-  --secondary3: #e0bf75 
-  --secondary4: #eedcb3  
-  --secondary5: #f5e9cd  
-  --secondary6: #ecefef 
+  // Template accent (was the template's #2A85FF blue).
+  --accent: var(--navy-700)
 
-  --professional1: #2b2a2b  
-  --professional2: #2c2e35  
-  --professional3: #4e4f52 
-  --professional4: #6c7776  
-  --professional5: #8f9a99  
-  --professional6: #ced4d3 
+  --primary1: #ffffff
+  --primary2: var(--navy-50)
+  --primary3: #DFE6F2
+  --primary4: #CDD6E6
+  --primary5: #B9C3D6
+  --primary6: var(--navy-300)
+  --primary7: #8F9BB5
+  --primary8: var(--navy-400)
+  --primary9: var(--navy-900)
+
+  --secondary1: var(--navy-900)
+  --secondary2: var(--navy-700)
+  --secondary3: var(--navy-550)
+  --secondary4: var(--navy-200)
+  --secondary5: var(--navy-100)
+  --secondary6: var(--navy-50)
+
+  --professional1: var(--navy-900)
+  --professional2: var(--navy-800)
+  --professional3: var(--navy-500)
+  --professional4: var(--navy-450)
+  --professional5: var(--navy-350)
+  --professional6: var(--navy-150)
 
   --danger1: #a72828
   --danger2: #d43b3b
@@ -46,29 +76,31 @@ body
 
 
 body.dark
-  --primary1: #1e1e1e
-  --primary2: #252525
-  --primary3: #2e2e2e
-  --primary4: #383838
-  --primary5: #424242
-  --primary6: #4c4c4c
-  --primary7: #575757
-  --primary8: #636363
+  --accent: var(--navy-sky-500)
+
+  --primary1: var(--navy-900)
+  --primary2: var(--navy-850)
+  --primary3: var(--navy-800)
+  --primary4: var(--navy-750)
+  --primary5: var(--navy-700)
+  --primary6: var(--navy-600)
+  --primary7: var(--navy-550)
+  --primary8: var(--navy-400)
   --primary9: #ffffff
 
-  --secondary1: #e0b85a
-  --secondary2: #f8c24d
-  --secondary3: #e9cc80
-  --secondary4: #f5e2b8
-  --secondary5: #faf0d2
-  --secondary6: #f2f5f5
+  --secondary1: var(--navy-sky-300)
+  --secondary2: var(--navy-sky-400)
+  --secondary3: #C2D4F7
+  --secondary4: var(--navy-600)
+  --secondary5: var(--navy-700)
+  --secondary6: var(--navy-800)
 
-  --professional1: #f5f5f5
-  --professional2: #dcdcdc
-  --professional3: #b3b3b3
-  --professional4: #999999
-  --professional5: #808080
-  --professional6: #666666
+  --professional1: #F5F7FB
+  --professional2: #DFE6F2
+  --professional3: var(--navy-200)
+  --professional4: var(--navy-300)
+  --professional5: var(--navy-400)
+  --professional6: var(--navy-500)
 
   --danger1: #ff6b6b
   --danger2: #ff4c4c
@@ -112,14 +144,14 @@ body.dark
 .stat__item:not(:first-child) 
   border-width: 0 0 0 1px
   border-style: solid
-  border-color: #EFEFEF 
+  border-color: var(--navy-100) 
   @media only screen and (max-width: 1023px) 
     .stat__item:not(:first-child) 
       margin-top: 16px
       padding-top: 16px
       border-width: 1px 0 0  
   body.dark .stat__item:not(:first-child) 
-    border-color: #272B30 
+    border-color: var(--navy-800) 
 .stat__item:first-child 
   padding-left: 0 
 .stat__item:last-child 
@@ -139,7 +171,7 @@ body.dark
   .stat__icon .icon 
     width: 24px
     height: 24px
-    fill: #1A1D1F 
+    fill: var(--navy-900) 
 
 .stat__label 
   display: flex
@@ -148,10 +180,10 @@ body.dark
   font-size: 13px
   font-weight: 600
   line-height: 1.23077
-  color: #6F767E 
+  color: var(--navy-450) 
 
 .stat .tooltip .icon 
-  fill: #6F767E 
+  fill: var(--navy-450) 
 
 .stat__counter 
   min-width: 238px
@@ -177,9 +209,9 @@ body.dark
   align-items: center
   margin-top: 8px
   padding: 4px
-  color: #6F767E 
+  color: var(--navy-450) 
   body.dark .stat__indicator 
-    background: #272B30
+    background: var(--navy-800)
     border-radius: 8px 
   .stat__indicator span 
     margin-left: 4px
@@ -190,15 +222,15 @@ body.dark
 .countries__item 
   display: flex
   align-items: center
-  color: #33383F 
+  color: var(--navy-700) 
   body.dark .countries__item 
-    color: #EFEFEF 
+    color: var(--navy-100) 
   .countries__item:not(:last-child) 
     margin-bottom: 12px
     padding-bottom: 12px
-    border-bottom: 1px solid #EFEFEF 
+    border-bottom: 1px solid var(--navy-100) 
     body.dark .countries__item:not(:last-child) 
-      border-color: #272B30 
+      border-color: var(--navy-800) 
 
 
 .link

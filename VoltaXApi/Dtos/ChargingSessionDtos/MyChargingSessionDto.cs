@@ -19,7 +19,7 @@ public sealed class MyChargingSessionDto
     public double ChargedMinutes { get; set; }
     public double IdleMinutes { get; set; }
     public double ChargedKwhs { get; set; }
-    public double TotalPriceWithVAT { get; set; }
+    public decimal TotalPriceWithVAT { get; set; }
     public string Currency { get; set; } = "MAD";
     public ReasonEnumType StoppedReason { get; set; }
     public ChargingSessionStatusEnum Status { get; set; }

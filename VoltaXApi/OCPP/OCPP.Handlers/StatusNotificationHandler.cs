@@ -14,16 +14,19 @@ namespace VoltaXApi.OCPP.Handlers
 
         private readonly IMessageLogRepository _msgLogRepo;
         private readonly IConnectorStatusService _connectorStatusService;
+        private readonly VoltaXApi.Services.Alarms.IAlarmService _alarms;
         private readonly ILogger _logger;
         public StatusNotificationHandler(
             ILoggerFactory loggerFactory,
             IMessageLogRepository messageLogRepository,
-            IConnectorStatusService connectorStatusService
+            IConnectorStatusService connectorStatusService,
+            VoltaXApi.Services.Alarms.IAlarmService alarms
         )
         {
             _msgLogRepo = messageLogRepository;
             _logger = loggerFactory.CreateLogger(typeof(StatusNotificationHandler));
             _connectorStatusService = connectorStatusService;
+            _alarms = alarms;
         }
         public async Task<string> Handle(OCPPMessage msgIn, OCPPMessage msgOut, ChargePointStatus chargePointStatus)
         {
@@ -54,6 +57,9 @@ namespace VoltaXApi.OCPP.Handlers
 
                 if (connectorId >= 0)
                 {
+                    // Faulted raises (or counts) an alarm; any other status clears the connector's fault alarm.
+                    await _alarms.OnStatus201Async(chargePointStatus.Id, evseId, connectorId, newStatus,
+                        DateTimeOffset.Parse(statusNotificationRequest.Timestamp, System.Globalization.CultureInfo.InvariantCulture).UtcDateTime);
                     if (await _connectorStatusService.UpdateConnectorStatus(connectorId,evseId, newStatus, DateTimeOffset.Parse(statusNotificationRequest.Timestamp, System.Globalization.CultureInfo.InvariantCulture), chargePointStatus.Id) == false)
                     {
                         errorCode = ErrorCodes.InternalError;

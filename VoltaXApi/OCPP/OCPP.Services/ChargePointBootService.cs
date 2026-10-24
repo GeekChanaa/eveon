@@ -25,15 +25,17 @@ namespace VoltaXApi.OCPP.Services
         private readonly IChargePointService _chargePointService;
         private readonly VoltaXApiDbContext _db;
         private readonly ProvisioningNotifier _provisioningNotifier;
+        private readonly VoltaXApi.Services.Alarms.IAlarmService _alarms;
         private readonly ILogger<ChargePointBootService> _logger;
 
         public ChargePointBootService(IChargePointRepository chargePointRepository, IChargePointService chargePointService,
-            VoltaXApiDbContext db, ProvisioningNotifier provisioningNotifier, ILogger<ChargePointBootService> logger)
+            VoltaXApiDbContext db, ProvisioningNotifier provisioningNotifier, VoltaXApi.Services.Alarms.IAlarmService alarms, ILogger<ChargePointBootService> logger)
         {
             _chargePointRepository = chargePointRepository;
             _chargePointService = chargePointService;
             _db = db;
             _provisioningNotifier = provisioningNotifier;
+            _alarms = alarms;
             _logger = logger;
         }
 
@@ -64,6 +66,8 @@ namespace VoltaXApi.OCPP.Services
                 provisioning.Status = ChargePointProvisioningStatusEnum.Provisioned;
                 await _db.SaveChangesAsync();
             }
+            // Only accepted boots are reboots (a pending charger repeats its BootNotification on purpose).
+            await _alarms.OnAcceptedBootAsync(chargePointStatus.Id, DateTime.UtcNow);
             return new BootDecision(RegistrationStatusEnumType.Accepted, AcceptedHeartbeatInterval);
         }
     }

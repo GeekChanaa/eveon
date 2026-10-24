@@ -26,7 +26,7 @@ public static class TransactionSeeder
             .RuleFor(cs => cs.Status, f => f.PickRandom<TransactionStatusEnum>())
             .RuleFor(t => t.StopTime, (f, u) => u.StartTime.AddMinutes(f.Random.Double(10, 90))) 
             .RuleFor(t => t.MeterStop, f => f.Random.Double(1, 200)) 
-            .RuleFor(t => t.Amount, f => f.Random.Double(1, 200)) 
+            .RuleFor(t => t.Amount, f => f.Random.Decimal(1m, 200m)) 
             .RuleFor(t => t.StopReason, f => f.Random.Words(1));
             
         var Transactions = _faker.Generate(number).ToList();

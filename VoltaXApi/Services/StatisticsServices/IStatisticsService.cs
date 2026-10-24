@@ -6,9 +6,9 @@ namespace VoltaXApi.Services
   public interface IStatisticsService
   {
     Task<ChargePointStatisticsSummaryDto> GetChargePointStatisticsSummary(int chargePointID); 
-    Task<double> GetTotalRevenueAsync(double vatRate, double gracePeriodSeconds);
-    Task<double> GetTotalRevenueTodayAsync(double vatRate, double gracePeriodSeconds);
-    Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(double vatRate, double gracePeriodSeconds);
-    Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(double vatRate, double gracePeriodSeconds);
+    Task<double> GetTotalRevenueAsync(decimal vatRate, double gracePeriodSeconds);
+    Task<double> GetTotalRevenueTodayAsync(decimal vatRate, double gracePeriodSeconds);
+    Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(decimal vatRate, double gracePeriodSeconds);
+    Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(decimal vatRate, double gracePeriodSeconds);
   }
 }

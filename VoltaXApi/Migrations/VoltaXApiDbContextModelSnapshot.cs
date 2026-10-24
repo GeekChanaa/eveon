@@ -90,8 +90,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<double>("WalletBalance")
-                        .HasColumnType("float");
+                    b.Property<decimal>("WalletBalance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -129,6 +130,126 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Administrators");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Alarms.Alarm", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
+
+                    b.Property<DateTime?>("AcknowledgedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AcknowledgedByID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AssignedToID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChargePointID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChargePointIdentity")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime?>("ClearedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ConnectorNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DedupKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Details")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("EvseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FirstSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OpenKey")
+                        .IsRequired()
+                        .HasMaxLength(230)
+                        .HasColumnType("nvarchar(230)");
+
+                    b.Property<string>("ResolutionComment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ResolvedByID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AcknowledgedByID");
+
+                    b.HasIndex("AssignedToID");
+
+                    b.HasIndex("OpenKey")
+                        .IsUnique();
+
+                    b.HasIndex("ResolvedByID");
+
+                    b.HasIndex("ChargePointID", "Status");
+
+                    b.HasIndex("Status", "LastSeenAt");
+
+                    b.ToTable("Alarms");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.AuditLog", b =>
@@ -188,6 +309,422 @@ namespace VoltaXApi.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.Billing.Invoice", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("AmountExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("AmountInclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreditedInvoiceID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RefundID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Series")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("SourceReference")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("VatAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("IssuedAt");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("SourceReference")
+                        .IsUnique();
+
+                    b.HasIndex("UserID", "IssuedAt");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceFile", b =>
+                {
+                    b.Property<int>("InvoiceID")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("InvoiceID");
+
+                    b.ToTable("InvoiceFiles");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceSequence", b =>
+                {
+                    b.Property<string>("Series")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LastNumber")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Series", "Year");
+
+                    b.ToTable("InvoiceSequences");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.PartnerSettlement", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("CommissionExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommissionPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<decimal>("CommissionVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EnergyKwh")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("GeneratedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("GrossAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetPayout")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PaidByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PartnerID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("PeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("RevenueVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SessionCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Year", "Month");
+
+                    b.HasIndex("PartnerID", "Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("PartnerSettlements", (string)null);
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.PartnerSettlementLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ChargePoint")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CommissionExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommissionVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Gross")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Kwh")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("NetExclVat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetPayout")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("RefundID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SettlementID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Station")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<decimal>("Vat")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("SettlementID");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("PartnerSettlementLines", (string)null);
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.Refund", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreditNoteID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Provider")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ProviderReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ProviderStatus")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("RequestedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("OrderID");
+
+                    b.ToTable("Refunds", (string)null);
+                });
+
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
                 {
                     b.Property<int>("ID")
@@ -196,15 +733,21 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Balance")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Balance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BalanceVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Blocked")
                         .HasColumnType("bit");
 
                     b.Property<string>("CardNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<int>("CardType")
                         .HasColumnType("int");
@@ -237,6 +780,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CardNumber");
 
                     b.HasIndex("UserID");
 
@@ -911,6 +1456,17 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<decimal?>("BalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BalanceBefore")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("BilledAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("CardID")
                         .HasColumnType("int");
 
@@ -926,8 +1482,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ConnectorID")
                         .HasColumnType("int");
 
-                    b.Property<double?>("CostPerKwh")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("CostPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -938,17 +1495,39 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime?>("EndIdleDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("EnergyAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("FlatFeeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("IdleAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<double?>("IdleMinutes")
                         .HasColumnType("float");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<double?>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double?>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("PricePerKWh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -956,19 +1535,33 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("StoppedReason")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("TimeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
+                    b.Property<int?>("UserID")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CardID");
 
-                    b.HasIndex("ConnectorID");
+                    b.HasIndex("StartDate");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("ConnectorID", "StartDate");
+
+                    b.HasIndex("UserID", "EndDate");
 
                     b.ToTable("ChargingSessions");
                 });
@@ -1001,6 +1594,10 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -1018,6 +1615,10 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("Network")
                         .HasColumnType("int");
+
+                    b.Property<string>("OpeningHours")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("Organisation")
                         .HasColumnType("nvarchar(max)");
@@ -1379,8 +1980,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int?>("ConnectorType")
                         .HasColumnType("int");
 
-                    b.Property<double>("CostPerKwh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("CostPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1391,8 +1993,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseID")
                         .HasColumnType("int");
 
-                    b.Property<double>("FlatFee")
-                        .HasColumnType("float");
+                    b.Property<decimal>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -1405,14 +2008,17 @@ namespace VoltaXApi.Migrations
                     b.Property<double>("Power")
                         .HasColumnType("float");
 
-                    b.Property<double>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerKWh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerKWh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -1612,6 +2218,9 @@ namespace VoltaXApi.Migrations
 
                     b.Property<int>("ExpiryYear")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -1907,7 +2516,8 @@ namespace VoltaXApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("ChargePointId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("ConnectorId")
                         .HasColumnType("int");
@@ -1946,6 +2556,8 @@ namespace VoltaXApi.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("LogTime");
+
+                    b.HasIndex("ChargePointId", "LogTime");
 
                     b.ToTable("MessageLogs");
                 });
@@ -3031,6 +3643,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("ChargePointID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ConnectorID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -3139,8 +3754,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CardID")
                         .HasColumnType("int");
@@ -3148,10 +3764,32 @@ namespace VoltaXApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CreatedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ProviderReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTime>("RechargeDate")
                         .HasColumnType("datetime2");
@@ -3169,7 +3807,11 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("CardID");
 
+                    b.HasIndex("RechargeDate");
+
                     b.HasIndex("UserID");
+
+                    b.HasIndex("Provider", "ProviderReference");
 
                     b.ToTable("Orders");
                 });
@@ -3190,6 +3832,14 @@ namespace VoltaXApi.Migrations
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CommissionPerKwh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -3255,6 +3905,48 @@ namespace VoltaXApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Partners");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.PaymentEvent", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Result")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("Provider", "EventId")
+                        .IsUnique();
+
+                    b.ToTable("PaymentEvents");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Permission", b =>
@@ -3331,6 +4023,9 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Phone");
+
+                    b.HasIndex("IpAddress", "WindowStart")
+                        .HasDatabaseName("IX_PhoneLoginChallenges_IpAddress");
 
                     b.ToTable("PhoneLoginChallenges");
                 });
@@ -4117,8 +4812,9 @@ namespace VoltaXApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("ChargePointID")
                         .HasColumnType("int");
@@ -4165,7 +4861,8 @@ namespace VoltaXApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Uid")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -4180,7 +4877,11 @@ namespace VoltaXApi.Migrations
 
                     b.HasIndex("StartCardID");
 
+                    b.HasIndex("StartTime");
+
                     b.HasIndex("StopCardID");
+
+                    b.HasIndex("Uid");
 
                     b.ToTable("Transactions");
                 });
@@ -4266,6 +4967,10 @@ namespace VoltaXApi.Migrations
 
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("PaymentCustomerId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
@@ -4394,6 +5099,65 @@ namespace VoltaXApi.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("UserInfoDownloadRequests");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.WalletTransaction", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ChargingSessionID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ChargingSessionID");
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.HasIndex("CardID", "CreatedAt");
+
+                    b.ToTable("WalletTransactions");
                 });
 
             modelBuilder.Entity("VoltaXApi.OCPP.Ocpp16.Ocpp16Transaction", b =>
@@ -4667,8 +5431,9 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("EvseId")
                         .HasColumnType("int");
 
-                    b.Property<double>("FlatFee")
-                        .HasColumnType("float");
+                    b.Property<decimal>("FlatFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<double>("Kwh")
                         .HasColumnType("float");
@@ -4682,14 +5447,17 @@ namespace VoltaXApi.Migrations
                     b.Property<int>("OcpiPartyID")
                         .HasColumnType("int");
 
-                    b.Property<double>("PricePerIdleMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerIdleMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerKWh")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerKWh")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
-                    b.Property<double>("PricePerMinute")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PricePerMinute")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
@@ -4721,8 +5489,9 @@ namespace VoltaXApi.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("nvarchar(36)");
 
-                    b.Property<double>("VatRate")
-                        .HasColumnType("float");
+                    b.Property<decimal>("VatRate")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("decimal(5,4)");
 
                     b.HasKey("ID");
 
@@ -4846,6 +5615,58 @@ namespace VoltaXApi.Migrations
                         .HasForeignKey("UserID");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.InvoiceFile", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Billing.Invoice", "Invoice")
+                        .WithOne("File")
+                        .HasForeignKey("VoltaXApi.Models.Billing.InvoiceFile", "InvoiceID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.PartnerSettlementLine", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Billing.PartnerSettlement", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("SettlementID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Alarms.Alarm", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.User", "AcknowledgedBy")
+                        .WithMany()
+                        .HasForeignKey("AcknowledgedByID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VoltaXApi.Models.User", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VoltaXApi.Models.ChargePoint", "ChargePoint")
+                        .WithMany()
+                        .HasForeignKey("ChargePointID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VoltaXApi.Models.User", "ResolvedBy")
+                        .WithMany()
+                        .HasForeignKey("ResolvedByID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("AcknowledgedBy");
+
+                    b.Navigation("AssignedTo");
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("ResolvedBy");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>
@@ -5005,9 +5826,7 @@ namespace VoltaXApi.Migrations
 
                     b.HasOne("VoltaXApi.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("Card");
 
@@ -5687,6 +6506,17 @@ namespace VoltaXApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VoltaXApi.Models.WalletTransaction", b =>
+                {
+                    b.HasOne("VoltaXApi.Models.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+                });
+
             modelBuilder.Entity("VoltaXApi.Ocpi.Models.OcpiOutboxMessage", b =>
                 {
                     b.HasOne("VoltaXApi.Ocpi.Models.OcpiParty", "OcpiParty")
@@ -5718,6 +6548,16 @@ namespace VoltaXApi.Migrations
                         .IsRequired();
 
                     b.Navigation("OcpiParty");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.Invoice", b =>
+                {
+                    b.Navigation("File");
+                });
+
+            modelBuilder.Entity("VoltaXApi.Models.Billing.PartnerSettlement", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("VoltaXApi.Models.Card", b =>

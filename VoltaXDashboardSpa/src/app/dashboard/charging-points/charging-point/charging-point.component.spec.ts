@@ -9,7 +9,7 @@ describe('ChargingPointComponent editing', () => {
   beforeEach(() => {
     response = new Subject();
     service = { edit: jasmine.createSpy('edit').and.returnValue(response) };
-    component = new ChargingPointComponent(service, {} as any, new EnumMappingService(), {} as any, {} as any, {} as any);
+    component = new ChargingPointComponent(service, {} as any, new EnumMappingService({ instant: (key: string) => key } as any), {} as any, {} as any, {} as any, {} as any, {} as any);
     component.chargePointID = 7;
     component.chargePoint = { id: 7, serialNumber: 'Original', status: 0, chargePointBrandID: 2, make: 'Brand A', password: ' secret ', comment: 'Note' };
     component.brands = [{ value: 2, label: 'Brand A' }, { value: 3, label: 'Brand B' }];
@@ -55,12 +55,8 @@ describe('ChargingPointComponent editing', () => {
     component.cancelEdit();
     expect(service.edit).not.toHaveBeenCalled();
   });
-  it('masks passwords and preserves intentional whitespace on save', () => {
-    const password = field(component, 'password');
-    expect(component.displayValue(password)).not.toContain('secret');
-    component.editField(password);
-    component.saveField();
-    expect(service.edit).toHaveBeenCalledWith(7, jasmine.objectContaining({ password: ' secret ' }));
+  it('never offers the charger password as an inline field (it is generated or set through its own flow)', () => {
+    expect(field(component, 'password')).toBeUndefined();
   });
   it('allows clearing an optional comment and maps enum zero correctly', () => {
     component.editField(field(component, 'status'));

@@ -148,25 +148,26 @@ finally
 }
 
 // ---------------------------------------------------------------- CostUpdated cost = billing
-var connector = new Connector { PricePerKWh = 3.2, PricePerMinute = 0.45, PricePerIdleMinute = 0.1 };
+var connector = new Connector { PricePerKWh = 3.2m, PricePerMinute = 0.45m, PricePerIdleMinute = 0.1m, FlatFee = 1m };
+var tariff = Tariff.Of(connector, 0.2m);
 var calculator = CostCalculator.Instance;
 foreach (var (kwh, minutes) in new[] { (0.0, 0.0), (12.5, 30.0), (40.0, 10.0), (1.0, 300.0) })
 {
-    // The formulas TransactionService (running cost) and CardService (debit) used before the extraction.
-    var billingRunning = Math.Max(kwh * connector.PricePerKWh, minutes * connector.PricePerMinute);
-    Check(calculator.RunningCost(connector, kwh, minutes) == billingRunning, $"cost: running cost {kwh} kWh / {minutes} min equals billing");
-    Check(calculator.FinalCost(connector, minutes) == minutes * connector.PricePerMinute, $"cost: final cost {minutes} min equals the card debit");
+    // Flat fee (when energy was delivered) + energy + time, each rounded to the cent.
+    var expected = Math.Round((decimal)kwh * 3.2m, 2, MidpointRounding.AwayFromZero) + Math.Round((decimal)minutes * 0.45m, 2, MidpointRounding.AwayFromZero) + (kwh > 0 ? 1m : 0m);
+    Check(calculator.RunningCost(tariff, kwh, minutes) == expected, $"cost: running cost {kwh} kWh / {minutes} min equals the billed amount");
+    Check(calculator.Charge(tariff, kwh, minutes).Total == expected, $"cost: session charge {kwh} kWh / {minutes} min");
 }
-Check(calculator.EnergyCost(connector, 10) == 10 * 3.2 && calculator.IdleCost(connector, 10) == 10 * 0.1, "cost: energy and idle prices");
+Check(calculator.IdleFee(tariff, 10, 300) == 1m && calculator.IdleFee(tariff, 4, 300) == 0, "cost: idle fee after the grace period");
 var start = new DateTime(2026, 10, 3, 10, 0, 0, DateTimeKind.Utc);
-var active = new CostUpdatedHostedService.ActiveTransaction("CP-1", 1, "tx-1", start, 1000, 1012.5, connector);
-Check(CostUpdatedHostedService.RunningCost(calculator, active, start.AddMinutes(30)) == calculator.RunningCost(connector, 12.5, 30), "CostUpdated: running cost of an active transaction uses the billing formula");
+var active = new CostUpdatedHostedService.ActiveTransaction("CP-1", 1, "tx-1", start, 1000, 1012.5, tariff);
+Check(CostUpdatedHostedService.RunningCost(calculator, active, start.AddMinutes(30)) == calculator.RunningCost(tariff, 12.5, 30), "CostUpdated: running cost of an active transaction uses the billing formula");
 Check(CostUpdatedHostedService.RunningCost(calculator, active with { MeterStop = null }, start.AddMinutes(-5)) == 0, "CostUpdated: no meter value / clock skew never gives a negative cost");
-Check(CostUpdatedSender.RoundCost(12.345) == 12.35 && CostUpdatedSender.RoundCost(-1) == 0, "CostUpdated: totalCost rounded to cents");
+Check(CostUpdatedSender.RoundCost(12.345m) == 12.35m && CostUpdatedSender.RoundCost(-1) == 0, "CostUpdated: totalCost rounded to cents");
 
 var fake = new FakeSender();
 var sender = new CostUpdatedSender(fake, NullLogger<CostUpdatedSender>.Instance);
-Check(await sender.SendAsync("CP-1", "tx-1", 4.567) && fake.Sent.Single() == ("CP-1", "CostUpdated", 4.57, "tx-1"), "CostUpdated: sent to a 2.0.1 charger with {totalCost, transactionId}");
+Check(await sender.SendAsync("CP-1", "tx-1", 4.567m) && fake.Sent.Single() == ("CP-1", "CostUpdated", 4.57m, "tx-1"), "CostUpdated: sent to a 2.0.1 charger with {totalCost, transactionId}");
 fake.Protocols["CP-16"] = OcppProtocols.Ocpp16;
 Check(!await sender.SendAsync("CP-16", "tx-2", 1) && fake.Sent.Count == 1, "CostUpdated: never sent to a 1.6 charger");
 Check(!await sender.SendAsync("CP-OFF", "tx-3", 1) && fake.Sent.Count == 1, "CostUpdated: offline charger skipped");
@@ -191,7 +192,7 @@ sealed class FakeSender : IOcppCommandSender
 {
     public Dictionary<string, string> Protocols { get; } = new() { ["CP-1"] = OcppProtocols.Ocpp201 };
     public Dictionary<string, string> Reject { get; } = new();
-    public List<(string ChargePointId, string Action, double TotalCost, string TransactionId)> Sent { get; } = new();
+    public List<(string ChargePointId, string Action, decimal TotalCost, string TransactionId)> Sent { get; } = new();
     public int Calls { get; private set; }
 
     public string? GetProtocolVersion(string chargePointId) => Protocols.TryGetValue(chargePointId, out var p) ? p : null;

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    End-to-end and load runs of the EVEON charger simulator (EVEON_SIM) against a local VoltaX API on a throwaway
+    SQLite database. Usage in docs/testing.md and tools/e2e/run-e2e.ps1 / run-e2e.sh.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>VoltaX.E2E</RootNamespace>
+    <!-- The API project is referenced for its model, hashers and as the built API to start. -->
+    <NoWarn>$(NoWarn);CS8618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../VoltaXApi/VoltaXApi.csproj" />
+  </ItemGroup>
+
+</Project>

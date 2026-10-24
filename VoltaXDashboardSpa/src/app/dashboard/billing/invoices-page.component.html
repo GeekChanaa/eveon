@@ -1,0 +1,86 @@
+<div class="page__inner"><main class="page__container">
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'billing.eyebrow' | translate }}</span>
+      <h1>{{ 'billing.invoices.title' | translate }}</h1>
+      <p>{{ 'billing.invoices.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn vx-btn--primary" (click)="journal()" [disabled]="downloading">{{ 'billing.invoices.journal' | translate }}</button>
+    </div>
+  </header>
+
+  <form class="vx-panel vx-filters no-print" (ngSubmit)="load()">
+    <div class="vx-field">
+      <label for="from">{{ 'common.fields.from' | translate }}</label>
+      <input id="from" type="date" name="from" [(ngModel)]="filter.from">
+    </div>
+    <div class="vx-field">
+      <label for="to">{{ 'common.fields.to' | translate }}</label>
+      <input id="to" type="date" name="to" [(ngModel)]="filter.to">
+    </div>
+    <div class="vx-field">
+      <label for="kind">{{ 'billing.invoices.kind' | translate }}</label>
+      <select id="kind" name="kind" [(ngModel)]="filter.kind">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option value="Invoice">{{ 'billing.invoices.kinds.Invoice' | translate }}</option>
+        <option value="CreditNote">{{ 'billing.invoices.kinds.CreditNote' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-field vx-field--grow">
+      <label for="search">{{ 'common.fields.search' | translate }}</label>
+      <input id="search" type="search" name="search" [(ngModel)]="filter.search" [placeholder]="'billing.invoices.searchPlaceholder' | translate">
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary">{{ 'common.actions.filter' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
+    </div>
+  </form>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+
+  <section class="vx-panel">
+    <p class="vx-empty" *ngIf="loading && !result">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="result?.items?.length; else empty">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'billing.invoices.number' | translate }}</th>
+          <th>{{ 'billing.invoices.issued' | translate }}</th>
+          <th>{{ 'billing.invoices.customer' | translate }}</th>
+          <th>{{ 'billing.invoices.subject' | translate }}</th>
+          <th class="num">{{ 'billing.invoices.exclVat' | translate }}</th>
+          <th class="num">{{ 'billing.invoices.vat' | translate }}</th>
+          <th class="num">{{ 'billing.invoices.inclVat' | translate }}</th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let r of result!.items">
+            <td class="vx-mono">{{ r.number }}
+              <div><span class="vx-badge" [ngClass]="r.kind === 'CreditNote' ? 'vx-badge--warning' : 'vx-badge--info'">{{ 'billing.invoices.kinds.' + r.kind | translate }}</span></div>
+            </td>
+            <td>{{ r.issuedAt | vxDate:'short' }}</td>
+            <td>{{ r.customerName || '—' }}</td>
+            <td>
+              <a *ngIf="r.chargingSessionId" [routerLink]="['/dashboard/charging-sessions', r.chargingSessionId]">{{ 'billing.invoices.session' | translate:{ id: r.chargingSessionId } }}</a>
+              <a *ngIf="r.orderId" [routerLink]="['/dashboard/recharge-orders', r.orderId]">{{ 'billing.invoices.order' | translate:{ id: r.orderId } }}</a>
+              <div class="muted" *ngIf="r.creditedInvoiceNumber">{{ 'billing.invoices.credits' | translate:{ number: r.creditedInvoiceNumber } }}</div>
+            </td>
+            <td class="num">{{ signed(r, r.amountExclVat) | vxMoney }}</td>
+            <td class="num">{{ signed(r, r.vatAmount) | vxMoney }}</td>
+            <td class="num"><strong>{{ signed(r, r.amountInclVat) | vxMoney }}</strong></td>
+            <td class="no-print"><button type="button" class="vx-btn vx-btn--small" (click)="pdf(r)" [disabled]="downloading">PDF</button></td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="4">{{ 'billing.invoices.pageTotal' | translate }}</td>
+          <td class="num">{{ totals.exclVat | vxMoney }}</td>
+          <td class="num">{{ totals.vat | vxMoney }}</td>
+          <td class="num">{{ totals.inclVat | vxMoney }}</td>
+          <td></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <ng-template #empty><p class="vx-empty" *ngIf="!loading">{{ 'billing.invoices.empty' | translate }}</p></ng-template>
+    <vx-pager *ngIf="result" [page]="result.page" [pageSize]="result.pageSize" [total]="result.total" (pageChange)="load($event)"></vx-pager>
+  </section>
+</main></div>

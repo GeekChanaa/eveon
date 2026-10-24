@@ -10,11 +10,16 @@
       { label: 'Connector Real Time', link: '/dashboard/connector-realtime/{{chargePointID}}' },
       { label: '#'+chargePointID }
       ]"></app-breadcrumb>
+    <div class="vx-alert vx-alert--error" *ngIf="loadError" role="alert">
+      {{ 'common.state.error' | translate }}
+      <button type="button" class="vx-btn vx-btn--small" (click)="getChargePointByID(chargePointID)">{{ 'common.actions.retry' | translate }}</button>
+    </div>
+    <app-preloader-container *ngIf="loading"></app-preloader-container>
     <div class="charger__navbar">
       <button *ngIf="canOpenMenu(1)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 1}" (click)="selectMenuItem(1)" class="charger__navbar-item">Overview</button>
       <button *ngIf="canOpenMenu(2)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 2}" (click)="selectMenuItem(2)" class="charger__navbar-item">Pricing & Access</button>
       <button *ngIf="canOpenMenu(3)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 3}" (click)="selectMenuItem(3)" class="charger__navbar-item">Details & Settings</button>
-      <button *ngIf="canOpenMenu(4)"  [disabled]="!disabledActions" [ngClass]="{'disabled':!disabledActions,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
+      <button *ngIf="canOpenMenu(4)"  [disabled]="!online" [attr.title]="online ? null : 'Actions need the charger to be connected'" [ngClass]="{'disabled':!online,'charger__navbar-item--active': selectedMenuItem === 4}" (click)="selectMenuItem(4)" class="charger__navbar-item">Actions</button>
       <button *ngIf="canOpenMenu(5)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 5}" (click)="selectMenuItem(5)" class="charger__navbar-item">OCPP Configuration</button>
       <button *ngIf="canOpenMenu(6)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 6}" (click)="selectMenuItem(6)" class="charger__navbar-item">Firmware</button>
       <button *ngIf="canOpenMenu(7)"  [ngClass]="{'charger__navbar-item--active': selectedMenuItem === 7}" (click)="selectMenuItem(7)" class="charger__navbar-item">Uptime Reports</button>

@@ -16,6 +16,7 @@ namespace VoltaXApi.Services
     private readonly IConnectorUptimeRepository _connectorUptimeRepository;
     private readonly ISystemReportService _systemReportService;
     private readonly IChargingSessionService _chargingSessionService;
+    private readonly ITransactionService _transactionService;
     private readonly ILogger<ConnectorStatusService> _logger;
 
     public ConnectorStatusService(
@@ -26,6 +27,7 @@ namespace VoltaXApi.Services
       IConnectorUptimeRepository connectorUptimeRepository,
       ISystemReportService systemReportService,
       IChargingSessionService chargingSessionService,
+      ITransactionService transactionService,
       ILogger<ConnectorStatusService> logger
     )
     {
@@ -36,6 +38,7 @@ namespace VoltaXApi.Services
       _connectorUptimeRepository = connectorUptimeRepository;
       _systemReportService = systemReportService;
       _chargingSessionService = chargingSessionService;
+      _transactionService = transactionService;
       _logger = logger;
     }
 
@@ -129,8 +132,14 @@ namespace VoltaXApi.Services
             Criticality = ReportCriticality.High
           };
           await _systemReportService.HandleReport(sysReport);
+          // The session stays open: the charger normally ends it once it recovers (StaleTransactionSweeper
+          // closes it otherwise).
+          await _transactionService.NotifyConnectorFaultAsync(connector.ID, statusTime);
         }
-        if (connectorStatus != null && status == ConnectorStatusEnumType.Available && connectorStatus.LastStatus == ConnectorStatusEnumType.Occupied)
+        // The idle time after the last session ends when the connector stops being occupied: the car left
+        // (Available), or the connector went out of service (Faulted, Unavailable) and its departure can no longer
+        // be seen. Otherwise a later plug-in and unplug would close that idle time days later.
+        if (connectorStatus?.LastStatus == ConnectorStatusEnumType.Occupied && status != ConnectorStatusEnumType.Occupied)
         {
           await _chargingSessionService.HandleIdleMinutes(connector.ID, statusTime);
         }

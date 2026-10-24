@@ -15,7 +15,6 @@ import { RechargeCardComponent } from './recharge-card/recharge-card.component';
 import { MatRippleModule } from '@angular/material/core';
 import { SelectFormFieldComponent } from './select-form-field/select-form-field.component';
 import { DebitCardComponent } from './debit-card/debit-card.component';
-import { InvoiceComponent } from './invoice/invoice.component';
 import { EmptyCardComponent } from './empty-card/empty-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { ActionModalComponent } from './action-modal/action-modal.component';
@@ -53,6 +52,7 @@ import { FieldLabelComponent } from './field-label/field-label.component';
 import { DashboardDetailsContainerComponent } from './dashboard-details-container/dashboard-details-container.component';
 import { InfoItemComponent } from './info-item/info-item.component';
 import { InfoBoxComponent } from './info-box/info-box.component';
+import { VxI18nModule } from '../shared/i18n/vx-i18n.module';
 
 @NgModule({
   declarations: [
@@ -67,7 +67,6 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     RechargeCardComponent,
     SelectFormFieldComponent,
     DebitCardComponent,
-    InvoiceComponent,
     InfoItemComponent,
     EmptyCardComponent,
     ActionModalComponent,
@@ -112,7 +111,8 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     FormsModule,
     MatRippleModule,
     MatButtonModule,
-    CalendarModule
+    CalendarModule,
+    VxI18nModule
   ],
   exports: [
     CardComponent,
@@ -125,7 +125,6 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     RechargeCardComponent,
     SelectFormFieldComponent,
     DebitCardComponent,
-    InvoiceComponent,
     EmptyCardComponent,
     ActionModalComponent,
     SvgSpinnerComponent,
@@ -160,7 +159,8 @@ import { InfoBoxComponent } from './info-box/info-box.component';
     BreadcrumbComponent,
     FieldLabelComponent,
     DashboardDetailsContainerComponent,
-    InfoBoxComponent
+    InfoBoxComponent,
+    VxI18nModule
   ],
   providers: [],
 })

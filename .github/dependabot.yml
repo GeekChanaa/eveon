@@ -1,0 +1,74 @@
+# Weekly dependency update pull requests. Minor and patch updates are grouped per ecosystem to keep the
+# number of pull requests low; major versions that need a migration (Angular, .NET) are left to people.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directories:
+      - /VoltaXApi
+      - /tests/VoltaX.Tests
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # .NET 10 packages need the target framework to move first (net9.0 today).
+      - dependency-name: "Microsoft.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "System.*"
+        update-types: ["version-update:semver-major"]
+      # Pomelo follows EF Core majors.
+      - dependency-name: "Pomelo.EntityFrameworkCore.MySql"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: npm
+    directory: /VoltaXDashboardSpa
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Angular majors go through `ng update`, with PrimeNG / Material / CDK and TypeScript alongside.
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@angular-devkit/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "primeng"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "zone.js"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+  - package-ecosystem: pub
+    directory: /volta_x_mobile
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories:
+      - /VoltaXApi
+      - /VoltaXApi/deploy/sqlserver
+    schedule:
+      interval: weekly
+      day: monday
+    ignore:
+      # A new .NET major means a new target framework, not just a new base image.
+      - dependency-name: "dotnet/*"
+        update-types: ["version-update:semver-major"]

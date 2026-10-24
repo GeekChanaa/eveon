@@ -64,6 +64,8 @@
 
               </div>
 
+              <vx-refund-panel *ngIf="order?.id" target="Order" [targetId]="order.id"></vx-refund-panel>
+
               <!-- Actions -->
               <div class="form-section">
                 <h3 class="section-title">Other Actions</h3>

@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VoltaXApi.Models
@@ -8,12 +10,16 @@ namespace VoltaXApi.Models
         [NotUpdatable]
         public string CardNumber { get; set; }
         [NotMapped]
-        public string LastFourDigits { get { return CardNumber.Substring(CardNumber.Length - 4);} }
+        public string LastFourDigits => CardNumber is { Length: >= 4 } ? CardNumber[^4..] : CardNumber ?? "";
         public CardTypeEnum CardType { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int MaxCount { get; set; }
         public CardStatusEnum Status { get; set; }
-        public double Balance { get; set; }
+        [Precision(18, 2)]
+        public decimal Balance { get; set; }
+        /// <summary>Incremented with every balance change (see IWalletService); concurrent changes retry.</summary>
+        [ConcurrencyCheck]
+        public int BalanceVersion { get; set; }
         public string Note { get; set; }
         public bool? Blocked { get; set; }
         public int? UserID { get; set; }

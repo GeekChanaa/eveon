@@ -20,7 +20,7 @@ namespace VoltaXApi.OCPP.Services
     {
         bool IsSuppressed(string chargePointId);
         /// <summary>Sends the cost; false when the charger is skipped (offline, not 2.0.1, rejected before) or rejects it now.</summary>
-        Task<bool> SendAsync(string chargePointId, string transactionId, double totalCost, CancellationToken cancellationToken = default);
+        Task<bool> SendAsync(string chargePointId, string transactionId, decimal totalCost, CancellationToken cancellationToken = default);
     }
 
     public sealed class CostUpdatedSender : ICostUpdatedSender
@@ -39,9 +39,9 @@ namespace VoltaXApi.OCPP.Services
         public bool IsSuppressed(string chargePointId) => _rejected.ContainsKey(chargePointId);
 
         /// <summary>The 2.0.1 totalCost is a decimal amount; billing amounts are rounded to cents.</summary>
-        public static double RoundCost(double cost) => Math.Round(Math.Max(0, cost), 2, MidpointRounding.AwayFromZero);
+        public static decimal RoundCost(decimal cost) => Math.Round(Math.Max(0, cost), 2, MidpointRounding.AwayFromZero);
 
-        public async Task<bool> SendAsync(string chargePointId, string transactionId, double totalCost, CancellationToken cancellationToken = default)
+        public async Task<bool> SendAsync(string chargePointId, string transactionId, decimal totalCost, CancellationToken cancellationToken = default)
         {
             if (IsSuppressed(chargePointId) || _commandSender.GetProtocolVersion(chargePointId) != OcppProtocols.Ocpp201) return false;
             var request = new CostUpdatedRequest { TotalCost = RoundCost(totalCost), TransactionId = transactionId };
@@ -60,7 +60,7 @@ namespace VoltaXApi.OCPP.Services
         }
 
         /// <summary>Sends the final cost of a transaction that just ended without blocking the caller (e.g. a TransactionEvent handler).</summary>
-        public static void SendFinalInBackground(IServiceScopeFactory scopeFactory, ILogger logger, string chargePointId, string? transactionId, double finalCost)
+        public static void SendFinalInBackground(IServiceScopeFactory scopeFactory, ILogger logger, string chargePointId, string? transactionId, decimal finalCost)
         {
             if (string.IsNullOrEmpty(transactionId)) return;
             OcppBackgroundCommand.Run(scopeFactory, logger, "CostUpdated (final)", chargePointId,
@@ -124,23 +124,28 @@ namespace VoltaXApi.OCPP.Services
         }
 
         public sealed record ActiveTransaction(string ChargePointId, int ChargePointDbId, string TransactionId, DateTime StartTime,
-            double MeterStart, double? MeterStop, Connector Connector);
+            double MeterStart, double? MeterStop, Tariff Tariff);
 
         /// <summary>Running cost of an active transaction, with the billing formula (see <see cref="ICostCalculator.RunningCost"/>).</summary>
-        public static double RunningCost(ICostCalculator calculator, ActiveTransaction t, DateTime nowUtc) =>
-            calculator.RunningCost(t.Connector, Math.Max(0, (t.MeterStop ?? t.MeterStart) - t.MeterStart), Math.Max(0, (nowUtc - t.StartTime).TotalMinutes));
+        public static decimal RunningCost(ICostCalculator calculator, ActiveTransaction t, DateTime nowUtc) =>
+            calculator.RunningCost(t.Tariff, Math.Max(0, (t.MeterStop ?? t.MeterStart) - t.MeterStart), Math.Max(0, (nowUtc - t.StartTime).TotalMinutes));
 
         public async Task RunOnceAsync(CancellationToken cancellationToken)
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
             var calculator = scope.ServiceProvider.GetRequiredService<ICostCalculator>();
+            var vatRate = scope.ServiceProvider.GetRequiredService<GlobalConfigurations>().Vat;
 
-            var active = await db.Transactions.AsNoTracking()
+            // Priced with the tariff frozen on the session, like the final debit.
+            var rows = await db.Transactions.AsNoTracking()
                 .Where(t => t.Status == TransactionStatusEnum.Current && t.Uid != null && t.Connector != null && t.Connector.ChargePoint != null)
-                .Select(t => new ActiveTransaction(t.Connector!.ChargePoint!.ChargePointId, t.Connector.ChargePoint.ID, t.Uid!, t.StartTime,
-                    t.MeterStart, t.MeterStop, t.Connector))
+                .Select(t => new { t.Connector!.ChargePoint!.ChargePointId, ChargePointDbId = t.Connector.ChargePoint.ID, Uid = t.Uid!, t.StartTime,
+                    t.MeterStart, t.MeterStop, t.Connector, t.ChargingSession })
                 .ToListAsync(cancellationToken);
+            var active = rows.Select(t => new ActiveTransaction(t.ChargePointId, t.ChargePointDbId, t.Uid, t.StartTime, t.MeterStart, t.MeterStop,
+                    t.ChargingSession != null ? Tariff.Of(t.ChargingSession, t.Connector, vatRate) : Tariff.Of(t.Connector, vatRate)))
+                .ToList();
             var candidates = active.Where(t => !_sender.IsSuppressed(t.ChargePointId) &&
                                                _commandSender.GetProtocolVersion(t.ChargePointId) == OcppProtocols.Ocpp201).ToList();
             if (candidates.Count == 0) return;

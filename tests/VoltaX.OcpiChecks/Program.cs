@@ -36,12 +36,12 @@ string[] capabilities = { "CHARGING_PROFILE_CAPABLE", "CHARGING_PREFERENCES_CAPA
     "START_SESSION_CONNECTOR_REQUIRED", "TOKEN_GROUP_CAPABLE", "UNLOCK_CAPABLE" };
 string[] priceComponentTypes = { "ENERGY", "FLAT", "PARKING_TIME", "TIME" };
 
-var id = new OcpiIdentity("MA", "EVE", "EVEON", 0.2);
+var id = new OcpiIdentity("MA", "EVE", "EVEON", 0.2m);
 var updated = new DateTime(2026, 10, 1, 8, 30, 0, DateTimeKind.Utc);
 Connector NewConnector(int dbId, int evse, int number, ConnectorEnumType type, double kw) => new()
 {
     ID = dbId, EvseID = evse, ConnectorID = number, ConnectorType = type, Power = kw, ChargePointID = 7,
-    PricePerKWh = 3.6, PricePerMinute = 0.12, PricePerIdleMinute = 0.5, FlatFee = 2.4, UpdatedAt = updated
+    PricePerKWh = 3.6m, PricePerMinute = 0.12m, PricePerIdleMinute = 0.5m, FlatFee = 2.4m, UpdatedAt = updated
 };
 var station = new ChargingStation
 {
@@ -138,7 +138,7 @@ var session = new OcpiSession
     ID = 900, OcpiPartyID = 1, TokenCountryCode = "NL", TokenPartyId = "EMS", TokenUid = "04A1B2C3", TokenType = "RFID", ContractId = "NL-EMS-C12345678-X",
     AuthMethod = "WHITELIST", ChargingStationID = 42, ChargePointID = 7, EvseId = 1, ConnectorID = 100, TransactionUid = "tx-1",
     Status = OcpiSessionStatus.Completed, StartDateTime = updated, EndDateTime = updated.AddMinutes(30), Kwh = 10,
-    PricePerKWh = 3.6, PricePerMinute = 0.12, FlatFee = 2.4, VatRate = 0.2, LastUpdated = updated.AddMinutes(31)
+    PricePerKWh = 3.6m, PricePerMinute = 0.12m, FlatFee = 2.4m, VatRate = 0.2m, LastUpdated = updated.AddMinutes(31)
 };
 var sj = Json(OcpiMapper.ToSession(id, session, station.ChargePoints!.First().Connectors!.First()));
 Check(Has(sj, "country_code", "party_id", "id", "start_date_time", "kwh", "cdr_token", "auth_method", "location_id", "evse_uid", "connector_id", "currency", "status", "last_updated"), "Session has the required OCPI fields");

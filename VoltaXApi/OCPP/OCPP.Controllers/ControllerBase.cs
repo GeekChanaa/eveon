@@ -22,10 +22,6 @@ namespace OCPP.Core.Server
             {
                 ChargePointStatus = chargePointStatus;
             }
-            else
-            {
-                Console.WriteLine("New ControllerBase => empty chargepoint status");
-            }
         }
 
         protected static string CleanChargeTagId(string rawChargeTagId, ILogger logger)
@@ -39,7 +35,7 @@ namespace OCPP.Core.Server
                 if (sep >= 0)
                 {
                     idTag = rawChargeTagId.Substring(0, sep);
-                    Console.WriteLine("CleanChargeTagId => Charge tag '{0}' => '{1}'", rawChargeTagId, idTag);
+                    logger?.LogDebug("CleanChargeTagId => Charge tag suffix removed");
                 }
             }
 

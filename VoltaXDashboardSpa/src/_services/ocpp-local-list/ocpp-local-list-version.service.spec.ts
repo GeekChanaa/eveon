@@ -1,16 +1,18 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
-import { OcppLocalListVersionService } from './ocpp-local-list-version.service';
+import { TestBed, waitForAsync, inject } from '@angular/core/testing';
+import { OCPPLocalListVersionService } from './ocpp-local-list-version.service';
 
+import { VxTestingModule } from 'src/testing/vx-testing.module';
 describe('Service: OcppLocalListVersion', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [OcppLocalListVersionService]
+      imports: [VxTestingModule],
+      providers: [OCPPLocalListVersionService]
     });
   });
 
-  it('should ...', inject([OcppLocalListVersionService], (service: OcppLocalListVersionService) => {
+  it('should ...', inject([OCPPLocalListVersionService], (service: OCPPLocalListVersionService) => {
     expect(service).toBeTruthy();
   }));
 });

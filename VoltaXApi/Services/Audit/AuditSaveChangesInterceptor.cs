@@ -26,6 +26,7 @@ namespace VoltaXApi.Services.Audit
             [typeof(ChargePoint)] = new() { nameof(ChargePoint.Status), nameof(ChargePoint.FirmwareVersion) },
             // Payment-provider credential: never copied into the audit trail.
             [typeof(DebitCard)] = new() { nameof(DebitCard.ProviderToken) },
+            [typeof(Card)] = new() { nameof(Card.BalanceVersion) },
         };
 
         private static readonly HashSet<string> AlwaysIgnored = new() { nameof(IEntity.CreatedAt), nameof(IEntity.UpdatedAt) };

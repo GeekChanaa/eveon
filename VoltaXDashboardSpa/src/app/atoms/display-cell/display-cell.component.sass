@@ -343,7 +343,7 @@
     font-size: 14px
   // Theme-aware badge: the base style's light fill hides the (white) dark-mode text.
   .form-field__value--enum
-    background-color: var(--vx-hover, #f4f4f4)
+    background-color: var(--vx-hover, var(--navy-50))
     border: 1px solid var(--vx-border, #ededed)
     color: var(--vx-text, #171b24)
   .form-field__input, .form-field__select, .form-field__textarea
@@ -357,16 +357,16 @@
     padding: 8px 14px
     font-size: 12px
   .form-field__btn--save
-    background: var(--vx-yellow, #e5b223)
-    color: #171b24
+    background: var(--vx-brand, #0A1A3A)
+    color: var(--vx-on-brand, #fff)
   .form-field__btn--cancel
     background: var(--vx-surface, #fff)
     color: var(--vx-text, #171b24)
     border: 1px solid var(--vx-border, #ededed)
   &.form-field--editing
     padding: 16px
-    background: var(--vx-yellow-soft, #e5b22314)
+    background: var(--vx-brand-soft, rgba(10, 26, 58, .08))
     box-shadow: none
   button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible
-    outline: 2px solid var(--vx-yellow, #e5b223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: 2px

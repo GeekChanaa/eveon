@@ -1,0 +1,83 @@
+@import ./helpers/variables
+
+// ---------------------------------------------------------------------------
+// Right-to-left (Arabic). LanguageService sets <html dir="rtl">; the layout of
+// the template (app.min.css) and of theme.sass is written left-to-right, so the
+// shell is mirrored here: sidebar on the right, header and page gutter from the
+// right, drawer sliding in from the right. Feature pages use logical properties
+// (margin-inline-start...) and need nothing here.
+// ---------------------------------------------------------------------------
+
+html[dir="rtl"]
+  body
+    font-family: "Inter", "Segoe UI", Tahoma, "Noto Sans Arabic", "Geeza Pro", Arial, sans-serif
+
+  .sidebar
+    left: auto
+    right: 0
+
+  .vx .sidebar
+    border-right: 0
+    border-left: 1px solid var(--vx-border)
+
+  .vx .sidebar__logo
+    padding-left: 0
+    padding-right: 6px
+
+  .header
+    left: 0
+    right: 340px
+
+  .vx .header
+    left: 0
+    right: 280px
+
+    +x
+      right: 260px
+
+    +m
+      right: 0
+
+  .page.vx
+    padding: 72px 280px 0 0
+
+    +x
+      padding-right: 260px
+      padding-left: 0
+
+    +m
+      padding-right: 0
+
+  body.sidebar-collapsed .page.vx
+    padding-left: 0
+    padding-right: 88px
+
+  body.sidebar-collapsed .vx .header
+    left: 0
+    right: 88px
+
+  // Arrows in menus point the reading direction.
+  .sidebar__link .icon-arrow-next,
+  .quick-arrow,
+  .icon-arrow-next
+    transform: scaleX(-1)
+
+  +m
+    .vx .sidebar
+      transform: translateX(100%)
+
+    .vx .sidebar.active
+      transform: translateX(0)
+
+    .vx .sidebar__close
+      right: auto
+      left: 12px
+
+    .vx .sidebar__brand
+      padding-right: 0
+      padding-left: 44px
+
+  // Numbers, amounts, card digits and ids keep their left-to-right order inside RTL text.
+  .ltr, .vx-num
+    direction: ltr
+    unicode-bidi: isolate

@@ -30,7 +30,7 @@ export class TwoFactorSettingsComponent implements OnInit {
   loadStatus() {
     this._authService.getTwoFactorStatus().subscribe({
       next: status => this.status = status,
-      error: () => this.error = 'Could not load your two factor authentication settings.'
+      error: () => this.error = 'auth.twoFactor.loadFailed'
     });
   }
 
@@ -79,7 +79,8 @@ export class TwoFactorSettingsComponent implements OnInit {
       next: result => { this.isLoading = false; done(result); },
       error: err => {
         this.isLoading = false;
-        this.error = err.status == 429 ? 'Too many attempts. Please wait a minute.' : err.error?.error ?? 'Something went wrong, please try again.';
+        // The API's message when it gave one (e.g. a wrong code), otherwise a translated one.
+        this.error = err.status == 429 ? 'auth.twoFactor.tooManyAttempts' : err.error?.error ?? 'auth.twoFactor.failed';
       }
     });
   }

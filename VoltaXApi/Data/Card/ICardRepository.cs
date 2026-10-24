@@ -7,6 +7,7 @@ namespace VoltaXApi.Data
 {
     public interface ICardRepository : IRepository<Card>
     {
+        IQueryable<CardListDto> GetCardsList(GlobalParams globalParams);
         IQueryable<CardListDto> GetUserRechargeCardsAsync(int UserID, GlobalParams globalParams);
         Task<List<TransactionDto>> GetCardTransactions(int CardID);
         Task<List<OrderDto>> GetCardOrders(int CardID);
@@ -15,7 +16,6 @@ namespace VoltaXApi.Data
         Task<Card> CreateCardForUser(User user);
         Task CreateCard(CreateCardDto card);
         Task<CardListDto> GetCardForDisplayByID(int cardID);
-        Task<List<Card>> GetAllCards();
         Task<CardTokenInfoDto?> GetCardTokenInfoByUserID(int userID);
         Task<Card?> FindCardAsNoTrackingAsync(Expression<Func<Card, bool>> predicate);
     }

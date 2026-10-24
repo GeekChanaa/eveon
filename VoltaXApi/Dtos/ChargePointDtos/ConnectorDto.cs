@@ -31,12 +31,12 @@ namespace VoltaxApi.Dtos
         public double? PowerKw { get; set; }
 
         // Flat fee for using this connector, nullable.
-        public double? FlatFee { get; set; }
+        public decimal? FlatFee { get; set; }
 
         // Price per minute for using this connector, nullable.
-        public double? PricePerMinute { get; set; }
+        public decimal? PricePerMinute { get; set; }
 
         // Price per idle minute for using this connector, nullable.
-        public double? PricePerIdleMinute { get; set; }
+        public decimal? PricePerIdleMinute { get; set; }
     }
 }

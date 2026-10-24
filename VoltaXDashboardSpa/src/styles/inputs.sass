@@ -23,27 +23,27 @@
   --input-affix: 34px
   --input-icon-size: 18px
 
-  --input-bg: #F7F7F8
+  --input-bg: #F5F7FB
   --input-bg-focus: #FFFFFF
-  --input-border: #E4E5E7
+  --input-border: #D5DCE9
   --input-border-hover: var(--secondary2)
   --input-border-focus: var(--secondary1)
-  --input-text: #1A1D1F
-  --input-placeholder: #8B9095
+  --input-text: var(--navy-900)
+  --input-placeholder: var(--navy-400)
 
 body.dark
-  --input-bg: #232629
-  --input-bg-focus: #191B1D
-  --input-border: #31363B
+  --input-bg: var(--navy-800)
+  --input-bg-focus: var(--navy-850)
+  --input-border: var(--navy-600)
   --input-text: #FCFCFC
-  --input-placeholder: #9A9FA5
+  --input-placeholder: var(--navy-350)
 
 .field .tooltip
   position: relative
   top: -1px
 
 .field .tooltip .icon
-  fill: #9A9FA5
+  fill: var(--navy-350)
 
 .field__wrap
   position: relative
@@ -99,7 +99,7 @@ textarea.field__input
   border-color: var(--input-border-focus)
   background: var(--input-bg-focus)
   // Replaces the old 2px border: same emphasis without shifting the text by a pixel.
-  box-shadow: 0 0 0 2px rgba(240, 177, 52, .18)
+  box-shadow: 0 0 0 2px rgba(var(--vx-brand-rgb, 10, 26, 58), .18)
   outline: none
 
 body.dark .field__input:focus
@@ -242,7 +242,7 @@ body.dark .field.success .field__input
   position: relative
   top: -1px
 .file .tooltip .icon
-  fill: #9A9FA5
+  fill: var(--navy-350)
 
 .file__wrap
   position: relative

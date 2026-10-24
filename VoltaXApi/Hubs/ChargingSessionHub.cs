@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using VoltaXApi.Authorization;
 
 namespace VoltaXApi.Hubs
 {
@@ -25,10 +26,12 @@ namespace VoltaXApi.Hubs
     public class ChargingSessionHub : Hub
     {
         private readonly ILogger<ChargingSessionHub> _logger;
+        private readonly AccessService _accessService;
 
-        public ChargingSessionHub(ILogger<ChargingSessionHub> logger)
+        public ChargingSessionHub(ILogger<ChargingSessionHub> logger, AccessService accessService)
         {
             _logger = logger;
+            _accessService = accessService;
         }
 
         /// <summary>
@@ -75,9 +78,17 @@ namespace VoltaXApi.Hubs
             await Clients.Caller.SendAsync("ReceiveMessage", $"Unsubscribed from user {userId} sessions");
         }
 
+        /// <summary>
+        /// Every connection follows its own user's sessions: the customer portal's live widget needs no hub call,
+        /// and nobody can receive another user's updates this way (the group comes from the token, not the client).
+        /// </summary>
         public override async Task OnConnectedAsync()
         {
             _logger.LogInformation("ChargingSessionHub => Client connected: {ConnectionId}", Context.ConnectionId);
+            // AuthorizedHubFilter already rejected unauthenticated connections.
+            var access = Context.User == null ? null : await _accessService.Resolve(Context.User);
+            if (access != null)
+                await Groups.AddToGroupAsync(Context.ConnectionId, GetUserGroupName(access.User.ID));
             await base.OnConnectedAsync();
         }
 

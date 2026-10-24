@@ -42,7 +42,7 @@ catch (ArgumentException) { Check(true, "invalid connector addresses are rejecte
 var options = new DbContextOptionsBuilder<VoltaXApiDbContext>()
     .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
 await using var db = new VoltaXApiDbContext(options);
-var retained = new Connector { ChargePointID = 1, EvseID = 1, ConnectorID = 1, PricePerKWh = 7.5 };
+var retained = new Connector { ChargePointID = 1, EvseID = 1, ConnectorID = 1, PricePerKWh = 7.5m };
 var removed = new Connector { ChargePointID = 1, EvseID = 3, ConnectorID = 1 };
 var other = new Connector { ChargePointID = 2, EvseID = 8, ConnectorID = 1 };
 db.Connectors.AddRange(retained, removed, other);
@@ -58,7 +58,7 @@ var repository = new ConnectorRepository(db, config, null!);
 await repository.ReconcileChargePointConnectors(1, new[] { (1, 1), (2, 1) });
 var active = await db.Connectors.Where(c => c.ChargePointID == 1).ToListAsync();
 Check(active.Count == 2 && active.All(c => c.ConnectorID == 1 && (c.EvseID == 1 || c.EvseID == 2)), "only reported connectors remain active");
-Check(active.Single(c => c.EvseID == 1).ID == retained.ID && retained.PricePerKWh == 7.5, "matching connector keeps identity and pricing");
+Check(active.Single(c => c.EvseID == 1).ID == retained.ID && retained.PricePerKWh == 7.5m, "matching connector keeps identity and pricing");
 Check(active.Single(c => c.EvseID == 2).FlatFee == 3, "new connectors receive default pricing");
 Check(await db.Connectors.AnyAsync(c => c.ID == other.ID), "other charge points remain unchanged");
 Check(!await db.ConnectorStatuses.AnyAsync(s => s.ConnectorID == removed.ID), "removed connector statuses disappear from counts");

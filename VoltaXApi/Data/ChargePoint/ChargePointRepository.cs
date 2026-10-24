@@ -15,51 +15,17 @@ namespace VoltaXApi.Data
     public class ChargePointRepository : Repository<ChargePoint>, IChargePointRepository
     {
         private readonly IMapper _mapper;
-        private readonly GlobalConfigurations _globalConfigurations;
 
         public ChargePointRepository(
             VoltaXApiDbContext context,
-            IMapper mapper,
-            GlobalConfigurations globalConfigurations) : base(context)
+            IMapper mapper) : base(context)
         {
             _mapper = mapper;
-            _globalConfigurations = globalConfigurations;
         }
 
         public async Task<List<Connector>> GetChargePointConnectors(int chargePointID)
         {
             return await this._context.Connectors.Where(u => u.ChargePointID == chargePointID).ToListAsync();
-        }
-
-        // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<double> GetChargePointRevenue(string chargePointID, DateTime? startTime = null, DateTime? endTime = null)
-        {
-            var sessions = await _context.ChargingSessions
-                .Where(s => s.EndDate != null && s.Connector.ChargePoint.ChargePointId == chargePointID
-                        && (s.StartDate >= startTime || startTime == null)
-                        && (s.EndDate <= endTime || endTime == null))
-            .ToListAsync();
-
-            double totalRevenue = 0;
-            foreach (var session in sessions)
-            {
-                totalRevenue += session.TotalPriceWithVAT(_globalConfigurations.Vat, (int)_globalConfigurations.GracePeriod);
-            }
-
-            return totalRevenue;
-        }
-
-        // Charge Point Total Transactions Amount (total revenues from this charge point)
-        public async Task<double> GetPartnerChargePointRevenue(int partnerID, string chargePointID)
-        {
-            var revenue = await _context.ChargePoints
-                .Where(cp => cp.ChargingStation.PartnerID == partnerID &&
-                            cp.ChargePointId == chargePointID &&
-                            !cp.IsDeleted)
-                .Select(cp => cp.Connectors.Sum(c => (c.PricePerKWh - c.CostPerKwh) * c.Power))
-                .FirstOrDefaultAsync();
-
-            return revenue;
         }
 
         override public async Task AddAsync(ChargePoint chargePoint)

@@ -17,10 +17,10 @@ public class ChargingSessionListDto
     public double? ChargedMinutes { get; set; }
     public double? IdleMinutes { get; set; }
     public double? ChargedKwhs { get; set; }
-    public double? PricePerMinute { get; set; }
-    public double? CostPerKwh { get; set; }
-    public double? PricePerIdleMinute { get; set; }
-    public double? TotalPriceWithVAT { get; set; }
+    public decimal? PricePerMinute { get; set; }
+    public decimal? CostPerKwh { get; set; }
+    public decimal? PricePerIdleMinute { get; set; }
+    public decimal? TotalPriceWithVAT { get; set; }
     public DateTime? EndDate { get; set; }
     public ReasonEnumType StoppedReason { get; set; }
     public ChargingSessionStatusEnum ChargingSessionStatus { get; set; }

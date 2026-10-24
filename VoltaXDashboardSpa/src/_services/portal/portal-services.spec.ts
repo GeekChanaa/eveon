@@ -1,0 +1,166 @@
+import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { environment } from 'src/environments/environment';
+import { VxTestingModule } from 'src/testing/vx-testing.module';
+import { CustomerPortalService } from './customer-portal.service';
+import { PartnerPortalService } from './partner-portal.service';
+import { PaymentsService } from './payments.service';
+import { OperatorSearchService } from '../operator-search.service';
+
+const api = environment.apiUrl;
+
+describe('Portal API services', () => {
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [VxTestingModule] });
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => http.verify());
+
+  describe('CustomerPortalService', () => {
+    it('sends only the filters that are set', () => {
+      TestBed.inject(CustomerPortalService).sessions({ from: '2026-10-01', to: null, status: '', search: 'Marina', page: 2, pageSize: 20 }).subscribe();
+
+      const request = http.expectOne(r => r.url === `${api}/api/my/sessions`);
+      expect(request.request.params.keys().sort()).toEqual(['from', 'page', 'pageSize', 'search']);
+      expect(request.request.params.get('search')).toBe('Marina');
+      request.flush({ items: [], page: 2, pageSize: 20, total: 0 });
+    });
+
+    it('exports the filtered sessions without paging and as a file', () => {
+      TestBed.inject(CustomerPortalService).exportSessions({ status: 'completed', page: 3, pageSize: 20 }, 'pdf').subscribe();
+
+      const request = http.expectOne(r => r.url === `${api}/api/my/sessions/export`);
+      expect(request.request.params.get('format')).toBe('pdf');
+      expect(request.request.params.get('status')).toBe('completed');
+      expect(request.request.params.has('page')).toBeFalse();
+      expect(request.request.responseType).toBe('blob');
+      request.flush(new Blob(['%PDF']));
+    });
+
+    it('reads the running session, or nothing when no session is charging (204)', () => {
+      const portal = TestBed.inject(CustomerPortalService);
+      const seen: unknown[] = [];
+      portal.activeSession().subscribe(s => seen.push(s));
+      portal.activeSession().subscribe(s => seen.push(s));
+
+      const [first, second] = http.match(`${api}/api/my/sessions/active`);
+      first.flush({ id: 9 });
+      second.flush(null, { status: 204, statusText: 'No Content' });
+      expect(seen).toEqual([{ id: 9 }, null]);
+    });
+
+    it('is read only: every call is a GET', () => {
+      const portal = TestBed.inject(CustomerPortalService);
+      portal.overview().subscribe();
+      portal.profile().subscribe();
+      portal.cards().subscribe();
+      portal.wallet().subscribe();
+      portal.orders().subscribe();
+      portal.session(4).subscribe();
+
+      const requests = http.match(() => true);
+      expect(requests.length).toBe(6);
+      requests.forEach(r => { expect(r.request.method).toBe('GET'); r.flush({}); });
+    });
+  });
+
+  describe('PaymentsService', () => {
+    it('starts a top-up with the amount and card', () => {
+      TestBed.inject(PaymentsService).startTopUp(150, 9).subscribe();
+
+      const request = http.expectOne(`${api}/api/payments/top-ups`);
+      expect(request.request.method).toBe('POST');
+      expect(request.request.body).toEqual({ amount: 150, cardId: 9 });
+      request.flush({ orderId: 1, checkout: { method: 'GET', url: 'https://pay.test' } });
+    });
+  });
+
+  describe('PartnerPortalService', () => {
+    it('puts the four prices of one connector', () => {
+      const pricing = { pricePerKWh: 3.5, pricePerMinute: 0.1, pricePerIdleMinute: 0.5, flatFee: 2 };
+      TestBed.inject(PartnerPortalService).updatePricing(12, pricing).subscribe();
+
+      const request = http.expectOne(`${api}/api/partner-portal/connectors/12/pricing`);
+      expect(request.request.method).toBe('PUT');
+      expect(request.request.body).toEqual(pricing);
+      request.flush({ id: 12, ...pricing });
+    });
+
+    it('shares the loaded profile (sidebar logo) and the uploaded logo', () => {
+      const service = TestBed.inject(PartnerPortalService);
+      const seen: (string | null | undefined)[] = [];
+      service.profile$.subscribe(p => seen.push(p?.logoUrl));
+
+      service.profile().subscribe();
+      http.expectOne(`${api}/api/partner-portal/profile`).flush({ id: 1, name: 'Volt', logoUrl: '/files/a.png' });
+      service.uploadLogo(new File(['x'], 'logo.png', { type: 'image/png' })).subscribe();
+      const upload = http.expectOne(`${api}/api/partner-portal/profile/logo`);
+      expect(upload.request.body instanceof FormData).toBeTrue();
+      upload.flush({ id: 1, name: 'Volt', logoUrl: '/files/b.png' });
+
+      expect(seen).toEqual([undefined, '/files/a.png', '/files/b.png']);
+    });
+
+    it('sends the remote actions to the partner portal, scoped by id', () => {
+      const service = TestBed.inject(PartnerPortalService);
+      service.reset(3, 'Hard').subscribe();
+      service.refreshStatus(3).subscribe();
+      service.unlock(12).subscribe();
+      service.stopSession(77).subscribe();
+
+      const reset = http.expectOne(`${api}/api/partner-portal/charge-points/3/reset`);
+      expect(reset.request.method).toBe('POST');
+      expect(reset.request.body).toEqual({ type: 'Hard' });
+      reset.flush({ message: '', status: 'Accepted' });
+      http.expectOne(`${api}/api/partner-portal/charge-points/3/refresh-status`).flush({ status: 'Accepted' });
+      http.expectOne(`${api}/api/partner-portal/connectors/12/unlock`).flush({ status: 'Unlocked' });
+      http.expectOne(`${api}/api/partner-portal/sessions/77/stop`).flush({ status: 'Accepted' });
+    });
+
+    it('edits a station and uploads its photos as form data', () => {
+      const service = TestBed.inject(PartnerPortalService);
+      const hours = { twentyFourSeven: true, regular: [] };
+      const amenities = { wifi: true, parking: false, restaurants: false, washroom: false, sittingArea: false };
+      service.updateStation(4, { name: 'A', address: 'B', city: 'C', latitude: null, longitude: null, access: 'Public', parkingType: 'AngleParking',
+        description: null, openingHours: hours, amenities }).subscribe();
+      service.addStationPhotos(4, [new File(['x'], 'a.png', { type: 'image/png' }), new File(['y'], 'b.png', { type: 'image/png' })]).subscribe();
+      service.removeStationPhoto(4, 9).subscribe();
+
+      const put = http.expectOne(`${api}/api/partner-portal/stations/4`);
+      expect(put.request.method).toBe('PUT');
+      expect(put.request.body.openingHours).toEqual(hours);
+      put.flush({});
+      const upload = http.expectOne(`${api}/api/partner-portal/stations/4/photos`);
+      expect((upload.request.body as FormData).getAll('photos').length).toBe(2);
+      upload.flush({});
+      const remove = http.expectOne(`${api}/api/partner-portal/stations/4/photos/9`);
+      expect(remove.request.method).toBe('DELETE');
+      remove.flush(null);
+    });
+
+    it('resolves stored file paths against the static files host', () => {
+      expect(PartnerPortalService.fileUrl(null)).toBeNull();
+      expect(PartnerPortalService.fileUrl('https://cdn.test/x.png')).toBe('https://cdn.test/x.png');
+      expect(PartnerPortalService.fileUrl('/files/x.png')).toBe(environment.apiStaticFilesUrl + '/files/x.png');
+    });
+  });
+
+  describe('OperatorSearchService', () => {
+    it('searches sessions and exports transactions with the same filters', () => {
+      const service = TestBed.inject(OperatorSearchService);
+      service.sessions({ search: '#42', status: 'active', page: 1, pageSize: 25 }).subscribe();
+      service.exportTransactions({ status: 'Ended', page: 4, pageSize: 25 }).subscribe();
+
+      const sessions = http.expectOne(r => r.url === `${api}/api/ChargingSession/Search`);
+      expect(sessions.request.params.get('search')).toBe('#42');
+      sessions.flush({ items: [], page: 1, pageSize: 25, total: 0 });
+      const exported = http.expectOne(r => r.url === `${api}/api/Transaction/Export`);
+      expect(exported.request.params.get('status')).toBe('Ended');
+      expect(exported.request.params.has('page')).toBeFalse();
+      exported.flush(new Blob(['a;b']));
+    });
+  });
+});

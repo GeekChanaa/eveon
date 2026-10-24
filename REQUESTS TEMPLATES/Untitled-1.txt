@@ -1,1 +1,0 @@
-[2,"19223204","RequestStartTransaction",{"customData": {"vendorId": "VOLTAX"},"evseId": 1,"idToken": {"customData": {"vendorId": "VOLTAX"},"additionalInfo": [{"customData": {"vendorId": "VOLTAX"},"additionalIdToken": "VOLTAX01","type": "PME"}],"idToken": "string","type": "Central"},"remoteStartId": 0}]

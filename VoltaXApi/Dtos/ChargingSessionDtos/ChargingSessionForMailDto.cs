@@ -16,14 +16,14 @@ namespace VoltaXApi.Dtos
         public double? ConnectorPower { get; set; }
         public double? ChargedMinutes { get; set; }
         public double? IdleMinutes { get; set; }
-        public double? PricePerMinute { get; set; }
-        public double? PricePerIdleMinute { get; set; }
-        public double? ChargingPriceWithoutVAT { get; set; }
-        public double? ChargingPriceWithVAT { get; set; }
-        public double? IdlePriceWithoutVAT { get; set; }
-        public double? IdlePriceWithVAT { get; set; }
-        public double? TotalPriceWithoutVAT { get; set; }
-        public double? TotalPriceWithVAT { get; set; }
+        public decimal? PricePerMinute { get; set; }
+        public decimal? PricePerIdleMinute { get; set; }
+        public decimal? ChargingPriceWithoutVAT { get; set; }
+        public decimal? ChargingPriceWithVAT { get; set; }
+        public decimal? IdlePriceWithoutVAT { get; set; }
+        public decimal? IdlePriceWithVAT { get; set; }
+        public decimal? TotalPriceWithoutVAT { get; set; }
+        public decimal? TotalPriceWithVAT { get; set; }
         public double? KwhCharged { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }

@@ -1,13 +1,13 @@
 // Shared tokens and small pieces for the charge point configuration pages (light + dark via styles/theme.sass).
 $surface: var(--vx-surface, #FFFFFF)
 $surface-alt: var(--vx-surface-alt, #FAFAFA)
-$hover: var(--vx-hover, #F4F4F4)
+$hover: var(--vx-hover, var(--navy-50))
 $border: var(--vx-border, #EDEDED)
 $text: var(--vx-text, #0B0B0B)
 $muted: var(--vx-text-muted, #7A7C80)
-$yellow: var(--vx-yellow, #E5B223)
-$yellow-soft: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
-$yellow-ink: var(--vx-yellow-ink, #8A6410)
+$brand: var(--vx-brand, #0A1A3A)
+$brand-soft: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
+$brand-ink: var(--vx-brand-ink, #1F3461)
 $ok: #1F9D55
 $ok-soft: rgba(31, 157, 85, .12)
 $warn: #B7791F
@@ -92,8 +92,8 @@ $ease: cubic-bezier(.2, .8, .2, 1)
     background: $bad-soft
     color: $bad
   &.cfg-badge_pending
-    background: $yellow-soft
-    color: $yellow-ink
+    background: $brand-soft
+    color: $brand-ink
   &.cfg-badge_muted
     background: $hover
     color: $muted
@@ -130,7 +130,7 @@ $ease: cubic-bezier(.2, .8, .2, 1)
     transform: scale(.97)
 
   &:focus-visible
-    outline: 2px solid $yellow
+    outline: 2px solid $brand
     outline-offset: 2px
 
   &:disabled
@@ -139,13 +139,13 @@ $ease: cubic-bezier(.2, .8, .2, 1)
 
   &.cfg-btn_primary
     border-color: transparent
-    background: $yellow
-    color: #0B0B0B
+    background: $brand
+    color: var(--vx-on-brand, #fff)
 
     &:hover:not(:disabled)
-      background: var(--vx-yellow-hover, #D0A01B)
-      color: #0B0B0B
-      box-shadow: 0 6px 18px -8px rgba(229, 178, 35, .8)
+      background: var(--vx-brand-hover, #1F3461)
+      color: var(--vx-on-brand, #fff)
+      box-shadow: 0 6px 18px -8px rgba(var(--vx-brand-rgb, 10, 26, 58), .8)
 
   &.cfg-btn_ghost
     border-color: transparent

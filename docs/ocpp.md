@@ -18,7 +18,7 @@ Both versions share the same business rules through version-neutral services:
 | Concern | Service |
 |---|---|
 | Boot acceptance (unknown = Rejected, never provisioned = Pending, provisioned = Accepted) | `OCPP.Services/ChargePointBootService` (+ `ChargePointRegistration`) |
-| Token / idTag authorization (card active/blocked/expired, OCPI tokens through `IExternalTokenAuthorizer`) | `OCPP.Services/IdTokenAuthorizationService` |
+| Token / idTag authorization (card active/blocked/expired/without balance = NoCredit, OCPI tokens through `IExternalTokenAuthorizer`) | `OCPP.Services/IdTokenAuthorizationService` |
 | Sessions, billing, customer notifications, SignalR updates, low-balance stop | `Services/TransactionService` fed with `TransactionEventData` |
 | Roaming (OCPI) sessions | `IRoamingTransactionObserver` (1.6 through `Ocpi/Services/RoamingTransactionEvent`) |
 | Connector status model | `Services/ConnectorStatusService` |
@@ -35,7 +35,8 @@ Both versions share the same business rules through version-neutral services:
   and kept in the MessageLog.
 - **Transactions**: StartTransaction always gets an integer `transactionId` = `Ocpp16Transactions.Id` (even when
   refused, as the charger needs one). The matching `Transactions.Uid` (and OCPI `TransactionUid`) is `ocpp16-{Id}`.
-  `RequestStopTransaction` accepts either form for a 1.6 charger.
+  `RequestStopTransaction` accepts either form for a 1.6 charger. A StartTransaction sent again after a lost answer
+  (same connector, idTag, meterStart and timestamp, not stopped) gets the transactionId already issued.
 - **Meter values**: 1.6 has no multiplier; the unit defaults to `Wh` (energy) / `W` (power); `kWh`/`kW` are converted.
   `SignedData` samples and unknown measurands are ignored. `meterStart`/`meterStop` are Wh.
 - **Authorization statuses**: 2.0.1-only results (NoCredit, NotAtThisLocation, ...) are sent as `Invalid` to 1.6 chargers.
@@ -102,12 +103,20 @@ or does not answer, Used when a transaction starts with it (1.6 `StartTransactio
 `TransactionEvent.reservationId`), Cancelled after an accepted CancelReservation or a 2.0.1
 `ReservationStatusUpdate(Removed)`, and Expired from `ReservationStatusUpdate(Expired)` or the sweeper.
 
-## OCPP 2.0.1: authorization before plug-in
+## OCPP 2.0.1: authorization before plug-in, plug-in before authorization
 
 A `TransactionEvent(Started)` without EVSE is accepted: the token is checked like any start (same answer and
 customer notifications) and the transaction is kept in `OcppPendingTransactions`. The first later event carrying the
 EVSE starts the session with the Started event's timestamp and meter, then is applied itself. Nothing is billed
 before a connector is known; a transaction that ends without ever reporting an EVSE is dropped.
+
+A `TransactionEvent(Started)` without idToken (TxStartPoint `EVConnected`: the transaction starts at plug-in,
+triggerReason `CablePluggedIn`) is acknowledged without `idTokenInfo` and kept pending with its connector
+(`OcppPendingTransactions.ConnectorID`, as later events may omit the EVSE). The `Updated` event that brings the token
+(triggerReason `Authorized`) is checked like a start and answered with its `idTokenInfo`; once accepted the session
+starts at that event, with its meter value (or the Started one): the driver pays from the moment they authorized.
+A transaction that ends without an accepted token is dropped, nothing billed. A `Started` repeated after the session
+started is acknowledged and ignored. `idTokenInfo` is only ever sent in answer to an event that carried an idToken.
 
 ## Adding an inbound handler
 
@@ -134,3 +143,51 @@ Outgoing commands use `IOcppCommandSender.SendRequestAsync<TReq,TRes>(chargePoin
   GetLog) are not implemented for 1.6 yet; signed firmware is refused with 400 for 1.6 chargers.
 - 1.6 chargers boot Pending until provisioned or skipped on the provisioning page; while Pending they may
   not start transactions (Authorize and StartTransaction answer Invalid).
+
+## Faults and transactions that never end
+
+- **Retries and late events.** Events are matched on the transaction id within the charge point (2.0.1 ids are
+  only unique per charging station; many chargers count from 1). An event for a closed or unknown
+  transaction is acknowledged and logged; it never touches another transaction of the connector (a re-sent
+  Ended of the previous transaction used to close the session charging at that moment). A meter reading older than
+  the last one applied to the transaction (a retried sample, an offline queue flushed out of order) is ignored, so
+  the session's energy and duration never move backwards.
+- **Fault during a session.** A `Faulted` StatusNotification raises a high-criticality system report and, when
+  a transaction is open on the connector, notifies the customer (`ChargerFaultDuringSession`). The session
+  stays open: the charger is expected to end it when it recovers, and the customer pays the energy measured.
+  A session ended by the charger or the server (fault, power loss, reboot, reset, stale or superseded
+  transaction) or while the connector is not Occupied accrues no idle fee.
+- **Server-side close** (`StaleTransactionSweeper`, every `Ocpp:StaleTransactionSweepMinutes`, default 10).
+  An open transaction is ended by the server, at its last meter reading and on its last meter value, when
+  - its connector is `Faulted` or `Unavailable` and nothing came for `Ocpp:FaultedTransactionMinutes`
+    (default 60): stop reason `ConnectorFaulted`;
+  - nothing at all came for `Ocpp:StaleTransactionHours` (default 12), e.g. a charger that lost the
+    transaction in a power cut: stop reason `StaleTransaction`.
+  The customer is notified and billed like a normal end; a real Ended event that arrives later is not billed
+  again. A charger that keeps sending meter values is never closed this way.
+- **Sessions of unassigned cards** (no owner) are recorded without a user.
+
+Scenario tests: `tests/VoltaX.Tests/Ocpp` (`TransactionScenarioTests`, `FaultScenarioTests`) and
+`tests/VoltaX.Tests/Billing`.
+
+## Alarms
+
+Charge point alarms (`Alarms` table, `api/Alarm`, dashboard page `/dashboard/alarm-management`) are raised from
+what the chargers report and from two background checks. One alarm exists per fault while it is active
+(Open or Acknowledged): the same fault reported again increments its count and last-seen time.
+
+| Source | Alarm | Severity | Cleared automatically when |
+| --- | --- | --- | --- |
+| 1.6 StatusNotification, `errorCode` other than `NoError` or status `Faulted` | `ConnectorFault`, code = error code | Faulted: Critical; GroundFailure, HighTemperature, OverCurrentFailure, OverVoltage, PowerSwitchFailure, InternalError: Major; others: Minor | the connector (or connector 0) reports `NoError` without `Faulted` |
+| 2.0.1 StatusNotification `Faulted` | `ConnectorFault`, code `Faulted` | Critical | the connector reports another status |
+| 2.0.1 NotifyEvent of a monitor of severity 0-3 or of an active fault variable (Problem, Tripped, Fault...) | `DeviceEvent`, code `Component.Variable` | severity 0-1: Critical, 2-3 or hard-wired: Major, other: Minor | the same component/variable is reported `cleared` or back to `false` / `0` |
+| No connection on any instance for `Alarms:OfflineAfterMinutes` (default 15), for chargers seen online once | `Offline` | Critical | the charger is connected again |
+| `Alarms:BootLoopCount` (default 3) accepted boots within `Alarms:BootLoopWindowMinutes` (default 15) | `BootLoop` | Major | the charger stayed up for twice the window |
+
+The availability check runs every `Alarms:MonitorIntervalSeconds` (default 60). Operators with `ViewAlarms` see
+alarms; `EditAlarms` acknowledges, assigns (to administrators or users with `EditAlarms`) and resolves them with a
+comment. Every change is pushed on `/chargerHub` (group `#alarms`, method `AlarmChanged`). A new critical alarm
+notifies the dashboard users who can see alarms and is emailed to `Alarms:EmailRecipients` (comma separated,
+default `SupportEmails:Admin`).
+
+Scenario tests: `tests/VoltaX.Tests/Ocpp/AlarmScenarioTests.cs`, API tests: `tests/VoltaX.Tests/Api/AlarmApiTests.cs`.

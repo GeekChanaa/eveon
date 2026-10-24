@@ -32,7 +32,11 @@ namespace VoltaXApi.Models
         // External (OAuth) identity
         [MaxLength(256)]
         public string? GoogleId { get; set; }
-        [MaxLength(32)]
+        /// <summary>The customer id at the payment provider that keeps this user's saved cards.</summary>
+        [System.ComponentModel.DataAnnotations.MaxLength(64)]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public string? PaymentCustomerId { get; set; }
         public AuthProviderEnum AuthProvider { get; set; } = AuthProviderEnum.Local;
         [MaxLength(512)]
         public string? ExternalPictureUrl { get; set; }

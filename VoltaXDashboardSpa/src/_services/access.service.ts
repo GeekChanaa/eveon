@@ -13,7 +13,9 @@ export const DASHBOARD_RESOURCES: Record<string, string> = {
   'comments': 'Comments', 'ocpp-configuration': 'ChargePointConfiguration', 'charge-point-configurations': 'ChargePointConfiguration', 'ocpp-local-list': 'OcppLocalLists',
   'global-configurations': 'GlobalConfigurations', 'charging-profile': 'ChargePointConfiguration',
   'charging-strategies': 'ChargePointConfiguration', 'station-load-balance': 'ChargePointConfiguration',
-  'home-charger-bind-list': 'ChargePoints', 'alarm-management': 'Reports', 'charger-events': 'ChargePoints'
+  'charger-events': 'ChargePoints', 'alarm-management': 'Alarms',
+  // Billing pages (same permissions as the API: api/Settlement, api/Invoice).
+  'settlements': 'Partners', 'invoices': 'RechargeOrders'
 };
 export function routePermission(url: string): string | null {
   const parts = url.split(/[?#]/)[0].split('/').filter(Boolean);

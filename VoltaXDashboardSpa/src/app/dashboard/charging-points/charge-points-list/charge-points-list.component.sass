@@ -7,9 +7,9 @@
   height: 34px
   padding: 0
   border-radius: 50%
-  border-color: var(--vx-yellow, #E5B223)
-  background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
-  color: var(--vx-yellow-ink, #8A6410)
+  border-color: var(--vx-brand, #0A1A3A)
+  background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
+  color: var(--vx-brand-ink, #1F3461)
   text-decoration: none
   animation: setup-glow 2.4s ease-in-out infinite
   transition: background .2s, color .2s, transform .15s
@@ -22,14 +22,14 @@
     stroke: currentColor
 
   &:hover
-    background: var(--vx-yellow, #E5B223)
-    color: #0B0B0B
+    background: var(--vx-brand, #0A1A3A)
+    color: var(--vx-on-brand, #fff)
 
   &:active
     transform: scale(.96)
 
   &:focus-visible
-    outline: 2px solid var(--vx-yellow, #E5B223)
+    outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: 2px
 
   @media (prefers-reduced-motion: reduce)
@@ -37,4 +37,4 @@
 
 @keyframes setup-glow
   50%
-    box-shadow: 0 0 0 4px rgba(229, 178, 35, .18)
+    box-shadow: 0 0 0 4px rgba(var(--vx-brand-rgb, 10, 26, 58), .18)

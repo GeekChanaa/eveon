@@ -12,18 +12,21 @@ namespace VoltaXApi.Services
       private readonly IConnectorRepository _connectorRepository;
       private readonly IMailService _mailService;
       private readonly ISystemReportService _systemReportService;
+      private readonly IWalletService _walletService;
 
       public CardService(
         ICardRepository cardRepository,
         IConnectorRepository connectorRepository,
         IMailService mailService,
-        ISystemReportService systemReportService
+        ISystemReportService systemReportService,
+        IWalletService walletService
       ) 
       {
         _cardRepository = cardRepository;
         _connectorRepository = connectorRepository;
         _mailService = mailService;
         _systemReportService = systemReportService;
+        _walletService = walletService;
       }
 
       public async Task<AuthorizationStatusEnumType> ValidateCard(string idTag)
@@ -46,41 +49,12 @@ namespace VoltaXApi.Services
             return AuthorizationStatusEnumType.Accepted;
         }
 
-        public Task<bool> SubstractAmountFromCard(int cardTagID, double kwhCharged, int connectorID) =>
-            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.EnergyCost(connector, kwhCharged));
-
-        public Task<bool> SubstractAmountFromCardByMinutes(int cardTagID, double minutesCharged, int connectorID) =>
-            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.FinalCost(connector, minutesCharged));
-
-        public Task<bool> SubstractAmountFromCardByIdleMinutes(int cardTagID, double idleMinutes, int connectorID) =>
-            Debit(cardTagID, connectorID, connector => CostCalculator.Instance.IdleCost(connector, idleMinutes));
-
-        /// <summary>Debits the card with the connector-priced amount; false (and a system report) when the balance goes negative.</summary>
-        private async Task<bool> Debit(int cardID, int connectorID, Func<Connector, double> price)
+        public async Task<bool> AddAmountToCard(int cardID, decimal amount, int orderID)
         {
-            Card card = await _cardRepository.GetByIdAsync(cardID)
-                ?? throw new CardNotFoundException($"There is no card with the id {cardID}");
-            Connector connector = await _connectorRepository.GetByIdAsync(connectorID)
-                ?? throw new NotFoundException($"There is no connector with the id {connectorID}");
-
-            card.Balance -= price(connector);
-            await _cardRepository.Update(card);
-
-            if (card.Balance < 0)
-            {
-                await HandleCardNegativeBalance(card, connectorID);
-                return false;
-            }
-            return true;
-        }
-        
-        public async Task<bool> AddAmountToCard(int cardID, double amount)
-        {
-            Card? card = await _cardRepository.GetByIdAsync(cardID);
-
-            card.Balance = card.Balance + amount;
-            await _cardRepository.Update(card);
-
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "A recharge amount must be positive");
+            await _walletService.PostAsync(cardID, new WalletPosting(amount, WalletTransactionType.TopUp, $"order:{orderID}:topup",
+                "Wallet top-up", OrderID: orderID));
             return true;
         }
 

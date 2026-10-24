@@ -19,7 +19,7 @@
   font-size: 10px
   font-weight: 700
   letter-spacing: .14em
-  color: var(--vx-yellow-ink)
+  color: var(--vx-brand-ink)
 .subtitle, .section-heading p
   color: var(--vx-text-muted)
   font-size: 13px
@@ -31,13 +31,13 @@
   gap: 12px
   flex-shrink: 0
   padding: 13px 18px
-  background: var(--vx-yellow)
-  color: #171717
+  background: var(--vx-brand)
+  color: var(--vx-on-brand, #fff)
   border-radius: 10px
   font-size: 13px
   font-weight: 700
   &:hover
-    background: var(--vx-yellow-hover)
+    background: var(--vx-brand-hover)
 svg
   width: 21px
   height: 21px
@@ -72,7 +72,7 @@ svg
   font-weight: 650
   white-space: nowrap
   &:hover
-    color: var(--vx-yellow-ink)
+    color: var(--vx-brand-ink)
 .quick-links
   display: grid
   grid-template-columns: repeat(3, minmax(0, 1fr))
@@ -88,14 +88,14 @@ svg
   transition: background .15s, border-color .15s
   &:hover
     background: var(--vx-surface-alt)
-    border-color: var(--vx-yellow)
+    border-color: var(--vx-brand)
 .quick-icon
   display: grid
   place-items: center
   flex: 0 0 38px
   height: 38px
-  background: var(--vx-yellow-soft)
-  color: var(--vx-yellow-ink)
+  background: var(--vx-brand-soft)
+  color: var(--vx-brand-ink)
   border-radius: 9px
 .quick-copy
   display: grid
@@ -111,7 +111,7 @@ svg
   color: var(--vx-text-muted)
   margin-left: auto
 a:focus-visible
-  outline: 3px solid var(--vx-yellow)
+  outline: 3px solid var(--vx-brand)
   outline-offset: 3px
 @media (max-width: 1200px)
   .quick-links

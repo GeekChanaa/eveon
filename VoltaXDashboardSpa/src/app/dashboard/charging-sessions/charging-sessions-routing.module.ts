@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChargingSessionComponent } from './charging-session/charging-session.component';
+import { ChargingSessionDetailComponent } from './charging-session-detail/charging-session-detail.component';
 import { ChargingSessionsListComponent } from './charging-sessions-list/charging-sessions-list.component';
 const routes: Routes = [
   {
@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: ":id",
-    component: ChargingSessionComponent
+    component: ChargingSessionDetailComponent
   },
 ];
 

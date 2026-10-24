@@ -1,0 +1,375 @@
+# Continuous integration: API (build, tests, migrations on both database providers), dashboard (build,
+# headless tests), mobile app (analyze, tests), secret scanning and dependency audits, and the simulator
+# end-to-end matrix once the EVEON_SIM_REPOSITORY variable is set.
+# No repository secrets are needed: database passwords and signing keys are generated per run.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_VERSION: "9.0.x"
+  NODE_VERSION: "20"
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+jobs:
+  api:
+    name: API build and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore VoltaX.sln
+
+      - name: Build
+        run: dotnet build VoltaX.sln --configuration Release --no-restore
+
+      - name: Test
+        run: >-
+          dotnet test tests/VoltaX.Tests/VoltaX.Tests.csproj --configuration Release --no-build
+          --logger "trx;LogFileName=api-tests.trx" --logger "console;verbosity=normal"
+          --results-directory TestResults --collect "XPlat Code Coverage"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: TestResults
+          if-no-files-found: warn
+
+      # The snapshot is SQL Server typed (docs/database.md): with that provider a model change without its
+      # migration shows up here. No database is contacted.
+      - name: Model changes all have a migration
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ConnectionStrings__DefaultConnection: Server=unused.invalid;Database=unused;Integrated Security=false
+        run: |
+          token="$(openssl rand -base64 66 | tr -d '\n')"
+          export AppSettings__Token="$token"
+          dotnet tool install --global dotnet-ef --version 9.0.0
+          dotnet ef migrations has-pending-model-changes --project VoltaXApi --configuration Release --no-build
+
+  migrations:
+    name: Migrations on ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: MariaDB 11.8
+            provider: MySql
+            image: mariadb:11.8
+            server-version: 11.8.0
+          - name: SQL Server 2022
+            provider: SqlServer
+            image: mcr.microsoft.com/mssql/server:2022-latest
+            server-version: ""
+    env:
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: localhost
+      Cors__AllowedOrigins__0: http://localhost
+      FirstSetup__Enabled: "false"
+      Database__Provider: ${{ matrix.provider }}
+      Database__ServerVersion: ${{ matrix.server-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Start an empty ${{ matrix.name }}
+        env:
+          IMAGE: ${{ matrix.image }}
+          PROVIDER: ${{ matrix.provider }}
+        run: |
+          password="Ci-$(openssl rand -hex 16)"
+          token="$(openssl rand -base64 66 | tr -d '\n')"
+          echo "::add-mask::$password"
+          echo "::add-mask::$token"
+          echo "AppSettings__Token=$token" >> "$GITHUB_ENV"
+          if [ "$PROVIDER" = MySql ]; then
+            docker run --detach --name db -e MARIADB_ROOT_PASSWORD="$password" -p 3306:3306 "$IMAGE"
+            probe() { docker exec db healthcheck.sh --connect --innodb_initialized; }
+            echo "ConnectionStrings__DefaultConnection=Server=127.0.0.1;Port=3306;Database=eveon_ci;User=root;Password=$password;" >> "$GITHUB_ENV"
+          else
+            docker run --detach --name db -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD="$password" -p 1433:1433 "$IMAGE"
+            probe() { docker exec db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$password" -C -b -Q "SELECT 1"; }
+            echo "ConnectionStrings__DefaultConnection=Server=127.0.0.1,1433;Database=eveon_ci;User Id=sa;Password=$password;TrustServerCertificate=true" >> "$GITHUB_ENV"
+          fi
+          for _ in $(seq 1 90); do
+            if probe > /dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          docker logs db
+          exit 1
+
+      # The deploy step itself: every migration, then the check that every mapped table and column exists.
+      - name: Apply every migration (--migrate)
+        working-directory: VoltaXApi
+        run: dotnet run --configuration Release --no-launch-profile -- --migrate
+
+      - name: Apply again, nothing to do
+        working-directory: VoltaXApi
+        run: |
+          dotnet run --configuration Release --no-launch-profile --no-build -- --migrate | tee second-run.log
+          grep -q "no migration to apply" second-run.log
+
+  dashboard:
+    name: Dashboard build and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: VoltaXDashboardSpa
+    env:
+      NG_CLI_ANALYTICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: VoltaXDashboardSpa/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Production build
+        run: npm run build -- --configuration production
+
+      - name: Unit tests (headless Chrome)
+        run: npm run test:ci -- --code-coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-coverage
+          path: VoltaXDashboardSpa/coverage
+          if-no-files-found: ignore
+
+  mobile:
+    name: Mobile analyze and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Report only for now: `flutter analyze` finds an error in the default widget test and `flutter test`
+    # stops on an asset listed in pubspec.yaml but missing from the repository (assets/icons/station.png).
+    # Remove continue-on-error once both are fixed.
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: volta_x_mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Look for the Flutter app
+        id: app
+        working-directory: .
+        run: |
+          if [ -f volta_x_mobile/pubspec.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::volta_x_mobile/pubspec.yaml not found: mobile checks skipped"
+          fi
+
+      - uses: subosito/flutter-action@v2
+        if: steps.app.outputs.present == 'true'
+        with:
+          channel: stable
+          flutter-version: 3.35.1
+          cache: true
+
+      - name: Get packages
+        if: steps.app.outputs.present == 'true'
+        run: flutter pub get
+
+      - name: Analyze
+        if: steps.app.outputs.present == 'true'
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        if: steps.app.outputs.present == 'true'
+        run: flutter test
+
+  scripts:
+    name: Shell scripts (shellcheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck (deploy scripts and container entry points)
+        run: git ls-files -z '*.sh' | xargs -0 --no-run-if-empty shellcheck
+
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Pinned by digest. Rules: gitleaks defaults plus .gitleaks.toml (test fixtures only).
+      GITLEAKS_IMAGE: ghcr.io/gitleaks/gitleaks:v8.21.2@sha256:0e99e8821643ea5b235718642b93bb32486af9c8162c8b8731f7cbdc951a7f46
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Blocking: every commit this push or pull request adds. Older history still holds secrets that were
+      # committed before (docs/security-runbook.md); scanning it would fail every run until it is rewritten.
+      - name: New commits
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          range="-1 $HEAD_SHA"
+          if [ "$EVENT" = pull_request ]; then
+            range="$BASE..$HEAD_SHA"
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            range="$BEFORE..$HEAD_SHA"
+          fi
+          echo "Scanning: $range"
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/repo" -w /repo "$GITLEAKS_IMAGE" \
+            git --redact --no-banner --config .gitleaks.toml --log-opts="$range" \
+            --report-format sarif --report-path /repo/gitleaks-commits.sarif /repo
+
+      # Report only: the files as they are now, including what earlier commits left behind.
+      - name: Current files (report only)
+        if: always()
+        continue-on-error: true
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/repo" -w /repo "$GITLEAKS_IMAGE" \
+            dir --redact --no-banner --config .gitleaks.toml \
+            --report-format sarif --report-path /repo/gitleaks-files.sarif /repo
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-reports
+          path: gitleaks-*.sarif
+          if-no-files-found: ignore
+
+  dependencies:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Reported in the job summary; High shows as a warning, Critical fails the job.
+      - name: NuGet packages with known vulnerabilities
+        run: |
+          dotnet list VoltaX.sln package --vulnerable --include-transitive | tee nuget-vulnerable.txt
+          { echo "### NuGet vulnerability report"; echo '```'; cat nuget-vulnerable.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if grep -Eq ' (High|Critical) ' nuget-vulnerable.txt; then
+            echo "::warning title=NuGet advisories::packages with High or Critical advisories, see the job summary"
+          fi
+          if grep -Eq ' Critical ' nuget-vulnerable.txt; then exit 1; fi
+
+      - name: npm audit (production dependencies, fails on critical)
+        working-directory: VoltaXDashboardSpa
+        run: |
+          status=0
+          npm audit --omit=dev --audit-level=critical > npm-audit.txt || status=$?
+          cat npm-audit.txt
+          { echo "### npm audit (dashboard, production dependencies)"; echo '```'; tail -n 40 npm-audit.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
+      - name: Dependency review (pull requests)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: critical
+
+  # Simulator end-to-end matrix (docs/testing.md): the API on a throwaway SQLite database and every charging
+  # preset of the EVEON simulator on OCPP 1.6 and 2.0.1. Runs once the repository variable EVEON_SIM_REPOSITORY
+  # names the simulator repository (EVEON_SIM_REF: its branch; secret EVEON_SIM_TOKEN when it is private).
+  e2e:
+    name: Simulator end-to-end
+    needs: [api]
+    if: ${{ vars.EVEON_SIM_REPOSITORY != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.EVEON_SIM_REPOSITORY }}
+          ref: ${{ vars.EVEON_SIM_REF }}
+          token: ${{ secrets.EVEON_SIM_TOKEN || github.token }}
+          path: EVEON_SIM
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: EVEON_SIM/package-lock.json
+
+      - name: Simulator end-to-end
+        run: tools/e2e/run-e2e.sh --sim EVEON_SIM --out tools/e2e/out/ci --parallel 4
+
+      - name: Run folder
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-run
+          path: |
+            tools/e2e/out/ci
+            !tools/e2e/out/ci/api-bin
+          if-no-files-found: warn
+
+      - name: Summary
+        if: always()
+        run: cat tools/e2e/out/ci/summary.md >> "$GITHUB_STEP_SUMMARY" || true

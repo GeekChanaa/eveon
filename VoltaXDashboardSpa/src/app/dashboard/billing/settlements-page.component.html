@@ -1,0 +1,230 @@
+<div class="page__inner"><main class="page__container">
+  <vx-print-header [title]="'billing.settlements.title' | translate"></vx-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'billing.eyebrow' | translate }}</span>
+      <h1>{{ 'billing.settlements.title' | translate }}</h1>
+      <p>{{ 'billing.settlements.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ error }}</div>
+  <div class="vx-alert vx-alert--success" *ngIf="message" role="status">{{ message }}</div>
+
+  <form class="vx-panel vx-filters no-print" *ngIf="canEdit" (ngSubmit)="generate()">
+    <div class="vx-field">
+      <label for="gen-month">{{ 'billing.settlements.month' | translate }}</label>
+      <select id="gen-month" name="genMonth" [(ngModel)]="generateMonth">
+        <option *ngFor="let m of months" [ngValue]="m">{{ m }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="gen-year">{{ 'billing.settlements.year' | translate }}</label>
+      <select id="gen-year" name="genYear" [(ngModel)]="generateYear">
+        <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="gen-partner">{{ 'billing.settlements.partner' | translate }}</label>
+      <select id="gen-partner" name="genPartner" [(ngModel)]="generatePartnerId">
+        <option [ngValue]="null">{{ 'billing.settlements.allPartners' | translate }}</option>
+        <option *ngFor="let p of terms" [ngValue]="p.partnerId">{{ p.name }}</option>
+      </select>
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary" [disabled]="generating">
+        {{ (generating ? 'billing.settlements.generating' : 'billing.settlements.generate') | translate }}
+      </button>
+    </div>
+    <p class="vx-footnote">{{ 'billing.settlements.generateHint' | translate }}</p>
+  </form>
+
+  <form class="vx-panel vx-filters no-print" (ngSubmit)="load()">
+    <div class="vx-field">
+      <label for="f-partner">{{ 'billing.settlements.partner' | translate }}</label>
+      <select id="f-partner" name="partnerId" [(ngModel)]="filter.partnerId">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let p of terms" [ngValue]="p.partnerId">{{ p.name }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="f-year">{{ 'billing.settlements.year' | translate }}</label>
+      <select id="f-year" name="year" [(ngModel)]="filter.year">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="f-month">{{ 'billing.settlements.month' | translate }}</label>
+      <select id="f-month" name="month" [(ngModel)]="filter.month">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let m of months" [ngValue]="m">{{ m }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="f-status">{{ 'common.fields.status' | translate }}</label>
+      <select id="f-status" name="status" [(ngModel)]="filter.status">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option value="Pending">{{ 'billing.settlementStatus.Pending' | translate }}</option>
+        <option value="Paid">{{ 'billing.settlementStatus.Paid' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary">{{ 'common.actions.filter' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
+    </div>
+  </form>
+
+  <section class="vx-panel">
+    <p class="vx-empty" *ngIf="loading && !result">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="result?.items?.length; else empty">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'billing.settlements.partner' | translate }}</th>
+          <th>{{ 'billing.statements.period' | translate }}</th>
+          <th class="num">{{ 'billing.statements.sessions' | translate }}</th>
+          <th class="num">{{ 'billing.statements.gross' | translate }}</th>
+          <th class="num">{{ 'billing.statements.commission' | translate }}</th>
+          <th class="num">{{ 'billing.statements.netPayout' | translate }}</th>
+          <th>{{ 'common.fields.status' | translate }}</th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let s of result!.items">
+            <td><button type="button" class="vx-btn vx-btn--link" (click)="open(s)">{{ s.partnerName }}</button></td>
+            <td>{{ period(s) | vxDate:'MMMM y' }}</td>
+            <td class="num">{{ s.sessionCount | vxNumber:'1.0-0' }}</td>
+            <td class="num">{{ s.grossAmount | vxMoney }}</td>
+            <td class="num">{{ commission(s) | vxMoney }}</td>
+            <td class="num"><strong>{{ s.netPayout | vxMoney }}</strong></td>
+            <td>
+              <span class="vx-badge" [ngClass]="s.status === 'Paid' ? 'vx-badge--success' : 'vx-badge--warning'">{{ 'billing.settlementStatus.' + s.status | translate }}</span>
+              <div class="muted" *ngIf="s.paidAt">{{ s.paidAt | vxDate:'shortDate' }} · {{ s.paymentReference }}</div>
+            </td>
+            <td class="no-print">
+              <span class="vx-actions">
+                <button type="button" class="vx-btn vx-btn--small" *ngIf="canEdit && s.status === 'Pending'" (click)="startPayment(s)">{{ 'billing.settlements.markPaid' | translate }}</button>
+                <button type="button" class="vx-btn vx-btn--small" (click)="export(s, 'csv')" [disabled]="exporting">CSV</button>
+                <button type="button" class="vx-btn vx-btn--small" (click)="export(s, 'pdf')" [disabled]="exporting">PDF</button>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">{{ 'billing.settlements.pageTotal' | translate }}</td>
+          <td class="num">{{ pageTotals.gross | vxMoney }}</td>
+          <td class="num">{{ pageTotals.commission | vxMoney }}</td>
+          <td class="num">{{ pageTotals.payout | vxMoney }}</td>
+          <td colspan="2"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <ng-template #empty><p class="vx-empty" *ngIf="!loading">{{ 'billing.settlements.empty' | translate }}</p></ng-template>
+    <vx-pager *ngIf="result" [page]="result.page" [pageSize]="result.pageSize" [total]="result.total" (pageChange)="load($event)"></vx-pager>
+  </section>
+
+  <section class="vx-panel no-print" *ngIf="paying as p" role="dialog" aria-labelledby="pay-title">
+    <div class="vx-panel__head">
+      <h2 id="pay-title">{{ 'billing.settlements.payTitle' | translate:{ partner: p.partnerName, period: (period(p) | vxDate:'MMMM y'), amount: (p.netPayout | vxMoney) } }}</h2>
+    </div>
+    <form class="vx-filters" (ngSubmit)="confirmPayment()">
+      <div class="vx-field">
+        <label for="pay-date">{{ 'billing.settlements.paidAt' | translate }}</label>
+        <input id="pay-date" type="date" name="payDate" [(ngModel)]="payDate">
+      </div>
+      <div class="vx-field vx-field--grow">
+        <label for="pay-ref">{{ 'billing.settlements.reference' | translate }}</label>
+        <input id="pay-ref" type="text" name="payReference" maxlength="128" [(ngModel)]="payReference" required
+          [placeholder]="'billing.settlements.referencePlaceholder' | translate">
+      </div>
+      <div class="vx-actions">
+        <button type="submit" class="vx-btn vx-btn--primary">{{ 'billing.settlements.confirmPaid' | translate }}</button>
+        <button type="button" class="vx-btn" (click)="paying = null">{{ 'common.actions.cancel' | translate }}</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="vx-panel" *ngIf="detail as d">
+    <div class="vx-panel__head">
+      <div>
+        <h2>{{ d.settlement.partnerName }} · {{ period(d.settlement) | vxDate:'MMMM y' }}</h2>
+        <p>{{ 'billing.statements.terms' | translate:{ percent: (d.settlement.commissionPercent | vxNumber:'1.0-2'), perKwh: (d.settlement.commissionPerKwh | vxMoney) } }}</p>
+      </div>
+      <button type="button" class="vx-btn no-print" (click)="detail = null">{{ 'common.actions.close' | translate }}</button>
+    </div>
+    <dl class="vx-kv">
+      <div><dt>{{ 'billing.statements.gross' | translate }}</dt><dd>{{ d.settlement.grossAmount | vxMoney }}</dd></div>
+      <div><dt>{{ 'billing.statements.netExclVat' | translate }}</dt><dd>{{ d.settlement.netExclVat | vxMoney }}</dd></div>
+      <div><dt>{{ 'billing.statements.revenueVat' | translate }}</dt><dd>{{ d.settlement.revenueVat | vxMoney }}</dd></div>
+      <div><dt>{{ 'billing.statements.commissionExclVat' | translate }}</dt><dd>{{ d.settlement.commissionExclVat | vxMoney }}</dd></div>
+      <div><dt>{{ 'billing.statements.commissionVat' | translate }}</dt><dd>{{ d.settlement.commissionVat | vxMoney }}</dd></div>
+      <div><dt>{{ 'billing.statements.netPayout' | translate }}</dt><dd>{{ d.settlement.netPayout | vxMoney }}</dd></div>
+    </dl>
+    <div class="vx-table-wrap" style="margin-block-start: 16px" *ngIf="d.lines.length">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'billing.statements.date' | translate }}</th>
+          <th>{{ 'billing.statements.session' | translate }}</th>
+          <th class="num">{{ 'billing.statements.energy' | translate }}</th>
+          <th class="num">{{ 'billing.statements.gross' | translate }}</th>
+          <th class="num">{{ 'billing.statements.commission' | translate }}</th>
+          <th class="num">{{ 'billing.statements.netPayout' | translate }}</th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let l of d.lines">
+            <td>{{ l.date | vxDate:'short' }}</td>
+            <td>
+              <a *ngIf="l.chargingSessionId" [routerLink]="['/dashboard/charging-sessions', l.chargingSessionId]">#{{ l.chargingSessionId }}</a>
+              <span class="muted" *ngIf="l.refundId"> · {{ 'billing.statements.refund' | translate }}</span>
+              <div class="muted">{{ l.station || '—' }}<ng-container *ngIf="l.chargePoint"> · {{ l.chargePoint }}</ng-container></div>
+            </td>
+            <td class="num">{{ l.kwh | vxNumber:'1.0-3' }}</td>
+            <td class="num">{{ l.gross | vxMoney }}</td>
+            <td class="num">{{ l.commissionExclVat + l.commissionVat | vxMoney }}</td>
+            <td class="num"><strong>{{ l.netPayout | vxMoney }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="vx-panel no-print" *ngIf="terms.length">
+    <div class="vx-panel__head">
+      <div>
+        <h2>{{ 'billing.settlements.termsTitle' | translate }}</h2>
+        <p>{{ 'billing.settlements.termsHint' | translate }}</p>
+      </div>
+    </div>
+    <div class="vx-table-wrap">
+      <table class="vx-table">
+        <thead><tr>
+          <th>{{ 'billing.settlements.partner' | translate }}</th>
+          <th class="num">{{ 'billing.settlements.percent' | translate }}</th>
+          <th class="num">{{ 'billing.settlements.perKwh' | translate }}</th>
+          <th></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let t of terms">
+            <td>{{ t.name }}</td>
+            <td class="num">
+              <input type="number" min="0" max="100" step="0.01" [name]="'percent' + t.partnerId" [(ngModel)]="t.percent" [disabled]="!canEdit"
+                [attr.aria-label]="'billing.settlements.percent' | translate" style="max-inline-size: 96px">
+            </td>
+            <td class="num">
+              <input type="number" min="0" max="100" step="0.0001" [name]="'perKwh' + t.partnerId" [(ngModel)]="t.perKwh" [disabled]="!canEdit"
+                [attr.aria-label]="'billing.settlements.perKwh' | translate" style="max-inline-size: 96px">
+            </td>
+            <td>
+              <button type="button" class="vx-btn vx-btn--small" *ngIf="canEdit" (click)="saveTerms(t)" [disabled]="t.saving">{{ 'common.actions.save' | translate }}</button>
+              <span class="vx-badge vx-badge--success" *ngIf="t.saved">{{ 'common.state.saved' | translate }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main></div>

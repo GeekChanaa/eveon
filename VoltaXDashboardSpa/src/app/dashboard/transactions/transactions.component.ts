@@ -1,17 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Transaction } from 'src/_models/transaction';
-import { OrderService } from 'src/_services/order.service';
-import { TransactionService } from 'src/_services/transaction.service';
+import { Component } from '@angular/core';
 
+/** Shell of the transactions pages (list and detail are its children). */
 @Component({
   selector: 'app-transactions',
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.sass']
 })
-export class TransactionsComponent implements OnInit {
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
-
-
-}
+export class TransactionsComponent {}

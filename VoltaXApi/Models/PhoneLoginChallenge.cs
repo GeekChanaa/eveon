@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 namespace VoltaXApi.Models;
+// The per-IP send limit sums Sends over a recent WindowStart.
+[Index(nameof(IpAddress), nameof(WindowStart), Name = "IX_PhoneLoginChallenges_IpAddress")]
 public class PhoneLoginChallenge
 {
     [Key, MaxLength(16)] public string Phone { get; set; } = "";

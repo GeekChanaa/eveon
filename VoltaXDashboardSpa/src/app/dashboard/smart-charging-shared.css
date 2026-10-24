@@ -171,7 +171,7 @@
 
 .sc-table--compact td { padding: 6px 10px; }
 
-.sc-table tr.is-selected td { background: var(--vx-yellow-soft, rgba(229, 178, 35, .14)); }
+.sc-table tr.is-selected td { background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14)); }
 
 .sc-cell-actions {
   display: flex;
@@ -213,7 +213,7 @@
 }
 
 .sc-badge--ok { background: rgba(131, 191, 110, .2); color: #3f8f2a; }
-.sc-badge--warn { background: rgba(229, 178, 35, .2); color: var(--vx-yellow-ink, #a07800); }
+.sc-badge--warn { background: rgba(var(--vx-brand-rgb, 10, 26, 58), .2); color: var(--vx-brand-ink, #1F3461); }
 .sc-badge--error { background: rgba(255, 106, 85, .18); color: var(--vx-danger, #d9402b); }
 
 .sc-list {
@@ -238,8 +238,8 @@
 }
 
 .sc-list__item.is-selected {
-  border-color: var(--vx-yellow, #e5b223);
-  background: var(--vx-yellow-soft, rgba(229, 178, 35, .14));
+  border-color: var(--vx-brand, #0A1A3A);
+  background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14));
 }
 
 .sc-stats {
@@ -276,7 +276,7 @@
 
 .sc-timeline__segment {
   height: 100%;
-  background: var(--vx-yellow, #e5b223);
+  background: var(--vx-brand, #0A1A3A);
 }
 
 .sc-timeline-axis {

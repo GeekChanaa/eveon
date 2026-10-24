@@ -13,17 +13,17 @@ namespace VoltaXApi.Dtos
         [Range(0, 1000)]
         public double Power { get; set; } = 0 ;
         [Range(0, 10000)]
-        public double PricePerKWh { get; set; }   
+        public decimal PricePerKWh { get; set; }   
         [Range(0, 10000)]
-        public double FlatFee { get; set; }  = 0 ;     
+        public decimal FlatFee { get; set; }  = 0 ;     
         [Range(0, 10000)]
-        public double PricePerMinute { get; set; }   
+        public decimal PricePerMinute { get; set; }   
         [Range(0, 10000)]
-        public double PricePerIdleMinute { get; set; }   
+        public decimal PricePerIdleMinute { get; set; }   
         [Range(0, 10000)]
-        public double PricePerHour { get; set; }  
+        public decimal PricePerHour { get; set; }  
         [Range(0, 10000)]
-        public double CostPerKwh { get; set; }  
+        public decimal CostPerKwh { get; set; }  
         [Range(0, 1000)]
         public double MaxPower { get; set; }  
         public TimeSpan? StartTime { get; set; }    

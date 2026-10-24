@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { UserRole } from 'src/_models/_enums/user-role';
 import { AuthService } from 'src/_services/auth.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
-import { PartnerService } from 'src/_services/partner.service';
+import { PartnerPortalService } from 'src/_services/portal/partner-portal.service';
 import { SidebarService } from 'src/_services/sidebar.service';
 import { environment } from 'src/environments/environment';
 
@@ -30,7 +30,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   partnerID : number = 0;
 
-  partnerImageUrl : string = "";
+  partnerImageUrl : string | null = null;
+  partnerName : string = "";
   
   staticUrl : string = environment.apiStaticFilesUrl;
   
@@ -50,7 +51,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     public access: AccessService,
     private router: Router,
     private _authService : AuthService,
-    private _partnerService : PartnerService,
+    private _partnerPortal : PartnerPortalService,
     public _enumMappingService : EnumMappingService,
     private _sidebarService : SidebarService
   ) { }
@@ -129,6 +130,17 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     return current === target || current.startsWith(target + '/');
   }
 
+  /** Up to two initials of the partner, shown when it has no logo. */
+  get partnerInitials(): string {
+    const words = (this.partnerName || '').trim().split(/\s+/).filter(Boolean);
+    return words.slice(0, 2).map(w => w[0].toUpperCase()).join('') || '·';
+  }
+
+  /** The customer portal has its own menu (customers never see dashboard features). */
+  get customerShell(): boolean {
+    return this.normalize(this.currentUrl).startsWith('/my-dashboard');
+  }
+
   /** Home links have children everywhere, so they only light up on an exact match. */
   isExactActive(link: string): boolean {
     return this.normalize(this.currentUrl) === this.normalize(link);
@@ -151,10 +163,13 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     return value;
   }
 
+  /** The partner's logo replaces eveon's; it follows uploads made from the partner profile page. */
   getPartnerImage(){
-    this._partnerService.getPartnerLogoUrl(this.partnerID).subscribe((data) => {
-      this.partnerImageUrl = this.staticUrl + data.url;
-    })
+    this.subscriptions.add(this._partnerPortal.profile$.subscribe(profile => {
+      this.partnerImageUrl = PartnerPortalService.fileUrl(profile?.logoUrl);
+      this.partnerName = profile?.name ?? "";
+    }));
+    this._partnerPortal.profile().subscribe({ error: () => {} });
   }
 
   onThemeToggle(){

@@ -24,12 +24,15 @@ namespace VoltaXApi.Data
 
         public IQueryable<SystemReportCommentDisplayDto> GetSystemReportComments(int systemReportID)
         {
+          // FullName is a C# property: using it made EF load the whole user row, password hash included.
           return  this._context.SystemReportComments.Where(sr => sr.SystemReportID == systemReportID)
+                          .OrderBy(sr => sr.CreatedAt).ThenBy(sr => sr.ID)
                           .Select(sr => new SystemReportCommentDisplayDto{
                             ID = sr.ID,
                             Content = sr.Content,
                             Images = sr.SystemReportCommentImages.Select(u => u.Image.Url).ToList(),
-                            UserName = sr.User.FullName
+                            UserName = sr.User.FirstName + " " + sr.User.LastName,
+                            CreatedAt = sr.CreatedAt
                           });
         }
 

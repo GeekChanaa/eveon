@@ -1,14 +1,52 @@
+# Build output, everywhere (.NET, Angular, Flutter has its own volta_x_mobile/.gitignore)
+[Bb]in/
+[Oo]bj/
+artifacts/
 .artifacts/
-tests/**/bin/
-tests/**/obj/
+publish/
+dist/
+out-tsc/
+*.tar.gz
+efbundle
+efbundle.exe
+
+# Caches and dependencies
+node_modules/
+.angular/
+.sass-cache/
+.vs/
+.idea/
+*.user
+*.suo
+
+# Test results and coverage
+TestResults/
+test-results/
+coverage/
+*.trx
+coverage*.xml
+coverage*.json
+*.coverage
+# Simulator end-to-end and load runs (database, logs, reports)
+tools/e2e/out/
+
+# Logs and runtime data written by the API (logs/, App_Data/: charger log uploads, GDPR exports)
+*.log
+logs/
+App_Data/
 
 # Secrets and local environment files
 *.env
 !*.env.example
 secrets.json
 *.pem
-*.log
+*.pfx
+appsettings.*.local.json
 .vercel
 
 # Temporary test account passwords (never commit, the repo is public)
 test-accounts.local.txt
+
+# OS files
+.DS_Store
+Thumbs.db

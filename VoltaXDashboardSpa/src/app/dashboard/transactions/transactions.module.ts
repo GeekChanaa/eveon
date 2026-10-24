@@ -7,6 +7,7 @@ import { TransactionsListComponent } from './transactions-list/transactions-list
 import { TransactionComponent } from './transaction/transaction.component';
 import { TransactionsComponent } from './transactions.component';
 import { TransactionsRoutingModule } from './transactions-routing.module';
+import { PortalUiModule } from 'src/app/shared/portal-ui/portal-ui.module';
 
 @NgModule({
     declarations: [
@@ -19,6 +20,7 @@ import { TransactionsRoutingModule } from './transactions-routing.module';
         ReactiveFormsModule,
         CommonModule,
         SharedModule,
+        PortalUiModule,
         FormsModule,
         TransactionsRoutingModule
     ],

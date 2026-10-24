@@ -7,7 +7,7 @@
   </div>
   <div class="field__wrap">
     <div class="field__wrap">
-      <select [formControlName]="controlName" class="select">
+      <select [formControl]="$any(parentForm.get(controlName))" class="select">
         <option *ngFor="let option of options" [value]="option.value">
           {{ option.viewValue }}
         </option>

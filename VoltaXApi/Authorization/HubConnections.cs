@@ -6,7 +6,8 @@ namespace VoltaXApi.Authorization;
 
 /// <summary>
 /// SignalR connections of this instance by user, so access changes can abort them. <see cref="Revoke"/> also
-/// broadcasts to the other instances (scale-out bus); without a bus only local connections are revoked.
+/// broadcasts to the other instances (scale-out bus); without a bus only local connections are revoked. A revocation
+/// also drops the users' cached access (<see cref="AccessSnapshotCache"/>) on every instance that receives it.
 /// </summary>
 public sealed class HubConnections
 {
@@ -16,11 +17,14 @@ public sealed class HubConnections
     private readonly IScaleOutBus? bus;
     private readonly string instanceId;
     private readonly ILogger<HubConnections>? logger;
+    private readonly AccessSnapshotCache? accessCache;
 
-    public HubConnections(IScaleOutBus? bus = null, ScaleOutSettings? settings = null, ILogger<HubConnections>? logger = null)
+    public HubConnections(IScaleOutBus? bus = null, ScaleOutSettings? settings = null, ILogger<HubConnections>? logger = null,
+        AccessSnapshotCache? accessCache = null)
     {
         this.bus = bus;
         this.logger = logger;
+        this.accessCache = accessCache;
         instanceId = settings?.InstanceId ?? Guid.NewGuid().ToString("N");
     }
 
@@ -46,6 +50,7 @@ public sealed class HubConnections
     private void RevokeLocal(IEnumerable<int> userIds)
     {
         var ids = userIds.ToHashSet();
+        accessCache?.Invalidate(ids);
         foreach (var pair in connections.Where(pair => ids.Contains(pair.Value.UserId)))
         { pair.Value.Context.Abort(); connections.TryRemove(pair.Key, out _); }
     }

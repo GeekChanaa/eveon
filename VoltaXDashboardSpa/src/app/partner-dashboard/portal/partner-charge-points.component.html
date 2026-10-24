@@ -1,0 +1,135 @@
+<div class="page__inner"><main class="page__container">
+  <app-partner-print-header [title]="'partner.chargePoints.title' | translate"></app-partner-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'partner.eyebrow' | translate }}</span>
+      <h1>{{ 'partner.chargePoints.title' | translate }}</h1>
+      <p>{{ 'portal.partner.chargePointsSubtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="load()" [disabled]="loading"><vx-icon name="repeat"></vx-icon>{{ 'common.actions.refresh' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-panel vx-filters no-print" *ngIf="stations.length > 1">
+    <div class="vx-field vx-field--grow">
+      <label for="station">{{ 'partner.fields.station' | translate }}</label>
+      <select id="station" [value]="stationId ?? ''" (change)="selectStation($any($event.target).value)">
+        <option value="">{{ 'partner.chargePoints.allStations' | translate }}</option>
+        <option *ngFor="let st of stations" [value]="st.id">{{ st.name }} · {{ st.city }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">
+    <span style="flex: 1">{{ 'common.state.error' | translate }}</span>
+    <button type="button" class="vx-btn vx-btn--small no-print" (click)="load()">{{ 'common.actions.retry' | translate }}</button>
+  </div>
+  <p class="vx-empty" *ngIf="loading && !chargePoints.length">{{ 'common.state.loading' | translate }}</p>
+  <section class="vx-panel" *ngIf="!loading && !error && !chargePoints.length">
+    <div class="vx-empty-state">
+      <span class="vx-empty-state__icon"><vx-icon name="charging-station"></vx-icon></span>
+      <strong>{{ 'partner.chargePoints.empty' | translate }}</strong>
+    </div>
+  </section>
+
+  <section class="vx-panel vx-cp" *ngFor="let cp of chargePoints" [attr.aria-labelledby]="'cp-' + cp.id" [attr.aria-busy]="busy.has(cp.id)">
+    <div class="vx-panel__head">
+      <div>
+        <h2 [id]="'cp-' + cp.id">{{ cp.chargePointId }}</h2>
+        <p>{{ cp.stationName }}<ng-container *ngIf="cp.vendor || cp.model"> · {{ cp.vendor }} {{ cp.model }}</ng-container></p>
+      </div>
+      <div class="vx-cp__head-actions">
+        <span class="vx-connection" [class.vx-connection--online]="cp.online">
+          {{ (cp.online ? 'portal.partner.connected' : 'portal.partner.notConnected') | translate }}<ng-container *ngIf="cp.protocol"> · {{ protocolLabel(cp.protocol) }}</ng-container>
+        </span>
+        <span class="vx-badge" [ngClass]="tone(cp.status)">{{ 'partner.chargePointStatus.' + cp.status | translate }}</span>
+        <a class="vx-btn vx-btn--small no-print" [routerLink]="['/partner-dashboard/sessions']" [queryParams]="{ chargePoint: cp.id }">{{ 'partner.chargePoints.sessions' | translate }}</a>
+      </div>
+    </div>
+
+    <div class="vx-actions no-print" role="group" [attr.aria-label]="'portal.partner.actions.title' | translate:{ id: cp.chargePointId }" style="margin-block-end: 14px">
+      <button type="button" class="vx-btn vx-btn--small" (click)="refresh(cp)" [disabled]="busy.has(cp.id) || !cp.online"
+        [title]="(cp.online ? 'portal.partner.actions.refreshHint' : 'portal.partner.actions.offlineHint') | translate">
+        <vx-icon name="repeat"></vx-icon>{{ 'portal.partner.actions.refresh' | translate }}</button>
+      <button type="button" class="vx-btn vx-btn--small" (click)="ask('softReset', cp)" [disabled]="busy.has(cp.id) || !cp.online"
+        [title]="(cp.online ? 'portal.partner.actions.softResetHint' : 'portal.partner.actions.offlineHint') | translate">
+        <vx-icon name="reset"></vx-icon>{{ 'portal.partner.actions.softReset' | translate }}</button>
+      <button type="button" class="vx-btn vx-btn--small vx-btn--danger" (click)="ask('hardReset', cp)" [disabled]="busy.has(cp.id) || !cp.online"
+        [title]="(cp.online ? 'portal.partner.actions.hardResetHint' : 'portal.partner.actions.offlineHint') | translate">
+        <vx-icon name="warning"></vx-icon>{{ 'portal.partner.actions.hardReset' | translate }}</button>
+      <span class="vx-field__hint" *ngIf="busy.has(cp.id)" role="status">{{ 'portal.partner.actions.sending' | translate }}</span>
+    </div>
+
+    <div class="vx-alert" *ngIf="feedback[cp.id] as f" [ngClass]="feedbackClass(f.tone)" role="status">
+      <span style="flex: 1">{{ f.key | translate:f.params }}</span>
+      <button type="button" class="vx-btn vx-btn--small no-print" (click)="dismiss(cp.id)">{{ 'common.actions.close' | translate }}</button>
+    </div>
+
+    <div class="vx-table-wrap" *ngIf="cp.connectors.length; else noConnectors">
+      <table class="vx-table vx-table--stack">
+        <thead><tr>
+          <th scope="col">{{ 'partner.fields.connector' | translate }}</th>
+          <th scope="col">{{ 'common.fields.status' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.pricing.perKwh' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.pricing.perMinute' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.pricing.perIdleMinute' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.pricing.flatFee' | translate }}</th>
+          <th scope="col" class="no-print"><span class="vx-sr-only">{{ 'portal.partner.actions.column' | translate }}</span></th>
+        </tr></thead>
+        <tbody>
+          <ng-container *ngFor="let c of cp.connectors">
+            <tr [class.vx-row-saved]="savedConnectors.has(c.id)">
+              <td [attr.data-label]="'partner.fields.connector' | translate">
+                <span>
+                  <strong>{{ connectorLabel(c) }}</strong>
+                  <div class="muted">{{ typeLabel(c.type) }} · <span class="vx-num">{{ c.powerKw | vxNumber:'1.0-1' }}</span> {{ 'common.units.kw' | translate }}</div>
+                </span>
+              </td>
+              <td [attr.data-label]="'common.fields.status' | translate">
+                <span class="vx-badge" [ngClass]="c.activeSessionId ? 'vx-badge--success vx-badge--live' : tone(c.status)">
+                  {{ c.activeSessionId ? ('partner.status.charging' | translate) : ('partner.connectorStatus.' + (c.status ?? 'Unknown') | translate) }}</span>
+              </td>
+              <td class="num" [attr.data-label]="'partner.pricing.perKwh' | translate">{{ c.pricePerKWh | vxMoney }}</td>
+              <td class="num" [attr.data-label]="'partner.pricing.perMinute' | translate">{{ c.pricePerMinute | vxMoney }}</td>
+              <td class="num" [attr.data-label]="'partner.pricing.perIdleMinute' | translate">{{ c.pricePerIdleMinute | vxMoney }}</td>
+              <td class="num" [attr.data-label]="'partner.pricing.flatFee' | translate">{{ c.flatFee | vxMoney }}</td>
+              <td class="no-print num">
+                <span class="vx-actions" style="justify-content: flex-end">
+                  <button type="button" class="vx-btn vx-btn--small" *ngIf="editing !== c.id" (click)="edit(c)">{{ 'partner.pricing.edit' | translate }}</button>
+                  <button type="button" class="vx-btn vx-btn--small" (click)="ask('unlock', cp, c)" [disabled]="busy.has(cp.id) || !cp.online"
+                    [attr.aria-label]="('portal.partner.actions.unlock' | translate) + ' ' + connectorLabel(c)">{{ 'portal.partner.actions.unlock' | translate }}</button>
+                  <button type="button" class="vx-btn vx-btn--small vx-btn--danger" *ngIf="c.activeSessionId" (click)="ask('stop', cp, c)" [disabled]="busy.has(cp.id)"
+                    [attr.aria-label]="('portal.partner.actions.stop' | translate) + ' ' + connectorLabel(c)"><vx-icon name="stop"></vx-icon>{{ 'portal.partner.actions.stop' | translate }}</button>
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="editing === c.id" class="vx-row-editor no-print">
+              <td colspan="7">
+                <div class="vx-alert vx-alert--error" *ngIf="saveError" role="alert">{{ saveError | translate }}</div>
+                <app-partner-pricing-editor [connector]="c" [siblings]="cp.connectors.length - 1" [saving]="saving"
+                  (save)="save(cp, c, $event)" (cancel)="editing = null"></app-partner-pricing-editor>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noConnectors><p class="vx-empty">{{ 'partner.chargePoints.noConnectors' | translate }}</p></ng-template>
+  </section>
+
+  <p class="vx-footnote">{{ 'partner.chargePoints.pricingNote' | translate }} {{ 'portal.partner.actions.auditNote' | translate }}</p>
+  <vx-print-footer [note]="'portal.partner.printNote' | translate"></vx-print-footer>
+
+  <vx-confirm-dialog #actionDialog [tone]="pending?.kind === 'softReset' ? 'primary' : 'danger'"
+    [title]="pending ? ('portal.partner.confirm.' + pending.kind + 'Title' | translate:{ id: pending.point.chargePointId }) : ''"
+    [confirmLabel]="pending ? ('portal.partner.confirm.' + pending.kind + 'Confirm' | translate) : ''"
+    (confirmed)="confirmPending()" (cancelled)="pending = null">
+    <ng-container *ngIf="pending as p">
+      <p>{{ 'portal.partner.confirm.' + p.kind + 'Text' | translate:{ id: p.point.chargePointId, connector: p.connector ? connectorLabel(p.connector) : '', running: running(p.point) } }}</p>
+      <p *ngIf="p.kind === 'hardReset' && running(p.point) > 0"><strong>{{ 'portal.partner.confirm.runningWarning' | translate:{ count: running(p.point) } }}</strong></p>
+    </ng-container>
+  </vx-confirm-dialog>
+</main></div>

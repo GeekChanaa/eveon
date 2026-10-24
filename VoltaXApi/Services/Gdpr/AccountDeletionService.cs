@@ -16,7 +16,7 @@ namespace VoltaXApi.Services.Gdpr
     }
 
     public record PendingAccountDeletionDto(int ID, int UserID, string FullName, string Email, DateTime RequestedAt,
-        DateTime ScheduledFor, AccountDeletionStatusEnum Status, double WalletBalance, bool RefundRequired, DateTime? CompletedAt);
+        DateTime ScheduledFor, AccountDeletionStatusEnum Status, decimal WalletBalance, bool RefundRequired, DateTime? CompletedAt);
 
     public interface IAccountDeletionService
     {

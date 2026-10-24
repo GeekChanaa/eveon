@@ -1,3 +1,4 @@
+using VoltaXApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,14 @@ namespace VoltaXApi.Data
     public class OrderRepository : Repository<Order>,IOrderRepository
     {
         private readonly IMapper _mapper;
+        private readonly GlobalConfigurations _globalConfigurations;
         public OrderRepository(
             VoltaXApiDbContext context,
-            IMapper mapper) : base(context)
+            IMapper mapper,
+            GlobalConfigurations globalConfigurations) : base(context)
         {
             _mapper = mapper;
+            _globalConfigurations = globalConfigurations;
         }
 
         public IQueryable<RechargeOrderListDto> GetRechargeOrders(GlobalParams globalParams)
@@ -52,26 +56,19 @@ namespace VoltaXApi.Data
         }
 
 
-        public Task<double> CountRecharge(Expression<Func<Order, bool>> predicate)
+        public async Task<InvoiceData?> GetOrderForInvoice(int orderID)
         {
-            var Amount = _context.Orders
-                .Where(predicate)
-                .SumAsync(t => t.Amount);
-
-            return Amount;
-        }
-
-        public async Task<InvoiceData> GetOrderForInvoice(int orderID)
-        {
-            return await  _context.Orders.Where(u => u.ID == orderID).Select(o => new InvoiceData{
+            var invoice = await _context.Orders.Where(u => u.ID == orderID).Select(o => new InvoiceData{
                 Date = o.RechargeDate.ToString("dd MMM yyyy"),
                 InvoiceNumber = o.ID.ToString(),
                 CardNumber = o.Card.CardNumber,
                 BilledTo = $"{o.Card.User.FirstName} {o.Card.User.LastName}",
-                TotalAmount = o.Amount,
-                AmountHT = o.Amount - o.Amount*0.8,
-                VAT = o.Amount - o.Amount*0.2
+                TotalAmount = o.Amount
             }).FirstOrDefaultAsync();
+            if (invoice != null)
+                // The amount paid includes VAT: HT + VAT = TTC.
+                (invoice.AmountHT, invoice.VAT) = CostCalculator.SplitVat(invoice.TotalAmount, _globalConfigurations.Vat);
+            return invoice;
         }
 
         public IQueryable<Order> GetCardOrders(int cardID)
@@ -82,6 +79,8 @@ namespace VoltaXApi.Data
         public async Task<Order> CreateRechargeOrder(CreateRechargeOrderDto rechargeOrderDto)
         {
             Order order = _mapper.Map<CreateRechargeOrderDto,Order>(rechargeOrderDto);
+            order.Status = RechargeOrderStatus.Pending;
+            order.RechargeDate = DateTime.UtcNow;
             await AddAsync(order);
             return order;
         }

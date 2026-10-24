@@ -26,7 +26,7 @@ body .page app-search-input .field__input
     color: var(--input-text)
     background-color: var(--input-bg-focus)
     border-color: var(--input-border-focus)
-    box-shadow: 0 0 0 3px rgba(240, 177, 52, .16)
+    box-shadow: 0 0 0 3px rgba(var(--vx-brand-rgb, 10, 26, 58), .16)
 
 body.dark .page .form .form__input,
 body.dark .page .search .search__input,
@@ -91,7 +91,7 @@ body .page :is(app-table-list, app-display-table-list)
       border-color: var(--professional5)
 
     &.is-open
-      background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+      background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
       border-color: var(--secondary1)
 
     &:focus-visible
@@ -119,13 +119,13 @@ body .page :is(app-table-list, app-display-table-list)
   .list-tool.list-tool--new
     background: var(--secondary2)
     border-color: var(--secondary2)
-    color: #171717
+    color: var(--vx-on-brand, #fff)
     font-weight: 700
     box-shadow: 0 2px 4px rgba(0, 0, 0, .06)
 
     &:hover
-      background: var(--vx-yellow-hover, var(--secondary1))
-      border-color: var(--vx-yellow-hover, var(--secondary1))
+      background: var(--vx-brand-hover, var(--secondary1))
+      border-color: var(--vx-brand-hover, var(--secondary1))
 
   .list-columns-control
     position: relative
@@ -232,7 +232,7 @@ body .page :is(app-table-list, app-display-table-list)
 
     &.col_header:hover
       color: var(--list-text)
-      background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+      background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
 
     .icon
       width: 14px
@@ -249,7 +249,7 @@ body .page :is(app-table-list, app-display-table-list)
 
   .row__table .row__row:not(:first-child):hover .row__col,
   .row__table .row__row:not(:first-child):focus-within .row__col
-    background: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
+    background: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
 
   .row__table .row__row .options_col
     width: 1%
@@ -305,7 +305,7 @@ body .page :is(app-table-list, app-display-table-list)
 
   .row__foot .pagination__link.active
     background: var(--secondary2)
-    color: #171717
+    color: var(--vx-on-brand, #fff)
 
   .row__foot .pagination__btn:disabled
     opacity: .4

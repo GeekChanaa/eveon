@@ -1,8 +1,6 @@
 import { Component, HostListener, Input, OnInit, Type } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChargePointService } from 'src/_services/charge-point.service';
-import { SignalRChargerService } from 'src/_services/signalR-charger.service';
-import { WebSocketStatusService } from 'src/_services/websocket-status.service';
 import { OCPPActions } from 'src/app/ocpp/messages/requests';
 @Component({
   selector: 'app-connector-realtime-actions',
@@ -41,8 +39,6 @@ export class ConnectorRealtimeActionsComponent implements OnInit {
   requestHandlerModalVisible : string = "";
   
   ngOnInit() {
-    console.log("this is the chargepoint : ")
-    console.log(this.chargePoint);
   }
 
   OCPPActions : any[] = OCPPActions;

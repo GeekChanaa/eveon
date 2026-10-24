@@ -9,11 +9,11 @@ namespace VoltaXApi.Dtos
         public int? ConnectorID { get; set; }
         public int? EvseID { get; set; }
         public double Power { get; set; }
-        public double PricePerKWh { get; set; }   
-        public double PricePerMinute { get; set; }   
-        public double PricePerIdleMinute { get; set; }   
-        public double PricePerHour { get; set; }  
-        public double FlatFee { get; set; }  
-        public double CostPerKwh { get; set; }  
+        public decimal PricePerKWh { get; set; }   
+        public decimal PricePerMinute { get; set; }   
+        public decimal PricePerIdleMinute { get; set; }   
+        public decimal PricePerHour { get; set; }  
+        public decimal FlatFee { get; set; }  
+        public decimal CostPerKwh { get; set; }  
     }
 }

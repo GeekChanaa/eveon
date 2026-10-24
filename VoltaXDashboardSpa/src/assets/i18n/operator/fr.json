@@ -1,0 +1,141 @@
+{
+  "operator": {
+    "realtime": {
+      "reconnecting": "Reconnexion…",
+      "reconnectingHint": "Les mises à jour en direct ont été interrompues, reconnexion en cours.",
+      "disconnected": "Direct en pause",
+      "disconnectedHint": "La connexion en direct est coupée. Cliquez pour réessayer maintenant."
+    },
+    "toast": {
+      "success": "C'est fait",
+      "warning": "Attention",
+      "error": "Une erreur est survenue"
+    },
+    "confirm": {
+      "title": "Confirmation",
+      "message": "Voulez-vous vraiment continuer ?",
+      "deleteTitle": "Supprimer cet élément ?",
+      "deleteMessage": "Il sera supprimé définitivement. Cette action est irréversible.",
+      "deleteNamed": "Supprimer {{name}} ?"
+    },
+    "table": {
+      "filters": "Filtres",
+      "filtering": "Filtrer la liste",
+      "closeFilters": "Fermer les filtres",
+      "columns": "Colonnes",
+      "visibleColumns": "Colonnes affichées",
+      "columnsHint": "Choisissez ce qui apparaît dans ce tableau.",
+      "new": "Nouveau",
+      "createNew": "Créer",
+      "options": "Options",
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher",
+      "delete": "Supprimer",
+      "open": "Ouvrir",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "loadError": "Impossible de charger la liste.",
+      "deleted": "Supprimé.",
+      "deleteFailed": "La suppression a échoué.",
+      "sortBy": "Trier par {{field}}"
+    },
+    "enums": {
+      "CardStatus": {
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "Blocked": "Bloquée",
+        "Expired": "Expirée"
+      },
+      "CardType": {
+        "Standard": "Standard",
+        "Premium": "Premium",
+        "Partner": "Partenaire"
+      },
+      "ChargePointCategory": {
+        "Single": "Simple",
+        "Double": "Double"
+      },
+      "ChargePointStatus": {
+        "Available": "Disponible",
+        "Offline": "Hors ligne",
+        "UnderMaintenance": "En maintenance"
+      },
+      "UserRole": {
+        "Admin": "Administrateur",
+        "Customer": "Client",
+        "PremiumCustomer": "Client premium",
+        "Support": "Support"
+      },
+      "ChargingStationCategoryEnum": {
+        "Public": "Publique",
+        "Private": "Privée",
+        "Partner": "Partenaire"
+      },
+      "ChargingStationStatusEnum": {
+        "Available": "Disponible",
+        "UnderMaintenance": "En maintenance",
+        "Offline": "Hors ligne"
+      },
+      "ChargingStationNetworkEnum": {
+        "Public": "Public",
+        "Private": "Privé"
+      },
+      "ParkingTypeEnum": {
+        "ParallelParking": "Stationnement en créneau",
+        "PerpendicularParking": "Stationnement en bataille",
+        "AngleParking": "Stationnement en épi"
+      },
+      "ReportStatus": {
+        "Pending": "En attente",
+        "InProgress": "En cours",
+        "Resolved": "Résolu",
+        "Closed": "Clôturé"
+      },
+      "ReportStatusEnum": {
+        "Pending": "En attente",
+        "InProgress": "En cours",
+        "Resolved": "Résolu",
+        "Closed": "Clôturé"
+      },
+      "ReportType": {
+        "ChargePoint": "Point de charge",
+        "Connector": "Connecteur",
+        "Website": "Site web",
+        "Other": "Autre"
+      },
+      "ReportCategory": {
+        "General": "Général",
+        "Technical": "Technique",
+        "Maintenance": "Maintenance"
+      },
+      "PartnerTypeEnum": {
+        "Vendor": "Fournisseur",
+        "ServiceProvider": "Prestataire de services",
+        "Reseller": "Revendeur",
+        "Affiliate": "Affilié",
+        "Investor": "Investisseur",
+        "Other": "Autre"
+      },
+      "ReportCriticality": {
+        "Informational": "Information",
+        "Low": "Faible",
+        "Medium": "Moyenne",
+        "High": "Élevée",
+        "Critical": "Critique"
+      },
+      "RechargeOrderStatus": {
+        "Pending": "En attente",
+        "Processing": "En cours",
+        "Completed": "Terminée",
+        "Failed": "Échouée",
+        "Canceled": "Annulée",
+        "Refunded": "Remboursée"
+      },
+      "NoticeTypeEnum": {
+        "LegalUpdate": "Mise à jour légale",
+        "Marketing": "Marketing",
+        "Maintenance": "Maintenance"
+      }
+    }
+  }
+}

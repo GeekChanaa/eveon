@@ -1,17 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CustomerHomeComponent } from './customer-home/customer-home.component';
-import { ProfileComponent } from '../dashboard/profile/profile.component';
+import { CustomerOverviewComponent } from './portal/customer-overview.component';
+import { CustomerSessionsComponent } from './portal/customer-sessions.component';
+import { CustomerSessionDetailComponent } from './portal/customer-session-detail.component';
+import { CustomerWalletComponent } from './portal/customer-wallet.component';
+import { CustomerPaymentMethodsComponent } from './portal/customer-payment-methods.component';
+import { CustomerCardsComponent, CustomerProfileComponent } from './portal/customer-account.component';
+
 const routes: Routes = [
-  {
-    path: "",
-    component: CustomerHomeComponent,
-  },{
-    path: "profile",
-    component: ProfileComponent,
-  }
-  
-  
+  { path: '', component: CustomerOverviewComponent },
+  { path: 'sessions', component: CustomerSessionsComponent },
+  { path: 'sessions/:id', component: CustomerSessionDetailComponent },
+  { path: 'wallet', component: CustomerWalletComponent },
+  { path: 'payment-methods', component: CustomerPaymentMethodsComponent },
+  { path: 'cards', component: CustomerCardsComponent },
+  { path: 'profile', component: CustomerProfileComponent },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

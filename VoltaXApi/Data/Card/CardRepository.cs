@@ -47,19 +47,36 @@ namespace VoltaXApi.Data
             }).AsQueryable();
         }
 
+        /// <summary>The cards of the list endpoint, projected in the query (the owner is only read for the name).</summary>
+        public IQueryable<CardListDto> GetCardsList(GlobalParams globalParams)
+        {
+            return GetAllAsync(globalParams).Select(u => new CardListDto
+            {
+                ID = u.ID,
+                CardNumber = u.CardNumber,
+                CardType = u.CardType,
+                ExpirationDate = u.ExpirationDate,
+                MaxCount = u.MaxCount,
+                Status = u.Status,
+                Balance = u.Balance,
+                Note = u.Note,
+                UserID = u.UserID,
+                UserName = u.User == null ? null : u.User.FirstName + " " + u.User.LastName
+            });
+        }
+
         // get card transactions
         public async Task<List<TransactionDto>> GetCardTransactions(int CardID)
         {
-            var cardTransactions = _transactionRepository.GetCardTransactions(CardID);
-            return _mapper.ProjectTo<TransactionDto>(cardTransactions).ToList();
+            var cardTransactions = _transactionRepository.GetCardTransactions(CardID).AsNoTracking();
+            return await _mapper.ProjectTo<TransactionDto>(cardTransactions).ToListAsync();
         }
 
-        // get card Orders
+        // get card Orders (none for an unknown or deleted card)
         public async Task<List<OrderDto>> GetCardOrders(int CardID)
         {
-            var card = await _context.Cards.Include(u => u.Orders).FirstOrDefaultAsync(u => u.ID == CardID);
-            var Orders = card?.Orders.AsQueryable();
-            return _mapper.ProjectTo<OrderDto>(Orders).ToList();
+            var orders = _context.Orders.AsNoTracking().Where(o => o.CardID == CardID && o.Card != null).OrderBy(o => o.ID);
+            return await _mapper.ProjectTo<OrderDto>(orders).ToListAsync();
         }
 
 
@@ -125,11 +142,6 @@ namespace VoltaXApi.Data
             Card card = await _context.Cards.Where(card => card.ID == cardID).Include(c => c.User).FirstOrDefaultAsync();
             CardListDto cardToDisplay = this._mapper.Map<Card, CardListDto>(card);
             return cardToDisplay;
-        }
-
-        public async Task<List<Card>> GetAllCards()
-        {
-            return await this.dbSet.Include(u => u.User).ToListAsync();
         }
 
         public async Task<Card> CreateCardForUser(User user)

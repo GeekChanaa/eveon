@@ -1,22 +1,14 @@
 # Refresh-token sessions
 
-The API issues access/refresh pairs for customer registration, customer/partner password login, and Google login. Clients replace both tokens after each `POST /api/auth/Refresh`. Only SHA-256 hashes are stored in SQL Server. Rotation uses an optimistic concurrency check on `RevokedAt`, so concurrent requests cannot both spend the same token. Reusing a revoked token revokes the account's active refresh tokens.
+The API issues access/refresh pairs for customer registration, customer/partner password login, and Google login. Clients replace both tokens after each `POST /api/auth/Refresh`. Only SHA-256 hashes are stored in the database. Rotation uses an optimistic concurrency check on `RevokedAt`, so concurrent requests cannot both spend the same token. Reusing a revoked token revokes the account's active refresh tokens.
 
-## Repair an existing SQL Server database
+## Schema
 
-From the repository root:
-
-```powershell
-dotnet run --project VoltaXApi -- --environment Development --initialize-refresh-tokens
-```
-
-This command creates only `RefreshTokens` and its indexes/foreign key, records `20260912100000_AddRefreshTokens` in EF migration history when it creates the table, verifies the mapped columns, and exits. It is transactional and serialized with a SQL application lock. Repeating it preserves existing tokens. It requires an existing VoltaX database with `Users`; it does not bootstrap the rest of the application.
-
-Development startup also performs this targeted initialization before hosted services run. Set `Database:InitializeRefreshTokens` to `false` to require explicit deployment. Other environments verify the table and fail with an actionable message if it is missing. To deploy, run the same command with the intended environment and its SQL Server connection configured, or explicitly enable `Database:InitializeRefreshTokens` for initialization.
-
-The checked-in production connection uses MySQL syntax, while service registration selects SQL Server. Configure `ConnectionStrings__DefaultConnection` with the actual SQL Server connection before deploying; do not use the development database for production.
-
-Historical migrations and the snapshot were generated for MySQL. This targeted repair avoids replaying those migrations against SQL Server. A complete provider migration remains separate work. EF Core documents [separate migration sets for different providers](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/providers) and [EF 9 model mismatch checks](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes).
+`RefreshTokens` is created by the migration `20260912100000_AddRefreshTokens`, applied like every other
+migration with `--migrate` on SQL Server and MySQL / MariaDB alike (see [database.md](database.md)). The
+former SQL Server-only repair command `--initialize-refresh-tokens` and the `Database:InitializeRefreshTokens`
+setting are gone; a start with that migration (or any other) pending fails in Production with the list of
+missing migrations.
 
 ## Client behavior
 

@@ -1,0 +1,130 @@
+<div class="page__inner"><main class="page__container">
+  <app-partner-print-header [title]="'partner.sessions.title' | translate" [subtitle]="period"></app-partner-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'partner.eyebrow' | translate }}</span>
+      <h1>{{ 'partner.sessions.title' | translate }}</h1>
+      <p>{{ 'partner.sessions.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="export('csv')" [disabled]="exporting" [attr.aria-busy]="exporting === 'csv'">
+        <vx-icon name="download"></vx-icon>{{ 'common.actions.exportCsv' | translate }}</button>
+      <button type="button" class="vx-btn vx-btn--primary" (click)="export('pdf')" [disabled]="exporting" [attr.aria-busy]="exporting === 'pdf'">
+        <vx-icon name="invoice"></vx-icon>{{ 'partner.sessions.statementPdf' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <form class="vx-panel vx-filters no-print" (ngSubmit)="load()" role="search" [attr.aria-label]="'common.actions.filter' | translate">
+    <div class="vx-field">
+      <label for="from">{{ 'common.fields.from' | translate }}</label>
+      <input id="from" type="date" name="from" [(ngModel)]="filter.from">
+    </div>
+    <div class="vx-field">
+      <label for="to">{{ 'common.fields.to' | translate }}</label>
+      <input id="to" type="date" name="to" [(ngModel)]="filter.to">
+    </div>
+    <div class="vx-field" *ngIf="stations.length > 1">
+      <label for="station">{{ 'partner.fields.station' | translate }}</label>
+      <select id="station" name="station" [(ngModel)]="filter.stationId" (ngModelChange)="stationChanged()">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let st of stations" [ngValue]="st.id">{{ st.name }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="chargePoint">{{ 'partner.fields.chargePoint' | translate }}</label>
+      <select id="chargePoint" name="chargePoint" [(ngModel)]="filter.chargePointId">
+        <option [ngValue]="null">{{ 'common.state.all' | translate }}</option>
+        <option *ngFor="let cp of visibleChargePoints" [ngValue]="cp.id">{{ cp.chargePointId }}</option>
+      </select>
+    </div>
+    <div class="vx-field">
+      <label for="status">{{ 'common.fields.status' | translate }}</label>
+      <select id="status" name="status" [(ngModel)]="filter.status">
+        <option value="">{{ 'common.state.all' | translate }}</option>
+        <option value="active">{{ 'partner.status.charging' | translate }}</option>
+        <option value="completed">{{ 'partner.status.completed' | translate }}</option>
+      </select>
+    </div>
+    <div class="vx-actions">
+      <button type="submit" class="vx-btn vx-btn--primary">{{ 'common.actions.filter' | translate }}</button>
+      <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
+    </div>
+  </form>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">
+    <span style="flex: 1">{{ 'common.state.error' | translate }}</span>
+    <button type="button" class="vx-btn vx-btn--small no-print" (click)="load(filter.page)">{{ 'common.actions.retry' | translate }}</button>
+  </div>
+  <div class="vx-alert vx-alert--error no-print" *ngIf="exportError" role="alert">{{ 'portal.partner.exportFailed' | translate }}</div>
+  <div class="vx-alert no-print" *ngIf="feedback as f" [ngClass]="feedbackClass(f.tone)" role="status">
+    <span style="flex: 1">{{ f.key | translate:f.params }}</span>
+    <button type="button" class="vx-btn vx-btn--small" (click)="feedback = null">{{ 'common.actions.close' | translate }}</button>
+  </div>
+
+  <section class="vx-panel" [attr.aria-busy]="loading">
+    <div class="vx-summary" *ngIf="result?.items?.length">
+      <span>{{ 'common.pager.results' | translate:{ total: result!.total } }}</span>
+      <span>{{ 'partner.fields.energy' | translate }} <strong class="vx-num">{{ totals.kwh | vxNumber:'1.0-2' }} {{ 'common.units.kwh' | translate }}</strong></span>
+      <span>{{ 'partner.fields.revenue' | translate }} <strong class="vx-num">{{ totals.revenue | vxMoney }}</strong></span>
+    </div>
+    <p class="vx-empty" *ngIf="loading && !result">{{ 'common.state.loading' | translate }}</p>
+    <div class="vx-table-wrap" *ngIf="result?.items?.length; else empty">
+      <table class="vx-table vx-table--stack">
+        <caption class="vx-sr-only">{{ 'partner.sessions.title' | translate }}</caption>
+        <thead><tr>
+          <th scope="col">#</th>
+          <th scope="col">{{ 'partner.fields.started' | translate }}</th>
+          <th scope="col">{{ 'partner.fields.chargePoint' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.fields.duration' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.fields.energy' | translate }}</th>
+          <th scope="col" class="num">{{ 'partner.fields.revenue' | translate }}</th>
+          <th scope="col">{{ 'partner.fields.stoppedBy' | translate }}</th>
+          <th scope="col" class="no-print"><span class="vx-sr-only">{{ 'portal.partner.actions.column' | translate }}</span></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let s of result!.items">
+            <td class="muted" data-label="#"><span class="vx-num">{{ s.id }}</span></td>
+            <td [attr.data-label]="'partner.fields.started' | translate">
+              <span>{{ s.startDate | vxDate:'short' }}<div class="muted" *ngIf="s.endDate">→ {{ s.endDate | vxDate:'shortTime' }}</div></span></td>
+            <td [attr.data-label]="'partner.fields.chargePoint' | translate">
+              <span>{{ s.stationName || '—' }}<div class="muted">{{ s.chargePointName }} · {{ s.connector }}</div></span></td>
+            <td class="num" [attr.data-label]="'partner.fields.duration' | translate">{{ s.chargedMinutes | vxDuration }}</td>
+            <td class="num" [attr.data-label]="'partner.fields.energy' | translate"><span class="vx-num">{{ s.chargedKwhs | vxNumber:'1.0-2' }}</span> {{ 'common.units.kwh' | translate }}</td>
+            <td class="num" [attr.data-label]="'partner.fields.revenue' | translate">{{ s.active ? '—' : (s.total | vxMoney) }}</td>
+            <td [attr.data-label]="'partner.fields.stoppedBy' | translate">
+              <span *ngIf="s.active; else reason" class="vx-badge vx-badge--success vx-badge--live">{{ 'partner.status.charging' | translate }}</span>
+              <ng-template #reason>{{ 'stopReasons.' + s.stoppedReason | translate }}</ng-template>
+            </td>
+            <td class="no-print num">
+              <button type="button" class="vx-btn vx-btn--small vx-btn--danger" *ngIf="s.active" (click)="askStop(s)" [disabled]="busy.has(s.id)"
+                [attr.aria-label]="('portal.partner.actions.stop' | translate) + ' #' + s.id"><vx-icon name="stop"></vx-icon>{{ 'portal.partner.actions.stop' | translate }}</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">{{ 'partner.sessions.pageTotal' | translate }}</td>
+          <td class="num" [attr.data-label]="'partner.fields.duration' | translate">{{ totals.minutes | vxDuration }}</td>
+          <td class="num" [attr.data-label]="'partner.fields.energy' | translate"><span class="vx-num">{{ totals.kwh | vxNumber:'1.0-2' }}</span> {{ 'common.units.kwh' | translate }}</td>
+          <td class="num" [attr.data-label]="'partner.fields.revenue' | translate">{{ totals.revenue | vxMoney }}</td>
+          <td colspan="2"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <ng-template #empty>
+      <div class="vx-empty-state" *ngIf="!loading">
+        <span class="vx-empty-state__icon"><vx-icon name="plugged-car"></vx-icon></span>
+        <strong>{{ 'partner.sessions.empty' | translate }}</strong>
+      </div>
+    </ng-template>
+    <vx-pager *ngIf="result" [page]="result.page" [pageSize]="result.pageSize" [total]="result.total" (pageChange)="load($event)"></vx-pager>
+  </section>
+  <p class="vx-footnote">{{ 'partner.sessions.privacy' | translate }}</p>
+  <vx-print-footer [note]="'portal.partner.printNote' | translate"></vx-print-footer>
+
+  <vx-confirm-dialog #stopDialog tone="danger" [title]="'portal.partner.confirm.stopTitle' | translate:{ id: stopping?.chargePointName ?? '' }"
+    [confirmLabel]="'portal.partner.confirm.stopConfirm' | translate" (confirmed)="confirmStop()" (cancelled)="stopping = null">
+    <p *ngIf="stopping as s">{{ 'portal.partner.confirm.stopSessionText' | translate:{ id: s.id, station: s.stationName ?? '', energy: (s.chargedKwhs | vxNumber:'1.0-2') } }}</p>
+  </vx-confirm-dialog>
+</main></div>

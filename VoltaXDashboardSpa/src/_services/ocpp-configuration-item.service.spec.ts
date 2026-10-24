@@ -1,16 +1,18 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
-import { OcppConfigurationItemService } from './ocpp-configuration-item.service';
+import { TestBed, waitForAsync, inject } from '@angular/core/testing';
+import { OCPPConfigurationItemService } from './ocpp-configuration-item.service';
 
+import { VxTestingModule } from 'src/testing/vx-testing.module';
 describe('Service: OcppConfigurationItem', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [OcppConfigurationItemService]
+      imports: [VxTestingModule],
+      providers: [OCPPConfigurationItemService]
     });
   });
 
-  it('should ...', inject([OcppConfigurationItemService], (service: OcppConfigurationItemService) => {
+  it('should ...', inject([OCPPConfigurationItemService], (service: OCPPConfigurationItemService) => {
     expect(service).toBeTruthy();
   }));
 });

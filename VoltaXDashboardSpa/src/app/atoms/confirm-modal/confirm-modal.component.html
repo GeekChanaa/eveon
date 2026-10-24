@@ -4,8 +4,8 @@
     <h2 id="confirm-modal-title">{{ title }}</h2>
     <p id="confirm-modal-message">{{ message }}</p>
     <div class="modal__actions">
-      <button class="modal__button modal__button--cancel" type="button" autofocus (click)="cancel()">Cancel</button>
-      <button class="modal__button modal__button--confirm" type="button" (click)="confirm()">{{ confirmLabel }}</button>
+      <button class="modal__button modal__button--cancel" type="button" autofocus (click)="cancel()">{{ 'common.actions.cancel' | translate }}</button>
+      <button class="modal__button modal__button--confirm" type="button" (click)="confirm()">{{ confirmLabel || ('common.actions.confirm' | translate) }}</button>
     </div>
   </div>
 </div>

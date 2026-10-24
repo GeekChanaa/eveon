@@ -19,6 +19,8 @@ namespace VoltaXApi.Services
         public double? MeterKWh { get; init; }
         /// <summary>Stored as Transaction.StartResult / StopReason.</summary>
         public string TriggerReason { get; init; } = "";
+        /// <summary>Why an Ended event stopped the transaction (2.0.1 stoppedReason; 1.6 reason mapped), stored on the session.</summary>
+        public ReasonEnumType? StoppedReason { get; init; }
         /// <summary>Updated event reporting an abnormal condition (customer is notified).</summary>
         public bool AbnormalCondition { get; init; }
         /// <summary>Ended event whose reason is abnormal (customer is notified).</summary>
@@ -35,9 +37,10 @@ namespace VoltaXApi.Services
             IdTag = idTag,
             MeterKWh = meterKWh,
             TriggerReason = request.TriggerReason.ToString(),
+            StoppedReason = StoppedReasonOf(request),
             AbnormalCondition = request.TriggerReason == TriggerReasonEnumType.AbnormalCondition,
-            AbnormalStop = IsAbnormalStop(request.TriggerReason, request.Reason),
-            ReasonSuffix = FormatReason(request.Reason?.ToString())
+            AbnormalStop = IsAbnormalStop(request.TriggerReason, StoppedReasonOf(request)),
+            ReasonSuffix = FormatReason(StoppedReasonOf(request)?.ToString())
         };
 
         /// <summary>Idempotency key of a customer notification about this event.</summary>
@@ -47,11 +50,19 @@ namespace VoltaXApi.Services
 
         public string TransactionKey(Transaction transaction) => $"Transaction:{transaction.ID}:{EventType}:{Timestamp}";
 
+        /// <summary>OCPP 2.0.1 carries it in transactionInfo.stoppedReason (the top-level field is a legacy fallback).</summary>
+        public static ReasonEnumType? StoppedReasonOf(TransactionEventRequest request) =>
+            request.TransactionInfo?.StoppedReason ?? request.Reason;
+
         public static bool IsAbnormalStop(TriggerReasonEnumType triggerReason, ReasonEnumType? reason)
         {
             if (triggerReason is TriggerReasonEnumType.AbnormalCondition or
-                TriggerReasonEnumType.EVCommunicationLost or
                 TriggerReasonEnumType.ResetCommand)
+                return true;
+
+            // Unplugging the car ends the transaction with EVCommunicationLost: abnormal only without a normal reason.
+            if (triggerReason == TriggerReasonEnumType.EVCommunicationLost &&
+                reason is not (ReasonEnumType.EVDisconnected or ReasonEnumType.Local or ReasonEnumType.Remote or ReasonEnumType.StoppedByEV))
                 return true;
 
             return reason is ReasonEnumType.EmergencyStop or

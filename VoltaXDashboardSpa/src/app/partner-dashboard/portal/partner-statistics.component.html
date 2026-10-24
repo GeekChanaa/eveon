@@ -1,0 +1,84 @@
+<div class="page__inner"><main class="page__container">
+  <app-partner-print-header [title]="'partner.statistics.title' | translate"></app-partner-print-header>
+
+  <header class="vx-heading">
+    <div>
+      <span class="vx-eyebrow">{{ 'partner.eyebrow' | translate }}</span>
+      <h1>{{ 'partner.statistics.title' | translate }}</h1>
+      <p>{{ 'partner.statistics.subtitle' | translate }}</p>
+    </div>
+    <div class="vx-actions no-print">
+      <button type="button" class="vx-btn" (click)="print()">{{ 'common.actions.print' | translate }}</button>
+    </div>
+  </header>
+
+  <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
+  <p class="vx-empty" *ngIf="loading">{{ 'common.state.loading' | translate }}</p>
+
+  <ng-container *ngIf="stats">
+    <div class="vx-chips no-print" role="group" [attr.aria-label]="'partner.statistics.metric' | translate">
+      <button type="button" class="vx-chip" *ngFor="let m of metrics" [class.active]="metric === m" [attr.aria-pressed]="metric === m" (click)="select(m)">
+        {{ 'partner.statistics.' + m | translate }}
+      </button>
+    </div>
+
+    <section class="vx-stats vx-stats--three">
+      <div class="vx-stat vx-stat--brand">
+        <div class="vx-stat__label">{{ 'partner.statistics.revenue12' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ total(stats.monthly, 'revenue') | vxMoney }}</div>
+        <div class="vx-stat__hint">{{ 'partner.statistics.last30' | translate }} · {{ total(stats.daily, 'revenue') | vxMoney }}</div>
+      </div>
+      <div class="vx-stat">
+        <div class="vx-stat__label">{{ 'partner.statistics.energy12' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ total(stats.monthly, 'energy') | vxNumber:'1.0-0' }} {{ 'common.units.kwh' | translate }}</div>
+        <div class="vx-stat__hint">{{ 'partner.statistics.last30' | translate }} · {{ total(stats.daily, 'energy') | vxNumber:'1.0-0' }} {{ 'common.units.kwh' | translate }}</div>
+      </div>
+      <div class="vx-stat">
+        <div class="vx-stat__label">{{ 'partner.statistics.sessions12' | translate }}</div>
+        <div class="vx-stat__value vx-num">{{ total(stats.monthly, 'sessions') | vxNumber:'1.0-0' }}</div>
+        <div class="vx-stat__hint">{{ 'partner.statistics.last30' | translate }} · {{ total(stats.daily, 'sessions') | vxNumber:'1.0-0' }}</div>
+      </div>
+    </section>
+
+    <section class="vx-panel no-print">
+      <div class="vx-panel__head"><div><h2>{{ 'partner.statistics.daily' | translate }}</h2><p>{{ 'partner.statistics.' + metric | translate }}</p></div></div>
+      <apx-chart *ngIf="daily" [series]="daily.series" [chart]="daily.chart" [xaxis]="daily.xaxis" [yaxis]="daily.yaxis" [colors]="daily.colors"
+        [plotOptions]="daily.plotOptions" [dataLabels]="daily.dataLabels" [grid]="daily.grid" [tooltip]="daily.tooltip"></apx-chart>
+    </section>
+
+    <section class="vx-panel no-print">
+      <div class="vx-panel__head"><div><h2>{{ 'partner.statistics.monthly' | translate }}</h2><p>{{ 'partner.statistics.' + metric | translate }}</p></div></div>
+      <apx-chart *ngIf="monthly" [series]="monthly.series" [chart]="monthly.chart" [xaxis]="monthly.xaxis" [yaxis]="monthly.yaxis" [colors]="monthly.colors"
+        [plotOptions]="monthly.plotOptions" [dataLabels]="monthly.dataLabels" [grid]="monthly.grid" [tooltip]="monthly.tooltip"></apx-chart>
+    </section>
+
+    <section class="vx-panel">
+      <div class="vx-panel__head"><div><h2>{{ 'partner.statistics.byMonth' | translate }}</h2><p>{{ 'partner.overview.vatIncluded' | translate }}</p></div></div>
+      <div class="vx-table-wrap">
+        <table class="vx-table">
+          <thead><tr>
+            <th>{{ 'partner.statistics.month' | translate }}</th>
+            <th class="num">{{ 'partner.statistics.sessions' | translate }}</th>
+            <th class="num">{{ 'partner.statistics.energy' | translate }}</th>
+            <th class="num">{{ 'partner.statistics.revenue' | translate }}</th>
+          </tr></thead>
+          <tbody>
+            <tr *ngFor="let p of stats.monthly.slice().reverse()">
+              <td>{{ label(p.period) }}</td>
+              <td class="num">{{ p.sessions | vxNumber:'1.0-0' }}</td>
+              <td class="num">{{ p.energy | vxNumber:'1.0-1' }} {{ 'common.units.kwh' | translate }}</td>
+              <td class="num">{{ p.revenue | vxMoney }}</td>
+            </tr>
+          </tbody>
+          <tfoot><tr>
+            <td>{{ 'common.fields.total' | translate }}</td>
+            <td class="num">{{ total(stats.monthly, 'sessions') | vxNumber:'1.0-0' }}</td>
+            <td class="num">{{ total(stats.monthly, 'energy') | vxNumber:'1.0-1' }} {{ 'common.units.kwh' | translate }}</td>
+            <td class="num">{{ total(stats.monthly, 'revenue') | vxMoney }}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+  <vx-print-footer [note]="'portal.partner.printNote' | translate"></vx-print-footer>
+</main></div>

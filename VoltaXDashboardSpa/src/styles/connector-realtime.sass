@@ -11,9 +11,9 @@
 
 @import ./helpers/variables
 
-$crt-yellow: var(--vx-yellow, #E5B223)
+$crt-brand: var(--vx-brand, #0A1A3A)
 $crt-surface: var(--vx-surface, #FFFFFF)
-$crt-hover: var(--vx-hover, #F4F4F4)
+$crt-hover: var(--vx-hover, var(--navy-50))
 $crt-border: var(--vx-border, #EDEDED)
 $crt-text: var(--vx-text, #0B0B0B)
 $crt-muted: var(--vx-text-muted, #7A7C80)
@@ -42,7 +42,7 @@ $crt-muted: var(--vx-text-muted, #7A7C80)
     width: 3px
     height: 18px
     border-radius: 2px
-    background: $crt-yellow
+    background: $crt-brand
     transform: none
 
   .title
@@ -147,11 +147,11 @@ body.dark
   transition: color .18s, border-color .18s
 
   &:hover
-    color: $crt-yellow
-    border-bottom-color: $crt-yellow
+    color: $crt-brand
+    border-bottom-color: $crt-brand
 
 // ---------------------------------------------------------------------------
-// Row action buttons — squares rather than circles, yellow instead of the
+// Row action buttons — squares rather than circles, brand colour instead of the
 // red/blue one-off hovers. Destructive actions keep red on purpose.
 // ---------------------------------------------------------------------------
 
@@ -180,12 +180,12 @@ body.dark
     transition: fill .18s
 
   &:hover
-    background: rgba(229, 178, 35, .12)
-    border-color: $crt-yellow
+    background: rgba(var(--vx-brand-rgb, 10, 26, 58), .12)
+    border-color: $crt-brand
 
     svg,
     .icon
-      fill: $crt-yellow
+      fill: $crt-brand
 
 // Stop / destructive stays red — it is the one action you cannot undo.
 .table__action.stop-btn
@@ -227,10 +227,10 @@ body.dark
       fill: $crt-text
 
     &:hover:not(.inactive)
-      border-color: $crt-yellow
+      border-color: $crt-brand
 
       svg
-        fill: $crt-yellow
+        fill: $crt-brand
 
     &.inactive
       border-color: $crt-border
@@ -254,9 +254,9 @@ body.dark
       color: $crt-text
 
     &.active
-      background: $crt-yellow
-      border-color: $crt-yellow
-      color: #0B0B0B
+      background: $crt-brand
+      border-color: $crt-brand
+      color: var(--vx-on-brand, #fff)
 
 // ---------------------------------------------------------------------------
 // Spacing between stacked sections

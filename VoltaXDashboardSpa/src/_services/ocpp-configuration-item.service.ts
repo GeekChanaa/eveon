@@ -4,7 +4,6 @@ import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-import { RechargeOrderDto } from 'src/_models/_dtos/recharge-order-dto';
 import { InvoiceDTO } from 'src/_models/_dtos/invoice-dto';
 import { Observable } from 'rxjs';
 import { OCPPConfigurationItem } from 'src/_models/ocpp-configuration-item';

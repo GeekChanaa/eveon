@@ -19,4 +19,9 @@ export class SystemReportCommentService extends AbstractService<SystemReportComm
   getSystemReportComments(id : number,page?: number, itemsPerPage?: number, itemParams?: any){
     return super.getAll(page,itemsPerPage,itemParams,"getSystemReportComments/"+id);
   }
+
+  // Add a comment written by the signed-in operator
+  createComment(systemReportID : number, content : string){
+    return this.http.post<{ id: number }>(this.baseUrl+"CreateComment/"+systemReportID, { content });
+  }
 }

@@ -4,7 +4,6 @@ import { AbstractService } from './abstract-service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-import { RechargeOrderDto } from 'src/_models/_dtos/recharge-order-dto';
 import { InvoiceDTO } from 'src/_models/_dtos/invoice-dto';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -74,12 +73,8 @@ export class OrderService extends AbstractService<Order>{
     return this._http.get<number>(this.baseUrl+"countRechargeAmountBetween?dateStart="+dateStart+"&dateEnd="+dateEnd);
   }
 
-  // recharge card order
-  rechargeCard(orderDto : RechargeOrderDto){
-    return this._http.post(this.baseUrl+"RechargeOrder",orderDto);
-  }
-
-  createRechargeOrder(orderDto : any){
+  // Manual top-up by an operator; online payments go through PaymentsService
+  createRechargeOrder(orderDto : { cardID: number; amount: number; note: string }){
     return this._http.post(this.baseUrl+"CreateRechargeOrder",orderDto);
   }
 

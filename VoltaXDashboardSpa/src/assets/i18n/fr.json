@@ -1,0 +1,487 @@
+{
+  "common": {
+    "currency": {
+      "mad": "MAD"
+    },
+    "units": {
+      "kwh": "kWh",
+      "min": "min",
+      "kw": "kW",
+      "perKwh": "/ kWh",
+      "perMin": "/ min"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "remove": "Retirer",
+      "confirm": "Confirmer",
+      "download": "Télécharger",
+      "print": "Imprimer",
+      "exportCsv": "Exporter en CSV",
+      "exportPdf": "Exporter en PDF",
+      "filter": "Filtrer",
+      "reset": "Réinitialiser",
+      "search": "Rechercher",
+      "back": "Retour",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "retry": "Réessayer",
+      "viewAll": "Tout voir",
+      "details": "Détails",
+      "apply": "Appliquer",
+      "refresh": "Actualiser"
+    },
+    "state": {
+      "loading": "Chargement…",
+      "empty": "Rien à afficher pour le moment.",
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "saved": "Enregistré",
+      "yes": "Oui",
+      "no": "Non",
+      "all": "Tous",
+      "none": "Aucun"
+    },
+    "fields": {
+      "from": "Du",
+      "to": "Au",
+      "status": "Statut",
+      "date": "Date",
+      "amount": "Montant",
+      "total": "Total",
+      "search": "Recherche"
+    },
+    "pager": {
+      "page": "Page {{page}} sur {{pages}}",
+      "results": "{{total}} résultats"
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "operationMonitoring": "Supervision",
+    "connectorRealtime": "Connecteurs en temps réel",
+    "statistics": "Statistiques",
+    "stationManagement": "Gestion des stations",
+    "chargingStations": "Stations de recharge",
+    "chargePoints": "Bornes",
+    "businessManagement": "Gestion commerciale",
+    "chargingCards": "Cartes de recharge",
+    "appManagement": "Gestion de l’application",
+    "notices": "Annonces",
+    "reports": "Signalements",
+    "dataRequests": "Demandes de données",
+    "orderManagement": "Gestion des commandes",
+    "chargingSessions": "Sessions de recharge",
+    "transactions": "Transactions",
+    "rechargeOrders": "Rechargements",
+    "maintenance": "Maintenance",
+    "globalConfigurations": "Configuration générale",
+    "systemReports": "Rapports système",
+    "ocppOperation": "Exploitation OCPP",
+    "chargerEvents": "Événements des bornes",
+    "chargePointConfigurations": "Configuration des bornes",
+    "defaultConfiguration": "Configuration par défaut",
+    "localList": "Liste locale",
+    "account": "Comptes",
+    "users": "Utilisateurs",
+    "partners": "Partenaires",
+    "roles": "Rôles et permissions",
+    "auditLog": "Journal d’audit",
+    "roaming": "Itinérance (OCPI)",
+    "pki": "PKI des bornes",
+    "security": "Sécurité",
+    "help": "Aide et documentation",
+    "expand": "Déplier le menu",
+    "collapse": "Replier le menu",
+    "myCharging": "Mes recharges",
+    "myCards": "Mes cartes",
+    "payments": "Paiements",
+    "wallet": "Porte-monnaie et recharge",
+    "paymentMethods": "Moyens de paiement",
+    "myNetwork": "Mon réseau",
+    "chargePointsPrices": "Bornes et tarifs",
+    "activity": "Activité",
+    "partnerProfile": "Profil et logo"
+  },
+  "header": {
+    "openMenu": "Ouvrir le menu",
+    "language": "Langue",
+    "accountMenu": "Ouvrir le menu du compte",
+    "profilePhoto": "Votre photo de profil",
+    "signedInAs": "Connecté en tant que",
+    "myProfile": "Mon profil",
+    "manageUsers": "Gérer les utilisateurs et les accès",
+    "signOut": "Se déconnecter"
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre"
+  },
+  "roles": {
+    "Admin": "Administrateur",
+    "Customer": "Client",
+    "PremiumCustomer": "Client premium",
+    "Support": "Support",
+    "Partner": "Partenaire",
+    "undefined": ""
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page introuvable",
+      "text": "La page que vous cherchez n’existe pas ou a été déplacée."
+    },
+    "accessDenied": {
+      "title": "Accès restreint",
+      "text": "Votre rôle ne donne pas accès à cette page. Demandez l’accès à un administrateur si nécessaire.",
+      "home": "Retour à l’accueil"
+    }
+  },
+  "customer": {
+    "eyebrow": "Mon EVEON",
+    "actions": {
+      "topUp": "Recharger",
+      "sessions": "Mes sessions"
+    },
+    "overview": {
+      "title": "Mon compte",
+      "hello": "Bonjour {{name}}",
+      "subtitle": "Vos recharges, votre porte-monnaie et vos factures au même endroit.",
+      "balance": "Solde du porte-monnaie",
+      "cards": "{{count}} carte(s) de recharge",
+      "sessionsMonth": "Sessions ce mois-ci",
+      "allTime": "{{value}} au total",
+      "energyMonth": "Énergie ce mois-ci",
+      "spentMonth": "Dépensé ce mois-ci",
+      "liveTitle": "Recharge en cours",
+      "liveHint": "Mis à jour toutes les 30 secondes. Le montant final est facturé à la fin de la session.",
+      "recent": "Dernières sessions"
+    },
+    "status": {
+      "charging": "En charge",
+      "Completed": "Terminée",
+      "CompletedOccupied": "Terminée (toujours branchée)",
+      "Pending": "En cours",
+      "NotStarted": "Non démarrée"
+    },
+    "session": {
+      "title": "Session de recharge",
+      "notFound": "Cette session n’existe pas ou ne vous appartient pas.",
+      "downloadInvoice": "Télécharger la facture",
+      "details": "Détails",
+      "station": "Station",
+      "chargePoint": "Borne",
+      "started": "Début",
+      "ended": "Fin",
+      "duration": "Durée de charge",
+      "idle": "Temps d’occupation",
+      "energy": "Énergie",
+      "stopReason": "Arrêtée par",
+      "card": "Carte",
+      "costSoFar": "Coût actuel",
+      "breakdown": "Ce que vous avez payé",
+      "vatIncluded": "Montants TTC.",
+      "item": "Élément",
+      "quantity": "Quantité",
+      "rate": "Tarif",
+      "energyItem": "Énergie délivrée",
+      "timeItem": "Durée de charge",
+      "feeItem": "Frais de session",
+      "idleItem": "Occupation après la charge",
+      "exclVat": "Total HT",
+      "vat": "TVA ({{rate}} %)",
+      "totalPaid": "Total payé",
+      "balanceBefore": "Solde avant",
+      "balanceAfter": "Solde après"
+    },
+    "sessions": {
+      "title": "Sessions de recharge",
+      "subtitle": "Toutes vos sessions avec leur énergie et leur coût. Filtrez, exportez ou imprimez-les.",
+      "searchPlaceholder": "Station ou borne",
+      "pageTotal": "Total de la page",
+      "empty": "Aucune session de recharge pour le moment."
+    },
+    "wallet": {
+      "title": "Porte-monnaie",
+      "subtitle": "Rechargez votre carte en ligne et suivez chaque mouvement de votre solde.",
+      "returnPaid": "Paiement reçu : {{amount}} ont été ajoutés à votre porte-monnaie.",
+      "returnPending": "En attente de la confirmation de la banque…",
+      "returnCanceled": "Le paiement a été annulé. Rien n’a été débité.",
+      "returnFailed": "Le paiement n’a pas abouti. Rien n’a été débité.",
+      "topUpTitle": "Recharger",
+      "topUpHint": "Choisissez un montant ; vous paierez sur la page sécurisée de notre prestataire de paiement.",
+      "unavailable": "La recharge en ligne n’est pas encore disponible. Contactez le support pour recharger votre porte-monnaie.",
+      "sandbox": "Mode test : aucun paiement réel n’est effectué.",
+      "otherAmount": "Autre montant",
+      "amountRange": "Saisissez un montant entre {{min}} et {{max}}.",
+      "amountDecimals": "Deux décimales au maximum.",
+      "card": "Carte de recharge",
+      "noUsableCard": "Aucune de vos cartes ne peut être rechargée (bloquée ou expirée). Contactez le support.",
+      "pay": "Payer {{amount}}",
+      "redirecting": "Redirection vers la page de paiement…",
+      "secureNote": "Vos coordonnées bancaires sont saisies sur la page sécurisée du prestataire de paiement ; EVEON ne voit jamais votre numéro de carte.",
+      "topUps": "Rechargements",
+      "invoice": "Facture",
+      "noTopUps": "Aucun rechargement pour le moment.",
+      "movements": "Mouvements du solde",
+      "movementsHint": "Chaque crédit et débit de vos cartes de recharge.",
+      "operation": "Opération",
+      "balanceAfter": "Solde après",
+      "noMovements": "Aucun mouvement pour le moment."
+    },
+    "methods": {
+      "subtitle": "Cartes enregistrées chez notre prestataire de paiement pour recharger plus vite.",
+      "add": "Ajouter une carte",
+      "added": "Votre carte a été enregistrée.",
+      "canceled": "L’ajout de la carte a été annulé.",
+      "notSupported": "L’enregistrement de cartes n’est pas disponible avec le prestataire actuel : vous saisissez votre carte à chaque paiement.",
+      "card": "Carte",
+      "expires": "Expiration",
+      "genericCard": "Carte",
+      "expired": "Expirée",
+      "default": "Par défaut",
+      "makeDefault": "Définir par défaut",
+      "empty": "Aucune carte enregistrée.",
+      "confirmRemove": "Retirer la carte se terminant par {{last4}} ?"
+    },
+    "cards": {
+      "subtitle": "Vos cartes de recharge RFID et leur solde.",
+      "number": "Carte",
+      "expires": "Valable jusqu’au",
+      "state": {
+        "Active": "Active",
+        "Blocked": "Bloquée",
+        "Expired": "Expirée"
+      },
+      "empty": "Aucune carte de recharge.",
+      "lostCard": "Carte perdue ou volée ? Contactez immédiatement le support pour la bloquer."
+    },
+    "profile": {
+      "subtitle": "Vos informations personnelles.",
+      "memberSince": "Membre depuis le {{date}}",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "birthday": "Date de naissance",
+      "verified": "Vérifié",
+      "notVerified": "Non vérifié",
+      "readOnly": "Pour modifier ces informations, contactez le support EVEON."
+    }
+  },
+  "stopReasons": {
+    "DeAuthorized": "Carte refusée",
+    "EmergencyStop": "Arrêt d’urgence",
+    "EnergyLimitReached": "Limite d’énergie atteinte",
+    "EVDisconnected": "Véhicule débranché",
+    "GroundFault": "Défaut de terre",
+    "ImmediateReset": "Redémarrage de la borne",
+    "Local": "Arrêtée à la borne",
+    "LocalOutOfCredit": "Crédit épuisé",
+    "MasterPass": "Carte opérateur",
+    "Other": "Autre",
+    "OvercurrentFault": "Surintensité",
+    "PowerLoss": "Coupure de courant",
+    "PowerQuality": "Qualité du réseau",
+    "Reboot": "Redémarrage de la borne",
+    "Remote": "Arrêtée à distance",
+    "SOCLimitReached": "Niveau de batterie atteint",
+    "StoppedByEV": "Arrêtée par le véhicule",
+    "TimeLimitReached": "Durée maximale atteinte",
+    "Timeout": "Délai dépassé"
+  },
+  "orderStatus": {
+    "Pending": "En attente",
+    "Processing": "En cours",
+    "Completed": "Payé",
+    "Failed": "Échoué",
+    "Canceled": "Annulé",
+    "Refunded": "Remboursé"
+  },
+  "walletType": {
+    "TopUp": "Rechargement",
+    "SessionCharge": "Session de recharge",
+    "IdleFee": "Frais d’occupation",
+    "Refund": "Remboursement",
+    "Adjustment": "Ajustement"
+  },
+  "partner": {
+    "eyebrow": "Espace partenaire",
+    "actions": {
+      "prices": "Gérer les tarifs",
+      "statement": "Relevé"
+    },
+    "overview": {
+      "title": "Espace partenaire",
+      "subtitle": "Vos stations, leur activité et votre chiffre d’affaires en un coup d’œil.",
+      "revenueMonth": "Chiffre d’affaires du mois",
+      "today": "Aujourd’hui : {{value}}",
+      "sessionsMonth": "Sessions ce mois-ci",
+      "chargingNow": "En charge maintenant",
+      "network": "{{stations}} stations · {{chargePoints}} bornes · {{connectors}} connecteurs",
+      "revenueTotal": "Chiffre d’affaires depuis le début",
+      "vatIncluded": "Montants facturés aux conducteurs, TTC.",
+      "recent": "Dernières sessions",
+      "connectors": "État des connecteurs",
+      "refreshed": "Mis à jour à {{time}}, actualisé chaque minute"
+    },
+    "fields": {
+      "chargePoint": "Borne",
+      "energy": "Énergie",
+      "revenue": "Chiffre d’affaires",
+      "station": "Station",
+      "connector": "Connecteur",
+      "address": "Adresse",
+      "started": "Début",
+      "duration": "Durée de charge",
+      "stoppedBy": "Arrêtée par"
+    },
+    "status": {
+      "charging": "En charge",
+      "completed": "Terminée"
+    },
+    "connectorStatus": {
+      "Available": "Disponible",
+      "Occupied": "Occupé",
+      "Reserved": "Réservé",
+      "Faulted": "En défaut",
+      "Unavailable": "Indisponible",
+      "Disconnected": "Déconnecté",
+      "Unknown": "Inconnu"
+    },
+    "stationStatus": {
+      "Available": "Ouverte",
+      "UnderMaintenance": "En maintenance",
+      "Offline": "Hors ligne"
+    },
+    "chargePointStatus": {
+      "Available": "En ligne",
+      "Offline": "Hors ligne",
+      "UnderMaintenance": "En maintenance"
+    },
+    "stations": {
+      "title": "Stations de recharge",
+      "subtitle": "Vos stations, leurs bornes et leurs connecteurs.",
+      "empty": "Aucune station n’est encore rattachée à votre compte.",
+      "points": "{{count}} borne(s)",
+      "chargePoints": "Bornes",
+      "connectors": "Connecteurs",
+      "pricesLink": "Tarifs",
+      "sessionsLink": "Sessions",
+      "map": "Carte"
+    },
+    "chargePoints": {
+      "title": "Bornes et tarifs",
+      "subtitle": "L’état des connecteurs en direct et les tarifs payés par les conducteurs sur chaque connecteur. Modifiez-les à tout moment.",
+      "allStations": "Toutes les stations",
+      "empty": "Aucune borne à afficher.",
+      "sessions": "Sessions",
+      "noConnectors": "Cette borne n’a pas encore de connecteur.",
+      "pricingNote": "Les tarifs sont TTC. Les nouvelles sessions utilisent immédiatement les nouveaux tarifs ; les sessions déjà commencées gardent leurs tarifs de départ. Chaque modification est journalisée."
+    },
+    "pricing": {
+      "perKwh": "Énergie",
+      "perMinute": "Durée de charge",
+      "perIdleMinute": "Occupation",
+      "flatFee": "Frais de session",
+      "range": "Saisissez un tarif entre 0 et {{max}}, avec 4 décimales au maximum.",
+      "example": "Exemple : {{kwh}} kWh chargés en {{minutes}} minutes = {{amount}} (hors frais d’occupation).",
+      "note": "L’occupation est facturée après le délai de grâce, une fois la charge terminée si le véhicule reste branché. Les frais de session ne s’appliquent que si de l’énergie a été délivrée.",
+      "applyToAll": "Appliquer aux {{count}} connecteurs de cette borne",
+      "save": "Enregistrer les tarifs",
+      "saving": "Enregistrement…",
+      "edit": "Modifier les tarifs",
+      "invalid": "Ces tarifs ont été refusés. Vérifiez les valeurs et réessayez.",
+      "failed": "Les tarifs n’ont pas pu être enregistrés. Veuillez réessayer."
+    },
+    "sessions": {
+      "title": "Sessions de recharge",
+      "subtitle": "Toutes les sessions sur vos stations avec leur énergie et leur chiffre d’affaires. Téléchargez le relevé pour votre comptabilité.",
+      "statementPdf": "Relevé (PDF)",
+      "pageTotal": "Total de la page",
+      "empty": "Aucune session pour ces filtres.",
+      "privacy": "Les données personnelles des conducteurs ne sont pas partagées avec les partenaires."
+    },
+    "statistics": {
+      "title": "Statistiques",
+      "subtitle": "Chiffre d’affaires, énergie et sessions sur vos stations ces 30 derniers jours et 12 derniers mois.",
+      "metric": "Indicateur",
+      "revenue": "Chiffre d’affaires",
+      "energy": "Énergie",
+      "sessions": "Sessions",
+      "revenue12": "Chiffre d’affaires, 12 derniers mois",
+      "energy12": "Énergie, 12 derniers mois",
+      "sessions12": "Sessions, 12 derniers mois",
+      "last30": "30 derniers jours",
+      "daily": "30 derniers jours",
+      "monthly": "12 derniers mois",
+      "byMonth": "Mois par mois",
+      "month": "Mois"
+    },
+    "profile": {
+      "title": "Profil et logo",
+      "subtitle": "Les informations de votre société et le logo affiché dans votre espace et sur les documents imprimés.",
+      "readOnly": "Pour modifier ces informations, contactez EVEON.",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "city": "Ville",
+      "security": "Double authentification et sécurité",
+      "logo": "Logo",
+      "logoHint": "PNG, JPEG ou WebP, 5 Mo maximum. Un logo carré ou horizontal sur fond transparent rend le mieux.",
+      "choose": "Choisir une image",
+      "upload": "Envoyer le logo",
+      "uploading": "Envoi…",
+      "logoSaved": "Votre logo a été mis à jour.",
+      "badType": "Choisissez une image PNG, JPEG ou WebP.",
+      "tooBig": "L’image dépasse 5 Mo.",
+      "uploadFailed": "Le logo n’a pas pu être envoyé. Vérifiez le fichier et réessayez."
+    }
+  },
+  "ops": {
+    "fields": {
+      "started": "Début",
+      "stopped": "Fin",
+      "chargePoint": "Borne",
+      "connector": "Connecteur",
+      "customer": "Client",
+      "duration": "Durée de charge",
+      "energy": "Énergie",
+      "transaction": "Transaction",
+      "session": "Session",
+      "idTag": "Badge",
+      "meter": "Compteur",
+      "meterStart": "Compteur au début",
+      "meterStop": "Compteur à la fin",
+      "startResult": "Résultat du démarrage",
+      "stopReason": "Motif d’arrêt"
+    },
+    "sessions": {
+      "title": "Sessions de recharge",
+      "subtitle": "Toutes les sessions du réseau avec le montant facturé au client. Filtrez, exportez ou imprimez.",
+      "searchPlaceholder": "#id, borne, station, carte, client ou e-mail",
+      "scoped": "Sessions d’une borne, d’une station ou d’un client.",
+      "showAll": "Afficher toutes les sessions",
+      "pageTotal": "Total de la page (sessions terminées)",
+      "empty": "Aucune session pour ces filtres.",
+      "note": "Montants TTC. * Coût en cours d’une session non terminée ; elle est facturée à la fin."
+    },
+    "transactions": {
+      "title": "Transactions",
+      "subtitle": "Les transactions OCPP telles que remontées par les bornes, avec leurs relevés de compteur (Wh). Ouvrez une ligne pour voir la session facturée.",
+      "searchPlaceholder": "Identifiant, borne, badge ou motif d’arrêt",
+      "empty": "Aucune transaction pour ces filtres.",
+      "openSession": "Ouvrir la session",
+      "notFound": "Cette transaction n’existe pas."
+    },
+    "transactionStatus": {
+      "Current": "En cours",
+      "Ended": "Terminée",
+      "Forbidden": "Refusée"
+    },
+    "reports": {
+      "noComments": "Aucun commentaire pour le moment.",
+      "comment": "Commentaire",
+      "placeholder": "Écrivez un commentaire pour l’équipe…",
+      "post": "Publier le commentaire"
+    }
+  }
+}

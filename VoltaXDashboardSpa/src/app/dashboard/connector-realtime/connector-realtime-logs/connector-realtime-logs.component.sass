@@ -12,11 +12,11 @@
   cursor: pointer
 
   &:focus-visible
-    outline: 2px solid $crt-yellow
+    outline: 2px solid $crt-brand
     outline-offset: -2px
 
   &:hover .log__chevron svg
-    stroke: $crt-yellow
+    stroke: $crt-brand
     transform: translateX(2px)
 
 .log__message
@@ -95,8 +95,8 @@
 
   &:focus
     outline: none
-    border-color: $crt-yellow
-    box-shadow: 0 0 0 3px rgba(229, 178, 35, .18)
+    border-color: $crt-brand
+    box-shadow: 0 0 0 3px rgba(var(--vx-brand-rgb, 10, 26, 58), .18)
 
   &.logs__date_invalid
     border-color: #DC2626
@@ -131,10 +131,10 @@
     &.active
       background: $crt-surface
       color: $crt-text
-      box-shadow: 0 1px 2px rgba(0, 0, 0, .12), inset 0 -2px 0 $crt-yellow
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .12), inset 0 -2px 0 $crt-brand
 
     &:focus-visible
-      outline: 2px solid $crt-yellow
+      outline: 2px solid $crt-brand
       outline-offset: 1px
 
 .logs__clear
@@ -192,11 +192,11 @@
     width: 16px
 
   &:hover:not(:disabled)
-    background: rgba(229, 178, 35, .12)
-    border-color: $crt-yellow
+    background: rgba(var(--vx-brand-rgb, 10, 26, 58), .12)
+    border-color: $crt-brand
 
   &:focus-visible
-    outline: 2px solid $crt-yellow
+    outline: 2px solid $crt-brand
     outline-offset: 2px
 
   &:disabled

@@ -4,10 +4,10 @@ namespace VoltaXApi.Dtos
   public class UpdateConnectorPricingDto
   {
     [Range(0, 10000)]
-    public double PricePerKWh { get; set; }   
+    public decimal PricePerKWh { get; set; }   
     [Range(0, 10000)]
-    public double PricePerIdleMinute { get; set; }   
+    public decimal PricePerIdleMinute { get; set; }   
     [Range(0, 10000)]
-    public double CostPerKwh { get; set; }
+    public decimal CostPerKwh { get; set; }
   }
 }

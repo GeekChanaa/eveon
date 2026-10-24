@@ -33,7 +33,8 @@ namespace VoltaXApi.Controllers
         [HttpPost("CreateSystemReport")]
         public async Task<IActionResult> CreateReport(SystemReport report)
         {
-            await this._systemReportService.HandleReport(report);
+            // Only the plain fields: a bound entity would also insert nested objects (user, card, charge point...).
+            await this._systemReportService.HandleReport(VoltaXApi.Helpers.EntityUpdate.NewFromScalars(report));
             return StatusCode(204);
         }
 

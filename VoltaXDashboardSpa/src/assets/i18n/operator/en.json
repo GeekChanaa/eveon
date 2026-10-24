@@ -1,0 +1,141 @@
+{
+  "operator": {
+    "realtime": {
+      "reconnecting": "Reconnecting…",
+      "reconnectingHint": "Live updates were interrupted, reconnecting.",
+      "disconnected": "Live updates paused",
+      "disconnectedHint": "The live connection is down. Click to try again now."
+    },
+    "toast": {
+      "success": "Done",
+      "warning": "Attention",
+      "error": "Something went wrong"
+    },
+    "confirm": {
+      "title": "Please confirm",
+      "message": "Are you sure you want to continue?",
+      "deleteTitle": "Delete this item?",
+      "deleteMessage": "It will be removed for good. This cannot be undone.",
+      "deleteNamed": "Delete {{name}}?"
+    },
+    "table": {
+      "filters": "Filters",
+      "filtering": "Filter the list",
+      "closeFilters": "Close the filters",
+      "columns": "Columns",
+      "visibleColumns": "Visible columns",
+      "columnsHint": "Choose what appears in this table.",
+      "new": "New",
+      "createNew": "Create",
+      "options": "Options",
+      "search": "Search",
+      "searchPlaceholder": "Search",
+      "delete": "Delete",
+      "open": "Open",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "loadError": "The list could not be loaded.",
+      "deleted": "Deleted.",
+      "deleteFailed": "It could not be deleted.",
+      "sortBy": "Sort by {{field}}"
+    },
+    "enums": {
+      "CardStatus": {
+        "Active": "Active",
+        "Inactive": "Inactive",
+        "Blocked": "Blocked",
+        "Expired": "Expired"
+      },
+      "CardType": {
+        "Standard": "Standard",
+        "Premium": "Premium",
+        "Partner": "Partner"
+      },
+      "ChargePointCategory": {
+        "Single": "Single",
+        "Double": "Double"
+      },
+      "ChargePointStatus": {
+        "Available": "Available",
+        "Offline": "Offline",
+        "UnderMaintenance": "Under maintenance"
+      },
+      "UserRole": {
+        "Admin": "Administrator",
+        "Customer": "Customer",
+        "PremiumCustomer": "Premium customer",
+        "Support": "Support"
+      },
+      "ChargingStationCategoryEnum": {
+        "Public": "Public",
+        "Private": "Private",
+        "Partner": "Partner"
+      },
+      "ChargingStationStatusEnum": {
+        "Available": "Available",
+        "UnderMaintenance": "Under maintenance",
+        "Offline": "Offline"
+      },
+      "ChargingStationNetworkEnum": {
+        "Public": "Public",
+        "Private": "Private"
+      },
+      "ParkingTypeEnum": {
+        "ParallelParking": "Parallel parking",
+        "PerpendicularParking": "Perpendicular parking",
+        "AngleParking": "Angle parking"
+      },
+      "ReportStatus": {
+        "Pending": "Pending",
+        "InProgress": "In progress",
+        "Resolved": "Resolved",
+        "Closed": "Closed"
+      },
+      "ReportStatusEnum": {
+        "Pending": "Pending",
+        "InProgress": "In progress",
+        "Resolved": "Resolved",
+        "Closed": "Closed"
+      },
+      "ReportType": {
+        "ChargePoint": "Charge point",
+        "Connector": "Connector",
+        "Website": "Website",
+        "Other": "Other"
+      },
+      "ReportCategory": {
+        "General": "General",
+        "Technical": "Technical",
+        "Maintenance": "Maintenance"
+      },
+      "PartnerTypeEnum": {
+        "Vendor": "Vendor",
+        "ServiceProvider": "Service provider",
+        "Reseller": "Reseller",
+        "Affiliate": "Affiliate",
+        "Investor": "Investor",
+        "Other": "Other"
+      },
+      "ReportCriticality": {
+        "Informational": "Informational",
+        "Low": "Low",
+        "Medium": "Medium",
+        "High": "High",
+        "Critical": "Critical"
+      },
+      "RechargeOrderStatus": {
+        "Pending": "Pending",
+        "Processing": "Processing",
+        "Completed": "Completed",
+        "Failed": "Failed",
+        "Canceled": "Canceled",
+        "Refunded": "Refunded"
+      },
+      "NoticeTypeEnum": {
+        "LegalUpdate": "Legal update",
+        "Marketing": "Marketing",
+        "Maintenance": "Maintenance"
+      }
+    }
+  }
+}

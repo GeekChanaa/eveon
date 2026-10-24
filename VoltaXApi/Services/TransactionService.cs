@@ -27,6 +27,7 @@ namespace VoltaXApi.Services
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IHubContext<ChargingSessionHub> _chargingSessionHub;
     private readonly GlobalConfigurations _globalConfigurations;
+    private readonly ICostCalculator _costCalculator;
     private readonly ILogger<TransactionService> _logger;
     private readonly VoltaXApiDbContext _context;
 
@@ -42,6 +43,7 @@ namespace VoltaXApi.Services
       IServiceScopeFactory scopeFactory,
       IHubContext<ChargingSessionHub> chargingSessionHub,
       GlobalConfigurations globalConfigurations,
+      ICostCalculator costCalculator,
       ILogger<TransactionService> logger,
       VoltaXApiDbContext context
     )
@@ -58,6 +60,7 @@ namespace VoltaXApi.Services
       _chargingSessionService = chargingSessionService;
       _chargingSessionHub = chargingSessionHub;
       _globalConfigurations = globalConfigurations;
+      _costCalculator = costCalculator;
       _logger = logger;
     }
 
@@ -115,15 +118,19 @@ namespace VoltaXApi.Services
           return status;
         }
 
-        // Check if the card has sufficient balance before starting
-        if (card.Balance <= 0)
+        // A session needs a positive balance of at least GlobalConfigurations:DefaultMinimumRequiredBalance,
+        // as a start from the app does (EVDriverService); otherwise the charger is told NoCredit.
+        if (!IdTokenAuthorizationService.HasCredit(card, _globalConfigurations))
         {
-          _logger.LogWarning("StartTransaction => Card {CardId} has no balance ({Balance}), rejecting start", card.ID, card.Balance);
+          _logger.LogWarning("StartTransaction => Card {CardId} balance {Balance} is below the minimum {Minimum}, rejecting start",
+              card.ID, card.Balance, _globalConfigurations.DefaultMinimumRequiredBalance);
           status = AuthorizationStatusEnumType.NoCredit;
           await CreateChargingSessionNotification(
               card,
               "ChargingStartRejectedNoCredit",
-              "Your charging session could not start because your charging card has no available balance. Please top up your card and try again.",
+              card.Balance <= 0
+                  ? "Your charging session could not start because your charging card has no available balance. Please top up your card and try again."
+                  : $"Your charging session could not start because your charging card balance ({card.Balance:0.00} MAD) is below the minimum of {_globalConfigurations.DefaultMinimumRequiredBalance:0.00} MAD needed to start. Please top up your card and try again.",
               data.EventKey(card),
               urgent: true);
           return status;
@@ -188,11 +195,20 @@ namespace VoltaXApi.Services
         if (validateOnly || connector == null)
           return status;
 
+        // A Started event re-sent after a lost CALLRESULT: the transaction exists already.
+        if (await _context.Transactions.AnyAsync(t => t.Uid == data.TransactionUid && t.ConnectorID == connector.ID))
+        {
+          _logger.LogInformation("StartTransaction => Transaction {TransactionUid} already started; repeated event acknowledged", data.TransactionUid);
+          return status;
+        }
+
         if (!TryParseUtc(data.Timestamp, out var startTimestamp))
         {
           _logger.LogWarning("StartTransaction => Invalid timestamp {Timestamp}; server time used", data.Timestamp);
           startTimestamp = DateTime.UtcNow;
         }
+
+        await CloseSupersededTransactions(data.ChargePointId, connector, data.TransactionUid);
 
         chargingSession = await _chargingSessionService.StartChargingSession(connector, card, startTimestamp);
 
@@ -217,7 +233,7 @@ namespace VoltaXApi.Services
               transaction.Uid, card.ID, connector.ID);
 
           // Notify connected clients about session start
-          await NotifySessionUpdate(chargingSession.ID, new ChargingSessionUpdateDto
+          await NotifySessionUpdate(chargingSession.ID, chargingSession.UserID, new ChargingSessionUpdateDto
           {
             SessionId = chargingSession.ID,
             TransactionUid = transaction.Uid,
@@ -363,6 +379,20 @@ namespace VoltaXApi.Services
           return status;
         }
 
+        // A reading older than the last one applied (a retried sample, an offline queue flushed out of order) is
+        // stale: applying it would move the meter and the duration of the session backwards.
+        var lastAppliedMinutes = await _context.ChargingSessions.AsNoTracking()
+            .Where(s => s.ID == transaction.ChargingSessionID)
+            .Select(s => s.ChargedMinutes)
+            .FirstOrDefaultAsync();
+        if (lastAppliedMinutes > 0 && updateTimestamp < transaction.StartTime.AddMinutes(lastAppliedMinutes.Value))
+        {
+          _logger.LogInformation(
+              "UpdateTransaction => Reading of {Timestamp} for transaction {TransactionUid} is older than the last one applied; ignored",
+              data.Timestamp, transaction.Uid);
+          return status;
+        }
+
         if (data.AbnormalCondition)
         {
           await CreateChargingSessionNotification(
@@ -374,17 +404,25 @@ namespace VoltaXApi.Services
               chargingSessionId: transaction.ChargingSessionID);
         }
 
+        // The previous reading, for the power drawn since then (shown live to the driver).
+        double previousMeter = transaction.MeterStop ?? transaction.MeterStart;
+        double previousMinutes = await _context.ChargingSessions.AsNoTracking()
+            .Where(s => s.ID == transaction.ChargingSessionID).Select(s => s.ChargedMinutes).FirstOrDefaultAsync() ?? 0;
+
         transaction.MeterStop = currentMeter;
         await _context.SaveChangesAsync();
 
           double chargedKwhs = (transaction.MeterStop ?? 0) - transaction.MeterStart;
           double elapsedMinutes = (updateTimestamp - transaction.StartTime).TotalMinutes;
-          double currentCost = CostCalculator.Instance.RunningCost(connector, chargedKwhs, elapsedMinutes);
-          double remainingBalance = Math.Max(0, card.Balance - currentCost);
+          double? powerKw = meterKWH.HasValue ? AveragePowerKw(previousMeter, previousMinutes, currentMeter, elapsedMinutes) : null;
 
           // Update the charging session with latest meter data
-          await _chargingSessionService.UpdateChargingSession(
+          var session = await _chargingSessionService.UpdateChargingSession(
               transaction.ChargingSessionID, elapsedMinutes, chargedKwhs);
+
+          // Same formula and tariff as the final debit.
+          decimal currentCost = _costCalculator.RunningCost(Tariff.Of(session, connector, _globalConfigurations.Vat), chargedKwhs, elapsedMinutes);
+          decimal remainingBalance = Math.Max(0, card.Balance - currentCost);
 
           _logger.LogInformation(
               "UpdateTransaction => Transaction {TransactionUid}: {Kwh:0.000} kWh, cost={Cost:0.00}, balance={Balance:0.00}",
@@ -409,12 +447,13 @@ namespace VoltaXApi.Services
                 services => services.GetRequiredService<IEVDriverService>().RequestStopTransaction(chargePoint.ChargePointId, stopRequest));
 
             // Notify client about low balance
-            await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+            await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
             {
               SessionId = transaction.ChargingSessionID,
               TransactionUid = transaction.Uid,
               Status = "StoppingLowBalance",
               EnergyKWh = chargedKwhs,
+              PowerKw = powerKw,
               DurationMinutes = elapsedMinutes,
               CurrentCost = currentCost,
               CardBalance = remainingBalance,
@@ -425,12 +464,13 @@ namespace VoltaXApi.Services
           }
 
           // Notify connected clients about session update
-          await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+          await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
           {
             SessionId = transaction.ChargingSessionID,
             TransactionUid = transaction.Uid,
             Status = "Charging",
             EnergyKWh = chargedKwhs,
+            PowerKw = powerKw,
             DurationMinutes = elapsedMinutes,
             CurrentCost = currentCost,
             CardBalance = remainingBalance,
@@ -606,31 +646,24 @@ namespace VoltaXApi.Services
             ? transaction.MeterStop.Value - transaction.MeterStart
             : 0;
 
-        // Deduct amount from card
-        if (cardTagID > 0)
-          await _cardService.SubstractAmountFromCardByMinutes(cardTagID, minutesCharged, connector.ID);
-
-        await _chargingSessionService.EndChargingSession(
+        // Ends and bills the session; the ended transaction is saved in the same SaveChanges as the debit.
+        var session = await _chargingSessionService.EndChargingSession(
             transaction.ChargingSessionID, minutesCharged, chargedKwhs,
-            endTimestamp);
-
+            endTimestamp, data.StoppedReason);
+        transaction.Amount = session.ChargingPriceWithVAT;
         await _context.SaveChangesAsync();
 
         _logger.LogInformation(
-            "EndTransaction => Transaction {TransactionUid} ended: {Kwh:0.000} kWh, {Minutes:0.0} minutes",
-            transaction.Uid, chargedKwhs, minutesCharged);
+            "EndTransaction => Transaction {TransactionUid} ended: {Kwh:0.000} kWh, {Minutes:0.0} minutes, billed {Amount:0.00}",
+            transaction.Uid, chargedKwhs, minutesCharged, session.ChargingPriceWithVAT);
 
         // Shows the billed amount on the charger's display (CostUpdated, 2.0.1 only); never blocks this handler.
         CostUpdatedSender.SendFinalInBackground(_scopeFactory, _logger, chargePoint.ChargePointId, transaction.Uid,
-            CostCalculator.Instance.FinalCost(connector, minutesCharged));
+            session.ChargingPriceWithVAT);
 
-        // Reload updated card balance
-        double updatedBalance = card?.Balance ?? 0;
+        decimal updatedBalance = session.BalanceAfter ?? card?.Balance ?? 0;
         if (card != null)
         {
-          await _context.Entry(card).ReloadAsync();
-          updatedBalance = card.Balance;
-
           if (updatedBalance <= _globalConfigurations.DefaultLowBalanceThresholdBuffer)
           {
             await CreateChargingSessionNotification(
@@ -646,20 +679,25 @@ namespace VoltaXApi.Services
           }
         }
 
-        // Notify connected clients about session end
-        double finalCost = CostCalculator.Instance.EnergyCost(connector, chargedKwhs);
-        await NotifySessionUpdate(transaction.ChargingSessionID, new ChargingSessionUpdateDto
+        // Notify connected clients about session end, with the amount actually billed.
+        await NotifySessionUpdate(transaction.ChargingSessionID, session.UserID, new ChargingSessionUpdateDto
         {
           SessionId = transaction.ChargingSessionID,
           TransactionUid = transaction.Uid,
           Status = "Ended",
           EnergyKWh = chargedKwhs,
           DurationMinutes = minutesCharged,
-          CurrentCost = finalCost,
+          CurrentCost = session.ChargingPriceWithVAT,
           CardBalance = updatedBalance,
           StopReason = data.TriggerReason,
           Timestamp = transaction.StopTime ?? DateTime.UtcNow
         });
+
+        // The quote mail goes out after the charger is answered: a slow or unreachable mail server (30 s timeout)
+        // must not hold up the StopTransaction / Ended answer, or the charger retries the stop.
+        var quotedSessionId = transaction.ChargingSessionID;
+        OcppBackgroundCommand.Run(_scopeFactory, _logger, "Session quote mail", chargePoint.ChargePointId,
+            services => services.GetRequiredService<IChargingSessionService>().SendSessionQuoteAsync(quotedSessionId));
       }
       catch (Exception exp)
       {
@@ -681,6 +719,58 @@ namespace VoltaXApi.Services
       return status;
     }
 
+    /// <summary>
+    /// A connector charges one transaction at a time: when a new one starts, an older one still open there was
+    /// forgotten by the charger (power cut, reboot). It is ended at its last meter reading so it stops blocking
+    /// the connector and the customer pays what was measured.
+    /// </summary>
+    private async Task CloseSupersededTransactions(string chargePointId, Connector connector, string newTransactionUid)
+    {
+      var superseded = await _context.Transactions.AsNoTracking()
+          .Where(t => t.ConnectorID == connector.ID && t.Status == TransactionStatusEnum.Current && t.StopTime == null
+                      && t.Uid != null && t.Uid != newTransactionUid)
+          .Select(t => new { Uid = t.Uid!, t.StartTime, t.ChargingSession!.ChargedMinutes })
+          .ToListAsync();
+      foreach (var old in superseded)
+      {
+        _logger.LogWarning("StartTransaction => {NewUid} starts on connector {ConnectorId} while {OldUid} is still open; closing {OldUid}",
+            newTransactionUid, connector.ID, old.Uid, old.Uid);
+        await EndTransaction(new TransactionEventData
+        {
+          ChargePointId = chargePointId,
+          TransactionUid = old.Uid,
+          EventType = TransactionEventEnumType.Ended,
+          Timestamp = DateTime.SpecifyKind(old.StartTime.AddMinutes(Math.Max(0, old.ChargedMinutes ?? 0)), DateTimeKind.Utc).ToString("o"),
+          TriggerReason = "Superseded",
+          StoppedReason = ReasonEnumType.Other,
+          AbnormalStop = true,
+          ReasonSuffix = " (a new session started on this connector)"
+        }, connector);
+      }
+    }
+
+    public async Task NotifyConnectorFaultAsync(int connectorId, DateTimeOffset? at)
+    {
+      var open = await _context.Transactions.AsNoTracking()
+          .Where(t => t.ConnectorID == connectorId && t.Status == TransactionStatusEnum.Current && t.StopTime == null)
+          .OrderByDescending(t => t.ID)
+          .Select(t => new { t.ID, t.ChargingSessionID, t.StartCardID })
+          .FirstOrDefaultAsync();
+      if (open?.StartCardID == null)
+        return;
+      var card = await _context.Cards.AsNoTracking().FirstOrDefaultAsync(c => c.ID == open.StartCardID);
+      if (card == null)
+        return;
+      _logger.LogWarning("Connector {ConnectorId} faulted during transaction {TransactionId}", connectorId, open.ID);
+      await CreateChargingSessionNotification(
+          card,
+          "ChargerFaultDuringSession",
+          "The charge point reported a fault during your charging session. Charging may have stopped: please check your vehicle. You are only billed for the energy measured.",
+          $"Transaction:{open.ID}:Faulted:{at:o}",
+          urgent: true,
+          chargingSessionId: open.ChargingSessionID);
+    }
+
     #region Private Helpers
 
     /// <summary>Parses an OCPP timestamp as a UTC instant (a timestamp without offset is taken as UTC).</summary>
@@ -689,7 +779,10 @@ namespace VoltaXApi.Services
             System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out utc);
 
     /// <summary>
-    /// Finds an active (non-closed) transaction by UID first, then falls back to the latest on the connector.
+    /// The open transaction with this charger transaction id on the connector's charge point, or null. There is no
+    /// fallback on another open transaction of the connector: a retried or late Ended event for a transaction
+    /// already closed would then close (and bill) the session that is charging now. The charge point is part of the
+    /// key because 2.0.1 transaction ids are only unique per charging station (many chargers count from 1).
     /// </summary>
     private async Task<Transaction?> FindActiveTransaction(
         string transactionUid,
@@ -697,56 +790,55 @@ namespace VoltaXApi.Services
         string chargePointStatusId,
         Connector? connector)
     {
-      // First try: find by transaction UID
+      var chargePointDbId = connector?.ChargePointID;
       var transaction = (await _transactionRepository
-          .FindAsync(t => t.Uid == transactionUid))
+          .FindAsync(t => t.Uid == transactionUid && (chargePointDbId == null || t.Connector!.ChargePointID == chargePointDbId)))
           .OrderByDescending(t => t.ID)
           .FirstOrDefault();
 
-      if (transaction != null && !transaction.StopTime.HasValue)
-        return transaction;
-
-      if (transaction != null && transaction.StopTime.HasValue)
-        _logger.LogDebug("FindActiveTransaction => Transaction {Uid} is already closed", transactionUid);
-
-      // Fallback: find latest open transaction on this connector
-      if (connector == null)
+      if (transaction == null)
       {
-        _logger.LogDebug("FindActiveTransaction => No connector provided, cannot find fallback transaction");
+        _logger.LogWarning("FindActiveTransaction => Unknown transaction {Uid} from {ChargePointId} (connector {ConnectorId})",
+            transactionUid, chargePointStatusId, connector?.ID);
         return null;
       }
 
-      transaction = (await _transactionRepository
-          .FindAsync(t => t.ConnectorID == connector.ID && !t.StopTime.HasValue))
-          .OrderByDescending(t => t.ID)
-          .FirstOrDefault();
-
-      if (transaction != null)
+      if (transaction.StopTime.HasValue || transaction.Status == TransactionStatusEnum.Ended)
       {
-        _logger.LogDebug("FindActiveTransaction => Found fallback transaction {TransactionId} on connector {ConnectorId}",
-            transaction.ID, connector.ID);
-        return transaction;
+        _logger.LogInformation("FindActiveTransaction => Transaction {Uid} is already closed; event ignored", transactionUid);
+        return null;
       }
 
-      _logger.LogDebug("FindActiveTransaction => No active transaction found for connector {ConnectorId}", connector.ID);
-      return null;
+      return transaction;
     }
 
     /// <summary>
-    /// Send a real-time update to all clients subscribed to the given charging session.
+    /// Sends a real-time update to the clients following the charging session and to the session owner's own
+    /// connections (customer portal live widget: every connection joins its user's group on connect).
     /// </summary>
-    private async Task NotifySessionUpdate(int chargingSessionId, ChargingSessionUpdateDto update)
+    private async Task NotifySessionUpdate(int chargingSessionId, int? ownerUserId, ChargingSessionUpdateDto update)
     {
       try
       {
-        string groupName = ChargingSessionHub.GetSessionGroupName(chargingSessionId);
-        await _chargingSessionHub.Clients.Group(groupName).SendAsync("SessionUpdate", update);
-        _logger.LogDebug("NotifySessionUpdate => Sent update to session group {GroupName}", groupName);
+        var groups = new List<string> { ChargingSessionHub.GetSessionGroupName(chargingSessionId) };
+        if (ownerUserId.HasValue)
+          groups.Add(ChargingSessionHub.GetUserGroupName(ownerUserId.Value));
+        await _chargingSessionHub.Clients.Groups(groups).SendAsync("SessionUpdate", update);
+        _logger.LogDebug("NotifySessionUpdate => Sent update to {Groups}", string.Join(", ", groups));
       }
       catch (Exception ex)
       {
         _logger.LogWarning(ex, "NotifySessionUpdate => Failed to send SignalR update for session {SessionId}", chargingSessionId);
       }
+    }
+
+    /// <summary>Average power (kW) between two meter readings; null when they are less than 3 seconds apart or the meter went back.</summary>
+    public static double? AveragePowerKw(double fromKWh, double fromMinutes, double toKWh, double toMinutes)
+    {
+      var hours = (toMinutes - fromMinutes) / 60.0;
+      if (hours < 3.0 / 3600 || toKWh < fromKWh)
+        return null;
+      return Math.Round((toKWh - fromKWh) / hours, 2);
     }
 
     /// <summary>
@@ -757,7 +849,7 @@ namespace VoltaXApi.Services
     private async Task CreateLowBalanceNotification(
         Card card,
         Transaction transaction,
-        double remainingBalance)
+        decimal remainingBalance)
     {
       await CreateChargingSessionNotification(
           card,

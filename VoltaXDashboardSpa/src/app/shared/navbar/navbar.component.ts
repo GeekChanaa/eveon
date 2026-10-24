@@ -6,6 +6,7 @@ import { AccessService } from 'src/_services/access.service';
 import { SidebarService } from 'src/_services/sidebar.service';
 import { UserService } from 'src/_services/user.service';
 import { avatarUrl } from 'src/_helpers/avatar-url';
+import { LanguageService } from 'src/_services/language.service';
 @Component({ selector: 'app-navbar', templateUrl: './navbar.component.html', styleUrls: ['./navbar.component.sass'] })
 export class NavbarComponent implements OnInit, OnDestroy {
   user: any = {};
@@ -13,7 +14,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   userInitials = '?';
   private subscriptions = new Subscription();
   constructor(private auth: AuthService, public access: AccessService, private router: Router,
-    private users: UserService, private sidebar: SidebarService) {}
+    private users: UserService, private sidebar: SidebarService, public language: LanguageService) {}
   ngOnInit(): void {
     this.subscriptions.add(this.access.load().subscribe({ next: info => {
       this.user = info;
@@ -23,6 +24,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.users.getAvatarUrl().subscribe(url => { if (url) this.imageUrl = avatarUrl(url); }));
   }
   toggleSidebar(): void { this.sidebar.toggleOpened(); }
+  useLanguage(code: string): void { this.language.use(code); }
   logout(): void { this.auth.logout(); }
   goToProfile(): void {
     this.router.navigateByUrl(this.access.can('AccessDashboard') ? '/dashboard/profile' : this.user.role === 'Partner' && this.user.partnerId ? '/partner-dashboard/profile' : '/my-dashboard/profile');

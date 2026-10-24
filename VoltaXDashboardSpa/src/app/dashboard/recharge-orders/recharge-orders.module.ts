@@ -7,6 +7,7 @@ import { RechargeOrdersListComponent } from './recharge-orders-list/recharge-ord
 import { RechargeOrderComponent } from './recharge-order/recharge-order.component';
 import { CreateRechargeOrderComponent } from './create-recharge-order/create-recharge-order.component';
 import { RechargeOrdersRoutingModule } from './recharge-orders-routing.module';
+import { RefundPanelComponent } from 'src/app/shared/billing/refund-panel.component';
 @NgModule({
     declarations: [
         RechargeOrdersListComponent,
@@ -19,7 +20,8 @@ import { RechargeOrdersRoutingModule } from './recharge-orders-routing.module';
         CommonModule,
         SharedModule,
         FormsModule,
-        RechargeOrdersRoutingModule
+        RechargeOrdersRoutingModule,
+        RefundPanelComponent
     ],
   })
   export class RechargeOrdersModule { }

@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VoltaXApi.Services
 {
+    /// <summary>
+    /// Operator statistics. Revenue covers ended sessions and is summed by the database (see
+    /// <see cref="SessionAggregation"/>); daily and monthly figures use business-time-zone dates of the session start.
+    /// </summary>
     public class StatisticsService : IStatisticsService
     {
         private readonly VoltaXApiDbContext _context;
@@ -34,57 +38,41 @@ namespace VoltaXApi.Services
             };
         }
 
-        public async Task<double> GetTotalRevenueAsync(double vatRate, double gracePeriodSeconds)
-        {
-            var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null));
-            return sessions.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
-        }
+        public async Task<double> GetTotalRevenueAsync(decimal vatRate, double gracePeriodSeconds) =>
+            (double)(await SessionAggregation.TotalAsync(EndedSessions(), new SessionPricing(vatRate, gracePeriodSeconds))).Revenue;
 
         // Total revenue for the current business day
-        public async Task<double> GetTotalRevenueTodayAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<double> GetTotalRevenueTodayAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today);
             var to = _clock.StartOfDayUtc(_clock.Today.AddDays(1));
-            var sessions = await PricedSessions(_context.ChargingSessions
-                .Where(s => s.EndDate != null && s.StartDate >= from && s.StartDate < to));
-            return sessions.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds));
+            var sessions = EndedSessions().Where(s => s.StartDate >= from && s.StartDate < to);
+            return (double)(await SessionAggregation.TotalAsync(sessions, new SessionPricing(vatRate, gracePeriodSeconds))).Revenue;
         }
 
         // Daily revenue for the last 30 business days, keyed by business date
-        public async Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<Dictionary<DateTime, double>> GetDailyRevenueLast30DaysAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
-            var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null && s.StartDate >= from));
-
-            return sessions
-                .GroupBy(s => _clock.ToLocal(s.StartDate).Date)
-                .ToDictionary(g => g.Key, g => g.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
+            return await RevenueBy(from, BusinessPeriods.DayBoundaries(_clock, from), vatRate, gracePeriodSeconds, local => local.Date);
         }
 
         // Monthly revenue for the last year, keyed "month-year" of the business date
-        public async Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(double vatRate, double gracePeriodSeconds)
+        public async Task<Dictionary<string, double>> GetMonthlyRevenueLastYearAsync(decimal vatRate, double gracePeriodSeconds)
         {
             var from = _clock.StartOfDayUtc(_clock.Today.AddYears(-1));
-            var sessions = await PricedSessions(_context.ChargingSessions.Where(s => s.EndDate != null && s.StartDate >= from));
-
-            return sessions
-                .GroupBy(s => MonthKey(_clock.ToLocal(s.StartDate)))
-                .ToDictionary(g => g.Key, g => g.Sum(s => s.TotalPriceWithVAT(vatRate, (int)gracePeriodSeconds)));
+            return await RevenueBy(from, BusinessPeriods.MonthBoundaries(_clock, from), vatRate, gracePeriodSeconds, local => $"{local.Month}-{local.Year}");
         }
 
-        private static string MonthKey(DateTime local) => $"{local.Month}-{local.Year}";
+        private IQueryable<ChargingSession> EndedSessions() =>
+            _context.ChargingSessions.AsNoTracking().Where(s => s.EndDate != null);
 
-        /// <summary>Loads only the columns the price computation needs.</summary>
-        private static Task<List<ChargingSession>> PricedSessions(IQueryable<ChargingSession> query) =>
-            query.AsNoTracking()
-                .Select(s => new ChargingSession
-                {
-                    StartDate = s.StartDate,
-                    ChargedMinutes = s.ChargedMinutes,
-                    PricePerMinute = s.PricePerMinute,
-                    IdleMinutes = s.IdleMinutes,
-                    PricePerIdleMinute = s.PricePerIdleMinute
-                })
-                .ToListAsync();
+        private async Task<Dictionary<TKey, double>> RevenueBy<TKey>(DateTime from, IReadOnlyList<DateTime> boundaries, decimal vatRate,
+            double gracePeriodSeconds, Func<DateTime, TKey> key) where TKey : notnull
+        {
+            var totals = await SessionAggregation.ByStartAsync(EndedSessions().Where(s => s.StartDate >= from), boundaries,
+                start => key(_clock.ToLocal(start)), new SessionPricing(vatRate, gracePeriodSeconds));
+            return totals.ToDictionary(t => t.Key, t => (double)t.Value.Revenue);
+        }
     }
 }

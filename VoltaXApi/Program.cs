@@ -32,10 +32,32 @@ public class Program
 
             var app = builder.Build();
 
-            var initializeRefreshTokens = args.Contains("--initialize-refresh-tokens");
+            var migrateOnly = args.Contains(DatabaseMigrations.Flag);
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<VoltaXApiDbContext>();
+
+                // Schema first, through migrations only (docs/database.md): the seeders below need it.
+                // SQLite (test runs) has no migrations: the schema comes from the model.
+                var migrations = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(DatabaseMigrations));
+                if (db.Database.IsSqlite())
+                {
+                    await db.Database.EnsureCreatedAsync();
+                    if (migrateOnly)
+                        return;
+                }
+                else if (migrateOnly || builder.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+                {
+                    await DatabaseMigrations.MigrateAsync(db, migrations);
+                    await DatabaseMigrations.VerifySchemaAsync(db, migrations);
+                    if (migrateOnly)
+                        return;
+                }
+                else
+                    await DatabaseMigrations.CheckNothingPendingAsync(db,
+                        builder.Configuration.GetValue<bool?>("Database:FailOnPendingMigrations") ?? app.Environment.IsProduction(),
+                        migrations);
+
                 await PermissionSeeder.Seed(db);
                 try
                 {
@@ -46,21 +68,12 @@ public class Program
                     // Table missing until AddChargePointProvisioning is applied; the API still starts.
                     Log.Warning(ex, "Could not seed the default OCPP provisioning profile");
                 }
-                if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Database:InitializePhoneLogin"))
-                    await PhoneLoginSchema.Initialize(db);
-                if (initializeRefreshTokens || builder.Configuration.GetValue<bool?>("Database:InitializeRefreshTokens")
-                    == true || (app.Environment.IsDevelopment() && builder.Configuration["Database:InitializeRefreshTokens"] == null))
-                    await RefreshTokenSchema.Initialize(db);
-                else
-                    await RefreshTokenSchema.Verify(db);
                 if (args.Contains(AdminBootstrap.Flag))
                 {
                     await AdminBootstrap.Run(db, builder.Configuration);
                     return;
                 }
             }
-            if (initializeRefreshTokens)
-                return;
 
             // Every start (so every deploy) checks the roles, defaults and test accounts.
             await RunFirstSetup(app);
@@ -98,10 +111,14 @@ public class Program
         ServiceRegistration.ConfigureApplicationServices(builder.Services);
         ServiceRegistration.ConfigureOCPPServices(builder.Services);
         ServiceRegistration.ConfigureOCPPHandlers(builder.Services);
+        ServiceRegistration.ConfigurePayments(builder.Services, builder.Configuration, builder.Environment);
 
-        // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger) or "SqlServer" (default).
+        // Database:Provider = "MySql" (MariaDB / MySQL, e.g. Hostinger), "Sqlite" (local and CI test runs only)
+        // or "SqlServer" (default).
         if (string.Equals(builder.Configuration["Database:Provider"], "MySql", StringComparison.OrdinalIgnoreCase))
             ServiceRegistration.ConfigureDatabaseMySql(builder.Services, builder.Configuration);
+        else if (string.Equals(builder.Configuration["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase))
+            ServiceRegistration.ConfigureDatabaseSqlite(builder.Services, builder.Configuration, builder.Environment);
         else
             ServiceRegistration.ConfigureDatabaseSqlServer(builder.Services, builder.Configuration);
 
@@ -157,25 +174,27 @@ public class Program
         if (result.HasErrors && options.FailStartupOnError)
             throw new InvalidOperationException("First setup check failed, see the log above");
         if (result.Credentials.Count == 0)
+        {
+            // Fixed passwords from configuration, or rotation off: nothing new to tell anyone.
+            if (options.TestUsers.Enabled)
+                Log.Information("No test account passwords mailed: no password changed on this start");
             return;
+        }
 
-        // Mailed once the API listens: a slow SMTP server must not hold the health check back.
+        // Queued: MailDeliveryService sends it once the API runs, so a slow SMTP server never holds the start back.
         var recipient = options.TestUsers.CredentialsRecipient;
         var environment = $"{app.Environment.EnvironmentName} ({app.Configuration["SpaLink"]})";
-        app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
+        try
         {
-            try
-            {
-                using var scope = app.Services.CreateScope();
-                await scope.ServiceProvider.GetRequiredService<IMailService>().SendSetupCredentialsMail(recipient, environment, result.Credentials);
-                Log.Information("Test account passwords mailed to {Recipient}", recipient);
-            }
-            catch (Exception ex)
-            {
-                // Never log the passwords: they are only valid until the next start anyway.
-                Log.Error(ex, "Could not mail the test account passwords to {Recipient}", recipient);
-            }
-        }));
+            using var scope = app.Services.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IMailService>().SendSetupCredentialsMail(recipient, environment, result.Credentials);
+            Log.Information("Test account passwords queued for {Recipient}", recipient);
+        }
+        catch (Exception ex)
+        {
+            // Never log the passwords: they are only valid until the next start anyway.
+            Log.Error(ex, "Could not mail the test account passwords to {Recipient}", recipient);
+        }
     }
 
     private static void SeedDatabase(WebApplication app)

@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -24,14 +25,10 @@ namespace VoltaXApi.Controllers
     public class ChargingSessionController : GenericController<ChargingSession>
     {
         private readonly IChargingSessionRepository _repository;
-        private readonly ChargingSessionInvoiceGeneratorService _invoiceGenerator;
 
-        public ChargingSessionController(
-            IChargingSessionRepository repository,
-            ChargingSessionInvoiceGeneratorService invoiceGeneratorService) : base(repository)
+        public ChargingSessionController(IChargingSessionRepository repository) : base(repository)
         {
             _repository = repository;
-            _invoiceGenerator = invoiceGeneratorService;
         }
 
         [HttpGet("GetChargePointChargingSessions/{chargePointID}")]
@@ -46,39 +43,40 @@ namespace VoltaXApi.Controllers
         [HttpGet("GetChargingSessionInformations/{chargingSessionID}")]
         public async Task<IActionResult> GetChargingSessionInformations(int chargingSessionID)
         {
-            return Ok(await _repository.GetChargingSessionInformations(chargingSessionID));
+            var session = await _repository.GetChargingSessionInformations(chargingSessionID);
+            return session == null ? NotFound() : Ok(session);
         }
 
+        /// <summary>The legal invoice of an ended, billed session (issued on first request, then always the stored PDF).</summary>
         [HttpGet("GetChargingSessionInvoice/{chargingSessionID}")]
-        public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID)
+        public async Task<IActionResult> GetChargingSessionInvoice(int chargingSessionID,
+            [FromServices] VoltaXApi.Services.Billing.IInvoiceService invoices, CancellationToken ct)
         {
-            var chargingSession = await _repository.GetChargingSessionInformations(chargingSessionID);
-            var chargingSessionInvoice = new ChargingSessionInvoice
-            {
-                UserName = chargingSession.UserName,
-                SessionDate = chargingSession.StartDate,
-                StartDate = chargingSession.StartDate,
-                EndDate = chargingSession.EndDate,
-                ConnectorID = chargingSession.ConnectorID,
-                ChargePointName = chargingSession.ChargePointName,
-                TotalKwhCharged = chargingSession.KwhCharged ?? 0,
-                TotalPrice = chargingSession.TotalPriceWithVAT ?? 0,
-                TotalPriceWithoutVAT = chargingSession.TotalPriceWithoutVAT ?? 0,
-                TotalPriceWithVAT = chargingSession.TotalPriceWithVAT ?? 0,
-                ChargingPriceWithVAT = chargingSession.ChargingPriceWithVAT ?? 0,
-                IdlePriceWithVAT = chargingSession.IdldePriceWithVAT ?? 0,
-                CardNumber  = chargingSession.CardNumber,
-                ChargedMinutes = chargingSession.ChargedMinutes ?? 0,
-                IdleMinutes = chargingSession.IdleMinutes ?? 0,
-                PricePerIdleMinute = chargingSession.PricePerIdleMinute ?? 0,
-                PricePerMinute = chargingSession.PricePerMinute ?? 0,
-                KwhsCharged = chargingSession.KwhCharged ?? 0,
-                CardBalance = chargingSession.CardBalance,
-                ChargingSessionID = chargingSessionID
-            };
-            var pdfBytes = _invoiceGenerator.GenerateInvoice(chargingSessionInvoice);
+            var invoice = await invoices.IssueForSessionAsync(chargingSessionID, ct);
+            var file = invoice == null ? null : await invoices.GetFileAsync(invoice.ID, ct);
+            return file == null ? NotFound() : File(file.Content, file.ContentType, file.FileName);
+        }
 
-            return File(pdfBytes, "application/pdf", "Invoice.pdf");
+        /// <summary>Every session of the network with filters (period, status, station, charge point, customer, text), newest first.</summary>
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search([FromQuery] OperatorSessionFilter filter,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search, CancellationToken ct) =>
+            Ok(await search.SessionsAsync(filter, ct));
+
+        /// <summary>The filtered sessions as a CSV file or a printable PDF statement (at most 20,000 sessions).</summary>
+        [HttpGet("Export")]
+        public async Task<IActionResult> Export([FromQuery] OperatorSessionFilter filter, [FromQuery] string format,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search,
+            [FromServices] VoltaXApi.Services.CustomerPortal.SessionStatementExporter exporter,
+            [FromServices] GlobalConfigurations pricing, CancellationToken ct)
+        {
+            if (format is not ("csv" or "pdf"))
+                return BadRequest(new { error = "format must be csv or pdf" });
+            var rows = await search.SessionStatementAsync(filter, ct);
+            var name = $"eveon-sessions-{DateTime.UtcNow:yyyyMMdd}";
+            return format == "csv"
+                ? File(exporter.Csv(rows), "text/csv; charset=utf-8", name + ".csv")
+                : File(exporter.Pdf("EVEON network", filter.From, filter.To, rows, pricing.Vat), "application/pdf", name + ".pdf");
         }
 
         [HttpGet("GetChargePointNbrChargingSessions/{chargePointID}")]

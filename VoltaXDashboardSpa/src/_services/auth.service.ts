@@ -17,6 +17,7 @@ import { LinkedAccountsDto } from 'src/_models/_dtos/linked-accounts-dto';
 import { TokenStorageService } from './token-storage.service';
 import { TokenRefreshService } from './token-refresh.service';
 import { GeolocationService } from './geolocation.service';
+import { RealtimeHubService } from './realtime-hub.service';
 
 export interface TwoFactorStatus { eligible: boolean; enabled: boolean; required: boolean; recoveryCodesLeft: number; }
 export interface TwoFactorEnrollment { secret: string; otpAuthUri: string; qrCodeDataUri: string; }
@@ -37,6 +38,7 @@ export class AuthService {
     private _tokenStorage: TokenStorageService,
     private _tokenRefresh: TokenRefreshService,
     private _geolocation: GeolocationService,
+    private _realtime: RealtimeHubService,
     ) 
     { }
 
@@ -120,6 +122,8 @@ export class AuthService {
   }
 
   private clearSession(){
+    // Live connections belong to the session that ends.
+    void this._realtime.stopAll();
     this._tokenStorage.clear();
     this.token = null;
     this.decodedToken = null;

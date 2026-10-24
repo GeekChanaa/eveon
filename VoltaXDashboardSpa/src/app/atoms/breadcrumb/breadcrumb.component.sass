@@ -3,13 +3,13 @@
 // fallbacks have to flip with the mode too, or dark mode there would inherit
 // the light ink at 3.4:1.
 .breadcrumb
-  --bc-ink: var(--vx-yellow-ink, #8A6410)
-  --bc-ink-strong: var(--vx-yellow-ink-strong, #6E4F0C)
+  --bc-ink: var(--vx-brand-ink, #1F3461)
+  --bc-ink-strong: var(--vx-brand-ink-strong, #0A1A3A)
   --bc-fg: var(--vx-text, #0B0B0B)
 
 body.dark .breadcrumb
-  --bc-ink: var(--vx-yellow-ink, #F0BE3C)
-  --bc-ink-strong: var(--vx-yellow-ink-strong, #FFD05C)
+  --bc-ink: var(--vx-brand-ink, #A3BEF5)
+  --bc-ink-strong: var(--vx-brand-ink-strong, #A3BEF5)
   --bc-fg: var(--vx-text, #FAFAFA)
 
 .breadcrumb
@@ -78,7 +78,7 @@ body.dark .breadcrumb
         // Keyboard users get a visible target — there was no focus style
         // at all before, so tabbing through was invisible.
         &:focus-visible
-          outline: 2px solid var(--vx-yellow, #E5B223)
+          outline: 2px solid var(--vx-brand, #0A1A3A)
           outline-offset: 3px
           border-radius: 3px
 

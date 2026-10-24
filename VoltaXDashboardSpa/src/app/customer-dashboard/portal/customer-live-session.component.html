@@ -1,0 +1,62 @@
+<section class="vx-live" [class.vx-live--compact]="compact" aria-labelledby="live-session-title">
+  <div class="vx-live__head">
+    <div class="vx-live__title">
+      <span class="vx-live__icon" aria-hidden="true"><vx-icon name="lightning"></vx-icon></span>
+      <div>
+        <h2 id="live-session-title">{{ (stopping ? 'portal.live.stoppingTitle' : 'customer.overview.liveTitle') | translate }}</h2>
+        <p>{{ session.stationName || session.chargePointName }}<ng-container *ngIf="session.connector"> · {{ session.connector }}</ng-container></p>
+      </div>
+    </div>
+    <span class="vx-badge vx-badge--dot" [ngClass]="connectionTone">{{ ('portal.live.connection.' + connection) | translate }}</span>
+  </div>
+
+  <dl class="vx-live__metrics">
+    <div class="vx-live__metric">
+      <dt>{{ 'customer.session.energy' | translate }}</dt>
+      <dd><span class="vx-num">{{ energy | vxNumber:'1.2-2' }}</span> <small>{{ 'common.units.kwh' | translate }}</small></dd>
+    </div>
+    <div class="vx-live__metric">
+      <dt>{{ 'portal.live.power' | translate }}</dt>
+      <dd><span class="vx-num">{{ power != null ? (power | vxNumber:'1.1-1') : '—' }}</span> <small>{{ 'common.units.kw' | translate }}</small></dd>
+      <span class="vx-live__hint" *ngIf="powerIsAverage">{{ 'portal.live.average' | translate }}</span>
+    </div>
+    <div class="vx-live__metric">
+      <dt>{{ 'portal.live.duration' | translate }}</dt>
+      <dd><span class="vx-num" dir="ltr">{{ clock }}</span></dd>
+    </div>
+    <div class="vx-live__metric vx-live__metric--brand">
+      <dt>{{ 'portal.live.cost' | translate }}</dt>
+      <dd><span class="vx-num">{{ cost | vxMoney }}</span></dd>
+      <span class="vx-live__hint">{{ 'portal.live.estimated' | translate }}</span>
+    </div>
+  </dl>
+
+  <div class="vx-live__balance" *ngIf="remaining != null">
+    <div class="vx-live__balance-row">
+      <span>{{ 'portal.live.balanceLeft' | translate }}</span>
+      <strong class="vx-num">{{ remaining | vxMoney }}</strong>
+    </div>
+    <div class="vx-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="usedPercent"
+      [attr.aria-label]="'portal.live.balanceUsed' | translate:{ percent: usedPercent }">
+      <span [style.width.%]="usedPercent" [class.vx-progress__bar--warn]="usedPercent >= 80"></span>
+    </div>
+  </div>
+
+  <div class="vx-alert vx-alert--warning" *ngIf="lowBalance" role="alert">{{ 'portal.live.lowBalance' | translate }}</div>
+  <div class="vx-alert" *ngIf="feedback" [ngClass]="feedbackClass(feedback.tone)" role="status">{{ feedback.key | translate:feedback.params }}</div>
+
+  <div class="vx-live__foot">
+    <p class="vx-live__note">{{ (connection === 'live' ? 'portal.live.noteLive' : 'portal.live.noteOffline') | translate }}</p>
+    <div class="vx-actions no-print">
+      <a class="vx-btn" *ngIf="!compact" [routerLink]="['/my-dashboard/sessions', session.id]">{{ 'common.actions.details' | translate }}</a>
+      <button type="button" class="vx-btn vx-btn--danger" (click)="askStop()" [disabled]="!canStop" [attr.aria-busy]="stopping">
+        <vx-icon name="stop"></vx-icon>{{ (stopping ? 'portal.live.stopping' : 'portal.live.stop') | translate }}
+      </button>
+    </div>
+  </div>
+
+  <vx-confirm-dialog #stopDialog tone="danger" [title]="'portal.live.stopTitle' | translate" [confirmLabel]="'portal.live.stopConfirm' | translate"
+    [cancelLabel]="'portal.live.keepCharging' | translate" (confirmed)="stop()">
+    <p>{{ 'portal.live.stopText' | translate:{ energy: (energy | vxNumber:'1.2-2'), cost: (cost | vxMoney) } }}</p>
+  </vx-confirm-dialog>
+</section>

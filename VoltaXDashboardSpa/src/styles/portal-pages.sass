@@ -1,0 +1,739 @@
+@import ./helpers/variables
+
+// ---------------------------------------------------------------------------
+// Customer and partner portal pages, on top of the portal building blocks
+// (portal.sass): icons, KPI tiles with an icon, loading skeletons, the live
+// session widget, dialogs, stacked tables on phones, photo grids, opening hours
+// and the printed pages. Logical properties only, so Arabic mirrors as is.
+// ---------------------------------------------------------------------------
+
+.vx-icon
+  display: inline-block
+  flex: none
+  width: 16px
+  height: 16px
+  fill: currentColor
+  vertical-align: -3px
+
+.vx-btn .vx-icon
+  vertical-align: middle
+
+.vx-btn--danger-solid
+  background: #b42318
+  border-color: #b42318
+  color: #fff
+  &:hover:not([disabled])
+    background: #912018
+    border-color: #912018
+
+.vx-alert--warning
+  border-color: rgba(247, 144, 9, .4)
+  background: rgba(247, 144, 9, .08)
+
+.vx-badge--dot:before
+  content: ""
+  width: 7px
+  height: 7px
+  border-radius: 50%
+  background: currentColor
+
+// KPI tiles: <div class="vx-stat"><span class="vx-stat__icon"><vx-icon>...
+.vx-stat
+  position: relative
+  min-width: 0
+.vx-stat__icon
+  position: absolute
+  inset-block-start: 16px
+  inset-inline-end: 16px
+  display: grid
+  place-items: center
+  width: 34px
+  height: 34px
+  border-radius: 10px
+  background: var(--vx-brand-soft)
+  color: var(--vx-brand-ink)
+  .vx-icon
+    width: 18px
+    height: 18px
+.vx-stat--brand .vx-stat__icon
+  background: rgba(255, 255, 255, .14)
+  color: inherit
+.vx-stat .vx-stat__label
+  padding-inline-end: 44px
+
+// Loading placeholders
+.vx-skeleton
+  display: block
+  min-height: 14px
+  border-radius: 8px
+  background: linear-gradient(90deg, var(--vx-hover) 0, var(--vx-surface-alt) 40%, var(--vx-hover) 80%)
+  background-size: 300% 100%
+  animation: vx-shimmer 1.3s ease-in-out infinite
+  color: transparent !important
+.vx-stat.vx-skeleton-tile
+  min-height: 104px
+  .vx-skeleton + .vx-skeleton
+    margin-block-start: 12px
+@keyframes vx-shimmer
+  0%
+    background-position: 100% 0
+  100%
+    background-position: 0 0
+@media (prefers-reduced-motion: reduce)
+  .vx-skeleton, .vx-badge--live:before
+    animation: none
+
+// Empty states with a hint and an action
+.vx-empty-state
+  display: grid
+  justify-items: center
+  gap: 8px
+  padding: 36px 16px
+  text-align: center
+  color: var(--vx-text-muted)
+  font-size: 13px
+  .vx-empty-state__icon
+    display: grid
+    place-items: center
+    width: 48px
+    height: 48px
+    border-radius: 14px
+    background: var(--vx-brand-soft)
+    color: var(--vx-brand-ink)
+    .vx-icon
+      width: 22px
+      height: 22px
+  strong
+    font-size: 14px
+    color: var(--vx-text)
+  p
+    max-width: 420px
+    margin: 0
+    line-height: 1.55
+
+// Shortcut list (overview pages)
+.vx-quick
+  display: grid
+  gap: 8px
+  margin: 0
+  padding: 0
+  list-style: none
+  a, button
+    display: flex
+    align-items: center
+    gap: 12px
+    width: 100%
+    padding: 12px
+    border: 1px solid var(--vx-border)
+    border-radius: 12px
+    background: var(--vx-surface)
+    color: var(--vx-text)
+    font: inherit
+    font-size: 13px
+    font-weight: 650
+    text-align: start
+    text-decoration: none
+    cursor: pointer
+    transition: border-color .15s, background .15s
+    &:hover
+      border-color: var(--vx-brand)
+      background: var(--vx-surface-alt)
+    &:focus-visible
+      outline: 3px solid var(--vx-brand)
+      outline-offset: 2px
+  .vx-quick__icon
+    display: grid
+    place-items: center
+    flex: none
+    width: 34px
+    height: 34px
+    border-radius: 9px
+    background: var(--vx-brand-soft)
+    color: var(--vx-brand-ink)
+  small
+    display: block
+    margin-block-start: 2px
+    font-weight: 500
+    color: var(--vx-text-muted)
+
+// ---------------------------------------------------------------------------
+// Live charging session
+// ---------------------------------------------------------------------------
+.vx-live
+  margin-block-end: 20px
+  padding: 22px
+  border: 1px solid rgba(var(--vx-brand-rgb), .35)
+  border-radius: 16px
+  background: linear-gradient(135deg, rgba(var(--vx-brand-rgb), .07), transparent 55%), var(--vx-surface)
+  color: var(--vx-text)
+  +m
+    padding: 16px
+.vx-live__head, .vx-live__foot
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 12px
+.vx-live__title
+  display: flex
+  align-items: center
+  gap: 14px
+  min-width: 0
+  h2
+    margin: 0
+    font-size: 16px
+    font-weight: 650
+    letter-spacing: -.02em
+  p
+    margin: 3px 0 0
+    font-size: 12px
+    color: var(--vx-text-muted)
+.vx-live__icon
+  display: grid
+  place-items: center
+  flex: none
+  width: 42px
+  height: 42px
+  border-radius: 12px
+  background: var(--vx-brand)
+  color: var(--vx-on-brand, #fff)
+  animation: vx-charge 2.4s ease-in-out infinite
+  .vx-icon
+    width: 22px
+    height: 22px
+@keyframes vx-charge
+  50%
+    box-shadow: 0 0 0 8px rgba(var(--vx-brand-rgb), .12)
+@media (prefers-reduced-motion: reduce)
+  .vx-live__icon
+    animation: none
+.vx-live__metrics
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  gap: 12px
+  margin: 18px 0
+  +t
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+.vx-live__metric
+  min-width: 0
+  padding: 14px
+  border: 1px solid var(--vx-border)
+  border-radius: 12px
+  background: var(--vx-surface)
+  dt
+    font-size: 11px
+    font-weight: 700
+    letter-spacing: .06em
+    text-transform: uppercase
+    color: var(--vx-text-muted)
+  dd
+    margin: 6px 0 0
+    font-size: 24px
+    font-weight: 650
+    letter-spacing: -.02em
+    font-variant-numeric: tabular-nums
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    small
+      font-size: 13px
+      font-weight: 600
+      color: var(--vx-text-muted)
+    +m
+      font-size: 20px
+.vx-live__metric--brand
+  border-color: var(--vx-brand)
+  background: var(--vx-brand)
+  color: var(--vx-on-brand, #fff)
+  dt, .vx-live__hint, dd small
+    color: inherit
+    opacity: .82
+.vx-live__hint
+  display: block
+  margin-block-start: 4px
+  font-size: 11px
+  color: var(--vx-text-muted)
+.vx-live__balance
+  margin-block-end: 16px
+.vx-live__balance-row
+  display: flex
+  justify-content: space-between
+  gap: 12px
+  margin-block-end: 8px
+  font-size: 12px
+  color: var(--vx-text-muted)
+  strong
+    color: var(--vx-text)
+    font-size: 13px
+.vx-live__note
+  margin: 0
+  font-size: 12px
+  color: var(--vx-text-muted)
+.vx-live--compact
+  border-color: var(--vx-border)
+
+.vx-progress
+  height: 8px
+  overflow: hidden
+  border-radius: 999px
+  background: var(--vx-hover)
+  span
+    display: block
+    height: 100%
+    border-radius: inherit
+    background: var(--vx-brand)
+    transition: width .4s ease
+  .vx-progress__bar--warn
+    background: #F79009
+
+// ---------------------------------------------------------------------------
+// Confirmation dialog (native <dialog>)
+// ---------------------------------------------------------------------------
+.vx-dialog
+  width: min(460px, calc(100vw - 32px))
+  padding: 0
+  border: 1px solid var(--vx-border)
+  border-radius: 16px
+  background: var(--vx-surface)
+  color: var(--vx-text)
+  box-shadow: 0 24px 60px rgba(10, 26, 58, .28)
+  &::backdrop
+    background: rgba(10, 26, 58, .45)
+.vx-dialog__body
+  display: flex
+  gap: 14px
+  padding: 22px 22px 8px
+  h2
+    margin: 2px 0 8px
+    font-size: 16px
+    font-weight: 650
+.vx-dialog__icon
+  display: grid
+  place-items: center
+  flex: none
+  width: 40px
+  height: 40px
+  border-radius: 12px
+  background: var(--vx-brand-soft)
+  color: var(--vx-brand-ink)
+  svg
+    width: 20px
+    height: 20px
+    fill: currentColor
+.vx-dialog--danger .vx-dialog__icon
+  background: rgba(240, 68, 56, .12)
+  color: #b42318
+.vx-dialog__text
+  font-size: 13px
+  line-height: 1.55
+  color: var(--vx-text-muted)
+  p
+    margin: 0 0 8px
+.vx-dialog__actions
+  display: flex
+  justify-content: flex-end
+  flex-wrap: wrap
+  gap: 8px
+  padding: 14px 22px 20px
+
+// ---------------------------------------------------------------------------
+// Tables that become cards on phones: <table class="vx-table vx-table--stack">
+// with data-label on each cell.
+// ---------------------------------------------------------------------------
++m
+  .vx-table-wrap:has(.vx-table--stack)
+    border: 0
+    overflow: visible
+  .vx-table--stack
+    thead
+      display: none
+    tbody, tr, td, tfoot
+      display: block
+    tbody tr
+      margin-block-end: 10px
+      padding: 6px 0
+      border: 1px solid var(--vx-border)
+      border-radius: 12px
+      background: var(--vx-surface)
+    td
+      display: flex
+      justify-content: space-between
+      gap: 12px
+      padding: 7px 14px
+      border: 0 !important
+      text-align: end
+      &[data-label]:before
+        content: attr(data-label)
+        flex: none
+        font-size: 11px
+        font-weight: 700
+        letter-spacing: .04em
+        text-transform: uppercase
+        text-align: start
+        color: var(--vx-text-muted)
+      &.num
+        justify-content: space-between
+      &:empty
+        display: none
+    tfoot tr
+      border-radius: 12px
+      border: 1px solid var(--vx-border)
+      background: var(--vx-surface-alt)
+
+// Summary chips above a table (count, energy, amount of the filtered rows)
+.vx-summary
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+  margin-block-end: 14px
+  span
+    display: inline-flex
+    align-items: center
+    gap: 6px
+    padding: 6px 12px
+    border: 1px solid var(--vx-border)
+    border-radius: 999px
+    background: var(--vx-surface-alt)
+    font-size: 12px
+    color: var(--vx-text-muted)
+    strong
+      color: var(--vx-text)
+
+// ---------------------------------------------------------------------------
+// Partner portal: charge point actions, stations, photos, opening hours
+// ---------------------------------------------------------------------------
+.vx-cp__head-actions
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 8px
+.vx-connection
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  font-size: 12px
+  color: var(--vx-text-muted)
+  &:before
+    content: ""
+    width: 8px
+    height: 8px
+    border-radius: 50%
+    background: #98A2B3
+.vx-connection--online:before
+  background: #12B76A
+
+.vx-station-cards
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
+  gap: 16px
+  margin-block-end: 20px
+.vx-station-card
+  display: grid
+  grid-template-rows: auto 1fr
+  overflow: hidden
+  border: 1px solid var(--vx-border)
+  border-radius: 16px
+  background: var(--vx-surface)
+  color: var(--vx-text)
+  break-inside: avoid
+.vx-station-card__photo
+  display: grid
+  place-items: center
+  height: 140px
+  background: var(--vx-surface-alt)
+  color: var(--vx-brand-ink)
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
+  .vx-icon
+    width: 34px
+    height: 34px
+    opacity: .5
+.vx-station-card__body
+  display: grid
+  align-content: start
+  gap: 10px
+  padding: 16px
+  h3
+    margin: 0
+    font-size: 15px
+    font-weight: 650
+  p
+    margin: 0
+    font-size: 12px
+    color: var(--vx-text-muted)
+.vx-station-card__stats
+  display: flex
+  flex-wrap: wrap
+  gap: 6px 16px
+  font-size: 12px
+  color: var(--vx-text-muted)
+  strong
+    color: var(--vx-text)
+
+.vx-photo-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+  gap: 12px
+  margin: 0 0 14px
+  padding: 0
+  list-style: none
+  li
+    position: relative
+    overflow: hidden
+    aspect-ratio: 4 / 3
+    border: 1px solid var(--vx-border)
+    border-radius: 12px
+    background: var(--vx-surface-alt)
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
+  .vx-btn
+    position: absolute
+    inset-block-end: 8px
+    inset-inline-end: 8px
+    background: var(--vx-surface)
+
+.vx-form-grid
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  gap: 14px
+  +m
+    grid-template-columns: minmax(0, 1fr)
+  .vx-field
+    min-width: 0
+  .vx-field--full
+    grid-column: 1 / -1
+.vx-field textarea
+  min-height: 110px
+  padding: 10px 12px
+  border: 1px solid var(--vx-border)
+  border-radius: 10px
+  background: var(--vx-surface)
+  color: var(--vx-text)
+  font: inherit
+  font-size: 13px
+  line-height: 1.5
+  resize: vertical
+  &:focus
+    outline: none
+    border-color: var(--vx-brand)
+    box-shadow: 0 0 0 3px var(--vx-brand-soft)
+.vx-field__hint
+  font-size: 12px
+  color: var(--vx-text-muted)
+.vx-field input.ng-invalid.ng-touched, .vx-field select.ng-invalid.ng-touched, .vx-field textarea.ng-invalid.ng-touched
+  border-color: #b42318
+
+.vx-checks
+  display: flex
+  flex-wrap: wrap
+  gap: 10px 20px
+
+.vx-hours
+  display: grid
+  gap: 8px
+.vx-hours__day
+  display: grid
+  grid-template-columns: 130px minmax(0, 1fr)
+  align-items: start
+  gap: 12px
+  padding: 10px 12px
+  border: 1px solid var(--vx-border)
+  border-radius: 12px
+  +m
+    grid-template-columns: minmax(0, 1fr)
+.vx-hours__periods
+  display: grid
+  gap: 8px
+.vx-hours__period
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 8px
+  input[type="time"]
+    height: 36px
+    padding: 0 10px
+    border: 1px solid var(--vx-border)
+    border-radius: 9px
+    background: var(--vx-surface)
+    color: var(--vx-text)
+    font: inherit
+    font-size: 13px
+.vx-hours-list
+  display: grid
+  gap: 6px
+  margin: 0
+  padding: 0
+  list-style: none
+  font-size: 13px
+  li
+    display: flex
+    justify-content: space-between
+    gap: 12px
+    padding-block: 6px
+    border-block-end: 1px dashed var(--vx-border)
+  .muted
+    color: var(--vx-text-muted)
+
+// Partner brand in the sidebar: logo, or initials and name
+.sidebar__partner-brand
+  display: flex
+  align-items: center
+  gap: 10px
+  min-width: 0
+  color: var(--vx-text)
+  text-decoration: none
+  .vx-partner-logo
+    width: 40px
+    height: 40px
+    padding: 4px
+    border-radius: 10px
+    font-size: 14px
+  strong
+    display: block
+    overflow: hidden
+    font-size: 14px
+    font-weight: 700
+    text-overflow: ellipsis
+    white-space: nowrap
+  small
+    display: block
+    font-size: 10px
+    font-weight: 700
+    letter-spacing: .12em
+    text-transform: uppercase
+    color: var(--vx-text-muted)
+.sidebar__partner-brand-text
+  min-width: 0
+// The sidebar's own ".sidebar__logo img { width: 50% }" is meant for eveon's logo.
+.vx .sidebar .sidebar__partner-brand .vx-partner-logo img
+  width: auto
+  max-width: 100%
+  max-height: 100%
+  object-fit: contain
+
+.vx-table td.vx-amount--credit
+  color: #067647
+body.dark .vx-table td.vx-amount--credit
+  color: #75e0a7
++rmin(768)
+  body.sidebar-collapsed .page.vx .sidebar__partner-brand-text
+    display: none
+
+// Arrows follow the reading direction.
+html[dir="rtl"] .vx-flip-rtl
+  transform: scaleX(-1)
+
+// Portal shells: the dashboard search lists operator pages only.
+.vx-portal-shell
+  app-navbar-search, .header__search
+    display: none !important
+
+// ---------------------------------------------------------------------------
+// Printed pages
+// ---------------------------------------------------------------------------
+.vx-print-header
+  gap: 16px
+.vx-print-header__brands
+  display: flex
+  align-items: center
+  gap: 14px
+  img
+    height: 28px
+  .vx-print-header__partner
+    height: 40px
+    max-width: 140px
+    margin: 0
+    object-fit: contain
+.vx-print-header__partner-name
+  padding-inline-start: 14px
+  border-inline-start: 1px solid #DFE5F0
+  font-size: 14px
+  font-weight: 700
+  color: #0A1A3A
+.vx-print-header__meta
+  display: grid
+  justify-items: end
+  gap: 2px
+  text-align: end
+  font-size: 11px
+  color: #4A5878
+  strong
+    font-size: 16px
+    color: #0A1A3A
+.vx-print-footer
+  margin-block-start: 18px
+  padding-block-start: 8px
+  border-block-start: 1px solid #DFE5F0
+  font-size: 10px
+  color: #4A5878
+
+@media print
+  // Light tokens on paper, whatever the theme on screen.
+  body.dark, body
+    --vx-surface: #fff
+    --vx-surface-alt: #F5F7FB
+    --vx-hover: #EEF2F9
+    --vx-border: #DFE5F0
+    --vx-text: #0A1A3A
+    --vx-text-muted: #4A5878
+    --vx-brand: #0A1A3A
+    --vx-brand-ink: #1F3461
+    --vx-brand-soft: rgba(10, 26, 58, .06)
+    --vx-on-brand: #fff
+  html, body
+    font-size: 11pt
+  .vx-filters, .vx-pager, .vx-dialog, .vx-chips, .vx-live__foot .vx-actions, app-navbar, app-sidebar
+    display: none !important
+  .vx-print-footer.print-only
+    display: flex !important
+    justify-content: space-between
+  .vx-heading
+    margin-block-end: 12px
+    h1
+      font-size: 20px
+  .vx-table-wrap
+    overflow: visible !important
+  .vx-table
+    font-size: 10pt
+    thead
+      display: table-header-group
+    tfoot
+      display: table-row-group
+    th, td
+      padding: 6px 8px
+  .vx-table--stack
+    thead
+      display: table-header-group !important
+    tbody
+      display: table-row-group !important
+    tr
+      display: table-row !important
+    td
+      display: table-cell !important
+      &[data-label]:before
+        content: none !important
+  .vx-badge
+    border: 1px solid currentColor
+    background: none !important
+  .vx-badge--live:before, .vx-live__icon
+    animation: none !important
+  .vx-stat__icon, .vx-skeleton
+    display: none
+  .vx-live, .vx-live__metric--brand
+    background: #fff !important
+    color: #0A1A3A !important
+    border-color: #DFE5F0 !important
+  .vx-split
+    display: block
+  .vx-station-card
+    border-color: #DFE5F0
+  .vx-station-card__photo
+    height: 90px
+  .vx-photo-grid .vx-btn
+    display: none
+  h1, h2, h3
+    break-after: avoid

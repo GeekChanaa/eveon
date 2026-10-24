@@ -3,6 +3,10 @@
 `appsettings.json` and `appsettings.production.json` hold **no secrets**. The API refuses to start
 when a required secret is missing (`Configurations/SecurityConfiguration.cs`).
 
+The Docker image contains `appsettings.json` only: in a container every production value comes from
+environment variables (`VoltaXApi/deploy/railway.env.example`, `VoltaXApi/deploy/api.env.example`).
+`appsettings.production.json` is kept for running the API locally with `--environment Production`.
+
 ## Local development
 
 Secrets live in .NET user-secrets (stored in your user profile, outside the repo):
@@ -58,14 +62,15 @@ Extra keys for this setup:
 
 | Key | Notes |
 | --- | --- |
-| `Database__Provider` | `MySql` (MariaDB / MySQL) or `SqlServer` (default) |
+| `Database__Provider` | `MySql` (MariaDB / MySQL) or `SqlServer` (default); `Sqlite` for local and CI test runs only (schema created from the model at start up, refused in Production, see `docs/testing.md`) |
 | `Database__ServerVersion` | MariaDB version of the server (`SELECT VERSION()`), default `10.6.15` |
-| `Database__InitializePhoneLogin` | `true` creates `PhoneLoginChallenges` if missing (no migration creates it) |
+| `Database__MigrateOnStartup` | `true` applies pending migrations before the API starts (single instance hosts); otherwise run the image with `--migrate` at deploy |
+| `Database__FailOnPendingMigrations` | default `true` in Production: refuse to start while a migration is pending |
 | `ReverseProxy__TrustAllProxies` | `true` on Railway: trust `X-Forwarded-*` from its edge proxy, which has no fixed address |
 
-Schema on a new MySQL database: apply the migrations from a machine allowed by Hostinger's Remote MySQL
-(`Database__Provider=MySql` + the connection string set, then `dotnet ef database update`), or generate
-`dotnet ef migrations script -o schema.sql` and import it in phpMyAdmin.
+Schema: migrations only, see [database.md](database.md). Apply them with the same settings as production and
+`--migrate` (or `Database__MigrateOnStartup=true`), from a machine allowed by Hostinger's Remote MySQL, or
+generate `dotnet ef migrations script --idempotent -o schema.sql` and import it in phpMyAdmin.
 
 First admin on a new database: run the API once with `--create-admin` and the same settings as production
 plus `Bootstrap__AdminEmail`, `Bootstrap__AdminPassword` (≥ 12 characters) and optionally

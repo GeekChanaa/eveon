@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using VoltaXApi.Services.Payments;
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.DataProtection;
 using AutoMapper;
@@ -39,6 +41,9 @@ public static class ServiceRegistration
     public static void ConfigureControllers(IServiceCollection services)
     {
         services.AddScoped<VoltaXApi.Authorization.AccessService>();
+        services.AddSingleton<VoltaXApi.Authorization.AccessSnapshotCache>(sp => new VoltaXApi.Authorization.AccessSnapshotCache(
+            sp.GetRequiredService<TimeProvider>(), sp.GetRequiredService<IConfiguration>()));
+        services.AddSingleton<IAccessChangeListener>(sp => sp.GetRequiredService<VoltaXApi.Authorization.AccessSnapshotCache>());
         services.AddSingleton<VoltaXApi.Authorization.HubConnections>();
         services.AddControllers(options =>
         {
@@ -142,11 +147,14 @@ public static class ServiceRegistration
         services.Configure<SupportEmails>(configuration.GetSection("SupportEmails"));
         services.Configure<CompanyInformations>(configuration.GetSection("CompanyInformations"));
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<MailQueueOptions>(configuration.GetSection(MailQueueOptions.SectionName));
         services.Configure<VoltaXApi.Services.Setup.FirstSetupOptions>(configuration.GetSection("FirstSetup"));
         services.Configure<CardExpirationSettings>(configuration.GetSection("CardExpirationSettings"));
         services.Configure<CardConfigurationSettings>(configuration.GetSection("CardConfigurationSettings"));
         services.Configure<AwsSnsOptions>(configuration.GetSection("AwsSns"));
         services.Configure<AuthTokenSettings>(configuration.GetSection(AuthTokenSettings.SectionName));
+        Paging.MaxPageSize = configuration.GetValue(Paging.MaxPageSizeKey, Paging.DefaultMaxPageSize);
+        VoltaXApi.Services.Billing.BillingRegistration.AddBillingOptions(services, configuration);
         services.Configure<CookiePolicyOptions>(options =>
         {
             options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -201,6 +209,7 @@ public static class ServiceRegistration
         services.AddScoped<IOCPPLocalListItemRepository, OCPPLocalListItemRepository>();
         services.AddScoped<IOCPPLocalListVersionRepository, OCPPLocalListVersionRepository>();
         services.AddScoped<IOCPPConfigurationItemRepository, OCPPConfigurationItemRepository>();
+        services.AddScoped<IOCPPDisplayMessageInfoRepository, OCPPDisplayMessageInfoRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<ICommentReplyRepository, CommentReplyRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
@@ -236,11 +245,20 @@ public static class ServiceRegistration
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<ICardService, CardService>();
+        services.AddScoped<IWalletService, WalletService>();
+        services.AddScoped<VoltaXApi.Services.CustomerPortal.CustomerPortalService>();
+        services.AddScoped<VoltaXApi.Services.CustomerPortal.SessionStatementExporter>();
+        services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerPortalService>();
+        services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerRemoteCommandService>();
+        services.AddScoped<VoltaXApi.Services.PartnerPortal.PartnerStationService>();
+        services.AddScoped<VoltaXApi.Services.Sessions.OperatorSearchService>();
+        services.AddScoped<VoltaXApi.Services.Sessions.TransactionCsv>();
         services.AddScoped<IConnectorService, ConnectorService>();
         services.AddScoped<IConnectorStatusService, ConnectorStatusService>();
         services.AddScoped<ISystemReportService, SystemReportService>();
         services.AddScoped<IOcppComponentsVariablesService, OcppComponentsVariablesService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IOrderStatisticsService, OrderStatisticsService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IAuthService, AuthService>();
@@ -254,6 +272,11 @@ public static class ServiceRegistration
         services.AddScoped<IEmailVerificationGuard, EmailVerificationGuard>();
         services.AddHostedService<RefreshTokenCleanupService>();
         services.AddScoped<IMailService, MailService>();
+        // Mail is queued and sent in the background, so no request or OCPP handler waits for the SMTP server.
+        services.AddSingleton<MailQueue>();
+        services.AddSingleton<IMailQueue>(sp => sp.GetRequiredService<MailQueue>());
+        services.AddSingleton<IMailTransport, SmtpMailTransport>();
+        services.AddHostedService<MailDeliveryService>();
         services.AddScoped<VoltaXApi.Services.Setup.FirstSetupJob>();
         services.AddScoped<ISnsService, SnsService>();
         services.AddScoped<IUserInfoDownloadRequestService, UserInfoDownloadRequestService>();
@@ -269,7 +292,6 @@ public static class ServiceRegistration
         VoltaXApi.Ocpi.OcpiRegistration.AddOcpi(services);
         services.AddScoped<IFileManagementService, FileManagementService>();
         // Only implementation until a real payment provider is integrated; it refuses every call outside Development.
-        services.AddSingleton<VoltaXApi.Services.Payments.IPaymentCardTokenizer, VoltaXApi.Services.Payments.DevelopmentFakeCardTokenizer>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IWebSocketRequestsHandler, WebSocketRequestsHandler>();
         // Connection-level OCPP objects are singletons; every incoming CALL gets its own DI scope.
@@ -281,8 +303,7 @@ public static class ServiceRegistration
         services.AddScoped<IOCPPTransactionsService, OCPPTransactionsService>();
         services.AddScoped<INoticeService, NoticeService>();
         services.AddScoped<IChargingSessionService, ChargingSessionService>();
-        services.AddScoped<ChargingSessionInvoiceGeneratorService>();
-        services.AddScoped<IInvoiceGeneratorService<InvoiceData>, RechargeOrderInvoiceGenerator>();
+        VoltaXApi.Services.Billing.BillingRegistration.AddBilling(services);
         services.AddSingleton<WebSocketSubProtocolMatcher>();
         
         // Singletons
@@ -323,6 +344,15 @@ public static class ServiceRegistration
         services.AddSingleton<VoltaXApi.Services.ICostCalculator>(VoltaXApi.Services.CostCalculator.Instance);
         services.AddSingleton<ICostUpdatedSender, CostUpdatedSender>();
         services.AddHostedService<CostUpdatedHostedService>();
+        services.AddSingleton<StaleTransactionSweeper>();
+        services.AddHostedService<StaleTransactionHostedService>();
+        // Charge point alarms: raised from charger messages, offline / boot loop checks, pushed and notified.
+        services.AddSingleton(sp => VoltaXApi.Services.Alarms.AlarmOptions.From(sp.GetRequiredService<IConfiguration>()));
+        services.AddSingleton<VoltaXApi.Services.Alarms.BootHistory>();
+        services.AddSingleton<VoltaXApi.Services.Alarms.AlarmNotifier>();
+        services.AddScoped<VoltaXApi.Services.Alarms.IAlarmService, VoltaXApi.Services.Alarms.AlarmService>();
+        services.AddSingleton<VoltaXApi.Services.Alarms.ChargerAvailabilityMonitor>();
+        services.AddHostedService<VoltaXApi.Services.Alarms.ChargerAvailabilityHostedService>();
         services.AddScoped<ILogUploadUrlFactory, LogUploadUrlFactory>();
         services.AddSingleton(sp => ChargerLogStorage.FromConfiguration(sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<IWebHostEnvironment>()));
     }
@@ -363,6 +393,39 @@ public static class ServiceRegistration
         services.AddOcppInboundHandler<NotifyDisplayMessagesHandler>(OcppProtocols.Ocpp201, "NotifyDisplayMessages");
     }
     
+    /// <summary>
+    /// Online payments (section "Payments"): Provider None (default, off), Sandbox (test page, no money; refused
+    /// in Production unless Payments:Sandbox:AllowInProduction), Cmi or Stripe. See docs/payments.md.
+    /// </summary>
+    public static void ConfigurePayments(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    {
+        services.Configure<PaymentOptions>(configuration.GetSection("Payments"));
+        var options = configuration.GetSection("Payments").Get<PaymentOptions>() ?? new PaymentOptions();
+        var provider = options.Provider;
+        if (string.Equals(provider, SandboxPaymentGateway.ProviderName, StringComparison.OrdinalIgnoreCase))
+        {
+            if (environment.IsProduction() && !options.Sandbox.AllowInProduction)
+                throw new InvalidOperationException("Payments:Provider=Sandbox credits wallets without money and is refused in Production. " +
+                    "Configure Cmi or Stripe, or set Payments:Sandbox:AllowInProduction=true for a test environment.");
+            if (string.IsNullOrEmpty(options.Sandbox.Secret))
+                throw new InvalidOperationException("Payments:Sandbox:Secret is required with the sandbox provider.");
+        }
+
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddHttpClient(StripePaymentGateway.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(30));
+        services.AddScoped<SandboxPaymentGateway>();
+        services.AddScoped<CmiPaymentGateway>();
+        services.AddScoped<StripePaymentGateway>();
+        services.AddScoped<IPaymentGateway>(sp => provider?.ToLowerInvariant() switch
+        {
+            "sandbox" => sp.GetRequiredService<SandboxPaymentGateway>(),
+            "cmi" => sp.GetRequiredService<CmiPaymentGateway>(),
+            "stripe" => sp.GetRequiredService<StripePaymentGateway>(),
+            _ => new DisabledPaymentGateway()
+        });
+        services.AddScoped<PaymentService>();
+    }
+
     public static void ConfigureDatabaseMySql(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
@@ -372,8 +435,24 @@ public static class ServiceRegistration
             var serverVersion = new MariaDbServerVersion(configuration["Database:ServerVersion"] ?? "10.6.15");
             
             options.UseMySql(connectionString, serverVersion)
+                // The migration snapshot is SQL Server typed (docs/database.md), so on MySQL the
+                // "pending model changes" check before migrating always fires: keep it out of the error log.
+                .ConfigureWarnings(w => w.Log((Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning, LogLevel.Debug)))
                 .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>());
         });
+    }
+
+    /// <summary>
+    /// SQLite for local and CI test runs (tools/e2e): no migrations, the schema is created from the model at start
+    /// up. Refused in Production.
+    /// </summary>
+    public static void ConfigureDatabaseSqlite(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    {
+        if (environment.IsProduction())
+            throw new InvalidOperationException("Database:Provider=Sqlite is for local and CI test runs only; use MySql or SqlServer in Production.");
+        services.AddDbContext<VoltaXApiDbContext>((serviceProvider, options) =>
+            options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))
+                .AddInterceptors(serviceProvider.GetRequiredService<VoltaXApi.Services.Audit.AuditSaveChangesInterceptor>()));
     }
 
     public static void ConfigureDatabaseSqlServer(IServiceCollection services, IConfiguration configuration)

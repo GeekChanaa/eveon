@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using VoltaXApi.Data;
@@ -10,32 +11,42 @@ namespace VoltaXApi.Services
     {
         private readonly IChargingSessionRepository _chargingSessionRepository;
         private readonly ICardService _cardService;
-        private readonly IConnectorStatusRepository _connectorStatusRepository;
         private readonly GlobalConfigurations _globalConfigurations;
         private readonly IMailService _mailService;
         private readonly IMailRequestFactory _mailRequestFactory;
         private readonly IUserRepository _userRepository;
+        private readonly IWalletService _walletService;
+        private readonly ICostCalculator _costCalculator;
+        private readonly VoltaXApiDbContext _context;
+        private readonly ILogger<ChargingSessionService> _logger;
+        private readonly VoltaXApi.Services.Billing.IBillingEvents _billing;
 
         public ChargingSessionService(
           IChargingSessionRepository chargingSessionRepository,
-          IConnectorStatusRepository connectorStatusRepository,
           GlobalConfigurations globalConfigurations,
           ICardService cardService,
           IMailService mailService,
           IMailRequestFactory mailRequestFactory,
-          IUserRepository userRepository
+          IUserRepository userRepository,
+          IWalletService walletService,
+          ICostCalculator costCalculator,
+          VoltaXApiDbContext context,
+          ILogger<ChargingSessionService> logger,
+          VoltaXApi.Services.Billing.IBillingEvents billing
         )
         {
             _chargingSessionRepository = chargingSessionRepository;
-            _connectorStatusRepository = connectorStatusRepository;
             _cardService = cardService;
             _globalConfigurations = globalConfigurations;
             _mailService = mailService;
             _mailRequestFactory = mailRequestFactory;
             _userRepository = userRepository;
+            _walletService = walletService;
+            _costCalculator = costCalculator;
+            _context = context;
+            _logger = logger;
+            _billing = billing;
         }
-
-
 
         public async Task<ChargingSession> StartChargingSession(Connector connector, Card card, DateTime startDate)
         {
@@ -51,47 +62,138 @@ namespace VoltaXApi.Services
             return chargingSession;
         }
 
-        public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate)
+        public async Task<ChargingSession> EndChargingSession(int chargingSessionID, double minutesCharged, double chargedKwhs, DateTime endDate,
+            ReasonEnumType? stoppedReason = null)
         {
-            ChargingSession chargingSession = await _chargingSessionRepository.GetByIdAsync(chargingSessionID);
-            string userEmail = await _userRepository.GetUserEmailByID(chargingSession.UserID);
-            ConnectorStatus connectorStatus = await _connectorStatusRepository.GetConnectorStatusByConnectorID(chargingSession.ConnectorID);
+            ChargingSession chargingSession = await _context.ChargingSessions
+                .Include(s => s.Connector)
+                .FirstAsync(s => s.ID == chargingSessionID);
+            var connectorStatus = await _context.ConnectorStatuses.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.ConnectorID == chargingSession.ConnectorID);
+
+            var alreadyBilled = chargingSession.IsBilled;
             chargingSession.ChargedMinutes = minutesCharged;
             chargingSession.ChargedKwhs = chargedKwhs;
             chargingSession.EndDate = endDate;
+            if (stoppedReason.HasValue)
+                chargingSession.StoppedReason = stoppedReason.Value;
             chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.CompletedOccupied;
-            if (connectorStatus.LastStatus == ConnectorStatusEnumType.Available)
+            if (connectorStatus?.LastStatus != ConnectorStatusEnumType.Occupied || EndedByChargerOrServer(stoppedReason))
             {
+                // No idle time: the car already left, the connector is out of service (its departure cannot be
+                // seen), or the charger or the server ended the session (fault, power loss, reboot, reset, stale
+                // transaction), when the driver is told that only the measured energy is billed.
                 chargingSession.IdleMinutes = 0;
                 chargingSession.EndIdleDate = endDate;
                 chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.Completed;
             }
-            await this._chargingSessionRepository.Update(chargingSession);
 
-            // Sending the email
-            MailRequest chargingSessionMailRequest = _mailRequestFactory.CreateChargingSessionQuoteMail(userEmail);
-            ChargingSessionForMailDto chargingSessionForMail = await _chargingSessionRepository.GetChargingSessionForMail(chargingSessionID);
-            await this._mailService.SendChargingSessionQuoteMailRequest(chargingSessionMailRequest, chargingSessionForMail);
+            if (alreadyBilled)
+            {
+                await _context.SaveChangesAsync();
+                return chargingSession;
+            }
 
+            var tariff = Tariff.Of(chargingSession, chargingSession.Connector, _globalConfigurations.Vat);
+            var charge = _costCalculator.Charge(tariff, chargedKwhs, minutesCharged);
+            tariff.ApplyTo(chargingSession);
+            chargingSession.EnergyAmount = charge.Energy;
+            chargingSession.TimeAmount = charge.Time;
+            chargingSession.FlatFeeAmount = charge.FlatFee;
+            chargingSession.TotalAmount = charge.Total + (chargingSession.IdleAmount ?? 0);
+            chargingSession.BilledAt = DateTime.UtcNow;
+
+            await _walletService.SaveWithRetryAsync(async () =>
+            {
+                var card = await _context.Cards.FirstOrDefaultAsync(c => c.ID == chargingSession.CardID);
+                chargingSession.BalanceBefore = card?.Balance;
+                if (card != null && charge.Total > 0)
+                    _walletService.Stage(card, new WalletPosting(-charge.Total, WalletTransactionType.SessionCharge,
+                        $"session:{chargingSession.ID}:charge", "Charging session", ChargingSessionID: chargingSession.ID));
+                chargingSession.BalanceAfter = card?.Balance;
+            });
+
+            if (chargingSession.BalanceAfter < 0)
+                await ReportNegativeBalance(chargingSession);
+
+            // The car already left: the bill is final, issue the invoice.
+            await _billing.SessionBilledAsync(chargingSession.ID);
             return chargingSession;
         }
-        
 
-        public async Task<ChargingSession> HandleIdleMinutes(int connectorID, DateTimeOffset? statusTime)
+        public async Task SendSessionQuoteAsync(int chargingSessionID)
         {
-            ChargingSession chargingSession = await _chargingSessionRepository.GetLastChargingSession(connectorID);
-            if (chargingSession != null && chargingSession.IdleMinutes == null)
+            try
             {
-                double idleMinutes = (statusTime - chargingSession.EndDate)?.TotalMinutes ?? 0;
-                chargingSession.IdleMinutes = idleMinutes;
-                chargingSession.EndIdleDate = statusTime?.UtcDateTime;
-                chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.Completed;
-                await _chargingSessionRepository.Update(chargingSession);
-                
-                if (_globalConfigurations.GracePeriod < idleMinutes * 60)
-                    await _cardService.SubstractAmountFromCardByIdleMinutes(chargingSession.CardID, idleMinutes, connectorID);
+                int? userID = await _context.ChargingSessions.Where(s => s.ID == chargingSessionID).Select(s => s.UserID).FirstAsync();
+                if (userID == null)
+                    return; // a card that belongs to nobody (fleet / unassigned card)
+                string userEmail = await _userRepository.GetUserEmailByID(userID.Value);
+                if (string.IsNullOrWhiteSpace(userEmail))
+                    return;
+                MailRequest chargingSessionMailRequest = _mailRequestFactory.CreateChargingSessionQuoteMail(userEmail);
+                ChargingSessionForMailDto chargingSessionForMail = await _chargingSessionRepository.GetChargingSessionForMail(chargingSessionID);
+                await _mailService.SendChargingSessionQuoteMailRequest(chargingSessionMailRequest, chargingSessionForMail);
             }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "The quote of charging session {ChargingSessionId} could not be emailed", chargingSessionID);
+            }
+        }
+
+        public async Task<ChargingSession?> HandleIdleMinutes(int connectorID, DateTimeOffset? statusTime)
+        {
+            // Only the connector's latest session can be idle: an older one whose idle time was never closed (a status
+            // lost while the charger was offline) must not be billed up to now.
+            ChargingSession? chargingSession = await _context.ChargingSessions
+                .Include(s => s.Connector)
+                .Where(c => c.ConnectorID == connectorID)
+                .OrderByDescending(c => c.StartDate)
+                .ThenByDescending(c => c.ID)
+                .FirstOrDefaultAsync();
+            if (chargingSession == null || chargingSession.EndDate == null || chargingSession.IdleMinutes != null)
+                return chargingSession;
+
+            double idleMinutes = Math.Max(0, (statusTime - chargingSession.EndDate)?.TotalMinutes ?? 0);
+            chargingSession.IdleMinutes = idleMinutes;
+            chargingSession.EndIdleDate = statusTime?.UtcDateTime;
+            chargingSession.ChargingSessionStatus = ChargingSessionStatusEnum.Completed;
+
+            var tariff = Tariff.Of(chargingSession, chargingSession.Connector, _globalConfigurations.Vat);
+            var fee = _costCalculator.IdleFee(tariff, idleMinutes, _globalConfigurations.GracePeriod);
+            chargingSession.IdleAmount = fee;
+            if (chargingSession.IsBilled)
+                chargingSession.TotalAmount = chargingSession.ChargingPriceWithVAT + fee;
+
+            await _walletService.SaveWithRetryAsync(async () =>
+            {
+                if (fee <= 0)
+                    return;
+                var card = await _context.Cards.FirstOrDefaultAsync(c => c.ID == chargingSession.CardID);
+                if (card == null)
+                    return;
+                _walletService.Stage(card, new WalletPosting(-fee, WalletTransactionType.IdleFee,
+                    $"session:{chargingSession.ID}:idle", "Idle fee", ChargingSessionID: chargingSession.ID));
+                chargingSession.BalanceAfter = card.Balance;
+            });
+
+            if (chargingSession.BalanceAfter < 0)
+                await ReportNegativeBalance(chargingSession);
+            await _billing.SessionBilledAsync(chargingSession.ID);
             return chargingSession;
+        }
+
+        /// <summary>Stop reasons that are not the driver's doing (2.0.1 vocabulary, 1.6 reasons are mapped to it).</summary>
+        private static bool EndedByChargerOrServer(ReasonEnumType? reason) => reason is
+            ReasonEnumType.EmergencyStop or ReasonEnumType.GroundFault or ReasonEnumType.OvercurrentFault or
+            ReasonEnumType.PowerLoss or ReasonEnumType.PowerQuality or ReasonEnumType.Reboot or
+            ReasonEnumType.ImmediateReset or ReasonEnumType.Other or ReasonEnumType.Timeout;
+
+        private async Task ReportNegativeBalance(ChargingSession chargingSession)
+        {
+            var card = await _context.Cards.AsNoTracking().FirstOrDefaultAsync(c => c.ID == chargingSession.CardID);
+            if (card != null)
+                await _cardService.HandleCardNegativeBalance(card, chargingSession.ConnectorID);
         }
     }
 }

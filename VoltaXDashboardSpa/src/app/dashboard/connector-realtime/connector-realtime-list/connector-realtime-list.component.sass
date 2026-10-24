@@ -41,7 +41,7 @@
       width: 14px
       height: 14px
       margin-left: 4px
-      fill: var(--vx-yellow, #E5B223)
+      fill: var(--vx-brand, #0A1A3A)
       vertical-align: middle
 
   // Body cells
@@ -75,7 +75,7 @@
     transition: background .18s
 
     &:hover .row__col
-      background: var(--vx-hover, #F4F4F4)
+      background: var(--vx-hover, var(--navy-50))
 
   .row__table .row__col.options_col
     width: 1%
@@ -85,7 +85,7 @@
   .actions__container
     justify-content: flex-end
 
-  // Action buttons — squares, yellow hover, matching the detail tabs.
+  // Action buttons — squares, brand hover, matching the detail tabs.
   .table__action
     height: 32px
     width: 32px
@@ -109,12 +109,12 @@
 
   .table__action.connector__btn:hover,
   .table__action.display-btn:hover
-    background: rgba(229, 178, 35, .12)
-    border-color: var(--vx-yellow, #E5B223)
-    color: var(--vx-yellow, #E5B223)
+    background: rgba(var(--vx-brand-rgb, 10, 26, 58), .12)
+    border-color: var(--vx-brand, #0A1A3A)
+    color: var(--vx-brand, #0A1A3A)
 
     svg
-      fill: var(--vx-yellow, #E5B223)
+      fill: var(--vx-brand, #0A1A3A)
 
   // Delete stays red — it is the one action you cannot undo.
   .table__action.delete-btn:hover
@@ -136,10 +136,10 @@
       fill: var(--vx-text, #0B0B0B)
 
     &:hover:not(.inactive)
-      border-color: var(--vx-yellow, #E5B223)
+      border-color: var(--vx-brand, #0A1A3A)
 
       svg
-        fill: var(--vx-yellow, #E5B223)
+        fill: var(--vx-brand, #0A1A3A)
 
   .pagination__pages .pagination__link
     width: 34px
@@ -151,10 +151,10 @@
     color: var(--vx-text-muted, #7A7C80)
 
     &:hover
-      background: var(--vx-hover, #F4F4F4)
+      background: var(--vx-hover, var(--navy-50))
       color: var(--vx-text, #0B0B0B)
 
     &.active
-      background: var(--vx-yellow, #E5B223)
-      border-color: var(--vx-yellow, #E5B223)
-      color: #0B0B0B
+      background: var(--vx-brand, #0A1A3A)
+      border-color: var(--vx-brand, #0A1A3A)
+      color: var(--vx-on-brand, #fff)

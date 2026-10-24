@@ -17,7 +17,7 @@ namespace VoltaXApi.Dtos
         public double? MeterStop { get; set; }
         public string? StopReason { get; set; }
         public int? CardID { get; set; }
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
     }
 
 }

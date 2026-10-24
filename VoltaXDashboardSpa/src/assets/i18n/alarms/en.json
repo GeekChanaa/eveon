@@ -1,0 +1,114 @@
+{
+  "alarms": {
+    "nav": "Alarms",
+    "title": "Alarms",
+    "subtitle": "Faults reported by the chargers, chargers offline and reboot loops. Acknowledge what you are handling, assign it, resolve it with a comment.",
+    "searchPlaceholder": "Charge point, station, code or description",
+    "scopedToChargePoint": "Showing the alarms of one charge point.",
+    "showAll": "Show all alarms",
+    "pending": "{{count}} alarm change(s) since this page was loaded.",
+    "showLatest": "Show the latest",
+    "loadError": "The alarms could not be loaded.",
+    "emptyActive": "No active alarm. Every charger is fine.",
+    "empty": "No alarm for these filters.",
+    "since": "since {{date}}",
+    "summary": {
+      "label": "Active alarms",
+      "active": "Active",
+      "bySeverity": "{{major}} major · {{minor}} minor",
+      "criticalHint": "Need attention now",
+      "unassigned": "Unassigned",
+      "unassignedHint": "Nobody took them yet",
+      "mine": "Assigned to me",
+      "mineHint": "Your alarms"
+    },
+    "severity": {
+      "Critical": "Critical",
+      "Major": "Major",
+      "Minor": "Minor",
+      "Warning": "Warning"
+    },
+    "status": {
+      "Open": "Open",
+      "Acknowledged": "Acknowledged",
+      "Resolved": "Resolved",
+      "Cleared": "Cleared"
+    },
+    "statusFilter": {
+      "active": "Active (open or acknowledged)",
+      "open": "Open",
+      "acknowledged": "Acknowledged",
+      "resolved": "Resolved",
+      "cleared": "Cleared by the charger",
+      "closed": "Closed",
+      "all": "All"
+    },
+    "type": {
+      "ConnectorFault": "Connector fault",
+      "DeviceEvent": "Charger event",
+      "Offline": "Charger offline",
+      "BootLoop": "Reboot loop"
+    },
+    "assigned": {
+      "anyone": "Anyone",
+      "me": "Me",
+      "none": "Unassigned",
+      "nobody": "Nobody"
+    },
+    "sort": {
+      "lastSeen": "Latest first",
+      "severity": "Most severe first",
+      "firstSeen": "Newest alarms first",
+      "count": "Most repeated first"
+    },
+    "scope": {
+      "chargePoint": "whole charge point",
+      "evse": "EVSE {{evse}}",
+      "connector": "EVSE {{evse}} · connector {{connector}}"
+    },
+    "fields": {
+      "severity": "Severity",
+      "type": "Type",
+      "station": "Station",
+      "assignedTo": "Assigned to",
+      "sort": "Order",
+      "alarm": "Alarm",
+      "where": "Where",
+      "lastSeen": "Last seen",
+      "firstSeen": "First seen",
+      "count": "Occurrences",
+      "code": "Code",
+      "details": "Details from the charger",
+      "acknowledged": "Acknowledged",
+      "resolved": "Resolved",
+      "resolution": "Resolution",
+      "cleared": "Cleared by the charger",
+      "comment": "What was done"
+    },
+    "detail": {
+      "title": "Alarm",
+      "loadError": "This alarm could not be loaded.",
+      "clearedHint": "The charger reported the fault gone; the alarm closed itself.",
+      "resolvedHint": "This alarm was resolved by an operator.",
+      "readOnly": "You can see alarms but not handle them.",
+      "handle": "Handle the alarm",
+      "resolveTitle": "Resolve",
+      "commentPlaceholder": "Cause and fix, e.g. RCD reset on site, contactor replaced…",
+      "commentRequired": "Describe what was done (3 characters at least)."
+    },
+    "actions": {
+      "acknowledge": "Acknowledge",
+      "takeIt": "Take it",
+      "assign": "Assign",
+      "resolve": "Resolve the alarm"
+    },
+    "toast": {
+      "acknowledged": "Alarm acknowledged.",
+      "assigned": "Alarm assigned.",
+      "unassigned": "Alarm unassigned.",
+      "resolved": "Alarm resolved.",
+      "actionFailed": "The alarm could not be updated.",
+      "exportFailed": "The export failed."
+    }
+  }
+}

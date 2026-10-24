@@ -289,7 +289,7 @@ export class ChargingProfileComponent implements OnInit {
       yaxis: { min: 0, title: { text: schedule.chargingRateUnit ?? '' } },
       tooltip: { x: { format: 'dd MMM HH:mm' } },
       grid: { strokeDashArray: 4 },
-      colors: ['#2A85FF'],
+      colors: [document.body.classList.contains('dark') ? '#7FA2EE' : '#1F3461'],
       legend: { show: false }
     };
   }

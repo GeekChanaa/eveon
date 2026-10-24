@@ -95,6 +95,17 @@ namespace VoltaXApi.OCPP.Ocpp16
         {
             var timestamp = Ocpp16Mapping.ToUtc(request.Timestamp);
             var chargePoint = await FindChargePoint(chargePointStatus.Id);
+
+            var repeated = chargePoint == null ? null : await FindRepeatedStart(chargePoint.ID, request, timestamp);
+            if (repeated != null)
+            {
+                Logger.LogInformation("StartTransaction (1.6) => {ChargePointId} sent transaction {TransactionId} again; same answer",
+                    chargePointStatus.Id, repeated.Id);
+                var repeatedStatus = repeated.AuthorizationStatus ?? Ocpp16AuthorizationStatus.Invalid;
+                return new(new StartTransaction16Response { TransactionId = repeated.Id, IdTagInfo = new IdTagInfo { Status = repeatedStatus } },
+                    $"'{request.IdTag}'=>{repeatedStatus} (transaction {repeated.Id}, repeated)", request.ConnectorId);
+            }
+
             var transaction = new Ocpp16Transaction
             {
                 ChargePointID = chargePoint?.ID ?? 0,
@@ -122,6 +133,23 @@ namespace VoltaXApi.OCPP.Ocpp16
                 TransactionId = transaction.Id,
                 IdTagInfo = new IdTagInfo { Status = transaction.AuthorizationStatus }
             }, $"'{request.IdTag}'=>{transaction.AuthorizationStatus} (transaction {transaction.Id})", request.ConnectorId);
+        }
+
+        /// <summary>
+        /// A StartTransaction the charger sends again because the answer was lost (same connector, idTag, meterStart
+        /// and timestamp, not stopped yet). It gets the transactionId already issued: a new one would open a second
+        /// session and close the first as superseded.
+        /// </summary>
+        private Task<Ocpp16Transaction?> FindRepeatedStart(int chargePointDbId, StartTransaction16Request request, DateTime timestamp)
+        {
+            // A one-second window: databases keep fewer fractional digits than a charger may send.
+            var from = timestamp.AddSeconds(-1);
+            var to = timestamp.AddSeconds(1);
+            return Db.Ocpp16Transactions.AsNoTracking()
+                .Where(t => t.ChargePointID == chargePointDbId && t.ConnectorId == request.ConnectorId && t.IdTag == request.IdTag
+                            && t.MeterStartWh == request.MeterStart && t.StartTimestamp >= from && t.StartTimestamp <= to && t.StopTimestamp == null)
+                .OrderByDescending(t => t.Id)
+                .FirstOrDefaultAsync();
         }
 
         private async Task<AuthorizationStatusEnumType> Authorize(StartTransaction16Request request, ChargePointStatus chargePointStatus,
@@ -225,6 +253,7 @@ namespace VoltaXApi.OCPP.Ocpp16
                         IdTag = idTag,
                         MeterKWh = request.MeterStop / 1000.0,
                         TriggerReason = request.Reason ?? "Local",
+                        StoppedReason = Ocpp16Mapping.ToStoppedReason(request.Reason),
                         AbnormalStop = Ocpp16Mapping.IsAbnormalStopReason(request.Reason),
                         ReasonSuffix = TransactionEventData.FormatReason(request.Reason)
                     }, connector);

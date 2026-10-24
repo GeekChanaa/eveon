@@ -2,22 +2,25 @@ using VoltaXApi.Settings;
 using VoltaXApi.Models;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using MimeKit;
 using System.IO;
 using System;
-using MailKit;
 using VoltaxApi.Helpers;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
 
 namespace VoltaXApi.Services
 {
+	/// <summary>
+	/// Builds the platform's emails from the templates in Assets/EmailTemplates and hands them to <see cref="IMailQueue"/>:
+	/// the caller never waits for the mail server (see <see cref="MailDeliveryService"/>).
+	/// </summary>
 	public class MailService : IMailService
 	{
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Templates = new();
+
 		private readonly MailSettings _mailSettings;
-		private readonly IEmailTemplateService _emailTemplateService;
+		private readonly IMailQueue _mailQueue;
 		private readonly IConfiguration _configuration;
 		private readonly SupportEmails _supportEmails;
 		private readonly IWebHostEnvironment _env;
@@ -25,14 +28,14 @@ namespace VoltaXApi.Services
 
 		public MailService(
 					IOptions<MailSettings> mailSettings,
-					IEmailTemplateService emailTemplateService,
+					IMailQueue mailQueue,
 					IConfiguration config,
 					IOptions<SupportEmails> supportEmails,
 					IWebHostEnvironment env,
 					ISystemReportRepository SystemReportRepository)
 		{
 			_mailSettings = mailSettings.Value;
-			_emailTemplateService = emailTemplateService;
+			_mailQueue = mailQueue;
 			_configuration = config;
 			_supportEmails = supportEmails.Value;
 			_env = env;
@@ -438,6 +441,28 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendAlarmEmail(MailRequest mailRequest, VoltaXApi.Services.Alarms.AlarmMail alarm)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			static string Html(string? value) => System.Net.WebUtility.HtmlEncode(value ?? "");
+			builder.HtmlBody = PopulateTemplate(GetEmailTemplate("alarm"), new Dictionary<string, string>
+					{
+							{ "id", alarm.Id.ToString() },
+							{ "severity", Html(alarm.Severity) },
+							{ "type", Html(alarm.Type) },
+							{ "code", Html(alarm.Code) },
+							{ "description", Html(alarm.Description) },
+							{ "details", Html(alarm.Details ?? "-") },
+							{ "chargePoint", Html(alarm.ChargePoint) },
+							{ "station", Html(alarm.Station ?? "-") },
+							{ "evse", alarm.EvseId.HasValue ? $"(EVSE {alarm.EvseId})" : "" },
+							{ "firstSeen", alarm.FirstSeenAt.ToString("dd MMM yyyy, HH:mm 'UTC'", System.Globalization.CultureInfo.InvariantCulture) },
+							{ "link", Html(alarm.Link ?? "#") },
+					});
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
@@ -463,10 +488,11 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		// Templates ship with the build: read once per process.
 		private string GetEmailTemplate(string templateName)
 		{
 			var path = Path.Combine(_env.ContentRootPath, "Assets", "EmailTemplates", $"{templateName}.html");
-			return File.ReadAllText(path);
+			return Templates.GetOrAdd(path, File.ReadAllText);
 		}
 
 		private string PopulateTemplate(string template, Dictionary<string, string> placeholders)
@@ -527,15 +553,14 @@ namespace VoltaXApi.Services
 
 
 
-		public async Task SendEmailSmtp(MimeMessage email)
+		/// <summary>
+		/// Queues the message and returns at once; <see cref="MailDeliveryService"/> sends it over SMTP with retries
+		/// (see <see cref="SmtpMailTransport"/>).
+		/// </summary>
+		public Task SendEmailSmtp(MimeMessage email)
 		{
-			// Fail in 30 s instead of MailKit's 2 min when the host or port is unreachable.
-			using var smtp = new SmtpClient { Timeout = 30_000 };
-			await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-			var username = string.IsNullOrWhiteSpace(_mailSettings.Username) ? _mailSettings.Mail : _mailSettings.Username;
-			await smtp.AuthenticateAsync(username, _mailSettings.Password);
-			await smtp.SendAsync(email);
-			await smtp.DisconnectAsync(true);
+			_mailQueue.Enqueue(email);
+			return Task.CompletedTask;
 		}
 
 		public async Task SendPasswordChangedMail(MailRequest mailRequest, string userName)
@@ -589,6 +614,14 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 		
+		public async Task SendHtmlEmailAsync(MailRequest mailRequest)
+		{
+			PrepareEmailElements(mailRequest, out var email, out var builder);
+			builder.HtmlBody = mailRequest.Body ?? "";
+			email.Body = builder.ToMessageBody();
+			await SendEmailSmtp(email);
+		}
+
 		public async Task SendDebitCardRemovedEmail(MailRequest mailRequest, string userName)
         {
             PrepareEmailElements(mailRequest, out var email, out var builder);

@@ -21,7 +21,10 @@ public static class EndpointPermissions
         ["Comment"] = "Comments", ["CommentReply"] = "Comments", ["Rating"] = "Reports", ["RatingReport"] = "Reports",
         ["Configuration"] = "GlobalConfigurations", ["AccountDeletion"] = "Users",
         ["ChargerEvent"] = "ChargePoints", ["ChargerDisplayMessage"] = "ChargePoints",
-        ["ChargingProfile"] = "ChargePoints", ["ChargingStrategy"] = "ChargePoints", ["StationLoadBalancing"] = "ChargingStations"
+        ["ChargingProfile"] = "ChargePoints", ["ChargingStrategy"] = "ChargePoints", ["StationLoadBalancing"] = "ChargingStations",
+        // Billing: the invoice register is read with the top-up permission.
+        ["Invoice"] = "RechargeOrders", ["Refund"] = "RechargeOrders", ["Settlement"] = "Partners",
+        ["Alarm"] = "Alarms"
     };
     public static string? Required(string controller, string action, string method)
     {

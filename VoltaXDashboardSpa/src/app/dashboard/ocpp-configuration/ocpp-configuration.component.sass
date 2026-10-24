@@ -1,12 +1,12 @@
 $surface: var(--vx-surface, #FFFFFF)
 $surface-alt: var(--vx-surface-alt, #FAFAFA)
-$hover: var(--vx-hover, #F4F4F4)
+$hover: var(--vx-hover, var(--navy-50))
 $border: var(--vx-border, #EDEDED)
 $text: var(--vx-text, #0B0B0B)
 $muted: var(--vx-text-muted, #7A7C80)
-$yellow: var(--vx-yellow, #E5B223)
-$yellow-soft: var(--vx-yellow-soft, rgba(229, 178, 35, .14))
-$yellow-ink: var(--vx-yellow-ink, #8A6410)
+$brand: var(--vx-brand, #0A1A3A)
+$brand-soft: var(--vx-brand-soft, rgba(var(--vx-brand-rgb, 10, 26, 58), .14))
+$brand-ink: var(--vx-brand-ink, #1F3461)
 $bad: #DC2626
 
 :host
@@ -52,8 +52,8 @@ $bad: #DC2626
   width: 50px
   height: 50px
   border-radius: 12px
-  background: $yellow-soft
-  color: $yellow-ink
+  background: $brand-soft
+  color: $brand-ink
 
   svg
     width: 22px
@@ -126,7 +126,7 @@ $bad: #DC2626
   transition: border-color .18s, background .18s, opacity .18s
 
   &:hover:not(:disabled)
-    border-color: $yellow
+    border-color: $brand
 
   &:disabled
     opacity: .5
@@ -136,12 +136,12 @@ $bad: #DC2626
     background: transparent
 
   &.profile-btn_primary
-    border-color: $yellow
-    background: $yellow
-    color: #0B0B0B
+    border-color: $brand
+    background: $brand
+    color: var(--vx-on-brand, #fff)
 
     &:hover:not(:disabled)
-      background: var(--vx-yellow-hover, #D0A01B)
+      background: var(--vx-brand-hover, #1F3461)
 
 .profile-readonly,
 .profile-empty
@@ -170,7 +170,7 @@ $bad: #DC2626
     width: 3px
     height: 16px
     border-radius: 2px
-    background: $yellow
+    background: $brand
 
   span
     padding: 1px 7px
@@ -222,10 +222,10 @@ $bad: #DC2626
 .profile-attr
   padding: 1px 6px
   border-radius: 5px
-  background: $yellow-soft
+  background: $brand-soft
   font-family: inherit
   font-size: 10.5px
-  color: $yellow-ink
+  color: $brand-ink
 
 .profile-row__desc
   margin-top: 3px
@@ -297,11 +297,11 @@ $bad: #DC2626
     height: 1px
 
   input:focus-visible + .profile-toggle__track
-    outline: 2px solid $yellow
+    outline: 2px solid $brand
     outline-offset: 2px
 
   input:checked + .profile-toggle__track
-    background: $yellow
+    background: $brand
 
     .profile-toggle__thumb
       transform: translateX(14px)

@@ -73,12 +73,15 @@ namespace VoltaXApi.OCPP.Handlers
     {
         private readonly IOcppDeviceDataService _deviceData;
         private readonly ChargerAlarmNotifier _alarms;
+        private readonly VoltaXApi.Services.Alarms.IAlarmService _alarmService;
 
-        public NotifyEventHandler(IMessageLogRepository msgLogRepo, IOcppDeviceDataService deviceData, ChargerAlarmNotifier alarms, ILogger<NotifyEventHandler> logger)
+        public NotifyEventHandler(IMessageLogRepository msgLogRepo, IOcppDeviceDataService deviceData, ChargerAlarmNotifier alarms,
+            VoltaXApi.Services.Alarms.IAlarmService alarmService, ILogger<NotifyEventHandler> logger)
             : base(msgLogRepo, logger)
         {
             _deviceData = deviceData;
             _alarms = alarms;
+            _alarmService = alarmService;
         }
 
         protected override async Task<string?> Process(string chargePointId, NotifyEventRequest request)
@@ -86,6 +89,8 @@ namespace VoltaXApi.OCPP.Handlers
             // Every part is self-contained (tbc / seqNo only split a long list): each is stored as it arrives.
             var events = await _deviceData.RecordEventsAsync(chargePointId, request);
             await _alarms.NotifyAsync(events);
+            // Alarm-worthy events raise (or count) an alarm; cleared ones close it.
+            await _alarmService.OnEventsAsync(chargePointId, events);
             return $"{events.Count} event(s)";
         }
     }

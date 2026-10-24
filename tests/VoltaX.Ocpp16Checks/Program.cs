@@ -83,7 +83,7 @@ await using (var scope = provider.CreateAsyncScope())
     db.ChargePointProvisionings.AddRange(
         new ChargePointProvisioning { ChargePointID = accepted.ID, Status = ChargePointProvisioningStatusEnum.Provisioned },
         new ChargePointProvisioning { ChargePointID = cp201.ID, Status = ChargePointProvisioningStatusEnum.Provisioned });
-    db.Connectors.Add(new Connector { ChargePointID = cp201.ID, EvseID = 1, ConnectorID = 1, PricePerMinute = 0.5 });
+    db.Connectors.Add(new Connector { ChargePointID = cp201.ID, EvseID = 1, ConnectorID = 1, PricePerMinute = 0.5m });
     db.Cards.AddRange(
         new Card { CardNumber = "TAG1", Balance = 100, ExpirationDate = DateTime.UtcNow.AddYears(1), Status = CardStatusEnum.Active, UserID = user.ID, Note = "" },
         new Card { CardNumber = "BLOCKED", Balance = 100, Blocked = true, ExpirationDate = DateTime.UtcNow.AddYears(1), Status = CardStatusEnum.Active, Note = "" },
@@ -147,7 +147,7 @@ Check(await Query(db => db.ConnectorStatuses.AnyAsync(s => s.ConnectorID == conn
 await Query(async db =>
 {
     var row = await db.Connectors.SingleAsync(c => c.ID == connector!.ID);
-    row.PricePerMinute = 0.5;
+    row.PricePerMinute = 0.5m;
     return await db.SaveChangesAsync();
 });
 
@@ -200,7 +200,7 @@ Check(transaction.Status == TransactionStatusEnum.Ended && transaction.MeterStop
 var session = await Query(db => db.ChargingSessions.SingleAsync(s => s.ID == transaction.ChargingSessionID));
 Check(Math.Abs((session.ChargedKwhs ?? 0) - 12.0) < 1e-9 && Math.Abs((session.ChargedMinutes ?? 0) - 30) < 1e-6, "session closed with 12 kWh over 30 minutes");
 var balanceAfter = await Query(db => db.Cards.Where(c => c.CardNumber == "TAG1").Select(c => c.Balance).SingleAsync());
-Check(Math.Abs(balanceBefore - balanceAfter - 15.0) < 1e-6, "card billed like 2.0.1 (30 min x 0.5)");
+Check(balanceBefore - balanceAfter == 39.0m, "card billed like 2.0.1 (12 kWh x 2 + 30 min x 0.5)");
 var stopAgain = await Call(Cp16, "StopTransaction", new { transactionId, meterStop = 14000, timestamp = now.AddMinutes(31) });
 Check(!stopAgain.TryGetProperty("idTagInfo", out _), "a repeated StopTransaction is acknowledged without billing again");
 Check(await Query(db => db.Cards.Where(c => c.CardNumber == "TAG1").Select(c => c.Balance).SingleAsync()) == balanceAfter, "no second debit");

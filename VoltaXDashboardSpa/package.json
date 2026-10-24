@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --source-map=false"
   },
   "private": true,
   "dependencies": {
@@ -22,14 +23,13 @@
     "@angular/router": "^16.2.12",
     "@auth0/angular-jwt": "^5.1.2",
     "@microsoft/signalr": "^8.0.7",
+    "@ngx-translate/core": "15.0.0",
     "@primeng/themes": "^19.0.9",
     "apexcharts": "^3.40.0",
-    "html2pdf.js": "^0.10.1",
     "jquery": "^3.7.0",
     "jquery-nice-select": "^1.1.0",
     "json-schema-faker": "^0.5.6",
     "json-schema-to-typescript": "^15.0.2",
-    "jspdf": "^2.5.1",
     "ng-apexcharts": "^1.7.6",
     "ngx-slick-carousel": "^15.0.0",
     "primeng": "^16.9.1",
@@ -54,5 +54,10 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0"
+  },
+  "overrides": {
+    "jquery-nice-select": {
+      "jquery": "$jquery"
+    }
   }
 }

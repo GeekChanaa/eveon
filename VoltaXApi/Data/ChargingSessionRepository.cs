@@ -1,3 +1,4 @@
+using VoltaXApi.Services;
 using VoltaXApi.Models;
 using VoltaXApi.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +31,10 @@ namespace VoltaXApi.Data
 
     public IQueryable<ChargePointChargingSessionListDto> GetChargePointChargingSessions(int chargePointID, GlobalParams globalParams)
     {
+      // Explicit order: OFFSET / FETCH over an unordered query follows whichever index the database picks.
       var chargingSessions = _context.ChargingSessions.Include(u => u.User).Include(u => u.Connector)
-          .Where(cs => cs.Connector.ChargePointID == chargePointID).AsQueryable().ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
+          .Where(cs => cs.Connector.ChargePointID == chargePointID).OrderBy(cs => cs.ID)
+          .ProjectTo<ChargePointChargingSessionListDto>(_mapper.ConfigurationProvider);
       return chargingSessions;
     }
 
@@ -77,6 +80,15 @@ namespace VoltaXApi.Data
             TotalPriceWithVAT = cs.TotalPriceWithVAT(vatRate,(int) gracePeriodSeconds),
             KwhCharged = cs.ChargedKwhs,
             CostPerKwh = cs.CostPerKwh,
+            PricePerKWh = cs.PricePerKWh,
+            FlatFee = cs.FlatFee,
+            VatRate = cs.VatRate ?? vatRate,
+            EnergyPriceWithVAT = cs.EnergyAmount,
+            TimePriceWithVAT = cs.TimeAmount,
+            FlatFeeWithVAT = cs.FlatFeeAmount,
+            BalanceBefore = cs.BalanceBefore,
+            BalanceAfter = cs.BalanceAfter,
+            IsBilled = cs.TotalAmount != null,
             StartDate = cs.StartDate,
             EndDate = cs.EndDate,
             StoppedReason = cs.StoppedReason,
@@ -165,7 +177,7 @@ namespace VoltaXApi.Data
 
     public IQueryable<PartnerChargingSessionListDto> GetPartnerChargingSessions(int partnerID)
     {
-      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).Select(cs => new PartnerChargingSessionListDto
+      return _context.ChargingSessions.Where(u => u.Connector.ChargePoint.ChargingStation.PartnerID == partnerID).OrderBy(cs => cs.ID).Select(cs => new PartnerChargingSessionListDto
       {
         ID = cs.ID,
         Connector = cs.Connector.EvseID + " " + cs.Connector.ConnectorID,
@@ -188,8 +200,10 @@ namespace VoltaXApi.Data
     public async Task<Dictionary<DateTime, double>> GetChargePointNbrChargingSessionsLast30Days(int chargePointID)
     {
       var from = _clock.StartOfDayUtc(_clock.Today.AddDays(-30));
+      // In date order, whatever index the database reads them with.
       var startDates = await _context.ChargingSessions.AsNoTracking()
           .Where(cs => cs.StartDate >= from && cs.Connector!.ChargePointID == chargePointID)
+          .OrderBy(cs => cs.StartDate)
           .Select(cs => cs.StartDate)
           .ToListAsync();
 
@@ -283,15 +297,15 @@ namespace VoltaXApi.Data
       ChargingSession chargingSession = new()
       {
         ConnectorID = connector.ID,
-        UserID = (int)(card.UserID == null ? 1 : card.UserID),
+        UserID = card.UserID,
         CardID = card.ID,
         StartDate = startDate,
         StoppedReason = ReasonEnumType.Local,
         ChargingSessionStatus = ChargingSessionStatusEnum.Pending,
-        PricePerIdleMinute = connector.PricePerIdleMinute,
-        PricePerMinute = connector.PricePerMinute,
         CostPerKwh = connector.CostPerKwh,
       };
+      // The prices of the session are frozen now: a later price change never alters it.
+      Tariff.Of(connector, _globalConfigurations.Vat).ApplyTo(chargingSession);
 
       await this.AddAsync(chargingSession);
 

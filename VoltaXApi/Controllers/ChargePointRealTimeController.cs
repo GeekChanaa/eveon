@@ -23,18 +23,19 @@ namespace VoltaXApi.Controllers
     [ApiController]
     public class ChargePointRealTimeController : ControllerBase
     {
-        private readonly WebSocketManagerService _wsManagerService;
+        private readonly ChargePointStatusManagerService _chargePoints;
         public ChargePointRealTimeController(
-          WebSocketManagerService wsManagerService
+          ChargePointStatusManagerService chargePoints
         )
         {
-          _wsManagerService = wsManagerService;
+          _chargePoints = chargePoints;
         }
 
+        /// <summary>Whether the charge point has an open connection, on this instance or another one (scale-out).</summary>
         [HttpGet("Status/{chargePointID}")]
-        public async Task<IActionResult> Status(string chargePointID)
+        public IActionResult Status(string chargePointID)
         {
-          bool isActive = _wsManagerService.GetWebSocketStatus(chargePointID);
+          bool isActive = _chargePoints.ChargePointExists(chargePointID);
           return Ok(new { ChargePointID = chargePointID, IsActive = isActive });
         }
     }

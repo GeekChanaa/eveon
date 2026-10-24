@@ -30,7 +30,7 @@ namespace VoltaXApi.Data
                     ChargingStationID = cs.ID,
                     Revenue = cs.ChargePoints
                         .SelectMany(cp => cp.Connectors)
-                        .Sum(c => (c.PricePerKWh - c.CostPerKwh) * c.Power)
+                        .Sum(c => (c.PricePerKWh - c.CostPerKwh) * (decimal)c.Power)
                 })
                 .OrderByDescending(cs => cs.Revenue)
                 .Take(10);

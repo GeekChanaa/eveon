@@ -1,17 +1,17 @@
 <div class="icon">
-  <img src="assets/images/logos/logo.svg" alt="">
+  <img class="some-icon" src="/assets/images/logos/logo.svg" alt="eveon"><img class="some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon">
 </div>
-<div class="form-container">
+<div class="form-container" aria-live="polite">
   <ng-container *ngIf="errorMessage == ''">
-    <div class="title">Signing you in…</div>
-    <div class="subtitle">Finishing your Google sign in, hold on a second.</div>
+    <div class="title" role="status">{{ 'auth.session.signingIn' | translate }}</div>
+    <div class="subtitle">{{ 'auth.google.finishing' | translate }}</div>
   </ng-container>
 
   <ng-container *ngIf="errorMessage != ''">
-    <div class="title">Google sign in failed</div>
-    <app-info-box message="{{errorMessage}}" [type]="'error'"></app-info-box>
+    <div class="title">{{ 'auth.google.failed' | translate }}</div>
+    <app-info-box [message]="errorMessage | translate" [type]="'error'" role="alert"></app-info-box>
     <app-button class="entry__button" [variant]="'secondary'" size="large" (btnClick)="backToLogin()">
-      Back to login
+      {{ 'auth.google.backToLogin' | translate }}
     </app-button>
   </ng-container>
 </div>

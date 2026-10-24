@@ -1,5 +1,5 @@
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -26,7 +26,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
     ])
   ]
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent {
   @Input() title: string = 'Modal Title';
   @Input() modalSize: 'small' | 'medium' | 'large' = 'medium';
   @Input() showFooter: boolean = true;
@@ -43,9 +43,6 @@ export class ModalComponent implements OnInit {
   modalState: 'void' | 'open' = 'open';
 
   constructor(private elementRef: ElementRef) {}
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
 
   close(): void {
     this.modalState = 'void';

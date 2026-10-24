@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace VoltaXApi.Models
@@ -21,7 +22,8 @@ namespace VoltaXApi.Models
         public DateTime? CancelledAt { get; set; }
         public int? CancelledByUserID { get; set; }
         // Charging card balance at request time; ops refund it before or after anonymization.
-        public double WalletBalance { get; set; }
+        [Precision(18, 2)]
+        public decimal WalletBalance { get; set; }
         public bool RefundRequired { get; set; }
         // Cards blocked by the request, restored if it is cancelled.
         [MaxLength(1024)]

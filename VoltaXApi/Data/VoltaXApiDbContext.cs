@@ -5,20 +5,23 @@ using VoltaXApi.Models;
 
 namespace VoltaXApi.Data
 {
-    public class VoltaXApiDbContext : DbContext, Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.IDataProtectionKeyContext
+    public partial class VoltaXApiDbContext : DbContext, Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.IDataProtectionKeyContext
     {
         // Data Protection key ring (protects TOTP secrets); persisted so restarts / instances share it.
         public DbSet<Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey> DataProtectionKeys { get; set; }
         public DbSet<PhoneLoginChallenge> PhoneLoginChallenges { get; set; }
         private IConfiguration _configuration;
         private readonly IHttpContextAccessor? _httpContextAccessor;
+        private readonly IAccessChangeListener? _accessChanges;
 
 
         public VoltaXApiDbContext(
             DbContextOptions<VoltaXApiDbContext> options,
-            IHttpContextAccessor? httpContextAccessor = null) : base(options)
+            IHttpContextAccessor? httpContextAccessor = null,
+            IAccessChangeListener? accessChanges = null) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
+            _accessChanges = accessChanges;
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,6 +53,27 @@ namespace VoltaXApi.Data
             modelBuilder.Entity<Card>()
                 .Property(c => c.IsDeleted)
                 .HasDefaultValue(false);
+
+            modelBuilder.Entity<PaymentEvent>(entity =>
+            {
+                entity.HasIndex(e => new { e.Provider, e.EventId }).IsUnique();
+                entity.HasIndex(e => e.OrderID);
+            });
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => new { o.Provider, o.ProviderReference });
+
+            modelBuilder.Entity<WalletTransaction>(entity =>
+            {
+                entity.Property(w => w.Type).HasConversion<string>().HasMaxLength(32);
+                entity.HasIndex(w => w.Reference).IsUnique();
+                entity.HasIndex(w => new { w.CardID, w.CreatedAt });
+                entity.HasIndex(w => w.ChargingSessionID);
+                entity.HasIndex(w => w.OrderID);
+                entity.HasOne(w => w.Card)
+                    .WithMany()
+                    .HasForeignKey(w => w.CardID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<CardChangeHistory>(entity =>
             {
@@ -184,6 +208,7 @@ namespace VoltaXApi.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.AuthProvider)
                 .HasConversion<string>()
+                .HasMaxLength(32)
                 .HasDefaultValue(AuthProviderEnum.Local);
 
             // Unique only across the rows that actually carry a Google identity.
@@ -290,6 +315,21 @@ namespace VoltaXApi.Data
             });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.VariableMonitor>()
                 .HasIndex(m => new { m.ChargePointID, m.MonitoringId });
+
+            // Charge point alarms: one active row per fault (unique OpenKey), listed by status and time.
+            modelBuilder.Entity<VoltaXApi.Models.Alarms.Alarm>(entity =>
+            {
+                entity.Property(a => a.Type).HasConversion<string>().HasMaxLength(32);
+                entity.Property(a => a.Status).HasConversion<string>().HasMaxLength(16);
+                entity.HasIndex(a => a.OpenKey).IsUnique();
+                entity.HasIndex(a => new { a.Status, a.LastSeenAt });
+                entity.HasIndex(a => new { a.ChargePointID, a.Status });
+                entity.HasIndex(a => a.AssignedToID);
+                entity.HasOne(a => a.ChargePoint).WithMany().HasForeignKey(a => a.ChargePointID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.AcknowledgedBy).WithMany().HasForeignKey(a => a.AcknowledgedByID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.AssignedTo).WithMany().HasForeignKey(a => a.AssignedToID).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.ResolvedBy).WithMany().HasForeignKey(a => a.ResolvedByID).OnDelete(DeleteBehavior.Restrict);
+            });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.CustomerInformationReport>()
                 .HasIndex(r => new { r.ChargePointID, r.RequestId });
             modelBuilder.Entity<VoltaXApi.Models.Ocpp201.DisplayMessageSnapshot>()
@@ -367,6 +407,9 @@ namespace VoltaXApi.Data
                 entity.HasIndex(a => new { a.TransactionID, a.CreatedAt });
             });
 
+            ConfigureQueryIndexes(modelBuilder);
+            BillingModel.Configure(modelBuilder);
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 if (typeof(IEntity).IsAssignableFrom(entityType.ClrType))
@@ -398,6 +441,7 @@ namespace VoltaXApi.Data
         public DbSet<SystemReport> SystemReports { get; set; }
         public DbSet<SystemReportComment> SystemReportComments { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<WalletTransaction> WalletTransactions { get; set; }
         public DbSet<CardChangeHistory> CardChangeHistories { get; set; }
         public DbSet<CardExpirationNotification> CardExpirationNotifications { get; set; }
         public DbSet<ChargingStation> ChargingStations { get; set; }
@@ -412,6 +456,10 @@ namespace VoltaXApi.Data
         public DbSet<Connector> Connectors { get; set; }
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<PaymentEvent> PaymentEvents { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.Invoice> Invoices { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.InvoiceFile> InvoiceFiles { get; set; }
+        public DbSet<VoltaXApi.Models.Billing.InvoiceSequence> InvoiceSequences { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<MessageLog> MessageLogs { get; set; }
@@ -488,6 +536,7 @@ namespace VoltaXApi.Data
         public DbSet<VoltaXApi.Models.Ocpp201.DisplayMessageSnapshot> DisplayMessageSnapshots { get; set; }
         public DbSet<VoltaXApi.Models.Ocpp201.LogUploadTicket> LogUploadTickets { get; set; }
         public DbSet<VoltaXApi.Models.Ocpp201.UploadedChargerLog> UploadedChargerLogs { get; set; }
+        public DbSet<VoltaXApi.Models.Alarms.Alarm> Alarms { get; set; }
         
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -495,8 +544,12 @@ namespace VoltaXApi.Data
             EnsureCardHistoryIsImmutable();
             UpdateTimestamps();
             SoftDelete();
+            AddOpeningBalanceMovements();
             await AddCardChangeHistoryAsync(cancellationToken);
-            return await base.SaveChangesAsync(cancellationToken);
+            var accessChanges = CollectAccessChanges();
+            var saved = await base.SaveChangesAsync(cancellationToken);
+            NotifyAccessChanges(accessChanges);
+            return saved;
         }
 
         public override int SaveChanges()
@@ -504,8 +557,33 @@ namespace VoltaXApi.Data
             EnsureCardHistoryIsImmutable();
             UpdateTimestamps();
             SoftDelete();
+            AddOpeningBalanceMovements();
             AddCardChangeHistory();
-            return base.SaveChanges();
+            var accessChanges = CollectAccessChanges();
+            var saved = base.SaveChanges();
+            NotifyAccessChanges(accessChanges);
+            return saved;
+        }
+
+        /// <summary>
+        /// A card created with a balance gets its opening movement, so the wallet ledger of every card adds up to
+        /// its balance (later changes go through IWalletService).
+        /// </summary>
+        private void AddOpeningBalanceMovements()
+        {
+            foreach (var entry in ChangeTracker.Entries<Card>().Where(e => e.State == EntityState.Added && e.Entity.Balance != 0).ToList())
+            {
+                WalletTransactions.Add(new WalletTransaction
+                {
+                    Card = entry.Entity,
+                    Type = WalletTransactionType.Adjustment,
+                    Amount = entry.Entity.Balance,
+                    BalanceAfter = entry.Entity.Balance,
+                    Reference = $"opening:{Guid.NewGuid():N}",
+                    Description = "Opening balance",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
         }
 
         private async Task AddCardChangeHistoryAsync(CancellationToken cancellationToken)
@@ -541,7 +619,8 @@ namespace VoltaXApi.Data
             Microsoft.EntityFrameworkCore.ChangeTracking.PropertyValues databaseValues)
         {
             var changes = entry.Properties
-                .Where(property => property.Metadata.Name is not nameof(IEntity.CreatedAt) and not nameof(IEntity.UpdatedAt))
+                .Where(property => property.Metadata.Name is not nameof(IEntity.CreatedAt) and not nameof(IEntity.UpdatedAt)
+                    and not nameof(Card.BalanceVersion))
                 .Select(property => new
                 {
                     property.Metadata.Name,

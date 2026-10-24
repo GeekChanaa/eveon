@@ -16,7 +16,7 @@
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.69.0" />
     <PackageReference Include="LinqKit" Version="1.3.0" />
-    <PackageReference Include="MailKit" Version="4.3.0" />
+    <PackageReference Include="MailKit" Version="4.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="9.0.0" />
@@ -32,6 +32,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <!-- Database:Provider=Sqlite: local and CI test runs only (tools/e2e), refused in Production. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.MSBuild" Version="14.2.0">
@@ -49,6 +51,11 @@
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.4" />
+    <!-- Transitive packages pinned to versions without known advisories (see "dotnet list package" with the vulnerable flag). -->
+    <PackageReference Include="AWSSDK.Core" Version="4.0.3.3" />
+    <PackageReference Include="MessagePack" Version="2.5.303" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.21" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.21" />
     <!-- Reference data the first setup job imports into an empty database (the .json is content by default).
          sql-scripts/ is git-ignored, so the file is absent on CI / Railway: the job then only logs a warning. -->
     <Content Include="sql-scripts\EV-cars.csv" Condition="Exists('sql-scripts\EV-cars.csv')">

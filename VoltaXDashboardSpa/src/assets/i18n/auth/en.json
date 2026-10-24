@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "session": {
+      "signingIn": "Signing you in…",
+      "failed": "Your session could not be opened. Taking you back to the sign-in page…"
+    },
+    "google": {
+      "finishing": "Finishing your Google sign-in, one moment.",
+      "failed": "Google sign-in failed",
+      "noToken": "Google sign-in did not complete. Please try again.",
+      "backToLogin": "Back to sign-in"
+    },
+    "twoFactor": {
+      "title": "Two-factor authentication",
+      "required": "Your organisation requires two-factor authentication for this account. Please set it up now.",
+      "enabled": "Enabled: signing in asks for a code from your authenticator app ({{count}} recovery codes left).",
+      "disable": "Disable",
+      "currentPassword": "Current password",
+      "codeOrRecovery": "Authentication or recovery code",
+      "confirmDisable": "Disable two-factor authentication",
+      "intro": "Protect your account with a code from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…).",
+      "setUp": "Set up",
+      "scan": "Scan this QR code with your authenticator app, then enter the 6-digit code it shows.",
+      "qrAlt": "QR code for your authenticator app",
+      "manualKey": "Cannot scan? Enter this key by hand:",
+      "setupLink": "Setup link",
+      "code": "6-digit code",
+      "verify": "Verify and enable",
+      "saveCodes": "Save these recovery codes now.",
+      "saveCodesHint": "Each one works once if you lose your device. They will not be shown again.",
+      "copy": "Copy",
+      "savedThem": "I saved them",
+      "loadFailed": "Your two-factor authentication settings could not be loaded.",
+      "tooManyAttempts": "Too many attempts. Please wait a minute.",
+      "failed": "Something went wrong. Please try again."
+    }
+  }
+}

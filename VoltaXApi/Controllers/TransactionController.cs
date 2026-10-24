@@ -2,6 +2,7 @@ using VoltaXApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using VoltaXApi.Data;
 using VoltaXApi.Dtos;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -92,6 +93,19 @@ namespace VoltaXApi.Controllers
             Response.AddPagination(transactionsList.CurrentPage, transactionsList.PageSize, transactionsList.TotalCount, transactionsList.TotalPages);
             return transactionsList;
         }
+
+        /// <summary>Every OCPP transaction with filters (period, status, charge point, text), newest first.</summary>
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search([FromQuery] OperatorTransactionFilter filter,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search, CancellationToken ct) =>
+            Ok(await search.TransactionsAsync(filter, ct));
+
+        /// <summary>The filtered transactions as a CSV file (at most 20,000).</summary>
+        [HttpGet("Export")]
+        public async Task<IActionResult> Export([FromQuery] OperatorTransactionFilter filter,
+            [FromServices] VoltaXApi.Services.Sessions.OperatorSearchService search,
+            [FromServices] VoltaXApi.Services.Sessions.TransactionCsv csv, CancellationToken ct) =>
+            File(csv.Build(await search.TransactionExportAsync(filter, ct)), "text/csv; charset=utf-8", $"eveon-transactions-{DateTime.UtcNow:yyyyMMdd}.csv");
 
         [HttpGet("GetTransactionByID/{transactionID}")]
         public async Task<ActionResult<TransactionListDto>> GetTransactionByID(string transactionID)

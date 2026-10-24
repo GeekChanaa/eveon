@@ -41,6 +41,9 @@ namespace VoltaXApi.Controllers
             [FromQuery] DateTime? to = null)
         {
             var msgLogs = _repository.GetAllAsync(globalParams).Where(u => u.ChargePointId == chargePointId);
+            // Without a requested sort, keep the insertion order (the charge point / time index would reorder them).
+            if (string.IsNullOrEmpty(globalParams.OrderBy))
+                msgLogs = msgLogs.OrderBy(u => u.ID);
 
             // LogTime is stored in UTC; the client sends ISO strings with an offset, which bind as UTC.
             if (from.HasValue)

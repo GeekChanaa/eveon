@@ -1,52 +1,55 @@
 <ng-container *ngIf="status?.eligible">
-  <h3 class="section-title">Two factor authentication</h3>
+  <h3 class="section-title">{{ 'auth.twoFactor.title' | translate }}</h3>
 
-  <div class="tfa__warning" *ngIf="status?.required && !status?.enabled">
-    Your organisation requires two factor authentication for administrator accounts. Please set it up now.
+  <div class="tfa__warning" *ngIf="status?.required && !status?.enabled" role="alert">
+    {{ 'auth.twoFactor.required' | translate }}
   </div>
 
   <ng-container *ngIf="status?.enabled && !disabling">
-    <p>Enabled. Signing in asks for a code from your authenticator app ({{status?.recoveryCodesLeft}} recovery codes left).</p>
-    <button type="button" class="button-stroke" (click)="disabling = true">Disable</button>
+    <p>{{ 'auth.twoFactor.enabled' | translate:{ count: status?.recoveryCodesLeft } }}</p>
+    <button type="button" class="button-stroke" (click)="disabling = true">{{ 'auth.twoFactor.disable' | translate }}</button>
   </ng-container>
 
   <form *ngIf="status?.enabled && disabling" (ngSubmit)="disable()" class="tfa__form">
-    <input class="tfa__input" type="password" name="password" [(ngModel)]="password" placeholder="Current password" autocomplete="current-password">
-    <input class="tfa__input" name="code" [(ngModel)]="code" placeholder="Authentication or recovery code" autocomplete="one-time-code">
+    <label class="tfa__label" for="tfa-password">{{ 'auth.twoFactor.currentPassword' | translate }}</label>
+    <input id="tfa-password" class="tfa__input" type="password" name="password" [(ngModel)]="password" autocomplete="current-password">
+    <label class="tfa__label" for="tfa-disable-code">{{ 'auth.twoFactor.codeOrRecovery' | translate }}</label>
+    <input id="tfa-disable-code" class="tfa__input" name="code" [(ngModel)]="code" autocomplete="one-time-code">
     <div class="tfa__actions">
-      <button type="submit" class="button-stroke" [disabled]="isLoading || !code">Disable two factor authentication</button>
-      <button type="button" class="button-stroke" (click)="cancel()">Cancel</button>
+      <button type="submit" class="button-stroke" [disabled]="isLoading || !code">{{ 'auth.twoFactor.confirmDisable' | translate }}</button>
+      <button type="button" class="button-stroke" (click)="cancel()">{{ 'common.actions.cancel' | translate }}</button>
     </div>
   </form>
 
   <ng-container *ngIf="!status?.enabled && !enrollment">
-    <p>Protect your account with a code from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password...).</p>
-    <button type="button" class="button-stroke" [disabled]="isLoading" (click)="startEnrollment()">Set up</button>
+    <p>{{ 'auth.twoFactor.intro' | translate }}</p>
+    <button type="button" class="button-stroke" [disabled]="isLoading" (click)="startEnrollment()">{{ 'auth.twoFactor.setUp' | translate }}</button>
   </ng-container>
 
   <div *ngIf="enrollment" class="tfa__enroll">
-    <p>Scan this QR code with your authenticator app, then enter the 6 digit code it shows.</p>
-    <img class="tfa__qr" [src]="enrollment.qrCodeDataUri" alt="Authenticator QR code">
-    <p class="tfa__secret">Can't scan? Enter this key manually: <code>{{enrollment.secret}}</code></p>
+    <p>{{ 'auth.twoFactor.scan' | translate }}</p>
+    <img class="tfa__qr" [src]="enrollment.qrCodeDataUri" [alt]="'auth.twoFactor.qrAlt' | translate">
+    <p class="tfa__secret">{{ 'auth.twoFactor.manualKey' | translate }} <code dir="ltr">{{enrollment.secret}}</code></p>
     <details>
-      <summary>Setup link</summary>
-      <code class="tfa__uri">{{enrollment.otpAuthUri}}</code>
+      <summary>{{ 'auth.twoFactor.setupLink' | translate }}</summary>
+      <code class="tfa__uri" dir="ltr">{{enrollment.otpAuthUri}}</code>
     </details>
     <form (ngSubmit)="confirmEnrollment()" class="tfa__form">
-      <input class="tfa__input" name="code" [(ngModel)]="code" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+      <label class="tfa__label" for="tfa-code">{{ 'auth.twoFactor.code' | translate }}</label>
+      <input id="tfa-code" class="tfa__input" name="code" [(ngModel)]="code" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr">
       <div class="tfa__actions">
-        <button type="submit" class="button-stroke" [disabled]="isLoading || code.length !== 6">Verify and enable</button>
-        <button type="button" class="button-stroke" (click)="cancel()">Cancel</button>
+        <button type="submit" class="button-stroke" [disabled]="isLoading || code.length !== 6">{{ 'auth.twoFactor.verify' | translate }}</button>
+        <button type="button" class="button-stroke" (click)="cancel()">{{ 'common.actions.cancel' | translate }}</button>
       </div>
     </form>
   </div>
 
   <div *ngIf="recoveryCodes.length" class="tfa__codes">
-    <p><strong>Save these recovery codes now.</strong> Each one works once if you lose your device. They will not be shown again.</p>
-    <ul><li *ngFor="let recoveryCode of recoveryCodes"><code>{{recoveryCode}}</code></li></ul>
-    <button type="button" class="button-stroke" (click)="copyRecoveryCodes()">Copy</button>
-    <button type="button" class="button-stroke" (click)="recoveryCodes = []">I saved them</button>
+    <p><strong>{{ 'auth.twoFactor.saveCodes' | translate }}</strong> {{ 'auth.twoFactor.saveCodesHint' | translate }}</p>
+    <ul dir="ltr"><li *ngFor="let recoveryCode of recoveryCodes"><code>{{recoveryCode}}</code></li></ul>
+    <button type="button" class="button-stroke" (click)="copyRecoveryCodes()">{{ 'auth.twoFactor.copy' | translate }}</button>
+    <button type="button" class="button-stroke" (click)="recoveryCodes = []">{{ 'auth.twoFactor.savedThem' | translate }}</button>
   </div>
 
-  <div class="error" *ngIf="error">{{error}}</div>
+  <div class="error" *ngIf="error" role="alert">{{ error | translate }}</div>
 </ng-container>

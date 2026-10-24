@@ -19,6 +19,11 @@ namespace VoltaXApi.Dtos
         public double EnergyKWh { get; set; }
 
         /// <summary>
+        /// Average power since the previous meter reading (kW); null when it cannot be measured yet.
+        /// </summary>
+        public double? PowerKw { get; set; }
+
+        /// <summary>
         /// Duration of the session in minutes.
         /// </summary>
         public double DurationMinutes { get; set; }
@@ -26,12 +31,12 @@ namespace VoltaXApi.Dtos
         /// <summary>
         /// Estimated cost so far.
         /// </summary>
-        public double CurrentCost { get; set; }
+        public decimal CurrentCost { get; set; }
 
         /// <summary>
         /// Remaining card balance.
         /// </summary>
-        public double CardBalance { get; set; }
+        public decimal CardBalance { get; set; }
 
         /// <summary>
         /// Reason for stopping (only on End).

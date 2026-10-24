@@ -5,10 +5,10 @@ namespace VoltaXApi.Services
 {
   public interface IPartnerStatisticsService
   {
-    Task<double> GetTotalRevenueForPartnerAsync(int partnerID, double vatRate, double gracePeriodSeconds);
-    Task<double> GetTotalRevenueForPartnerTodayAsync(int partnerID, double vatRate, double gracePeriodSeconds);
-    Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, double vatRate, double gracePeriodSeconds);
-    Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, double vatRate, double gracePeriodSeconds);
+    Task<double> GetTotalRevenueForPartnerAsync(int partnerID, decimal vatRate, double gracePeriodSeconds);
+    Task<double> GetTotalRevenueForPartnerTodayAsync(int partnerID, decimal vatRate, double gracePeriodSeconds);
+    Task<Dictionary<DateTime, double>> GetDailyRevenueForPartnerLast30DaysAsync(int partnerID, decimal vatRate, double gracePeriodSeconds);
+    Task<Dictionary<string, double>> GetMonthlyRevenueForPartnerLastYearAsync(int partnerID, decimal vatRate, double gracePeriodSeconds);
 
     Task<double> GetTotalChargingSessionsForPartnerAsync(int partnerID);
     Task<double> GetTotalChargingSessionsForPartnerTodayAsync(int partnerID);
