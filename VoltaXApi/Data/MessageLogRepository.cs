@@ -70,7 +70,8 @@ namespace VoltaXApi.Data
                     msgLog.ConnectorId = connectorId;
                     msgLog.LogTime = DateTime.UtcNow;
                     msgLog.Message = message;
-                    msgLog.Result = result;
+                    // Some handlers have no result to log (2.0.1 Heartbeat, DataTransfer, ...): the column is required.
+                    msgLog.Result = result ?? string.Empty;
                     msgLog.ErrorCode = errorCode;
                     msgLog.ContentSent = sent.RawMessage;
                     msgLog.ContentReceived = received.RawMessage;
