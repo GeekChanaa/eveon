@@ -104,5 +104,7 @@ unless they are volumes:
 
 `.github/workflows/ci.yml` builds and tests the API, applies every migration to empty MariaDB and SQL
 Server databases, builds and tests the dashboard, analyzes and tests the mobile app (report only for now),
-runs shellcheck, scans new commits for secrets (gitleaks, `.gitleaks.toml`) and audits dependencies.
+runs shellcheck, scans new commits for secrets (gitleaks, `.gitleaks.toml`) and audits dependencies. Once
+the repository variable `EVEON_SIM_REPOSITORY` is set it also runs the simulator end-to-end matrix
+([testing.md](testing.md)).
 `.github/dependabot.yml` opens weekly update pull requests.

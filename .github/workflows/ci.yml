@@ -1,5 +1,6 @@
 # Continuous integration: API (build, tests, migrations on both database providers), dashboard (build,
-# headless tests), mobile app (analyze, tests), secret scanning and dependency audits.
+# headless tests), mobile app (analyze, tests), secret scanning and dependency audits, and the simulator
+# end-to-end matrix once the EVEON_SIM_REPOSITORY variable is set.
 # No repository secrets are needed: database passwords and signing keys are generated per run.
 name: CI
 
@@ -327,16 +328,48 @@ jobs:
         with:
           fail-on-severity: critical
 
-  # Simulator end-to-end run. The simulator / OCPP workstream provides the script; enable once it exists:
-  # e2e:
-  #   name: Simulator end-to-end
-  #   needs: [api]
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 30
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-dotnet@v4
-  #       with:
-  #         dotnet-version: ${{ env.DOTNET_VERSION }}
-  #     - name: Simulator end-to-end
-  #       run: echo "TODO: the E2E command from the simulator workstream (it starts the API, connects simulated chargers, runs a session)"
+  # Simulator end-to-end matrix (docs/testing.md): the API on a throwaway SQLite database and every charging
+  # preset of the EVEON simulator on OCPP 1.6 and 2.0.1. Runs once the repository variable EVEON_SIM_REPOSITORY
+  # names the simulator repository (EVEON_SIM_REF: its branch; secret EVEON_SIM_TOKEN when it is private).
+  e2e:
+    name: Simulator end-to-end
+    needs: [api]
+    if: ${{ vars.EVEON_SIM_REPOSITORY != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.EVEON_SIM_REPOSITORY }}
+          ref: ${{ vars.EVEON_SIM_REF }}
+          token: ${{ secrets.EVEON_SIM_TOKEN || github.token }}
+          path: EVEON_SIM
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: EVEON_SIM/package-lock.json
+
+      - name: Simulator end-to-end
+        run: tools/e2e/run-e2e.sh --sim EVEON_SIM --out tools/e2e/out/ci --parallel 4
+
+      - name: Run folder
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-run
+          path: |
+            tools/e2e/out/ci
+            !tools/e2e/out/ci/api-bin
+          if-no-files-found: warn
+
+      - name: Summary
+        if: always()
+        run: cat tools/e2e/out/ci/summary.md >> "$GITHUB_STEP_SUMMARY" || true
