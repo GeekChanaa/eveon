@@ -33,6 +33,7 @@ Components, request, OCPP and billing flows, the auth model and scale-out: [docs
 | `volta_x_mobile/` | Flutter mobile app (UI prototype) |
 | `tests/VoltaX.Tests/` | xUnit tests: API endpoints and authorization, OCPP scenarios, billing, payments, portals |
 | `tests/VoltaX.*Checks/` | Console checks run by hand against a development database |
+| `tools/e2e/` | Simulator end-to-end and load runner (EVEON_SIM against the API on a throwaway database) |
 | `VoltaXScrappers/` | Charger catalogue scraper and its images (reference data) |
 | `docs/` | Documentation (below), OCPP message samples |
 | `docker-compose.dev.yml` | Local MariaDB (and optional SQL Server, Redis) |
@@ -112,7 +113,10 @@ only; meanings, defaults and templates are in [docs/configuration.md](docs/confi
 dotnet test tests/VoltaX.Tests/VoltaX.Tests.csproj -c Release      # API (in-memory SQLite, no database needed)
 cd VoltaXDashboardSpa && npm run test:ci                           # dashboard, headless Chrome
 cd volta_x_mobile && flutter test                                  # mobile app
+tools/e2e/run-e2e.sh                                               # simulator end-to-end (needs EVEON_SIM)
 ```
+
+What each layer covers, the end-to-end and load runs: [docs/testing.md](docs/testing.md).
 
 CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) also applies every migration to empty MariaDB and
 SQL Server databases, scans new commits for secrets and audits dependencies.
@@ -131,6 +135,7 @@ run at deploy time with `--migrate`, and the dashboard deploys to Vercel. See
 | [configuration.md](docs/configuration.md) | Settings, secrets, hosting, OCPP security profiles and charger PKI |
 | [database.md](docs/database.md) | Providers, migrations, applying them, verification |
 | [deployment.md](docs/deployment.md) | Image, Railway, Docker host, storage, dashboard, CI |
+| [testing.md](docs/testing.md) | Test layers, simulator end-to-end and load runs |
 | [ocpp.md](docs/ocpp.md) | OCPP 2.0.1 / 1.6 support and message coverage; [samples](docs/ocpp-samples/README.md) |
 | [billing.md](docs/billing.md) | Prices, formula, VAT, invoices |
 | [payments.md](docs/payments.md) | Wallet top-ups, providers, webhooks |
