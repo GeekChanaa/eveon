@@ -17,6 +17,7 @@ namespace VoltaXApi.Services
 	/// </summary>
 	public class MailService : IMailService
 	{
+		private const string DefaultDisplayName = "EVEON";
 		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Templates = new();
 
 		private readonly MailSettings _mailSettings;
@@ -507,7 +508,8 @@ namespace VoltaXApi.Services
 		private void PrepareEmailElements(MailRequest mailRequest, out MimeMessage message, out BodyBuilder builder)
 		{
 			message = new MimeMessage();
-			message.From.Add(new MailboxAddress(mailRequest.Subject, _mailSettings.Mail));
+			// The From name is the brand (MailSettings:DisplayName), not the subject: the subject has its own header.
+			message.From.Add(new MailboxAddress(string.IsNullOrWhiteSpace(_mailSettings.DisplayName) ? DefaultDisplayName : _mailSettings.DisplayName, _mailSettings.Mail));
 			message.Sender = MailboxAddress.Parse(_mailSettings.Mail);
 			foreach (var email in mailRequest.ToEmails)
 				message.To.Add(MailboxAddress.Parse(email));

@@ -6,7 +6,8 @@ namespace VoltaXApi.Settings
         public string Mail { get; set; }
         // SMTP login when it differs from the sender (Brevo: xxxx@smtp-brevo.com). Empty = Mail.
         public string? Username { get; set; }
-        public string DisplayName { get; set; }
+        // Name shown with the sender address; empty = "EVEON".
+        public string? DisplayName { get; set; }
         public string Password { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }

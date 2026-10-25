@@ -143,6 +143,24 @@ public class MailQueueTests
         await delivery.StopAsync(CancellationToken.None);
     }
 
+    private sealed class CapturingQueue : IMailQueue
+    {
+        public List<MimeMessage> Messages { get; } = new();
+        public bool Enqueue(MimeMessage message) { Messages.Add(message); return true; }
+    }
+
+    [Fact]
+    public async Task The_sender_name_is_the_brand_not_the_subject()
+    {
+        var queue = new CapturingQueue();
+
+        await Service(queue).SendWelcomeEmail(new MailRequest { ToEmails = new List<string> { "driver@eveon.test" }, Subject = "Welcome to EVEON" }, "Ev");
+
+        var from = Assert.Single(Assert.Single(queue.Messages).From.Mailboxes);
+        Assert.Equal("EVEON", from.Name);
+        Assert.Equal("noreply@eveon.test", from.Address);
+    }
+
     [Fact]
     public void A_full_queue_refuses_new_messages()
     {

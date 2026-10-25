@@ -40,7 +40,7 @@ On the server they live in `/etc/eveon/api.env` (`chmod 600`), passed with `dock
 | `Security__HttpsRedirection` | no | default `true` outside development |
 | `RateLimiting__AuthStrictPerMinute` / `PublicPerMinute` / `GlobalPerMinute` | no | defaults 5 / 60 / 600 |
 | `Authentication__Google__ClientId` / `ClientSecret` | for Google login | |
-| `MailSettings__Mail` | for email | sender address (verified at the mail provider) |
+| `MailSettings__Mail` / `MailSettings__DisplayName` | for email | sender address (verified at the mail provider) and the name shown with it, default `EVEON` |
 | `MailSettings__Host` / `Port` / `Username` / `Password` | for email over SMTP | port 465: TLS from the start, other ports: STARTTLS |
 | `MailSettings__BrevoApiKey` | for email where SMTP is blocked | Brevo API key (`xkeysib-...`): mail goes over HTTPS to Brevo's API and the SMTP settings are unused. Railway blocks outbound SMTP (25, 465, 587, 2525) below the Pro plan. If Brevo answers 401 "unrecognised IP address", turn off Brevo's authorised IPs check (Security > Authorised IPs): Railway's outgoing addresses change |
 | `AwsSns__AccessKey` / `AwsSns__SecretKey` | for SMS | use a least-privilege IAM user (sns:Publish only) |
