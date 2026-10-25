@@ -10,5 +10,8 @@ namespace VoltaXApi.Settings
         public string Password { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
+        // Brevo API key (xkeysib-...): when set, mail goes through Brevo's HTTPS API instead of SMTP (Host, Port,
+        // Username and Password are then unused). For hosts that block outbound SMTP, such as Railway's Hobby plan.
+        public string? BrevoApiKey { get; set; }
     }
 }

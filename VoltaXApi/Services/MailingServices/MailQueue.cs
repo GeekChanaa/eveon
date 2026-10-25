@@ -96,6 +96,8 @@ namespace VoltaXApi.Services
             await smtp.SendAsync(message, cancellationToken);
             await smtp.DisconnectAsync(true, cancellationToken);
         }
+
+        public override string ToString() => $"SMTP {settings.Value.Host}:{settings.Value.Port}";
     }
 
     /// <summary>
@@ -127,6 +129,7 @@ namespace VoltaXApi.Services
             // Sends in progress are only cancelled once the drain time after the stop request is over.
             using var sending = new CancellationTokenSource(Timeout.InfiniteTimeSpan, _time);
             using var stop = stoppingToken.Register(() => sending.CancelAfter(TimeSpan.FromSeconds(Math.Max(0, _options.DrainOnStopSeconds))));
+            _logger.LogInformation("Mail is delivered through {Transport}", _transport);
             try
             {
                 while (await _queue.Reader.WaitToReadAsync(stoppingToken))
@@ -185,8 +188,8 @@ namespace VoltaXApi.Services
             }
         }
 
-        /// <summary>The server refused the message itself (5xx reply): sending it again cannot work.</summary>
+        /// <summary>The server refused the message itself (SMTP 5xx reply, Brevo 4xx): sending it again cannot work.</summary>
         private static bool IsPermanent(Exception ex) =>
-            ex is SmtpCommandException { StatusCode: >= (SmtpStatusCode)500 } or ParseException;
+            ex is SmtpCommandException { StatusCode: >= (SmtpStatusCode)500 } or ParseException or MailRejectedException;
     }
 }
