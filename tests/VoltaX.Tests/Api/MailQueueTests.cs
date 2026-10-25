@@ -162,6 +162,24 @@ public class MailQueueTests
     }
 
     [Fact]
+    public async Task A_notice_is_sent_to_each_recipient_alone_with_its_text_encoded()
+    {
+        var queue = new CapturingQueue();
+        var request = new MailRequest
+        {
+            Name = "VoltaX Notice",
+            Subject = "Maintenance",
+            ToEmails = new List<string> { "a@eveon.test", "b@eveon.test", "A@eveon.test", "" }
+        };
+
+        await Service(queue).SendNoticeEmail(request, "Closed <b>Sunday</b>\nBack Monday");
+
+        Assert.Equal(new[] { "a@eveon.test", "b@eveon.test" }, queue.Messages.Select(m => Assert.Single(m.To.Mailboxes).Address));
+        Assert.All(queue.Messages, m => Assert.Equal("Maintenance", m.Subject));
+        Assert.All(queue.Messages, m => Assert.Contains("Closed &lt;b&gt;Sunday&lt;/b&gt;<br>Back Monday", m.HtmlBody));
+    }
+
+    [Fact]
     public void A_full_queue_refuses_new_messages()
     {
         var (queue, _) = Pipeline(new FakeTransport(), capacity: 2);

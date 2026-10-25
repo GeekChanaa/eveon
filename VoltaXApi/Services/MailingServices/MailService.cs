@@ -464,14 +464,24 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		/// <summary>
+		/// One message per recipient: a notice goes to every customer, partner or admin, who must not see each
+		/// other's addresses. The text is plain text (line breaks kept).
+		/// </summary>
 		public async Task SendNoticeEmail(MailRequest mailRequest, string noticeText)
 		{
-			PrepareEmailElements(mailRequest, out var email, out var builder);
-			var template = GetEmailTemplate("notice");
-			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
+			var body = PopulateTemplate(GetEmailTemplate("notice"), new Dictionary<string, string>
 					{
-						{ "NoticeText", noticeText }
+						{ "NoticeText", System.Net.WebUtility.HtmlEncode(noticeText ?? "").ReplaceLineEndings("<br>") }
 					});
+			foreach (var recipient in mailRequest.ToEmails.Where(e => !string.IsNullOrWhiteSpace(e)).Distinct(StringComparer.OrdinalIgnoreCase))
+			{
+				var single = new MailRequest { Name = mailRequest.Name, Subject = mailRequest.Subject, ToEmails = new List<string> { recipient } };
+				PrepareEmailElements(single, out var email, out var builder);
+				builder.HtmlBody = body;
+				email.Body = builder.ToMessageBody();
+				await SendEmailSmtp(email);
+			}
 		}
 
 
