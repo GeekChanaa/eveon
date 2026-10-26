@@ -1,0 +1,89 @@
+# Bump version: raises the version of the API (VoltaXApi.csproj) or the dashboard (package.json), adds the
+# release to the public changelog (dashboard page /changelog, data in
+# VoltaXDashboardSpa/src/assets/data/changelog.json), then commits to the selected branch and tags the commit
+# <component>-v<version> (api-v1.2.0, dashboard-v1.4.1).
+#
+# Run it from Actions > Bump version > Run workflow, on the branch to release from. Leave "changes" empty to use
+# the subjects of the commits that touched the component since its last version; otherwise separate the entries
+# with ";" (customer facing wording, the changelog is public).
+#
+# Owner to enable: the workflow pushes with GITHUB_TOKEN, so the branch must accept pushes from GitHub Actions
+# (with branch protection, allow github-actions[bot] to bypass it). Pushes made with GITHUB_TOKEN do not start
+# other workflows: CI does not run on the release commit, and an API tag does not start "Release image" (push a
+# v1.2.3 tag yourself, or run that workflow by hand, to publish the image).
+name: Bump version
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: What to release
+        type: choice
+        options: [api, dashboard]
+        required: true
+      bump:
+        description: Which part of the version to raise (major.minor.patch)
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+      changes:
+        description: 'Changes, separated by ";" (empty: commit subjects since the last version)'
+        type: string
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-version-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    name: Bump ${{ inputs.component }} (${{ inputs.bump }})
+    # Releases are committed to a branch; a run started from a tag has nowhere to push.
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The whole history: the changes are read from the commits since the last version.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Bump the version and update the changelog
+        id: bump
+        env:
+          COMPONENT: ${{ inputs.component }}
+          BUMP: ${{ inputs.bump }}
+          CHANGES: ${{ inputs.changes }}
+        run: node tools/release/bump-version.mjs "$COMPONENT" "$BUMP" "$CHANGES"
+
+      - name: Commit, tag and push
+        env:
+          COMPONENT: ${{ inputs.component }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --all --message "Release $COMPONENT $VERSION"
+          git tag --annotate "$TAG" --message "Release $COMPONENT $VERSION"
+          git push origin "HEAD:${GITHUB_REF_NAME}" "refs/tags/$TAG"
+
+      - name: Summary
+        env:
+          COMPONENT: ${{ inputs.component }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          {
+            echo "### Released $COMPONENT $VERSION"
+            echo
+            echo "Tag \`$TAG\` on \`$GITHUB_REF_NAME\`."
+          } >> "$GITHUB_STEP_SUMMARY"

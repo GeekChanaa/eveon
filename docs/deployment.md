@@ -63,6 +63,18 @@ Release images can also come from GitHub: pushing a `v1.2.3` tag runs `.github/w
 which publishes `ghcr.io/<owner>/eveon-api:1.2.3`; deploy it with
 `IMAGE=ghcr.io/<owner>/eveon-api TAG=1.2.3 SKIP_BUILD=1 ./deploy.sh`.
 
+## Versions and changelog
+
+The API version is `<Version>` in `VoltaXApi/VoltaXApi.csproj`, the dashboard version is `version` in
+`VoltaXDashboardSpa/package.json`. Raise one with Actions > **Bump version** > Run workflow
+(`.github/workflows/bump-version.yml`): pick the component and patch, minor or major, and optionally the
+changes separated by `;` (by default, the subjects of the commits that touched the component since its last
+version). It runs `tools/release/bump-version.mjs`, which updates the version and adds the release to
+`VoltaXDashboardSpa/src/assets/data/changelog.json`, then commits `Release <component> <version>` to the
+branch and tags it `api-v<version>` or `dashboard-v<version>`. The changelog is public: anyone can read it at
+`/changelog` on the dashboard, so write the changes for customers. The release commit is pushed with
+`GITHUB_TOKEN`, so it starts neither CI nor `release.yml`; Vercel still redeploys the dashboard from it.
+
 ## Storage
 
 The API writes files in four places. Inside a container they disappear when the container is replaced,
