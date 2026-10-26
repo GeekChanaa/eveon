@@ -66,7 +66,25 @@
     <ng-container *ngIf="!isLoading && !loadError && (data == null || data.length == 0)">
       <app-empty-card></app-empty-card>
     </ng-container>
-    <div class="row__container" *ngIf="!isLoading && !loadError && data != null && data.length > 0">
+
+    <!-- First load: the table's shape, shimmering, instead of a blank card. -->
+    <div class="table-skeleton" *ngIf="isLoading && !hasRows" aria-hidden="true">
+      <div class="table-skeleton__row table-skeleton__row--head">
+        <span class="table-skeleton__cell" *ngFor="let field of visibleFields"><span class="table-skeleton__bar table-skeleton__bar--head"></span></span>
+        <span class="table-skeleton__cell table-skeleton__cell--options"></span>
+      </div>
+      <div class="table-skeleton__row" *ngFor="let row of skeletonRows; let r = index" [style.animation-delay.ms]="r * 60">
+        <span class="table-skeleton__cell" *ngFor="let field of visibleFields; let c = index">
+          <span class="table-skeleton__bar" [style.width.%]="skeletonWidth(r, c)"></span>
+        </span>
+        <span class="table-skeleton__cell table-skeleton__cell--options">
+          <span class="table-skeleton__dot"></span><span class="table-skeleton__dot"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Later loads (page, sort, filters) keep the rows on screen, dimmed, until the new ones arrive. -->
+    <div class="row__container" *ngIf="!loadError && hasRows" [class.is-refreshing]="isLoading" [attr.aria-busy]="isLoading">
       <div class="row__wrapper">
         <div class="row__table">
           <div class="row__row">

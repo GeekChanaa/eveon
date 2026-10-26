@@ -169,6 +169,22 @@ export class TableListComponent implements OnInit {
       });
   }
 
+  readonly skeletonRows = Array.from({ length: 8 });
+
+  get hasRows(): boolean {
+    return (this.data?.length ?? 0) > 0;
+  }
+
+  get visibleFields(): string[] {
+    const shown = this.fields.filter(f => this.fieldShown[f]);
+    return shown.length > 0 ? shown : this.fields.slice(0, 5);
+  }
+
+  /** Varied bar widths so the skeleton reads like real content, stable between renders. */
+  skeletonWidth(row: number, column: number): number {
+    return 45 + ((row * 7 + column * 13) % 5) * 11;
+  }
+
   /** Header of a column, in the interface language. */
   fieldLabel(field: string): string {
     if (this.fieldLabelPrefix) {

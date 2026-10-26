@@ -1,5 +1,3 @@
-<div class="bar" [ngClass]="{'sticky' : isSticky}">
-  <div></div>
+<div class="bar" [class.sticky]="isSticky" role="progressbar" [attr.aria-label]="'common.state.loading' | translate">
+  <span class="bar__runner"></span>
 </div>
-
-<div class="overlay" [ngClass]="{'sticky' : isSticky}"></div>

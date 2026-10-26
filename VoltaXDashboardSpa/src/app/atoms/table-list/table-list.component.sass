@@ -414,3 +414,77 @@ body.dark .row__col:after
 .filters__list
     max-height: 200px
     overflow: scroll
+// Loading: a skeleton of the table on the first load, dimmed rows while a new page or filter loads.
+.row__container
+  transition: opacity .2s ease
+  &.is-refreshing
+    opacity: .5
+    pointer-events: none
+
+.table-skeleton
+  display: grid
+  margin: 0 -12px
+  overflow: hidden
+
+.table-skeleton__row
+  display: flex
+  align-items: center
+  gap: 0
+  border-bottom: 1px solid var(--list-border, var(--vx-border, #DFE5F0))
+  animation: skeleton-in .35s ease both
+  &:last-child
+    border-bottom: 0
+  &:nth-child(even)
+    background: var(--list-header, var(--vx-surface-alt, #F5F7FB))
+
+.table-skeleton__row--head
+  background: var(--list-header, var(--vx-surface-alt, #F5F7FB))
+  .table-skeleton__cell
+    padding-block: 15px
+
+.table-skeleton__cell
+  flex: 1 1 0
+  min-width: 0
+  padding: 19px 18px
+
+.table-skeleton__cell--options
+  display: flex
+  flex: 0 0 96px
+  justify-content: flex-end
+  gap: 8px
+
+.table-skeleton__bar, .table-skeleton__dot
+  display: block
+  // Brand-tinted and translucent: visible on plain and striped rows, in both themes.
+  background: linear-gradient(90deg, rgba(var(--vx-brand-rgb, 10, 26, 58), .07) 0, rgba(var(--vx-brand-rgb, 10, 26, 58), .17) 45%, rgba(var(--vx-brand-rgb, 10, 26, 58), .07) 90%)
+  background-size: 300% 100%
+  animation: skeleton-shimmer 1.4s ease-in-out infinite
+
+.table-skeleton__bar
+  height: 12px
+  border-radius: 6px
+
+.table-skeleton__bar--head
+  width: 55%
+  height: 9px
+  opacity: .8
+
+.table-skeleton__dot
+  width: 28px
+  height: 28px
+  border-radius: 8px
+
+@keyframes skeleton-shimmer
+  0%
+    background-position: 100% 0
+  100%
+    background-position: 0 0
+
+@keyframes skeleton-in
+  from
+    opacity: 0
+    transform: translateY(4px)
+
+@media (prefers-reduced-motion: reduce)
+  .table-skeleton__row, .table-skeleton__bar, .table-skeleton__dot
+    animation: none

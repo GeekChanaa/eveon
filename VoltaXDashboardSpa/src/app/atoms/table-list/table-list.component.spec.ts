@@ -66,6 +66,23 @@ describe('TableListComponent', () => {
     fixture.detectChanges();
     expect(el().querySelector('app-empty-card')).toBeNull();
     expect(el().querySelector('app-progress-bar')).not.toBeNull();
+    expect(el().querySelector('.table-skeleton')).not.toBeNull();
+  });
+
+  it('keeps the rows on screen, dimmed, while the next page loads', () => {
+    getItems.and.returnValue(of(page([{ id: 1, name: 'First' }], 2)));
+    fixture.detectChanges();
+    const pending = new Subject<PaginatedResult<any[]>>();
+    getItems.and.returnValue(pending);
+    component.nextPage();
+    fixture.detectChanges();
+    expect(el().querySelector('.table-skeleton')).toBeNull();
+    expect(el().querySelector('.row__container.is-refreshing')?.textContent).toContain('First');
+
+    pending.next(page([{ id: 2, name: 'Second' }], 2));
+    fixture.detectChanges();
+    expect(el().querySelector('.row__container.is-refreshing')).toBeNull();
+    expect(el().textContent).toContain('Second');
   });
 
   it('asks before deleting and reports the result', () => {
