@@ -252,19 +252,141 @@ body .page :is(app-create-charging-station, app-create-charge-point, app-create-
       background-color: var(--secondary1)
       border-color: var(--secondary1)
 
+  .station-address-search
+    margin-bottom: 24px
+    padding: 20px
+    border: 1px solid var(--station-border)
+    border-radius: 14px
+    background: var(--station-soft)
+
+    .field__label
+      display: block
+      margin-bottom: 4px
+
+  .station-address-search__help
+    margin: 0 0 12px
+    font-size: 13px
+    line-height: 1.6
+    color: var(--station-muted)
+
+  .station-address-search__box
+    position: relative
+
+    .field__input
+      width: 100%
+      height: var(--input-height-large, 44px)
+      padding-left: 42px
+      padding-right: 40px
+      background-color: var(--station-bg)
+
+  .station-address-search__icon
+    position: absolute
+    top: 50%
+    left: 14px
+    width: 18px
+    height: 18px
+    transform: translateY(-50%)
+    fill: none
+    stroke: var(--station-muted)
+    stroke-width: 2
+    stroke-linecap: round
+    pointer-events: none
+
+  .station-address-search__spinner
+    position: absolute
+    top: 50%
+    right: 14px
+    width: 16px
+    height: 16px
+    margin-top: -8px
+    border: 2px solid var(--station-border)
+    border-top-color: var(--station-accent)
+    border-radius: 50%
+    animation: station-spin .7s linear infinite
+
+  .station-address-search__list
+    position: absolute
+    z-index: 20
+    top: calc(100% + 6px)
+    left: 0
+    right: 0
+    max-height: 320px
+    margin: 0
+    padding: 6px
+    overflow-y: auto
+    list-style: none
+    border: 1px solid var(--station-border)
+    border-radius: 12px
+    background: var(--station-bg)
+    box-shadow: 0 12px 32px rgba(4, 12, 31, .16)
+
+    li
+      display: flex
+      align-items: flex-start
+      gap: 10px
+      padding: 10px 12px
+      border-radius: 8px
+      cursor: pointer
+
+      &.is-active
+        background: var(--vx-brand-soft)
+
+      &.is-empty
+        cursor: default
+        font-size: 13px
+        line-height: 1.6
+        color: var(--station-muted)
+
+    svg
+      flex-shrink: 0
+      width: 18px
+      height: 18px
+      margin-top: 1px
+      fill: none
+      stroke: var(--station-accent)
+      stroke-width: 1.8
+      stroke-linejoin: round
+
+    strong
+      display: block
+      font-size: 14px
+      font-weight: 600
+      color: var(--station-text)
+
+    small
+      display: block
+      margin-top: 2px
+      font-size: 12px
+      line-height: 1.5
+      color: var(--station-muted)
+
   .station-map
     padding: 8px
     border: 1px solid var(--station-border)
     border-radius: 14px
     background: var(--station-soft)
 
-    app-map-picker > div:first-child
-      border-radius: 9px
+  .station-map__status
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: 6px 14px
+    padding: 12px 8px 4px
+    font-size: 13px
+    line-height: 1.5
+    color: var(--station-muted)
 
-    .map-error
-      margin: 12px
+    &.is-missing
       color: var(--danger1)
-      font-size: 13px
+      font-weight: 600
+
+  .station-map__coords
+    padding: 3px 8px
+    border-radius: 6px
+    background: var(--vx-brand-soft)
+    color: var(--station-accent)
+    font-weight: 600
+    font-variant-numeric: tabular-nums
 
   .station-wizard .form__actions
     display: flex
@@ -634,6 +756,13 @@ body.dark .page :is(app-create-charging-station, app-create-charge-point, app-cr
     background: var(--station-soft)
     border: 1px solid currentColor
 
+@keyframes station-spin
+  to
+    transform: rotate(360deg)
+
 @media (prefers-reduced-motion: reduce)
   body .page :is(app-create-charging-station, app-create-charge-point, app-create-user, app-create-partner, app-add-partner-logo) .station-choice
     transition: none
+
+  body .page app-create-charging-station .station-address-search__spinner
+    animation-duration: 2s

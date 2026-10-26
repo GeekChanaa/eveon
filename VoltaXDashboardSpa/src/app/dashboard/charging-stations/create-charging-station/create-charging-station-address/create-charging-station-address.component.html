@@ -1,38 +1,98 @@
 <form [formGroup]="form">
 
-  <div class="field__group">
-    <app-search-input class="field"
-      placeholder="City"
-      title="City"
-      description="The City where the charging station is."
-      [control]="getControl('city')"
-      [options]="cities"></app-search-input>
-  
-    <app-form-field
-      class="field"
-      title="Zip Code"
-      inputType="text"
-      description="The postal code for the address."
-      placeholder="Enter Zip Code"
-      [control]="getControl('zipCode')"
-    ></app-form-field>
+  <div class="station-address-search">
+    <label class="field__label" for="station-address-search">Find the address</label>
+    <p class="station-address-search__help">Search a street, place or neighbourhood in Morocco. The address, city, zip code and map pin fill in for you.</p>
+
+    <div class="station-address-search__box">
+      <svg class="station-address-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input
+        id="station-address-search"
+        class="field__input"
+        type="text"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="station-address-suggestions"
+        [attr.aria-expanded]="showSuggestions"
+        [attr.aria-activedescendant]="showSuggestions && activeSuggestion >= 0 ? 'station-address-suggestion-' + activeSuggestion : null"
+        placeholder="e.g. Boulevard d'Anfa, Casablanca"
+        [(ngModel)]="query"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="onQueryChange($event)"
+        (keydown)="onSearchKeydown($event)"
+        (focus)="openSuggestions()"
+        (blur)="closeSuggestions()">
+      <span *ngIf="searching" class="station-address-search__spinner" aria-hidden="true"></span>
+
+      <ul *ngIf="showSuggestions" id="station-address-suggestions" class="station-address-search__list" role="listbox">
+        <li *ngFor="let suggestion of suggestions; let i = index"
+          [id]="'station-address-suggestion-' + i"
+          role="option"
+          [attr.aria-selected]="i === activeSuggestion"
+          [class.is-active]="i === activeSuggestion"
+          (mouseenter)="activeSuggestion = i"
+          (mousedown)="$event.preventDefault(); pickSuggestion(suggestion)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <span>
+            <strong>{{ suggestion.street }}</strong>
+            <small>{{ suggestion.label }}</small>
+          </span>
+        </li>
+        <li *ngIf="!suggestions.length" class="is-empty" role="option" aria-disabled="true">
+          {{ searchUnavailable ? 'Address search is unavailable right now. Fill in the fields and click the map.' : 'No address found. Try a nearby street, or click the map.' }}
+        </li>
+      </ul>
+    </div>
   </div>
-  
 
   <app-form-field
     class="field"
     title="Address"
     inputType="text"
-    description="The full street address."
+    description="Street and number, as drivers will see it."
     placeholder="Enter Street Address"
     [control]="getControl('address')"
   ></app-form-field>
 
-  <div class="station-section-heading"><h3>Pin the exact location</h3><p>Click on the map to place the station at its charging entrance.</p></div>
+  <div class="field__group">
+    <app-search-input class="field"
+      placeholder="Select a city"
+      title="City"
+      description="The City where the charging station is."
+      [control]="getControl('city')"
+      [options]="cities"></app-search-input>
+
+    <app-form-field
+      class="field"
+      title="Zip Code"
+      inputType="text"
+      description="Optional. The 5-digit postal code."
+      placeholder="e.g. 20250"
+      [control]="getControl('zipCode')"
+    ></app-form-field>
+  </div>
+
+  <div class="station-section-heading">
+    <h3>Pin the exact location</h3>
+    <p>Click the map or drag the pin onto the charging entrance. Switch to Satellite to see the parking spots.</p>
+  </div>
   <div class="station-map">
-  <app-map-picker
-    (locationSelected)="onLocationSelected($event)" 
-    [useCurrentLocation]="true"></app-map-picker>
+    <app-map-picker
+      [lat]="latitude"
+      [lng]="longitude"
+      [showError]="submitted"
+      (locationSelected)="onLocationSelected($event)"></app-map-picker>
+
+    <div class="station-map__status" [class.is-missing]="submitted && !hasLocation" aria-live="polite">
+      <ng-container *ngIf="hasLocation; else noPin">
+        <span class="station-map__coords">{{ latitude | number:'1.5-5' }}, {{ longitude | number:'1.5-5' }}</span>
+        <span>{{ resolvingPin ? 'Looking up the address…' : pinMessage }}</span>
+      </ng-container>
+      <ng-template #noPin>
+        <span>{{ submitted ? 'Pin the station on the map to continue.' : 'No location pinned yet.' }}</span>
+      </ng-template>
+    </div>
   </div>
 
   <div class="form__actions">
@@ -45,7 +105,6 @@
     <app-button
       class="ml-auto"
       (btnClick)="saveInformations()"
-      [disabled]="form.invalid"
       [variant]="'professional'">
         Next
     </app-button>

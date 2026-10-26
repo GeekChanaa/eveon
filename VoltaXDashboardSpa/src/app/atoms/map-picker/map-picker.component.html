@@ -1,5 +1,19 @@
-<div #mapContainer [ngClass]="{'map-picker-error' : !locationChosen}" style="width: 100%; height: 400px;"></div>
+<div class="map-picker" [class.map-picker--invalid]="showError && !hasLocation">
+  <div #mapContainer class="map-picker__canvas" [style.height]="height"></div>
 
-<div *ngIf="!locationChosen && !noEdit" class="map-error">
-  Please choose a location by clicking on the map.
+  <div *ngIf="!mapReady && !loadFailed" class="map-picker__overlay">Loading map…</div>
+  <div *ngIf="loadFailed" class="map-picker__overlay" role="alert">
+    The map could not be loaded. Check your connection and reload the page.
+  </div>
+
+  <button *ngIf="mapReady && !noEdit" type="button" class="map-picker__locate" (click)="locateMe()" [disabled]="locating">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7.5"/></svg>
+    {{ locating ? 'Locating…' : 'Use my location' }}
+  </button>
+
+  <div *ngIf="mapReady && !noEdit && !hasLocation" class="map-picker__hint">
+    Click the map to drop the pin
+  </div>
 </div>
+
+<p *ngIf="locateError" class="map-picker__message" role="alert">{{ locateError }}</p>

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { ValidationMessagesService } from 'src/_services/validation-messages.ser
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.sass']
 })
-export class SearchInputComponent implements OnInit, OnChanges {
+export class SearchInputComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() options: {id : any, name : any}[] = [];
   @Input() control: FormControl = new FormControl('');
@@ -28,6 +29,8 @@ export class SearchInputComponent implements OnInit, OnChanges {
 
   showList = false;
 
+  private valueSubscription?: Subscription;
+
   constructor(
     private _validationMessageService : ValidationMessagesService
   ) { }
@@ -35,8 +38,19 @@ export class SearchInputComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.filteredOptions = this.options;
   }
+
+  ngOnDestroy(): void {
+    this.valueSubscription?.unsubscribe();
+  }
   
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['control']) {
+      // Keep the visible text in sync when the value is set from code (e.g. an address lookup).
+      this.valueSubscription?.unsubscribe();
+      this.valueSubscription = this.control.valueChanges.subscribe(() => this.syncSearchString());
+      this.syncSearchString();
+    }
+
     if (changes['options'] && this.options?.length) {
       this.filteredOptions = this.options;
   
@@ -46,6 +60,20 @@ export class SearchInputComponent implements OnInit, OnChanges {
           this.searchString = this.getOptionLabel(selectedOption);
         }
       }
+    }
+  }
+
+  private syncSearchString() {
+    const value = this.control.value;
+    if (value === null || value === undefined || value === '') {
+      this.searchString = '';
+      return;
+    }
+    const selectedOption = this.options?.find(option => option.id === value);
+    if (selectedOption) {
+      this.searchString = this.getOptionLabel(selectedOption);
+    } else if (this.options?.length) {
+      this.searchString = String(value);
     }
   }
 
@@ -66,6 +94,15 @@ export class SearchInputComponent implements OnInit, OnChanges {
 
   hideSelect() {
     this.showList = false;
+    // Typed text only counts once it matches an option; otherwise show the current value again.
+    const typed = this.searchString?.trim().toLowerCase();
+    const exactMatch = typed ? this.options.find(option =>
+      String(option.name).toLowerCase() === typed || this.getOptionLabel(option).toLowerCase() === typed) : undefined;
+    if (exactMatch && exactMatch.id !== this.control.value) {
+      this.selectOption(exactMatch);
+    } else {
+      this.syncSearchString();
+    }
   }
 
   selectOption(option: any) {

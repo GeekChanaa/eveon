@@ -1,2 +1,101 @@
-.map-error
-  color: red
+:host
+  display: block
+
+.map-picker
+  position: relative
+  overflow: hidden
+  border: 1px solid var(--vx-border, #DFE5F0)
+  border-radius: 10px
+  background: var(--vx-surface-alt, #F3F5F9)
+  transition: border-color .18s, box-shadow .18s
+
+  &--invalid
+    border-color: var(--danger1)
+    box-shadow: 0 0 0 3px rgba(167, 40, 40, .15)
+
+.map-picker__canvas
+  width: 100%
+
+.map-picker__overlay
+  position: absolute
+  inset: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 24px
+  text-align: center
+  font-size: 13px
+  color: var(--vx-text-muted, #4A5878)
+
+.map-picker__locate
+  position: absolute
+  top: 10px
+  left: 10px
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  height: 40px
+  padding: 0 14px
+  border: 0
+  border-radius: 2px
+  background: #FFFFFF
+  box-shadow: rgba(0, 0, 0, .3) 0 1px 4px -1px
+  color: #1F3461
+  font-family: inherit
+  font-size: 13px
+  font-weight: 500
+  cursor: pointer
+
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2
+    stroke-linecap: round
+
+  &:hover:not(:disabled)
+    background: #EEF2F9
+
+  &:disabled
+    cursor: progress
+    opacity: .75
+
+  &:focus-visible
+    outline: 2px solid var(--secondary1, #0A1A3A)
+    outline-offset: 2px
+
+.map-picker__hint
+  position: absolute
+  left: 50%
+  bottom: 24px
+  transform: translateX(-50%)
+  padding: 8px 14px
+  border-radius: 999px
+  background: rgba(10, 26, 58, .86)
+  color: #FFFFFF
+  font-size: 12px
+  font-weight: 600
+  white-space: nowrap
+  pointer-events: none
+
+.map-picker__message
+  margin: 10px 2px 0
+  font-size: 13px
+  color: var(--danger1)
+
+:host-context(body.dark)
+  .map-picker__locate
+    background: #12264D
+    color: #FFFFFF
+
+    &:hover:not(:disabled)
+      background: #1F3461
+
+  .map-picker__hint
+    background: rgba(127, 162, 238, .92)
+    color: #0A1A3A
+
+@media (prefers-reduced-motion: reduce)
+  .map-picker
+    transition: none
