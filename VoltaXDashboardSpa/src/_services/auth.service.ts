@@ -18,6 +18,7 @@ import { TokenStorageService } from './token-storage.service';
 import { TokenRefreshService } from './token-refresh.service';
 import { GeolocationService } from './geolocation.service';
 import { RealtimeHubService } from './realtime-hub.service';
+import { PROFILE_PROMPT_SEEN_KEY } from './portal/profile-completion.service';
 
 export interface TwoFactorStatus { eligible: boolean; enabled: boolean; required: boolean; recoveryCodesLeft: number; }
 export interface TwoFactorEnrollment { secret: string; otpAuthUri: string; qrCodeDataUri: string; }
@@ -127,6 +128,8 @@ export class AuthService {
     this._tokenStorage.clear();
     this.token = null;
     this.decodedToken = null;
+    // The next sign in shows the "complete your account" prompt again.
+    try { sessionStorage.removeItem(PROFILE_PROMPT_SEEN_KEY); } catch { }
   }
 
   getAuthInformation(){

@@ -9,8 +9,11 @@ import { CustomerWalletComponent } from './portal/customer-wallet.component';
 import { CustomerPaymentMethodsComponent } from './portal/customer-payment-methods.component';
 import { CustomerCardsComponent, CustomerProfileComponent } from './portal/customer-account.component';
 import { CustomerLiveSessionComponent } from './portal/customer-live-session.component';
+import { ProfileCompletionBannerComponent } from './profile-completion/profile-completion-banner.component';
+import { CustomerContactFormComponent } from './profile-completion/customer-contact-form.component';
+import { CustomerDetailsFormComponent } from './profile-completion/customer-details-form.component';
 
-/** The customer portal: the signed-in customer's own data, read only, plus paying online. */
+/** The customer portal: the signed-in customer's own data, read only, plus paying online and completing the profile. */
 @NgModule({
   declarations: [
     CustomerOverviewComponent,
@@ -25,7 +28,10 @@ import { CustomerLiveSessionComponent } from './portal/customer-live-session.com
   imports: [
     SharedModule,
     PortalUiModule,
-    CustomerDashboardRoutingModule
+    CustomerDashboardRoutingModule,
+    ProfileCompletionBannerComponent,
+    CustomerContactFormComponent,
+    CustomerDetailsFormComponent
   ]
 })
 export class CustomerDashboardModule { }

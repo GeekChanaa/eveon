@@ -336,6 +336,75 @@
   gap: 8px
   padding: 14px 22px 20px
 
+// Profile completion: the wide dialog, email / phone rows and the home page message
+.vx-dialog--wide
+  width: min(640px, calc(100vw - 32px))
+  max-height: calc(100vh - 32px)
+  overflow-y: auto
+  .vx-eyebrow
+    font-size: 10px
+    font-weight: 700
+    letter-spacing: .14em
+    text-transform: uppercase
+    color: var(--vx-brand-ink)
+  .vx-form-grid
+    margin-block-start: 6px
+.vx-contact
+  display: grid
+  gap: 12px
+.vx-contact__row
+  display: flex
+  gap: 12px
+  padding: 14px
+  border: 1px solid var(--vx-border)
+  border-radius: 12px
+  .vx-alert
+    margin-block: 8px 0
+  .vx-filters
+    margin-block: 8px 0
+  .vx-actions
+    margin-block-start: 10px
+.vx-contact__icon
+  display: grid
+  place-items: center
+  flex: none
+  width: 34px
+  height: 34px
+  border-radius: 10px
+  background: var(--vx-brand-soft)
+  color: var(--vx-brand-ink)
+  .vx-icon
+    width: 16px
+    height: 16px
+    fill: currentColor
+.vx-contact__body
+  flex: 1
+  min-width: 0
+  .vx-field__hint
+    margin: 6px 0 0
+.vx-contact__line
+  display: flex
+  align-items: center
+  flex-wrap: wrap
+  gap: 8px
+  font-size: 13px
+.vx-contact__value
+  margin-block-start: 2px
+  font-size: 14px
+  font-weight: 600
+  overflow-wrap: anywhere
+.vx-completion-banner
+  align-items: center
+  flex-wrap: wrap
+  > .vx-icon
+    width: 18px
+    height: 18px
+    flex: none
+    fill: #b54708
+  ul
+    margin: 4px 0 0
+    padding-inline-start: 18px
+
 // ---------------------------------------------------------------------------
 // Tables that become cards on phones: <table class="vx-table vx-table--stack">
 // with data-label on each cell.

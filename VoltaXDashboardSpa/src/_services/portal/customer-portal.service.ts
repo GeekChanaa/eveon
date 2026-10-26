@@ -4,10 +4,10 @@ import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { toParams } from 'src/_helpers/download';
 import {
-  MyActiveSession, MyCard, MyOrder, MyOverview, MyProfile, MySession, MySessionDetail, MySessionFilter, MyWalletMovement, PagedResult
+  MyActiveSession, MyCard, MyOrder, MyOverview, MyProfile, MyProfileUpdate, MySession, MySessionDetail, MySessionFilter, MyWalletMovement, PagedResult
 } from 'src/_models/portal';
 
-/** The customer portal API (api/my): the signed-in customer's own data, read only. */
+/** The customer portal API (api/my): the signed-in customer's own data, read only but for the optional profile details. */
 @Injectable({ providedIn: 'root' })
 export class CustomerPortalService {
   private readonly base = `${environment.apiUrl}/api/my`;
@@ -16,6 +16,7 @@ export class CustomerPortalService {
 
   overview(): Observable<MyOverview> { return this.http.get<MyOverview>(`${this.base}/overview`); }
   profile(): Observable<MyProfile> { return this.http.get<MyProfile>(`${this.base}/profile`); }
+  updateProfile(update: MyProfileUpdate): Observable<void> { return this.http.put<void>(`${this.base}/profile`, update); }
   cards(): Observable<MyCard[]> { return this.http.get<MyCard[]>(`${this.base}/cards`); }
 
   sessions(filter: MySessionFilter): Observable<PagedResult<MySession>> {

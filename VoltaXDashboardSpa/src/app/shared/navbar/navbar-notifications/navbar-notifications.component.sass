@@ -223,6 +223,11 @@
 .notif-item.is-unread .notif-item__text
   color: var(--vx-text, #171b24)
 
+// Account warnings stay on top until resolved
+.notif-item--pinned
+  background: color-mix(in srgb, #F79009 8%, transparent)
+  margin-block-end: 4px
+
 .notif-urgent
   flex-shrink: 0
   padding: 1px 6px

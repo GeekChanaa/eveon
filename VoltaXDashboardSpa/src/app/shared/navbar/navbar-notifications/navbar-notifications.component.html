@@ -1,7 +1,7 @@
 <div class="header__item header__item_notifications" (keydown.escape)="close(true)">
-  <button #toggle type="button" class="header__head" [class.active]="state.unreadCount > 0" (click)="togglePanel()"
+  <button #toggle type="button" class="header__head" [class.active]="attentionCount > 0" (click)="togglePanel()"
     aria-haspopup="true" [attr.aria-expanded]="open" aria-controls="notification-panel"
-    [attr.aria-label]="state.unreadCount ? 'Notifications, ' + state.unreadCount + ' unread' : 'Notifications'">
+    [attr.aria-label]="attentionCount ? 'Notifications, ' + attentionCount + ' unread' : 'Notifications'">
     <svg class="icon icon-notification" aria-hidden="true">
       <use xlink:href="#icon-notification"></use>
     </svg>
@@ -11,7 +11,7 @@
     <header class="notif-panel__head">
       <div>
         <h2>Notifications</h2>
-        <p>{{ state.unreadCount ? state.unreadCount + ' unread' : 'You are all caught up' }}</p>
+        <p>{{ attentionCount ? attentionCount + ' unread' : 'You are all caught up' }}</p>
       </div>
       <div class="notif-panel__tools">
         <button type="button" class="notif-link" [disabled]="!state.unreadCount" (click)="markAllAsRead()">Mark all as read</button>
@@ -32,7 +32,22 @@
         <p>Could not load notifications.</p>
         <button type="button" class="notif-link" (click)="retry()">Retry</button>
       </div>
-      <p class="notif-state" *ngIf="!state.loading && !state.error && !visibleItems.length">
+      <article *ngFor="let warning of accountWarnings" class="notif-item notif-item--pinned is-unread" data-tone="warning">
+        <button type="button" class="notif-item__main" (click)="openAccountWarning()">
+          <span class="notif-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+          </span>
+          <span class="notif-item__body">
+            <span class="notif-item__line">
+              <strong>{{ 'portal.completion.notificationTitle' | translate }}</strong>
+            </span>
+            <span class="notif-item__text">{{ ('portal.completion.warning.' + warning) | translate }} {{ 'portal.completion.notificationAction' | translate }}</span>
+          </span>
+          <span class="notif-dot"><span class="visually-hidden">Unread</span></span>
+        </button>
+      </article>
+
+      <p class="notif-state" *ngIf="!state.loading && !state.error && !visibleItems.length && !accountWarnings.length">
         {{ filter === 'unread' ? 'No unread notifications.' : 'No notifications yet. Charger outages, reports and data requests will show up here.' }}
       </p>
 

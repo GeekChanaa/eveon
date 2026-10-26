@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { avatarUrl } from 'src/_helpers/avatar-url';
 import { MyCard, MyProfile } from 'src/_models/portal';
 import { CustomerPortalService } from 'src/_services/portal/customer-portal.service';
+import { ProfileCompletionService } from 'src/_services/portal/profile-completion.service';
 import { statusTone } from 'src/app/shared/portal-ui/portal-ui.module';
 
 /** Charging cards (RFID) of the customer, read only. */
@@ -63,7 +64,10 @@ export class CustomerCardsComponent implements OnInit {
   }
 }
 
-/** The customer's profile, read only (changes go through support). */
+/**
+ * The customer's profile: name and photo (changed through support), email and phone with their verification, and the
+ * optional details the customer fills in.
+ */
 @Component({
   selector: 'app-customer-profile',
   template: `
@@ -76,36 +80,40 @@ export class CustomerCardsComponent implements OnInit {
     </div>
   </header>
   <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
-  <section class="vx-panel" *ngIf="profile as p">
-    <div class="vx-panel__head" style="justify-content: flex-start; gap: 16px">
-      <span class="account-avatar" style="width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: var(--vx-brand-soft); color: var(--vx-brand-ink); font-weight: 700">
-        <img *ngIf="photo; else initials" [src]="photo" alt="" style="width: 100%; height: 100%; object-fit: cover">
-        <ng-template #initials>{{ (p.firstName.charAt(0) || '') + (p.lastName.charAt(0) || '') }}</ng-template>
-      </span>
-      <div><h2>{{ p.firstName }} {{ p.lastName }}</h2><p>{{ 'customer.profile.memberSince' | translate:{ date: (p.memberSince | vxDate:'mediumDate') } }}</p></div>
-    </div>
-    <dl class="vx-kv">
-      <div><dt>{{ 'customer.profile.email' | translate }}</dt><dd>{{ p.email }}
-        <span class="vx-badge" [ngClass]="p.isEmailVerified ? 'vx-badge--success' : 'vx-badge--warning'">{{ (p.isEmailVerified ? 'customer.profile.verified' : 'customer.profile.notVerified') | translate }}</span></dd></div>
-      <div><dt>{{ 'customer.profile.phone' | translate }}</dt><dd><span class="vx-num">{{ p.phone || '—' }}</span>
-        <span *ngIf="p.phone" class="vx-badge" [ngClass]="p.isPhoneNumberVerified ? 'vx-badge--success' : 'vx-badge--warning'">{{ (p.isPhoneNumberVerified ? 'customer.profile.verified' : 'customer.profile.notVerified') | translate }}</span></dd></div>
-      <div><dt>{{ 'customer.profile.birthday' | translate }}</dt><dd>{{ p.birthday ? (p.birthday | vxDate:'longDate') : '—' }}</dd></div>
-    </dl>
-    <p class="muted" style="margin-block-start: 18px; font-size: 12px">{{ 'customer.profile.readOnly' | translate }}</p>
-  </section>
+  <app-profile-completion-banner></app-profile-completion-banner>
+  <ng-container *ngIf="profile$ | async as p">
+    <section class="vx-panel">
+      <div class="vx-panel__head" style="justify-content: flex-start; gap: 16px">
+        <span class="account-avatar" style="width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: var(--vx-brand-soft); color: var(--vx-brand-ink); font-weight: 700">
+          <img *ngIf="photo(p) as src; else initials" [src]="src" alt="" style="width: 100%; height: 100%; object-fit: cover">
+          <ng-template #initials>{{ (p.firstName.charAt(0) || '') + (p.lastName.charAt(0) || '') }}</ng-template>
+        </span>
+        <div><h2>{{ p.firstName }} {{ p.lastName }}</h2><p>{{ 'customer.profile.memberSince' | translate:{ date: (p.memberSince | vxDate:'mediumDate') } }}</p></div>
+      </div>
+      <p class="muted" style="margin: 0; font-size: 12px">{{ 'portal.completion.nameReadOnly' | translate }}</p>
+    </section>
+
+    <section class="vx-panel">
+      <div class="vx-panel__head"><div><h2>{{ 'portal.completion.contactTitle' | translate }}</h2><p>{{ 'portal.completion.contactHint' | translate }}</p></div></div>
+      <app-customer-contact-form [profile]="p"></app-customer-contact-form>
+    </section>
+
+    <section class="vx-panel">
+      <div class="vx-panel__head"><div><h2>{{ 'portal.completion.detailsTitle' | translate }}</h2><p>{{ 'portal.completion.detailsIntro' | translate }}</p></div></div>
+      <app-customer-details-form [profile]="p"></app-customer-details-form>
+    </section>
+  </ng-container>
 </main></div>`
 })
 export class CustomerProfileComponent implements OnInit {
-  private readonly portal = inject(CustomerPortalService);
+  private readonly completion = inject(ProfileCompletionService);
   private readonly destroyRef = inject(DestroyRef);
-  profile: MyProfile | null = null;
-  photo: string | null = null;
+  readonly profile$ = this.completion.profile$;
   error = false;
 
   ngOnInit(): void {
-    this.portal.profile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: profile => { this.profile = profile; this.photo = avatarUrl(profile.imageUrl); },
-      error: () => this.error = true
-    });
+    this.completion.load().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({ error: () => this.error = true });
   }
+
+  photo(profile: MyProfile): string | null { return avatarUrl(profile.imageUrl); }
 }

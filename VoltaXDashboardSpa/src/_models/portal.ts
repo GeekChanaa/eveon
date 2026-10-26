@@ -17,6 +17,18 @@ export interface MyProfile {
   isEmailVerified: boolean;
   isPhoneNumberVerified: boolean;
   memberSince: string;
+  gender: 'Male' | 'Female' | null;
+  city: string | null;
+  electricVehicleModelId: number | null;
+  electricVehicleModelName: string | null;
+}
+
+/** The optional details the customer fills in (PUT api/my/profile replaces all of them; null clears one). */
+export interface MyProfileUpdate {
+  birthday: string | null;
+  gender: 'Male' | 'Female' | null;
+  city: string | null;
+  electricVehicleModelId: number | null;
 }
 
 export interface MyActiveSession {

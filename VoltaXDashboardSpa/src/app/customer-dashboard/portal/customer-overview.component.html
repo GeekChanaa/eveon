@@ -14,6 +14,8 @@
     </div>
   </header>
 
+  <app-profile-completion-banner></app-profile-completion-banner>
+
   <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">
     <span style="flex: 1">{{ 'common.state.error' | translate }}</span>
     <button type="button" class="vx-btn vx-btn--small no-print" (click)="retry()">{{ 'common.actions.retry' | translate }}</button>

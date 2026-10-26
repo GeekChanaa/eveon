@@ -23,6 +23,7 @@ import { CalendarModule } from 'primeng/calendar';
 import 'prismjs/prism';
 import { GoodByeComponent } from './good-bye/good-bye.component';
 import { CookieNoticeComponent } from './global/cookie-notice/cookie-notice.component';
+import { ProfileCompletionDialogComponent } from './customer-dashboard/profile-completion/profile-completion-dialog.component';
 import { ValidationMessagesService } from 'src/_services/validation-messages.service';
 import { TokenRefreshService } from 'src/_services/token-refresh.service';
 import { TokenStorageService } from 'src/_services/token-storage.service';
@@ -64,6 +65,7 @@ export function loadMessagesFactory(service: ValidationMessagesService) {
     MatButtonModule,
     CalendarModule,
     CookieNoticeComponent,
+    ProfileCompletionDialogComponent,
     TranslateModule.forRoot({
       defaultLanguage: 'fr',
       loader: { provide: TranslateLoader, useFactory: translateLoaderFactory, deps: [HttpClient] }

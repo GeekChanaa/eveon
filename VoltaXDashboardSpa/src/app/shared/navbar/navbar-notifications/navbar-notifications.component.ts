@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { DashboardNotification } from 'src/_models/notification';
 import { ConfirmService } from 'src/_services/confirm.service';
 import { NotificationService, NotificationState } from 'src/_services/notification.service';
+import { ProfileCompletionService, ProfileWarning } from 'src/_services/portal/profile-completion.service';
 
 type Tone = 'danger' | 'success' | 'warning' | 'info' | 'accent' | 'neutral';
 interface ActionMeta { label: string; tone: Tone; icon: string; }
@@ -42,16 +43,19 @@ export class NavbarNotificationsComponent implements OnInit, OnDestroy {
   open = false;
   filter: 'all' | 'unread' = 'all';
   toasts: Toast[] = [];
+  /** Customer account warnings (unverified email / phone): pinned on top until resolved, never removable. */
+  accountWarnings: ProfileWarning[] = [];
   now = Date.now();
   private clock?: ReturnType<typeof setInterval>;
   private subscriptions = new Subscription();
 
   constructor(private notifications: NotificationService, private router: Router, private confirm: ConfirmService,
-    private host: ElementRef<HTMLElement>, private zone: NgZone) {}
+    private host: ElementRef<HTMLElement>, private zone: NgZone, private completion: ProfileCompletionService) {}
 
   ngOnInit(): void {
     this.subscriptions.add(this.notifications.state$.subscribe(state => this.state = state));
     this.subscriptions.add(this.notifications.received$.subscribe(notification => this.showToast(notification)));
+    this.subscriptions.add(this.completion.warnings$.subscribe(warnings => this.accountWarnings = warnings));
     this.notifications.connect();
     this.clock = setInterval(() => this.now = Date.now(), 60000);
     // Outside Angular: a document-wide listener would otherwise run change detection on every click in the app.
@@ -71,6 +75,14 @@ export class NavbarNotificationsComponent implements OnInit, OnDestroy {
   }
 
   get badge(): string { return this.state.unreadCount > 99 ? '99+' : String(this.state.unreadCount); }
+
+  /** Unread notifications plus the pinned account warnings, which also need the user's attention. */
+  get attentionCount(): number { return this.state.unreadCount + this.accountWarnings.length; }
+
+  openAccountWarning(): void {
+    this.close();
+    this.completion.open('contact');
+  }
 
   meta(notification: DashboardNotification): ActionMeta {
     return ACTIONS[notification.action || ''] || { label: notification.type || 'Notification', tone: 'neutral', icon: ICONS.bell };
