@@ -78,7 +78,7 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
         {
             allowed = new[] { "ValidateCurrentToken", "LogoutEverywhere", "CreateGoogleLinkTicket", "GoogleLinkWithToken", "GoogleUnlink", "GetLinkedAccounts", "ResendVerification", "GetTwoFactorStatus", "BeginTwoFactorEnrollment", "ConfirmTwoFactorEnrollment", "DisableTwoFactor" }.Contains(action);
             if (action == "ChangePassword") allowed = IntArgument(context, "UserID", "ID") == user.ID;
-            if (new[] { "VerifyEmail", "VerifyPhone", "SendPhoneVerificationSms" }.Contains(action))
+            if (new[] { "VerifyPhone", "SendPhoneVerificationSms" }.Contains(action))
                 allowed = string.Equals(StringArgument(context, "Email"), user.Email, StringComparison.OrdinalIgnoreCase);
             if (action == "SendEmailVerificationCode") allowed = IntArgument(context, "userID") == user.ID;
             if (action == "SendSmsTest") allowed = access.IsAdmin;
