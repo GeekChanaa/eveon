@@ -104,7 +104,9 @@ public static class SecurityConfiguration
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-                .WithExposedHeaders("Content-Disposition"));
+                // The CORS middleware writes Access-Control-Expose-Headers when the response starts, replacing what
+                // an action added: every header the dashboard reads must be listed here (Pagination drives every pager).
+                .WithExposedHeaders("Content-Disposition", "Pagination", "Application-Error"));
         });
     }
 
