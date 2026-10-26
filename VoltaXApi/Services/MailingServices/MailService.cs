@@ -313,7 +313,7 @@ namespace VoltaXApi.Services
 		{
 			ReportCriticality.Critical => (
 				"Immediate attention required",
-				"Volta X detected a critical condition that may interrupt charging operations or affect customers. Please begin triage immediately and keep the report updated as the situation develops.",
+				"EVEON detected a critical condition that may interrupt charging operations or affect customers. Please begin triage immediately and keep the report updated as the situation develops.",
 				"If service is affected, escalate through the incident-response path without waiting for the next routine review."),
 			ReportCriticality.High => (
 				"A high-priority issue needs review",
@@ -321,7 +321,7 @@ namespace VoltaXApi.Services
 				"Escalate promptly if the issue is active, recurring, or affecting more than one charging point."),
 			ReportCriticality.Medium => (
 				"A system issue needs investigation",
-				"Volta X recorded a condition that should be reviewed before it develops into a larger operational problem. The key context is summarized below.",
+				"EVEON recorded a condition that should be reviewed before it develops into a larger operational problem. The key context is summarized below.",
 				"Prioritize it in the current support queue and monitor for repeated occurrences."),
 			ReportCriticality.Low => (
 				"A low-priority issue was recorded",
@@ -329,7 +329,7 @@ namespace VoltaXApi.Services
 				"Address it during routine maintenance unless new evidence indicates wider impact."),
 			_ => (
 				"A system event was recorded",
-				"Volta X generated an informational report to keep the operations team aware of a system condition. Review the details below and document any relevant findings.",
+				"EVEON generated an informational report to keep the operations team aware of a system condition. Review the details below and document any relevant findings.",
 				"No urgent action is expected unless the event is recurring or connected to another incident.")
 		};
 
@@ -427,8 +427,8 @@ namespace VoltaXApi.Services
 			var mailRequest = new MailRequest { ToEmails = new List<string> { recipient }, Subject = $"Eveon {environment}: test account passwords", Email = recipient, Name = "Eveon" };
 			PrepareEmailElements(mailRequest, out var email, out var builder);
 
-			static string Cell(string value) => $"<td style=\"border:1px solid #d9e2ec;\">{System.Net.WebUtility.HtmlEncode(value)}</td>";
-			var rows = string.Concat(credentials.Select(c => $"<tr>{Cell(c.Role)}{Cell(c.Email)}<td style=\"border:1px solid #d9e2ec;font-family:Consolas,monospace;\">{System.Net.WebUtility.HtmlEncode(c.Password)}</td></tr>"));
+			static string Cell(string value) => $"<td style=\"border:1px solid #DFE5F0;\">{System.Net.WebUtility.HtmlEncode(value)}</td>";
+			var rows = string.Concat(credentials.Select(c => $"<tr>{Cell(c.Role)}{Cell(c.Email)}<td style=\"border:1px solid #DFE5F0;font-family:Consolas,monospace;\">{System.Net.WebUtility.HtmlEncode(c.Password)}</td></tr>"));
 			var template = GetEmailTemplate("setup-credentials");
 			builder.HtmlBody = PopulateTemplate(template, new Dictionary<string, string>
 					{
