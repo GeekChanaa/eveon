@@ -1,0 +1,20 @@
+{
+  "releases": [
+    {
+      "component": "dashboard",
+      "version": "1.0.0",
+      "date": "2026-10-26",
+      "changes": [
+        "First versioned release of the dashboard. Each new version is listed here with its changes."
+      ]
+    },
+    {
+      "component": "api",
+      "version": "1.0.0",
+      "date": "2026-10-26",
+      "changes": [
+        "First versioned release of the API. Each new version is listed here with its changes."
+      ]
+    }
+  ]
+}

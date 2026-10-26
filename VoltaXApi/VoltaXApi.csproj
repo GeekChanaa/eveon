@@ -6,6 +6,8 @@
     <NoWarn>CS8618</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>d3c0e5e5-ca40-4763-9d73-e5065bec744e</UserSecretsId>
+    <!-- Release version, bumped by the Bump version workflow (.github/workflows/bump-version.yml). -->
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
