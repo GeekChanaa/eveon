@@ -1,0 +1,232 @@
+:host
+  --lf-surface: var(--vx-surface, #fff)
+  --lf-alt: var(--vx-surface-alt, #F5F7FB)
+  --lf-border: var(--vx-border, #DFE5F0)
+  --lf-text: var(--vx-text, #0A1A3A)
+  --lf-muted: var(--vx-text-muted, #4A5878)
+  --lf-brand: var(--vx-brand, #0A1A3A)
+  --lf-brand-soft: var(--vx-brand-soft, rgba(10, 26, 58, .08))
+  --lf-on-brand: var(--vx-on-brand, #fff)
+  display: inline-block
+
+.lf
+  position: relative
+
+.lf__toggle--active
+  border-color: var(--lf-brand)
+  background: var(--lf-brand-soft)
+
+.lf__count
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  min-width: 20px
+  height: 20px
+  padding: 0 6px
+  border-radius: 999px
+  background: var(--lf-brand)
+  color: var(--lf-on-brand)
+  font-size: 11px
+  font-weight: 700
+
+.lf__panel
+  position: absolute
+  z-index: 30
+  top: calc(100% + 8px)
+  left: 0
+  display: flex
+  flex-direction: column
+  width: 560px
+  max-width: calc(100vw - 32px)
+  max-height: min(70vh, 640px)
+  border: 1px solid var(--lf-border)
+  border-radius: 14px
+  background: var(--lf-surface)
+  color: var(--lf-text)
+  box-shadow: 0 16px 48px rgba(10, 26, 58, .16)
+
+.lf__head
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 16px 18px 12px
+  border-bottom: 1px solid var(--lf-border)
+
+.lf__title
+  font-size: 15px
+  font-weight: 700
+
+.lf__icon-btn
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  width: 32px
+  height: 32px
+  border: 0
+  border-radius: 8px
+  background: transparent
+  color: var(--lf-muted)
+  cursor: pointer
+  &:hover
+    background: var(--lf-alt)
+    color: var(--lf-text)
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2
+    stroke-linecap: round
+
+.lf__body
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  gap: 16px 18px
+  padding: 16px 18px
+  overflow-y: auto
+
+.lf__field
+  display: grid
+  gap: 8px
+  align-content: start
+  min-width: 0
+
+.lf__field--wide
+  grid-column: 1 / -1
+
+.lf__label-row
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  gap: 8px
+
+.lf__label
+  color: var(--lf-muted)
+  font-size: 11px
+  font-weight: 700
+  letter-spacing: .06em
+  text-transform: uppercase
+
+.lf__clear
+  padding: 0
+  border: 0
+  background: none
+  color: var(--lf-muted)
+  font-size: 12px
+  font-weight: 600
+  text-decoration: underline
+  cursor: pointer
+  &:hover
+    color: var(--lf-text)
+
+.lf__input
+  width: 100%
+  min-height: 40px
+  padding: 0 12px
+  border: 1px solid var(--lf-border)
+  border-radius: 10px
+  background: var(--lf-surface)
+  color: var(--lf-text)
+  font: inherit
+  font-size: 14px
+  &:focus
+    outline: none
+    border-color: var(--lf-brand)
+    box-shadow: 0 0 0 3px var(--lf-brand-soft)
+
+.lf__options
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+
+.lf__option, .lf__preset
+  display: inline-flex
+  align-items: center
+  gap: 6px
+  min-height: 32px
+  padding: 0 12px
+  border: 1px solid var(--lf-border)
+  border-radius: 999px
+  background: var(--lf-surface)
+  color: var(--lf-text)
+  font: inherit
+  font-size: 13px
+  font-weight: 600
+  cursor: pointer
+  transition: background .15s, border-color .15s, color .15s
+  &:hover
+    border-color: var(--lf-brand)
+  svg
+    width: 14px
+    height: 14px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2.5
+    stroke-linecap: round
+    stroke-linejoin: round
+
+.lf__option.is-selected
+  border-color: var(--lf-brand)
+  background: var(--lf-brand)
+  color: var(--lf-on-brand)
+
+.lf__preset
+  min-height: 28px
+  padding: 0 10px
+  font-size: 12px
+  color: var(--lf-muted)
+
+.lf__presets
+  display: flex
+  flex-wrap: wrap
+  gap: 6px
+
+.lf__segmented
+  display: inline-flex
+  padding: 3px
+  border: 1px solid var(--lf-border)
+  border-radius: 10px
+  background: var(--lf-alt)
+  button
+    min-height: 32px
+    padding: 0 14px
+    border: 0
+    border-radius: 8px
+    background: transparent
+    color: var(--lf-muted)
+    font: inherit
+    font-size: 13px
+    font-weight: 600
+    cursor: pointer
+  button.is-selected
+    background: var(--lf-surface)
+    color: var(--lf-text)
+    box-shadow: 0 1px 3px rgba(10, 26, 58, .12)
+
+.lf__range
+  display: flex
+  align-items: center
+  gap: 8px
+
+.lf__range-sep
+  flex: none
+  color: var(--lf-muted)
+
+.lf__foot
+  display: flex
+  justify-content: flex-end
+  gap: 8px
+  padding: 12px 18px 16px
+  border-top: 1px solid var(--lf-border)
+
+@media (max-width: 640px)
+  .lf__panel
+    position: fixed
+    top: auto
+    right: 8px
+    bottom: 8px
+    left: 8px
+    width: auto
+    max-height: 80vh
+  .lf__body
+    grid-template-columns: minmax(0, 1fr)

@@ -37,7 +37,25 @@
       "loadError": "Impossible de charger la liste.",
       "deleted": "Supprimé.",
       "deleteFailed": "La suppression a échoué.",
-      "sortBy": "Trier par {{field}}"
+      "sortBy": "Trier par {{field}}",
+      "filter": {
+        "active": "Filtré par",
+        "any": "Tous",
+        "clear": "Effacer",
+        "clearAll": "Tout effacer",
+        "remove": "Retirer le filtre {{label}}",
+        "contains": "Contient…",
+        "from": "Du",
+        "to": "Au",
+        "min": "Min",
+        "max": "Max",
+        "presets": {
+          "today": "Aujourd'hui",
+          "last7": "7 derniers jours",
+          "last30": "30 derniers jours",
+          "thisMonth": "Ce mois-ci"
+        }
+      }
     },
     "enums": {
       "CardStatus": {

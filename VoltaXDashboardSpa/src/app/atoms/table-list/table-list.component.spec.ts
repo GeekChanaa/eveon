@@ -7,6 +7,8 @@ import { ConfirmService } from 'src/_services/confirm.service';
 import { ToastService } from 'src/_services/toast.service';
 import { configureVxTest } from 'src/testing/vx-testing.module';
 import { TableListComponent } from './table-list.component';
+import { FilterChipsComponent } from '../filter-chips/filter-chips.component';
+import { ListFilterPanelComponent } from '../list-filter-panel/list-filter-panel.component';
 
 describe('TableListComponent', () => {
   let component: TableListComponent;
@@ -17,8 +19,10 @@ describe('TableListComponent', () => {
     ({ result: rows, pagination: { currentPage: 1, itemsPerPage: 20, totalItems: rows.length, totalPages } } as any);
 
   beforeEach(async () => {
+    Object.keys(sessionStorage).filter(k => k.startsWith('vx.list-filters.')).forEach(k => sessionStorage.removeItem(k));
     toast = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error', 'apiError']);
-    await configureVxTest([TableListComponent], {
+    await configureVxTest([TableListComponent, ListFilterPanelComponent], {
+      imports: [FilterChipsComponent],
       providers: [
         { provide: ToastService, useValue: toast },
         { provide: AccessService, useValue: { isAdmin: true, can: () => true, canUrl: () => true } }
@@ -109,5 +113,71 @@ describe('TableListComponent', () => {
   it('labels columns from the translation prefix', () => {
     component.fieldLabelPrefix = 'operator.notices.fields';
     expect(component.fieldLabel('createdAt')).toBe('Created At');
+  });
+
+  describe('filters', () => {
+    const defs = [
+      { key: 'status', label: 'Status', type: 'multiselect' as const, options: [{ value: 'Active', label: 'Active' }, { value: 'Blocked', label: 'Blocked' }] },
+      { key: 'name', label: 'Name', type: 'text' as const },
+    ];
+
+    beforeEach(() => {
+      component.filterDefs = defs;
+      component.searchByAttributes = ['Name'];
+    });
+
+    const lastParams = () => getItems.calls.mostRecent().args[2];
+    const chips = () => Array.from(el().querySelectorAll('.fc__chip'));
+
+    it('sends the applied filters with their operators, combined with AND, from the first page', () => {
+      fixture.detectChanges();
+      component.currentPage = 4;
+      component.onFiltersApplied({ status: ['Active', 'Blocked'], name: ' ann ' });
+      expect(getItems).toHaveBeenCalledWith(1, 20, jasmine.objectContaining({
+        FilterBy: ['Status', 'Name'], FilterOperator: ['in', 'contains'], FilterValue: ['Active|Blocked', 'ann'], FilterMethod: '&&'
+      }));
+    });
+
+    it('shows each applied filter and the search as a chip that removes only itself', () => {
+      fixture.detectChanges();
+      component.searchValue = 'abc';
+      component.search();
+      component.onFiltersApplied({ status: ['Active'], name: 'ann' });
+      fixture.detectChanges();
+      expect(chips().length).toBe(3);
+
+      (chips()[1].querySelector('.fc__remove') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(chips().length).toBe(2);
+      expect(lastParams()).toEqual(jasmine.objectContaining({ FilterBy: ['Name'], SearchValue: 'abc' }));
+
+      (chips()[0].querySelector('.fc__remove') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(component.searchValue).toBe('');
+      expect(lastParams().SearchValue).toBeUndefined();
+    });
+
+    it('clears every filter at once', () => {
+      fixture.detectChanges();
+      component.onFiltersApplied({ status: ['Active'], name: 'ann' });
+      fixture.detectChanges();
+      (el().querySelector('.fc__clear') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(chips().length).toBe(0);
+      expect(lastParams().FilterBy).toBeUndefined();
+    });
+
+    it('remembers the filters of the list for the session', () => {
+      fixture.detectChanges();
+      component.onFiltersApplied({ status: ['Blocked'] });
+
+      const again = TestBed.createComponent(TableListComponent).componentInstance;
+      again.routeName = 'notices';
+      again.filterDefs = defs;
+      again.fields = ['name'];
+      again.getItemsObservable = getItems;
+      again.ngOnInit();
+      expect(lastParams()).toEqual(jasmine.objectContaining({ FilterBy: ['Status'], FilterValue: ['Blocked'] }));
+    });
   });
 });

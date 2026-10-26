@@ -11,9 +11,6 @@ import { RoleService } from 'src/_services/roles/role.service';
 export class RolesListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    type:""
-  };
   
 
   role: RoleListDto = {
@@ -44,12 +41,5 @@ export class RolesListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.role?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      type:"",
-    }
   }
 }

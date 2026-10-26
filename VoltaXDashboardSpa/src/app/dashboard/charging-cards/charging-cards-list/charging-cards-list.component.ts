@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { CardDto } from 'src/_models/_dtos/card-dto';
 import { CardService } from 'src/_services/card.service';
 
@@ -11,10 +12,15 @@ import { CardService } from 'src/_services/card.service';
 export class ChargingCardsListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    cardType:"",
-    cardStatus : ""
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'cardType', label: 'Type', type: 'multiselect', options: ['Standard', 'Premium', 'Partner'].map(v => ({ value: v, label: v })) },
+    { key: 'status', label: 'Status', type: 'multiselect', options: ['Active', 'Inactive', 'Blocked', 'Expired'].map(v => ({ value: v, label: v })) },
+    { key: 'balance', label: 'Balance', type: 'number-range' },
+    { key: 'expirationDate', label: 'Expires', type: 'date-range' },
+    { key: 'owner', field: 'User-Email', label: 'Owner email', type: 'text' },
+    { key: 'assigned', field: 'UserID', label: 'Assigned to a user', type: 'boolean', presence: true },
+    { key: 'createdAt', label: 'Created', type: 'date-range' },
+  ];
   
 
   card: CardDto = {
@@ -54,13 +60,5 @@ export class ChargingCardsListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.card?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      cardType:"",
-      cardStatus : ""
-    }
   }
 }

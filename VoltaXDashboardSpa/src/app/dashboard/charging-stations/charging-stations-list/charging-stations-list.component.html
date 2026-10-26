@@ -3,73 +3,20 @@
     <app-table-list 
       name="charging station"
       names="charging stations"
-      [searchByAttributes]="['Name','Address']"
+      [searchByAttributes]="['Name','Address','City','Organisation']"
       routeName="charging-stations"
       createLink="/dashboard/charging-stations/create"
       [fields]="fields" 
-      [filters]="filters"
+      [filterDefs]="filterDefs"
       [getItemsObservable]="getChargingStationsObservable.bind(this)"
       [deleteItemObservable]="deleteChargingStationObservable.bind(this)"
       [updateItemObservable]="updateChargingStationObservable.bind(this)"
-      searchByPlaceHolder="Search by Name or Address"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by name, address, city or organisation"
       [breadcrumbs]="[
         { label: 'Dashboard', link: '/dashboard' },
         { label: 'Charging Stations'}
       ]"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-        
-          <div class="filters__item">
-            <div class="filters__list">
-              <div class="field">
-                <div class="field__label">By City
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.city">
-                      <option value="" selected>None</option>
-                      <option value="{{city.name}}" *ngFor="let city of cities">{{city.name}}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field__label">By Category
-                  <div class="tooltip" title="Maximum 100 characters. No HTML or emoji allowed">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.category">
-                      <option value="" selected>None</option>
-                      <option value="Public">Public</option>
-                      <option value="Private">Private</option>
-                      <option value="Partner">Partner</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

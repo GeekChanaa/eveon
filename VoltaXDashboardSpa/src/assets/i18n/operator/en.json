@@ -37,7 +37,25 @@
       "loadError": "The list could not be loaded.",
       "deleted": "Deleted.",
       "deleteFailed": "It could not be deleted.",
-      "sortBy": "Sort by {{field}}"
+      "sortBy": "Sort by {{field}}",
+      "filter": {
+        "active": "Filtered by",
+        "any": "Any",
+        "clear": "Clear",
+        "clearAll": "Clear all",
+        "remove": "Remove filter {{label}}",
+        "contains": "Contains…",
+        "from": "From",
+        "to": "To",
+        "min": "Min",
+        "max": "Max",
+        "presets": {
+          "today": "Today",
+          "last7": "Last 7 days",
+          "last30": "Last 30 days",
+          "thisMonth": "This month"
+        }
+      }
     },
     "enums": {
       "CardStatus": {

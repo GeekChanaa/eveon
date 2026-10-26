@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { RechargeOrderListDto } from 'src/_models/_dtos/recharge-order-list-dto';
 import { OrderService } from 'src/_services/order.service';
 
@@ -11,9 +12,13 @@ import { OrderService } from 'src/_services/order.service';
 export class RechargeOrdersListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    type:""
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'status', label: 'Status', type: 'multiselect', options: [{ value: 'Pending', label: 'Pending' }, { value: 'Processing', label: 'Processing' }, { value: 'Completed', label: 'Completed' }, { value: 'Failed', label: 'Failed' }, { value: 'Canceled', label: 'Canceled' }, { value: 'Refunded', label: 'Refunded' }] },
+    { key: 'provider', label: 'Payment provider', type: 'multiselect', options: [{ value: 'Manual', label: 'Manual' }, { value: 'Cmi', label: 'Cmi' }, { value: 'Stripe', label: 'Stripe' }, { value: 'Sandbox', label: 'Sandbox' }] },
+    { key: 'amount', label: 'Amount', type: 'number-range' },
+    { key: 'rechargeDate', label: 'Recharge date', type: 'date-range' },
+    { key: 'paidAt', label: 'Paid on', type: 'date-range' },
+  ];
   
 
   order: RechargeOrderListDto = {
@@ -48,12 +53,5 @@ export class RechargeOrdersListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.order?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      type:"",
-    }
   }
 }

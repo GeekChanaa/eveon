@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { ReportService } from 'src/_services/report.service';
 import { Report } from 'src/_models/report';
 import { ReportTypeEnum } from 'src/_models/_enums/report-type';
@@ -15,11 +16,15 @@ import { ReportListDto } from 'src/_models/_dtos/reports-dtos/report-list-dto';
 export class ReportsListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    reportCategory:"",
-    reportType:"",
-    status:"",
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'status', label: 'Status', type: 'multiselect', options: [{ value: 'Pending', label: 'Pending' }, { value: 'InProgress', label: 'In progress' }, { value: 'Resolved', label: 'Resolved' }, { value: 'Closed', label: 'Closed' }] },
+    { key: 'reportCategory', label: 'Category', type: 'multiselect', options: [{ value: 'General', label: 'General' }, { value: 'Technical', label: 'Technical' }, { value: 'Maintenance', label: 'Maintenance' }] },
+    { key: 'reportType', label: 'Type', type: 'multiselect', options: [{ value: 'ChargePoint', label: 'Charge point' }, { value: 'Connector', label: 'Connector' }, { value: 'Website', label: 'Website' }, { value: 'Other', label: 'Other' }] },
+    { key: 'chargePoint', field: 'ChargePoint-ChargePointId', label: 'Charge point', type: 'text' },
+    { key: 'reporter', field: 'User-Email', label: 'Reporter email', type: 'text' },
+    { key: 'reportDate', label: 'Reported', type: 'date-range' },
+    { key: 'resolvedDate', label: 'Resolved', type: 'date-range' },
+  ];
   
 
   report: ReportListDto = {
@@ -58,13 +63,5 @@ export class ReportsListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.report?.[element] != "object") this.fields.push(element);
     });
-  }
-
-  resetFilters(){
-    this.filters = {
-      reportCategory:"",
-      reportType:"",
-      status : ""
-    }
   }
 }

@@ -36,6 +36,7 @@
       <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
     </div>
   </form>
+  <app-filter-chips class="no-print" [defs]="chipDefs" [values]="applied" (remove)="removeFilter($event)" (clearAll)="reset()"></app-filter-chips>
 
   <div class="vx-alert vx-alert--error" *ngIf="error" role="alert">{{ 'common.state.error' | translate }}</div>
 

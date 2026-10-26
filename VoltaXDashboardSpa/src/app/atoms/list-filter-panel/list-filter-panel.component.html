@@ -1,0 +1,88 @@
+<div class="lf" (keydown.escape)="open && close()">
+  <button #toggleButton type="button" class="list-tool lf__toggle" [class.is-open]="open" [class.lf__toggle--active]="appliedCount > 0"
+    [attr.aria-expanded]="open" [attr.aria-controls]="panelId" (click)="toggle($event)">
+    <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7h9m4 0h3M4 17h3m4 0h9" />
+      <circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" />
+    </svg>
+    <span>{{ 'operator.table.filters' | translate }}</span>
+    <span class="lf__count" *ngIf="appliedCount > 0">{{ appliedCount }}</span>
+  </button>
+
+  <form *ngIf="open" class="lf__panel" [id]="panelId" role="dialog" [attr.aria-label]="titleKey | translate"
+    (ngSubmit)="submit()" (click)="$event.stopPropagation()">
+    <div class="lf__head">
+      <div class="lf__title">{{ titleKey | translate }}</div>
+      <button type="button" class="lf__icon-btn" [attr.aria-label]="'operator.table.closeFilters' | translate" (click)="close()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    </div>
+
+    <div class="lf__body">
+      <div class="lf__field" *ngFor="let def of defs; trackBy: trackByKey" [class.lf__field--wide]="def.type === 'multiselect' || isRange(def)">
+        <div class="lf__label-row">
+          <label class="lf__label" [attr.for]="panelId + '-' + def.key">{{ def.label | translate }}</label>
+          <button *ngIf="hasValue(def)" type="button" class="lf__clear" (click)="clearOne(def)">{{ 'operator.table.filter.clear' | translate }}</button>
+        </div>
+
+        <ng-container [ngSwitch]="def.type">
+          <select *ngSwitchCase="'select'" class="lf__input" [id]="panelId + '-' + def.key" [name]="def.key" [(ngModel)]="draft[def.key]">
+            <option [ngValue]="null">{{ 'operator.table.filter.any' | translate }}</option>
+            <option *ngFor="let option of def.options" [ngValue]="option.value">{{ option.label | translate }}</option>
+          </select>
+
+          <div *ngSwitchCase="'multiselect'" class="lf__options" role="group" [attr.aria-label]="def.label | translate">
+            <button *ngFor="let option of def.options" type="button" class="lf__option" [class.is-selected]="isSelected(def, option)"
+              [attr.aria-pressed]="isSelected(def, option)" (click)="toggleOption(def, option)">
+              <svg *ngIf="isSelected(def, option)" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+              {{ option.label | translate }}
+            </button>
+          </div>
+
+          <div *ngSwitchCase="'boolean'" class="lf__segmented" role="radiogroup" [attr.aria-label]="def.label | translate">
+            <button type="button" role="radio" [attr.aria-checked]="draft[def.key] == null" [class.is-selected]="draft[def.key] == null" (click)="setBoolean(def, null)">{{ 'operator.table.filter.any' | translate }}</button>
+            <button type="button" role="radio" [attr.aria-checked]="draft[def.key] === true" [class.is-selected]="draft[def.key] === true" (click)="setBoolean(def, true)">{{ 'common.state.yes' | translate }}</button>
+            <button type="button" role="radio" [attr.aria-checked]="draft[def.key] === false" [class.is-selected]="draft[def.key] === false" (click)="setBoolean(def, false)">{{ 'common.state.no' | translate }}</button>
+          </div>
+
+          <input *ngSwitchCase="'text'" class="lf__input" type="search" autocomplete="off" [id]="panelId + '-' + def.key" [name]="def.key"
+            [(ngModel)]="draft[def.key]" [placeholder]="(def.placeholder || 'operator.table.filter.contains') | translate">
+
+          <input *ngSwitchCase="'number'" class="lf__input" type="number" [id]="panelId + '-' + def.key" [name]="def.key" [(ngModel)]="draft[def.key]">
+
+          <input *ngSwitchCase="'date'" class="lf__input" type="date" [id]="panelId + '-' + def.key" [name]="def.key" [(ngModel)]="draft[def.key]">
+
+          <ng-container *ngSwitchCase="'date-range'">
+            <div class="lf__range">
+              <input class="lf__input" type="date" [id]="panelId + '-' + def.key" [name]="def.key + '-from'" [(ngModel)]="draft[def.key].from"
+                [max]="draft[def.key].to || null" [attr.aria-label]="('operator.table.filter.from' | translate) + ' — ' + (def.label | translate)">
+              <span class="lf__range-sep" aria-hidden="true">→</span>
+              <input class="lf__input" type="date" [name]="def.key + '-to'" [(ngModel)]="draft[def.key].to"
+                [min]="draft[def.key].from || null" [attr.aria-label]="('operator.table.filter.to' | translate) + ' — ' + (def.label | translate)">
+            </div>
+            <div class="lf__presets">
+              <button *ngFor="let preset of presets" type="button" class="lf__preset" (click)="applyPreset(def, preset)">
+                {{ 'operator.table.filter.presets.' + preset | translate }}
+              </button>
+            </div>
+          </ng-container>
+
+          <div *ngSwitchCase="'number-range'" class="lf__range">
+            <input class="lf__input" type="number" [id]="panelId + '-' + def.key" [name]="def.key + '-from'" [(ngModel)]="draft[def.key].from"
+              [placeholder]="'operator.table.filter.min' | translate" [attr.aria-label]="('operator.table.filter.min' | translate) + ' — ' + (def.label | translate)">
+            <span class="lf__range-sep" aria-hidden="true">→</span>
+            <input class="lf__input" type="number" [name]="def.key + '-to'" [(ngModel)]="draft[def.key].to"
+              [placeholder]="'operator.table.filter.max' | translate" [attr.aria-label]="('operator.table.filter.max' | translate) + ' — ' + (def.label | translate)">
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="lf__foot">
+      <button type="button" class="vx-btn" (click)="reset()" [disabled]="draftCount === 0">{{ 'common.actions.reset' | translate }}</button>
+      <button type="submit" class="vx-btn vx-btn--primary">
+        {{ 'common.actions.apply' | translate }}<span *ngIf="draftCount > 0">&nbsp;({{ draftCount }})</span>
+      </button>
+    </div>
+  </form>
+</div>

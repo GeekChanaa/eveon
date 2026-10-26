@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { CommentService } from 'src/_services/comment.service';
 import { Comment } from 'src/_models/comment';
 @Component({
@@ -10,10 +11,13 @@ import { Comment } from 'src/_models/comment';
 export class CommentsListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    category:"",
-    city : ""
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'rating', label: 'Rating', type: 'number-range' },
+    { key: 'station', field: 'ChargingStation-Name', label: 'Station', type: 'text' },
+    { key: 'city', field: 'ChargingStation-City', label: 'City', type: 'text' },
+    { key: 'user', field: 'User-Email', label: 'Author email', type: 'text' },
+    { key: 'commentTime', label: 'Posted', type: 'date-range' },
+  ];
   
 
   comment: Comment = {
@@ -49,12 +53,5 @@ export class CommentsListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.comment?.[element] != "object") this.fields.push(element);
     });
-  }
-
-  resetFilters(){
-    this.filters = {
-      category:"",
-      city : ""
-    }
   }
 }

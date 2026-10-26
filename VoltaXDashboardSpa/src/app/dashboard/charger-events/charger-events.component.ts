@@ -1,4 +1,6 @@
 import { Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
+import { ListFilterDef, changedFrom } from 'src/_models/list-filter';
+import { FilterChipsComponent } from 'src/app/atoms/filter-chips/filter-chips.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -16,10 +18,12 @@ const SEVERITY_LABELS = ['Danger', 'Hardware failure', 'System failure', 'Critic
  * OCPP 2.0.1 charger events (NotifyEvent), newest first, with live alarms pushed over the charger hub.
  * With [chargePointId] it lists one charger (and its monitors); without, every charger.
  */
+const NO_FILTERS: ChargerEventFilters = { alarmsOnly: false, maxSeverity: null, from: '', to: '', search: '', component: '', variable: '' };
+
 @Component({
   selector: 'app-charger-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, FilterChipsComponent],
   templateUrl: './charger-events.component.html',
   styleUrls: ['./charger-events.component.sass']
 })
@@ -28,7 +32,18 @@ export class ChargerEventsComponent implements OnInit {
   /** Opens the list on active alarms only. */
   @Input() alarmsOnly = false;
   readonly pageSize = 25;
-  filters: ChargerEventFilters = { alarmsOnly: false, maxSeverity: null, from: '', to: '', search: '', component: '', variable: '' };
+  filters: ChargerEventFilters = { ...NO_FILTERS };
+  /** The filters of the last load, shown as removable chips. */
+  applied: Record<string, any> = {};
+  readonly chipDefs: ListFilterDef[] = [
+    { key: 'search', label: 'Search', type: 'text' },
+    { key: 'component', label: 'Component', type: 'text' },
+    { key: 'variable', label: 'Variable', type: 'text' },
+    { key: 'maxSeverity', label: 'Max severity', type: 'select', options: SEVERITY_LABELS.map((label, i) => ({ value: i, label: `${i} ${label}` })) },
+    { key: 'from', label: 'From', type: 'date' },
+    { key: 'to', label: 'To', type: 'date' },
+    { key: 'alarmsOnly', label: 'Active alarms only', type: 'boolean' },
+  ];
   items: ChargerEvent[] = [];
   monitors: VariableMonitor[] = [];
   showMonitors = false;
@@ -65,7 +80,13 @@ export class ChargerEventsComponent implements OnInit {
   search(): void { this.page = 1; this.load(); }
 
   reset(): void {
-    this.filters = { alarmsOnly: false, maxSeverity: null, from: '', to: '', search: '', component: '', variable: '' };
+    this.filters = { ...NO_FILTERS };
+    this.search();
+  }
+
+  /** A chip was removed: that filter is emptied and the list reloads. */
+  removeFilter(key: string): void {
+    (this.filters as any)[key] = (NO_FILTERS as any)[key];
     this.search();
   }
 
@@ -79,6 +100,7 @@ export class ChargerEventsComponent implements OnInit {
     this.loading = true;
     this.error = '';
     this.liveCount = 0;
+    this.applied = changedFrom(this.filters, NO_FILTERS);
     const filters: ChargerEventFilters = { ...this.filters, chargePointId: this.chargePointId || undefined };
     if (filters.from) filters.from = new Date(filters.from + 'T00:00:00').toISOString();
     if (filters.to) filters.to = new Date(filters.to + 'T23:59:59').toISOString();

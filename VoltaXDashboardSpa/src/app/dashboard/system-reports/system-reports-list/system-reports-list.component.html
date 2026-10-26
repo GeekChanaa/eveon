@@ -3,12 +3,11 @@
     <app-table-list 
       name="system report"
       names="system reports"
-      [searchByAttributes]="['IssueDescription']"
+      [searchByAttributes]="['IssueDescription','ChargePoint.ChargePointId']"
       routeName="system-reports"
       createLink="/dashboard/system-reports/create"
       [fields]="fields" 
-      [filters]="filters"
-      [searchable]="false"
+      [filterDefs]="filterDefs"
       [getItemsObservable]="getSystemReportsObservable.bind(this)"
       [deleteItemObservable]="deleteSystemReportObservable.bind(this)"
       [updateItemObservable]="updateSystemReportObservable.bind(this)"
@@ -16,86 +15,8 @@
         { label: 'Dashboard', link: '/dashboard' },
         { label: 'System Reports'}
       ]"
-      searchByPlaceHolder="Search by Name"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by description or charge point"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-        
-          <div class="filters__item">
-            <div class="filters__list">
-              <div class="field">
-                <div class="field__label">By Status
-                  <div class="tooltip" title="Status of the system report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.status">
-                      <option value="" selected>None</option>
-                      <option value="Pending">Pending</option>
-                      <option value="InProgress">InProgress</option>
-                      <option value="Resolved">Resolved</option>
-                      <option value="Closed">Closed</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field__label">By Criticality
-                  <div class="tooltip" title="Criticality of the system report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.criticality">
-                      <option value="" selected>None</option>
-                      <option value="Informational">Informational</option>
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Critical">Critical</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field__label">By Category
-                  <div class="tooltip" title="Category of the system report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.reportCategory">
-                      <option value="" selected>None</option>
-                      <option value="General">General</option>
-                      <option value="Technical">Technical</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

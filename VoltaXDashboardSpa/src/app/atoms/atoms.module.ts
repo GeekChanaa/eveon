@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { AtomsComponent } from './atoms.component';
 import { CardComponent } from './card/card.component';
 import { TableListComponent } from './table-list/table-list.component';
+import { ListFilterPanelComponent } from './list-filter-panel/list-filter-panel.component';
+import { FilterChipsComponent } from './filter-chips/filter-chips.component';
 import { SearchInputComponent } from './search-input/search-input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SmallCardComponent } from './small-card/small-card.component';
@@ -59,6 +61,7 @@ import { VxI18nModule } from '../shared/i18n/vx-i18n.module';
     AtomsComponent,
     CardComponent,
     TableListComponent,
+    ListFilterPanelComponent,
     SearchInputComponent,
     SmallCardComponent,
     CamelCaseToSpacePipe,
@@ -105,6 +108,7 @@ import { VxI18nModule } from '../shared/i18n/vx-i18n.module';
     InfoBoxComponent
   ],
   imports: [
+    FilterChipsComponent,
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
@@ -117,6 +121,8 @@ import { VxI18nModule } from '../shared/i18n/vx-i18n.module';
   exports: [
     CardComponent,
     TableListComponent,
+    ListFilterPanelComponent,
+    FilterChipsComponent,
     SearchInputComponent,
     SmallCardComponent,
     DisplayCellComponent,

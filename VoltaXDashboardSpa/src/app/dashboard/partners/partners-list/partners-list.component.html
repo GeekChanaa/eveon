@@ -3,60 +3,20 @@
       <app-table-list 
         name="partner"
         names="partners"
-        [searchByAttributes]="['Name']"
+        [searchByAttributes]="['Name','PartnerIdentificationNumber','Email','Phone','City']"
         routeName="partners"
         createLink="/dashboard/partners/create"
         [fields]="fields" 
-        [filters]="filters"
+        [filterDefs]="filterDefs"
         [getItemsObservable]="getPartnersObservable.bind(this)"
         [deleteItemObservable]="deletePartnerObservable.bind(this)"
         [updateItemObservable]="updatePartnerObservable.bind(this)"
-        searchByPlaceHolder="Search by Name"
-        (resetFiltersEvent)="resetFilters()"
+        searchByPlaceHolder="Search by name, ID, email, phone or city"
         [breadcrumbs]="[
           { label: 'Dashboard', link: '/dashboard' },
           { label: 'Partners'}
         ]"
         >
-        <!-- filter body -->
-        <ng-container filter__body>
-          <div  class="filters__group">
-          
-            <div class="filters__item">
-              <div class="filters__list">
-                
-  
-                <div class="field">
-                  <div class="field__label">Partner type
-                    <div class="tooltip" title="The Type of the partner">
-                      <svg class="icon icon-info">
-                        <use xlink:href="#icon-info"></use>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="field__wrap">
-                    <div class="field__wrap">
-                      <select class="select" [(ngModel)]="filters.type">
-                        <option value="" selected>All types</option>
-                        <option value="Vendor">Vendor</option>
-                        <option value="ServiceProvider">ServiceProvider</option>
-                        <option value="Reseller">Reseller</option>
-                        <option value="Affiliate">Affiliate</option>
-                        <option value="Investor">Investor</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-  
-                
-              </div>
-            </div>
-            
-          </div>
-        </ng-container>
-  
-        
       </app-table-list>
     </div>
   </div>

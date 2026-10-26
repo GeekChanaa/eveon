@@ -12,9 +12,6 @@ export class PermissionsListComponent implements OnInit {
 
 
   fields: string[] = [];
-  filters : any = {
-    type:""
-  };
   
 
   permission: PermissionListDto = {
@@ -46,13 +43,6 @@ export class PermissionsListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.permission?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      type:"",
-    }
   }
 
 }

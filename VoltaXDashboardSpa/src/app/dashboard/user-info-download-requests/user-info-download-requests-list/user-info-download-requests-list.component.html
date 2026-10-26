@@ -2,59 +2,25 @@
   <div class="page__container">
     <div class="request-list-intro">
       <span class="request-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z M14 2v6h6M12 11v7m-3-3 3 3 3-3"/></svg></span>
-      <p>Review user information download requests. Filter by status and open a request to view its details.</p>
+      <p>Review user information download requests. Search by user, filter by status or date, and open a request to view its details.</p>
     </div>
     <app-table-list 
       name="user info download request"
       names="user info download requests"
       routeName="user-info-download-requests"
       [fields]="fields" 
-      [filters]="filters"
-      [searchable]="false"
+      [filterDefs]="filterDefs"
+      [searchByAttributes]="['User.FirstName','User.LastName','User.Email']"
       [getItemsObservable]="getUserInfoDownloadRequests.bind(this)"
       [updateItemObservable]="updateSystemReportObservable.bind(this)"
       [deletable]="false"
       createLink=""
-      searchByPlaceHolder="Search by User Name"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by user name or email"
       [breadcrumbs]="[
           { label: 'Dashboard', link: '/dashboard' },
           { label: 'User Info Download Requests'}
         ]"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-        
-          <div class="filters__item">
-            <div class="filters__list">
-              <div class="field">
-                <div class="field__label">Request status
-                  <div class="tooltip" title="Status of the request">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.status">
-                      <option value="" selected>All statuses</option>
-                      <option value="Pending">Pending</option>
-                      <option value="InProgress">Processing</option>
-                      <option value="Resolved">Approved</option>
-                      <option value="Closed">Denied</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

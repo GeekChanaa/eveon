@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { PartnerListDto } from 'src/_models/_dtos/partner-list-dto';
 import { PartnerTypeEnum } from 'src/_models/_enums/partner-enum-type';
 import { PartnerService } from 'src/_services/partner.service';
@@ -12,9 +13,20 @@ import { PartnerService } from 'src/_services/partner.service';
 export class PartnersListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    type:""
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'type', label: 'Partner type', type: 'multiselect', options: [
+      { value: 'Vendor', label: 'Vendor' },
+      { value: 'ServiceProvider', label: 'Service provider' },
+      { value: 'Reseller', label: 'Reseller' },
+      { value: 'Affiliate', label: 'Affiliate' },
+      { value: 'Investor', label: 'Investor' },
+      { value: 'Other', label: 'Other' },
+    ] },
+    { key: 'city', label: 'City', type: 'text' },
+    { key: 'country', label: 'Country', type: 'text' },
+    { key: 'commissionPerKwh', label: 'Commission per kWh (MAD)', type: 'number-range' },
+    { key: 'createdAt', label: 'Created', type: 'date-range' },
+  ];
   
 
   partner: PartnerListDto = {
@@ -50,13 +62,6 @@ export class PartnersListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.partner?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      type:"",
-    }
   }
 
 }

@@ -8,14 +8,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { AppTableCustomButtonDirective } from 'src/_directives/table-custom-button.directive';
 import { saveDownload } from 'src/_helpers/download';
+import { ListFilterDef, ListFilterValues, activeFilterValues, toFilterParams, withoutFilter } from 'src/_models/list-filter';
 import { PaginatedResult, Pagination } from 'src/_models/pagination';
 import { ConfirmService } from 'src/_services/confirm.service';
 import { EnumMappingService } from 'src/_services/enum-mapping.service';
 import { LanguageService } from 'src/_services/language.service';
 import { ToastService } from 'src/_services/toast.service';
+import { FilterChipsComponent } from '../filter-chips/filter-chips.component';
 
 /**
- * The dashboard's generic server-paged list: search, filters (projected), visible columns, sort, delete (confirmed),
+ * The dashboard's generic server-paged list: search, filters (declared with filterDefs, shown as removable chips),
+ * visible columns, sort, delete (confirmed),
  * optional CSV export of the filtered rows. Shows loading, empty and error (with retry) states.
  * Texts are translation keys: titleKey, filterTitleKey, searchByPlaceHolder, fieldLabelPrefix (+ field name).
  */
@@ -32,6 +35,10 @@ export class TableListComponent implements OnInit {
   @Input() names: string = "";
   /** Translation key of the page title. */
   @Input() titleKey: string = "";
+  /** What the list can be filtered by; no Filters button without it. */
+  @Input() filterDefs: ListFilterDef[] = [];
+  /** Filters applied on the first load (a saved choice from this session wins). */
+  @Input() initialFilters: ListFilterValues = {};
   /** Translation key of the filter panel title (default operator.table.filtering). */
   @Input() filterTitleKey: string = "operator.table.filtering";
   /** Column headers: translate(fieldLabelPrefix + '.' + field) when set, otherwise the field name spaced. */
@@ -54,8 +61,8 @@ export class TableListComponent implements OnInit {
   /** When set, an "Export CSV" button downloads the rows matching the current search, filters and order (every page). */
   @Input() exportObservable?: (itemParams: any) => Observable<HttpResponse<Blob>>;
   @Input() exportFileName: string = "eveon-export.csv";
-  @Output() applyFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
-  @Output() resetFiltersEvent: EventEmitter<void> = new EventEmitter<void>();
+  /** The applied filters, after every change. */
+  @Output() filtersChange: EventEmitter<ListFilterValues> = new EventEmitter<ListFilterValues>();
   @Output() displayEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() updateEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() sortEvent: EventEmitter<string> = new EventEmitter<string>();
@@ -69,7 +76,7 @@ export class TableListComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   clickOutside(event: MouseEvent) {
     const columnsControl = this._eRef.nativeElement.querySelector('.list-columns-control');
-    if (!columnsControl?.contains(event.target)) {
+    if (!columnsControl?.contains(event.target as Node)) {
       this.displayMenu = false;
     }
   }
@@ -86,7 +93,6 @@ export class TableListComponent implements OnInit {
 
   toggleMenu(event: MouseEvent) {
     event.stopPropagation();
-    this.isActive = false;
     this.displayMenu = !this.displayMenu;
   }
 
@@ -125,14 +131,17 @@ export class TableListComponent implements OnInit {
   currentPage: number = 1;
 
   searchValue: string = "";
-
-  isActive: boolean = false;
+  /** The search text the rows are filtered by (the box may hold an edit not submitted yet). */
+  appliedSearch: string = "";
+  filterValues: ListFilterValues = {};
 
   fieldShown: { [key: string]: Boolean } = {};
 
   displayMenu: Boolean = false;
 
   ngOnInit() {
+    this.restoreState();
+    this.applyItemParams();
     this.getAll();
     this.fields.forEach((field, i) => this.fieldShown[field] = i < 5);
   }
@@ -183,38 +192,85 @@ export class TableListComponent implements OnInit {
   }
 
   search(){
-    if(this.searchValue == null || this.searchValue == ""){
-      this.itemParams.SearchBy = [];
-      this.itemParams.SearchValue = [];
+    this.appliedSearch = (this.searchValue ?? "").trim();
+    this.refilter();
+  }
+
+  /** The panel applied new filter values. */
+  onFiltersApplied(values: ListFilterValues) {
+    this.filterValues = activeFilterValues(values);
+    this.refilter();
+  }
+
+  /** A chip was removed: one filter, or the search text. */
+  removeFilter(key: string) {
+    if (key === FilterChipsComponent.SEARCH_KEY) {
+      this.searchValue = this.appliedSearch = "";
+    } else {
+      this.filterValues = withoutFilter(this.filterValues, key);
     }
-    else{
-      this.itemParams.SearchBy = this.searchByAttributes;
-      this.itemParams.SearchValue = this.searchValue;
-    }
+    this.refilter();
+  }
+
+  clearFilters() {
+    this.filterValues = {};
+    this.searchValue = this.appliedSearch = "";
+    this.refilter();
+  }
+
+  private refilter() {
+    this.applyItemParams();
+    this.saveState();
+    this.filtersChange.emit({ ...this.filterValues });
     this.currentPage = 1;
     this.getAll();
   }
 
-  applyFilters() {
-    this.itemParams.FilterValue = [];
-    this.itemParams.FilterBy = [];
-
-    for (const key in this.filters) {
-      if (this.filters[key] !== null && this.filters[key] !== undefined && this.filters[key] !== '') {
-        this.itemParams.FilterValue.push(this.filters[key]);
-        this.itemParams.FilterBy.push(this.capitalizeFirstLetter(key));
-      }
+  /** Search and filters as the API's GlobalParams (sort and order are kept). */
+  private applyItemParams() {
+    const search = this.appliedSearch;
+    this.itemParams.SearchBy = search ? this.searchByAttributes : [];
+    this.itemParams.SearchValue = search || null;
+    Object.assign(this.itemParams, toFilterParams(this.filterDefs, this.filterValues));
+    if (this.itemParams.FilterBy.length === 0) {
+      delete this.itemParams.FilterBy;
+      delete this.itemParams.FilterValue;
+      delete this.itemParams.FilterOperator;
+      delete this.itemParams.FilterMethod;
     }
-    this.currentPage = 1;
-    this.getAll();
-    this.removeActive();
+    if (!search) {
+      delete this.itemParams.SearchBy;
+      delete this.itemParams.SearchValue;
+    }
   }
 
-  capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  /** Filters survive leaving the list and coming back, for this browser tab. Keyed by page: several pages share a routeName. */
+  private get storageKey(): string {
+    return 'vx.list-filters.' + (this._router.url?.split(/[?#]/)[0] || this.routeName || this.name);
   }
 
-  @Input() filters : any = {};
+  private restoreState() {
+    let saved: { filters?: ListFilterValues, search?: string } | null = null;
+    try { saved = JSON.parse(sessionStorage.getItem(this.storageKey) ?? 'null'); } catch { saved = null; }
+    const defs = new Map(this.filterDefs.map(d => [d.key, d]));
+    const source = saved?.filters ?? this.initialFilters ?? {};
+    // Only values that still fit their filter: a saved value from an older version of the page is dropped.
+    const fits = (key: string, value: any) => {
+      const def = defs.get(key);
+      if (!def) return false;
+      if (def.type === 'multiselect') return Array.isArray(value);
+      if (def.type === 'date-range' || def.type === 'number-range') return value != null && typeof value === 'object' && !Array.isArray(value);
+      return value == null || typeof value !== 'object';
+    };
+    this.filterValues = activeFilterValues(Object.fromEntries(Object.entries(source).filter(([k, v]) => fits(k, v))));
+    this.searchValue = this.appliedSearch = this.searchable ? (saved?.search ?? "") : "";
+  }
+
+  private saveState() {
+    try {
+      sessionStorage.setItem(this.storageKey, JSON.stringify({ filters: this.filterValues, search: this.appliedSearch }));
+    } catch { /* storage unavailable: filters just are not remembered */ }
+  }
 
   update = (id: number) =>  this.updateEvent.emit(id);
 
@@ -249,16 +305,6 @@ export class TableListComponent implements OnInit {
       this.itemParams.reverseOrder = 'n'
     }
     this.getAll();
-  }
-
-  toggleActive(event: Event): void {
-      event.stopPropagation();
-      this.displayMenu = false;
-      this.isActive = !this.isActive;
-  }
-
-  removeActive(): void {
-      this.isActive = false;
   }
 
   /** The rows matching the current search, filters and order, as a CSV file. */
@@ -320,10 +366,6 @@ export class TableListComponent implements OnInit {
     } else {
       this.paginationPages = [currentPage - 1, currentPage, '...', totalPages];
     }
-  }
-
-  resetFilters(){
-    this.resetFiltersEvent.emit();
   }
 
   /** Deleting always asks first. */

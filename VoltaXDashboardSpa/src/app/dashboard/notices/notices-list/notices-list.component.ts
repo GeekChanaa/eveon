@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { NoticeListDto } from 'src/_models/_dtos/notice-dtos/notice-list-dto';
 import { NoticeTypeEnum } from 'src/_models/_enums/notice-type-enum';
 import { NoticeService } from 'src/_services/notice.service';
@@ -10,9 +11,19 @@ import { NoticeService } from 'src/_services/notice.service';
 })
 export class NoticesListComponent implements OnInit {
   fields: string[] = [];
-  filters : any = {
-    type:"",
-  };
+  filterDefs: ListFilterDef[] = [
+    { key: 'type', label: 'Type', type: 'multiselect', options: [
+      { value: 'LegalUpdate', label: 'Legal update' },
+      { value: 'Marketing', label: 'Marketing' },
+      { value: 'Maintenance', label: 'Maintenance' },
+    ] },
+    { key: 'isEmail', label: 'Sent by email', type: 'boolean' },
+    { key: 'isSms', label: 'Sent by SMS', type: 'boolean' },
+    { key: 'isPushNotification', label: 'Sent as push notification', type: 'boolean' },
+    { key: 'forUsers', label: 'For users', type: 'boolean' },
+    { key: 'forPartners', label: 'For partners', type: 'boolean' },
+    { key: 'createdAt', label: 'Created', type: 'date-range' },
+  ];
   
 
   notice: NoticeListDto = {
@@ -49,12 +60,5 @@ export class NoticesListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.notice?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      type : ""
-    }
   }
 }

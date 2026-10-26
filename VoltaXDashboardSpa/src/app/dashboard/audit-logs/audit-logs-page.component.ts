@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ListFilterDef, changedFrom } from 'src/_models/list-filter';
+import { FilterChipsComponent } from 'src/app/atoms/filter-chips/filter-chips.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AtomsModule } from '../../atoms/atoms.module';
@@ -7,10 +9,12 @@ import { AuditLogEntry, AuditLogFilters, AuditLogService } from 'src/_services/a
 
 interface ChangeRow { property: string; old: string; next: string; }
 
+const NO_FILTERS: AuditLogFilters = { user: '', entityType: '', entityId: '', action: '', from: '', to: '' };
+
 @Component({
   selector: 'app-audit-logs-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, AtomsModule],
+  imports: [CommonModule, FormsModule, AtomsModule, FilterChipsComponent],
   templateUrl: './audit-logs-page.component.html',
   styleUrls: ['./audit-logs-page.component.sass']
 })
@@ -18,7 +22,17 @@ export class AuditLogsPageComponent implements OnInit {
   readonly ready = PageState.Success;
   readonly pageSize = 25;
 
-  filters: AuditLogFilters = { user: '', entityType: '', entityId: '', action: '', from: '', to: '' };
+  filters: AuditLogFilters = { ...NO_FILTERS };
+  /** The filters of the last load, shown as removable chips. */
+  applied: Record<string, any> = {};
+  readonly chipDefs: ListFilterDef[] = [
+    { key: 'user', label: 'User', type: 'text' },
+    { key: 'entityType', label: 'Entity type', type: 'text' },
+    { key: 'entityId', label: 'Entity id', type: 'text' },
+    { key: 'action', label: 'Action', type: 'text' },
+    { key: 'from', label: 'From', type: 'date' },
+    { key: 'to', label: 'To', type: 'date' },
+  ];
   entityTypes: string[] = [];
   items: AuditLogEntry[] = [];
   page = 1;
@@ -42,7 +56,13 @@ export class AuditLogsPageComponent implements OnInit {
   }
 
   reset() {
-    this.filters = { user: '', entityType: '', entityId: '', action: '', from: '', to: '' };
+    this.filters = { ...NO_FILTERS };
+    this.search();
+  }
+
+  /** A chip was removed: that filter is emptied and the list reloads. */
+  removeFilter(key: string) {
+    (this.filters as any)[key] = (NO_FILTERS as any)[key];
     this.search();
   }
 
@@ -55,6 +75,7 @@ export class AuditLogsPageComponent implements OnInit {
   load() {
     this.loading = true;
     this.error = '';
+    this.applied = changedFrom(this.filters, NO_FILTERS);
     const filters: AuditLogFilters = { ...this.filters };
     // Date inputs are local days; send the whole day range in UTC.
     if (filters.from) filters.from = new Date(filters.from + 'T00:00:00').toISOString();

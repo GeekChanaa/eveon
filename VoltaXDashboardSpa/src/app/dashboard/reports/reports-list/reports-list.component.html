@@ -3,96 +3,20 @@
     <app-table-list 
       name="report"
       names="reports"
-      [searchByAttributes]="['ChargePoint.ChargePointId']"
+      [searchByAttributes]="['ChargePoint.ChargePointId','IssueDescription','User.FirstName','User.LastName']"
       routeName="reports"
       createLink="/dashboard/reports/create"
       [fields]="fields" 
-      [filters]="filters"
+      [filterDefs]="filterDefs"
       [getItemsObservable]="getReportsObservable.bind(this)"
       [deleteItemObservable]="deleteReportObservable.bind(this)"
       [updateItemObservable]="updateReportObservable.bind(this)"
-      searchByPlaceHolder="Search by Charge Point name"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by charge point, description or reporter name"
       [breadcrumbs]="[
           { label: 'Dashboard', link: '/dashboard' },
           { label: 'Reports'}
         ]"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-          <div class="filters__item">
-            <div class="filters__list">
-              <div class="field">
-                <div class="field__label">By Category
-                  <div class="tooltip" title="The Category of the report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.reportCategory">
-                      <option value="" selected>None</option>
-                      <option value="General">General</option>
-                      <option value="Technical">Technical</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field__label">By Type
-                  <div class="tooltip" title="The Type of the report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.reportType">
-                      <option value="" selected>None</option>
-                      <option value="ChargePoint">ChargePoint</option>
-                      <option value="Connector">Connector</option>
-                      <option value="Website">Website</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field">
-                <div class="field__label">By Status
-                  <div class="tooltip" title="The Status of the report">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.status">
-                      <option value="" selected>None</option>
-                      <option value="Pending">Pending</option>
-                      <option value="InProgress">In Progress</option>
-                      <option value="Resolved">Resolved</option>
-                      <option value="Closed">Closed</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

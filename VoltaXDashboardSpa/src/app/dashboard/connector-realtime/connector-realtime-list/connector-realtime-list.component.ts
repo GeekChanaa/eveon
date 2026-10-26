@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { ChargePointCRListDto } from 'src/_models/_dtos/charge-point-cr-list-dto';
 import { ChargePointCategoryEnum } from 'src/_models/_enums/charge-point-category';
 import { ChargePointStatusEnum } from 'src/_models/_enums/charge-point-status';
@@ -14,12 +15,8 @@ import { CityService } from 'src/_services/city.service';
 })
 export class ConnectorRealtimeListComponent implements OnInit {
 
-  cities : any[] = [];
   fields: string[] = [];
-  filters : any = {
-    category:"",
-    city : ""
-  };
+  filterDefs: ListFilterDef[] = this._buildFilterDefs([]);
   
 
   chargePoint: ChargePointCRListDto = {
@@ -57,19 +54,35 @@ export class ConnectorRealtimeListComponent implements OnInit {
       if (typeof this.chargePoint?.[element] != "object") this.fields.push(element);
     });
   }
-  
 
-  resetFilters(){
-    this.filters = {
-      category:"",
-      city : ""
-    }
+  // The city filter offers Morocco's cities once they arrive.
+  getCities(){
+    this._cityService.getAllMoroccoCityNames().subscribe({
+      next: (cities: { name: string }[]) => this.filterDefs = this._buildFilterDefs((cities ?? []).map(c => c.name)),
+      error: () => {}
+    });
   }
 
-  getCities(){
-    this._cityService.getAllMoroccoCityNames().subscribe((data) => {
-      this.cities = data;
-    })
+  /**
+   * The city filter exists from the start (a filter remembered from earlier applies on the first load); its choices arrive with the cities.
+   * The charge points list and the OCPP local list share this list's routeName, hence its remembered filters: keep the keys and types in step.
+   */
+  private _buildFilterDefs(cities: string[]): ListFilterDef[] {
+    return [
+      { key: 'status', label: 'Status', type: 'multiselect', options: [
+        { value: 'Available', label: 'Available' },
+        { value: 'Offline', label: 'Offline' },
+        { value: 'UnderMaintenance', label: 'Under maintenance' },
+      ] },
+      { key: 'category', label: 'Category', type: 'multiselect', options: [
+        { value: 'Single', label: 'Single' },
+        { value: 'Double', label: 'Double' },
+      ] },
+      { key: 'station', field: 'ChargingStation-Name', label: 'Charging station', type: 'text' },
+      { key: 'city', field: 'ChargingStation-City', label: 'City', type: 'multiselect', options: cities.map(name => ({ value: name, label: name })) },
+      { key: 'brand', field: 'ChargePointBrand-Name', label: 'Brand', type: 'text' },
+      { key: 'firmwareVersion', label: 'Firmware version', type: 'text' },
+    ];
   }
 
 }

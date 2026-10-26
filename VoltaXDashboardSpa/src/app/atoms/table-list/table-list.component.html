@@ -16,34 +16,8 @@
         </svg>
       </button>
     </form>
-    <div class="filters list-filter-control" [ngClass]="{'active': isActive}" (keydown.escape)="removeActive(); filterToggle.focus()">
-      <button #filterToggle type="button" class="list-tool" [class.is-open]="isActive"
-        [attr.aria-expanded]="isActive" (click)="toggleActive($event)">
-        <svg class="list-tool__icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 7h9m4 0h3M4 17h3m4 0h9" />
-          <circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" />
-        </svg>
-        <span>{{ 'operator.table.filters' | translate }}</span>
-      </button>
-
-
-      <div class="filters__body">
-          <div class="filters__top">
-            <div class="title-red filters__title">{{ filterTitleKey | translate }}</div>
-            <button type="button" class="filters__close" [attr.aria-label]="'operator.table.closeFilters' | translate" (click)="removeActive(); filterToggle.focus()">
-              <svg class="icon icon-close">
-                <use xlink:href="#icon-close"></use>
-              </svg>
-            </button>
-          </div>
-          <ng-content select="[filter__body]"></ng-content>
-          <div class="filters__btns">
-            <button type="button" class="button-stroke filters__button" (click)="resetFilters()">{{ 'common.actions.reset' | translate }}</button>
-            <button type="button" class="button filters__button" (click)="applyFilters()">{{ 'common.actions.apply' | translate }}</button>
-          </div>
-        </div>
-      <div class="filters__overlay" (click)="removeActive()"></div>
-    </div>
+    <app-list-filter-panel *ngIf="filterDefs.length > 0" [defs]="filterDefs" [values]="filterValues" [titleKey]="filterTitleKey"
+      (apply)="onFiltersApplied($event)"></app-list-filter-panel>
     <div class="list-columns-control" (keydown.escape)="displayMenu = false; columnsToggle.focus()">
       <button #columnsToggle type="button" class="list-tool" [class.is-open]="displayMenu"
         [attr.aria-expanded]="displayMenu" (click)="toggleMenu($event)">
@@ -80,6 +54,8 @@
     </a>
   </div>
 
+  <app-filter-chips [defs]="filterDefs" [values]="filterValues" [search]="appliedSearch"
+    (remove)="removeFilter($event)" (clearAll)="clearFilters()"></app-filter-chips>
 
   <div class="row__inner">
 

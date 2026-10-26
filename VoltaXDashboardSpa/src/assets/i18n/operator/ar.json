@@ -37,7 +37,25 @@
       "loadError": "تعذر تحميل القائمة.",
       "deleted": "تم الحذف.",
       "deleteFailed": "تعذر الحذف.",
-      "sortBy": "ترتيب حسب {{field}}"
+      "sortBy": "ترتيب حسب {{field}}",
+      "filter": {
+        "active": "مُصفّى حسب",
+        "any": "الكل",
+        "clear": "مسح",
+        "clearAll": "مسح الكل",
+        "remove": "إزالة عامل التصفية {{label}}",
+        "contains": "يحتوي على…",
+        "from": "من",
+        "to": "إلى",
+        "min": "الحد الأدنى",
+        "max": "الحد الأقصى",
+        "presets": {
+          "today": "اليوم",
+          "last7": "آخر 7 أيام",
+          "last30": "آخر 30 يومًا",
+          "thisMonth": "هذا الشهر"
+        }
+      }
     },
     "enums": {
       "CardStatus": {

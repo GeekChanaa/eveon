@@ -3,57 +3,20 @@
     <app-table-list 
       name="user"
       names="users"
-      [searchByAttributes]="['FirstName','LastName']"
+      [searchByAttributes]="['FirstName','LastName','Email','Phone']"
       routeName="users"
       createLink="/dashboard/users/create"
       [fields]="fields" 
-      [filters]="filters"
+      [filterDefs]="filterDefs"
       [getItemsObservable]="getUsersObservable.bind(this)"
       [deleteItemObservable]="deleteUserObservable.bind(this)"
       [updateItemObservable]="updateUserObservable.bind(this)"
-      searchByPlaceHolder="Search by Name"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by name, email or phone"
       [breadcrumbs]="[
           { label: 'Dashboard', link: '/dashboard' },
           { label: 'Users'}
         ]"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-        
-          <div class="filters__item">
-            <div class="filters__list">
-
-              <div class="field">
-                <div class="field__label">Role
-                  <div class="tooltip" title="Filter users by their account role">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.role">
-                      <option value="" selected>All roles</option>
-                      <option value="Admin">Admin</option>
-                      <option value="Customer">Customer</option>
-                      <option value="PremiumCustomer">PremiumCustomer</option>
-                      <option value="Support">Support</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

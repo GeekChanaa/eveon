@@ -3,60 +3,20 @@
     <app-table-list 
       name="Order"
       names="Orders"
-      [searchByAttributes]="['Card.CardNumber']"
+      [searchByAttributes]="['Card.CardNumber','ProviderReference','Note']"
       routeName="recharge-orders"
       createLink="/dashboard/recharge-orders/create"
       [fields]="fields" 
-      [filters]="filters"
+      [filterDefs]="filterDefs"
       [getItemsObservable]="getOrdersObservable.bind(this)"
       [deleteItemObservable]="deleteOrderObservable.bind(this)"
       [updateItemObservable]="updateOrderObservable.bind(this)"
-      searchByPlaceHolder="Search by Name"
-      (resetFiltersEvent)="resetFilters()"
+      searchByPlaceHolder="Search by card number, payment reference or note"
       [breadcrumbs]="[
         { label: 'Dashboard', link: '/dashboard' },
         { label: 'Orders'}
       ]"
       >
-      <!-- filter body -->
-      <ng-container filter__body>
-        <div  class="filters__group">
-        
-          <div class="filters__item">
-            <div class="filters__list">
-              
-
-              <div class="field">
-                <div class="field__label">By Type
-                  <div class="tooltip" title="The Type of the order">
-                    <svg class="icon icon-info">
-                      <use xlink:href="#icon-info"></use>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field__wrap">
-                  <div class="field__wrap">
-                    <select class="select" [(ngModel)]="filters.type">
-                      <option value="" selected>None</option>
-                      <option value="Vendor">Vendor</option>
-                      <option value="ServiceProvider">ServiceProvider</option>
-                      <option value="Reseller">Reseller</option>
-                      <option value="Affiliate">Affiliate</option>
-                      <option value="Investor">Investor</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              
-            </div>
-          </div>
-          
-        </div>
-      </ng-container>
-
-      
     </app-table-list>
   </div>
 </div>

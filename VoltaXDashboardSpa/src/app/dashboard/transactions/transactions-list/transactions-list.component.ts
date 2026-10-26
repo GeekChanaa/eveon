@@ -1,4 +1,5 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ListFilterDef, changedFrom } from 'src/_models/list-filter';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { saveDownload } from 'src/_helpers/download';
@@ -19,6 +20,16 @@ export class TransactionsListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   filter: OperatorTransactionFilter = { ...EMPTY };
+  /** The filters of the last load, shown as removable chips (the form may hold edits not applied yet). */
+  applied: Record<string, any> = {};
+  readonly chipDefs: ListFilterDef[] = [
+    { key: 'from', label: 'common.fields.from', type: 'date' },
+    { key: 'to', label: 'common.fields.to', type: 'date' },
+    { key: 'status', label: 'common.fields.status', type: 'select', options: [
+      { value: 'Current', label: 'ops.transactionStatus.Current' }, { value: 'Ended', label: 'ops.transactionStatus.Ended' },
+      { value: 'Forbidden', label: 'ops.transactionStatus.Forbidden' }] },
+    { key: 'search', label: 'common.fields.search', type: 'text' }
+  ];
   result: PagedResult<OperatorTransaction> | null = null;
   loading = false;
   error = false;
@@ -32,6 +43,7 @@ export class TransactionsListComponent implements OnInit {
 
   load(page = 1): void {
     this.filter.page = page;
+    this.applied = changedFrom(this.filter, EMPTY);
     this.loading = true;
     this.search.transactions(this.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: result => { this.result = result; this.loading = false; this.error = false; },
@@ -41,6 +53,12 @@ export class TransactionsListComponent implements OnInit {
 
   reset(): void {
     this.filter = { ...EMPTY };
+    this.load();
+  }
+
+  /** A chip was removed: that filter goes back to empty and the list reloads. */
+  removeFilter(key: string): void {
+    (this.filter as any)[key] = (EMPTY as any)[key];
     this.load();
   }
 

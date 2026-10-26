@@ -1,0 +1,12 @@
+<div class="fc" *ngIf="chips.length > 0" role="region" [attr.aria-label]="'operator.table.filter.active' | translate">
+  <span class="fc__lead">{{ 'operator.table.filter.active' | translate }}</span>
+  <span class="fc__chip" *ngFor="let chip of chips; trackBy: trackByKey">
+    <span class="fc__text"><span class="fc__label">{{ chip.label }}:</span> {{ chip.value }}</span>
+    <button type="button" class="fc__remove" (click)="remove.emit(chip.key)"
+      [attr.aria-label]="'operator.table.filter.remove' | translate:{ label: chip.label + ': ' + chip.value }"
+      [title]="'operator.table.filter.remove' | translate:{ label: chip.label + ': ' + chip.value }">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" /></svg>
+    </button>
+  </span>
+  <button *ngIf="chips.length > 1" type="button" class="fc__clear" (click)="clearAll.emit()">{{ 'operator.table.filter.clearAll' | translate }}</button>
+</div>

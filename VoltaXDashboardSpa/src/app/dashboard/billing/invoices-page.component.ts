@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FilterChipsComponent } from 'src/app/atoms/filter-chips/filter-chips.component';
+import { ListFilterDef, changedFrom } from 'src/_models/list-filter';
 import { saveDownload } from 'src/_helpers/download';
 import { PagedResult } from 'src/_models/portal';
 import { InvoiceFilter, InvoiceRow } from 'src/_models/billing';
@@ -11,11 +13,20 @@ const EMPTY: InvoiceFilter = { from: null, to: null, kind: '', search: null, pag
 @Component({
   selector: 'app-invoices-page',
   standalone: true,
-  imports: [PortalUiModule],
+  imports: [PortalUiModule, FilterChipsComponent],
   templateUrl: './invoices-page.component.html'
 })
 export class InvoicesPageComponent implements OnInit {
   filter: InvoiceFilter = { ...EMPTY };
+  /** The filters of the last load, shown as removable chips (the form may hold edits not applied yet). */
+  applied: Record<string, any> = {};
+  readonly chipDefs: ListFilterDef[] = [
+    { key: 'from', label: 'common.fields.from', type: 'date' },
+    { key: 'to', label: 'common.fields.to', type: 'date' },
+    { key: 'kind', label: 'billing.invoices.kind', type: 'select', options: [
+      { value: 'Invoice', label: 'billing.invoices.kinds.Invoice' }, { value: 'CreditNote', label: 'billing.invoices.kinds.CreditNote' }] },
+    { key: 'search', label: 'common.fields.search', type: 'text' }
+  ];
   result: PagedResult<InvoiceRow> | null = null;
   loading = false;
   error = false;
@@ -27,6 +38,7 @@ export class InvoicesPageComponent implements OnInit {
 
   load(page = 1): void {
     this.filter.page = page;
+    this.applied = changedFrom(this.filter, EMPTY);
     this.loading = true;
     this.billing.invoices(this.filter).subscribe({
       next: result => { this.result = result; this.loading = false; this.error = false; },
@@ -36,6 +48,12 @@ export class InvoicesPageComponent implements OnInit {
 
   reset(): void {
     this.filter = { ...EMPTY };
+    this.load();
+  }
+
+  /** A chip was removed: that filter goes back to empty and the list reloads. */
+  removeFilter(key: string): void {
+    (this.filter as any)[key] = (EMPTY as any)[key];
     this.load();
   }
 

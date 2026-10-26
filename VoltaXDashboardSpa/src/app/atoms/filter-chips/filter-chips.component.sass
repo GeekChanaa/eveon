@@ -1,0 +1,74 @@
+:host
+  display: block
+
+.fc
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  gap: 8px
+  margin-block: 0 16px
+
+.fc__lead
+  margin-inline-end: 4px
+  color: var(--vx-text-muted, #4A5878)
+  font-size: 12px
+  font-weight: 700
+  letter-spacing: .04em
+  text-transform: uppercase
+
+.fc__chip
+  display: inline-flex
+  align-items: center
+  gap: 4px
+  max-width: 100%
+  min-height: 32px
+  padding: 0 4px 0 12px
+  border: 1px solid var(--vx-brand, #0A1A3A)
+  border-radius: 999px
+  background: var(--vx-brand-soft, rgba(10, 26, 58, .08))
+  color: var(--vx-text, #0A1A3A)
+  font-size: 13px
+
+.fc__text
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+
+.fc__label
+  font-weight: 700
+
+.fc__remove
+  display: inline-flex
+  flex: none
+  align-items: center
+  justify-content: center
+  width: 24px
+  height: 24px
+  border: 0
+  border-radius: 50%
+  background: transparent
+  color: inherit
+  cursor: pointer
+  &:hover
+    background: var(--vx-brand, #0A1A3A)
+    color: var(--vx-on-brand, #fff)
+  &:focus-visible
+    outline: 2px solid var(--vx-brand, #0A1A3A)
+    outline-offset: 1px
+  svg
+    width: 14px
+    height: 14px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2.25
+    stroke-linecap: round
+
+.fc__clear
+  padding: 0 4px
+  border: 0
+  background: none
+  color: var(--vx-brand-ink, #1F3461)
+  font-size: 13px
+  font-weight: 700
+  text-decoration: underline
+  cursor: pointer

@@ -1,4 +1,6 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ListFilterDef, changedFrom } from 'src/_models/list-filter';
+import { FilterChipsComponent } from 'src/app/atoms/filter-chips/filter-chips.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, merge } from 'rxjs';
@@ -25,7 +27,7 @@ const EMPTY: AlarmFilter = {
 @Component({
   selector: 'app-alarm-management-page',
   standalone: true,
-  imports: [PortalUiModule],
+  imports: [PortalUiModule, FilterChipsComponent],
   templateUrl: './alarm-management-page.component.html',
   styleUrls: ['./alarm-management-page.component.sass']
 })
@@ -43,6 +45,9 @@ export class AlarmManagementPageComponent implements OnInit {
   readonly statuses = ALARM_STATUS_FILTERS;
 
   filter: AlarmFilter = { ...EMPTY };
+  /** The filters of the last load that differ from the defaults, shown as removable chips. */
+  applied: Record<string, any> = {};
+  chipDefs: ListFilterDef[] = [];
   page: AlarmPage | null = null;
   summary: AlarmSummary | null = null;
   stations: ChargingStationForSelectDto[] = [];
@@ -68,6 +73,7 @@ export class AlarmManagementPageComponent implements OnInit {
   get myId(): number | null { return this.access.current?.userId ?? null; }
 
   ngOnInit(): void {
+    this.chipDefs = this.buildChipDefs();
     const params = this.route.snapshot.queryParamMap;
     const station = Number(params.get('station'));
     if (Number.isInteger(station) && station > 0) this.filter.chargingStationID = station;
@@ -77,7 +83,10 @@ export class AlarmManagementPageComponent implements OnInit {
     this.load();
     this.loadSummary();
     this.stationsService.getChargingStationsForSelect().pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: stations => this.stations = stations ?? [], error: () => this.stations = [] });
+      .subscribe({
+        next: stations => { this.stations = stations ?? []; this.chipDefs = this.buildChipDefs(); },
+        error: () => this.stations = []
+      });
 
     const alarmId = Number(params.get('alarm'));
     if (Number.isInteger(alarmId) && alarmId > 0) this.open(alarmId);
@@ -92,6 +101,7 @@ export class AlarmManagementPageComponent implements OnInit {
 
   load(page = 1, silent = false): void {
     this.filter.page = page;
+    this.applied = changedFrom(this.filter, EMPTY);
     if (!silent) this.loading = true;
     this.pendingChanges = 0;
     this.alarms.list(this.filter).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -109,6 +119,26 @@ export class AlarmManagementPageComponent implements OnInit {
   reset(): void {
     this.filter = { ...EMPTY };
     this.load(1);
+  }
+
+  /** A chip was removed: that filter goes back to its default and the list reloads. */
+  removeFilter(key: string): void {
+    (this.filter as any)[key] = (EMPTY as any)[key];
+    this.load(1);
+  }
+
+  private buildChipDefs(): ListFilterDef[] {
+    return [
+      { key: 'status', label: 'common.fields.status', type: 'select', options: this.statuses.map(s => ({ value: s, label: 'alarms.statusFilter.' + s })) },
+      { key: 'severity', label: 'alarms.fields.severity', type: 'select', options: this.severities.map(s => ({ value: s, label: 'alarms.severity.' + s })) },
+      { key: 'type', label: 'alarms.fields.type', type: 'select', options: this.types.map(t => ({ value: t, label: 'alarms.type.' + t })) },
+      { key: 'chargingStationID', label: 'alarms.fields.station', type: 'select', options: this.stations.map(s => ({ value: s.id, label: s.name })) },
+      { key: 'assigned', label: 'alarms.fields.assignedTo', type: 'select', options: [
+        { value: 'me', label: 'alarms.assigned.me' }, { value: 'none', label: 'alarms.assigned.none' }] },
+      { key: 'from', label: 'common.fields.from', type: 'date' },
+      { key: 'to', label: 'common.fields.to', type: 'date' },
+      { key: 'search', label: 'common.fields.search', type: 'text' },
+    ];
   }
 
   /** Summary tiles filter the list. */

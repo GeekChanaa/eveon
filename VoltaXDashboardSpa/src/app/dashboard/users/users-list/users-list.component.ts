@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListFilterDef } from 'src/_models/list-filter';
 import { UserListDto } from 'src/_models/_dtos/user-list-dto';
+import { RoleService } from 'src/_services/roles/role.service';
 import { UserService } from 'src/_services/user.service';
 
 @Component({
@@ -11,9 +13,7 @@ import { UserService } from 'src/_services/user.service';
 export class UsersListComponent implements OnInit {
 
   fields: string[] = [];
-  filters : any = {
-    role:""
-  };
+  filterDefs: ListFilterDef[] = this._buildFilterDefs([]);
   
 
   user: UserListDto = {
@@ -37,11 +37,30 @@ export class UsersListComponent implements OnInit {
   // Constructor
   constructor(
     private _userService: UserService,
+    private _roleService: RoleService,
     private _router : Router
   ) { }
 
   ngOnInit() {
     this._getItemFields();
+    // Roles are configurable: offer the ones that exist.
+    this._roleService.getAllRoles().subscribe({
+      next: (roles: { name: string }[]) => this.filterDefs = this._buildFilterDefs((roles ?? []).map(r => r.name)),
+      error: () => {}
+    });
+  }
+
+  /** The role filter exists from the start (a filter remembered from earlier applies on the first load); its choices arrive with the roles. */
+  private _buildFilterDefs(roles: string[]): ListFilterDef[] {
+    return [
+      { key: 'role', field: 'Role-Name', label: 'Role', type: 'multiselect', options: roles.map(name => ({ value: name, label: name })) },
+      { key: 'city', label: 'City', type: 'text' },
+      { key: 'partner', field: 'Partner-Name', label: 'Partner', type: 'text' },
+      { key: 'isEmailVerified', label: 'Email verified', type: 'boolean' },
+      { key: 'isPhoneNumberVerified', label: 'Phone verified', type: 'boolean' },
+      { key: 'suspended', field: 'SuspendedAt', label: 'Suspended', type: 'boolean', presence: true },
+      { key: 'createdAt', label: 'Joined', type: 'date-range' },
+    ];
   }
 
   getUsersObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._userService.getAllUsers(currentPage, itemsPerPage, itemParams);
@@ -57,12 +76,5 @@ export class UsersListComponent implements OnInit {
         this.fields.push(element);
       if (typeof this.user?.[element] != "object") this.fields.push(element);
     });
-  }
-  
-
-  resetFilters(){
-    this.filters = {
-      role:""
-    }
   }
 }

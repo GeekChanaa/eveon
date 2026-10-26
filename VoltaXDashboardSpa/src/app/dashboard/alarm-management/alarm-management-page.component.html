@@ -96,6 +96,7 @@
       <button type="button" class="vx-btn" (click)="reset()">{{ 'common.actions.reset' | translate }}</button>
     </div>
   </form>
+  <app-filter-chips [defs]="chipDefs" [values]="applied" (remove)="removeFilter($event)" (clearAll)="reset()"></app-filter-chips>
 
   <div class="vx-alert" *ngIf="filter.chargePointID" role="status">
     {{ 'alarms.scopedToChargePoint' | translate }}
