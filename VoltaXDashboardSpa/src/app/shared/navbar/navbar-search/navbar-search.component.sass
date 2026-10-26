@@ -17,7 +17,7 @@
     transform: translateY(-10px)
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1)
     
-    body.dark & 
+    :host-context(body.dark) & 
       background: var(--navy-950)
     
   
@@ -46,7 +46,7 @@
       border-color: var(--accent)
       background: var(--primary1)
       color: var(--primary9)
-      body.dark & 
+      :host-context(body.dark) & 
         background: var(--navy-950)
       
     
@@ -106,7 +106,7 @@
     font-weight: 600
     color: var(--navy-450)
     
-    body.dark & 
+    :host-context(body.dark) & 
       color: var(--navy-350)
     
     
@@ -177,7 +177,7 @@
       outline: none
       color: var(--primary9)
       
-      body.dark & 
+      :host-context(body.dark) & 
         background: var(--navy-950)
       
     
@@ -213,7 +213,7 @@
       transform: translateY(0)
     
     
-    body.dark & 
+    :host-context(body.dark) & 
       background: var(--navy-900)
       border-color: var(--navy-800)
     
@@ -225,7 +225,7 @@
       padding-bottom: 20px
       border-bottom: 1px solid var(--navy-100)
       
-      body.dark & 
+      :host-context(body.dark) & 
         border-color: var(--navy-800)
       
       
@@ -245,6 +245,9 @@
     color: var(--navy-450)
     letter-spacing: 0.05em
     text-transform: uppercase
+
+    :host-context(body.dark) &
+      color: var(--navy-300)
   
   
   &__list 
@@ -265,7 +268,7 @@
     &:hover 
       background-color: var(--navy-50)
       
-      body.dark & 
+      :host-context(body.dark) & 
         background-color: var(--navy-800)
       
     
@@ -320,7 +323,7 @@
     border-radius: 12px
     background-color: var(--navy-50)
     
-    body.dark & 
+    :host-context(body.dark) & 
       background-color: var(--navy-800)
     
     
@@ -329,7 +332,7 @@
       height: 24px
       fill: var(--accent)
       
-      body.dark & 
+      :host-context(body.dark) & 
         fill: var(--accent)
       
     
@@ -346,6 +349,9 @@
     line-height: 1.23077
     color: var(--navy-450)
     margin-top: 4px
+
+    :host-context(body.dark) &
+      color: var(--navy-300)
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
@@ -364,7 +370,7 @@
     overflow: hidden
     text-overflow: ellipsis
     
-    body.dark & 
+    :host-context(body.dark) & 
       color: #FCFCFC
     
   
@@ -431,7 +437,7 @@
       border-radius: 50%
       margin-bottom: 16px
       
-      body.dark & 
+      :host-context(body.dark) & 
         background-color: var(--navy-800)
       
       
@@ -448,7 +454,7 @@
       color: var(--navy-900)
       margin-bottom: 8px
       
-      body.dark & 
+      :host-context(body.dark) & 
         color: #FCFCFC
       
     
@@ -478,7 +484,7 @@
   &:hover 
     background-color: var(--navy-50)
     
-    body.dark & 
+    :host-context(body.dark) & 
       background-color: var(--navy-800)
     
   
@@ -488,29 +494,21 @@
     height: 20px
     fill: var(--navy-450)
     
-    body.dark & 
+    :host-context(body.dark) & 
       fill: var(--navy-350)
     
   
 
 
 
-.search__result 
-    right: 8px
-    width: 56px
-    height: 32px
-    background: var(--primary1)
-    border-radius: 8px
-    box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.05), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)
-    font-size: 16px
-    font-weight: 600
-    color: var(--primary9) 
-    body.dark .search__result 
-      background: var(--navy-900)
-      box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.05), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 1px 0px rgba(255, 255, 255, 0.08)
-      color: var(--primary1) 
-    @media only screen and (max-width: 767px) 
-      .search__result 
-        display: none  
-    .search__result:hover 
-      color: var(--accent) 
+.search__result
+  box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.05), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 2px 0px rgba(255, 255, 255, 0.25)
+  font-size: 16px
+  color: var(--primary9)
+
+  :host-context(body.dark) &
+    background: var(--navy-900)
+    box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.05), inset 0px -1px 1px rgba(0, 0, 0, 0.04), inset 0px 1px 0px rgba(255, 255, 255, 0.08)
+
+  &:hover
+    color: var(--accent)
