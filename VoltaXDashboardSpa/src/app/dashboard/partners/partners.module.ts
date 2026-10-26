@@ -12,6 +12,7 @@ import { PartnerChargingStationsComponent } from './partner-charging-stations/pa
 import { PartnerChargingStationComponent } from './partner-charging-station/partner-charging-station.component';
 import { CalendarModule } from 'primeng/calendar';
 import { AddPartnerLogoComponent } from './create-partner/add-partner-logo/add-partner-logo.component';
+import { PartnerAccountComponent } from './partner-account/partner-account.component';
 @NgModule({
     declarations: [
       PartnersListComponent,
@@ -20,7 +21,8 @@ import { AddPartnerLogoComponent } from './create-partner/add-partner-logo/add-p
       PartnerChargingStationsComponent,
       PartnerChargingStationsComponent,
       PartnerChargingStationComponent,
-      AddPartnerLogoComponent
+      AddPartnerLogoComponent,
+      PartnerAccountComponent
     ],
     imports: [
         AtomsModule,

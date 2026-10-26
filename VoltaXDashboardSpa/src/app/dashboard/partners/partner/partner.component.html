@@ -26,6 +26,7 @@
       <!-- Information Tab -->
       <div *ngIf="tabsEnum === 'InformationsTab'" class="information-tab" id="panel-InformationsTab" role="tabpanel" aria-labelledby="tab-InformationsTab">
         <div class="section-intro"><div><h2>Information</h2><p>Review the partner profile and select Edit beside a field to make a change.</p></div></div>
+        <app-partner-account [partnerId]="partnerID" [email]="partner.email"></app-partner-account>
         <div class="partner-profile">
             <!-- Logo section -->
             <div class="logo-section">

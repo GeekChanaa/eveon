@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 
 import { Observable } from 'rxjs';
 
+export interface PartnerUserCreated { userID: number; email: string; recipients: number; }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +37,11 @@ export class PartnerService extends AbstractService<Partner>{
 
   getAllPartnersForSelect(){
     return this._http.get<any[]>(this.baseUrl+"GetAllPartnersForSelect/")
+  }
+
+  /** Creates the partner's sign in account on its email (administrators only); the password is emailed to the administrators. */
+  createPartnerUser(partnerID: number){
+    return this._http.post<PartnerUserCreated>(this.baseUrl + 'CreatePartnerUser/' + partnerID, {});
   }
 
   uploadPartnerLogo(formData : FormData, partnerId:  number){
