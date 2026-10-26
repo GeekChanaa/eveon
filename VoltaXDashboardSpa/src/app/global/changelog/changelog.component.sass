@@ -1,3 +1,31 @@
+// Public pages sit outside the .vx dashboard shell, which defines the theme tokens (styles/theme.sass), so
+// the page sets the same values itself for both modes.
+.changelog
+  --vx-brand: var(--navy-900)
+  --vx-brand-soft: rgba(10, 26, 58, .08)
+  --vx-brand-ink: var(--navy-700)
+  --vx-on-brand: #FFFFFF
+  --vx-surface: #FFFFFF
+  --vx-surface-alt: #F5F7FB
+  --vx-hover: var(--navy-50)
+  --vx-border: #DFE5F0
+  --vx-text: var(--navy-900)
+  --vx-text-muted: var(--navy-500)
+  a
+    color: var(--vx-brand-ink)
+
+:host-context(body.dark) .changelog
+  --vx-brand: var(--navy-sky-400)
+  --vx-brand-soft: rgba(127, 162, 238, .16)
+  --vx-brand-ink: var(--navy-sky-300)
+  --vx-on-brand: var(--navy-900)
+  --vx-surface: var(--navy-900)
+  --vx-surface-alt: var(--navy-800)
+  --vx-hover: var(--navy-800)
+  --vx-border: var(--navy-700)
+  --vx-text: #FFFFFF
+  --vx-text-muted: var(--navy-300)
+
 .changelog__status
   color: var(--vx-text-muted, #737985)
 
