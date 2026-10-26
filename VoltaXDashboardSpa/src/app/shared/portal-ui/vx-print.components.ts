@@ -1,15 +1,16 @@
 import { Component, HostListener, Input } from '@angular/core';
 
 /**
- * Brand header shown only on paper (window.print()): eveon's logo, the partner's logo on partner pages, the
- * document title, who it is for and when it was printed.
+ * Brand header of portal pages: eveon's logo, the partner's logo on partner pages, the document title and who it
+ * is for. On screen it follows the theme (white logo, light text in dark mode); the print date shows on paper only.
  */
 @Component({
   selector: 'vx-print-header',
   template: `
     <header class="vx-print-header print-only">
       <div class="vx-print-header__brands">
-        <img src="/assets/images/logos/logo.svg" alt="eveon">
+        <img class="vx-print-header__eveon" src="/assets/images/logos/logo.svg" alt="eveon">
+        <img class="vx-print-header__eveon vx-print-header__eveon--on-dark" src="/assets/images/logos/logo-white.svg" alt="">
         <img *ngIf="partnerLogo" class="vx-print-header__partner" [src]="partnerLogo" [alt]="partnerName ?? ''">
         <span *ngIf="!partnerLogo && partnerName" class="vx-print-header__partner-name">{{ partnerName }}</span>
       </div>
@@ -17,7 +18,7 @@ import { Component, HostListener, Input } from '@angular/core';
         <strong>{{ title }}</strong>
         <span *ngIf="holder">{{ holder }}</span>
         <span *ngIf="subtitle">{{ subtitle }}</span>
-        <span>{{ 'portal.print.printedAt' | translate:{ date: (printedAt | vxDate:'medium') } }}</span>
+        <span class="print-only">{{ 'portal.print.printedAt' | translate:{ date: (printedAt | vxDate:'medium') } }}</span>
       </div>
     </header>`
 })

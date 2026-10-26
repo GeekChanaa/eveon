@@ -719,20 +719,34 @@ html[dir="rtl"] .vx-flip-rtl
     object-fit: contain
 .vx-print-header__partner-name
   padding-inline-start: 14px
-  border-inline-start: 1px solid #DFE5F0
+  border-inline-start: 1px solid var(--vx-border, #DFE5F0)
   font-size: 14px
   font-weight: 700
-  color: #0A1A3A
+  color: var(--vx-text, #0A1A3A)
 .vx-print-header__meta
   display: grid
   justify-items: end
   gap: 2px
   text-align: end
   font-size: 11px
-  color: #4A5878
+  color: var(--vx-text-muted, #4A5878)
   strong
     font-size: 16px
-    color: #0A1A3A
+    color: var(--vx-text, #0A1A3A)
+
+// Dark mode on screen: eveon's white logo, and the partner's logo on a light tile so a dark logo stays visible.
+.vx-print-header__eveon--on-dark
+  display: none
+@media screen
+  body.dark .vx-print-header__eveon
+    display: none
+  body.dark .vx-print-header__eveon--on-dark
+    display: block
+  body.dark .vx-print-header .vx-print-header__partner
+    padding: 4px 8px
+    border-radius: 8px
+    background: #fff
+    box-sizing: content-box
 .vx-print-footer
   margin-block-start: 18px
   padding-block-start: 8px
