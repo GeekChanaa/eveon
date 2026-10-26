@@ -90,8 +90,12 @@ foreach (var input in new[] { "", "+33612345678", "0512345678", "061234567", "06
 var stored = await db.RefreshTokens.SingleAsync(t => t.UserID == user.ID);
 Check(stored.TokenHash != issued.Token && stored.TokenHash.Length == 64, "stores only the hash");
 Check(stored.UserAgent?.Length == 256, "bounds metadata length");
+Check(await service.IsActive(issued.Token), "fresh token is active");
+Check(stored.RevokedAt == null, "session check does not spend the token");
+Check(!await service.IsActive("unknown") && !await service.IsActive(null), "unknown token is not active");
 var rotated = await service.Rotate(issued.Token, null, null);
 Check(rotated.RefreshToken != issued.Token && stored.RevokedAt != null, "rotation spends the predecessor");
+Check(!await service.IsActive(issued.Token) && await service.IsActive(rotated.RefreshToken), "only the successor is active");
 Check(Math.Abs((rotated.RefreshTokenExpiresAt!.Value - issued.ExpiresAt).TotalMilliseconds) < 1, "fixed expiry is retained");
 Check(jwt.Claims.Any(c => c.Type == ClaimTypes.NameIdentifier && c.Value == user.ID.ToString()), "refresh rebuilds user claims");
 await Rejected(() => service.Rotate(issued.Token, null, null), "replay is rejected");

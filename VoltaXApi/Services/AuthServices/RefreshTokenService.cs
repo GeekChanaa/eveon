@@ -120,6 +120,19 @@ namespace VoltaXApi.Services
             };
         }
 
+        public async Task<bool> IsActive(string? rawToken)
+        {
+            if (string.IsNullOrWhiteSpace(rawToken))
+                return false;
+
+            var stored = await _refreshTokenRepository.GetByHash(Hash(rawToken));
+            if (stored == null || stored.IsRevoked || stored.IsExpired)
+                return false;
+
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.ID == stored.UserID);
+            return user != null && !user.IsDeleted && !user.IsCurrentlySuspended;
+        }
+
         public async Task Revoke(string rawToken, string reason = "logout")
         {
             if (string.IsNullOrWhiteSpace(rawToken))

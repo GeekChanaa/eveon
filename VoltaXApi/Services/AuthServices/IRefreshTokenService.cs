@@ -23,6 +23,13 @@ namespace VoltaXApi.Services
         /// </summary>
         Task<LoginResultDto> Rotate(string rawToken, string? ipAddress, string? userAgent);
 
+        /// <summary>
+        /// Whether <see cref="Rotate"/> would accept <paramref name="rawToken"/>, without
+        /// spending it: lets the public site ask "is someone signed in" without racing the
+        /// dashboard's own rotation.
+        /// </summary>
+        Task<bool> IsActive(string? rawToken);
+
         /// <summary>Revokes a single token — what a sign out does. Unknown tokens are ignored.</summary>
         Task Revoke(string rawToken, string reason = "logout");
 

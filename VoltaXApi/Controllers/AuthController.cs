@@ -158,6 +158,15 @@ namespace VoltaXApi.Controllers
         }
 
         /// <summary>
+        /// Whether this browser holds a usable session. Reads the refresh cookie without
+        /// spending it, so the public site's sign in pages can send a signed in visitor
+        /// straight to the dashboard.
+        /// </summary>
+        [HttpGet("Session")]
+        public async Task<IActionResult> Session() =>
+            Ok(new { signedIn = await _refreshTokenService.IsActive(RefreshTokenCookie.Read(HttpContext, null)) });
+
+        /// <summary>
         /// Ends one session. Answers 200 even for an unknown token: a sign out must never
         /// tell the caller whether a token was real.
         /// </summary>

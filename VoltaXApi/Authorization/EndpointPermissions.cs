@@ -46,7 +46,7 @@ public static class EndpointPermissions
     public static bool IsPublic(string controller, string action, string method) =>
         controller == "PhoneLogin" && method == "POST" && new[] { "RequestCode", "VerifyCode" }.Contains(action) ||
         controller == "Mobile" && method == "GET" && new[] { "Station", "Reviews" }.Contains(action) ||
-        controller == "Auth" && new[] { "Register", "Login", "Refresh", "VerifyEmail", "Logout", "ResetPassword", "ResetPasswordRequest", "ResetPasswordRequestForMobile", "VerifyResetPasswordCodeForMobile", "RequestPasswordReset", "VerifyTwoFactor", "GoogleLogin", "GoogleLink", "GoogleCallback", "GoogleTokenLogin" }.Contains(action) ||
+        controller == "Auth" && new[] { "Register", "Login", "Refresh", "Session", "VerifyEmail", "Logout", "ResetPassword", "ResetPasswordRequest", "ResetPasswordRequestForMobile", "VerifyResetPasswordCodeForMobile", "RequestPasswordReset", "VerifyTwoFactor", "GoogleLogin", "GoogleLink", "GoogleCallback", "GoogleTokenLogin" }.Contains(action) ||
         controller == "PartnerAuth" && new[] { "RequestPasswordReset", "ResetPassword", "Login", "GoogleLogin", "GoogleTokenLogin" }.Contains(action) ||
         method == "GET" && new[] { "User.UserEmailExists", "User.UserPhoneExists", "User.IsEmailUnique", "User.IsPhoneUnique", "Country.GetAllCountryNames", "State.GetAllStateNamesByCountry", "City.GetAllCityNamesByState", "City.GetAllMoroccoCityNames", "ChargingStation.GetChargingStationsForMap", "ChargePoint.GetChargePointByQrCode", "ElectricVehicleModel.GetAllElectricVehicleModelsForSelect" }.Contains(controller + "." + action);
 }
