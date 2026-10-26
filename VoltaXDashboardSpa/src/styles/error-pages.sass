@@ -1,0 +1,65 @@
+// ---------------------------------------------------------------------------
+// Error pages (401, 403, 404, 500).
+//
+// They render outside the dashboard shell, so they can't use the .vx tokens;
+// colours come straight from the raw palette and flip under body.dark, where
+// navy text would vanish into the navy background.
+// ---------------------------------------------------------------------------
+
+.error-page
+  --err-code: var(--navy-700)
+  --err-title: var(--navy-900)
+  --err-text: var(--navy-500)
+  --err-action: var(--navy-900)
+  --err-action-hover: var(--navy-700)
+  --err-on-action: #FFFFFF
+
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 12px
+  max-width: 520px
+  text-align: center
+
+  img
+    margin-bottom: 24px
+
+  .error-page__code
+    margin: 0
+    font-size: 64px
+    font-weight: 700
+    line-height: 1
+    color: var(--err-code)
+
+  .error-page__title
+    margin: 0
+    font-size: 24px
+    font-weight: 700
+    color: var(--err-title)
+
+  .error-page__text
+    margin: 0
+    font-size: 15px
+    font-weight: 500
+    line-height: 1.7
+    color: var(--err-text)
+
+  .error-page__action
+    display: inline-block
+    margin-top: 16px
+    padding: 12px 20px
+    border-radius: 8px
+    background: var(--err-action)
+    color: var(--err-on-action)
+    transition: background .2s
+
+    &:hover
+      background: var(--err-action-hover)
+
+body.dark .error-page
+  --err-code: var(--navy-sky-300)
+  --err-title: #FFFFFF
+  --err-text: var(--navy-300)
+  --err-action: var(--navy-sky-400)
+  --err-action-hover: var(--navy-sky-300)
+  --err-on-action: var(--navy-900)

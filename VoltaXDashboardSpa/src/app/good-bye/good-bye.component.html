@@ -1,4 +1,63 @@
-<div class="goodbye-container">
-  <h1>Goodbye!</h1>
-  <p>You are being logged out. Redirecting...</p>
-</div>
+<main class="goodbye">
+  <img class="goodbye__logo some-icon" src="/assets/images/logos/logo.svg" alt="eveon" width="120"><img class="goodbye__logo some-icon-dark" src="/assets/images/logos/logo-white.svg" alt="eveon" width="120">
+
+  <!-- The car finishes charging, unplugs and drives off. -->
+  <svg class="scene" viewBox="0 0 360 200" role="img" [attr.aria-label]="'goodbye.illustration' | translate">
+    <circle class="scene__halo" cx="180" cy="106" r="90"/>
+    <path class="scene__sparkle" d="M300 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
+    <path class="scene__sparkle" d="M64 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path class="scene__sparkle" d="M262 18l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+
+    <line class="scene__road" x1="12" y1="167" x2="348" y2="167"/>
+    <line class="scene__lane" x1="24" y1="180" x2="336" y2="180"/>
+
+    <g class="charger">
+      <rect class="charger__body" x="28" y="74" width="50" height="93" rx="10"/>
+      <rect class="charger__screen" x="36" y="84" width="34" height="38" rx="6"/>
+      <circle class="charger__track" cx="53" cy="103" r="11"/>
+      <circle class="charger__ring" cx="53" cy="103" r="11" pathLength="100" transform="rotate(-90 53 103)"/>
+      <path class="charger__bolt" d="M55 95l-6 9h5l-2 7 6-9h-5z"/>
+      <path class="charger__check" d="M48 103l3.5 3.5 7-7" pathLength="100"/>
+      <rect class="charger__holster" x="46" y="132" width="14" height="8" rx="3"/>
+    </g>
+
+    <g class="cable">
+      <path class="cable__wire" d="M78 140C92 166 100 166 108 138" pathLength="100"/>
+      <path class="cable__energy" d="M78 140C92 166 100 166 108 138" pathLength="100"/>
+      <rect class="cable__plug" x="104" y="133" width="8" height="9" rx="2"/>
+    </g>
+
+    <g class="car">
+      <ellipse class="car__shadow" cx="180" cy="169" rx="72" ry="4"/>
+      <g class="car__lines">
+        <line x1="76" y1="118" x2="98" y2="118"/>
+        <line x1="66" y1="132" x2="96" y2="132"/>
+        <line x1="80" y1="146" x2="98" y2="146"/>
+      </g>
+      <path class="car__body" d="M110 150v-14q0-8 8-10l18-4 18-18q4-4 10-4h36q6 0 10 4l16 18 16 3q8 2 8 10v15q0 4-4 4H114q-4 0-4-4z"/>
+      <path class="car__glass" d="M146 122l14-14q2-2 6-2h14v16z"/>
+      <path class="car__glass" d="M186 106h12q6 0 9 4l10 12h-31z"/>
+      <line class="car__door" x1="183" y1="108" x2="183" y2="150"/>
+      <rect class="car__port" x="112" y="133" width="5" height="8" rx="2"/>
+      <rect class="car__headlight" x="243" y="130" width="7" height="5" rx="2"/>
+      <rect class="car__taillight" x="110" y="143" width="4" height="5" rx="1.5"/>
+      <g class="car__wheel">
+        <circle class="car__tire" cx="146" cy="154" r="13"/>
+        <circle class="car__hub" cx="146" cy="154" r="6"/>
+        <path class="car__spokes" d="M146 148v12M140 154h12"/>
+      </g>
+      <g class="car__wheel">
+        <circle class="car__tire" cx="218" cy="154" r="13"/>
+        <circle class="car__hub" cx="218" cy="154" r="6"/>
+        <path class="car__spokes" d="M218 148v12M212 154h12"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="goodbye__copy">
+    <h1>{{ 'goodbye.title' | translate }}</h1>
+    <p>{{ 'goodbye.text' | translate }}</p>
+    <div class="goodbye__progress" aria-hidden="true"><span></span></div>
+    <a class="goodbye__action" routerLink="/auth/login">{{ 'goodbye.action' | translate }}</a>
+  </div>
+</main>

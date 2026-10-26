@@ -138,6 +138,12 @@
       "home": "Retour à l’accueil"
     }
   },
+  "goodbye": {
+    "title": "Au revoir, à bientôt",
+    "text": "Vous avez été déconnecté en toute sécurité. Retour à la connexion…",
+    "action": "Se connecter",
+    "illustration": "Une voiture électrique termine sa recharge, se débranche et s’en va"
+  },
   "customer": {
     "eyebrow": "Mon EVEON",
     "actions": {

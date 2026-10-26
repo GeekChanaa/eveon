@@ -1,5 +1,358 @@
-.goodbye-container 
-  text-align: center
-  margin-top: 20%
-  font-size: 1.5rem
+// Timeline of the scene, in seconds. $redirect matches REDIRECT_DELAY in
+// good-bye.component.ts.
+$redirect: 5s
+$charge-start: .3s
+$charge-time: 1.6s
+$unplug: 2.3s
+$drive: 2.9s
+$drive-time: 1.4s
 
+// The page renders outside the dashboard shell, so colours come from the raw
+// palette and flip under body.dark.
+:host
+  --gb-ink: var(--navy-900)
+  --gb-muted: var(--navy-500)
+  --gb-halo: rgba(31, 52, 97, .07)
+  --gb-sparkle: var(--navy-sky-500)
+  --gb-road: var(--navy-200)
+  --gb-charger: #FFFFFF
+  --gb-charger-edge: var(--navy-150)
+  --gb-screen: var(--navy-900)
+  --gb-track: var(--navy-700)
+  --gb-energy: var(--navy-sky-500)
+  --gb-cable: var(--navy-700)
+  --gb-car: var(--navy-700)
+  --gb-car-edge: var(--navy-900)
+  --gb-glass: #C2D4F7
+  --gb-tire: var(--navy-900)
+  --gb-hub: var(--navy-150)
+  --gb-shadow: rgba(4, 12, 31, .12)
+  --gb-action: var(--navy-900)
+  --gb-action-hover: var(--navy-700)
+  --gb-on-action: #FFFFFF
+  display: block
+
+:host-context(body.dark)
+  --gb-ink: #FFFFFF
+  --gb-muted: var(--navy-300)
+  --gb-halo: rgba(127, 162, 238, .1)
+  --gb-sparkle: var(--navy-sky-300)
+  --gb-road: var(--navy-700)
+  --gb-charger: var(--navy-800)
+  --gb-charger-edge: var(--navy-600)
+  --gb-screen: var(--navy-950)
+  --gb-track: var(--navy-700)
+  --gb-energy: var(--navy-sky-300)
+  --gb-cable: var(--navy-300)
+  --gb-car: var(--navy-sky-400)
+  --gb-car-edge: var(--navy-sky-300)
+  --gb-glass: var(--navy-800)
+  --gb-tire: var(--navy-950)
+  --gb-hub: var(--navy-400)
+  --gb-shadow: rgba(0, 0, 0, .35)
+  --gb-action: var(--navy-sky-400)
+  --gb-action-hover: var(--navy-sky-300)
+  --gb-on-action: var(--navy-900)
+
+.goodbye
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  gap: 8px
+  min-height: 100vh
+  padding: 32px 16px
+  box-sizing: border-box
+  text-align: center
+  color: var(--gb-ink)
+
+.goodbye__logo
+  margin-bottom: 8px
+
+.scene
+  width: min(420px, 100%)
+  height: auto
+  animation: gb-fade-up .6s ease-out both
+
+.scene__halo
+  fill: var(--gb-halo)
+
+.scene__sparkle
+  fill: var(--gb-sparkle)
+  transform-box: fill-box
+  transform-origin: center
+  animation: gb-twinkle 2.4s ease-in-out infinite
+  &:nth-of-type(2)
+    animation-delay: .8s
+  &:nth-of-type(3)
+    animation-delay: 1.6s
+
+.scene__road
+  stroke: var(--gb-road)
+  stroke-width: 2
+  stroke-linecap: round
+
+.scene__lane
+  stroke: var(--gb-road)
+  stroke-width: 2
+  stroke-linecap: round
+  stroke-dasharray: 14 12
+  opacity: .6
+
+// Charger --------------------------------------------------------------------
+
+.charger__body
+  fill: var(--gb-charger)
+  stroke: var(--gb-charger-edge)
+  stroke-width: 1.5
+
+.charger__screen
+  fill: var(--gb-screen)
+
+.charger__track, .charger__ring
+  fill: none
+  stroke-width: 3
+
+.charger__track
+  stroke: var(--gb-track)
+
+.charger__ring
+  stroke: var(--gb-energy)
+  stroke-linecap: round
+  stroke-dasharray: 100
+  animation: gb-fill $charge-time $charge-start ease-in-out both
+
+.charger__bolt
+  fill: var(--gb-energy)
+  transform-box: fill-box
+  transform-origin: center
+  animation: gb-pulse .8s $charge-start ease-in-out 2, gb-vanish .25s $charge-start + $charge-time ease-in forwards
+
+.charger__check
+  fill: none
+  stroke: #FFFFFF
+  stroke-width: 2.4
+  stroke-linecap: round
+  stroke-linejoin: round
+  stroke-dasharray: 100
+  animation: gb-draw .4s $charge-start + $charge-time + .1s ease-out both
+
+.charger__holster
+  fill: var(--gb-charger-edge)
+
+// Cable ----------------------------------------------------------------------
+
+.cable__wire
+  fill: none
+  stroke: var(--gb-cable)
+  stroke-width: 3
+  stroke-linecap: round
+  stroke-dasharray: 100
+  animation: gb-retract .5s $unplug ease-in both
+
+// Pulses running from the charger to the car while it charges.
+.cable__energy
+  fill: none
+  stroke: var(--gb-energy)
+  stroke-width: 3
+  stroke-linecap: round
+  stroke-dasharray: 4 8
+  animation: gb-flow .5s $charge-start linear 3, gb-vanish .2s $charge-start + $charge-time - .1s forwards
+
+.cable__plug
+  fill: var(--gb-cable)
+  animation: gb-vanish .2s $unplug ease-in forwards
+
+// Car ------------------------------------------------------------------------
+
+.car
+  animation: gb-drive $drive-time $drive cubic-bezier(.5, 0, .8, .3) both
+
+.car__shadow
+  fill: var(--gb-shadow)
+
+.car__lines
+  stroke: var(--gb-sparkle)
+  stroke-width: 2.5
+  stroke-linecap: round
+  opacity: 0
+  animation: gb-lines $drive-time $drive + .15s ease-out both
+
+.car__body
+  fill: var(--gb-car)
+  stroke: var(--gb-car-edge)
+  stroke-width: 1.5
+  stroke-linejoin: round
+
+.car__glass
+  fill: var(--gb-glass)
+
+.car__door
+  stroke: var(--gb-car-edge)
+  stroke-width: 1.5
+  opacity: .5
+
+.car__port
+  fill: var(--gb-car-edge)
+
+.car__headlight
+  fill: #FFE08A
+
+.car__taillight
+  fill: #FF6B6B
+
+.car__wheel
+  transform-box: fill-box
+  transform-origin: center
+  animation: gb-spin .35s $drive linear 4
+
+.car__tire
+  fill: var(--gb-tire)
+
+.car__hub
+  fill: var(--gb-hub)
+
+.car__spokes
+  stroke: var(--gb-tire)
+  stroke-width: 2
+
+// Copy -----------------------------------------------------------------------
+
+.goodbye__copy
+  display: flex
+  flex-direction: column
+  align-items: center
+  max-width: 420px
+  animation: gb-fade-up .6s .15s ease-out both
+  h1
+    margin: 8px 0 0
+    font-size: 28px
+    font-weight: 700
+    line-height: 1.25
+  p
+    margin: 10px 0 0
+    font-size: 15px
+    font-weight: 500
+    line-height: 1.6
+    color: var(--gb-muted)
+
+.goodbye__progress
+  width: 180px
+  height: 4px
+  margin-top: 24px
+  overflow: hidden
+  border-radius: 999px
+  background: var(--gb-road)
+  span
+    display: block
+    height: 100%
+    border-radius: inherit
+    background: var(--gb-energy)
+    transform-origin: left
+    animation: gb-progress $redirect linear both
+
+:host-context([dir=rtl]) .goodbye__progress span
+  transform-origin: right
+
+.goodbye__action
+  display: inline-block
+  margin-top: 20px
+  padding: 12px 22px
+  border-radius: 8px
+  background: var(--gb-action)
+  color: var(--gb-on-action)
+  font-weight: 600
+  text-decoration: none
+  transition: background .2s
+  &:hover
+    background: var(--gb-action-hover)
+  &:focus-visible
+    outline: 2px solid var(--gb-action)
+    outline-offset: 3px
+
+// Keyframes ------------------------------------------------------------------
+
+@keyframes gb-fade-up
+  from
+    opacity: 0
+    transform: translateY(12px)
+
+@keyframes gb-twinkle
+  0%, 100%
+    opacity: .25
+    transform: scale(.7)
+  50%
+    opacity: 1
+    transform: scale(1)
+
+@keyframes gb-fill
+  from
+    stroke-dashoffset: 100
+  to
+    stroke-dashoffset: 0
+
+@keyframes gb-draw
+  from
+    stroke-dashoffset: 100
+  to
+    stroke-dashoffset: 0
+
+@keyframes gb-pulse
+  50%
+    transform: scale(1.25)
+
+@keyframes gb-vanish
+  to
+    opacity: 0
+
+@keyframes gb-flow
+  to
+    stroke-dashoffset: -24
+
+// Shrinks the cable back towards the charger. The round cap would leave a
+// dot at zero length, hence the fade at the very end.
+@keyframes gb-retract
+  from
+    stroke-dashoffset: 0
+  90%
+    opacity: 1
+  to
+    stroke-dashoffset: 100
+    opacity: 0
+
+@keyframes gb-drive
+  0%
+    transform: translateX(0)
+  12%
+    transform: translateX(-5px)
+  100%
+    transform: translateX(260px)
+
+@keyframes gb-lines
+  0%
+    opacity: 0
+    transform: translateX(10px)
+  30%
+    opacity: 1
+  100%
+    opacity: 0
+    transform: translateX(-6px)
+
+@keyframes gb-spin
+  to
+    transform: rotate(360deg)
+
+@keyframes gb-progress
+  from
+    transform: scaleX(0)
+  to
+    transform: scaleX(1)
+
+// Without motion: the charged car stays parked; only the progress bar runs.
+@media (prefers-reduced-motion: reduce)
+  .scene, .scene *, .goodbye__copy
+    animation: none !important
+  .charger__ring, .charger__check
+    stroke-dashoffset: 0
+  .charger__bolt, .cable__energy
+    opacity: 0

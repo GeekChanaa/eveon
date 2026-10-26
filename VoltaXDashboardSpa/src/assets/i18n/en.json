@@ -138,6 +138,12 @@
       "home": "Return home"
     }
   },
+  "goodbye": {
+    "title": "Goodbye, see you soon",
+    "text": "You've been signed out safely. Taking you back to sign in…",
+    "action": "Sign in now",
+    "illustration": "An electric car finishes charging, unplugs and drives away"
+  },
   "customer": {
     "eyebrow": "My EVEON",
     "actions": {
