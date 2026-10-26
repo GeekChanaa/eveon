@@ -8,7 +8,7 @@ using VoltaXApi.Models;
 
 namespace VoltaX.Tests.CustomerPortal;
 
-/// <summary>The customer portal API: the caller's own data only, read only, with exports and invoices.</summary>
+/// <summary>The customer portal API: the caller's own data only, read only (but for the optional profile details), with exports and invoices.</summary>
 public class CustomerPortalApiTests : IClassFixture<CustomerPortalApiTests.Fixture>
 {
     public sealed class Fixture : IAsyncLifetime
@@ -184,6 +184,40 @@ public class CustomerPortalApiTests : IClassFixture<CustomerPortalApiTests.Fixtu
         Assert.Equal(HttpStatusCode.MethodNotAllowed, (await _me.DeleteAsync($"/api/my/sessions/{_f.BilledSessionId}")).StatusCode);
         var cards = await _me.GetFromJsonAsync<JsonElement>("/api/my/cards");
         Assert.DoesNotContain("MY-0001", cards.ToString()); // full card numbers never leave the API
+    }
+
+    [Fact]
+    public async Task The_caller_fills_in_and_clears_their_optional_details()
+    {
+        var model = new ElectricVehicleModel { Make = "Renault", Model = "Zoe", Type = "", Range = "", BatteryCapacity = "", ImageSrc = "", LogoSrc = "" };
+        await _f.Api.Seed(async db => { db.ElectricVehicleModels.Add(model); await db.SaveChangesAsync(); });
+        var other = _f.Api.Client(_f.Other);
+
+        var saved = await other.PutAsJsonAsync("/api/my/profile",
+            new { birthday = "1990-04-12", gender = "Female", city = " Rabat ", electricVehicleModelId = model.ID });
+        Assert.Equal(HttpStatusCode.NoContent, saved.StatusCode);
+        var profile = await other.GetFromJsonAsync<JsonElement>("/api/my/profile");
+        Assert.Equal("Female", profile.GetProperty("gender").GetString());
+        Assert.Equal("Rabat", profile.GetProperty("city").GetString());
+        Assert.Equal("Renault Zoe", profile.GetProperty("electricVehicleModelName").GetString());
+        Assert.StartsWith("1990-04-12", profile.GetProperty("birthday").GetString());
+
+        Assert.Equal(HttpStatusCode.NoContent, (await other.PutAsJsonAsync("/api/my/profile", new { })).StatusCode);
+        profile = await other.GetFromJsonAsync<JsonElement>("/api/my/profile");
+        Assert.Equal(JsonValueKind.Null, profile.GetProperty("city").ValueKind);
+        Assert.Equal(JsonValueKind.Null, profile.GetProperty("electricVehicleModelId").ValueKind);
+        // The customer's own account was not touched.
+        Assert.Equal(JsonValueKind.Null, (await _me.GetFromJsonAsync<JsonElement>("/api/my/profile")).GetProperty("city").ValueKind);
+    }
+
+    [Theory]
+    [InlineData("{\"gender\":\"Robot\"}")]
+    [InlineData("{\"birthday\":\"2999-01-01\"}")]
+    [InlineData("{\"electricVehicleModelId\":987654}")]
+    public async Task Invalid_profile_details_are_refused(string body)
+    {
+        var response = await _me.PutAsync("/api/my/profile", new StringContent(body, Encoding.UTF8, "application/json"));
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     private static async Task<string> Head(HttpResponseMessage response)

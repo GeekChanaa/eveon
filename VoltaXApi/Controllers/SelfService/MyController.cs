@@ -10,8 +10,8 @@ using VoltaXApi.Services.CustomerPortal;
 namespace VoltaXApi.Controllers.SelfService
 {
     /// <summary>
-    /// The customer portal: the caller's own profile, cards, charging sessions, wallet movements and top-ups,
-    /// read only (paying and saving cards go through api/payments). Every query is scoped to the caller.
+    /// The customer portal: the caller's own profile (whose optional details they may fill in), cards, charging sessions, wallet movements and top-ups,
+    /// otherwise read only (paying and saving cards go through api/payments). Every query is scoped to the caller.
     /// </summary>
     [ApiController]
     [Route("api/my")]
@@ -34,6 +34,11 @@ namespace VoltaXApi.Controllers.SelfService
         [HttpGet("profile")]
         public async Task<IActionResult> Profile(CancellationToken ct) =>
             await _portal.ProfileAsync(Me, ct) is { } profile ? Ok(profile) : NotFound();
+
+        /// <summary>The optional details (date of birth, gender, city, vehicle); skipping them is fine.</summary>
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile(MyProfileUpdateDto update, CancellationToken ct) =>
+            await _portal.UpdateProfileAsync(Me, update, ct) is { } error ? BadRequest(new { error }) : NoContent();
 
         [HttpGet("cards")]
         public async Task<IActionResult> Cards(CancellationToken ct) => Ok(await _portal.CardsAsync(Me, ct));

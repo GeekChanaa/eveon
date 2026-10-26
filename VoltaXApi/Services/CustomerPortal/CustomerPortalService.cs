@@ -7,7 +7,7 @@ using VoltaXApi.OCPP.Messages;
 namespace VoltaXApi.Services.CustomerPortal
 {
     /// <summary>
-    /// Read-only views of one customer's account for the customer portal. Every query is filtered on the user id
+    /// Views of one customer's account for the customer portal, plus saving their optional profile details. Every query is filtered on the user id
     /// passed in, which callers take from the authenticated request, never from input.
     /// </summary>
     public sealed class CustomerPortalService
@@ -29,8 +29,33 @@ namespace VoltaXApi.Services.CustomerPortal
             await _db.Users.AsNoTracking()
                 .Where(u => u.ID == userId)
                 .Select(u => new MyProfileDto(u.FirstName, u.LastName, u.Email, u.Phone, u.Birthday,
-                    u.Image != null ? u.Image.Url : u.ExternalPictureUrl, u.IsEmailVerified, u.IsPhoneNumberVerified, u.CreatedAt))
+                    u.Image != null ? u.Image.Url : u.ExternalPictureUrl, u.IsEmailVerified, u.IsPhoneNumberVerified, u.CreatedAt,
+                    u.Gender, u.City, u.ElectricVehicleModelID,
+                    u.ElectricVehicleModel != null ? u.ElectricVehicleModel.Make + " " + u.ElectricVehicleModel.Model : null))
                 .FirstOrDefaultAsync(ct);
+
+        /// <summary>
+        /// Saves the caller's optional details. Returns an error message for input the model binder cannot catch
+        /// (a date of birth in the future, an unknown vehicle), or null once saved.
+        /// </summary>
+        public async Task<string?> UpdateProfileAsync(int userId, MyProfileUpdateDto update, CancellationToken ct = default)
+        {
+            var user = await _db.Users.SingleAsync(u => u.ID == userId, ct);
+            var birthday = update.Birthday?.Date;
+            if (birthday != null && (birthday > _clock.Today || birthday.Value.Year < 1900))
+                return "Enter a valid date of birth.";
+            if (update.ElectricVehicleModelId is { } modelId
+                && !await _db.ElectricVehicleModels.AnyAsync(m => m.ID == modelId && !m.IsDeleted, ct))
+                return "Unknown vehicle model.";
+
+            user.Birthday = birthday;
+            user.Gender = string.IsNullOrWhiteSpace(update.Gender) ? null : update.Gender;
+            user.City = string.IsNullOrWhiteSpace(update.City) ? null : update.City.Trim();
+            user.ElectricVehicleModelID = update.ElectricVehicleModelId;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync(ct);
+            return null;
+        }
 
         public async Task<IReadOnlyList<MyCardDto>> CardsAsync(int userId, CancellationToken ct = default)
         {

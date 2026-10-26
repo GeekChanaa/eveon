@@ -7,7 +7,18 @@ namespace VoltaXApi.Dtos
     public sealed record PagedResult<T>(IReadOnlyList<T> Items, int Page, int PageSize, int Total);
 
     public sealed record MyProfileDto(string FirstName, string LastName, string Email, string? Phone, DateTime? Birthday,
-        string? ImageUrl, bool IsEmailVerified, bool IsPhoneNumberVerified, DateTime MemberSince);
+        string? ImageUrl, bool IsEmailVerified, bool IsPhoneNumberVerified, DateTime MemberSince,
+        string? Gender, string? City, int? ElectricVehicleModelId, string? ElectricVehicleModelName);
+
+    /// <summary>
+    /// The optional details a customer fills in from the portal (all of them replaced at once; null clears one).
+    /// Email and phone change through their own verification flows, the name through support.
+    /// </summary>
+    public sealed record MyProfileUpdateDto(
+        DateTime? Birthday,
+        [System.ComponentModel.DataAnnotations.RegularExpression("^(Male|Female)$")] string? Gender,
+        [System.ComponentModel.DataAnnotations.MaxLength(100)] string? City,
+        int? ElectricVehicleModelId);
 
     /// <summary>
     /// The caller's running session. <see cref="ChargePointName"/> is the charger's OCPP id and <see cref="TransactionUid"/>
