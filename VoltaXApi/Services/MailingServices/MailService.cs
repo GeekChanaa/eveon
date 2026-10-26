@@ -499,12 +499,19 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
-		// Templates ship with the build: read once per process.
+		// Public copy of wwwroot/Assets/images/email/ (api.eveon.ma answers 401 to static files, api-v2 serves them).
+		private const string DefaultAssetsUrl = "https://api-v2.eveon.ma/StaticFiles/Assets/images/email/";
+
+		// Templates ship with the build: read once per process, with the image location filled in.
 		private string GetEmailTemplate(string templateName)
 		{
 			var path = Path.Combine(_env.ContentRootPath, "Assets", "EmailTemplates", $"{templateName}.html");
-			return Templates.GetOrAdd(path, File.ReadAllText);
+			return Templates.GetOrAdd(path, p => File.ReadAllText(p).Replace("{EmailAssetsUrl}", AssetsUrl));
 		}
+
+		private string AssetsUrl => string.IsNullOrWhiteSpace(_mailSettings.AssetsUrl)
+			? DefaultAssetsUrl
+			: _mailSettings.AssetsUrl.TrimEnd('/') + "/";
 
 		private string PopulateTemplate(string template, Dictionary<string, string> placeholders)
 		{
