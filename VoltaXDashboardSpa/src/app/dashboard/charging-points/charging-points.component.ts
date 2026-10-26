@@ -74,7 +74,6 @@ export class ChargingPointsComponent implements OnInit {
     }
     // Getting item fields
     Object.keys(this.chargePoint ?? {}).forEach((element: string) => {
-      console.log(element);
       if (
         typeof this.chargePoint?.[element] == 'object' &&
         this.chargePoint?.[element] != null &&
@@ -111,7 +110,6 @@ export class ChargingPointsComponent implements OnInit {
   }
 
   update(id: number) {
-    console.log('this is update function');
   }
 
   sort(field: string) {

@@ -36,7 +36,6 @@ export class RequestStartTransactionComponent implements OnInit {
       if(data.result)
         this.cards = (data.result);
       this.filteredCards = this.cards
-      console.log(this.filteredCards);
     })
   }
 

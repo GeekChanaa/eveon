@@ -50,7 +50,6 @@ export class SystemReportComponent implements OnInit {
       this.state = PageState.Success;
       this.systemReportLoaded = true;
       this.systemReport = data;
-      console.log(this.systemReport)
     })
   }
 

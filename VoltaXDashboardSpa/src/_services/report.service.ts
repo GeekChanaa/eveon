@@ -26,8 +26,6 @@ export class ReportService extends AbstractService<Report>{
   }
 
   getAllReports(page?: number, itemsPerPage?: number, itemParams?: any){
-    console.log("this is the report item params");
-    console.log(itemParams);
     return super.getAll(page,itemsPerPage,itemParams,"GetAllReports");
   }
 

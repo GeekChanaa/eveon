@@ -40,7 +40,6 @@ export class ResetRequestComponent implements OnInit {
   }
 
   resetRequest(){
-    console.log(this.request);
     this.isLoading = true;
     this._configurationService.reset(this.chargePointID, this.request).subscribe((data) => {
       this.isLoading = false;

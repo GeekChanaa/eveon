@@ -84,8 +84,6 @@ export class ChargingSessionService extends AbstractService<ChargingSession> {
   }
 
   getUserChargingSessions(userID : number,page : number, itemsPerPage?: number, itemParams?: any){
-    console.log("this is the getUser CharginSessions");
-    console.log(userID,page,itemsPerPage);
     return super.getAll(page,itemsPerPage,itemParams,"GetUserChargingSessions/"+userID);
   }
 

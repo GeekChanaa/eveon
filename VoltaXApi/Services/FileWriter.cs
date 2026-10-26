@@ -9,9 +9,9 @@ namespace VoltaXApi.Services
           {
               File.WriteAllBytes(fullPath, message);
           }
-          catch (Exception ex)
+          catch (Exception)
           {
-            Console.WriteLine("this is an error in the write message tofile function");
+            // Message dumps are an opt-in debugging aid (MessageDumpDir): a failed write must not break the charger connection.
           }
       }
   }

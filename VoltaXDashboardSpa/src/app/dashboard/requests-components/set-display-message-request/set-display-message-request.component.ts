@@ -56,8 +56,6 @@ export class SetDisplayMessageRequestComponent implements OnInit {
   }
 
   setDisplayMessageRequest(){
-    console.log("this is the request");
-    console.log(this.request);
     this.request.getVariableData = this.variableDataTypes;
     this.isLoading = true;
     this._configurationService.setDisplayMessage(this.chargePointID, this.request).subscribe((data) => {

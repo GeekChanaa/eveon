@@ -83,8 +83,6 @@ export class PartnerComponent implements OnInit {
       this.state = PageState.Success;
       this.partner = cs;
       this.partnerLoaded = true;
-      console.log("this is the partner");
-      console.log(this.partner);
       this.partnerForm = this._fb.group({
         email: [this.partner.email, [Validators.required,Validators.email]],
         email2: [this.partner.email2, [Validators.required,Validators.email]],

@@ -22,7 +22,6 @@ export class PermissionRolesComponent implements OnInit {
   getRoles(){
     this._roleService.getRolesByPermissionID(this.permissionID).subscribe((data : any) => {
       this.roles = data;
-      console.log(this.roles);
     })
   }
 

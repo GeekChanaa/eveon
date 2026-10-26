@@ -51,7 +51,6 @@ export class GetVariablesRequestComponent implements OnInit {
   }
 
   getVariablesRequest(){
-    console.log(this.request);
     this.request.getVariableData = this.variableDataTypes;
     this.isLoading = true;
     this._monitoringService.getVariables(this.chargePointID, this.request).subscribe((data) => {
@@ -83,8 +82,6 @@ export class GetVariablesRequestComponent implements OnInit {
 
   getComponentVariables(name : string){
     this._ocppComponentsService.getComponentVariables(name).subscribe((data) => {
-      console.log("this is the component variables");
-      console.log(this.componentVariables);
       this.componentVariables = data;
     })
   }
@@ -109,7 +106,6 @@ export class GetVariablesRequestComponent implements OnInit {
   } 
 
   addVariableType(){
-    console.log(this.variableDataType);
     this.variableDataTypes.push(this.variableDataType);
     this.variableDataType = {
       component : {

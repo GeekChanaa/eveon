@@ -14,7 +14,6 @@ export class DocumentationButtonsComponent {
   // Demo function for tracking button events
   logEvent(eventName: string, event: any): void {
     this.lastEvent = `${eventName} triggered (${++this.eventCount})`;
-    console.log(`Button event: ${eventName}`, event);
   }
 
   // For disabled state toggle demo

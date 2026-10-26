@@ -55,7 +55,6 @@ export class CreateSystemReportComponent implements OnInit {
     });
 
     this.form.get('chargePointID')?.valueChanges.subscribe(value => {
-      console.log('Charge Point ID changed:', value);
   
       if (value) {
         this.getConnectors(value);
@@ -86,7 +85,6 @@ export class CreateSystemReportComponent implements OnInit {
   getUserSupports(){
     this._userService.getSupportUserNames().subscribe((data )=> {
       this.supports = data;
-      console.log(this.supports);
     })
   }
 

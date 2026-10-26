@@ -27,8 +27,6 @@ export class PartnerChargingStationsComponent implements OnInit {
   
   getPartnerChargingStations(){
     this._chargingStationService.getPartnerChargingStationsList(this.partnerID).subscribe((data) => {
-      console.log("this is the partner data");
-      console.log(data);
       this.chargingStations = data;
       this.cpfShow = false;
     })
@@ -42,7 +40,6 @@ export class PartnerChargingStationsComponent implements OnInit {
 
   showChargingStation(id : number){
     this.isChargingStationVisible = true;
-    console.log("showing charging station" , id);
     this.displayedChargingStationID = id;
   }
 

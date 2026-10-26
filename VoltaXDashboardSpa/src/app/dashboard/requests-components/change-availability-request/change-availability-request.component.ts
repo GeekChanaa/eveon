@@ -46,7 +46,6 @@ export class ChangeAvailabilityRequestComponent implements OnInit {
     let connector = JSON.parse(event.target.value);
     this.request.evse.id = connector.connectorID;
     this.request.evse.connectorId = connector.evseID;
-    console.log(this.request);
   }
 
   changeAvailabilityRequest(){

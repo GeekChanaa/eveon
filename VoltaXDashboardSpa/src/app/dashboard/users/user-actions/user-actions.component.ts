@@ -24,7 +24,6 @@ export class UserActionsComponent implements OnInit {
   }
 
   sendResetPasswordEmail(){
-    console.log("this is in here");
     this._authService.resetPasswordRequest(this.userEmail).subscribe((data) => {
       this._modalService.popup(ActionModalStatusEnum.Success, "Success !", "Reset password sent successfully", 4000);
     }, (error) => {

@@ -58,7 +58,6 @@ export class ChargingCardComponent implements OnInit {
     var idParam = this._route.snapshot.paramMap.get('id')
     if (idParam != null) {
       var id = parseInt(idParam);
-      console.log("this is the id");
       this.getChargingCardByID(id);
     }
   }

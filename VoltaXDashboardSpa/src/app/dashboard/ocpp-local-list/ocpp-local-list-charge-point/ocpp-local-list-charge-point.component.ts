@@ -30,8 +30,6 @@ export class OcppLocalListChargePointComponent implements OnInit {
   getChargePointLocalList(chargePointID : number){
     this.isLoading = true;
     this._ocppLocalListService.getOCPPLocalListVersionLocalList(chargePointID).subscribe((data) => {
-      console.log("this is the data");
-      console.log(data);
       this.localListVersion = data;
       this.isLoading = false;
     });

@@ -9,7 +9,6 @@ export type CardActionSize = 'small' | 'standard' | 'large';
 })
 export class CardActionComponent implements OnInit  {
   ngOnInit(): void {
-    console.log(this.actionName)
   }
   
   @Input() icon: string = 'info';

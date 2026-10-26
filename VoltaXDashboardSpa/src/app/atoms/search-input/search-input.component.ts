@@ -85,7 +85,6 @@ export class SearchInputComponent implements OnInit, OnChanges {
     if (!this.control.errors) return '';
 
     for (const errorKey in this.control.errors) {
-      console.log("errorkey : ",errorKey);
       if (this.control.errors.hasOwnProperty(errorKey)) {
         return this._validationMessageService.getMessage(errorKey, this.control.errors[errorKey]);
       }

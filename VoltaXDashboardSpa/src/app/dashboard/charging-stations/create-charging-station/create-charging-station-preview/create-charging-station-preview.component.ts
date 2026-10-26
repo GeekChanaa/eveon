@@ -74,7 +74,6 @@ export class CreateChargingStationPreviewComponent implements OnInit {
   
   openImageGallery(): void {
     // This would open a modal or fullscreen gallery
-    console.log('Opening full image gallery');
     // Implementation would depend on your modal/dialog system
   }
   

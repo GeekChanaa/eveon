@@ -58,8 +58,6 @@ export class GetReportRequestComponent implements OnInit {
   getReport(){
     this.request.componentVariable = this.CVariables;
     this.request.componentCriteria = this.selectedComponentCriterias;
-    console.log("THIS IS THE REQUEST ======================");
-    console.log(this.request);
     this.isLoading = true;
     this._reportingService.getReport(this.chargePointID, this.request).subscribe((data) => {
       this.isLoading = false;
@@ -115,7 +113,6 @@ export class GetReportRequestComponent implements OnInit {
 
   addComponentVariable(){
     if(this.componentVariable.component.name == "" || this.componentVariable.component.name == null) return;
-    console.log(this.componentVariable);
     this.CVariables.push(this.componentVariable);
     this.componentVariable = {
       component : {
@@ -130,7 +127,6 @@ export class GetReportRequestComponent implements OnInit {
   }
 
   addComponentCriteria(event : any){
-    console.log(event);
     let criteria = event.target.value;
     if(criteria == "") return;
     this.selectedComponentCriterias.push(criteria);

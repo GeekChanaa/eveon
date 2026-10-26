@@ -33,7 +33,6 @@ export class UserOrdersComponent implements OnInit {
 
   ngOnInit() {
     this._getItemFields();
-    console.log("this is the user ID : " + this.userID);
   }
 
   getUserOrdersObservable = (currentPage:  number | undefined, itemsPerPage : number | undefined, itemParams : any) => this._orderService.getUserOrders(currentPage ?? 0, itemsPerPage ?? -1, itemParams, this.userID);

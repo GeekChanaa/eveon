@@ -65,8 +65,6 @@ export class NavbarSearchComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((term : any) => this.search(term))
     ).subscribe(results => {
-      console.log("this is a value : "+this.searchControl.value)
-      console.log(this.recentSearches);
       this.searchResultsSubject.next(results);
       this.searchResults$.subscribe((data) => console.log(data));
     });

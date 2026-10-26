@@ -85,9 +85,6 @@ export class DisplayTableListComponent implements OnInit {
         this.data = data.result;
       if(data.pagination){
         this.pagination = data.pagination;
-        console.log("this is the pagination brother ");
-        console.log(data.pagination);
-        console.log(this.pagination)
         this.generatePaginationLinks();
       }
     })

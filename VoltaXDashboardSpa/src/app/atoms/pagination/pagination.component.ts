@@ -16,8 +16,6 @@ export class PaginationComponent implements OnInit {
 
   ngOnInit() {
     this.currentPage = this.pagination.currentPage;
-    console.log("this is the paginatio for this component");
-    console.log(this.pagination);
     this.generatePaginationLinks();
   }
 
@@ -38,14 +36,12 @@ export class PaginationComponent implements OnInit {
 
   nextPage() {
     this.currentPage++;
-    console.log("this is the current page right now : " + this.currentPage);
     this.refreshEvent.emit(this.currentPage);
   }
 
   // Previous Page
   previousPage() {
     this.currentPage--;
-    console.log("this is the current page right now : " + this.currentPage);
     this.refreshEvent.emit(this.currentPage);
   }
 

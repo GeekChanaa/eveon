@@ -120,9 +120,7 @@ export class CreateCommentComponent implements OnInit {
 
   getAllChargingStationNames(){
     this._chargingStationService.getChargingStationNames().subscribe((data) => {
-      console.log("CHARGING STATIONS")
       this.chargingStations = data;
-      console.log(this.chargingStations);
     })
   }
 

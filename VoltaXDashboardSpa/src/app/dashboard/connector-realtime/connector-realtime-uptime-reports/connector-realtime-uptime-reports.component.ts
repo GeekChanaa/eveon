@@ -31,7 +31,6 @@ export class ConnectorRealtimeUptimeReportsComponent implements OnInit {
   getChargePointConnectors(){
     this._connectorService.getChargePointConnectors(this.chargePointID).subscribe((data) => {
       this.connectors = data;
-      console.log(this.connectors);
       if(this.connectors != null && this.connectors.length > 0)
         this.changedReport(this.connectors[0].id)
     })

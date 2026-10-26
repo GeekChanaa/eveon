@@ -83,16 +83,13 @@ class VerifyPhoneNumberPage extends StatelessWidget {
                       )
                     ],
                     onCompleted: (v) {
-                      debugPrint("Completed");
                     },
                     // onTap: () {
                     //   print("Pressed");
                     // },
                     onChanged: (value) {
-                      debugPrint(value);
                     },
                     beforeTextPaste: (text) {
-                      debugPrint("Allowing to paste $text");
                       //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
                       //but you can show anything you want here, like your pop up saying wrong paste format or etc
                       return true;
