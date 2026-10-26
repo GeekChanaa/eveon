@@ -109,6 +109,15 @@ body.dark
   --danger5: #993232
   --danger6: #662222
 
+  // Native controls (select popups, date pickers, scrollbars) follow the
+  // theme; without it the browser draws them light on a navy page.
+  color-scheme: dark
+
+// Native select popups take their colours from the options, not the page.
+body.dark select option, body.dark select optgroup
+  background: var(--navy-900)
+  color: #FFFFFF
+
 
 
 

@@ -130,6 +130,51 @@
   input:focus, select:focus
     outline: 2px solid var(--vx-brand, #0A1A3A)
     outline-offset: 1px
+  // Enum values are short, so a full-width select (and a popup as wide as
+  // the card) is oversized; size it to its options instead.
+  select
+    width: auto
+    min-width: 220px
+    max-width: 100%
+  // Browsers with customizable selects get a themed, compact popup; the
+  // rest keep the native one.
+  @supports (appearance: base-select)
+    select, select::picker(select)
+      appearance: base-select
+    select
+      display: flex
+      align-items: center
+      justify-content: space-between
+      gap: 12px
+      cursor: pointer
+    select::picker-icon
+      color: var(--vx-text-muted, #737985)
+      transition: rotate .2s
+    select:open::picker-icon
+      rotate: 180deg
+    select::picker(select)
+      margin-top: 4px
+      max-height: 280px
+      padding: 4px
+      border: 1px solid var(--vx-border, #ededed)
+      border-radius: 8px
+      background: var(--vx-surface, #fff)
+      color: var(--vx-text, #171b24)
+      box-shadow: 0 8px 24px rgba(4, 12, 31, .18)
+    option
+      gap: 8px
+      padding: 8px 10px
+      border-radius: 6px
+      font-size: 13px
+      cursor: pointer
+    option:hover, option:focus-visible
+      background: var(--vx-hover, #EEF2F9)
+      outline: none
+    option:checked
+      color: var(--vx-brand-ink, #1F3461)
+      font-weight: 600
+    option::checkmark
+      color: var(--vx-brand-ink, #1F3461)
 
 .field-heading
   display: flex
