@@ -2,6 +2,7 @@ import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@an
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DashboardNotification } from 'src/_models/notification';
+import { BrowserNotificationService } from 'src/_services/browser-notification.service';
 import { ConfirmService } from 'src/_services/confirm.service';
 import { NotificationService, NotificationState } from 'src/_services/notification.service';
 import { ProfileCompletionService, ProfileWarning } from 'src/_services/portal/profile-completion.service';
@@ -22,9 +23,9 @@ const ACTIONS: Record<string, ActionMeta> = {
   ChargePointOnline: { label: 'Charge point back online', tone: 'success', icon: ICONS.plug },
   ChargePointConnected: { label: 'Charge point connected', tone: 'success', icon: ICONS.plug },
   ChargePointDisconnected: { label: 'Charge point disconnected', tone: 'warning', icon: ICONS.plug },
-  SystemReportCreated: { label: 'System report', tone: 'warning', icon: ICONS.warning },
   ChargePointAdded: { label: 'Charge point needs configuration', tone: 'accent', icon: ICONS.plug },
   ChargePointAwaitingProvisioning: { label: 'Charge point needs configuration', tone: 'warning', icon: ICONS.plug },
+  SystemReportCreated: { label: 'System report', tone: 'warning', icon: ICONS.warning },
   ReportCreated: { label: 'User report', tone: 'info', icon: ICONS.message },
   UserInfoDownloadRequested: { label: 'Data request', tone: 'accent', icon: ICONS.download }
 };
@@ -52,13 +53,18 @@ export class NavbarNotificationsComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(private notifications: NotificationService, private router: Router, private confirm: ConfirmService,
-    private host: ElementRef<HTMLElement>, private zone: NgZone, private completion: ProfileCompletionService) {}
+    private host: ElementRef<HTMLElement>, private zone: NgZone, private browserNotifications: BrowserNotificationService,
+    private completion: ProfileCompletionService) {}
 
   ngOnInit(): void {
     this.subscriptions.add(this.notifications.state$.subscribe(state => this.state = state));
-    this.subscriptions.add(this.notifications.received$.subscribe(notification => this.showToast(notification)));
+    this.subscriptions.add(this.notifications.received$.subscribe(notification => {
+      this.showToast(notification);
+      this.browserNotifications.show(notification);
+    }));
     this.subscriptions.add(this.completion.warnings$.subscribe(warnings => this.accountWarnings = warnings));
     this.notifications.connect();
+    this.browserNotifications.requestPermissionOnNextClick();
     this.clock = setInterval(() => this.now = Date.now(), 60000);
     // Outside Angular: a document-wide listener would otherwise run change detection on every click in the app.
     this.zone.runOutsideAngular(() => document.addEventListener('click', this.onDocumentClick));
