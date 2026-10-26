@@ -14,6 +14,7 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 import { IndexComponent } from './index/index.component';
 import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.component';
+import { ChangelogComponent } from './changelog/changelog.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.componen
       PrivacyPolicyComponent,
       TermsConditionsComponent,
       IndexComponent,
-      CookiesPolicyComponent
+      CookiesPolicyComponent,
+      ChangelogComponent
     ],
     imports: [
         GlobalRoutingModule,

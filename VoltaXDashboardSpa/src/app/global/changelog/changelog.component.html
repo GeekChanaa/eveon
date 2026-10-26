@@ -1,0 +1,46 @@
+<article class="legal changelog">
+  <nav class="legal__nav">
+    <a routerLink="/privacy">Privacy policy</a>
+    <a routerLink="/terms">Terms of use</a>
+    <a routerLink="/cookies">Cookie policy</a>
+    <a routerLink="/changelog">Changelog</a>
+  </nav>
+
+  <h1>Changelog</h1>
+  <p class="legal__meta">What changed in each version of the EVEON dashboard and API.</p>
+
+  <p *ngIf="loading" class="changelog__status">Loading the changelog&hellip;</p>
+  <p *ngIf="failed" class="changelog__status" role="alert">The changelog could not be loaded. Please try again later.</p>
+
+  <ng-container *ngIf="!loading && !failed">
+    <dl *ngIf="current.length" class="changelog__current">
+      <div *ngFor="let release of current">
+        <dt>{{ labels[release.component] }}</dt>
+        <dd>{{ release.version }}</dd>
+      </div>
+    </dl>
+
+    <div class="changelog__filters" role="group" aria-label="Show releases of">
+      <button
+        *ngFor="let option of filters"
+        type="button"
+        [class.is-active]="filter === option.value"
+        [attr.aria-pressed]="filter === option.value"
+        (click)="filter = option.value"
+      >{{ option.label }}</button>
+    </div>
+
+    <p *ngIf="!visible.length" class="changelog__status">No releases yet.</p>
+
+    <section *ngFor="let release of visible" class="changelog__release">
+      <header class="changelog__header">
+        <span class="changelog__tag" [attr.data-component]="release.component">{{ labels[release.component] }}</span>
+        <h2>{{ release.version }}</h2>
+        <time [attr.datetime]="release.date">{{ release.date | date: 'longDate' }}</time>
+      </header>
+      <ul>
+        <li *ngFor="let change of release.changes">{{ change }}</li>
+      </ul>
+    </section>
+  </ng-container>
+</article>

@@ -7,12 +7,14 @@ import { IndexComponent } from './index/index.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 import { CookiesPolicyComponent } from './cookies-policy/cookies-policy.component';
+import { ChangelogComponent } from './changelog/changelog.component';
 const routes: Routes = [
   // Old mock checkout; top-ups are paid online from the customer wallet.
   { path: "checkout", redirectTo: "/my-dashboard/wallet", pathMatch: "full" },
   { path: "privacy", component: PrivacyPolicyComponent, title: "Privacy policy" },
   { path: "terms", component: TermsConditionsComponent, title: "Terms of use" },
   { path: "cookies", component: CookiesPolicyComponent, title: "Cookie policy" },
+  { path: "changelog", component: ChangelogComponent, title: "Changelog" },
   {
     path: "not-found",
     component: NotFoundComponent,
