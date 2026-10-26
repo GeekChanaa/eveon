@@ -13,6 +13,12 @@ namespace VoltaXApi.Helpers
         public string? SearchValue { get; set; }
         public string[]? FilterBy { get; set; }
         public string[]? FilterValue { get; set; }
+        /// <summary>
+        /// Comparison per filter, parallel to <see cref="FilterBy"/>: eq (default when missing), neq, contains,
+        /// startswith, gt, gte, lt, lte, in (the value lists the accepted values separated by '|'), or null
+        /// (value true: the field has no value, false: it has one).
+        /// </summary>
+        public string[]? FilterOperator { get; set; }
         public string FilterMethod { get; set; } = "||";
 
         public string? ReverseOrder { get; set; }

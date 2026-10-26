@@ -89,6 +89,9 @@ public static class SafeDynamicQuery
             _ => throw new ValidationException("Filter method must be || or &&.")
         };
 
+        if (p.FilterOperator != null && p.FilterOperator.Length > p.FilterBy.Length)
+            throw new ValidationException("More filter operators than filter fields.");
+
         var direct = new List<string>();
         var nested = new List<string>();
         var values = new List<object?>();
@@ -100,15 +103,22 @@ public static class SafeDynamicQuery
             var path = field.Contains('-') ? Resolve(typeof(T), field, '-') : Resolve(typeof(T), field, '.');
             if (field.Contains('-') && path.ThroughCollection) throw new ValidationException($"Cannot filter by '{field}'.");
 
+            var op = ParseOperator(p.FilterOperator != null && i < p.FilterOperator.Length ? p.FilterOperator[i] : null, path.LeafType, field);
             var placeholder = "@" + values.Count;
-            values.Add(ConvertValue(p.FilterValue[i], path.LeafType, field));
+            if (op == FilterOp.Null)
+                // Presence check: no value to bind, the expression itself says null or not null.
+                placeholder = ParseFlag(p.FilterValue[i], field) ? "null" : "!null";
+            else
+                values.Add(op == FilterOp.In
+                    ? ConvertList(p.FilterValue[i], path.LeafType, field)
+                    : ConvertValue(p.FilterValue[i], path.LeafType, field));
 
             if (path.ThroughCollection)
-                nested.Add($"{path.CollectionExpression}.Any({path.InnerExpression} == {placeholder})");
+                nested.Add($"{path.CollectionExpression}.Any({Comparison(path.InnerExpression, op, placeholder)})");
             else if (path.IsNested)
-                nested.Add($"({path.NullGuard}{path.Expression} == {placeholder})");
+                nested.Add($"({path.NullGuard}{Comparison(path.Expression, op, placeholder)})");
             else
-                direct.Add($"{path.Expression} == {placeholder}");
+                direct.Add(Comparison(path.Expression, op, placeholder));
         }
 
         var parts = new List<string>();
@@ -116,6 +126,71 @@ public static class SafeDynamicQuery
         parts.AddRange(nested);
 
         return data.Where(Config, string.Join(" && ", parts), values.ToArray());
+    }
+
+    private enum FilterOp { Eq, Neq, Contains, StartsWith, Gt, Gte, Lt, Lte, In, Null }
+
+    private const int MaxInValues = 50;
+
+    private static FilterOp ParseOperator(string? raw, Type leafType, string field)
+    {
+        var op = (raw ?? "").Trim().ToLowerInvariant() switch
+        {
+            "" or "eq" => FilterOp.Eq,
+            "neq" => FilterOp.Neq,
+            "contains" => FilterOp.Contains,
+            "startswith" => FilterOp.StartsWith,
+            "gt" => FilterOp.Gt,
+            "gte" => FilterOp.Gte,
+            "lt" => FilterOp.Lt,
+            "lte" => FilterOp.Lte,
+            "in" => FilterOp.In,
+            "null" => FilterOp.Null,
+            _ => throw new ValidationException($"Unknown filter operator for '{field}'.")
+        };
+
+        var t = Nullable.GetUnderlyingType(leafType) ?? leafType;
+        if (op == FilterOp.Null && leafType.IsValueType && Nullable.GetUnderlyingType(leafType) == null)
+            throw new ValidationException($"'{field}' always has a value.");
+        var isText = t == typeof(string);
+        if ((op is FilterOp.Contains or FilterOp.StartsWith) && !isText)
+            throw new ValidationException($"'{field}' can only be compared, not searched.");
+        // Ordering comparisons on text would follow the database collation: only numbers, dates and enums.
+        if ((op is FilterOp.Gt or FilterOp.Gte or FilterOp.Lt or FilterOp.Lte) && (isText || t == typeof(bool) || t == typeof(Guid)))
+            throw new ValidationException($"'{field}' cannot be compared by range.");
+        return op;
+    }
+
+    private static string Comparison(string expression, FilterOp op, string placeholder) => op switch
+    {
+        FilterOp.Eq => $"{expression} == {placeholder}",
+        FilterOp.Neq => $"{expression} != {placeholder}",
+        FilterOp.Contains => $"({expression} != null && {expression}.Contains({placeholder}))",
+        FilterOp.StartsWith => $"({expression} != null && {expression}.StartsWith({placeholder}))",
+        FilterOp.Gt => $"{expression} > {placeholder}",
+        FilterOp.Gte => $"{expression} >= {placeholder}",
+        FilterOp.Lt => $"{expression} < {placeholder}",
+        FilterOp.Lte => $"{expression} <= {placeholder}",
+        FilterOp.In => $"{placeholder}.Contains({expression})",
+        FilterOp.Null => placeholder == "null" ? $"{expression} == null" : $"{expression} != null",
+        _ => throw new InvalidOperationException()
+    };
+
+    private static bool ParseFlag(string? raw, string field) => (raw ?? "").Trim().ToLowerInvariant() switch
+    {
+        "true" or "1" or "yes" => true,
+        "false" or "0" or "no" => false,
+        _ => throw new ValidationException($"Invalid value for '{field}'.")
+    };
+
+    /// <summary>The '|'-separated values of an "in" filter, as a typed list (so EF translates it to SQL IN).</summary>
+    private static object ConvertList(string? raw, Type target, string field)
+    {
+        var parts = (raw ?? "").Split('|');
+        if (parts.Length > MaxInValues) throw new ValidationException($"Too many values for '{field}'.");
+        var list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(target))!;
+        foreach (var part in parts) list.Add(ConvertValue(part, target, field));
+        return list;
     }
 
     /// <summary>Resolves a client-supplied field path to canonical property names, or throws.</summary>
