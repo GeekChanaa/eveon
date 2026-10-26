@@ -59,6 +59,13 @@ namespace VoltaXApi.Controllers
             return Ok(partnerID);
         }
 
+        // Administrators only (DashboardAccessFilter): the account gets the Partner role.
+        [HttpPost("CreatePartnerUser/{partnerID}")]
+        public async Task<ActionResult<PartnerUserCreatedDto>> CreatePartnerUser(int partnerID)
+        {
+            return await _partnerService.CreatePartnerUser(partnerID);
+        }
+
         [HttpGet("PartnerEmailExists")]
         public async Task<bool> PartnerEmailExists(string email)
         {

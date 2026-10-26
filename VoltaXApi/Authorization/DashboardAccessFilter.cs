@@ -160,6 +160,8 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
             // Admin accounts cannot be suspended through generic user edits (avoids last-admin races).
             if (allowed && target!.Role.Name == "Admin") allowed = dto!.SuspendedAt == target.SuspendedAt;
         }
+        // A partner account carries the Partner role, so only administrators create one (like any role above Customer).
+        if (allowed && controller == "Partner" && action == "CreatePartnerUser") allowed = access.IsAdmin;
         if (allowed && controller == "User" && action == "CreateUserDashboard")
         {
             var dto = context.ActionArguments.Values.OfType<UserDashboardCreateDto>().Single();

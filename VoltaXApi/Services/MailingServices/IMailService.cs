@@ -27,6 +27,8 @@ namespace VoltaXApi.Services
         Task SendPartnerResetPasswordMailRequest(MailRequest mailRequest, string userName, string password);
         Task SendChargingSessionQuoteMailRequest(MailRequest mailRequest, ChargingSessionForMailDto chargingSession);
         Task SendSuspendedAccountMail(MailRequest mailRequest, UserSuspendedForMailDto userDto);
+        /// <summary>A partner account was created: its email and generated password, to the administrators.</summary>
+        Task SendPartnerAccountCreatedMail(IReadOnlyList<string> recipients, string partnerName, string email, string password);
         Task SendSetupCredentialsMail(string recipient, string environment, IReadOnlyList<VoltaXApi.Services.Setup.TestCredential> credentials);
         /// <summary>Sends <see cref="MailRequest.Body"/> as the complete HTML body (no template around it), with the attachments.</summary>
         Task SendHtmlEmailAsync(MailRequest mailRequest);

@@ -442,6 +442,24 @@ namespace VoltaXApi.Services
 			await SendEmailSmtp(email);
 		}
 
+		public async Task SendPartnerAccountCreatedMail(IReadOnlyList<string> recipients, string partnerName, string email, string password)
+		{
+			var mailRequest = new MailRequest { ToEmails = recipients.ToList(), Subject = $"EVEON: partner account for {partnerName}", Name = "Eveon" };
+			PrepareEmailElements(mailRequest, out var message, out var builder);
+
+			var template = GetEmailTemplate("partner-account-created");
+			builder.HtmlBody = PopulateTemplate(template, new Dictionary<string, string>
+					{
+							{ "partnerName", System.Net.WebUtility.HtmlEncode(partnerName) },
+							{ "email", System.Net.WebUtility.HtmlEncode(email) },
+							{ "password", System.Net.WebUtility.HtmlEncode(password) },
+					});
+
+			message.Body = builder.ToMessageBody();
+
+			await SendEmailSmtp(message);
+		}
+
 		public async Task SendAlarmEmail(MailRequest mailRequest, VoltaXApi.Services.Alarms.AlarmMail alarm)
 		{
 			PrepareEmailElements(mailRequest, out var email, out var builder);
