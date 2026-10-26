@@ -23,6 +23,8 @@ const ACTIONS: Record<string, ActionMeta> = {
   ChargePointConnected: { label: 'Charge point connected', tone: 'success', icon: ICONS.plug },
   ChargePointDisconnected: { label: 'Charge point disconnected', tone: 'warning', icon: ICONS.plug },
   SystemReportCreated: { label: 'System report', tone: 'warning', icon: ICONS.warning },
+  ChargePointAdded: { label: 'Charge point needs configuration', tone: 'accent', icon: ICONS.plug },
+  ChargePointAwaitingProvisioning: { label: 'Charge point needs configuration', tone: 'warning', icon: ICONS.plug },
   ReportCreated: { label: 'User report', tone: 'info', icon: ICONS.message },
   UserInfoDownloadRequested: { label: 'Data request', tone: 'accent', icon: ICONS.download }
 };

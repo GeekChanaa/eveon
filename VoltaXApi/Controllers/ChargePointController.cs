@@ -20,15 +20,18 @@ namespace VoltaXApi.Controllers
         private readonly IChargePointRepository _repository;
         private readonly WebSocketManagerService _wsService;
         private readonly IQRCodeService _qrCodeService;
+        private readonly ProvisioningNotifier _provisioningNotifier;
 
         public ChargePointController(
             IChargePointRepository repository,
             WebSocketManagerService wsService,
-            IQRCodeService qrCodeService) : base(repository)
+            IQRCodeService qrCodeService,
+            ProvisioningNotifier provisioningNotifier) : base(repository)
         {
             _repository = repository;
             _wsService = wsService;
             _qrCodeService = qrCodeService;
+            _provisioningNotifier = provisioningNotifier;
         }
 
         // Get ChargePoint Connectors
@@ -77,6 +80,7 @@ namespace VoltaXApi.Controllers
             };
 
             await _repository.AddAsync(chargePoint);
+            _provisioningNotifier.Added(chargePoint.ChargePointId);
             return Ok(new { id = chargePoint.ID });
         }
 
