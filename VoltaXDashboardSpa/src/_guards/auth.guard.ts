@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { UrlTree } from '@angular/router';
 import { TokenStorageService } from 'src/_services/token-storage.service';
 import { AuthService } from 'src/_services/auth.service';
+import { loginUrlFor } from './auth-site.guard';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthGuard  {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | boolean | UrlTree {
-    const login = this.router.parseUrl(state.url.startsWith('/partner') ? '/partner-auth/login' : '/auth/login');
+    const login = this.router.parseUrl(loginUrlFor(state.url));
     if (!this.tokens.isAccessTokenExpired()) {
       return true;
     }

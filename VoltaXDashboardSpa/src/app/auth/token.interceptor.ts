@@ -6,6 +6,7 @@ import { catchError, switchMap } from "rxjs/operators";
 import { TokenRefreshService } from "src/_services/token-refresh.service";
 import { TokenStorageService } from "src/_services/token-storage.service";
 import { environment } from "src/environments/environment";
+import { loginUrlFor } from "src/_guards/auth-site.guard";
 
 /**
  * Attaches the access token to every call and keeps the session alive.
@@ -114,10 +115,9 @@ export class TokenInterceptor implements HttpInterceptor {
         this._tokenStorage.clear();
 
         const url = this._router.url || '';
-        const loginUrl = url.startsWith('/partner') ? '/partner-auth/login' : '/auth/login';
 
         if (!url.startsWith('/auth') && !url.startsWith('/partner-auth')) {
-            this._router.navigateByUrl(loginUrl);
+            this._router.navigateByUrl(loginUrlFor(url));
         }
 
         return throwError(() => error);

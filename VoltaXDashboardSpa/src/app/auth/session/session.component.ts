@@ -53,7 +53,8 @@ export class SessionComponent implements OnInit {
       error: () => {
         this.tokens.clear();
         this.message = 'auth.session.failed';
-        this.redirect(environment.authUrl + (partner ? '/partner-auth/login' : '/auth/login'));
+        const login = partner ? '/partner-auth/login' : '/auth/login';
+        this.redirect(environment.authUrl + login + (returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''));
       }
     });
   }
