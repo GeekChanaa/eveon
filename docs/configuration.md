@@ -41,8 +41,7 @@ On the server they live in `/etc/eveon/api.env` (`chmod 600`), passed with `dock
 | `RateLimiting__AuthStrictPerMinute` / `PublicPerMinute` / `GlobalPerMinute` | no | defaults 5 / 60 / 600 |
 | `Authentication__Google__ClientId` / `ClientSecret` | for Google login | |
 | `MailSettings__Mail` / `MailSettings__DisplayName` | for email | sender address (verified at the mail provider) and the name shown with it, default `EVEON` |
-| `MailSettings__Host` / `Port` / `Username` / `Password` | for email over SMTP | port 465: TLS from the start, other ports: STARTTLS |
-| `MailSettings__BrevoApiKey` | for email where SMTP is blocked | Brevo API key (`xkeysib-...`): mail goes over HTTPS to Brevo's API and the SMTP settings are unused. For hosts that block outbound SMTP (Railway below the Pro plan, for example). If Brevo answers 401 "unrecognised IP address", add the host's outgoing address in Brevo (Security > Authorised IPs) |
+| `MailSettings__Host` / `Port` / `Username` / `Password` | for email | SMTP of the eveon.ma mailboxes (Titan): `smtp.titan.email`, port 465 (TLS from the start; other ports use STARTTLS), the mailbox address as login (empty `Username` = `MailSettings__Mail`) and its password |
 | `AwsSns__AccessKey` / `AwsSns__SecretKey` | for SMS | use a least-privilege IAM user (sns:Publish only) |
 
 ## HTTPS

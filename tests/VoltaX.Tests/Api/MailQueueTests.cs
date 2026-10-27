@@ -126,23 +126,6 @@ public class MailQueueTests
         await delivery.StopAsync(CancellationToken.None);
     }
 
-    [Fact]
-    public async Task A_message_the_mail_api_rejects_is_not_retried()
-    {
-        var transport = new FakeTransport { Expected = 1 };
-        transport.Failures.Enqueue(new MailRejectedException("Brevo answered 401: Key not found"));
-        transport.Gate.SetResult();
-        var (queue, delivery) = Pipeline(transport);
-        await delivery.StartAsync(CancellationToken.None);
-
-        queue.Enqueue(Message("rejected"));
-        queue.Enqueue(Message("fine"));
-
-        Assert.True(await transport.AllDelivered.Task.WaitAsync(TimeSpan.FromSeconds(10)));
-        Assert.Equal(new[] { "rejected", "fine" }, transport.Attempts.Select(a => a.Subject));
-        await delivery.StopAsync(CancellationToken.None);
-    }
-
     private sealed class CapturingQueue : IMailQueue
     {
         public List<MimeMessage> Messages { get; } = new();

@@ -275,14 +275,7 @@ public static class ServiceRegistration
         // Mail is queued and sent in the background, so no request or OCPP handler waits for the SMTP server.
         services.AddSingleton<MailQueue>();
         services.AddSingleton<IMailQueue>(sp => sp.GetRequiredService<MailQueue>());
-        // SMTP, or Brevo's HTTPS API when MailSettings:BrevoApiKey is set (hosts that block outbound SMTP).
-        services.AddHttpClient(BrevoApiMailTransport.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(30));
-        services.AddSingleton<SmtpMailTransport>();
-        services.AddSingleton<BrevoApiMailTransport>();
-        services.AddSingleton<IMailTransport>(sp =>
-            string.IsNullOrWhiteSpace(sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<MailSettings>>().Value.BrevoApiKey)
-                ? sp.GetRequiredService<SmtpMailTransport>()
-                : sp.GetRequiredService<BrevoApiMailTransport>());
+        services.AddSingleton<IMailTransport, SmtpMailTransport>();
         services.AddHostedService<MailDeliveryService>();
         services.AddScoped<VoltaXApi.Services.Setup.FirstSetupJob>();
         services.AddScoped<ISnsService, SnsService>();

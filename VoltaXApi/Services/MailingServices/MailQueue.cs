@@ -188,8 +188,8 @@ namespace VoltaXApi.Services
             }
         }
 
-        /// <summary>The server refused the message itself (SMTP 5xx reply, Brevo 4xx): sending it again cannot work.</summary>
+        /// <summary>The server refused the message itself (SMTP 5xx reply): sending it again cannot work.</summary>
         private static bool IsPermanent(Exception ex) =>
-            ex is SmtpCommandException { StatusCode: >= (SmtpStatusCode)500 } or ParseException or MailRejectedException;
+            ex is SmtpCommandException { StatusCode: >= (SmtpStatusCode)500 } or ParseException;
     }
 }
