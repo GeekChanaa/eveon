@@ -10,7 +10,7 @@ name: Deploy dashboard
 
 on:
   push:
-    branches: [security-hardening]
+    branches: [master]
     paths:
       - "VoltaXDashboardSpa/**"
       - ".github/workflows/deploy-dashboard.yml"
