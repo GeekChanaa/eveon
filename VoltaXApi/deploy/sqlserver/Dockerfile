@@ -1,6 +1,6 @@
 # SQL Server for Railway. start.sh adapts it to Railway volumes and limits;
 # see the comments there.
-FROM mcr.microsoft.com/mssql/server:2022-latest
+FROM mcr.microsoft.com/mssql/server:2025-latest
 
 USER root
 COPY start.sh /usr/local/bin/start-mssql.sh
