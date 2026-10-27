@@ -107,6 +107,7 @@ public static class PermissionSeeder
             PermissionEnum.CreateUsers => "Can create users",
             PermissionEnum.EditUsers => "Can edit users",
             PermissionEnum.DeleteUsers => "Can delete users",
+            PermissionEnum.SuspendUsers => "Can suspend user accounts and lift suspensions",
 
             PermissionEnum.ViewPartners => "Can view partners",
             PermissionEnum.CreatePartners => "Can create partners",

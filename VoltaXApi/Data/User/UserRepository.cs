@@ -189,6 +189,8 @@ namespace VoltaXApi.Data
                 IsEmailVerified = u.IsEmailVerified,
                 IsPhoneNumberVerified = u.IsPhoneNumberVerified,
                 SuspendedAt = u.SuspendedAt,
+                SuspensionReason = u.SuspensionReason,
+                DeletionRequested = u.DeletionRequestedAt != null,
             }).FirstOrDefaultAsync();
 
             return user;
@@ -213,7 +215,6 @@ namespace VoltaXApi.Data
             user.Birthday = userDto.Birthday;
             user.IsEmailVerified = !emailChanged && userDto.IsEmailVerified;
             user.IsPhoneNumberVerified = !phoneChanged && userDto.IsPhoneNumberVerified;
-            user.SuspendedAt = userDto.SuspendedAt;
             user.ElectricVehicleModelID = userDto.ElectricVehicleModelID;
             user.PartnerID = userDto.PartnerID ?? null;
 

@@ -1,0 +1,20 @@
+# Caddy on the EC2 test host (deploy-ec2.sh installs it as /etc/caddy/Caddyfile).
+# Caddy gets and renews the Let's Encrypt certificate once api-v2.eveon.ma points at the host.
+
+api-v2.eveon.ma {
+	encode gzip
+
+	# REST API, SignalR hubs and the OCPP websocket for chargers with TLS (wss://api-v2.eveon.ma/OCPP/...).
+	reverse_proxy 127.0.0.1:8080
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}
+
+# OCPP security profile 1 (plain ws://api-v2.eveon.ma:8081/OCPP/...): no TLS and no redirect to HTTPS, for
+# chargers that cannot do TLS. Needs Ocpp__AllowInsecureProfile1=true; Basic auth still applies.
+http://api-v2.eveon.ma:8081 {
+	reverse_proxy 127.0.0.1:8080
+}

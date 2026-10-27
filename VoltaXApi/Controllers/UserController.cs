@@ -73,6 +73,20 @@ namespace VoltaXApi.Controllers
             await this._userService.EditUserDashboardInformations(userID, userDto);
         }
 
+        [HttpPost("SuspendUser/{userID}")]
+        public async Task<IActionResult> SuspendUser(int userID, SuspendUserDto suspension)
+        {
+            await _userService.SuspendUser(userID, suspension);
+            return NoContent();
+        }
+
+        [HttpPost("LiftSuspension/{userID}")]
+        public async Task<IActionResult> LiftSuspension(int userID)
+        {
+            await _userService.LiftSuspension(userID);
+            return NoContent();
+        }
+
         [HttpGet("GetUserNames")]
         public async Task<ActionResult<List<UserNameDto>>> GetUserNames()
         {

@@ -157,8 +157,12 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
             if (allowed && !access.IsAdmin)
                 allowed = target!.Role.Name != "Admin" && target.PartnerID == dto!.PartnerID &&
                     target.IsEmailVerified == dto.IsEmailVerified && target.IsPhoneNumberVerified == dto.IsPhoneNumberVerified;
-            // Admin accounts cannot be suspended through generic user edits (avoids last-admin races).
-            if (allowed && target!.Role.Name == "Admin") allowed = dto!.SuspendedAt == target.SuspendedAt;
+        }
+        if (allowed && controller == "User" && action is "SuspendUser" or "LiftSuspension")
+        {
+            var targetId = IntArgument(context, "userID");
+            // Demote via the protected role endpoint before suspending an administrator (avoids last-admin races).
+            allowed = targetId != user.ID && !await db.Users.AnyAsync(u => u.ID == targetId && u.Role.Name == "Admin");
         }
         // A partner account carries the Partner role, so only administrators create one (like any role above Customer).
         if (allowed && controller == "Partner" && action == "CreatePartnerUser") allowed = access.IsAdmin;
@@ -186,7 +190,7 @@ public sealed class DashboardAccessFilter(AccessService accessService, VoltaXApi
         // Every command sent to a charger (reset, unlock, remote start/stop, config...) is on record.
         if (result.Exception == null && method == "POST" && descriptor.ControllerTypeInfo.Namespace == "VoltaXApi.OCPP.Controllers")
             await audit.LogAsync($"Ocpp.{controller}.{action}", "ChargePoint", StringArgument(context, "chargePointID"));
-        if (result.Exception == null && controller == "User" && action is "EditUserDashboardInformations" or "Delete")
+        if (result.Exception == null && controller == "User" && action is "EditUserDashboardInformations" or "Delete" or "SuspendUser")
         {
             var targetId = IntArgument(context, "userID", "id");
             if (targetId.HasValue) connections.Revoke(new[] { targetId.Value });

@@ -40,7 +40,7 @@ export class UserAccessComponent implements OnInit {
   get groups(): { name: string; permissions: any[] }[] {
     const groups = new Map<string, any[]>();
     this.permissions.filter(p => this.label(p.name).toLowerCase().includes(this.filter.toLowerCase())).forEach(p => {
-      const feature = p.name.replace(/^(View|Create|Edit|Delete)/, '');
+      const feature = p.name.replace(/^(View|Create|Edit|Delete|Suspend)/, '');
       const name = /^(AccessDashboard|ViewDashboard|ViewStatisticsPage|ViewDocumentation|OperateChargePoints)$/.test(p.name) ? 'Dashboard & operations' : this.label(feature);
       groups.set(name, [...(groups.get(name) || []), p]);
     });
@@ -66,12 +66,12 @@ export class UserAccessComponent implements OnInit {
     if (checked) {
       this.selected.add(permission.id);
       const dashboard = names.get('AccessDashboard'); if (dashboard) this.selected.add(dashboard);
-      const view = names.get(permission.name.replace(/^(Create|Edit|Delete)/, 'View')); if (view) this.selected.add(view);
+      const view = names.get(permission.name.replace(/^(Create|Edit|Delete|Suspend)/, 'View')); if (view) this.selected.add(view);
       if (permission.name === 'OperateChargePoints' && names.has('ViewChargePoints')) this.selected.add(names.get('ViewChargePoints')!);
     } else {
       this.selected.delete(permission.id);
       if (permission.name === 'AccessDashboard') this.selected.clear();
-      if (permission.name.startsWith('View')) this.permissions.filter(p => /^(Create|Edit|Delete)/.test(p.name) && p.name.replace(/^(Create|Edit|Delete)/, 'View') === permission.name).forEach(p => this.selected.delete(p.id));
+      if (permission.name.startsWith('View')) this.permissions.filter(p => /^(Create|Edit|Delete|Suspend)/.test(p.name) && p.name.replace(/^(Create|Edit|Delete|Suspend)/, 'View') === permission.name).forEach(p => this.selected.delete(p.id));
       if (permission.name === 'ViewChargePoints' && names.has('OperateChargePoints')) this.selected.delete(names.get('OperateChargePoints')!);
     }
   }

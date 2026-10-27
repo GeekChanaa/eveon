@@ -1,5 +1,5 @@
 import { AccessService } from 'src/_services/access.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserService } from 'src/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/_models/user';
@@ -10,6 +10,7 @@ import { PartnerService } from 'src/_services/partner.service';
 import { RoleService } from 'src/_services/roles/role.service';
 import { ElectricVehicleModelService } from 'src/_services/electric-vehicle-model.service';
 import { PageState } from 'src/_models/_enums/page-state.enum';
+import { ConfirmService } from 'src/_services/confirm.service';
 enum UserTabsEnum {
   InformationsTab = "InformationsTab",
   RechargeCardsTab = "RechargeCardsTab",
@@ -29,7 +30,11 @@ export class UserComponent implements OnInit {
   state: PageState = PageState.Loading;
   // TabsEnum
   tabsEnum : UserTabsEnum = UserTabsEnum.InformationsTab;
-  editingSuspension : boolean = false;
+  @ViewChild('suspendDialog') suspendDialog!: ElementRef<HTMLDialogElement>;
+  suspension = { until: '', indefinite: false, reason: '', notifyUser: true };
+  suspensionError = '';
+  savingSuspension = false;
+  readonly tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA'); // local YYYY-MM-DD
   userLoaded : boolean = false;
   partnersOptions : any[] = [];
   rolesOptions : any[] = [];
@@ -54,7 +59,8 @@ export class UserComponent implements OnInit {
     private _modalService: ActionModalService,
     private _partnerService : PartnerService,
     private _roleService : RoleService,
-    private _evModelService : ElectricVehicleModelService
+    private _evModelService : ElectricVehicleModelService,
+    private _confirmService : ConfirmService
     ) { }
 
   ngOnInit() {
@@ -123,18 +129,64 @@ export class UserComponent implements OnInit {
     (tablist?.querySelectorAll('button')[next] as HTMLButtonElement)?.focus();
   }
 
-  isSuspended(){ 
-    return new Date(this.user.suspendedAt) > new Date();
+  isSuspended(){
+    return !!this.user.suspendedAt && new Date(this.user.suspendedAt) > new Date();
+  }
+
+  // The API stores an open-ended suspension as year 9999.
+  isIndefinite(){
+    return new Date(this.user.suspendedAt).getUTCFullYear() >= 9999;
+  }
+
+  // Admins are demoted before being suspended, and nobody suspends their own account.
+  canSuspend(){
+    return this.access.can('SuspendUsers') && this.user.role !== 'Admin' && this.user.id !== this.access.current?.userId && !this.user.deletionRequested;
+  }
+
+  openSuspendDialog(){
+    this.suspension = { until: '', indefinite: false, reason: '', notifyUser: true };
+    this.suspensionError = '';
+    this.suspendDialog.nativeElement.showModal();
+  }
+
+  closeSuspendDialog(){
+    this.suspendDialog.nativeElement.close();
   }
 
   suspendUser(){
-    this.updateUserObservable(this.user.id, this.user).subscribe((data) => {
-      this._modalService.popup(ActionModalStatusEnum.Success,"Success !","Account suspenstion taken into account",4000);
-      this.editingSuspension = false;
-    }, (error) => {
-      this._modalService.popup(ActionModalStatusEnum.Error, "Error !", "Something went wrong!", 4000);
-    })
+    const reason = this.suspension.reason.trim();
+    if (reason.length < 3) { this.suspensionError = 'Enter the reason for the suspension.'; return; }
+    if (!this.suspension.indefinite && !this.suspension.until) { this.suspensionError = 'Choose when the suspension ends.'; return; }
+    // The account stays suspended through the whole chosen day.
+    const until = this.suspension.indefinite ? null : new Date(this.suspension.until + 'T23:59:59').toISOString();
+    this.savingSuspension = true;
+    this.suspensionError = '';
+    this._userService.suspendUser(this.user.id, { until, reason, notifyUser: this.suspension.notifyUser }).subscribe({
+      next: () => {
+        this.savingSuspension = false;
+        this.closeSuspendDialog();
+        this.user.suspendedAt = until ?? '9999-12-31T00:00:00Z';
+        this.user.suspensionReason = reason;
+        this._modalService.popup(ActionModalStatusEnum.Success, "Account suspended", this.suspension.notifyUser ? "The user was notified by email." : "The user was not notified.", 4000);
+      },
+      error: (error) => {
+        this.savingSuspension = false;
+        this.suspensionError = error.error?.message || 'Could not suspend this account.';
+      }
+    });
   }
 
+  liftSuspension(){
+    this._confirmService.requestConfirmation('Lift suspension', `${this.user.fullName} will be able to sign in again.`, () => {
+      this._userService.liftSuspension(this.user.id).subscribe({
+        next: () => {
+          this.user.suspendedAt = null;
+          this.user.suspensionReason = null;
+          this._modalService.popup(ActionModalStatusEnum.Success, "Suspension lifted", "The account is active again.", 4000);
+        },
+        error: (error) => this._modalService.popup(ActionModalStatusEnum.Error, "Error !", error.error?.message || "Could not lift the suspension.", 4000)
+      });
+    }, { confirmLabel: 'Lift suspension' });
+  }
 
 }

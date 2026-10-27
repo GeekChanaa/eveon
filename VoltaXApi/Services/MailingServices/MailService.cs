@@ -411,9 +411,9 @@ namespace VoltaXApi.Services
 			var template = GetEmailTemplate("account-suspended");
 			var populatedTemplate = PopulateTemplate(template, new Dictionary<string, string>
 					{
-						{ "UserName", mailDto.UserName },
-						{ "SuspensionReason", mailDto.SuspensionReason},
-						{ "SuspendedAt", mailDto.SuspendedAt?.ToString("yyyy-MM-dd HH:mm")  },
+						{ "UserName", System.Net.WebUtility.HtmlEncode(mailDto.UserName) },
+						{ "SuspensionReason", System.Net.WebUtility.HtmlEncode(mailDto.SuspensionReason ?? "").ReplaceLineEndings("<br>") },
+						{ "SuspendedAt", mailDto.SuspendedAt is { } until ? until.ToString("yyyy-MM-dd HH:mm") + " UTC" : "further notice" },
 					});
 					
 			builder.HtmlBody = populatedTemplate;

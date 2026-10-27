@@ -20,6 +20,8 @@ namespace VoltaXApi.Services
         private readonly IMailService _mailService;
         private readonly IMailRequestFactory _mailRequestFactory;
         private readonly IRefreshTokenService _refreshTokenService;
+        // Same far-future value as a GDPR deletion: every login and API call checks SuspendedAt.
+        private static readonly DateTime IndefiniteSuspension = new(9999, 12, 31, 0, 0, 0, DateTimeKind.Utc);
 
         public UserService(
             IFileManagementService fileManagementService,
@@ -119,36 +121,48 @@ namespace VoltaXApi.Services
             return true;
         }
         
-        public async Task SuspendUser(User user, DateTime? suspendedAt, string suspensionReason = null)
-        {
-            var suspendedAccountDto = new UserSuspendedForMailDto
-            {
-                UserName = user.FullName,
-                SuspensionReason = user.SuspensionReason,
-                SuspendedAt = user.SuspendedAt 
-            };
-
-            // Send suspension email
-            var mailRequest = _mailRequestFactory.CreateAccountSuspendedMailRequest(user.Email);
-            await _mailService.SendSuspendedAccountMail(mailRequest,suspendedAccountDto);
-        }
-        
-        public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
+        public async Task SuspendUser(int userID, SuspendUserDto suspension)
         {
             var user = await _userRepository.GetByIdAsync(userID);
+            if (user == null || user.IsDeleted) throw new NotFoundException("User not found.");
+            if (user.DeletionRequestedAt != null) throw new ValidationException("This account is being deleted and is already blocked.");
+            if (suspension.Until != null && suspension.Until <= DateTime.UtcNow) throw new ValidationException("The suspension must end in the future.");
 
-            var now = DateTime.UtcNow;
-            var newlySuspended = userDto.SuspendedAt > now && userDto.SuspendedAt != user.SuspendedAt;
-
-            await _userRepository.EditUserDashboardInformations(userID, userDto);
+            user.SuspendedAt = suspension.Until ?? IndefiniteSuspension;
+            user.SuspensionReason = suspension.Reason.Trim();
+            await _userRepository.Update(user);
 
             // Suspension ends every session: refresh tokens are revoked here and the next
             // request with a still valid access token is refused by AccessService.
-            if (newlySuspended)
+            await _refreshTokenService.RevokeAllForUser(userID, "suspended");
+
+            if (suspension.NotifyUser && !string.IsNullOrEmpty(user.Email))
             {
-                await _refreshTokenService.RevokeAllForUser(userID, "suspended");
-                await SuspendUser(user, user.SuspendedAt, user.SuspensionReason);
+                var mailRequest = _mailRequestFactory.CreateAccountSuspendedMailRequest(user.Email);
+                await _mailService.SendSuspendedAccountMail(mailRequest, new UserSuspendedForMailDto
+                {
+                    UserName = user.FullName,
+                    SuspensionReason = user.SuspensionReason,
+                    SuspendedAt = suspension.Until
+                });
             }
+        }
+
+        public async Task LiftSuspension(int userID)
+        {
+            var user = await _userRepository.GetByIdAsync(userID);
+            if (user == null || user.IsDeleted) throw new NotFoundException("User not found.");
+            // Only AccountDeletionService.Cancel may unblock an account whose deletion is pending.
+            if (user.DeletionRequestedAt != null) throw new ValidationException("This account is being deleted; cancel the deletion request instead.");
+
+            user.SuspendedAt = null;
+            user.SuspensionReason = null;
+            await _userRepository.Update(user);
+        }
+
+        public async Task EditUserDashboardInformations(int userID, UserDashboardEditInformationsDto userDto)
+        {
+            await _userRepository.EditUserDashboardInformations(userID, userDto);
         }
 
     }

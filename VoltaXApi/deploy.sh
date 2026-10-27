@@ -7,8 +7,11 @@
 #
 # Required
 #   IMAGE         image repository to push and pull, e.g. docker.io/<account>/voltax-api or ghcr.io/<owner>/eveon-api
+#                 (optional with TRANSFER=ssh: default eveon-api)
 #   DEPLOY_HOST   SSH target, user@host
 # Optional
+#   TRANSFER      registry (default): push IMAGE and pull it on the host; ssh: no registry, the built image is
+#                 streamed to the host with docker save | docker load (deploy-ec2.sh uses this)
 #   TAG           image tag (default: short git commit, "-dirty" when the tree has uncommitted changes)
 #   PUSH_LATEST   also push and tag :latest (default true)
 #   PLATFORM      docker build platform (default linux/amd64)
@@ -33,6 +36,9 @@ trap 'fail "deploy failed at line $LINENO"' ERR
 
 cd "$(dirname "$0")"
 
+TRANSFER="${TRANSFER:-registry}"
+[[ "$TRANSFER" == registry || "$TRANSFER" == ssh ]] || fail "TRANSFER must be registry or ssh"
+[[ "$TRANSFER" == ssh ]] && IMAGE="${IMAGE:-eveon-api}"
 : "${IMAGE:?set IMAGE, e.g. IMAGE=docker.io/<account>/voltax-api}"
 : "${DEPLOY_HOST:?set DEPLOY_HOST, e.g. DEPLOY_HOST=ec2-user@<host>}"
 PUSH_LATEST="${PUSH_LATEST:-true}"
@@ -65,25 +71,33 @@ ssh "${ssh_args[@]}" "$DEPLOY_HOST" true || fail "cannot reach $DEPLOY_HOST over
 if [[ "${SKIP_BUILD:-}" != 1 ]]; then
     step "Building $REF ($PLATFORM)"
     docker build --platform "$PLATFORM" --pull --tag "$REF" .
-    step "Pushing $REF"
-    docker push "$REF"
-    if [[ "$PUSH_LATEST" == true ]]; then
-        docker tag "$REF" "$IMAGE:latest"
-        docker push "$IMAGE:latest"
+    if [[ "$TRANSFER" == registry ]]; then
+        step "Pushing $REF"
+        docker push "$REF"
+        if [[ "$PUSH_LATEST" == true ]]; then
+            docker tag "$REF" "$IMAGE:latest"
+            docker push "$IMAGE:latest"
+        fi
     fi
+fi
+
+if [[ "$TRANSFER" == ssh ]]; then
+    step "Sending $REF to $DEPLOY_HOST over SSH"
+    docker save "$REF" | gzip | ssh "${ssh_args[@]}" "$DEPLOY_HOST" 'gunzip | docker load'
 fi
 
 step "Deploying $REF to $DEPLOY_HOST"
 # The remote script is sent as is (quoted heredoc); its inputs are passed as quoted positional arguments.
-remote_args=$(printf '%q ' "$REF" "$CONTAINER" "$ENV_FILE" "$PUBLISH" "$VOLUME_PREFIX" "${SKIP_MIGRATE:-0}")
+remote_args=$(printf '%q ' "$REF" "$CONTAINER" "$ENV_FILE" "$PUBLISH" "$VOLUME_PREFIX" "${SKIP_MIGRATE:-0}" "$TRANSFER")
 # shellcheck disable=SC2029 # expanding remote_args here is the point: they are already quoted for the remote shell
 ssh "${ssh_args[@]}" "$DEPLOY_HOST" "bash -s -- $remote_args" <<'REMOTE'
 set -Eeuo pipefail
-ref=$1 container=$2 env_file=$3 publish=$4 prefix=$5 skip_migrate=$6
+ref=$1 container=$2 env_file=$3 publish=$4 prefix=$5 skip_migrate=$6 transfer=$7
 
 [[ -f "$env_file" ]] || { echo "ERROR: $env_file is missing on $(hostname) (template: deploy/api.env.example)" >&2; exit 1; }
 
-docker pull "$ref"
+# With TRANSFER=ssh the image was loaded just before; there is no registry to pull from.
+[[ "$transfer" == ssh ]] || docker pull "$ref"
 
 if [[ "$skip_migrate" != 1 ]]; then
     echo "==> Applying database migrations"

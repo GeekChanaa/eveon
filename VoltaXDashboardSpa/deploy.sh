@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build the dashboard and upload it to a static host over SSH (Hostinger). The Vercel deployment does not
-# use this script: Vercel builds from vercel.json.
+# Build the dashboard and upload it to a static host over SSH (Hostinger). GitHub Actions runs it on every
+# push to the default branch (.github/workflows/deploy-dashboard.yml); run it by hand for a one-off deploy.
 #
 #   cd VoltaXDashboardSpa
 #   DEPLOY_HOST=<user>@<host> DEPLOY_DIR=/home/<user>/domains/<domain>/public_html/dashboard SSH_PORT=65002 ./deploy.sh

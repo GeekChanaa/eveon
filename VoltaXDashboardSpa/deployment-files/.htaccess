@@ -20,7 +20,7 @@ RewriteRule ^ /index.html
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
     # Keep in sync with environment.prod.ts (apiUrl) and the external services the app loads.
     # 'unsafe-inline' for styles is required by Angular component styles and PrimeNG.
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://api.eveon.ma https://*.googleapis.com https://*.gstatic.com https://*.google.com; connect-src 'self' https://api.eveon.ma wss://api.eveon.ma https://maps.googleapis.com; frame-src https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://api-v2.eveon.ma https://*.googleapis.com https://*.gstatic.com https://*.google.com; connect-src 'self' https://api-v2.eveon.ma wss://api-v2.eveon.ma https://maps.googleapis.com; frame-src https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://api-v2.eveon.ma https://payment.cmi.co.ma https://testpayment.cmi.co.ma; object-src 'none'"
 
     # index.html must never be cached so a deploy is picked up immediately.
     <FilesMatch "index\.html$">

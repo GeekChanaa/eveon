@@ -22,6 +22,9 @@ namespace VoltaXApi.Dtos
         public bool IsEmailVerified { get; set; } = false;
         public bool IsPhoneNumberVerified { get; set; } = false;
         public DateTime? SuspendedAt { get; set; }
+        public string? SuspensionReason { get; set; }
+        // A pending GDPR deletion keeps the account blocked; that suspension cannot be lifted here.
+        public bool DeletionRequested { get; set; }
 
     }
 }

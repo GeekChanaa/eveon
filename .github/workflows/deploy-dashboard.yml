@@ -1,0 +1,71 @@
+# Deploy dashboard: builds VoltaXDashboardSpa and uploads it to Hostinger (dashboard-v2.eveon.ma) with
+# VoltaXDashboardSpa/deploy.sh on every push to the default branch that touches the dashboard, or by hand
+# (Actions > Deploy dashboard > Run workflow).
+#
+# Owner to enable (Settings > Secrets and variables > Actions > New repository secret):
+#   HOSTINGER_SSH_TARGET    u216915831@<SSH IP from hPanel > Advanced > SSH Access>
+#   HOSTINGER_SSH_KEY       private key whose public half is added in hPanel > SSH Access > SSH keys
+#   HOSTINGER_KNOWN_HOSTS   `ssh-keyscan -p 65002 <SSH IP>` output, so the job refuses an impostor host
+name: Deploy dashboard
+
+on:
+  push:
+    branches: [security-hardening]
+    paths:
+      - "VoltaXDashboardSpa/**"
+      - ".github/workflows/deploy-dashboard.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never cancel an upload half way: queue the next deploy instead.
+concurrency:
+  group: deploy-dashboard
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "20"
+  NG_CLI_ANALYTICS: "false"
+
+jobs:
+  deploy:
+    name: Build and upload to Hostinger
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production-dashboard
+      url: https://dashboard-v2.eveon.ma
+    defaults:
+      run:
+        working-directory: VoltaXDashboardSpa
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: VoltaXDashboardSpa/package-lock.json
+
+      - name: SSH key and known host
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/hostinger_deploy
+          chmod 600 ~/.ssh/hostinger_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Build and upload
+        env:
+          DEPLOY_HOST: ${{ secrets.HOSTINGER_SSH_TARGET }}
+          DEPLOY_DIR: /home/u216915831/domains/eveon.ma/public_html/dashboard-v2
+          SSH_PORT: "65002"
+          DELETE_STALE: "1"
+        run: SSH_KEY="$HOME/.ssh/hostinger_deploy" bash ./deploy.sh
+
+      - name: Remove the SSH key
+        if: always()
+        run: rm -f ~/.ssh/hostinger_deploy

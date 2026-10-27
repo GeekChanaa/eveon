@@ -62,6 +62,7 @@ public enum PermissionEnum
     CreateUsers,
     EditUsers,
     DeleteUsers,
+    SuspendUsers,
 
     ViewPartners,
     CreatePartners,

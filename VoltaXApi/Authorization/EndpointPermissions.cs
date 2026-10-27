@@ -33,6 +33,7 @@ public static class EndpointPermissions
         if (controller == "ChargingStrategy" && action == "ApplyChargingStrategy" || controller == "StationLoadBalancing" && action == "RebalanceStation") return "OperateChargePoints";
         // Data a charger returned about a customer (CustomerInformation): personal data, read-only.
         if (controller == "CustomerInformationReport") return method == "GET" ? "ViewUsers" : null;
+        if (controller == "User" && action is "SuspendUser" or "LiftSuspension") return "SuspendUsers";
         if (controller == "FileManagement" && action == "UploadChargingStationPicture") return "EditChargingStations";
         if (controller == "Statistics") return method == "GET" ? "ViewStatisticsPage" : null;
         if (!Resources.TryGetValue(controller, out var resource)) return null;

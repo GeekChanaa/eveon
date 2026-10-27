@@ -106,6 +106,15 @@ export class UserService extends AbstractService<User>{
     return this._http.put<any>(this.baseUrl + "EditUserDashboardInformations/"+id,user);
   }
 
+  // until: null suspends the account until the suspension is lifted by hand.
+  suspendUser(id : number, suspension : { until: string | null, reason: string, notifyUser: boolean }){
+    return this._http.post<void>(this.baseUrl + "SuspendUser/"+id, suspension);
+  }
+
+  liftSuspension(id : number){
+    return this._http.post<void>(this.baseUrl + "LiftSuspension/"+id, {});
+  }
+
   getUserInformations(userID : number){
     return this._http.get<any>(this.baseUrl + "GetUserInformations/"+userID);
   }

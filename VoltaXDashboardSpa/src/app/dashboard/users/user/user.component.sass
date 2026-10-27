@@ -21,6 +21,70 @@
   color: var(--vx-text, #171b24)
   font-size: 14px
 
+.account-status
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: 12px
+  margin-bottom: 16px
+  padding: 14px 18px
+  border: 1px solid var(--vx-border, #ededed)
+  border-radius: 12px
+  background: var(--vx-surface, #fff)
+  &.is-suspended
+    border-color: rgba(240, 68, 56, .35)
+    background: rgba(240, 68, 56, .07)
+
+.account-status__text
+  display: grid
+  gap: 2px
+  min-width: 0
+  font-size: 13px
+  color: var(--vx-text-muted)
+  strong
+    font-size: 14px
+    color: var(--vx-text, #171b24)
+  span
+    overflow-wrap: anywhere
+
+.suspend-dialog
+  width: min(520px, calc(100vw - 32px))
+  form
+    margin: 0
+
+.suspend-dialog__body
+  display: grid
+  gap: 14px
+  padding: 22px 22px 8px
+  h2
+    margin: 0
+    font-size: 16px
+    font-weight: 650
+  p
+    margin: 0
+    font-size: 13px
+    line-height: 1.55
+    color: var(--vx-text-muted)
+  textarea
+    padding: 10px 12px
+    border: 1px solid var(--vx-border)
+    border-radius: 10px
+    background: var(--vx-surface)
+    color: var(--vx-text)
+    font: inherit
+    font-size: 13px
+    resize: vertical
+    &:focus
+      outline: none
+      border-color: var(--vx-brand)
+      box-shadow: 0 0 0 3px var(--vx-brand-soft)
+  input:disabled
+    opacity: .55
+
+p.suspend-dialog__error
+  color: #b42318
+
 @media (max-width: 420px)
   .station-section app-display-cell, .role-value
     padding-left: 16px

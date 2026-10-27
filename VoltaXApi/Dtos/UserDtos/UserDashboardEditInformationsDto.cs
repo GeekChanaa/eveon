@@ -24,9 +24,6 @@ namespace VoltaXApi.Dtos
         public string? Gender { get; set; }
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneNumberVerified { get; set; }
-        public DateTime? SuspendedAt { get; set; }
-        [StringLength(500)]
-        public string? SuspensionReason { get; set; }
 
     }
 }

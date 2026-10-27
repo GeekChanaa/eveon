@@ -13,6 +13,53 @@
 
   <!-- Content area -->
   <div *ngIf="userLoaded" class="content-area">
+    <!-- Account status: suspension is its own permission, separate from editing the profile -->
+    <section class="account-status" [class.is-suspended]="isSuspended()" aria-live="polite">
+      <div class="account-status__text">
+        <ng-container *ngIf="isSuspended(); else activeAccount">
+          <strong>Suspended {{ isIndefinite() ? 'until lifted' : 'until ' + (user.suspendedAt | date:'medium') }}</strong>
+          <span *ngIf="user.suspensionReason">Reason: {{ user.suspensionReason }}</span>
+          <span *ngIf="user.deletionRequested">Account deletion requested by the user; the suspension ends only if the request is cancelled.</span>
+        </ng-container>
+        <ng-template #activeAccount>
+          <strong>Account active</strong>
+          <span>The user can sign in and charge.</span>
+        </ng-template>
+      </div>
+      <ng-container *ngIf="canSuspend()">
+        <button *ngIf="!isSuspended()" type="button" class="vx-btn vx-btn--danger" (click)="openSuspendDialog()">Suspend account</button>
+        <button *ngIf="isSuspended()" type="button" class="vx-btn" (click)="liftSuspension()">Lift suspension</button>
+      </ng-container>
+    </section>
+
+    <dialog #suspendDialog class="vx-dialog vx-dialog--danger suspend-dialog" aria-labelledby="suspend-title">
+      <form (ngSubmit)="suspendUser()" novalidate>
+        <div class="suspend-dialog__body">
+          <h2 id="suspend-title">Suspend {{ user.fullName }}</h2>
+          <p>The user is signed out everywhere and cannot sign in or charge until the suspension ends.</p>
+
+          <div class="vx-field">
+            <label for="suspend-reason">Reason</label>
+            <textarea id="suspend-reason" name="reason" rows="4" maxlength="500" required [(ngModel)]="suspension.reason"
+              placeholder="Explain why the account is suspended"></textarea>
+          </div>
+
+          <div class="vx-field">
+            <label for="suspend-until">Suspended until</label>
+            <input id="suspend-until" name="until" type="date" [min]="tomorrow" [(ngModel)]="suspension.until" [disabled]="suspension.indefinite">
+          </div>
+          <label class="vx-check"><input type="checkbox" name="indefinite" [(ngModel)]="suspension.indefinite"> No end date (until lifted by hand)</label>
+          <label class="vx-check"><input type="checkbox" name="notifyUser" [(ngModel)]="suspension.notifyUser"> Email the reason to {{ user.email }}</label>
+
+          <p *ngIf="suspensionError" class="suspend-dialog__error" role="alert">{{ suspensionError }}</p>
+        </div>
+        <div class="vx-dialog__actions">
+          <button type="button" class="vx-btn" (click)="closeSuspendDialog()">Cancel</button>
+          <button type="submit" class="vx-btn vx-btn--danger-solid" [disabled]="savingSuspension">Suspend account</button>
+        </div>
+      </form>
+    </dialog>
+
     <div class="station-tabs" role="tablist" aria-label="User sections">
       <button type="button" *ngFor="let tab of visibleTabs(); let i = index" role="tab" [id]="'tab-' + tab.id"
         [attr.aria-controls]="'panel-' + tab.id" [attr.aria-selected]="tabsEnum === tab.id"
@@ -64,16 +111,6 @@
 
                 <app-display-cell [modern]="true" [editable]="access.can('EditUsers')" [updateObservable]="updateUserObservable.bind(this)" [object]="user"
                   inpType="select" title="partnerID" [options]="partnersOptions" val="{{user.partner}}"></app-display-cell>
-                  
-                <!-- Suspending Account -->
-                <app-display-cell [modern]="true" [editable]="access.can('EditUsers')"
-                  [updateObservable]="updateUserObservable.bind(this)"
-                  [object]="user"
-                  inpType="date"
-                  title="suspendedAt"
-                  [val]="user.suspendedAt"
-                  placeholder="Select suspension end date">
-                </app-display-cell>
 
               </section>
 
