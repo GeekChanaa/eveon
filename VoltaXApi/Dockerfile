@@ -1,14 +1,14 @@
-# EVEON API image. Build context: this folder (Railway root directory VoltaXApi, or `docker build VoltaXApi`).
+# EVEON API image. Build context: this folder (`docker build VoltaXApi`; deploy-ec2.sh and deploy.sh build it).
 #
 # Nothing environment specific is baked in: the image carries appsettings.json (defaults, no secrets) and
-# every production value comes from environment variables at run time (deploy/railway.env.example,
-# deploy/api.env.example). .dockerignore keeps appsettings.production.json, env files and local data out.
+# every production value comes from environment variables at run time (deploy/api.env.example).
+# .dockerignore keeps appsettings.production.json, env files and local data out.
 #
 #   docker run --rm --env-file api.env <image> --migrate     apply the database migrations, then exit
 #   docker run -d --env-file api.env -p 8080:8080 <image>    serve
 #
 # Storage: uploads are written inside the container and are lost when it is replaced, unless these paths
-# are volumes (EC2: deploy.sh mounts them; Railway: see docs/deployment.md, "Storage"):
+# are volumes (deploy.sh mounts them, see docs/deployment.md, "Storage"):
 #   /app/wwwroot/ProfilePictures, /app/wwwroot/PartnersLogos, /app/wwwroot/images/charging-stations
 #   /app/App_Data (charger log uploads, GDPR exports, private files)
 # Logs go to stdout (Serilog console sink); the file sinks write to /app/logs, which is container scratch.
@@ -36,7 +36,7 @@ RUN mkdir -p logs App_Data wwwroot/ProfilePictures wwwroot/PartnersLogos wwwroot
 # The image's unprivileged user (uid 1654), never root.
 USER $APP_UID
 
-# Railway injects PORT; 8080 everywhere else. Set ASPNETCORE_URLS instead to listen elsewhere (e.g. https://+:8443).
+# PORT defaults to 8080 (some platforms inject their own). Set ASPNETCORE_URLS instead to listen elsewhere (e.g. https://+:8443).
 ENV ASPNETCORE_ENVIRONMENT=Production \
     PORT=8080
 EXPOSE 8080

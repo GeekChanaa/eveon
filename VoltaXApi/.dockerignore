@@ -40,7 +40,6 @@ sql-scripts/*
 # Deployment files and docs are not part of the application
 deploy/
 deploy.sh
-railway.json
 Dockerfile
 .dockerignore
 *.md

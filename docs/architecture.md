@@ -57,8 +57,7 @@ flowchart LR
 
 ## Request flow (REST)
 
-1. `UseForwardedHeaders` restores the client scheme, address and host from trusted proxies (Caddy, Railway's
-   edge); host filtering rejects hosts outside `AllowedHosts`; HTTPS redirection and security headers apply.
+1. `UseForwardedHeaders` restores the client scheme, address and host from trusted proxies (Caddy); host filtering rejects hosts outside `AllowedHosts`; HTTPS redirection and security headers apply.
 2. Authentication reads the JWT bearer token; the authorization stage answers 401 to anonymous callers on
    every endpoint not marked public, before the body is read.
 3. The global rate limiter partitions by user (or address): strict limits on sign-in endpoints.
@@ -134,8 +133,8 @@ required ones. [configuration.md](configuration.md), [security-runbook.md](secur
 
 ## Deployment and scale-out
 
-- One Docker image (`VoltaXApi/Dockerfile`) runs everywhere: Railway today, or a Docker host behind Caddy
-  (`VoltaXApi/deploy.sh`). Migrations run at deploy time with `--migrate`. [deployment.md](deployment.md)
+- One Docker image (`VoltaXApi/Dockerfile`) runs everywhere: the EC2 test host behind Caddy
+  (`VoltaXApi/deploy-ec2.sh`) or any Docker host (`VoltaXApi/deploy.sh`). Migrations run at deploy time with `--migrate`. [deployment.md](deployment.md)
 - Without Redis the API is a single instance and keeps charger sockets, SignalR groups and caches in
   memory. With `ScaleOut__Redis__ConnectionString`, several instances share charger ownership (a charger
   may connect to any instance), forward commands to the owner, fan SignalR events out through the Redis

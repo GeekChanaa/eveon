@@ -4,7 +4,7 @@
 when a required secret is missing (`Configurations/SecurityConfiguration.cs`).
 
 The Docker image contains `appsettings.json` only: in a container every production value comes from
-environment variables (`VoltaXApi/deploy/railway.env.example`, `VoltaXApi/deploy/api.env.example`).
+environment variables (`VoltaXApi/deploy/api.env.example`).
 `appsettings.production.json` is kept for running the API locally with `--environment Production`.
 
 ## Local development
@@ -42,7 +42,7 @@ On the server they live in `/etc/eveon/api.env` (`chmod 600`), passed with `dock
 | `Authentication__Google__ClientId` / `ClientSecret` | for Google login | |
 | `MailSettings__Mail` / `MailSettings__DisplayName` | for email | sender address (verified at the mail provider) and the name shown with it, default `EVEON` |
 | `MailSettings__Host` / `Port` / `Username` / `Password` | for email over SMTP | port 465: TLS from the start, other ports: STARTTLS |
-| `MailSettings__BrevoApiKey` | for email where SMTP is blocked | Brevo API key (`xkeysib-...`): mail goes over HTTPS to Brevo's API and the SMTP settings are unused. Railway blocks outbound SMTP (25, 465, 587, 2525) below the Pro plan. If Brevo answers 401 "unrecognised IP address", turn off Brevo's authorised IPs check (Security > Authorised IPs): Railway's outgoing addresses change |
+| `MailSettings__BrevoApiKey` | for email where SMTP is blocked | Brevo API key (`xkeysib-...`): mail goes over HTTPS to Brevo's API and the SMTP settings are unused. For hosts that block outbound SMTP (Railway below the Pro plan, for example). If Brevo answers 401 "unrecognised IP address", add the host's outgoing address in Brevo (Security > Authorised IPs) |
 | `AwsSns__AccessKey` / `AwsSns__SecretKey` | for SMS | use a least-privilege IAM user (sns:Publish only) |
 
 ## HTTPS
@@ -52,12 +52,12 @@ automatic Let's Encrypt certificate and proxies REST, SignalR and the OCPP webso
 The dashboard `.htaccess` forces HTTPS and sets HSTS/CSP; its `environment.prod.ts` points to
 `https://api.eveon.ma` — update both if the domain differs.
 
-## Hosting: Railway (API) + Vercel (dashboard) + Hostinger (MySQL)
+## Hosting: EC2 (API) + Hostinger (dashboard, MySQL)
 
 | Piece | Where | Config |
 | --- | --- | --- |
-| API `https://api.eveon.ma/api/...` | Railway, root directory `VoltaXApi`, config file `/VoltaXApi/railway.json` | variables: `VoltaXApi/deploy/railway.env.example` |
-| Dashboard `https://dashboard.eveon.ma` | Vercel, root directory `VoltaXDashboardSpa` | `VoltaXDashboardSpa/vercel.json` |
+| API `https://api-v2.eveon.ma/api/...` | EC2 test host, `VoltaXApi/deploy-ec2.sh`, Caddy (`VoltaXApi/deploy/Caddyfile.ec2`) | variables: `/etc/eveon/api.env` from `VoltaXApi/deploy/api.env.example` |
+| Dashboard `https://dashboard-v2.eveon.ma` | Hostinger static hosting, `.github/workflows/deploy-dashboard.yml` | `VoltaXDashboardSpa/deployment-files/.htaccess` |
 | Database | Hostinger MySQL / MariaDB | `Database__Provider=MySql` + connection string |
 
 Extra keys for this setup:
@@ -68,7 +68,7 @@ Extra keys for this setup:
 | `Database__ServerVersion` | MariaDB version of the server (`SELECT VERSION()`), default `10.6.15` |
 | `Database__MigrateOnStartup` | `true` applies pending migrations before the API starts (single instance hosts); otherwise run the image with `--migrate` at deploy |
 | `Database__FailOnPendingMigrations` | default `true` in Production: refuse to start while a migration is pending |
-| `ReverseProxy__TrustAllProxies` | `true` on Railway: trust `X-Forwarded-*` from its edge proxy, which has no fixed address |
+| `ReverseProxy__TrustAllProxies` | `true` only behind a managed edge proxy with no fixed address; on a Docker host behind Caddy set `ReverseProxy__KnownProxies__0=172.17.0.1` instead |
 
 Schema: migrations only, see [database.md](database.md). Apply them with the same settings as production and
 `--migrate` (or `Database__MigrateOnStartup=true`), from a machine allowed by Hostinger's Remote MySQL, or

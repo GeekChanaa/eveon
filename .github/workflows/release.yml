@@ -7,7 +7,7 @@
 #   2. After the first run, open the package (ghcr.io/<owner>/eveon-api) and choose its visibility; for a
 #      private package, give the EC2 host a token with read:packages (`docker login ghcr.io`).
 #   3. Deploy a release with VoltaXApi/deploy.sh: IMAGE=ghcr.io/<owner>/eveon-api TAG=1.2.3 SKIP_BUILD=1.
-#      Railway keeps building from the Dockerfile and does not use this image.
+#      The EC2 test host (deploy-ec2.sh) builds locally and does not use this image.
 name: Release image
 
 on:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build and push the API image, apply the database migrations, then replace the container on a Docker
-# host reached over SSH (the EC2 host). Railway does not use this script: it builds the Dockerfile itself.
+# host reached over SSH. For the EC2 test host, use deploy-ec2.sh (no registry).
 #
 #   cd VoltaXApi
 #   IMAGE=docker.io/<account>/voltax-api DEPLOY_HOST=ec2-user@<host> SSH_KEY=~/.ssh/eveon.pem ./deploy.sh

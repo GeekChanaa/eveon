@@ -29,7 +29,7 @@ Components, request, OCPP and billing flows, the auth model and scale-out: [docs
 | Path | Content |
 | --- | --- |
 | `VoltaXApi/` | API: OCPP CSMS (`OCPP/`), REST controllers, SignalR hubs (`Hubs/`), OCPI (`Ocpi/`), smart charging, EF Core data layer and migrations (`Data/`, `Migrations/`), `Dockerfile`, `deploy.sh`, `deploy/` (env templates, Caddy, scale-out compose) |
-| `VoltaXDashboardSpa/` | Angular 16 dashboard: operator back office, customer portal, partner portal; `vercel.json`, `deploy.sh` |
+| `VoltaXDashboardSpa/` | Angular 16 dashboard: operator back office, customer portal, partner portal; `deploy.sh` |
 | `volta_x_mobile/` | Flutter mobile app (UI prototype) |
 | `tests/VoltaX.Tests/` | xUnit tests: API endpoints and authorization, OCPP scenarios, billing, payments, portals |
 | `tests/VoltaX.*Checks/` | Console checks run by hand against a development database |
@@ -90,8 +90,8 @@ flutter run
 ## Configuration
 
 Settings are environment variables in containers (`:` becomes `__`) and user-secrets in development. Names
-only; meanings, defaults and templates are in [docs/configuration.md](docs/configuration.md),
-`VoltaXApi/deploy/railway.env.example` and `VoltaXApi/deploy/api.env.example`.
+only; meanings, defaults and templates are in [docs/configuration.md](docs/configuration.md)
+and `VoltaXApi/deploy/api.env.example`.
 
 | Area | Variables |
 | --- | --- |
@@ -123,9 +123,9 @@ SQL Server databases, scans new commits for secrets and audits dependencies.
 
 ## Deployment
 
-The API ships as one Docker image (Railway today, or a Docker host with `VoltaXApi/deploy.sh`), migrations
-run at deploy time with `--migrate`, and the dashboard deploys to Vercel. See
-[docs/deployment.md](docs/deployment.md).
+The API ships as one Docker image (an EC2 test host with `VoltaXApi/deploy-ec2.sh`, or any Docker host
+with `VoltaXApi/deploy.sh`), migrations run at deploy time with `--migrate`, and the dashboard deploys to
+Hostinger. See [docs/deployment.md](docs/deployment.md).
 
 ## Documentation
 
@@ -134,7 +134,7 @@ run at deploy time with `--migrate`, and the dashboard deploys to Vercel. See
 | [architecture.md](docs/architecture.md) | Components and flows |
 | [configuration.md](docs/configuration.md) | Settings, secrets, hosting, OCPP security profiles and charger PKI |
 | [database.md](docs/database.md) | Providers, migrations, applying them, verification |
-| [deployment.md](docs/deployment.md) | Image, Railway, Docker host, storage, dashboard, CI |
+| [deployment.md](docs/deployment.md) | Image, EC2 host, Docker host, storage, dashboard, CI |
 | [testing.md](docs/testing.md) | Test layers, simulator end-to-end and load runs |
 | [ocpp.md](docs/ocpp.md) | OCPP 2.0.1 / 1.6 support and message coverage; [samples](docs/ocpp-samples/README.md) |
 | [billing.md](docs/billing.md) | Prices, formula, VAT, invoices |

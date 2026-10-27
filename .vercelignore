@@ -1,6 +1,0 @@
-# Vercel (project eveon-ui) only builds the dashboard: upload nothing else.
-/*
-!/VoltaXDashboardSpa
-/VoltaXDashboardSpa/node_modules
-/VoltaXDashboardSpa/dist
-/VoltaXDashboardSpa/.angular

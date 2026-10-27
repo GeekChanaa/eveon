@@ -4,7 +4,7 @@
 
 | Where | Provider | Setting |
 | --- | --- | --- |
-| Production (Railway API + Hostinger) | MariaDB through Pomelo | `Database__Provider=MySql`, `Database__ServerVersion=<SELECT VERSION()>` |
+| Production (EC2 API + Hostinger) | MariaDB through Pomelo | `Database__Provider=MySql`, `Database__ServerVersion=<SELECT VERSION()>` |
 | EC2 / self-hosted | either | same settings |
 | Local development | SQL Server (the default when `Database:Provider` is unset) or MariaDB (`docker-compose.dev.yml`) | user-secrets or environment |
 | Tests (`tests/VoltaX.Tests`) | SQLite in memory, schema from the model (`EnsureCreated`) | none |
@@ -45,7 +45,7 @@ The API applies nothing by itself unless asked:
 | How | When to use |
 | --- | --- |
 | `dotnet VoltaXApi.dll --migrate` (container: `docker run --rm --env-file api.env <image> --migrate`) | The deploy step. Applies the pending migrations, checks that every mapped table and column exists, exits (code 0, or non-zero with the error). `VoltaXApi/deploy.sh` runs it before replacing the running container. |
-| `Database__MigrateOnStartup=true` | Hosts without a pre-deploy hook and a single instance (Railway with `numReplicas: 1`). Same as `--migrate`, then the API starts. |
+| `Database__MigrateOnStartup=true` | Hosts without a pre-deploy hook and a single instance. Same as `--migrate`, then the API starts. |
 | `dotnet ef database update --project VoltaXApi` | From a developer machine allowed to reach the database. |
 | `dotnet ef migrations script --idempotent -o schema.sql --project VoltaXApi` | When the database is only reachable through a console (phpMyAdmin): import the script. Generate it with `Database__Provider` set to the target provider. |
 
