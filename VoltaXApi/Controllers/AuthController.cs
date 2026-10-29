@@ -237,7 +237,12 @@ namespace VoltaXApi.Controllers
             });
         }
 
+        /// <summary>
+        /// The caller's own password (DashboardAccessFilter: ID must be the caller). Rate limited like sign in, since a
+        /// stolen session could otherwise guess the current password without limit.
+        /// </summary>
         [HttpPost("ChangePassword")]
+        [EnableRateLimiting(SecurityConfiguration.AuthStrictRateLimit)]
         public async Task<IActionResult> ChangePassword(UserPasswordChangeDto userPasswordChangeDto)
         {
             try
@@ -252,6 +257,10 @@ namespace VoltaXApi.Controllers
             catch (IncorrectPasswordException ex)
             {
                 return StatusCode(403, ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

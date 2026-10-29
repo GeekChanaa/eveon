@@ -310,9 +310,19 @@ namespace VoltaXApi.Services
         throw new ValidationException("This account has no password yet. Use the reset password flow to set one.");
       }
 
+      if (userPasswordChangeDto.NewPassword != userPasswordChangeDto.NewPasswordCheck)
+      {
+        throw new ValidationException("The new password and its confirmation do not match.");
+      }
+
       if (!AuthHelper.VerifyPasswordHash(userPasswordChangeDto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
       {
         throw new IncorrectPasswordException("The current password is incorrect.");
+      }
+
+      if (userPasswordChangeDto.NewPassword == userPasswordChangeDto.CurrentPassword)
+      {
+        throw new ValidationException("The new password must be different from the current one.");
       }
 
       AuthHelper.CreatePasswordHash(userPasswordChangeDto.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
