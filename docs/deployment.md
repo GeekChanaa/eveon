@@ -50,9 +50,16 @@ chargers with TLS use `wss://api-v2.eveon.ma/OCPP/<identity>`.
 
 ```bash
 cd VoltaXApi
-./deploy-ec2.sh                                  # build here, send over SSH, migrate, replace, health check
-ENV_SOURCE=<local api.env> ./deploy-ec2.sh       # also replace /etc/eveon/api.env first
+cp deploy/api.env.example deploy/api.env         # once, then fill in (gitignored: *.env)
+./deploy-ec2.sh                                  # upload deploy/api.env, build, send over SSH, migrate, replace, health check
+SKIP_ENV=1 ./deploy-ec2.sh                       # keep /etc/eveon/api.env on the host as it is
 ```
+
+`deploy/api.env` is the source of truth for the host's settings: every deploy replaces `/etc/eveon/api.env`
+and keeps the previous one as `/etc/eveon/api.env.bak-<date>`. Change settings there, not on the host, and
+redeploy (a container only reads its env file when it is created, so `docker restart` is not enough). The
+script refuses to upload the file if git tracks it. Keep the pool options of the example connection string:
+Hostinger limits each database user to 500 new connections per hour.
 
 No registry: the image is streamed with `docker save | docker load` (`deploy.sh` with `TRANSFER=ssh`). The
 script builds the working tree as it is, so deploy from a clean checkout of the commit to ship. It needs the
