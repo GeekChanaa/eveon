@@ -264,6 +264,41 @@
         "phoneMissing": "You have not added a phone number.",
         "phoneNotVerified": "Your phone number is not verified."
       }
+    },
+    "security": {
+      "title": "Sign in and security",
+      "intro": "Your password and the accounts you can sign in with.",
+      "password": "Password",
+      "passwordSet": "Set",
+      "passwordNotSet": "Not set",
+      "changeHint": "Use a password you don't use on any other site.",
+      "change": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm the new password",
+      "rules": "At least 8 characters, with an uppercase and a lowercase letter, a number and a special character.",
+      "weak": "This password is too weak: use at least 8 characters, with an uppercase and a lowercase letter, a number and a special character.",
+      "sameAsCurrent": "Choose a password different from the current one.",
+      "mismatch": "The two passwords don't match.",
+      "signOutNotice": "For your security, you will be signed out on all your devices. Sign in again with the new password.",
+      "save": "Change password",
+      "wrongCurrent": "The current password is incorrect.",
+      "invalid": "This password can't be used. Check the rules and try again.",
+      "setHint": "You signed up with Google, so your account has no password yet. We will email you a link to choose one.",
+      "set": "Email me a link to set a password",
+      "setResend": "Send the link again",
+      "setSent": "Link sent to {{email}}. It expires soon: open it now.",
+      "google": "Google account",
+      "linked": "Linked",
+      "notLinked": "Not linked",
+      "linkHint": "Link your Google account to sign in with Google, without typing your password.",
+      "link": "Link my Google account",
+      "linkedDone": "Your Google account is linked: you can now sign in with Google.",
+      "unlinkHint": "You will then sign in with your email and password only.",
+      "unlinkNeedsPassword": "Set a password before unlinking Google, otherwise you couldn't sign in anymore.",
+      "unlink": "Unlink Google",
+      "unlinkConfirm": "Unlink your Google account?",
+      "unlinkYes": "Unlink"
     }
   }
 }

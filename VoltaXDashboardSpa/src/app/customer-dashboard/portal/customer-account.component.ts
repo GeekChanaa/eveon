@@ -65,8 +65,8 @@ export class CustomerCardsComponent implements OnInit {
 }
 
 /**
- * The customer's profile: name and photo (changed through support), email and phone with their verification, and the
- * optional details the customer fills in.
+ * The customer's profile: name and photo (changed through support), email and phone with their verification, the
+ * optional details the customer fills in, and how they sign in (password, Google).
  */
 @Component({
   selector: 'app-customer-profile',
@@ -101,6 +101,11 @@ export class CustomerCardsComponent implements OnInit {
     <section class="vx-panel">
       <div class="vx-panel__head"><div><h2>{{ 'portal.completion.detailsTitle' | translate }}</h2><p>{{ 'portal.completion.detailsIntro' | translate }}</p></div></div>
       <app-customer-details-form [profile]="p"></app-customer-details-form>
+    </section>
+
+    <section class="vx-panel">
+      <div class="vx-panel__head"><div><h2>{{ 'portal.security.title' | translate }}</h2><p>{{ 'portal.security.intro' | translate }}</p></div></div>
+      <app-customer-security-form [email]="p.email"></app-customer-security-form>
     </section>
   </ng-container>
 </main></div>`

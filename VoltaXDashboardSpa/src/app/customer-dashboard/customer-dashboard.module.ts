@@ -12,6 +12,7 @@ import { CustomerLiveSessionComponent } from './portal/customer-live-session.com
 import { ProfileCompletionBannerComponent } from './profile-completion/profile-completion-banner.component';
 import { CustomerContactFormComponent } from './profile-completion/customer-contact-form.component';
 import { CustomerDetailsFormComponent } from './profile-completion/customer-details-form.component';
+import { CustomerSecurityFormComponent } from './profile-completion/customer-security-form.component';
 
 /** The customer portal: the signed-in customer's own data, read only, plus paying online and completing the profile. */
 @NgModule({
@@ -31,7 +32,8 @@ import { CustomerDetailsFormComponent } from './profile-completion/customer-deta
     CustomerDashboardRoutingModule,
     ProfileCompletionBannerComponent,
     CustomerContactFormComponent,
-    CustomerDetailsFormComponent
+    CustomerDetailsFormComponent,
+    CustomerSecurityFormComponent
   ]
 })
 export class CustomerDashboardModule { }
