@@ -20,6 +20,7 @@ namespace VoltaXApi.Services
         private readonly IRepository<ChargingStationImage> _chargingStationImageRepo;
         private readonly IFileManagementService _fileService;
         private readonly IMapper _mapper;
+        private readonly IQRCodeService _qrCodeService;
 
         public ChargingStationService(
           IChargingStationRepository repo,
@@ -27,7 +28,8 @@ namespace VoltaXApi.Services
           IRepository<Image> imageRepository,
           IRepository<ChargingStationImage> chargingStationImageRepo,
           IFileManagementService fileService,
-          IMapper mapper
+          IMapper mapper,
+          IQRCodeService qrCodeService
         ){
           this._repository = repo;
           this._imageRepo = imageRepository;
@@ -35,6 +37,7 @@ namespace VoltaXApi.Services
           this._chargingStationImageRepo = chargingStationImageRepo;
           this._mapper = mapper;
           this._chargePointRepository = chargePointRepository;
+          this._qrCodeService = qrCodeService;
         }
         public async Task<ChargingStation> CreateChargingStationWithDetails(ChargingStationCreateDto chargingStationDto)
         {
@@ -43,7 +46,7 @@ namespace VoltaXApi.Services
           foreach(var chargePoint in chargingStation.ChargePoints)
           {
             chargePoint.ChargePointId = await GenerateChargePointId();
-            chargePoint.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+            chargePoint.QrValue = _qrCodeService.NewChargePointQrValue();
           }
           await _repository.AddAsync(chargingStation);
 

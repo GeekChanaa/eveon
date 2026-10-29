@@ -1,69 +1,42 @@
 using System;
-using System.Linq;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using QRCoder;
-using VoltaXApi.Models;
 
 namespace VoltaXApi.Services
 {
     public class QRCodeService : IQRCodeService
     {
         private const string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        private const string BaseUrl = "https://app.voltax.com";
-        
-        /// <summary>
-        /// Generates a complete deep link URL for a charge point
-        /// Format: https://app.voltax.com/charge/{uniqueCode}
-        /// This URL will open the VoltaX mobile app if installed, otherwise opens the website
-        /// </summary>
-        public static string GenerateQRCodeValueForChargePoint(ChargePoint chargePoint)
+        private const int CodeLength = 20;
+
+        private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public QRCodeService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            const int codeLength = 20;
-            var randomBytes = new byte[codeLength];
-            
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomBytes);
-            }
-
-            var result = new char[codeLength];
-            for (int i = 0; i < codeLength; i++)
-            {
-                result[i] = AllowedCharacters[randomBytes[i] % AllowedCharacters.Length];
-            }
-
-            var uniqueCode = new string(result);
-            
-            // Return Universal/App Link format for mobile apps
-            return $"{BaseUrl}/charge/{uniqueCode}";
+            _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
-        
+
         /// <summary>
-        /// Generates a QR code value with custom base URL
+        /// A new QR value for a charge point: {base}/charge/{20 random characters}. The base is
+        /// AppSettings:QrBaseUrl when set, otherwise the address this request reached the API on
+        /// (https://api-v2.eveon.ma behind Caddy, http://localhost:8000 in development).
         /// </summary>
-        public static string GenerateQRCodeValueWithCustomUrl(string baseUrl = BaseUrl)
+        public string NewChargePointQrValue()
         {
-            const int codeLength = 20;
-            var randomBytes = new byte[codeLength];
-            
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomBytes);
-            }
-
-            var result = new char[codeLength];
-            for (int i = 0; i < codeLength; i++)
-            {
-                result[i] = AllowedCharacters[randomBytes[i] % AllowedCharacters.Length];
-            }
-
-            var uniqueCode = new string(result);
-            return $"{baseUrl}/charge/{uniqueCode}";
+            var randomBytes = RandomNumberGenerator.GetBytes(CodeLength);
+            var code = new char[CodeLength];
+            for (int i = 0; i < CodeLength; i++)
+                code[i] = AllowedCharacters[randomBytes[i] % AllowedCharacters.Length];
+            return $"{BaseUrl()}/charge/{new string(code)}";
         }
-        
+
         /// <summary>
         /// Extracts the unique code from a QR value URL
-        /// Example: "https://app.voltax.com/charge/ABC123" returns "ABC123"
+        /// Example: "https://api-v2.eveon.ma/charge/ABC123" returns "ABC123"
         /// </summary>
         public static string ExtractCodeFromQRValue(string qrValue)
         {
@@ -80,6 +53,16 @@ namespace VoltaXApi.Services
             var qrData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
             var qrCode = new PngByteQRCode(qrData);
             return qrCode.GetGraphic(20);
+        }
+
+        private string BaseUrl()
+        {
+            var configured = _configuration["AppSettings:QrBaseUrl"];
+            if (!string.IsNullOrWhiteSpace(configured)) return configured.TrimEnd('/');
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request == null || !request.Host.HasValue)
+                throw new InvalidOperationException("AppSettings:QrBaseUrl is not configured and there is no request to derive it from.");
+            return $"{request.Scheme}://{request.Host}{request.PathBase}".TrimEnd('/');
         }
     }
 }

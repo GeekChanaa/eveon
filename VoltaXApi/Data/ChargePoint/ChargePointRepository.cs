@@ -15,12 +15,15 @@ namespace VoltaXApi.Data
     public class ChargePointRepository : Repository<ChargePoint>, IChargePointRepository
     {
         private readonly IMapper _mapper;
+        private readonly IQRCodeService _qrCodeService;
 
         public ChargePointRepository(
             VoltaXApiDbContext context,
-            IMapper mapper) : base(context)
+            IMapper mapper,
+            IQRCodeService qrCodeService) : base(context)
         {
             _mapper = mapper;
+            _qrCodeService = qrCodeService;
         }
 
         public async Task<List<Connector>> GetChargePointConnectors(int chargePointID)
@@ -31,7 +34,7 @@ namespace VoltaXApi.Data
         override public async Task AddAsync(ChargePoint chargePoint)
         {
             chargePoint.ChargePointId = await this.GenerateChargePointId();
-            chargePoint.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+            chargePoint.QrValue = _qrCodeService.NewChargePointQrValue();
             await _context.Set<ChargePoint>().AddAsync(chargePoint);
             await _context.SaveChangesAsync();
         }
@@ -178,7 +181,7 @@ namespace VoltaXApi.Data
         {
             var cp = await _context.ChargePoints.FirstOrDefaultAsync(u => u.ID == chargePointID && !u.IsDeleted);
             if (cp == null) return false;
-            cp.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+            cp.QrValue = _qrCodeService.NewChargePointQrValue();
             await _context.SaveChangesAsync();
             return true;
         }
@@ -187,7 +190,7 @@ namespace VoltaXApi.Data
         {
             var chargePoints = await _context.ChargePoints.Where(u => !u.IsDeleted).ToListAsync();
             foreach (var cp in chargePoints)
-                cp.QrValue = QRCodeService.GenerateQRCodeValueWithCustomUrl();
+                cp.QrValue = _qrCodeService.NewChargePointQrValue();
             await _context.SaveChangesAsync();
             return chargePoints.Count;
         }

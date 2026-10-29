@@ -42,8 +42,8 @@ namespace VoltaXApi.Models
         
         /// <summary>
         /// QR Code value - Stores the complete deep link URL for mobile app
-        /// Format: https://app.voltax.com/charge/{uniqueCode}
-        /// Example: https://app.voltax.com/charge/A7K9M2X5P8Q1W4Y6Z3N0
+        /// Format: {API address}/charge/{uniqueCode}, see QRCodeService.NewChargePointQrValue
+        /// Example: https://api-v2.eveon.ma/charge/A7K9M2X5P8Q1W4Y6Z3N0
         /// Can be changed/regenerated at any time
         /// </summary>
         public string? QrValue { get; set; }
